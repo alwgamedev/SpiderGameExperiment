@@ -30,11 +30,32 @@ public class LegSynchronizer : MonoBehaviour
 
         public LegTimer(float offset, float stepTime, float restTime)
         {
-            stepping = false;
-            timer = -offset;
+            //stepping = false;
             this.stepTime = stepTime;
             this.restTime = restTime;
-            goalTime = restTime;
+            timer = offset;
+
+            var cycleTime = stepTime + restTime;
+            while (timer < 0)
+            {
+                timer += cycleTime;
+            }
+            while (timer > cycleTime)
+            {
+                timer -= cycleTime;
+            }
+
+            if (timer > stepTime)
+            {
+                timer -= stepTime;
+                stepping = false;
+                goalTime = restTime;
+            }
+            else
+            {
+                stepping = true;
+                goalTime = stepTime;
+            }
         }
 
         //returns whether stepping just turned to true
@@ -126,11 +147,12 @@ public class LegSynchronizer : MonoBehaviour
 
     private void InitializeTimers()
     {
+        float randomOffset = MathTools.RandomFloat(0, stepTime + restTime);
         timers = new LegTimer[synchronizedLegs.Length];
         for (int i = 0; i < timers.Length; i++)
         {
             var l = synchronizedLegs[i];
-            timers[i] = new LegTimer(l.TimeOffset, stepTime, restTime);
+            timers[i] = new LegTimer(l.TimeOffset + randomOffset, stepTime, restTime);
         }
     }
 }

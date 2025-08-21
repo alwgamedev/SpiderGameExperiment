@@ -20,7 +20,9 @@ public class LegAnimator : MonoBehaviour
     private void Start()
     {
         var g = CurrentGroundRaycast(Vector2.up);
-        lastComputedStepGoal = g ? g.point : ikTarget.position;
+        var s = StepGoalRaycast(Vector2.right, Vector2.up);
+        stepStartPosition = g ? g.point : ikTarget.position;
+        lastComputedStepGoal = s ? s.point : BackupStepGoal(Vector2.right, Vector2.up);
     }
 
     //VERY useful for identifying issues

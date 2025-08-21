@@ -2245,7 +2245,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   restTime: 0.4
   stepTime: 0.3
-  speedCapMin: 0.1
+  speedCapMin: 0.25
   speedCapMax: 2
   baseStepHeightMultiplier: 0.8
   stepSmoothingRate: 15
@@ -2261,13 +2261,13 @@ MonoBehaviour:
   - leg: {fileID: 2743920835986118611}
     timeOffset: 0.6
   - leg: {fileID: 8795002132057347550}
-    timeOffset: 0.1
+    timeOffset: 0
   - leg: {fileID: 6696795779634923590}
-    timeOffset: 0.5
+    timeOffset: 0.2
   - leg: {fileID: 4648777464423072146}
-    timeOffset: 0.4
+    timeOffset: 0.35
   - leg: {fileID: 2046956369761124234}
-    timeOffset: 0.8
+    timeOffset: 0.55
 --- !u!1 &2767446379286721415
 GameObject:
   m_ObjectHideFlags: 0

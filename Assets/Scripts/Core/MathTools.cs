@@ -2,6 +2,26 @@ using UnityEngine;
 
 public static class MathTools
 {
+    static System.Random rng;
+
+    public static System.Random RNG
+    {
+        get
+        {
+            if (rng == null)
+            {
+                rng = new();
+            }
+
+            return rng;
+        }
+    }
+
+    public static float RandomFloat(float min, float max)
+    {
+        return min + (max - min) * (float)RNG.NextDouble();
+    }
+
     /// <param name="p">point to be reflect</param>
     /// <param name="planeNormal">unit vector</param>
     public static Vector3 ReflectAcrossHyperplane(this Vector3 p, Vector3 planeNormal)
