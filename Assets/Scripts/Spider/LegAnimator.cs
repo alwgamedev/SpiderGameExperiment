@@ -12,6 +12,10 @@ public class LegAnimator : MonoBehaviour
     Vector2 lastComputedStepGoal;
     int groundLayer;
 
+    public Transform HipBone => hipBone;
+    public Transform FootBone => footBone;
+    public Vector2 UpLegUnitRay => (hipBone.position - footBone.position).normalized;
+
     private void Awake()
     {
         groundLayer = LayerMask.GetMask("Ground");

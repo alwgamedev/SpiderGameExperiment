@@ -11,6 +11,7 @@ public class LegSynchronizer : MonoBehaviour
     [SerializeField] float stepSmoothingRate;
     [SerializeField] float restSmoothingRate;
     [SerializeField] float footRotationSpeed;
+    //[SerializeField] float stepForce;
     [SerializeField] SynchronizedLeg[] synchronizedLegs;
 
     class LegTimer
@@ -81,7 +82,9 @@ public class LegSynchronizer : MonoBehaviour
     }
 
     Rigidbody2D body;
+    //int numLegs;
     LegTimer[] timers;
+    //bool[] needsStepForce;
 
     private void Awake()
     {
@@ -90,8 +93,21 @@ public class LegSynchronizer : MonoBehaviour
 
     private void Start()
     {
-        InitializeTimers();        
+        Initialize();        
     }
+
+    //private void FixedUpdate()
+    //{
+    //    for (int i = 0; i < numLegs; i++)
+    //    {
+    //        if (needsStepForce[i])
+    //        {
+    //            var l = synchronizedLegs[i].Leg;
+    //            body.AddForceAtPosition(body.mass * stepForce * l.UpLegUnitRay, l.HipBone.position, ForceMode2D.Impulse);
+    //            needsStepForce[i] = false;
+    //        }
+    //    }
+    //}
 
     private void LateUpdate()
     {
@@ -117,6 +133,7 @@ public class LegSynchronizer : MonoBehaviour
             if (t.Update(speedScaledDt))
             {
                 l.BeginStep(body);
+                //needsStepForce[i] = true;
             }
             if (t.Stepping)
             {
@@ -145,14 +162,17 @@ public class LegSynchronizer : MonoBehaviour
         }
     }
 
-    private void InitializeTimers()
+    private void Initialize()
     {
+        //numLegs = synchronizedLegs.Length;s
         float randomOffset = MathTools.RandomFloat(0, stepTime + restTime);
-        timers = new LegTimer[synchronizedLegs.Length];
-        for (int i = 0; i < timers.Length; i++)
-        {
-            var l = synchronizedLegs[i];
-            timers[i] = new LegTimer(l.TimeOffset + randomOffset, stepTime, restTime);
-        }
+        timers = synchronizedLegs.Select(l => new LegTimer(l.TimeOffset + randomOffset, stepTime, restTime)).ToArray();
+        //for (int i = 0; i < timers.Length; i++)
+        //{
+        //    var l = synchronizedLegs[i];
+        //    timers[i] = new LegTimer(l.TimeOffset + randomOffset, stepTime, restTime);
+        //}
+
+        //needsStepForce = new bool[numLegs];
     }
 }
