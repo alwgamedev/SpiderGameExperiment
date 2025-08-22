@@ -11,7 +11,6 @@ public class LegSynchronizer : MonoBehaviour
     [SerializeField] float stepSmoothingRate;
     [SerializeField] float restSmoothingRate;
     [SerializeField] float footRotationSpeed;
-    //[SerializeField] float stepForce;
     [SerializeField] SynchronizedLeg[] synchronizedLegs;
 
     class LegTimer
@@ -31,7 +30,6 @@ public class LegSynchronizer : MonoBehaviour
 
         public LegTimer(float offset, float stepTime, float restTime)
         {
-            //stepping = false;
             this.stepTime = stepTime;
             this.restTime = restTime;
             timer = offset;
@@ -82,9 +80,9 @@ public class LegSynchronizer : MonoBehaviour
     }
 
     Rigidbody2D body;
-    //int numLegs;
     LegTimer[] timers;
-    //bool[] needsStepForce;
+
+    public float bodyGroundSpeed;
 
     private void Awake()
     {
@@ -95,19 +93,6 @@ public class LegSynchronizer : MonoBehaviour
     {
         Initialize();        
     }
-
-    //private void FixedUpdate()
-    //{
-    //    for (int i = 0; i < numLegs; i++)
-    //    {
-    //        if (needsStepForce[i])
-    //        {
-    //            var l = synchronizedLegs[i].Leg;
-    //            body.AddForceAtPosition(body.mass * stepForce * l.UpLegUnitRay, l.HipBone.position, ForceMode2D.Impulse);
-    //            needsStepForce[i] = false;
-    //        }
-    //    }
-    //}
 
     private void LateUpdate()
     {
@@ -120,8 +105,7 @@ public class LegSynchronizer : MonoBehaviour
         var bodyUp = body.transform.up;
         var dt = Time.deltaTime;
 
-        var speed = Vector2.Dot(body.linearVelocity, bodyRight);
-        var speedFrac = speed < speedCapMin ? 0 : speed / speedCapMax;
+        var speedFrac = bodyGroundSpeed < speedCapMin ? 0 : bodyGroundSpeed / speedCapMax;
         var stepHeightSpeedMultiplier = Mathf.Min(speedFrac, 1);
         var speedScaledDt = speedFrac * dt;
         dt = Mathf.Max(speedScaledDt, dt);
@@ -133,7 +117,6 @@ public class LegSynchronizer : MonoBehaviour
             if (t.Update(speedScaledDt))
             {
                 l.BeginStep(body);
-                //needsStepForce[i] = true;
             }
             if (t.Stepping)
             {
@@ -145,8 +128,6 @@ public class LegSynchronizer : MonoBehaviour
             {
                 l.UpdateRest(dt, restSmoothingRate);
             }
-
-            //l.UpdateFootRotation(bodyUp, facingRight);
         }
     }
 
@@ -164,15 +145,7 @@ public class LegSynchronizer : MonoBehaviour
 
     private void Initialize()
     {
-        //numLegs = synchronizedLegs.Length;s
         float randomOffset = MathTools.RandomFloat(0, stepTime + restTime);
         timers = synchronizedLegs.Select(l => new LegTimer(l.TimeOffset + randomOffset, stepTime, restTime)).ToArray();
-        //for (int i = 0; i < timers.Length; i++)
-        //{
-        //    var l = synchronizedLegs[i];
-        //    timers[i] = new LegTimer(l.TimeOffset + randomOffset, stepTime, restTime);
-        //}
-
-        //needsStepForce = new bool[numLegs];
     }
 }
