@@ -1115,7 +1115,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ConstrainRotation: 0
   m_SolveFromDefaultPose: 1
-  m_Weight: 1
+  m_Weight: 0.75
   m_Chain:
     m_EffectorTransform: {fileID: 3120058777622577783}
     m_TargetTransform: {fileID: 4380958847150461223}
@@ -1133,11 +1133,11 @@ MonoBehaviour:
     - {x: 0, y: 0, z: -0.16589065, w: 0.9861442}
     - {x: -0, y: -0, z: 0.6813222, w: 0.7319837}
     m_StoredLocalRotations:
-    - {x: 0, y: 0, z: 0, w: 0}
-    - {x: 0, y: 0, z: 0, w: 0}
-    - {x: 0, y: 0, z: 0, w: 0}
-    - {x: 0, y: 0, z: 0, w: 0}
-    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0.27382392, w: 0.96177983}
+    - {x: 0, y: 0, z: -0.57374597, w: 0.8190333}
+    - {x: 0, y: 0, z: -0.21980958, w: 0.97554284}
+    - {x: 0, y: 0, z: -0.16589065, w: 0.9861442}
+    - {x: 0, y: 0, z: -0.99897814, w: -0.045197353}
   m_Iterations: 10
   m_Tolerance: 0.01
 --- !u!114 &289677099412839160
@@ -1491,7 +1491,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ConstrainRotation: 0
   m_SolveFromDefaultPose: 1
-  m_Weight: 1
+  m_Weight: 0.75
   m_Chain:
     m_EffectorTransform: {fileID: 8714597820655926901}
     m_TargetTransform: {fileID: 1238561792403655595}
@@ -1509,11 +1509,11 @@ MonoBehaviour:
     - {x: 0, y: 0, z: -0.1334409, w: 0.9910568}
     - {x: -0, y: -0, z: 0.72823876, w: 0.68532354}
     m_StoredLocalRotations:
-    - {x: 0, y: 0, z: 0, w: 0}
-    - {x: 0, y: 0, z: 0, w: 0}
-    - {x: 0, y: 0, z: 0, w: 0}
-    - {x: 0, y: 0, z: 0, w: 0}
-    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0.34309793, w: 0.93929964}
+    - {x: 0, y: 0, z: -0.72188, w: 0.69201833}
+    - {x: 0, y: 0, z: -0.19673306, w: 0.9804571}
+    - {x: 0, y: 0, z: -0.1334409, w: 0.9910568}
+    - {x: 0, y: 0, z: -0.99892, w: 0.04646349}
   m_Iterations: 10
   m_Tolerance: 0.01
 --- !u!114 &8139652597745638036
@@ -3368,7 +3368,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ConstrainRotation: 0
   m_SolveFromDefaultPose: 1
-  m_Weight: 1
+  m_Weight: 0.75
   m_Chain:
     m_EffectorTransform: {fileID: 8270222540382114309}
     m_TargetTransform: {fileID: 2278123347475011000}
@@ -3386,11 +3386,11 @@ MonoBehaviour:
     - {x: 0, y: 0, z: -0.15918843, w: 0.98724824}
     - {x: -0, y: -0, z: 0.672842, w: 0.7397863}
     m_StoredLocalRotations:
-    - {x: 0, y: 0, z: 0, w: 0}
-    - {x: 0, y: 0, z: 0, w: 0}
-    - {x: 0, y: 0, z: 0, w: 0}
-    - {x: 0, y: 0, z: 0, w: 0}
-    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0.2732149, w: 0.96195304}
+    - {x: 0, y: 0, z: -0.5759383, w: 0.8174932}
+    - {x: 0, y: 0, z: -0.21195577, w: 0.9772793}
+    - {x: 0, y: 0, z: -0.15918843, w: 0.98724824}
+    - {x: 0, y: 0, z: 0.25872666, w: 0.9659506}
   m_Iterations: 10
   m_Tolerance: 0.01
 --- !u!114 &3287121947862078546
@@ -5246,7 +5246,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5814272727016347195}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0, z: -0.72188, w: 0.69201833}
+  m_LocalRotation: {x: 0, y: 0, z: -0.72188, w: 0.69201833}
   m_LocalPosition: {x: 1.4802186, y: -0.0000003059697, z: 0}
   m_LocalScale: {x: 0.9999999, y: 0.9999999, z: 1}
   m_ConstrainProportionsScale: 0
@@ -6676,7 +6676,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ConstrainRotation: 0
   m_SolveFromDefaultPose: 1
-  m_Weight: 1
+  m_Weight: 0.75
   m_Chain:
     m_EffectorTransform: {fileID: 7669166903120010156}
     m_TargetTransform: {fileID: 1137408330521889720}
@@ -6694,11 +6694,11 @@ MonoBehaviour:
     - {x: 0, y: 0, z: -0.12782164, w: 0.9917972}
     - {x: -0, y: -0, z: 0.7213943, w: 0.69252455}
     m_StoredLocalRotations:
-    - {x: 0, y: 0, z: 0, w: 0}
-    - {x: 0, y: 0, z: 0, w: 0}
-    - {x: 0, y: 0, z: 0, w: 0}
-    - {x: 0, y: 0, z: 0, w: 0}
-    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0.35011715, w: 0.93670595}
+    - {x: 0, y: 0, z: -0.7217871, w: 0.69211525}
+    - {x: 0, y: 0, z: -0.20001683, w: 0.9797925}
+    - {x: 0, y: 0, z: -0.12782164, w: 0.9917972}
+    - {x: 0, y: 0, z: -0.9953274, w: 0.09655758}
   m_Iterations: 10
   m_Tolerance: 0.01
 --- !u!114 &12206713449588117
@@ -7222,7 +7222,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8406567198824328484}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0, z: -0.7217871, w: 0.69211525}
+  m_LocalRotation: {x: 0, y: 0, z: -0.7217871, w: 0.69211525}
   m_LocalPosition: {x: 1.4611212, y: -0.000000029713847, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -7808,14 +7808,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6991b23e83679b446a54da09b65f082f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  groundRaycastHorizontalSpacing: 1.25
   accelFactor: 25
   decelFactor: 25
   maxSpeed: 2.25
   preferredRideHeight: 0.85
-  heightSpringForce: 300
+  heightSpringForce: 750
   heightSpringDamping: 40
   balanceSpringForce: 50
   balanceSpringDamping: 0.1
+  gripSmoothingRate: 15
   heightReferencePoint: {fileID: 3708315842584664218}
 --- !u!114 &5843148394334628032
 MonoBehaviour:

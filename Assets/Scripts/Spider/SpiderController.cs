@@ -2,6 +2,7 @@
 
 public class SpiderController : MonoBehaviour
 {
+    [SerializeField] float groundRaycastHorizontalSpacing;
     [SerializeField] float accelFactor;
     [SerializeField] float decelFactor;
     [SerializeField] float maxSpeed;
@@ -10,20 +11,25 @@ public class SpiderController : MonoBehaviour
     [SerializeField] float heightSpringDamping;
     [SerializeField] float balanceSpringForce;
     [SerializeField] float balanceSpringDamping;
+    [SerializeField] float gripSmoothingRate;
     [SerializeField] Transform heightReferencePoint;
 
     LegSynchronizer legSynchronizer;
     Rigidbody2D rb;
     int moveInput;
+    float smoothedMoveInput;
 
     bool grounded;
     Vector2 lastComputedGroundDirection = Vector2.right;
-    Vector2 lastComputedGroundPoint = new(float.NaN, float.NaN);
+    Vector2 lastComputedGroundPoint = new(Mathf.Infinity, Mathf.Infinity);
+    //to force it to initialize ground point (and then after it only gets set when moveInput != 0)
+    float lastComputedGroundDistance = Mathf.Infinity;
+    //use infinity instead of NaN, because equals check always fails for NaN (even if you check NaN == NaN)
 
     int groundLayer;
-    const float groundRaycastHorizontalSpacing = .1f;
 
-    int Orientation => transform.localScale.x > 0 ? 1 : -1;
+    bool FacingRight => transform.localScale.x > 0;
+    int Orientation => FacingRight ? 1 : -1;
 
     private void Awake()
     {
@@ -32,23 +38,20 @@ public class SpiderController : MonoBehaviour
         groundLayer = LayerMask.GetMask("Ground");
     }
 
-    private void Start()
-    {
-        TryUpdateGroundPoint(out _, out _);
-    }
-
     private void Update()
     {
         moveInput = (Input.GetKey(KeyCode.RightArrow) ? 1 : 0) + (Input.GetKey(KeyCode.LeftArrow) ? -1 : 0);
+        smoothedMoveInput = Mathf.Lerp(smoothedMoveInput, moveInput, gripSmoothingRate * Time.deltaTime);
         if (moveInput * Orientation < 0)
         {
             ChangeDirection();
         }
+
     }
 
     private void FixedUpdate()
     {
-        lastComputedGroundDirection = GroundDirection();
+        UpdateGroundData();
 
         if (grounded)
         {
@@ -88,17 +91,15 @@ public class SpiderController : MonoBehaviour
 
     private void UpdateHeightSpring()
     {
-        if (moveInput != 0 || lastComputedGroundPoint.x == float.NaN)
+        if (moveInput != 0 && lastComputedGroundDistance != Mathf.Infinity)
         {
-            if (TryUpdateGroundPoint(out var distance, out var direction))
-            {
-                var l = distance - preferredRideHeight;
-                var f = heightSpringForce * l * direction;
-                var v = Vector2.Dot(rb.linearVelocity, direction) * direction;
-                rb.AddForce(rb.mass * (f - heightSpringDamping * v));
-            }
+            var direction = -transform.up;
+            var l = lastComputedGroundDistance - preferredRideHeight;
+            var f = heightSpringForce * l * direction;
+            var v = Vector2.Dot(rb.linearVelocity, direction) * direction;
+            rb.AddForce(rb.mass * (f - heightSpringDamping * v));
         }
-        else
+        else if (moveInput == 0 && lastComputedGroundPoint.x != Mathf.Infinity)
         {
             var groundUp = lastComputedGroundDirection.CCWPerp();
             var g = lastComputedGroundPoint + preferredRideHeight * groundUp;
@@ -109,7 +110,7 @@ public class SpiderController : MonoBehaviour
                 d /= l;
                 var f = heightSpringForce * l * d;
                 var v = Vector2.Dot(rb.linearVelocity, d) * d;
-                rb.AddForce(rb.mass * (f - heightSpringDamping * v));
+                rb.AddForce((1 - Mathf.Abs(smoothedMoveInput)) * rb.mass * (f - heightSpringDamping * v));
             }
         }
     }
@@ -121,37 +122,32 @@ public class SpiderController : MonoBehaviour
         rb.AddTorque(rb.mass * f);
     }
 
-    private Vector2 GroundDirection()
+    //always "right pointing" (relative to ground outward normal)
+    private void UpdateGroundData()
     {
         Vector2 pos = heightReferencePoint.position;
         Vector2 tRight = transform.right;
-        var o1 = pos - groundRaycastHorizontalSpacing * tRight;
-        var o2 = pos + groundRaycastHorizontalSpacing * tRight;
+        var o1 = pos;
+        var o2 = pos + Orientation * groundRaycastHorizontalSpacing * tRight;
         var r1 = Physics2D.Raycast(o1, -transform.up, Mathf.Infinity, groundLayer);
         var r2 = Physics2D.Raycast(o2, -transform.up, Mathf.Infinity, groundLayer);
 
         if (r1 && r2)
         {
             grounded = true;
-            return (r2.point - r1.point).normalized;
+            if (moveInput != 0 || lastComputedGroundPoint.x == Mathf.Infinity)
+            {
+                lastComputedGroundPoint = r1.point;
+            }
+            lastComputedGroundDistance = r1.distance;
+            lastComputedGroundDirection = FacingRight ? (r2.point - r1.point).normalized : (r1.point - r2.point).normalized;
+            //so we get right pointing ground direction
         }
-
-        grounded = false;
-        return transform.right;
-    }
-
-    private bool TryUpdateGroundPoint(out float distance, out Vector2 direction)
-    {
-        direction = -transform.up;
-        var r = Physics2D.Raycast(heightReferencePoint.position, direction, Mathf.Infinity, groundLayer);
-        if (r)
+        else
         {
-            distance = r.distance;
-            lastComputedGroundPoint = r.point;
-            return true;
+            lastComputedGroundDistance = Mathf.Infinity;
+            grounded = false;
+            lastComputedGroundDirection = tRight;
         }
-        
-        distance = Mathf.Infinity;
-        return false;
     }
 }
