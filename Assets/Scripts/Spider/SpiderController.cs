@@ -2,7 +2,9 @@
 
 public class SpiderController : MonoBehaviour
 {
+    [SerializeField] Transform heightReferencePoint;
     [SerializeField] float groundRaycastHorizontalSpacing;
+    [SerializeField] float groundRaycastLengthFactor;
     [SerializeField] float accelFactor;
     [SerializeField] float decelFactor;
     [SerializeField] float steepSlopeGripStrength;
@@ -14,15 +16,15 @@ public class SpiderController : MonoBehaviour
     [SerializeField] float heightSpringDamping;
     [SerializeField] float balanceSpringForce;
     [SerializeField] float balanceSpringDamping;
-    //[SerializeField] float gripSmoothingRate;
-    //[SerializeField] float gripSmoothThreshold;
-    //[SerializeField] float gripSmoothingPower;
-    [SerializeField] Transform heightReferencePoint;
+    [SerializeField] float jumpForce;
+    [SerializeField] float jumpVerificationTime;
 
     LegSynchronizer legSynchronizer;
     Rigidbody2D rb;
     int moveInput;
-    //float smoothedMoveInput = 0;
+
+    bool jumpInput;
+    float jumpVerificationTimer = float.MinValue;
 
     bool grounded;
     Vector2 lastComputedGroundDirection = Vector2.right;
@@ -36,6 +38,7 @@ public class SpiderController : MonoBehaviour
 
     bool FacingRight => transform.localScale.x > 0;
     int Orientation => FacingRight ? 1 : -1;
+    float GroundRaycastLength => groundRaycastLengthFactor * preferredRideHeight;
 
     private void Awake()
     {
@@ -46,8 +49,13 @@ public class SpiderController : MonoBehaviour
 
     private void Update()
     {
+        //important to only set jumpInput when !jumpInput, since multiple Updates may happen before FixedUpdate handles the jumpInput
+        if (!jumpInput && grounded)
+        {
+            jumpInput = Input.GetKeyDown(KeyCode.Space);
+        }
+
         moveInput = (Input.GetKey(KeyCode.RightArrow) ? 1 : 0) + (Input.GetKey(KeyCode.LeftArrow) ? -1 : 0);
-        //smoothedMoveInput = Mathf.Lerp(smoothedMoveInput, moveInput, gripSmoothingRate * Time.deltaTime);
         if (moveInput * Orientation < 0)
         {
             ChangeDirection();
@@ -57,16 +65,28 @@ public class SpiderController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        UpdateGroundData();
+        if (jumpVerificationTimer < 0)//initialized to negative value so we don't have to use <=
+        {
+            UpdateGroundData();
+        }
+        else
+        {
+            jumpVerificationTimer -= Time.deltaTime;
+        }
+
+        HandleMoveInput();
+        HandleJumpInput();
 
         if (grounded)
         {
-            HandleMoveInput();
             UpdateHeightSpring();
             Balance();
         }
 
         legSynchronizer.bodyGroundSpeed = Vector2.Dot(rb.linearVelocity, Orientation * lastComputedGroundDirection);
+        //2do (minor performance improvement): we compute Orientation * lastComputedGroundDirection multiple times in one update
+        //either compute it once, or have lastComputedDirection already point in orientation direction
+        //(are there any places where you need it to be "right facing"? i think only for the balancing)
     }
 
     private void ChangeDirection()
@@ -85,16 +105,26 @@ public class SpiderController : MonoBehaviour
             rb.AddForce(accelFactor * (maxSpeed - spd) * rb.mass * d);
             //do this even when spd > maxSpeed so that spider controls its speed on downhills
         }
-
-        //replace with correct friction implementation -- maybe more friction on steeper slopes
-        //(but you would really just have something like this that tries to keep spider in place)
-        else if (moveInput == 0)
+        else if (moveInput == 0 && grounded)
         {
-            rb.AddForce(decelFactor * -spd * rb.mass * d);
+            rb.AddForce(decelFactor * -spd * rb.mass * d);//simulate friction
             var grip = steepSlopeGripStrength * Mathf.Abs(lastComputedGroundDirection.y);
             var h = Vector2.Dot(groundSlipPoint - (Vector2)heightReferencePoint.position, d);
             grip *= Mathf.Sign(h) * Mathf.Pow(Mathf.Abs(h), steepSlopeGripDistancePower);
-            rb.AddForce(grip * rb.mass * d);
+            rb.AddForce(grip * rb.mass * d);//grip to steep slope
+        }
+    }
+    
+    //not checking anything here, bc i have it set up so it only collects jump input when you are able to jump
+    //(i.e. when grounded and not verifying jump)
+    private void HandleJumpInput()
+    {
+        if (jumpInput)
+        {
+            jumpInput = false;
+            grounded = false;
+            jumpVerificationTimer = jumpVerificationTime;
+            rb.AddForce(jumpForce * rb.mass * transform.up, ForceMode2D.Impulse);
         }
     }
 
@@ -105,34 +135,6 @@ public class SpiderController : MonoBehaviour
         var f = heightSpringForce * l * direction;
         var v = Vector2.Dot(rb.linearVelocity, direction) * direction;
         rb.AddForce(rb.mass * (f - heightSpringDamping * v));
-
-        //redo:
-        //-height spring always working 
-        //if (smoothedMoveInputAboveThreshold && lastComputedGroundDistance != Mathf.Infinity)
-        //{
-        //    //MAINTAIN HEIGHT
-        //    var direction = -transform.up;
-        //    var l = lastComputedGroundDistance - preferredRideHeight;
-        //    var f = heightSpringForce * l * direction;
-        //    var v = Vector2.Dot(rb.linearVelocity, direction) * direction;
-        //    rb.AddForce(rb.mass * (f - heightSpringDamping * v));
-        //}
-        //else if (!smoothedMoveInputAboveThreshold && lastComputedGroundPoint.x != Mathf.Infinity)
-        //{
-        //    //MAINTAIN HEIGHT & "GRIP" TO POSITION (helps climb steep slopes)
-        //    var groundUp = lastComputedGroundDirection.CCWPerp();
-        //    var g = lastComputedGroundPoint + preferredRideHeight * groundUp;
-        //    var d = g - (Vector2)heightReferencePoint.position;
-        //    var l = d.magnitude;
-        //    if (l > 10E-05f)
-        //    {
-        //        d /= l;
-        //        //var s = 1 - Mathf.Abs(smoothedMoveInput);
-        //        var f = /*Mathf.Pow(s, gripSmoothingPower) **/ heightSpringForce * l * d;
-        //        var v = Vector2.Dot(rb.linearVelocity, d) * d;
-        //        rb.AddForce((1 - Mathf.Abs(smoothedMoveInput)) * (rb.mass * (f - heightSpringDamping * v)));
-        //    }
-        //}
     }
 
     private void Balance()
@@ -149,16 +151,14 @@ public class SpiderController : MonoBehaviour
         Vector2 tRight = transform.right;
         var o1 = pos;
         var o2 = pos + Orientation * groundRaycastHorizontalSpacing * tRight;
-        var r1 = Physics2D.Raycast(o1, -transform.up, Mathf.Infinity, groundLayer);
-        var r2 = Physics2D.Raycast(o2, -transform.up, Mathf.Infinity, groundLayer);
+        var l = GroundRaycastLength;
+        var r1 = Physics2D.Raycast(o1, -transform.up, l, groundLayer);
+        var r2 = Physics2D.Raycast(o2, -transform.up, l, groundLayer);
+
 
         if (r1 && r2)
         {
             grounded = true;
-            //if (smoothedMoveInputAboveThreshold || lastComputedGroundPoint.x == Mathf.Infinity)
-            //{
-            //    lastComputedGroundPoint = r1.point;
-            //}
             if (moveInput != 0 || lastComputedGroundPoint.x == Mathf.Infinity)
             {
                 lastComputedGroundPoint = r1.point;
@@ -170,18 +170,12 @@ public class SpiderController : MonoBehaviour
             }
             lastComputedGroundDistance = r1.distance;
             lastComputedGroundDirection = FacingRight ? (r2.point - r1.point).normalized : (r1.point - r2.point).normalized;
-            //so we get right pointing ground direction
         }
         else
         {
-            grounded = false;
-            lastComputedGroundDistance = Mathf.Infinity;
-            lastComputedGroundDirection = tRight;
+            grounded = r1 || r2;
+            lastComputedGroundDistance = r1 ? r1.distance : (r2 ? r2.distance : Mathf.Infinity);
+            lastComputedGroundDirection = Vector2.right;
         }
     }
-
-    //private bool SmoothedMoveInputAboveThreshold()
-    //{
-    //    return Mathf.Abs(smoothedMoveInput) > gripSmoothThreshold;
-    //}
 }

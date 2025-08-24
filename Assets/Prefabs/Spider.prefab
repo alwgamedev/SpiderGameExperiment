@@ -7810,14 +7810,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   groundRaycastHorizontalSpacing: 1.25
   accelFactor: 25
-  decelFactor: 25
+  decelFactor: 15
+  steepSlopeGripStrength: 200
+  steepSlopeGripDistancePower: 1.25
+  slipRate: 1
   maxSpeed: 2.25
   preferredRideHeight: 0.85
-  heightSpringForce: 750
-  heightSpringDamping: 40
+  heightSpringForce: 200
+  heightSpringDamping: 25
   balanceSpringForce: 50
   balanceSpringDamping: 0.1
-  gripSmoothingRate: 15
   heightReferencePoint: {fileID: 3708315842584664218}
 --- !u!114 &5843148394334628032
 MonoBehaviour:
