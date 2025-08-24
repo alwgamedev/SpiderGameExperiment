@@ -5,6 +5,7 @@ public class SpiderController : MonoBehaviour
     [SerializeField] Transform heightReferencePoint;
     [SerializeField] float groundRaycastHorizontalSpacing;
     [SerializeField] float groundRaycastLengthFactor;
+    [SerializeField] float groundednessToleranceFactor;
     [SerializeField] float accelFactor;
     [SerializeField] float decelFactor;
     [SerializeField] float steepSlopeGripStrength;
@@ -24,7 +25,7 @@ public class SpiderController : MonoBehaviour
     int moveInput;
 
     bool jumpInput;
-    float jumpVerificationTimer = float.MinValue;
+    float jumpVerificationTimer;
 
     bool grounded;
     Vector2 lastComputedGroundDirection = Vector2.right;
@@ -39,6 +40,7 @@ public class SpiderController : MonoBehaviour
     bool FacingRight => transform.localScale.x > 0;
     int Orientation => FacingRight ? 1 : -1;
     float GroundRaycastLength => groundRaycastLengthFactor * preferredRideHeight;
+    float GroundednessTolerance => groundednessToleranceFactor * preferredRideHeight;
 
     private void Awake()
     {
@@ -49,6 +51,11 @@ public class SpiderController : MonoBehaviour
 
     private void Update()
     {
+        if (VerifyingJump())
+        {
+            jumpVerificationTimer -= Time.deltaTime;
+        }
+
         //important to only set jumpInput when !jumpInput, since multiple Updates may happen before FixedUpdate handles the jumpInput
         if (!jumpInput && grounded)
         {
@@ -65,23 +72,14 @@ public class SpiderController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (jumpVerificationTimer < 0)//initialized to negative value so we don't have to use <=
-        {
-            UpdateGroundData();
-        }
-        else
-        {
-            jumpVerificationTimer -= Time.deltaTime;
-        }
-
+        UpdateGroundData();
         HandleMoveInput();
         HandleJumpInput();
-
         if (grounded)
         {
             UpdateHeightSpring();
-            Balance();
         }
+        Balance();
 
         legSynchronizer.bodyGroundSpeed = Vector2.Dot(rb.linearVelocity, Orientation * lastComputedGroundDirection);
         //2do (minor performance improvement): we compute Orientation * lastComputedGroundDirection multiple times in one update
@@ -98,7 +96,7 @@ public class SpiderController : MonoBehaviour
 
     private void HandleMoveInput()
     {
-        var d = lastComputedGroundDirection * Orientation;
+        var d = Orientation * transform.right;//Orientation * lastComputedGroundDirection;
         var spd = Vector2.Dot(rb.linearVelocity, d);
         if (moveInput != 0 /*&& spd < maxSpeed*/)
         {
@@ -124,8 +122,13 @@ public class SpiderController : MonoBehaviour
             jumpInput = false;
             grounded = false;
             jumpVerificationTimer = jumpVerificationTime;
-            rb.AddForce(jumpForce * rb.mass * transform.up, ForceMode2D.Impulse);
+            rb.AddForce(jumpForce * rb.mass * lastComputedGroundDirection.CCWPerp(), ForceMode2D.Impulse);
         }
+    }
+
+    private bool VerifyingJump()
+    {
+        return jumpVerificationTimer > 0;
     }
 
     private void UpdateHeightSpring()
@@ -139,7 +142,7 @@ public class SpiderController : MonoBehaviour
 
     private void Balance()
     {
-        var c = Vector2.Dot(transform.up, lastComputedGroundDirection);
+        var c = Vector2.Dot(transform.up, grounded ? lastComputedGroundDirection : Vector2.right);
         var f = c * balanceSpringForce - balanceSpringDamping * rb.angularVelocity;
         rb.AddTorque(rb.mass * f);
     }
@@ -152,14 +155,13 @@ public class SpiderController : MonoBehaviour
         var o1 = pos;
         var o2 = pos + Orientation * groundRaycastHorizontalSpacing * tRight;
         var l = GroundRaycastLength;
-        var r1 = Physics2D.Raycast(o1, -transform.up, l, groundLayer);
-        var r2 = Physics2D.Raycast(o2, -transform.up, l, groundLayer);
-
+        Vector2 d = -transform.up;// : Vector2.Lerp(lastComputedGroundDirection.CWPerp(), -Vector2.up, airborneRaycastNeutralizeRate * Time.deltaTime).normalized; //grounded ? -transform.up : -Vector3.up;
+        var r1 = Physics2D.Raycast(o1, d, l, groundLayer);
+        var r2 = Physics2D.Raycast(o2, d, l, groundLayer);
 
         if (r1 && r2)
         {
-            grounded = true;
-            if (moveInput != 0 || lastComputedGroundPoint.x == Mathf.Infinity)
+            if (moveInput != 0 || !grounded || lastComputedGroundPoint.x == Mathf.Infinity)
             {
                 lastComputedGroundPoint = r1.point;
                 groundSlipPoint = lastComputedGroundPoint;
@@ -170,12 +172,20 @@ public class SpiderController : MonoBehaviour
             }
             lastComputedGroundDistance = r1.distance;
             lastComputedGroundDirection = FacingRight ? (r2.point - r1.point).normalized : (r1.point - r2.point).normalized;
+
+            if (!VerifyingJump())
+            {
+                grounded = r1.distance < GroundednessTolerance || r2.distance < GroundednessTolerance;
+            }
         }
         else
         {
-            grounded = r1 || r2;
+            if (!VerifyingJump())
+            {
+                grounded = r1 || r2;
+            }
             lastComputedGroundDistance = r1 ? r1.distance : (r2 ? r2.distance : Mathf.Infinity);
-            lastComputedGroundDirection = Vector2.right;
+            lastComputedGroundDirection = Vector2.right;//Vector2.Lerp(lastComputedGroundDirection, Vector2.right, raycastFailureGroundLevellingRate * Time.deltaTime).normalized;
         }
     }
 }

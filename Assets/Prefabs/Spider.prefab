@@ -7741,7 +7741,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 25
+  m_Mass: 10
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 1
@@ -7808,19 +7808,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6991b23e83679b446a54da09b65f082f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  groundRaycastHorizontalSpacing: 1.25
-  accelFactor: 25
+  heightReferencePoint: {fileID: 3708315842584664218}
+  groundRaycastHorizontalSpacing: 1
+  groundRaycastLengthFactor: 1.75
+  accelFactor: 35
   decelFactor: 15
   steepSlopeGripStrength: 200
   steepSlopeGripDistancePower: 1.25
   slipRate: 1
-  maxSpeed: 2.25
+  maxSpeed: 3.25
   preferredRideHeight: 0.85
   heightSpringForce: 200
   heightSpringDamping: 25
   balanceSpringForce: 50
   balanceSpringDamping: 0.1
-  heightReferencePoint: {fileID: 3708315842584664218}
+  jumpForce: 10
+  jumpVerificationTime: 0.15
 --- !u!114 &5843148394334628032
 MonoBehaviour:
   m_ObjectHideFlags: 0
