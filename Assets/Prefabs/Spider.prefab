@@ -7809,9 +7809,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   heightReferencePoint: {fileID: 3708315842584664218}
-  groundRaycastHorizontalSpacing: 1
-  groundRaycastLengthFactor: 1.75
-  accelFactor: 35
+  groundRaycastLengthFactor: 4
+  groundednessToleranceFactor: 1.5
+  accelFactor: 75
   decelFactor: 15
   steepSlopeGripStrength: 200
   steepSlopeGripDistancePower: 1.25
@@ -7822,8 +7822,8 @@ MonoBehaviour:
   heightSpringDamping: 25
   balanceSpringForce: 50
   balanceSpringDamping: 0.1
-  jumpForce: 10
-  jumpVerificationTime: 0.15
+  jumpForce: 12
+  jumpVerificationTime: 0.25
 --- !u!114 &5843148394334628032
 MonoBehaviour:
   m_ObjectHideFlags: 0

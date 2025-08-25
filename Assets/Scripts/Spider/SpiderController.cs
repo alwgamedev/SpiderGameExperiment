@@ -1,9 +1,10 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class SpiderController : MonoBehaviour
 {
     [SerializeField] Transform heightReferencePoint;
-    [SerializeField] float groundRaycastHorizontalSpacing;
+    //[SerializeField] float groundRaycastHorizontalSpacing = 1;
     [SerializeField] float groundRaycastLengthFactor;
     [SerializeField] float groundednessToleranceFactor;
     [SerializeField] float accelFactor;
@@ -41,6 +42,7 @@ public class SpiderController : MonoBehaviour
     int Orientation => FacingRight ? 1 : -1;
     float GroundRaycastLength => groundRaycastLengthFactor * preferredRideHeight;
     float GroundednessTolerance => groundednessToleranceFactor * preferredRideHeight;
+    Vector2 JumpDirection => transform.up;//0.5f * (Vector2.up + lastComputedGroundDirection.CCWPerp()).normalized;
 
     private void Awake()
     {
@@ -56,7 +58,7 @@ public class SpiderController : MonoBehaviour
             jumpVerificationTimer -= Time.deltaTime;
         }
 
-        //important to only set jumpInput when !jumpInput, since multiple Updates may happen before FixedUpdate handles the jumpInput
+        //only set jumpInput when !jumpInput, since multiple Updates may happen before FixedUpdate handles the jumpInput
         if (!jumpInput && grounded)
         {
             jumpInput = Input.GetKeyDown(KeyCode.Space);
@@ -122,7 +124,7 @@ public class SpiderController : MonoBehaviour
             jumpInput = false;
             grounded = false;
             jumpVerificationTimer = jumpVerificationTime;
-            rb.AddForce(jumpForce * rb.mass * lastComputedGroundDirection.CCWPerp(), ForceMode2D.Impulse);
+            rb.AddForce(jumpForce * rb.mass * JumpDirection, ForceMode2D.Impulse);
         }
     }
 
@@ -150,42 +152,72 @@ public class SpiderController : MonoBehaviour
     //always "right pointing" (relative to ground outward normal)
     private void UpdateGroundData()
     {
-        Vector2 pos = heightReferencePoint.position;
+        Vector2 o = heightReferencePoint.position;
+        Vector2 tDown = -transform.up;
         Vector2 tRight = transform.right;
-        var o1 = pos;
-        var o2 = pos + Orientation * groundRaycastHorizontalSpacing * tRight;
         var l = GroundRaycastLength;
-        Vector2 d = -transform.up;// : Vector2.Lerp(lastComputedGroundDirection.CWPerp(), -Vector2.up, airborneRaycastNeutralizeRate * Time.deltaTime).normalized; //grounded ? -transform.up : -Vector3.up;
-        var r1 = Physics2D.Raycast(o1, d, l, groundLayer);
-        var r2 = Physics2D.Raycast(o2, d, l, groundLayer);
+        var r = Physics2D.Raycast(o, tDown, l, groundLayer);
 
-        if (r1 && r2)
+        if (r)
         {
-            if (moveInput != 0 || !grounded || lastComputedGroundPoint.x == Mathf.Infinity)
-            {
-                lastComputedGroundPoint = r1.point;
-                groundSlipPoint = lastComputedGroundPoint;
-            }
-            else
-            {
-                groundSlipPoint = Vector2.Lerp(lastComputedGroundPoint, r1.point, slipRate * Time.deltaTime);
-            }
-            lastComputedGroundDistance = r1.distance;
-            lastComputedGroundDirection = FacingRight ? (r2.point - r1.point).normalized : (r1.point - r2.point).normalized;
+            HandleSuccessfulGroundHit(r);
+            return;
+        }
 
-            if (!VerifyingJump())
+        //if r1 fails, compute backup ground hits and choose shortest one
+        float minDist = Mathf.Infinity;
+        foreach (var s in BackupGroundHits(o, tDown, tRight, l))
+        {
+            if (s && s.distance < minDist)
             {
-                grounded = r1.distance < GroundednessTolerance || r2.distance < GroundednessTolerance;
+                minDist = s.distance;
+                r = s;
             }
+        }
+
+        if (r)
+        {
+            HandleSuccessfulGroundHit(r);
+            return;
+        }
+
+        grounded = false;//generally we should not set grounded while verifying jump, but setting false is fine (so no pt in slowing things down with a bool check)
+        lastComputedGroundDistance = Mathf.Infinity;
+        lastComputedGroundDirection = Vector2.right;
+    }
+
+    private void HandleSuccessfulGroundHit(RaycastHit2D r)
+    {
+        if (moveInput != 0 || !grounded || lastComputedGroundPoint.x == Mathf.Infinity)
+        {
+            lastComputedGroundPoint = r.point;
+            groundSlipPoint = lastComputedGroundPoint;
         }
         else
         {
-            if (!VerifyingJump())
-            {
-                grounded = r1 || r2;
-            }
-            lastComputedGroundDistance = r1 ? r1.distance : (r2 ? r2.distance : Mathf.Infinity);
-            lastComputedGroundDirection = Vector2.right;//Vector2.Lerp(lastComputedGroundDirection, Vector2.right, raycastFailureGroundLevellingRate * Time.deltaTime).normalized;
+            groundSlipPoint = Vector2.Lerp(lastComputedGroundPoint, r.point, slipRate * Time.deltaTime);
         }
+        lastComputedGroundDistance = r.distance;
+        lastComputedGroundDirection = r.normal.CWPerp();
+
+        if (!VerifyingJump())
+        {
+            grounded = r.distance < GroundednessTolerance;
+        }
+    }
+
+    private IEnumerable<RaycastHit2D> BackupGroundHits(Vector2 origin, Vector2 tDown, Vector2 tRight, float length)
+    {
+        var d30 = MathTools.cos30 * tDown + MathTools.sin30 * tRight;
+        var d60 = MathTools.cos60 * tDown + MathTools.sin60 * tRight;
+        var dM30 = MathTools.cos30 * tDown - MathTools.sin30 * tRight;
+        var dM60 = MathTools.cos60 * tDown - MathTools.sin60 * tRight;
+        yield return Physics2D.Raycast(origin, d30, length, groundLayer);
+        yield return Physics2D.Raycast(origin, d60, length, groundLayer);
+        yield return Physics2D.Raycast(origin, tRight, length, groundLayer);
+        yield return Physics2D.Raycast(origin, dM30, length, groundLayer);
+        yield return Physics2D.Raycast(origin, dM60, length, groundLayer);
+        yield return Physics2D.Raycast(origin, -tRight, length, groundLayer);
+
     }
 }
