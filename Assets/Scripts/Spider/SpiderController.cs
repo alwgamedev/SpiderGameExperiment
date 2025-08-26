@@ -149,7 +149,7 @@ public class SpiderController : MonoBehaviour
 
     private void Balance()
     {
-        var c = Vector2.Dot(transform.up, grounded ? predictiveGroundDirection : Vector2.right);
+        var c = Vector2.Dot(transform.up, grounded ? predictiveGroundDirection : lastComputedGroundDirection);
         var f = c * balanceSpringForce - balanceSpringDamping * rb.angularVelocity;
         rb.AddTorque(rb.mass * f);
         //headBone.right = MathTools.CheapRotationalLerp(headBone.right, predictiveGroundDirection, headRotationSpeed * Time.deltaTime);
@@ -174,13 +174,12 @@ public class SpiderController : MonoBehaviour
 
     private void OnTakeOff()
     {
-        //legSynchronizer.dragRestingLegs = true;
+        legSynchronizer.EnterStaticMode();
     }
 
     private void OnLanding()
     {
-        //legSynchronizer.dragRestingLegs = false;
-        //legSynchronizer.RepositionAllLegs(lastComputedGroundDirection);
+        legSynchronizer.EndStaticMode();
     }
 
     //always "right pointing" (relative to ground outward normal)
@@ -191,18 +190,21 @@ public class SpiderController : MonoBehaviour
         Vector2 tRight = transform.right;
         var l = GroundRaycastLength;
         var r = Physics2D.Raycast(o, tDown, l, groundLayer);
+        Debug.DrawLine(o, o + l * tDown, Color.red);
 
         if (r)
         {
             HandleSuccessfulGroundHit(r);
-            var r2 = Physics2D.Raycast(o + Orientation * lastComputedGroundDirection, tDown, l, groundLayer);
-            predictiveGroundDirection = r2 ? (FacingRight ? (r2.point - r.point).normalized : (r.point - r2.point).normalized) : Vector2.right;
-            return;
+            if (grounded)
+            { 
+                var r2 = MathTools.DebugRaycast(o + Orientation * tRight, tDown, l, groundLayer, Color.red);
+                Debug.DrawLine(o + Orientation * tRight, o + Orientation * tRight + l * tDown, Color.red);
+                predictiveGroundDirection = r2 ? (FacingRight ? (r2.point - r.point).normalized : (r.point - r2.point).normalized) : lastComputedGroundDirection;
+                return;
+            }
         }
-        
-        predictiveGroundDirection = tRight;
 
-            //if r1 fails, compute backup ground hits and choose shortest one
+        //if r1 fails or distance was too large to be considered grounded, compute backup ground hits and choose shortest one
         float minDist = Mathf.Infinity;
         foreach (var s in BackupGroundHits(o, tDown, tRight, l))
         {
@@ -216,12 +218,14 @@ public class SpiderController : MonoBehaviour
         if (r)
         {
             HandleSuccessfulGroundHit(r);
+            predictiveGroundDirection = lastComputedGroundDirection;
             return;
         }
 
         SetGrounded(false);//generally we should not set grounded while verifying jump, but setting false is fine (so no pt in slowing things down with a bool check)
         lastComputedGroundDistance = Mathf.Infinity;
         lastComputedGroundDirection = Vector2.right;
+        predictiveGroundDirection = lastComputedGroundDirection;
     }
 
     private void HandleSuccessfulGroundHit(RaycastHit2D r)
@@ -253,13 +257,13 @@ public class SpiderController : MonoBehaviour
         var dM60 = MathTools.cos60 * tDown - MathTools.sin60 * tRight;
         //var l30 = length / MathTools.cos30;
         //var l60 = length / MathTools.cos60;
-        //var l90 = 2 * length;
-        yield return Physics2D.Raycast(origin, d30, length, groundLayer);
-        yield return Physics2D.Raycast(origin, d60, length, groundLayer);
-        yield return Physics2D.Raycast(origin, tRight, length, groundLayer);
-        yield return Physics2D.Raycast(origin, dM30, length, groundLayer);
-        yield return Physics2D.Raycast(origin, dM60, length, groundLayer);
-        yield return Physics2D.Raycast(origin, -tRight, length, groundLayer);
+        //var l90 = 3 * length;
+        yield return MathTools.DebugRaycast(origin, d30, length, groundLayer, Color.yellow);
+        yield return MathTools.DebugRaycast(origin, d60, length, groundLayer, Color.yellow);
+        //yield return MathTools.DrawnRaycast(origin, tRight, length, groundLayer, Color.red);
+        yield return MathTools.DebugRaycast(origin, dM30, length, groundLayer, Color.yellow);
+        yield return MathTools.DebugRaycast(origin, dM60, length, groundLayer, Color.yellow);
+        //yield return MathTools.DrawnRaycast(origin, -tRight, length, groundLayer, Color.red);
 
     }
 }

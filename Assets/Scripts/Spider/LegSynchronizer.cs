@@ -11,8 +11,6 @@ public class LegSynchronizer : MonoBehaviour
     [SerializeField] float stepSmoothingRate;
     [SerializeField] float restSmoothingRate;
     [SerializeField] float footRotationSpeed;
-    //[SerializeField] float footRaycastLength;
-    //[SerializeField] float hipRaycastLength;//this is just a quick fix for now -- should scale with the spider "ride height", so maybe comes from SpiderController ultimately
     [SerializeField] SynchronizedLeg[] synchronizedLegs;
 
     class LegTimer
@@ -84,9 +82,9 @@ public class LegSynchronizer : MonoBehaviour
 
     Rigidbody2D body;
     LegTimer[] timers;
+    bool staticMode;
 
     public float bodyGroundSpeed;
-    //public bool dragRestingLegs;
 
     private void Awake()
     {
@@ -96,23 +94,15 @@ public class LegSynchronizer : MonoBehaviour
     private void Start()
     {
         InitializeTimers();
-        //foreach (var s in synchronizedLegs)
-        //{
-        //    s.Leg.footRaycastLength = footRaycastLength;
-        //    s.Leg.hipRaycastLength = hipRaycastLength;
-        //}
-        RepositionAllLegs(body.transform.right);
+        RepositionAllLegs(body.transform.right, body.transform.localScale.x > 0);
     }
 
     private void LateUpdate()
     {
         var facingRight = body.transform.localScale.x > 0;
-        var bodyRight = body.transform.right;
-        if (!facingRight)
-        {
-            bodyRight *= -1;
-        }
-        var bodyUp = body.transform.up;
+        Vector2 bodyMovementRight = facingRight ? body.transform.right : - body.transform.right;
+        Vector2 bodyUp = body.transform.up;
+        Vector2 bodyPos = body.transform.position;
         var dt = Time.deltaTime;
 
         var speedFrac = bodyGroundSpeed < speedCapMin ? 0 : bodyGroundSpeed / speedCapMax;
@@ -120,41 +110,93 @@ public class LegSynchronizer : MonoBehaviour
         var speedScaledDt = speedFrac * dt;
         dt = Mathf.Max(speedScaledDt, dt);
 
-        for (int i = 0; i < timers.Length; i++)
+        if (staticMode)
         {
-            var t = timers[i];
-            var l = synchronizedLegs[i].Leg;
-            if (t.Update(speedScaledDt))
+            for (int i = 0; i < timers.Length; i++)
             {
-                l.BeginStep(body);
+                var t = timers[i];
+                var l = synchronizedLegs[i].Leg;
+                if (t.Update(speedScaledDt))
+                {
+                    l.BeginStepStaticMode(bodyPos, bodyMovementRight, bodyUp);
+                }
+                if (t.Stepping)
+                {
+                    l.UpdateStepStaticMode(dt, t.StepProgress, bodyPos, bodyUp, facingRight,
+                        stepHeightSpeedMultiplier, baseStepHeightMultiplier,
+                        stepSmoothingRate, footRotationSpeed);
+                }
+                else
+                {
+                    l.UpdateRestStaticMode(dt, bodyPos, bodyMovementRight, bodyUp, restSmoothingRate);
+                }
             }
-            if (t.Stepping)
+        }
+        else
+        {
+            for (int i = 0; i < timers.Length; i++)
             {
-                l.UpdateStep(dt, t.StepProgress, body.transform.position, bodyRight, bodyUp, facingRight,
-                    stepHeightSpeedMultiplier, baseStepHeightMultiplier,
-                    stepSmoothingRate, footRotationSpeed);
-            }
-            else //if (!dragRestingLegs) 
-            {
-                l.UpdateRest(dt, bodyUp, restSmoothingRate);
+                var t = timers[i];
+                var l = synchronizedLegs[i].Leg;
+                if (t.Update(speedScaledDt))
+                {
+                    l.BeginStep(bodyPos, bodyMovementRight, bodyUp);
+                }
+                if (t.Stepping)
+                {
+                    l.UpdateStep(dt, t.StepProgress, bodyPos, bodyMovementRight, bodyUp, facingRight,
+                        stepHeightSpeedMultiplier, baseStepHeightMultiplier,
+                        stepSmoothingRate, footRotationSpeed);
+                }
+                else
+                {
+                    l.UpdateRest(dt, restSmoothingRate);
+                }
             }
         }
     }
 
-    public void RepositionAllLegs(Vector2 right)
+    public void EnterStaticMode()
+    {
+        if (!staticMode)
+        {
+            var p = body.transform.position;
+            for (int i = 0; i < synchronizedLegs.Length; i++)
+            {
+                synchronizedLegs[i].Leg.OnEnterStaticMode(p);
+            }
+            staticMode = true;
+        }
+    }
+
+    public void EndStaticMode()
+    {
+        if (staticMode)
+        {
+            Vector2 bUp = body.transform.up;
+            for (int i = 0; i < synchronizedLegs.Length; i++)
+            {
+                synchronizedLegs[i].Leg.OnEndStaticMode(bUp);
+            }
+            staticMode = false;
+        }
+    }
+
+    public void RepositionAllLegs(Vector2 right, bool bodyFacingRight)
     {
         Vector2 up = right.CCWPerp();
         Vector2 bPos = body.transform.position;
+        Vector2 bodyMovementRight = bodyFacingRight ? right : -right;
         for (int i = 0; i < synchronizedLegs.Length; i++)
         {
             var t = timers[i];
             if (t.Stepping)
             {
-                synchronizedLegs[i].Leg.RepositionStepping(bPos, right, up, t.RestTime);
+                synchronizedLegs[i].Leg.RepositionStepping(bPos, bodyMovementRight, up, t.RestTime);
             }
             else
             {
-                synchronizedLegs[i].Leg.RepositionResting(bPos, right, up, t.RestProgress, t.RestTime); 
+                synchronizedLegs[i].Leg.RepositionResting(bPos, bodyMovementRight, up, t.RestProgress, t.RestTime); 
             }
         }
     }
@@ -165,9 +207,19 @@ public class LegSynchronizer : MonoBehaviour
         Vector2 tRight = body.transform.right;
         Vector2 tUp = body.transform.up;
 
-        for (int i = 0; i < synchronizedLegs.Length; i++)
+        if (staticMode)
         {
-            synchronizedLegs[i].Leg.OnBodyChangedDirection(p, tRight, tUp);
+            for (int i = 0; i < synchronizedLegs.Length; i++)
+            {
+                synchronizedLegs[i].Leg.OnBodyChangedDirectionStaticMode(p, tRight);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < synchronizedLegs.Length; i++)
+            {
+                synchronizedLegs[i].Leg.OnBodyChangedDirection(p, tRight, tUp);
+            }
         }
     }
 

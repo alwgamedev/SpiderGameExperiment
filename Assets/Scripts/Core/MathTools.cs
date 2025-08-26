@@ -62,4 +62,12 @@ public static class MathTools
         //better than using explicit angles etc.
         return Vector2.Lerp(u1, u2, lerpAmount).normalized;
     }
+
+    public static RaycastHit2D DebugRaycast(Vector2 origin, Vector2 direction, float length, int layerMask, Color drawColor)
+    {
+#if UNITY_EDITOR
+        Debug.DrawLine(origin, origin + length * direction, drawColor);
+#endif
+        return Physics2D.Raycast(origin, direction, length, layerMask);
+    }
 }
