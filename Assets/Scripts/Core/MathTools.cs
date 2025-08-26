@@ -53,4 +53,13 @@ public static class MathTools
     {
         return new Vector2(v.y, -v.x);
     }
+
+    /// <summary>
+    /// u1, u2 unit vectors
+    /// </summary>
+    public static Vector2 CheapRotationalLerp(Vector2 u1, Vector2 u2, float lerpAmount)
+    {
+        //better than using explicit angles etc.
+        return Vector2.Lerp(u1, u2, lerpAmount).normalized;
+    }
 }

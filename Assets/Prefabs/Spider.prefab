@@ -1155,7 +1155,7 @@ MonoBehaviour:
   hipBone: {fileID: 2399890710218574748}
   footBone: {fileID: 8378328544454571262}
   ikTarget: {fileID: 4380958847150461223}
-  stepMax: 0.85
+  stepMax: 0.9
 --- !u!1 &839944467269662652
 GameObject:
   m_ObjectHideFlags: 0
@@ -1531,7 +1531,7 @@ MonoBehaviour:
   hipBone: {fileID: 6996931359358265962}
   footBone: {fileID: 3033994015570042515}
   ikTarget: {fileID: 1238561792403655595}
-  stepMax: 0.8
+  stepMax: 0.775
 --- !u!1 &1248638082500357407
 GameObject:
   m_ObjectHideFlags: 0
@@ -3408,7 +3408,7 @@ MonoBehaviour:
   hipBone: {fileID: 2680305816034372725}
   footBone: {fileID: 871183515759155505}
   ikTarget: {fileID: 2278123347475011000}
-  stepMax: 0.85
+  stepMax: 0.9
 --- !u!1 &3319515992144099393
 GameObject:
   m_ObjectHideFlags: 0
@@ -6716,7 +6716,7 @@ MonoBehaviour:
   hipBone: {fileID: 2749387138667642994}
   footBone: {fileID: 2034791752815395644}
   ikTarget: {fileID: 1137408330521889720}
-  stepMax: 0.8
+  stepMax: 0.775
 --- !u!1 &6858911009439342665
 GameObject:
   m_ObjectHideFlags: 0
@@ -7743,7 +7743,7 @@ Rigidbody2D:
   m_UseAutoMass: 0
   m_Mass: 10
   m_LinearDamping: 0
-  m_AngularDamping: 0.05
+  m_AngularDamping: 5
   m_GravityScale: 1
   m_Material: {fileID: 6200000, guid: 0fb3a02a58aa5114b8ef3cbdb77daef0, type: 2}
   m_IncludeLayers:
@@ -7811,6 +7811,7 @@ MonoBehaviour:
   heightReferencePoint: {fileID: 3708315842584664218}
   groundRaycastLengthFactor: 4
   groundednessToleranceFactor: 2
+  predictiveGroundDirectionSpacing: 1
   accelFactor: 75
   decelFactor: 15
   steepSlopeGripStrength: 200
@@ -7820,7 +7821,7 @@ MonoBehaviour:
   preferredRideHeight: 0.9
   heightSpringForce: 200
   heightSpringDamping: 25
-  balanceSpringForce: 50
+  balanceSpringForce: 75
   balanceSpringDamping: 0.1
   jumpForce: 12
   jumpVerificationTime: 0.25
@@ -7850,9 +7851,9 @@ MonoBehaviour:
   - leg: {fileID: 8139652597745638036}
     timeOffset: 0.4
   - leg: {fileID: 289677099412839160}
-    timeOffset: 0.2
+    timeOffset: 0.25
   - leg: {fileID: 12206713449588117}
-    timeOffset: 0.6
+    timeOffset: 0.65
   - leg: {fileID: 6337494717204129644}
     timeOffset: 0
   - leg: {fileID: 1298602695105135040}

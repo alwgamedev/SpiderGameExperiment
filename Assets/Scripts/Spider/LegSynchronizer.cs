@@ -11,8 +11,8 @@ public class LegSynchronizer : MonoBehaviour
     [SerializeField] float stepSmoothingRate;
     [SerializeField] float restSmoothingRate;
     [SerializeField] float footRotationSpeed;
-    [SerializeField] float footRaycastLength;
-    [SerializeField] float hipRaycastLength;//this is just a quick fix for now -- should scale with the spider "ride height", so maybe comes from SpiderController ultimately
+    //[SerializeField] float footRaycastLength;
+    //[SerializeField] float hipRaycastLength;//this is just a quick fix for now -- should scale with the spider "ride height", so maybe comes from SpiderController ultimately
     [SerializeField] SynchronizedLeg[] synchronizedLegs;
 
     class LegTimer
@@ -86,7 +86,7 @@ public class LegSynchronizer : MonoBehaviour
     LegTimer[] timers;
 
     public float bodyGroundSpeed;
-    public bool dragRestingLegs;
+    //public bool dragRestingLegs;
 
     private void Awake()
     {
@@ -96,11 +96,11 @@ public class LegSynchronizer : MonoBehaviour
     private void Start()
     {
         InitializeTimers();
-        foreach (var s in synchronizedLegs)
-        {
-            s.Leg.footRaycastLength = footRaycastLength;
-            s.Leg.hipRaycastLength = hipRaycastLength;
-        }
+        //foreach (var s in synchronizedLegs)
+        //{
+        //    s.Leg.footRaycastLength = footRaycastLength;
+        //    s.Leg.hipRaycastLength = hipRaycastLength;
+        //}
         RepositionAllLegs(body.transform.right);
     }
 
@@ -134,9 +134,9 @@ public class LegSynchronizer : MonoBehaviour
                     stepHeightSpeedMultiplier, baseStepHeightMultiplier,
                     stepSmoothingRate, footRotationSpeed);
             }
-            else if (!dragRestingLegs) 
+            else //if (!dragRestingLegs) 
             {
-                l.UpdateRest(dt, restSmoothingRate);
+                l.UpdateRest(dt, bodyUp, restSmoothingRate);
             }
         }
     }
@@ -150,11 +150,11 @@ public class LegSynchronizer : MonoBehaviour
             var t = timers[i];
             if (t.Stepping)
             {
-                synchronizedLegs[i].Leg.RepositionStepping(bPos, right, up, restTime);
+                synchronizedLegs[i].Leg.RepositionStepping(bPos, right, up, t.RestTime);
             }
             else
             {
-                synchronizedLegs[i].Leg.RepositionResting(bPos, right, up, t.RestProgress, restTime); 
+                synchronizedLegs[i].Leg.RepositionResting(bPos, right, up, t.RestProgress, t.RestTime); 
             }
         }
     }

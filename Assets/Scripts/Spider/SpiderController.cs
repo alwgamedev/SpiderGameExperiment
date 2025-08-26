@@ -3,10 +3,12 @@ using UnityEngine;
 
 public class SpiderController : MonoBehaviour
 {
+    //[SerializeField] Transform headBone;
     [SerializeField] Transform heightReferencePoint;
     //[SerializeField] float groundRaycastHorizontalSpacing = 1;
     [SerializeField] float groundRaycastLengthFactor;
     [SerializeField] float groundednessToleranceFactor;
+    [SerializeField] float predictiveGroundDirectionSpacing;
     [SerializeField] float accelFactor;
     [SerializeField] float decelFactor;
     [SerializeField] float steepSlopeGripStrength;
@@ -14,6 +16,7 @@ public class SpiderController : MonoBehaviour
     [SerializeField] float slipRate;
     [SerializeField] float maxSpeed;
     [SerializeField] float preferredRideHeight;
+    //[SerializeField] float headRotationSpeed;
     [SerializeField] float heightSpringForce;
     [SerializeField] float heightSpringDamping;
     [SerializeField] float balanceSpringForce;
@@ -29,6 +32,7 @@ public class SpiderController : MonoBehaviour
     float jumpVerificationTimer;
 
     bool grounded;
+    Vector2 predictiveGroundDirection;
     Vector2 lastComputedGroundDirection = Vector2.right;
     Vector2 lastComputedGroundPoint = new(Mathf.Infinity, Mathf.Infinity);
     Vector2 groundSlipPoint;
@@ -70,6 +74,7 @@ public class SpiderController : MonoBehaviour
             ChangeDirection();
         }
 
+        //headBone.right = MathTools.CheapRotationalLerp(headBone.right, predictiveGroundDirection, headRotationSpeed * Time.deltaTime);
     }
 
     private void FixedUpdate()
@@ -144,9 +149,10 @@ public class SpiderController : MonoBehaviour
 
     private void Balance()
     {
-        var c = Vector2.Dot(transform.up, grounded ? lastComputedGroundDirection : Vector2.right);
+        var c = Vector2.Dot(transform.up, grounded ? predictiveGroundDirection : Vector2.right);
         var f = c * balanceSpringForce - balanceSpringDamping * rb.angularVelocity;
         rb.AddTorque(rb.mass * f);
+        //headBone.right = MathTools.CheapRotationalLerp(headBone.right, predictiveGroundDirection, headRotationSpeed * Time.deltaTime);
     }
 
 
@@ -168,12 +174,12 @@ public class SpiderController : MonoBehaviour
 
     private void OnTakeOff()
     {
-        legSynchronizer.dragRestingLegs = true;
+        //legSynchronizer.dragRestingLegs = true;
     }
 
     private void OnLanding()
     {
-        legSynchronizer.dragRestingLegs = false;
+        //legSynchronizer.dragRestingLegs = false;
         //legSynchronizer.RepositionAllLegs(lastComputedGroundDirection);
     }
 
@@ -189,10 +195,14 @@ public class SpiderController : MonoBehaviour
         if (r)
         {
             HandleSuccessfulGroundHit(r);
+            var r2 = Physics2D.Raycast(o + Orientation * lastComputedGroundDirection, tDown, l, groundLayer);
+            predictiveGroundDirection = r2 ? (FacingRight ? (r2.point - r.point).normalized : (r.point - r2.point).normalized) : Vector2.right;
             return;
         }
+        
+        predictiveGroundDirection = tRight;
 
-        //if r1 fails, compute backup ground hits and choose shortest one
+            //if r1 fails, compute backup ground hits and choose shortest one
         float minDist = Mathf.Infinity;
         foreach (var s in BackupGroundHits(o, tDown, tRight, l))
         {
