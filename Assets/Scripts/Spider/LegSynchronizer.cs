@@ -11,6 +11,8 @@ public class LegSynchronizer : MonoBehaviour
     [SerializeField] float stepSmoothingRate;
     [SerializeField] float restSmoothingRate;
     [SerializeField] float footRotationSpeed;
+    [SerializeField] float footRaycastLength;
+    [SerializeField] float hipRaycastLength;//this is just a quick fix for now -- should scale with the spider "ride height", so maybe comes from SpiderController ultimately
     [SerializeField] SynchronizedLeg[] synchronizedLegs;
 
     class LegTimer
@@ -27,6 +29,7 @@ public class LegSynchronizer : MonoBehaviour
         public float StepTime => stepTime;
         public float RestTime => restTime;
         public float StepProgress => Timer / StepTime;
+        public float RestProgress => Timer / RestTime;
 
         public LegTimer(float offset, float stepTime, float restTime)
         {
@@ -83,6 +86,7 @@ public class LegSynchronizer : MonoBehaviour
     LegTimer[] timers;
 
     public float bodyGroundSpeed;
+    public bool dragRestingLegs;
 
     private void Awake()
     {
@@ -91,7 +95,13 @@ public class LegSynchronizer : MonoBehaviour
 
     private void Start()
     {
-        Initialize();        
+        InitializeTimers();
+        foreach (var s in synchronizedLegs)
+        {
+            s.Leg.footRaycastLength = footRaycastLength;
+            s.Leg.hipRaycastLength = hipRaycastLength;
+        }
+        RepositionAllLegs(body.transform.right);
     }
 
     private void LateUpdate()
@@ -120,13 +130,31 @@ public class LegSynchronizer : MonoBehaviour
             }
             if (t.Stepping)
             {
-                l.UpdateStep(dt, t.StepProgress, bodyRight, bodyUp, facingRight,
+                l.UpdateStep(dt, t.StepProgress, body.transform.position, bodyRight, bodyUp, facingRight,
                     stepHeightSpeedMultiplier, baseStepHeightMultiplier,
                     stepSmoothingRate, footRotationSpeed);
             }
-            else
+            else if (!dragRestingLegs) 
             {
                 l.UpdateRest(dt, restSmoothingRate);
+            }
+        }
+    }
+
+    public void RepositionAllLegs(Vector2 right)
+    {
+        Vector2 up = right.CCWPerp();
+        Vector2 bPos = body.transform.position;
+        for (int i = 0; i < synchronizedLegs.Length; i++)
+        {
+            var t = timers[i];
+            if (t.Stepping)
+            {
+                synchronizedLegs[i].Leg.RepositionStepping(bPos, right, up, restTime);
+            }
+            else
+            {
+                synchronizedLegs[i].Leg.RepositionResting(bPos, right, up, t.RestProgress, restTime); 
             }
         }
     }
@@ -137,13 +165,13 @@ public class LegSynchronizer : MonoBehaviour
         Vector2 tRight = body.transform.right;
         Vector2 tUp = body.transform.up;
 
-        foreach (var l in synchronizedLegs)
+        for (int i = 0; i < synchronizedLegs.Length; i++)
         {
-            l.Leg.OnBodyChangedDirection(p, tRight, tUp);
+            synchronizedLegs[i].Leg.OnBodyChangedDirection(p, tRight, tUp);
         }
     }
 
-    private void Initialize()
+    private void InitializeTimers()
     {
         float randomOffset = MathTools.RandomFloat(0, stepTime + restTime);
         timers = synchronizedLegs.Select(l => new LegTimer(l.TimeOffset + randomOffset, stepTime, restTime)).ToArray();

@@ -7810,14 +7810,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   heightReferencePoint: {fileID: 3708315842584664218}
   groundRaycastLengthFactor: 4
-  groundednessToleranceFactor: 1.5
+  groundednessToleranceFactor: 2
   accelFactor: 75
   decelFactor: 15
   steepSlopeGripStrength: 200
   steepSlopeGripDistancePower: 1.25
   slipRate: 1
   maxSpeed: 3.25
-  preferredRideHeight: 0.85
+  preferredRideHeight: 0.9
   heightSpringForce: 200
   heightSpringDamping: 25
   balanceSpringForce: 50

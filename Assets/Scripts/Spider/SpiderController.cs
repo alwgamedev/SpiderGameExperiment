@@ -83,8 +83,8 @@ public class SpiderController : MonoBehaviour
         }
         Balance();
 
-        legSynchronizer.bodyGroundSpeed = Vector2.Dot(rb.linearVelocity, Orientation * lastComputedGroundDirection);
-        //2do (minor performance improvement): we compute Orientation * lastComputedGroundDirection multiple times in one update
+        legSynchronizer.bodyGroundSpeed = Vector2.Dot(rb.linearVelocity, Orientation * transform.right);
+        //2do (minor performance improvement): we compute Orientation * lastComputedGroundDirection (or maybe now Ori * tRight) multiple times in one update
         //either compute it once, or have lastComputedDirection already point in orientation direction
         //(are there any places where you need it to be "right facing"? i think only for the balancing)
     }
@@ -122,7 +122,7 @@ public class SpiderController : MonoBehaviour
         if (jumpInput)
         {
             jumpInput = false;
-            grounded = false;
+            SetGrounded(false);
             jumpVerificationTimer = jumpVerificationTime;
             rb.AddForce(jumpForce * rb.mass * JumpDirection, ForceMode2D.Impulse);
         }
@@ -147,6 +147,34 @@ public class SpiderController : MonoBehaviour
         var c = Vector2.Dot(transform.up, grounded ? lastComputedGroundDirection : Vector2.right);
         var f = c * balanceSpringForce - balanceSpringDamping * rb.angularVelocity;
         rb.AddTorque(rb.mass * f);
+    }
+
+
+    //GROUND DETECTION
+
+    private void SetGrounded(bool val)
+    {
+        if (VerifyingJump() || grounded == val) return;
+        grounded = val;
+        if (grounded)
+        {
+            OnLanding();
+        }
+        else
+        {
+            OnTakeOff();
+        }
+    }
+
+    private void OnTakeOff()
+    {
+        legSynchronizer.dragRestingLegs = true;
+    }
+
+    private void OnLanding()
+    {
+        legSynchronizer.dragRestingLegs = false;
+        //legSynchronizer.RepositionAllLegs(lastComputedGroundDirection);
     }
 
     //always "right pointing" (relative to ground outward normal)
@@ -181,7 +209,7 @@ public class SpiderController : MonoBehaviour
             return;
         }
 
-        grounded = false;//generally we should not set grounded while verifying jump, but setting false is fine (so no pt in slowing things down with a bool check)
+        SetGrounded(false);//generally we should not set grounded while verifying jump, but setting false is fine (so no pt in slowing things down with a bool check)
         lastComputedGroundDistance = Mathf.Infinity;
         lastComputedGroundDirection = Vector2.right;
     }
@@ -200,18 +228,22 @@ public class SpiderController : MonoBehaviour
         lastComputedGroundDistance = r.distance;
         lastComputedGroundDirection = r.normal.CWPerp();
 
-        if (!VerifyingJump())
-        {
-            grounded = r.distance < GroundednessTolerance;
-        }
+        SetGrounded(r.distance < GroundednessTolerance);
     }
 
+    //2do: should we distribute these "radially" or horizontally?
+    //radial has the advantage the we can see ground in front of us (the 90 deg cast)
+    //but horizontally would be simpler (and maybe if all horizontally spaced hits fail we want to slide anyway)
+    //we could also just do horizontal casts + the two 90 deg casts
     private IEnumerable<RaycastHit2D> BackupGroundHits(Vector2 origin, Vector2 tDown, Vector2 tRight, float length)
     {
         var d30 = MathTools.cos30 * tDown + MathTools.sin30 * tRight;
         var d60 = MathTools.cos60 * tDown + MathTools.sin60 * tRight;
         var dM30 = MathTools.cos30 * tDown - MathTools.sin30 * tRight;
         var dM60 = MathTools.cos60 * tDown - MathTools.sin60 * tRight;
+        //var l30 = length / MathTools.cos30;
+        //var l60 = length / MathTools.cos60;
+        //var l90 = 2 * length;
         yield return Physics2D.Raycast(origin, d30, length, groundLayer);
         yield return Physics2D.Raycast(origin, d60, length, groundLayer);
         yield return Physics2D.Raycast(origin, tRight, length, groundLayer);

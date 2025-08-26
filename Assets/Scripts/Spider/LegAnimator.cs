@@ -1,4 +1,3 @@
-using Unity.Cinemachine;
 using UnityEngine;
 
 public class LegAnimator : MonoBehaviour
@@ -8,9 +7,12 @@ public class LegAnimator : MonoBehaviour
     [SerializeField] Transform ikTarget;
     [SerializeField] float stepMax;
 
-    Vector2 stepStartPosition;
+    Vector2 stepStartLocalPosition;
     Vector2 lastComputedStepGoal;
     int groundLayer;
+
+    public float footRaycastLength;
+    public float hipRaycastLength;
 
     public Transform HipBone => hipBone;
     public Transform FootBone => footBone;
@@ -21,41 +23,59 @@ public class LegAnimator : MonoBehaviour
         groundLayer = LayerMask.GetMask("Ground");
     }
 
-    private void Start()
+    //private void Start()
+    //{
+    //    var g = CurrentGroundRaycast(Vector2.up);
+    //    var s = StepGoalRaycast(Vector2.right, Vector2.up);
+    //    stepStartPosition = g ? g.point : ikTarget.position;
+    //    lastComputedStepGoal = s ? s.point : BackupStepGoal(Vector2.right, Vector2.up);
+    //}
+
+    //very useful for identifying issues
+    private void OnDrawGizmos()
     {
-        var g = CurrentGroundRaycast(Vector2.up);
-        var s = StepGoalRaycast(Vector2.right, Vector2.up);
-        stepStartPosition = g ? g.point : ikTarget.position;
-        lastComputedStepGoal = s ? s.point : BackupStepGoal(Vector2.right, Vector2.up);
+        Gizmos.color = Color.blue;
+        Gizmos.DrawSphere(ikTarget.position, .1f);
     }
 
-    //VERY useful for identifying issues
-    //private void OnDrawGizmos()
-    //{
-    //    Gizmos.color = Color.blue;
-    //    Gizmos.DrawSphere(ikTarget.position, .1f);
-    //}
+    public void RepositionStepping(Vector2 bodyPos, Vector2 bodyRight, Vector2 bodyUp, float maxStrideLength)
+    {
+        //approximate step start position and step goal
+        var start = StepGoalRaycast(bodyRight, bodyUp, 1, maxStrideLength);
+        var goal = StepGoalRaycast(bodyRight, bodyUp, 0, maxStrideLength);
+        stepStartLocalPosition = start ? start.point : BackupStepGoal(bodyPos, bodyRight, bodyUp, 1, maxStrideLength);
+        stepStartLocalPosition -= bodyPos;
+        lastComputedStepGoal = goal ? goal.point : BackupStepGoal(bodyPos, bodyRight, bodyUp, 0, maxStrideLength);
+    }
+
+    public void RepositionResting(Vector2 bodyPos, Vector2 bodyRight, Vector2 bodyUp, float restProgress, float maxStrideLength)
+    {
+        var s = StepGoalRaycast(bodyRight, bodyUp, restProgress, maxStrideLength);
+        lastComputedStepGoal = s ? s.point : BackupStepGoal(bodyPos, bodyRight, bodyUp, restProgress, maxStrideLength);
+    }
 
     public void BeginStep(Rigidbody2D body)
     {
         var bRight = body.transform.right;
         var bUp = body.transform.up;
-        stepStartPosition = ikTarget.position;
+        var bPos = body.transform.position;
+        stepStartLocalPosition = ikTarget.position - bPos;
         var stepGoalRay = StepGoalRaycast(bRight, bUp);
-        lastComputedStepGoal = stepGoalRay ? stepGoalRay.point : BackupStepGoal(bRight, bUp);
+        lastComputedStepGoal = stepGoalRay ? stepGoalRay.point : BackupStepGoal(bPos, bRight, bUp);
     }
 
     /// <param name="stepProgress">btwn 0 & 1</param
     /// <param name="bodyRight">multiplied by sign of body local scale (i.e. points in direction body is facing)</param>
-    public void UpdateStep(float dt, float stepProgress, Vector2 bodyRight, Vector2 bodyUp, bool bodyFacingRight,
+    public void UpdateStep(float dt, float stepProgress, Vector2 bodyPos, Vector2 bodyRight, Vector2 bodyUp, bool bodyFacingRight,
         float stepHeightSpeedMultiplier, float baseStepHeightMultiplier,
         float smoothingRate, float footRotationSpeed)
     {
         stepProgress = Mathf.Clamp(stepProgress, 0.0f, 1.0f);
         var stepGoalRay = StepGoalRaycast(bodyRight, bodyUp);
-        lastComputedStepGoal = stepGoalRay ? stepGoalRay.point : BackupStepGoal(bodyRight, bodyUp);
+        lastComputedStepGoal = stepGoalRay ? stepGoalRay.point : BackupStepGoal(bodyPos, bodyRight, bodyUp);
         var curGroundRay = CurrentGroundRaycast(bodyUp);
 
+        var stepStartPosition = bodyPos + stepStartLocalPosition;
         var stepRight = (lastComputedStepGoal - stepStartPosition).normalized;
         var stepUp = bodyFacingRight ? stepRight.CCWPerp() : stepRight.CWPerp();
         var stepCenter = 0.5f * (lastComputedStepGoal + stepStartPosition);
@@ -92,30 +112,39 @@ public class LegAnimator : MonoBehaviour
             lastComputedStepGoal = r.point;
         }
 
-        stepStartPosition = bodyPosition + (stepStartPosition - bodyPosition).ReflectAcrossHyperplane(bodyRight);
-        var s = Physics2D.Raycast(stepStartPosition + 3 * bodyUp, -bodyUp, Mathf.Infinity, groundLayer);
+        stepStartLocalPosition = stepStartLocalPosition.ReflectAcrossHyperplane(bodyRight);//bodyPosition + (stepStartLocalPosition - bodyPosition).ReflectAcrossHyperplane(bodyRight);
+        var s = Physics2D.Raycast(bodyPosition + stepStartLocalPosition + 3 * bodyUp, -bodyUp, Mathf.Infinity, groundLayer);
         if (s)
         {
-            stepStartPosition = s.point;
+            stepStartLocalPosition = s.point - bodyPosition;
         }
     }
 
     RaycastHit2D CurrentGroundRaycast(Vector2 bodyUp)
     {
-        return Physics2D.Raycast((Vector2)ikTarget.position + 2 * bodyUp, -bodyUp, Mathf.Infinity, groundLayer);
+        return Physics2D.Raycast((Vector2)ikTarget.position + 2 * bodyUp, -bodyUp, footRaycastLength + 2, groundLayer);
         //adding + 2*up to make sure we raycast from above grd
     }
 
-    RaycastHit2D StepGoalRaycast(Vector2 bodyRight, Vector2 bodyUp)
+    RaycastHit2D StepGoalRaycast(Vector2 bodyRight, Vector2 bodyUp, float restProgress = 0, float maxStrideLength = 0)
     {
-        return Physics2D.Raycast((Vector2)hipBone.position + stepMax * bodyRight, -bodyUp, Mathf.Infinity, groundLayer);
+        return Physics2D.Raycast((Vector2)hipBone.position + AdjustedStepMax(restProgress, maxStrideLength) * bodyRight, -bodyUp, hipRaycastLength, groundLayer);
     }
 
-    Vector2 BackupStepGoal(Vector2 bodyRight, Vector2 bodyUp)
+    Vector2 BackupStepGoal(Vector2 bodyPos, Vector2 bodyRight, Vector2 bodyUp, float restProgress = 0, float maxStrideLength = 0)
     {
         Vector2 h = hipBone.position;
-        var l = stepStartPosition - h;
+        var l = bodyPos + stepStartLocalPosition - h;
         l = h + Vector2.Dot(l, bodyUp) * bodyUp;
-        return l + stepMax * bodyRight;
+        return l + AdjustedStepMax(restProgress, maxStrideLength) * bodyRight;
+    }
+
+    float AdjustedStepMax(float restProgress, float maxStrideLength)
+    {
+        if (restProgress == 0)
+        {
+            return stepMax;
+        }
+        return stepMax - restProgress * maxStrideLength;
     }
 }
