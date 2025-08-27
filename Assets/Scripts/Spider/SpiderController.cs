@@ -184,7 +184,7 @@ public class SpiderController : MonoBehaviour
     private void OnLanding()
     {
         legSynchronizer.timeScale = 1;
-        legSynchronizer.EndStaticMode(FacingRight);
+        legSynchronizer.EndStaticMode(FacingRight, predictiveGroundDirection);//makes more sense to use predictive GroundDir bc that's what we rotate towards?
     }
 
     //always "right pointing" (relative to ground outward normal)
@@ -227,10 +227,11 @@ public class SpiderController : MonoBehaviour
             return;
         }
 
-        SetGrounded(false);//generally we should not set grounded while verifying jump, but setting false is fine (so no pt in slowing things down with a bool check)
         lastComputedGroundDistance = Mathf.Infinity;
-        lastComputedGroundDirection = Vector2.right;
+        lastComputedGroundDirection = Vector2.right; 
         predictiveGroundDirection = lastComputedGroundDirection;
+        SetGrounded(false);//generally we should not set grounded while verifying jump, but setting false is fine (so no pt in slowing things down with a bool check)
+
     }
 
     private void HandleSuccessfulGroundHit(RaycastHit2D r)

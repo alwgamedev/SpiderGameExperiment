@@ -173,22 +173,23 @@ public class LegSynchronizer : MonoBehaviour
         //}
     }
 
-    public void EndStaticMode(bool bodyFacingRight)
+    public void EndStaticMode(bool bodyFacingRight, Vector2 bodyRight)
     {
         if (staticMode)
         {
             staticMode = false;
-            RepositionAllLegs(bodyFacingRight);
+            RepositionAllLegs(bodyFacingRight, bodyRight);
             //LateUpdate();
         }
     }
 
-    public void RepositionAllLegs(bool bodyFacingRight/*Vector2 bodyMovementRight, Vector2 bodyUp*/)
+    //yes, legSynch has access to the rigidbody (so could get bodyRight) but you could e.g. pass groundDirection here instead
+    public void RepositionAllLegs(bool bodyFacingRight, Vector2 bodyRight)
     {
         //Vector2 up = right.CCWPerp();
         Vector2 bPos = body.transform.position;
-        Vector2 bodyMovementRight = bodyFacingRight ? body.transform.right : -body.transform.right;
-        Vector2 bodyUp = body.transform.up;
+        Vector2 bodyMovementRight = bodyFacingRight ? bodyRight : -bodyRight;
+        Vector2 bodyUp = bodyRight.CCWPerp();
         for (int i = 0; i < synchronizedLegs.Length; i++)
         {
             var t = timers[i];
