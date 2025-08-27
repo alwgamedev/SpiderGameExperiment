@@ -1121,33 +1121,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 12206713449588117, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: stepMax
-      value: 0.825
+    - target: {fileID: 2582591312671585704, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
+      propertyPath: m_LinearDamping
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 2582591312671585704, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: m_AngularDamping
-      value: 0.05
+      value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: preferredRideHeight
-      value: 0.875
-      objectReference: {fileID: 0}
-    - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: jumpVerificationTime
-      value: 0.25
-      objectReference: {fileID: 0}
-    - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: groundRaycastLengthFactor
+    - target: {fileID: 5843148394334628032, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
+      propertyPath: footRotationSpeed
       value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: predictiveGroundDirectionSpacing
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 8139652597745638036, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: stepMax
-      value: 0.825
       objectReference: {fileID: 0}
     - target: {fileID: 8910507805382992582, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: m_LocalPosition.x

@@ -3,9 +3,7 @@ using UnityEngine;
 
 public class SpiderController : MonoBehaviour
 {
-    //[SerializeField] Transform headBone;
     [SerializeField] Transform heightReferencePoint;
-    //[SerializeField] float groundRaycastHorizontalSpacing = 1;
     [SerializeField] float groundRaycastLengthFactor;
     [SerializeField] float groundednessToleranceFactor;
     [SerializeField] float predictiveGroundDirectionSpacing;
@@ -16,13 +14,13 @@ public class SpiderController : MonoBehaviour
     [SerializeField] float slipRate;
     [SerializeField] float maxSpeed;
     [SerializeField] float preferredRideHeight;
-    //[SerializeField] float headRotationSpeed;
     [SerializeField] float heightSpringForce;
     [SerializeField] float heightSpringDamping;
     [SerializeField] float balanceSpringForce;
     [SerializeField] float balanceSpringDamping;
     [SerializeField] float jumpForce;
     [SerializeField] float jumpVerificationTime;
+    [SerializeField] float airborneLegAnimationTimeScale;
 
     LegSynchronizer legSynchronizer;
     Rigidbody2D rb;
@@ -46,6 +44,7 @@ public class SpiderController : MonoBehaviour
     int Orientation => FacingRight ? 1 : -1;
     float GroundRaycastLength => groundRaycastLengthFactor * preferredRideHeight;
     float GroundednessTolerance => groundednessToleranceFactor * preferredRideHeight;
+    float PreferredBodyPosGroundHeight => transform.position.y - heightReferencePoint.position.y + preferredRideHeight;
     Vector2 JumpDirection => transform.up;//0.5f * (Vector2.up + lastComputedGroundDirection.CCWPerp()).normalized;
 
     private void Awake()
@@ -53,6 +52,11 @@ public class SpiderController : MonoBehaviour
         legSynchronizer = GetComponent<LegSynchronizer>();
         rb = GetComponent<Rigidbody2D>();
         groundLayer = LayerMask.GetMask("Ground");
+    }
+
+    private void Start()
+    {
+        legSynchronizer.Initialize(PreferredBodyPosGroundHeight, FacingRight);
     }
 
     private void Update()
@@ -73,8 +77,6 @@ public class SpiderController : MonoBehaviour
         {
             ChangeDirection();
         }
-
-        //headBone.right = MathTools.CheapRotationalLerp(headBone.right, predictiveGroundDirection, headRotationSpeed * Time.deltaTime);
     }
 
     private void FixedUpdate()
@@ -88,7 +90,8 @@ public class SpiderController : MonoBehaviour
         }
         Balance();
 
-        legSynchronizer.bodyGroundSpeed = Vector2.Dot(rb.linearVelocity, Orientation * transform.right);
+        legSynchronizer.bodyGroundSpeed = grounded ? Vector2.Dot(rb.linearVelocity, Orientation * transform.right) : rb.linearVelocity.magnitude;
+        legSynchronizer.preferredBodyPosGroundHeight = PreferredBodyPosGroundHeight;
         //2do (minor performance improvement): we compute Orientation * lastComputedGroundDirection (or maybe now Ori * tRight) multiple times in one update
         //either compute it once, or have lastComputedDirection already point in orientation direction
         //(are there any places where you need it to be "right facing"? i think only for the balancing)
@@ -103,7 +106,7 @@ public class SpiderController : MonoBehaviour
 
     private void HandleMoveInput()
     {
-        var d = Orientation * transform.right;//Orientation * lastComputedGroundDirection;
+        var d = Orientation * transform.right;
         var spd = Vector2.Dot(rb.linearVelocity, d);
         if (moveInput != 0 /*&& spd < maxSpeed*/)
         {
@@ -174,12 +177,14 @@ public class SpiderController : MonoBehaviour
 
     private void OnTakeOff()
     {
+        legSynchronizer.timeScale = airborneLegAnimationTimeScale;
         legSynchronizer.EnterStaticMode();
     }
 
     private void OnLanding()
     {
-        legSynchronizer.EndStaticMode();
+        legSynchronizer.timeScale = 1;
+        legSynchronizer.EndStaticMode(FacingRight);
     }
 
     //always "right pointing" (relative to ground outward normal)

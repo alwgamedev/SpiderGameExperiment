@@ -1531,7 +1531,7 @@ MonoBehaviour:
   hipBone: {fileID: 6996931359358265962}
   footBone: {fileID: 3033994015570042515}
   ikTarget: {fileID: 1238561792403655595}
-  stepMax: 0.775
+  stepMax: 0.825
 --- !u!1 &1248638082500357407
 GameObject:
   m_ObjectHideFlags: 0
@@ -6716,7 +6716,7 @@ MonoBehaviour:
   hipBone: {fileID: 2749387138667642994}
   footBone: {fileID: 2034791752815395644}
   ikTarget: {fileID: 1137408330521889720}
-  stepMax: 0.775
+  stepMax: 0.825
 --- !u!1 &6858911009439342665
 GameObject:
   m_ObjectHideFlags: 0
@@ -7743,7 +7743,7 @@ Rigidbody2D:
   m_UseAutoMass: 0
   m_Mass: 10
   m_LinearDamping: 0
-  m_AngularDamping: 5
+  m_AngularDamping: 0.05
   m_GravityScale: 1
   m_Material: {fileID: 6200000, guid: 0fb3a02a58aa5114b8ef3cbdb77daef0, type: 2}
   m_IncludeLayers:
@@ -7809,22 +7809,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   heightReferencePoint: {fileID: 3708315842584664218}
-  groundRaycastLengthFactor: 4
+  groundRaycastLengthFactor: 3
   groundednessToleranceFactor: 2
-  predictiveGroundDirectionSpacing: 1
-  accelFactor: 75
+  predictiveGroundDirectionSpacing: 0.5
+  accelFactor: 15
   decelFactor: 15
   steepSlopeGripStrength: 200
   steepSlopeGripDistancePower: 1.25
   slipRate: 1
   maxSpeed: 3.25
-  preferredRideHeight: 0.9
+  preferredRideHeight: 0.875
   heightSpringForce: 200
   heightSpringDamping: 25
-  balanceSpringForce: 75
+  balanceSpringForce: 25
   balanceSpringDamping: 0.1
   jumpForce: 12
   jumpVerificationTime: 0.25
+  airborneLegAnimationTimeScale: 0.5
 --- !u!114 &5843148394334628032
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7863,3 +7864,5 @@ MonoBehaviour:
   - leg: {fileID: 5076699777365114807}
     timeOffset: 0.55
   bodyGroundSpeed: 0
+  preferredBodyPosGroundHeight: 0
+  timeScale: 1
