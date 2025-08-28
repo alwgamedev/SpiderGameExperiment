@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class LegSynchronizer : MonoBehaviour
 {
+    [SerializeField] Rigidbody2D bodyRb;
     [SerializeField] float restTime;
     [SerializeField] float stepTime;
     [SerializeField] float speedCapMin;//below this speed, legs will be on ground;
@@ -10,7 +11,6 @@ public class LegSynchronizer : MonoBehaviour
     [SerializeField] float baseStepHeightMultiplier;
     [SerializeField] float stepSmoothingRate;
     [SerializeField] float restSmoothingRate;
-    //[SerializeField] float outwardDriftSmoothingRate;
     [SerializeField] float footRotationSpeed;
     [SerializeField] SynchronizedLeg[] synchronizedLegs;
 
@@ -81,28 +81,26 @@ public class LegSynchronizer : MonoBehaviour
         }
     }
 
-    Rigidbody2D body;
+    //Rigidbody2D body;
     LegTimer[] timers;
     bool staticMode;
 
     public float bodyGroundSpeed;
     public float preferredBodyPosGroundHeight;
     public float timeScale = 1;
-    //public float outwardDriftRate;
     public float outwardDrift;
-    //public Vector2 outwardDriftCenter;
 
-    private void Awake()
-    {
-        body = GetComponent<Rigidbody2D>();
-    }
+    //private void Awake()
+    //{
+    //  body = GetComponent<Rigidbody2D>();
+    //}
 
     private void LateUpdate()
     {
-        var facingRight = body.transform.localScale.x > 0;
-        Vector2 bodyMovementRight = facingRight ? body.transform.right : - body.transform.right;
-        Vector2 bodyUp = body.transform.up;
-        Vector2 bodyPos = body.transform.position;
+        var facingRight = bodyRb.transform.localScale.x > 0;
+        Vector2 bodyMovementRight = facingRight ? bodyRb.transform.right : - bodyRb.transform.right;
+        Vector2 bodyUp = bodyRb.transform.up;
+        Vector2 bodyPos = bodyRb.transform.position;
         var dt = Time.deltaTime * timeScale;
 
         var speedFrac = bodyGroundSpeed < speedCapMin ? 0 : bodyGroundSpeed / speedCapMax;
@@ -188,7 +186,7 @@ public class LegSynchronizer : MonoBehaviour
     public void RepositionAllLegs(bool bodyFacingRight, Vector2 bodyRight)
     {
         //Vector2 up = right.CCWPerp();
-        Vector2 bPos = body.transform.position;
+        Vector2 bPos = bodyRb.transform.position;
         Vector2 bodyMovementRight = bodyFacingRight ? bodyRight : -bodyRight;
         Vector2 bodyUp = bodyRight.CCWPerp();
         for (int i = 0; i < synchronizedLegs.Length; i++)
@@ -207,9 +205,9 @@ public class LegSynchronizer : MonoBehaviour
 
     public void OnBodyChangedDirection()
     {
-        Vector2 p = body.transform.position;
-        Vector2 tRight = body.transform.right;
-        Vector2 tUp = body.transform.up;
+        Vector2 p = bodyRb.transform.position;
+        Vector2 tRight = bodyRb.transform.right;
+        Vector2 tUp = bodyRb.transform.up;
 
         for (int i = 0; i < synchronizedLegs.Length; i++)
         {
@@ -232,9 +230,9 @@ public class LegSynchronizer : MonoBehaviour
 
     private void InitializeLegPositions(bool bodyFacingRight)
     {
-        Vector2 bodyPos = body.transform.position;
-        Vector2 bodyMovementRight = bodyFacingRight ? body.transform.right : -body.transform.right;
-        Vector2 bodyUp = body.transform.up;
+        Vector2 bodyPos = bodyRb.transform.position;
+        Vector2 bodyMovementRight = bodyFacingRight ? bodyRb.transform.right : -bodyRb.transform.right;
+        Vector2 bodyUp = bodyRb.transform.up;
         for (int i = 0; i < synchronizedLegs.Length; i++)
         {
             var t = timers[i];

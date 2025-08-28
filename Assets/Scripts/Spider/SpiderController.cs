@@ -3,12 +3,15 @@ using UnityEngine;
 
 public class SpiderController : MonoBehaviour
 {
+    [SerializeField] Transform abdomenBone;
+    [SerializeField] Transform headBone;
     [SerializeField] Transform heightReferencePoint;
     [SerializeField] float groundRaycastLengthFactor;
     [SerializeField] float groundednessToleranceFactor;
     [SerializeField] float predictiveGroundDirectionSpacing;
     [SerializeField] float accelFactor;
     [SerializeField] float decelFactor;
+    [SerializeField] float airborneAccelMultiplier;
     [SerializeField] float steepSlopeGripStrength;
     [SerializeField] float steepSlopeGripDistancePower;
     [SerializeField] float slipRate;
@@ -18,12 +21,16 @@ public class SpiderController : MonoBehaviour
     [SerializeField] float heightSpringDamping;
     [SerializeField] float balanceSpringForce;
     [SerializeField] float balanceSpringDamping;
+    [SerializeField] float airborneBalanceForceMultiplier;
     [SerializeField] float jumpForce;
+    [SerializeField] float jumpForceCrouchBoostRate;
     [SerializeField] float jumpVerificationTime;
+    [SerializeField] float crouchHeightFraction;//fraction of preferred ground height that body will crouch down by
+    [SerializeField] float crouchTime;
+    [SerializeField] float crouchReleaseSpeedMultiplier;
     [SerializeField] float airborneLegAnimationTimeScale;
     [SerializeField] float airborneLegDriftRate;
     [SerializeField] float airborneLegDriftMax;
-    //[SerializeField] Vector2 airborneLegDriftDirection;
 
     LegSynchronizer legSynchronizer;
     Rigidbody2D rb;
@@ -31,7 +38,6 @@ public class SpiderController : MonoBehaviour
 
     bool jumpInput;
     float jumpVerificationTimer;
-    //float airborneLegDriftTimer;
 
     bool grounded;
     Vector2 predictiveGroundDirection;
@@ -42,6 +48,9 @@ public class SpiderController : MonoBehaviour
     float lastComputedGroundDistance = Mathf.Infinity;
     //use infinity instead of NaN, because equals check always fails for NaN (even if you check NaN == NaN)
 
+    float crouchProgress;//0-1
+    //Vector2 crouchStartBodyLocalPos;
+
     int groundLayer;
 
     bool FacingRight => transform.localScale.x > 0;
@@ -49,14 +58,12 @@ public class SpiderController : MonoBehaviour
     float GroundRaycastLength => groundRaycastLengthFactor * preferredRideHeight;
     float GroundednessTolerance => groundednessToleranceFactor * preferredRideHeight;
     float PreferredBodyPosGroundHeight => transform.position.y - heightReferencePoint.position.y + preferredRideHeight;
-    Vector2 JumpDirection => transform.up;//0.5f * (Vector2.up + lastComputedGroundDirection.CCWPerp()).normalized;
 
     private void Awake()
     {
         legSynchronizer = GetComponent<LegSynchronizer>();
         rb = GetComponent<Rigidbody2D>();
         groundLayer = LayerMask.GetMask("Ground");
-        //airborneLegDriftDirection = airborneLegDriftDirection.normalized;
     }
 
     private void Start()
@@ -75,7 +82,7 @@ public class SpiderController : MonoBehaviour
 
         if (!grounded)
         {
-            UpdateDrift();
+            UpdateAirborneLegDrift();
         }
     }
 
@@ -99,9 +106,23 @@ public class SpiderController : MonoBehaviour
 
     private void CaptureInput()
     {
-        if (!jumpInput && grounded)
+        if (grounded && Input.GetKey(KeyCode.Space))
         {
-            jumpInput = Input.GetKeyDown(KeyCode.Space);
+            if (crouchProgress < 1)
+            {
+                UpdateCrouch(Time.deltaTime);
+            }
+        }
+        else
+        {
+            if (crouchProgress > 0)
+            {
+                UpdateCrouch(crouchReleaseSpeedMultiplier * -Time.deltaTime);
+            }
+            if (!jumpInput && grounded)
+            {
+                jumpInput = Input.GetKeyUp(KeyCode.Space);
+            }
         }
 
         moveInput = (Input.GetKey(KeyCode.RightArrow) ? 1 : 0) + (Input.GetKey(KeyCode.LeftArrow) ? -1 : 0);
@@ -122,10 +143,16 @@ public class SpiderController : MonoBehaviour
     {
         var d = Orientation * transform.right;
         var spd = Vector2.Dot(rb.linearVelocity, d);
-        if (moveInput != 0 /*&& spd < maxSpeed*/)
+        if (moveInput != 0)
         {
-            rb.AddForce(accelFactor * (maxSpeed - spd) * rb.mass * d);
-            //do this even when spd > maxSpeed so that spider controls its speed on downhills
+            if (grounded || spd < maxSpeed)
+            {
+                //var a = grounded ? accelFactor : accelFactor * airborneAccelMultiplier;
+                rb.AddForce(accelFactor * (maxSpeed - spd) * rb.mass * d);
+            }
+            //when grounded, apply force even when spd > maxSpeed (in which case it's a negative force)
+            //to control speed on downhills
+            //don't want to follow this convention when not grounded, because the negative forces create a weird feel
         }
         else if (moveInput == 0 && grounded)
         {
@@ -136,6 +163,32 @@ public class SpiderController : MonoBehaviour
             rb.AddForce(grip * rb.mass * d);//grip to steep slope
         }
     }
+
+    //private void UpdateJumpAim()
+    //{
+    //    var rotationCenter = JumpAimRotationCenter();//0.5f * (abdomenBone.position + headBone.position);
+    //    var headBoneRight = headBone.right;
+    //    var r = abdomenRightInLocalCoords.x * transform.right + abdomenRightInLocalCoords.y * transform.up;
+    //    var u = abdomenUpInLocalCoords.x * transform.right + abdomenUpInLocalCoords.y * transform.up;
+    //    abdomenBone.right = Mathf.Cos(jumpAimAngle) * r + Mathf.Sin(jumpAimAngle) * u;
+    //    var newCenter = JumpAimRotationCenter();
+    //    abdomenBone.position += rotationCenter - newCenter;
+    //    headBone.right = headBoneRight;
+    //}
+
+    //pass negative dt when reversing crouch
+    private void UpdateCrouch(float dt)
+    {
+        var progressDelta = dt / crouchTime;
+        progressDelta = Mathf.Clamp(progressDelta, -crouchProgress, 1 - crouchProgress);
+        crouchProgress += progressDelta;
+        abdomenBone.position -= progressDelta * crouchHeightFraction * preferredRideHeight * transform.up;
+    }
+
+    //private Vector3 JumpAimRotationCenter()
+    //{
+    //    return 0.25f * abdomenBone.position + 0.75f * headBone.position;
+    //}
     
     //not checking anything here, bc i have it set up so it only collects jump input when you are able to jump
     //(i.e. when grounded and not verifying jump)
@@ -146,8 +199,18 @@ public class SpiderController : MonoBehaviour
             jumpInput = false;
             SetGrounded(false);
             jumpVerificationTimer = jumpVerificationTime;
-            rb.AddForce(jumpForce * rb.mass * JumpDirection, ForceMode2D.Impulse);
+            rb.AddForce(rb.mass * JumpForce() * JumpDirection(), ForceMode2D.Impulse);
         }
+    }
+
+    private float JumpForce()
+    {
+        return jumpForce + crouchProgress * jumpForceCrouchBoostRate;
+    }
+
+    private Vector2 JumpDirection()
+    {
+        return transform.up;
     }
 
     private bool VerifyingJump()
@@ -167,20 +230,20 @@ public class SpiderController : MonoBehaviour
     private void Balance()
     {
         var c = Vector2.Dot(transform.up, grounded ? predictiveGroundDirection : lastComputedGroundDirection);
+        if (!grounded)
+        {
+            c *= airborneBalanceForceMultiplier;
+        }
         var f = c * balanceSpringForce - balanceSpringDamping * rb.angularVelocity;
         rb.AddTorque(rb.mass * f);
         //headBone.right = MathTools.CheapRotationalLerp(headBone.right, predictiveGroundDirection, headRotationSpeed * Time.deltaTime);
     }
 
-    private void UpdateDrift()
+    private void UpdateAirborneLegDrift()
     {
-        //legSynchronizer.outwardDriftRate = airborneLegDriftRate;
-        //legSynchronizer.outwardDriftCenter = heightReferencePoint.position;
         if (legSynchronizer.outwardDrift < airborneLegDriftMax)
         {
             legSynchronizer.outwardDrift += airborneLegDriftRate * Time.deltaTime;
-            //legSynchronizer.outwardDriftMax = airborneLegDriftMax;
-            //legSynchronizer.outwardDriftDirection = airborneLegDriftDirection;
         }
     }
 
