@@ -10,6 +10,7 @@ public class LegSynchronizer : MonoBehaviour
     [SerializeField] float baseStepHeightMultiplier;
     [SerializeField] float stepSmoothingRate;
     [SerializeField] float restSmoothingRate;
+    //[SerializeField] float outwardDriftSmoothingRate;
     [SerializeField] float footRotationSpeed;
     [SerializeField] SynchronizedLeg[] synchronizedLegs;
 
@@ -87,17 +88,14 @@ public class LegSynchronizer : MonoBehaviour
     public float bodyGroundSpeed;
     public float preferredBodyPosGroundHeight;
     public float timeScale = 1;
+    //public float outwardDriftRate;
+    public float outwardDrift;
+    //public Vector2 outwardDriftCenter;
 
     private void Awake()
     {
         body = GetComponent<Rigidbody2D>();
     }
-
-    //private void Start()
-    //{
-    //    InitializeTimers();
-    //    RepositionAllLegs(body.transform.right, body.transform.localScale.x > 0);
-    //}
 
     private void LateUpdate()
     {
@@ -127,11 +125,12 @@ public class LegSynchronizer : MonoBehaviour
                 {
                     l.UpdateStepStaticMode(dt, t.StepProgress, preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, facingRight, t.RestTime,
                         baseStepHeightMultiplier, stepHeightSpeedMultiplier,
-                        stepSmoothingRate, footRotationSpeed);
+                        stepSmoothingRate, footRotationSpeed, outwardDrift);
                 }
                 else
                 {
-                    l.UpdateRestStaticMode(dt, t.RestProgress, preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, t.RestTime, restSmoothingRate);
+                    l.UpdateRestStaticMode(dt, t.RestProgress, preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, t.RestTime, 
+                        restSmoothingRate, outwardDrift);
                 }
             }
         }
@@ -143,7 +142,7 @@ public class LegSynchronizer : MonoBehaviour
                 var l = synchronizedLegs[i].Leg;
                 if (t.Update(speedScaledDt))
                 {
-                    l.BeginStep(preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp);
+                    l.BeginStep(preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, t.RestTime);
                 }
                 if (t.Stepping)
                 {
@@ -153,10 +152,12 @@ public class LegSynchronizer : MonoBehaviour
                 }
                 else
                 {
-                    l.UpdateRest(dt, restSmoothingRate);
+                    l.UpdateRest(dt, preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, restSmoothingRate);
                 }
             }
         }
+
+
     }
 
     public void EnterStaticMode()

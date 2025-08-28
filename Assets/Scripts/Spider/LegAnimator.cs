@@ -1,3 +1,4 @@
+using Unity.Cinemachine;
 using UnityEngine;
 
 public class LegAnimator : MonoBehaviour
@@ -6,6 +7,7 @@ public class LegAnimator : MonoBehaviour
     [SerializeField] Transform footBone;
     [SerializeField] Transform ikTarget;
     [SerializeField] float stepMax;
+    [SerializeField] float driftMultiplier = 1.0f;
 
     Vector2 stepStartPosition;
     Vector2 stepGoalPosition;
@@ -99,29 +101,51 @@ public class LegAnimator : MonoBehaviour
         }
     }
 
-    public void BeginStep(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp)
+    public void ClampPositions()
     {
-        stepStartPosition = ikTarget.position;
+        //2DO!
+        //clamp bodyRight comp of stepStart and stepGoal between stepMax and stepMin (should probably do in every update? and/or in reposition)
+        //but don't do while drifting? or do do BEFORE drifting? (doo-doo lol)
+
+        //>MOVE BELOW TO CLAMP POSITION
+        //Vector2 hipPos = hipBone.position;
+        //var v = stepStartPosition - hipPos;
+        //var h = Vector2.Dot(v, bodyMovementRight);
+        //var min = stepMax - maxStrideLength;
+        //if (h < min)
+        //{
+        //    var p = hipPos + min * bodyMovementRight + Vector2.Dot(v, bodyUp) * bodyUp;
+        //    stepStartRay = GroundRaycast(p, bodyUp);
+        //    stepStartPosition = stepStartRay ? stepStartRay.point : p;
+        //}
+    }
+
+    public void BeginStep(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, float maxStrideLength)
+    {
+        var stepStartRay = GroundRaycast(ikTarget.position, bodyUp);
+        stepStartPosition = stepStartRay ? stepStartRay.point : ikTarget.position;
+
         var stepGoalRay = StepGoalRaycast(bodyMovementRight, bodyUp);
         stepGoalPosition = stepGoalRay ? stepGoalRay.point : StaticStepPos(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp);
     }
 
     /// <param name="stepProgress">btwn 0 & 1</param
     /// <param name="bodyRight">multiplied by sign of body local scale (i.e. points in direction body is facing)</param>
-    public void UpdateStep(float dt, float stepProgress, float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, bool bodyFacingRight,
+    public void UpdateStep(float dt, float stepProgress, 
+        float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, bool bodyFacingRight,
         float stepHeightSpeedMultiplier, float baseStepHeightMultiplier,
         float smoothingRate, float footRotationSpeed)
     {
         stepProgress = Mathf.Clamp(stepProgress, 0.0f, 1.0f);
 
-        if (!Physics2D.OverlapCircle(stepStartPosition, 0.01f, groundLayer))
-        {
-            var stepStartRay = GroundRaycast(stepStartPosition, bodyUp);
-            if (stepStartRay)
-            {
-                stepStartPosition = stepStartRay.point;
-            }
-        }
+        //if (!Physics2D.OverlapCircle(stepStartPosition, 0.01f, groundLayer))
+        //{
+        //    var stepStartRay = GroundRaycast(stepStartPosition, bodyUp);
+        //    if (stepStartRay)
+        //    {
+        //        stepStartPosition = stepStartRay.point;
+        //    }
+        //}
 
         var stepGoalRay = StepGoalRaycast(bodyMovementRight, bodyUp);
         stepGoalPosition = stepGoalRay ? stepGoalRay.point : StaticStepGoal(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp);
@@ -152,11 +176,17 @@ public class LegAnimator : MonoBehaviour
 
     public void UpdateStepStaticMode(float dt, float stepProgress, float bodyPosGroundHeight,
         Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, bool bodyFacingRight, float maxStrideLength,
-        float baseStepHeightMultiplier, float stepHeightSpeedMultiplier, float smoothingRate, float footRotationSpeed)
+        float baseStepHeightMultiplier, float stepHeightSpeedMultiplier, float smoothingRate, float footRotationSpeed,
+        float driftAmount = 0)
     {
         stepProgress = Mathf.Clamp(stepProgress, 0.0f, 1.0f);
         stepStartPosition = StaticStepStart(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, maxStrideLength);
         stepGoalPosition = StaticStepGoal(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp);
+        if (driftAmount != 0)
+        {
+            stepStartPosition = ApplyOutwardDrift(stepStartPosition, bodyPos, driftAmount);
+            stepGoalPosition = ApplyOutwardDrift(stepGoalPosition, bodyPos, driftAmount);
+        }
         var stepRight = (stepGoalPosition - stepStartPosition).normalized;
         var stepUp = bodyFacingRight ? stepRight.CCWPerp() : stepRight.CWPerp();
         var stepCenter = 0.5f * (stepGoalPosition + stepStartPosition);
@@ -181,18 +211,28 @@ public class LegAnimator : MonoBehaviour
         }
     }
 
-    public void UpdateRest(float dt, float smoothingRate)
+    public void UpdateRest(float dt, float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, float smoothingRate)
     {
+        var w = Vector2.Dot(stepGoalPosition - (Vector2)hipBone.position, bodyMovementRight);
+        if (w > stepMax)
+        {
+            var g = StepGoalRaycast(bodyMovementRight, bodyUp);
+            stepGoalPosition = g ? g.point : StaticStepGoal(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp);
+        }
         ikTarget.position = Vector2.Lerp(ikTarget.position, stepGoalPosition, smoothingRate * dt);
         //since we're only allowing feet to drag slightly -- i.e. they stay pretty near lastComputedStepGoal
         //-- don't worry about raycasting to ground to correct position
     }
 
     public void UpdateRestStaticMode(float dt, float restProgress, float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp,
-        float maxStrideLength, float smoothingRate)
+        float maxStrideLength, float smoothingRate, float driftAmount = 0)
     {
         //interpolate from stepGoal back towards stepStart
         var p = StaticStepPos(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, restProgress, maxStrideLength);
+        if (driftAmount != 0)
+        {
+            p = ApplyOutwardDrift(p, bodyPos, driftAmount);
+        }
         ikTarget.position = Vector2.Lerp(ikTarget.position, p, smoothingRate * dt);
     }
 
@@ -211,6 +251,15 @@ public class LegAnimator : MonoBehaviour
         {
             stepStartPosition = s.point;
         }
+    }
+
+    //make sure you call after any other updates
+    //2do: drift relative to bodyPos (or height ref pt) rather than hip
+    Vector2 ApplyOutwardDrift(Vector2 positionToDrift, Vector2 driftCenter, float driftAmount)
+    {
+        return driftCenter + (1 + driftMultiplier * driftAmount) * (positionToDrift - driftCenter);
+        //var u = (positionToDrift - driftCenter).normalized;
+        //return positionToDrift + driftMultiplier * driftAmount * u;
     }
 
     RaycastHit2D GroundRaycast(Vector2 origin, Vector2 bodyUp)

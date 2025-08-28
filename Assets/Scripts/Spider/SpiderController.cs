@@ -21,6 +21,9 @@ public class SpiderController : MonoBehaviour
     [SerializeField] float jumpForce;
     [SerializeField] float jumpVerificationTime;
     [SerializeField] float airborneLegAnimationTimeScale;
+    [SerializeField] float airborneLegDriftRate;
+    [SerializeField] float airborneLegDriftMax;
+    //[SerializeField] Vector2 airborneLegDriftDirection;
 
     LegSynchronizer legSynchronizer;
     Rigidbody2D rb;
@@ -28,6 +31,7 @@ public class SpiderController : MonoBehaviour
 
     bool jumpInput;
     float jumpVerificationTimer;
+    //float airborneLegDriftTimer;
 
     bool grounded;
     Vector2 predictiveGroundDirection;
@@ -52,6 +56,7 @@ public class SpiderController : MonoBehaviour
         legSynchronizer = GetComponent<LegSynchronizer>();
         rb = GetComponent<Rigidbody2D>();
         groundLayer = LayerMask.GetMask("Ground");
+        //airborneLegDriftDirection = airborneLegDriftDirection.normalized;
     }
 
     private void Start()
@@ -66,16 +71,11 @@ public class SpiderController : MonoBehaviour
             jumpVerificationTimer -= Time.deltaTime;
         }
 
-        //only set jumpInput when !jumpInput, since multiple Updates may happen before FixedUpdate handles the jumpInput
-        if (!jumpInput && grounded)
-        {
-            jumpInput = Input.GetKeyDown(KeyCode.Space);
-        }
+        CaptureInput();
 
-        moveInput = (Input.GetKey(KeyCode.RightArrow) ? 1 : 0) + (Input.GetKey(KeyCode.LeftArrow) ? -1 : 0);
-        if (moveInput * Orientation < 0)
+        if (!grounded)
         {
-            ChangeDirection();
+            UpdateDrift();
         }
     }
 
@@ -95,6 +95,20 @@ public class SpiderController : MonoBehaviour
         //2do (minor performance improvement): we compute Orientation * lastComputedGroundDirection (or maybe now Ori * tRight) multiple times in one update
         //either compute it once, or have lastComputedDirection already point in orientation direction
         //(are there any places where you need it to be "right facing"? i think only for the balancing)
+    }
+
+    private void CaptureInput()
+    {
+        if (!jumpInput && grounded)
+        {
+            jumpInput = Input.GetKeyDown(KeyCode.Space);
+        }
+
+        moveInput = (Input.GetKey(KeyCode.RightArrow) ? 1 : 0) + (Input.GetKey(KeyCode.LeftArrow) ? -1 : 0);
+        if (moveInput * Orientation < 0)
+        {
+            ChangeDirection();
+        }
     }
 
     private void ChangeDirection()
@@ -158,6 +172,18 @@ public class SpiderController : MonoBehaviour
         //headBone.right = MathTools.CheapRotationalLerp(headBone.right, predictiveGroundDirection, headRotationSpeed * Time.deltaTime);
     }
 
+    private void UpdateDrift()
+    {
+        //legSynchronizer.outwardDriftRate = airborneLegDriftRate;
+        //legSynchronizer.outwardDriftCenter = heightReferencePoint.position;
+        if (legSynchronizer.outwardDrift < airborneLegDriftMax)
+        {
+            legSynchronizer.outwardDrift += airborneLegDriftRate * Time.deltaTime;
+            //legSynchronizer.outwardDriftMax = airborneLegDriftMax;
+            //legSynchronizer.outwardDriftDirection = airborneLegDriftDirection;
+        }
+    }
+
 
     //GROUND DETECTION
 
@@ -178,13 +204,15 @@ public class SpiderController : MonoBehaviour
     private void OnTakeOff()
     {
         legSynchronizer.timeScale = airborneLegAnimationTimeScale;
+        legSynchronizer.outwardDrift = 0;
         legSynchronizer.EnterStaticMode();
     }
 
     private void OnLanding()
     {
         legSynchronizer.timeScale = 1;
-        legSynchronizer.EndStaticMode(FacingRight, predictiveGroundDirection);//makes more sense to use predictive GroundDir bc that's what we rotate towards?
+        legSynchronizer.outwardDrift = 0;
+        legSynchronizer.EndStaticMode(FacingRight, lastComputedGroundDirection);//makes more sense to use predictive GroundDir bc that's what we rotate towards?
     }
 
     //always "right pointing" (relative to ground outward normal)
