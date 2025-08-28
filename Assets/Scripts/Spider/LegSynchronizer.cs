@@ -142,12 +142,12 @@ public class LegSynchronizer : MonoBehaviour
                 var l = synchronizedLegs[i].Leg;
                 if (t.Update(speedScaledDt))
                 {
-                    l.BeginStep(preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, t.RestTime);
+                    l.BeginStep(preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp);
                 }
                 if (t.Stepping)
                 {
                     l.UpdateStep(dt, t.StepProgress, preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, facingRight,
-                        baseStepHeightMultiplier, stepHeightSpeedMultiplier, 
+                        baseStepHeightMultiplier, stepHeightSpeedMultiplier,
                         stepSmoothingRate, footRotationSpeed);
                 }
                 else

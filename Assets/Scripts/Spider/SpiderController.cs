@@ -212,7 +212,7 @@ public class SpiderController : MonoBehaviour
     {
         legSynchronizer.timeScale = 1;
         legSynchronizer.outwardDrift = 0;
-        legSynchronizer.EndStaticMode(FacingRight, lastComputedGroundDirection);//makes more sense to use predictive GroundDir bc that's what we rotate towards?
+        legSynchronizer.EndStaticMode(FacingRight, predictiveGroundDirection);//makes more sense to use predictive GroundDir bc that's what we rotate towards?
     }
 
     //always "right pointing" (relative to ground outward normal)
