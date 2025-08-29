@@ -31,6 +31,7 @@ public class SpiderController : MonoBehaviour
     [SerializeField] float airborneLegAnimationTimeScale;
     [SerializeField] float airborneLegDriftRate;
     [SerializeField] float airborneLegDriftMax;
+    //[SerializeField] Vector2 airborneLegDriftWeights;
 
     LegSynchronizer legSynchronizer;
     Rigidbody2D rb;
@@ -80,10 +81,10 @@ public class SpiderController : MonoBehaviour
 
         CaptureInput();
 
-        if (!grounded)
-        {
-            UpdateAirborneLegDrift();
-        }
+        //if (!grounded)
+        //{
+        //    UpdateAirborneLegDrift();
+        //}
     }
 
     private void FixedUpdate()
@@ -98,7 +99,9 @@ public class SpiderController : MonoBehaviour
         Balance();
 
         legSynchronizer.bodyGroundSpeed = grounded ? Vector2.Dot(rb.linearVelocity, Orientation * transform.right) : rb.linearVelocity.magnitude;
+        //legSynchronizer.groundDirection = lastComputedGroundDirection;
         legSynchronizer.preferredBodyPosGroundHeight = PreferredBodyPosGroundHeight;
+        legSynchronizer.stepHeightFraction = 1 - crouchProgress * crouchHeightFraction;
         //2do (minor performance improvement): we compute Orientation * lastComputedGroundDirection (or maybe now Ori * tRight) multiple times in one update
         //either compute it once, or have lastComputedDirection already point in orientation direction
         //(are there any places where you need it to be "right facing"? i think only for the balancing)
@@ -145,14 +148,7 @@ public class SpiderController : MonoBehaviour
         var spd = Vector2.Dot(rb.linearVelocity, d);
         if (moveInput != 0)
         {
-            if (grounded || spd < maxSpeed)
-            {
-                //var a = grounded ? accelFactor : accelFactor * airborneAccelMultiplier;
-                rb.AddForce(accelFactor * (maxSpeed - spd) * rb.mass * d);
-            }
-            //when grounded, apply force even when spd > maxSpeed (in which case it's a negative force)
-            //to control speed on downhills
-            //don't want to follow this convention when not grounded, because the negative forces create a weird feel
+            rb.AddForce(accelFactor * (maxSpeed - spd) * rb.mass * d);
         }
         else if (moveInput == 0 && grounded)
         {
@@ -348,19 +344,24 @@ public class SpiderController : MonoBehaviour
     //we could also just do horizontal casts + the two 90 deg casts
     private IEnumerable<RaycastHit2D> BackupGroundHits(Vector2 origin, Vector2 tDown, Vector2 tRight, float length)
     {
-        var d30 = MathTools.cos30 * tDown + MathTools.sin30 * tRight;
-        var d60 = MathTools.cos60 * tDown + MathTools.sin60 * tRight;
-        var dM30 = MathTools.cos30 * tDown - MathTools.sin30 * tRight;
-        var dM60 = MathTools.cos60 * tDown - MathTools.sin60 * tRight;
+        var d30 = MathTools.cos30 * tDown - MathTools.sin30 * tRight;
+        var d45 = MathTools.cos45 * tDown - MathTools.sin45 * tRight;
+        //var d60 = MathTools.cos60 * tDown + MathTools.sin60 * tRight;
+        var dM30 = MathTools.cos30 * tDown + MathTools.sin30 * tRight;
+        var dM45 = MathTools.cos45 * tDown + MathTools.sin45 * tRight;
+        //var dM60 = MathTools.cos60 * tDown - MathTools.sin60 * tRight;
         //var l30 = length / MathTools.cos30;
         //var l60 = length / MathTools.cos60;
         //var l90 = 3 * length;
         yield return MathTools.DebugRaycast(origin, d30, length, groundLayer, Color.yellow);
-        yield return MathTools.DebugRaycast(origin, d60, length, groundLayer, Color.yellow);
+        yield return MathTools.DebugRaycast(origin, d45, length, groundLayer, Color.yellow);
+
+        //yield return MathTools.DebugRaycast(origin, d60, length, groundLayer, Color.yellow);
         //yield return MathTools.DrawnRaycast(origin, tRight, length, groundLayer, Color.red);
         yield return MathTools.DebugRaycast(origin, dM30, length, groundLayer, Color.yellow);
-        yield return MathTools.DebugRaycast(origin, dM60, length, groundLayer, Color.yellow);
-        //yield return MathTools.DrawnRaycast(origin, -tRight, length, groundLayer, Color.red);
+        yield return MathTools.DebugRaycast(origin, dM45, length, groundLayer, Color.yellow);
 
+        //yield return MathTools.DebugRaycast(origin, dM60, length, groundLayer, Color.yellow);
+        //yield return MathTools.DrawnRaycast(origin, -tRight, length, groundLayer, Color.red);
     }
 }

@@ -86,9 +86,12 @@ public class LegSynchronizer : MonoBehaviour
     bool staticMode;
 
     public float bodyGroundSpeed;
+    //public Vector2 groundDirection;
     public float preferredBodyPosGroundHeight;
     public float timeScale = 1;
+    public float stepHeightFraction;
     public float outwardDrift;
+    public Vector2 outwardDriftWeights;
 
     //private void Awake()
     //{
@@ -103,13 +106,16 @@ public class LegSynchronizer : MonoBehaviour
         Vector2 bodyPos = bodyRb.transform.position;
         var dt = Time.deltaTime * timeScale;
 
-        var speedFrac = bodyGroundSpeed < speedCapMin ? 0 : bodyGroundSpeed / speedCapMax;
-        var stepHeightSpeedMultiplier = Mathf.Min(speedFrac, 1);
-        var speedScaledDt = speedFrac * dt;
+        var sf = bodyGroundSpeed / speedCapMax;
+        var groundSpeedFrac = bodyGroundSpeed < speedCapMin ? 0 : sf;
+        var baseStepHeightMultiplier = this.baseStepHeightMultiplier * stepHeightFraction;
+        var stepHeightSpeedMultiplier = Mathf.Min(groundSpeedFrac, 1);
+        var speedScaledDt = groundSpeedFrac * dt;
         dt = Mathf.Max(speedScaledDt, dt);
 
         if (staticMode)
         {
+            var driftSpeedMultiplier = Mathf.Clamp(sf, 0.5f, 1.25f);
             for (int i = 0; i < timers.Length; i++)
             {
                 var t = timers[i];
@@ -123,12 +129,12 @@ public class LegSynchronizer : MonoBehaviour
                 {
                     l.UpdateStepStaticMode(dt, t.StepProgress, preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, facingRight, t.RestTime,
                         baseStepHeightMultiplier, stepHeightSpeedMultiplier,
-                        stepSmoothingRate, footRotationSpeed, outwardDrift);
+                        stepSmoothingRate, footRotationSpeed, outwardDrift * driftSpeedMultiplier);
                 }
                 else
                 {
                     l.UpdateRestStaticMode(dt, t.RestProgress, preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, t.RestTime, 
-                        restSmoothingRate, outwardDrift);
+                        restSmoothingRate, outwardDrift * driftSpeedMultiplier);
                 }
             }
         }
@@ -160,16 +166,14 @@ public class LegSynchronizer : MonoBehaviour
 
     public void EnterStaticMode()
     {
-        staticMode = true;
-        //if (!staticMode)
-        //{
-        //    var p = body.transform.position;
-        //    for (int i = 0; i < synchronizedLegs.Length; i++)
-        //    {
-        //        synchronizedLegs[i].Leg.OnEnterStaticMode(p);
-        //    }
-        //    staticMode = true;
-        //}
+        if (!staticMode)
+        {
+            staticMode = true;
+            for (int i = 0; i < synchronizedLegs.Length; i++)
+            {
+                synchronizedLegs[i].Leg.RandomizeDriftWeights();
+            }
+        }
     }
 
     public void EndStaticMode(bool bodyFacingRight, Vector2 bodyRight)
@@ -178,14 +182,12 @@ public class LegSynchronizer : MonoBehaviour
         {
             staticMode = false;
             RepositionAllLegs(bodyFacingRight, bodyRight);
-            //LateUpdate();
         }
     }
 
     //yes, legSynch has access to the rigidbody (so could get bodyRight) but you could e.g. pass groundDirection here instead
     public void RepositionAllLegs(bool bodyFacingRight, Vector2 bodyRight)
     {
-        //Vector2 up = right.CCWPerp();
         Vector2 bPos = bodyRb.transform.position;
         Vector2 bodyMovementRight = bodyFacingRight ? bodyRight : -bodyRight;
         Vector2 bodyUp = bodyRight.CCWPerp();

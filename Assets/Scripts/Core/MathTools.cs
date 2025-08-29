@@ -4,15 +4,15 @@ public static class MathTools
 {
     static System.Random rng;
 
-    public const float cos30 = 0.86602540378f;// sqrt(3)/2
+    public const float cos30 = 0.8660254f;// sqrt(3)/2
     public const float sin30 = 0.5f;
-    public const float tan30 = 0.57735026919f;// 1/sqrt(3)
-    public const float cos45 = 0.70710678118f;// 1/sqrt(2)
+    public const float tan30 = 0.5773502f;// 1/sqrt(3)
+    public const float cos45 = 0.7071067f;// 1/sqrt(2)
     public const float sin45 = cos45;
     public const float tan45 = 1;
     public const float cos60 = sin30;
     public const float sin60 = cos30;
-    public const float tan60 = 1.73205080757f;// sqrt(3)
+    public const float tan60 = 1.7320508f;// sqrt(3)
 
     public static System.Random RNG
     {

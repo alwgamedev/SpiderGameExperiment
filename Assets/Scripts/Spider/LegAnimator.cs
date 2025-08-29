@@ -6,15 +6,20 @@ public class LegAnimator : MonoBehaviour
     [SerializeField] Transform footBone;
     [SerializeField] Transform ikTarget;
     [SerializeField] float stepMax;
-    [SerializeField] float driftMultiplier = 1.0f;
+    //[SerializeField] float driftMultiplier = 1.0f;
+    [SerializeField] Vector2 driftWeightsMax;
+    [SerializeField] Vector2 driftWeightsMin;
+    //[SerializeField] float randomDriftWeightsSmoothingRate;
 
     Vector2 stepStartPosition;
     Vector2 stepGoalPosition;
+    Vector2 currentDriftWeights;
     int groundLayer;
 
     private void Awake()
     {
         groundLayer = LayerMask.GetMask("Ground");
+        //RandomizeDriftWeights();
     }
 
     //very useful for identifying issues
@@ -40,6 +45,12 @@ public class LegAnimator : MonoBehaviour
         {
             ikTarget.position = c.point;
         }
+    }
+
+    public void RandomizeDriftWeights()
+    {
+        currentDriftWeights.x = MathTools.RandomFloat(driftWeightsMin.x, driftWeightsMax.x);
+        currentDriftWeights.y = MathTools.RandomFloat(driftWeightsMin.y, driftWeightsMax.y);
     }
 
     public void RepositionStepping(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, float maxStrideLength)
@@ -164,8 +175,11 @@ public class LegAnimator : MonoBehaviour
         stepGoalPosition = StaticStepGoal(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp);
         if (driftAmount != 0)
         {
-            stepStartPosition = ApplyOutwardDrift(stepStartPosition, bodyPos, driftAmount);
-            stepGoalPosition = ApplyOutwardDrift(stepGoalPosition, bodyPos, driftAmount);
+            //PerturbDriftWeights(dt);
+            stepStartPosition = ApplyOutwardDrift(stepStartPosition, bodyPos, bodyMovementRight, bodyUp, 
+                driftAmount, currentDriftWeights.x, currentDriftWeights.y);
+            stepGoalPosition = ApplyOutwardDrift(stepGoalPosition, bodyPos, bodyMovementRight, bodyUp, 
+                driftAmount, currentDriftWeights.x, currentDriftWeights.y);
         }
         var stepRight = (stepGoalPosition - stepStartPosition).normalized;
         var stepUp = bodyFacingRight ? stepRight.CCWPerp() : stepRight.CWPerp();
@@ -211,7 +225,9 @@ public class LegAnimator : MonoBehaviour
         var p = StaticStepPos(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, restProgress, maxStrideLength);
         if (driftAmount != 0)
         {
-            p = ApplyOutwardDrift(p, bodyPos, driftAmount);
+            //PerturbDriftWeights(dt);
+            p = ApplyOutwardDrift(p, bodyPos, bodyMovementRight, bodyUp, 
+                driftAmount, currentDriftWeights.x, currentDriftWeights.y);
         }
         ikTarget.position = Vector2.Lerp(ikTarget.position, p, smoothingRate * dt);
     }
@@ -233,12 +249,24 @@ public class LegAnimator : MonoBehaviour
         }
     }
 
-    Vector2 ApplyOutwardDrift(Vector2 positionToDrift, Vector2 driftCenter, float driftAmount)
+    //the float drift weights x,y (instead of vector) are so you can have default parameters in other methods (without having
+    //to construct a vector to pass into this method)
+    Vector2 ApplyOutwardDrift(Vector2 positionToDrift, Vector2 driftCenter, Vector2 bodyRight, Vector2 bodyUp, 
+        float driftAmount, float driftWeightX, float driftWeightY)
     {
-        return driftCenter + (1 + driftMultiplier * driftAmount) * (positionToDrift - driftCenter);
+        //var d = positionToDrift - driftCenter;
+        return positionToDrift + driftAmount * (driftWeightX * bodyRight + driftWeightY * bodyUp);
         //var u = (positionToDrift - driftCenter).normalized;
         //return positionToDrift + driftMultiplier * driftAmount * u;
     }
+
+    //private void PerturbDriftWeights(float dt)
+    //{
+    //    var x = MathTools.RandomFloat(driftWeightsMin.x, driftWeightsMax.x);
+    //    var y = MathTools.RandomFloat(driftWeightsMin.y, driftWeightsMax.y);
+    //    currentDriftWeights.x = Mathf.Lerp(currentDriftWeights.x, x, randomDriftWeightsSmoothingRate * dt);
+    //    currentDriftWeights.y = Mathf.Lerp(currentDriftWeights.y, y, randomDriftWeightsSmoothingRate * dt);
+    //}
 
     RaycastHit2D GroundRaycast(Vector2 origin, Vector2 bodyUp)
     {
