@@ -157,12 +157,14 @@ public class LegAnimator : MonoBehaviour
 
         //ROTATE FOOT
 
-        if (stepHeightSpeedMultiplier != 0)
-        {
-            //wanting feet to point straight down is spider-specific, I guess
-            var r = bodyFacingRight ? -bodyUp : bodyUp;//r needs to be normalized before lerp (in case you change r in future)
-            footBone.right = Vector2.Lerp(footBone.right, r, footRotationSpeed * dt);
-        }
+        //footBone.right = bodyFacingRight ? -bodyUp : bodyUp;
+
+        //if (stepHeightSpeedMultiplier != 0)
+        //{
+        //    //wanting feet to point straight down is spider-specific, I guess
+        //    var r = bodyFacingRight ? -bodyUp : bodyUp;//r needs to be normalized before lerp (in case you change r in future)
+        //    footBone.right = Vector2.Lerp(footBone.right, r, footRotationSpeed * dt);
+        //}
     }
 
     public void UpdateStepStaticMode(float dt, float stepProgress, float bodyPosGroundHeight,
@@ -176,9 +178,9 @@ public class LegAnimator : MonoBehaviour
         if (driftAmount != 0)
         {
             //PerturbDriftWeights(dt);
-            stepStartPosition = ApplyOutwardDrift(stepStartPosition, bodyPos, bodyMovementRight, bodyUp, 
+            stepStartPosition = ApplyOutwardDrift(stepStartPosition, bodyMovementRight, bodyUp,
                 driftAmount, currentDriftWeights.x, currentDriftWeights.y);
-            stepGoalPosition = ApplyOutwardDrift(stepGoalPosition, bodyPos, bodyMovementRight, bodyUp, 
+            stepGoalPosition = ApplyOutwardDrift(stepGoalPosition, bodyMovementRight, bodyUp,
                 driftAmount, currentDriftWeights.x, currentDriftWeights.y);
         }
         var stepRight = (stepGoalPosition - stepStartPosition).normalized;
@@ -197,15 +199,16 @@ public class LegAnimator : MonoBehaviour
 
         ikTarget.position = Vector2.Lerp(ikTarget.position, newTargetPosition, smoothingRate * dt);
 
-        if (stepHeightSpeedMultiplier != 0)
-        {
-            //wanting feet to point straight down is spider-specific, I guess
-            var r = bodyFacingRight ? -bodyUp : bodyUp;//r needs to be normalized before lerp (in case you change r in future)
-            footBone.right = Vector2.Lerp(footBone.right, r, footRotationSpeed * dt);
-        }
+        //if (stepHeightSpeedMultiplier != 0)
+        //{
+        //    //wanting feet to point straight down is spider-specific, I guess
+        //    var r = bodyFacingRight ? -bodyUp : bodyUp;//r needs to be normalized before lerp (in case you change r in future)
+        //    footBone.right = Vector2.Lerp(footBone.right, r, footRotationSpeed * dt);
+        //}
     }
 
-    public void UpdateRest(float dt, float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, float smoothingRate)
+    public void UpdateRest(float dt, float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp,
+        float smoothingRate)
     {
         var w = Vector2.Dot(stepGoalPosition - (Vector2)hipBone.position, bodyMovementRight);
         if (w > stepMax)
@@ -216,6 +219,8 @@ public class LegAnimator : MonoBehaviour
         ikTarget.position = Vector2.Lerp(ikTarget.position, stepGoalPosition, smoothingRate * dt);
         //since we're only allowing feet to drag slightly -- i.e. they stay pretty near lastComputedStepGoal
         //-- don't worry about raycasting to ground to correct position
+
+        //footBone.right = bodyFacingRight ? -bodyUp : bodyUp;
     }
 
     public void UpdateRestStaticMode(float dt, float restProgress, float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp,
@@ -226,7 +231,7 @@ public class LegAnimator : MonoBehaviour
         if (driftAmount != 0)
         {
             //PerturbDriftWeights(dt);
-            p = ApplyOutwardDrift(p, bodyPos, bodyMovementRight, bodyUp, 
+            p = ApplyOutwardDrift(p, bodyMovementRight, bodyUp, 
                 driftAmount, currentDriftWeights.x, currentDriftWeights.y);
         }
         ikTarget.position = Vector2.Lerp(ikTarget.position, p, smoothingRate * dt);
@@ -249,9 +254,20 @@ public class LegAnimator : MonoBehaviour
         }
     }
 
+    //private void UpdateFootRotation(Vector2 bodyUp, bool facingRight)
+    //{
+    //    footBone.right = facingRight ? -bodyUp : bodyUp;
+    //    //if (stepHeightSpeedMultiplier != 0)
+    //    //{
+    //    //    //wanting feet to point straight down is spider-specific, I guess
+    //    //    var r = bodyFacingRight ? -bodyUp : bodyUp;//r needs to be normalized before lerp (in case you change r in future)
+    //    //    footBone.right = Vector2.Lerp(footBone.right, r, footRotationSpeed * dt);
+    //    //}
+    //}
+
     //the float drift weights x,y (instead of vector) are so you can have default parameters in other methods (without having
     //to construct a vector to pass into this method)
-    Vector2 ApplyOutwardDrift(Vector2 positionToDrift, Vector2 driftCenter, Vector2 bodyRight, Vector2 bodyUp, 
+    Vector2 ApplyOutwardDrift(Vector2 positionToDrift, Vector2 bodyRight, Vector2 bodyUp, 
         float driftAmount, float driftWeightX, float driftWeightY)
     {
         //var d = positionToDrift - driftCenter;

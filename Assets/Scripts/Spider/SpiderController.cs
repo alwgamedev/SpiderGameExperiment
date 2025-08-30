@@ -9,6 +9,7 @@ public class SpiderController : MonoBehaviour
     [SerializeField] float groundRaycastLengthFactor;
     [SerializeField] float groundednessToleranceFactor;
     [SerializeField] float predictiveGroundDirectionSpacing;
+    [SerializeField] float failedGroundRaycastSmoothingRate;
     [SerializeField] float accelFactor;
     [SerializeField] float decelFactor;
     [SerializeField] float airborneAccelMultiplier;
@@ -16,14 +17,15 @@ public class SpiderController : MonoBehaviour
     [SerializeField] float steepSlopeGripDistancePower;
     [SerializeField] float slipRate;
     [SerializeField] float maxSpeed;
+    [SerializeField] float maxSpeedAirborne;
     [SerializeField] float preferredRideHeight;
     [SerializeField] float heightSpringForce;
     [SerializeField] float heightSpringDamping;
     [SerializeField] float balanceSpringForce;
     [SerializeField] float balanceSpringDamping;
-    [SerializeField] float airborneBalanceForceMultiplier;
     [SerializeField] float jumpForce;
     [SerializeField] float jumpForceCrouchBoostRate;
+    [SerializeField] float uphillJumpDirectionRotationRate;
     [SerializeField] float jumpVerificationTime;
     [SerializeField] float crouchHeightFraction;//fraction of preferred ground height that body will crouch down by
     [SerializeField] float crouchTime;
@@ -146,9 +148,10 @@ public class SpiderController : MonoBehaviour
     {
         var d = Orientation * transform.right;
         var spd = Vector2.Dot(rb.linearVelocity, d);
+        var maxSpd = grounded ? maxSpeed : maxSpeedAirborne;
         if (moveInput != 0)
         {
-            rb.AddForce(accelFactor * (maxSpeed - spd) * rb.mass * d);
+            rb.AddForce(accelFactor * (maxSpd - spd) * rb.mass * d);
         }
         else if (moveInput == 0 && grounded)
         {
@@ -206,6 +209,15 @@ public class SpiderController : MonoBehaviour
 
     private Vector2 JumpDirection()
     {
+        if (lastComputedGroundDirection.y * Orientation > 0)//if facing uphill add a little forward component to the jump
+        {
+            //return Vector2.up;
+            var t = uphillJumpDirectionRotationRate * Mathf.Abs(lastComputedGroundDirection.y);
+            return MathTools.CheapRotationalLerp(transform.up, Vector2.up, t);
+            //return (1 - uphillJumpHeightReductionRate) * transform.up + t * Orientation * transform.right;
+            //return MathTools.CheapRotationalLerp(transform.up, Orientation * transform.right, t);
+        }
+
         return transform.up;
     }
 
@@ -226,10 +238,10 @@ public class SpiderController : MonoBehaviour
     private void Balance()
     {
         var c = Vector2.Dot(transform.up, grounded ? predictiveGroundDirection : lastComputedGroundDirection);
-        if (!grounded)
-        {
-            c *= airborneBalanceForceMultiplier;
-        }
+        //if (!grounded)
+        //{
+        //    c *= airborneBalanceForceMultiplier;
+        //}
         var f = c * balanceSpringForce - balanceSpringDamping * rb.angularVelocity;
         rb.AddTorque(rb.mass * f);
         //headBone.right = MathTools.CheapRotationalLerp(headBone.right, predictiveGroundDirection, headRotationSpeed * Time.deltaTime);
@@ -290,7 +302,6 @@ public class SpiderController : MonoBehaviour
             if (grounded)
             { 
                 var r2 = MathTools.DebugRaycast(o + Orientation * tRight, tDown, l, groundLayer, Color.red);
-                Debug.DrawLine(o + Orientation * tRight, o + Orientation * tRight + l * tDown, Color.red);
                 predictiveGroundDirection = r2 ? (FacingRight ? (r2.point - r.point).normalized : (r.point - r2.point).normalized) : lastComputedGroundDirection;
                 return;
             }
@@ -315,7 +326,7 @@ public class SpiderController : MonoBehaviour
         }
 
         lastComputedGroundDistance = Mathf.Infinity;
-        lastComputedGroundDirection = Vector2.right; 
+        lastComputedGroundDirection = MathTools.CheapRotationalLerp(lastComputedGroundDirection, Vector2.right, failedGroundRaycastSmoothingRate * Time.deltaTime); 
         predictiveGroundDirection = lastComputedGroundDirection;
         SetGrounded(false);//generally we should not set grounded while verifying jump, but setting false is fine (so no pt in slowing things down with a bool check)
 

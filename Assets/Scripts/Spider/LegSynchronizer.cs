@@ -156,7 +156,8 @@ public class LegSynchronizer : MonoBehaviour
                 }
                 else
                 {
-                    l.UpdateRest(dt, preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, restSmoothingRate);
+                    l.UpdateRest(dt, preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp,
+                        restSmoothingRate);
                 }
             }
         }
