@@ -11,11 +11,12 @@ public class SpiderController : MonoBehaviour
     [SerializeField] float predictiveGroundDirectionSpacing;
     [SerializeField] float failedGroundRaycastSmoothingRate;
     [SerializeField] float accelFactor;
+    [SerializeField] float accelCap;
     [SerializeField] float decelFactor;
     [SerializeField] float airborneAccelMultiplier;
     [SerializeField] float steepSlopeGripStrength;
     [SerializeField] float steepSlopeGripDistancePower;
-    [SerializeField] float slipRate;
+    [SerializeField] float slipPointSmoothingRate;
     [SerializeField] float maxSpeed;
     [SerializeField] float maxSpeedAirborne;
     [SerializeField] float preferredRideHeight;
@@ -146,9 +147,13 @@ public class SpiderController : MonoBehaviour
         var spd = Vector2.Dot(rb.linearVelocity, d);
         var maxSpd = grounded ? maxSpeed : maxSpeedAirborne;
         var a = grounded ? accelFactor : accelFactor * airborneAccelMultiplier;
+        var s = Mathf.Min(maxSpd - spd, accelCap * maxSpd);
+        //otherwise if speed is highly negative, we get ungodly rates of acceleration
+        //(and note that we are doing it in a way that scales with max speed
+        //-- so you can limit maxSpd - spd to being e.g. double the maxSpeed or w/e)
         if (moveInput != 0)
         {
-            rb.AddForce(a * (maxSpd - spd) * rb.mass * d);
+            rb.AddForce(a * s * rb.mass * d);
         }
         else if (moveInput == 0 && grounded)
         {
@@ -197,7 +202,7 @@ public class SpiderController : MonoBehaviour
             jumpVerificationTimer = jumpVerificationTime;
             var jumpDir = JumpDirection();
             lastComputedGroundDirection = jumpDir.CWPerp();
-            Debug.DrawLine(transform.position, (Vector2)transform.position + lastComputedGroundDirection, Color.green, 3f);
+            //Debug.DrawLine(transform.position, (Vector2)transform.position + lastComputedGroundDirection, Color.green, 3f);
             rb.AddForce(rb.mass * JumpForce() * jumpDir, ForceMode2D.Impulse);
         }
     }
@@ -295,8 +300,7 @@ public class SpiderController : MonoBehaviour
             Vector2 tDown = -transform.up;
             Vector2 tRight = transform.right;
             var l = GroundRaycastLength;
-            var r = Physics2D.Raycast(o, tDown, l, groundLayer);
-            Debug.DrawLine(o, o + l * tDown, Color.red);
+            var r = MathTools.DebugRaycast(o, tDown, l, groundLayer, Color.red);
 
             if (r)
             {
@@ -337,19 +341,26 @@ public class SpiderController : MonoBehaviour
 
     private void HandleSuccessfulGroundHit(RaycastHit2D r)
     {
+        Vector2 p = heightReferencePoint.position;//the raycast origin
+        var up = r.normal;
+        var right = r.normal.CWPerp();
+        var d = Vector2.Dot(r.point - p, up);
+        var q = p + d * up;
+
+        lastComputedGroundDirection = right;
+        lastComputedGroundDistance = r.distance;
+
         if (moveInput != 0 || !grounded || lastComputedGroundPoint.x == Mathf.Infinity)
         {
-            lastComputedGroundPoint = r.point;
+            lastComputedGroundPoint = q;
             groundSlipPoint = lastComputedGroundPoint;
         }
         else
         {
-            groundSlipPoint = Vector2.Lerp(lastComputedGroundPoint, r.point, slipRate * Time.deltaTime);
+            groundSlipPoint = Vector2.Lerp(lastComputedGroundPoint, r.point, slipPointSmoothingRate * Time.deltaTime);
         }
-        lastComputedGroundDistance = r.distance;
-        lastComputedGroundDirection = r.normal.CWPerp();
 
-        SetGrounded(r.distance < GroundednessTolerance);
+        SetGrounded(lastComputedGroundDistance < GroundednessTolerance);
     }
 
     //2do: should we distribute these "radially" or horizontally?
