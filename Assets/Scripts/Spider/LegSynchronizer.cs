@@ -146,7 +146,9 @@ public class LegSynchronizer : MonoBehaviour
                 var l = synchronizedLegs[i].Leg;
                 if (t.Update(speedScaledDt))
                 {
-                    l.BeginStep(preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp);
+                    l.Reposition(preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp,
+                        t.RestTime, t.Stepping ? 0 : t.RestProgress);
+                    //l.BeginStep(preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp);
                 }
                 if (t.Stepping)
                 {
@@ -189,20 +191,22 @@ public class LegSynchronizer : MonoBehaviour
     //yes, legSynch has access to the rigidbody (so could get bodyRight) but you could e.g. pass groundDirection here instead
     public void RepositionAllLegs(bool bodyFacingRight, Vector2 bodyRight)
     {
-        Vector2 bPos = bodyRb.transform.position;
+        Vector2 bodyPos = bodyRb.transform.position;
         Vector2 bodyMovementRight = bodyFacingRight ? bodyRight : -bodyRight;
         Vector2 bodyUp = bodyRight.CCWPerp();
         for (int i = 0; i < synchronizedLegs.Length; i++)
         {
             var t = timers[i];
-            if (t.Stepping)
-            {
-                synchronizedLegs[i].Leg.RepositionStepping(preferredBodyPosGroundHeight, bPos, bodyMovementRight, bodyUp, t.RestTime);
-            }
-            else
-            {
-                synchronizedLegs[i].Leg.RepositionResting(preferredBodyPosGroundHeight, bPos, bodyMovementRight, bodyUp, t.RestProgress, t.RestTime); 
-            }
+            synchronizedLegs[i].Leg.Reposition(preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp,
+                t.RestTime, t.Stepping ? 0 : t.RestProgress);
+            //if (t.Stepping)
+            //{
+            //    synchronizedLegs[i].Leg.RepositionStepping(preferredBodyPosGroundHeight, bPos, bodyMovementRight, bodyUp, t.RestTime);
+            //}
+            //else
+            //{
+            //    synchronizedLegs[i].Leg.RepositionResting(preferredBodyPosGroundHeight, bPos, bodyMovementRight, bodyUp, t.RestProgress, t.RestTime); 
+            //}
         }
     }
 

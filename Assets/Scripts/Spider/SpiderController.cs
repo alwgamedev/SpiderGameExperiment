@@ -101,12 +101,8 @@ public class SpiderController : MonoBehaviour
         Balance();
 
         legSynchronizer.bodyGroundSpeed = grounded ? Vector2.Dot(rb.linearVelocity, Orientation * transform.right) : rb.linearVelocity.magnitude;
-        //legSynchronizer.groundDirection = lastComputedGroundDirection;
         legSynchronizer.preferredBodyPosGroundHeight = PreferredBodyPosGroundHeight;
         legSynchronizer.stepHeightFraction = 1 - crouchProgress * crouchHeightFraction;
-        //2do (minor performance improvement): we compute Orientation * lastComputedGroundDirection (or maybe now Ori * tRight) multiple times in one update
-        //either compute it once, or have lastComputedDirection already point in orientation direction
-        //(are there any places where you need it to be "right facing"? i think only for the balancing)
     }
 
     private void CaptureInput()
@@ -149,9 +145,10 @@ public class SpiderController : MonoBehaviour
         var d = Orientation * transform.right;
         var spd = Vector2.Dot(rb.linearVelocity, d);
         var maxSpd = grounded ? maxSpeed : maxSpeedAirborne;
+        var a = grounded ? accelFactor : accelFactor * airborneAccelMultiplier;
         if (moveInput != 0)
         {
-            rb.AddForce(accelFactor * (maxSpd - spd) * rb.mass * d);
+            rb.AddForce(a * (maxSpd - spd) * rb.mass * d);
         }
         else if (moveInput == 0 && grounded)
         {
@@ -198,7 +195,10 @@ public class SpiderController : MonoBehaviour
             jumpInput = false;
             SetGrounded(false);
             jumpVerificationTimer = jumpVerificationTime;
-            rb.AddForce(rb.mass * JumpForce() * JumpDirection(), ForceMode2D.Impulse);
+            var jumpDir = JumpDirection();
+            lastComputedGroundDirection = jumpDir.CWPerp();
+            Debug.DrawLine(transform.position, (Vector2)transform.position + lastComputedGroundDirection, Color.green, 3f);
+            rb.AddForce(rb.mass * JumpForce() * jumpDir, ForceMode2D.Impulse);
         }
     }
 
@@ -289,46 +289,49 @@ public class SpiderController : MonoBehaviour
     //always "right pointing" (relative to ground outward normal)
     private void UpdateGroundData()
     {
-        Vector2 o = heightReferencePoint.position;
-        Vector2 tDown = -transform.up;
-        Vector2 tRight = transform.right;
-        var l = GroundRaycastLength;
-        var r = Physics2D.Raycast(o, tDown, l, groundLayer);
-        Debug.DrawLine(o, o + l * tDown, Color.red);
-
-        if (r)
+        if (!VerifyingJump())
         {
-            HandleSuccessfulGroundHit(r);
-            if (grounded)
-            { 
-                var r2 = MathTools.DebugRaycast(o + Orientation * tRight, tDown, l, groundLayer, Color.red);
-                predictiveGroundDirection = r2 ? (FacingRight ? (r2.point - r.point).normalized : (r.point - r2.point).normalized) : lastComputedGroundDirection;
+            Vector2 o = heightReferencePoint.position;
+            Vector2 tDown = -transform.up;
+            Vector2 tRight = transform.right;
+            var l = GroundRaycastLength;
+            var r = Physics2D.Raycast(o, tDown, l, groundLayer);
+            Debug.DrawLine(o, o + l * tDown, Color.red);
+
+            if (r)
+            {
+                HandleSuccessfulGroundHit(r);
+                if (grounded)
+                {
+                    var r2 = MathTools.DebugRaycast(o + Orientation * tRight, tDown, l, groundLayer, Color.red);
+                    predictiveGroundDirection = r2 ? (FacingRight ? (r2.point - r.point).normalized : (r.point - r2.point).normalized) : lastComputedGroundDirection;
+                    return;
+                }
+            }
+
+            //if r1 fails or distance was too large to be considered grounded, compute backup ground hits and choose shortest one
+            float minDist = Mathf.Infinity;
+            foreach (var s in BackupGroundHits(o, tDown, tRight, l))
+            {
+                if (s && s.distance < minDist)
+                {
+                    minDist = s.distance;
+                    r = s;
+                }
+            }
+
+            if (r)
+            {
+                HandleSuccessfulGroundHit(r);
+                predictiveGroundDirection = lastComputedGroundDirection;
                 return;
             }
-        }
-
-        //if r1 fails or distance was too large to be considered grounded, compute backup ground hits and choose shortest one
-        float minDist = Mathf.Infinity;
-        foreach (var s in BackupGroundHits(o, tDown, tRight, l))
-        {
-            if (s && s.distance < minDist)
-            {
-                minDist = s.distance;
-                r = s;
-            }
-        }
-
-        if (r)
-        {
-            HandleSuccessfulGroundHit(r);
-            predictiveGroundDirection = lastComputedGroundDirection;
-            return;
         }
 
         lastComputedGroundDistance = Mathf.Infinity;
         lastComputedGroundDirection = MathTools.CheapRotationalLerp(lastComputedGroundDirection, Vector2.right, failedGroundRaycastSmoothingRate * Time.deltaTime); 
         predictiveGroundDirection = lastComputedGroundDirection;
-        SetGrounded(false);//generally we should not set grounded while verifying jump, but setting false is fine (so no pt in slowing things down with a bool check)
+        SetGrounded(false);
 
     }
 

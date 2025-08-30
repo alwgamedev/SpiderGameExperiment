@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class LegAnimator : MonoBehaviour
@@ -53,73 +54,78 @@ public class LegAnimator : MonoBehaviour
         currentDriftWeights.y = MathTools.RandomFloat(driftWeightsMin.y, driftWeightsMax.y);
     }
 
-    public void RepositionStepping(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, float maxStrideLength)
+    public void Reposition(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, 
+        float maxStrideLength, float restProgress = 0)
     {
         //approximate step start position and step goal
-        var start = StepStartRaycast(bodyMovementRight, bodyUp, maxStrideLength);
-        var goal = StepGoalRaycast(bodyMovementRight, bodyUp);
 
-        if (start)
-        {
-            stepStartPosition = start.point;
-        }
-        else
-        {
-            var p = StaticStepStart(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, maxStrideLength);
-            var g = GroundRaycast(p, bodyUp);
-            stepStartPosition = g ? g.point : p;
-        }
+        RecalculateStepStart(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, maxStrideLength);
+        RecalculateStepGoal(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, maxStrideLength, restProgress);
 
-        if (goal)
-        {
-            stepGoalPosition = goal.point;
-        }
-        else
-        {
-            var p = StaticStepGoal(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp);
-            var g = GroundRaycast(p, bodyUp);
-            stepGoalPosition = g ? g.point : p;
-        }
+        //var start = StepStartRaycast(bodyMovementRight, bodyUp, maxStrideLength);
+        //var goal = StepGoalRaycast(bodyMovementRight, bodyUp);
+
+        //if (start)
+        //{
+        //    stepStartPosition = start.point;
+        //}
+        //else
+        //{
+        //    var p = StaticStepStart(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, maxStrideLength);
+        //    var g = GroundRaycast(p, bodyUp);
+        //    stepStartPosition = g ? g.point : p;
+        //}
+
+        //if (goal)
+        //{
+        //    stepGoalPosition = goal.point;
+        //}
+        //else
+        //{
+        //    var p = StaticStepGoal(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp);
+        //    var g = GroundRaycast(p, bodyUp);
+        //    stepGoalPosition = g ? g.point : p;
+        //}
     }
 
-    public void RepositionResting(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, 
-        float restProgress, float maxStrideLength)
-    {
-        var start = StepStartRaycast(bodyMovementRight, bodyUp, maxStrideLength);
-        var goal = StepPosRaycast(bodyMovementRight, bodyUp, restProgress, maxStrideLength);
+    //public void RepositionResting(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, 
+    //    float restProgress, float maxStrideLength)
+    //{
+    //    var start = StepStartRaycast(bodyMovementRight, bodyUp, maxStrideLength);
+    //    var goal = StepPosRaycast(bodyMovementRight, bodyUp, restProgress, maxStrideLength);
 
-        if (start)
-        {
-            stepStartPosition = start.point;
-        }
-        else
-        {
-            var p = StaticStepStart(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, maxStrideLength);
-            var g = GroundRaycast(p, bodyUp);
-            stepStartPosition = g ? g.point : p;
-        }
+    //    if (start)
+    //    {
+    //        stepStartPosition = start.point;
+    //    }
+    //    else
+    //    {
+    //        var p = StaticStepStart(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, maxStrideLength);
+    //        var g = GroundRaycast(p, bodyUp);
+    //        stepStartPosition = g ? g.point : p;
+    //    }
 
-        if (goal)
-        {
-            stepGoalPosition = goal.point;
-        }
-        else
-        {
-            var p = StaticStepPos(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, restProgress, maxStrideLength);
-            var g = GroundRaycast(p, bodyUp);
-            stepGoalPosition = g ? g.point : p;
-        }
-    }
+    //    if (goal)
+    //    {
+    //        stepGoalPosition = goal.point;
+    //    }
+    //    else
+    //    {
+    //        var p = StaticStepPos(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, restProgress, maxStrideLength);
+    //        var g = GroundRaycast(p, bodyUp);
+    //        stepGoalPosition = g ? g.point : p;
+    //    }
+    //}
 
-    public void BeginStep(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp/*, float maxStrideLength*/)
-    {
-        var stepStartRay = GroundRaycast(ikTarget.position, bodyUp);
-        stepStartPosition = stepStartRay ? stepStartRay.point : ikTarget.position;
-        //ClampStepStartPosition(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, maxStrideLength);
+    //public void BeginStep(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp/*, float maxStrideLength*/)
+    //{
+    //    var stepStartRay = GroundRaycast(ikTarget.position, bodyUp);
+    //    stepStartPosition = stepStartRay ? stepStartRay.point : ikTarget.position;
+    //    //ClampStepStartPosition(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, maxStrideLength);
 
-        var stepGoalRay = StepGoalRaycast(bodyMovementRight, bodyUp);
-        stepGoalPosition = stepGoalRay ? stepGoalRay.point : StaticStepPos(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp);
-    }
+    //    var stepGoalRay = StepGoalRaycast(bodyMovementRight, bodyUp);
+    //    stepGoalPosition = stepGoalRay ? stepGoalRay.point : StaticStepPos(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp);
+    //}
 
     /// <param name="stepProgress">btwn 0 & 1</param
     /// <param name="bodyRight">multiplied by sign of body local scale (i.e. points in direction body is facing)</param>
@@ -254,35 +260,46 @@ public class LegAnimator : MonoBehaviour
         }
     }
 
-    //private void UpdateFootRotation(Vector2 bodyUp, bool facingRight)
-    //{
-    //    footBone.right = facingRight ? -bodyUp : bodyUp;
-    //    //if (stepHeightSpeedMultiplier != 0)
-    //    //{
-    //    //    //wanting feet to point straight down is spider-specific, I guess
-    //    //    var r = bodyFacingRight ? -bodyUp : bodyUp;//r needs to be normalized before lerp (in case you change r in future)
-    //    //    footBone.right = Vector2.Lerp(footBone.right, r, footRotationSpeed * dt);
-    //    //}
-    //}
-
     //the float drift weights x,y (instead of vector) are so you can have default parameters in other methods (without having
     //to construct a vector to pass into this method)
     Vector2 ApplyOutwardDrift(Vector2 positionToDrift, Vector2 bodyRight, Vector2 bodyUp, 
         float driftAmount, float driftWeightX, float driftWeightY)
     {
-        //var d = positionToDrift - driftCenter;
         return positionToDrift + driftAmount * (driftWeightX * bodyRight + driftWeightY * bodyUp);
-        //var u = (positionToDrift - driftCenter).normalized;
-        //return positionToDrift + driftMultiplier * driftAmount * u;
     }
 
-    //private void PerturbDriftWeights(float dt)
-    //{
-    //    var x = MathTools.RandomFloat(driftWeightsMin.x, driftWeightsMax.x);
-    //    var y = MathTools.RandomFloat(driftWeightsMin.y, driftWeightsMax.y);
-    //    currentDriftWeights.x = Mathf.Lerp(currentDriftWeights.x, x, randomDriftWeightsSmoothingRate * dt);
-    //    currentDriftWeights.y = Mathf.Lerp(currentDriftWeights.y, y, randomDriftWeightsSmoothingRate * dt);
-    //}
+    private void RecalculateStepStart(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, float maxStrideLength)
+    {
+        var start = StepStartRaycast(bodyMovementRight, bodyUp, maxStrideLength);
+
+        if (start)
+        {
+            stepStartPosition = start.point;
+        }
+        else
+        {
+            var p = StaticStepStart(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, maxStrideLength);
+            var g = GroundRaycast(p, bodyUp);
+            stepStartPosition = g ? g.point : p;
+        }
+    }
+
+    private void RecalculateStepGoal(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, 
+        float maxStrideLength, float restProgress = 0)
+    {
+        var goal = StepPosRaycast(bodyMovementRight, bodyUp, restProgress, maxStrideLength);
+
+        if (goal)
+        {
+            stepGoalPosition = goal.point;
+        }
+        else
+        {
+            var p = StaticStepPos(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, restProgress, maxStrideLength);
+            var g = GroundRaycast(p, bodyUp);
+            stepGoalPosition = g ? g.point : p;
+        }
+    }
 
     RaycastHit2D GroundRaycast(Vector2 origin, Vector2 bodyUp)
     {
