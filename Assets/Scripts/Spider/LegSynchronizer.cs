@@ -27,8 +27,9 @@ public class LegSynchronizer : MonoBehaviour
         public float Timer => timer;
         public float StepTime => stepTime;
         public float RestTime => restTime;// = max stride length
-        public float StepProgress => Timer / StepTime;
-        public float RestProgress => Timer / RestTime;
+        public float StateProgress => stepping ? Timer / StepTime : Timer / RestTime;
+        //public float StepProgress => Timer / StepTime;
+        //public float RestProgress => Timer / RestTime;
 
         public LegTimer(float offset, float stepTime, float restTime)
         {
@@ -122,20 +123,21 @@ public class LegSynchronizer : MonoBehaviour
                 var t = timers[i];
                 var l = synchronizedLegs[i].Leg;
                 t.Update(speedScaledDt);
-                //if (t.Update(speedScaledDt))
-                //{
-                //    l.BeginStepStaticMode(bodyPos, bodyMovementRight, bodyUp, t.RestTime);
-                //}
+                //we don't need a "BeginStep" bc in static mode the step start is recalculated on every update
                 if (t.Stepping)
                 {
-                    l.UpdateStepStaticMode(dt, t.StepProgress, preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, facingRight, t.RestTime,
+                    l.UpdateStepStaticMode(dt,
+                        preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, facingRight,
                         baseStepHeightMultiplier, stepHeightSpeedMultiplier,
-                        stepSmoothingRate, outwardDrift * driftSpeedMultiplier);
+                        stepSmoothingRate, t.StateProgress, t.StepTime, t.RestTime,
+                        outwardDrift * driftSpeedMultiplier);
                 }
                 else
                 {
-                    l.UpdateRestStaticMode(dt, t.RestProgress, preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, t.RestTime, 
-                        restSmoothingRate, outwardDrift * driftSpeedMultiplier);
+                    l.UpdateRestStaticMode(dt, 
+                        preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp,
+                        restSmoothingRate, t.StateProgress, t.RestTime,
+                        outwardDrift * driftSpeedMultiplier);
                 }
             }
         }
@@ -145,24 +147,22 @@ public class LegSynchronizer : MonoBehaviour
             {
                 var t = timers[i];
                 var l = synchronizedLegs[i].Leg;
-                //t.Update(speedScaledDt);
                 if (t.Update(speedScaledDt))
                 {
                     l.BeginStep(preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp,
-                        t.RestTime);
-                    continue;
-                    //l.BeginStep(preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp);
+                        t.StateProgress, t.StepTime, t.RestTime);
                 }
                 if (t.Stepping)
                 {
-                    l.UpdateStep(dt, t.StepProgress, preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, facingRight, t.RestTime,
+                    l.UpdateStep(dt, 
+                        preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, facingRight,
                         baseStepHeightMultiplier, stepHeightSpeedMultiplier,
-                        stepSmoothingRate);
+                        stepSmoothingRate, t.StateProgress, t.StepTime, t.RestTime);
                 }
                 else
                 {
-                    l.UpdateRest(dt, preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, t.RestProgress, t.RestTime,
-                        restSmoothingRate);
+                    l.UpdateRest(dt, preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, 
+                        restSmoothingRate, t.StateProgress, t.RestTime);
                 }
             }
         }
@@ -200,8 +200,8 @@ public class LegSynchronizer : MonoBehaviour
         for (int i = 0; i < synchronizedLegs.Length; i++)
         {
             var t = timers[i];
-            synchronizedLegs[i].Leg.Reposition(preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp,
-                t.RestTime, t.Stepping ? 0 : t.RestProgress);
+            synchronizedLegs[i].Leg.RecalculateGuides(preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp,
+                t.Stepping, t.StateProgress, t.StepTime, t.RestTime);
         }
     }
 
@@ -238,9 +238,8 @@ public class LegSynchronizer : MonoBehaviour
         for (int i = 0; i < synchronizedLegs.Length; i++)
         {
             var t = timers[i];
-            var restProgress = t.Stepping ? 1 - t.StepProgress : t.RestProgress;
             synchronizedLegs[i].Leg.InitializePosition(preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, 
-                restProgress, t.RestTime);
+                t.Stepping, t.StateProgress, t.StepTime, t.RestTime);
         }
     }
 }

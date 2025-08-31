@@ -16,7 +16,7 @@ public class SpiderController : MonoBehaviour
     [SerializeField] float airborneAccelMultiplier;
     [SerializeField] float steepSlopeGripStrength;
     [SerializeField] float steepSlopeGripDistancePower;
-    //[SerializeField] float slipPointSmoothingRate;
+    [SerializeField] float slipPointSmoothingRate;
     [SerializeField] float maxSpeed;
     [SerializeField] float maxSpeedAirborne;
     [SerializeField] float preferredRideHeight;
@@ -46,7 +46,7 @@ public class SpiderController : MonoBehaviour
     Vector2 predictiveGroundDirection;
     Vector2 lastComputedGroundDirection = Vector2.right;
     Vector2 lastComputedGroundPoint = new(Mathf.Infinity, Mathf.Infinity);
-    //Vector2 groundSlipPoint;
+    Vector2 groundSlipPoint;
     //to force it to initialize ground point (and then after it only gets set when moveInput != 0)
     float lastComputedGroundDistance = Mathf.Infinity;
     //use infinity instead of NaN, because equals check always fails for NaN (even if you check NaN == NaN)
@@ -159,7 +159,7 @@ public class SpiderController : MonoBehaviour
         {
             rb.AddForce(decelFactor * -spd * rb.mass * d);//simulate friction
             var grip = steepSlopeGripStrength * Mathf.Abs(lastComputedGroundDirection.y);
-            var h = Vector2.Dot(lastComputedGroundPoint - (Vector2)heightReferencePoint.position, d);
+            var h = Vector2.Dot(groundSlipPoint - (Vector2)heightReferencePoint.position, d);
             grip *= Mathf.Sign(h) * Mathf.Pow(Mathf.Abs(h), steepSlopeGripDistancePower);
             rb.AddForce(grip * rb.mass * d);//grip to steep slope
         }
@@ -305,7 +305,7 @@ public class SpiderController : MonoBehaviour
                 return;
             }
         }
-
+        
         lastComputedGroundDistance = Mathf.Infinity;
         lastComputedGroundDirection = MathTools.CheapRotationalLerp(lastComputedGroundDirection, Vector2.right, failedGroundRaycastSmoothingRate * Time.deltaTime); 
         predictiveGroundDirection = lastComputedGroundDirection;
@@ -322,20 +322,20 @@ public class SpiderController : MonoBehaviour
         var q = p + d * up;
 
         lastComputedGroundDirection = right;
-        lastComputedGroundDistance = Mathf.Abs(d);
-        //lastComputedGroundDistance = r.distance;
+        //lastComputedGroundDistance = Mathf.Abs(d);
+        lastComputedGroundDistance = r.distance;
 
         if (moveInput != 0 || !grounded || lastComputedGroundPoint.x == Mathf.Infinity)
         {
             lastComputedGroundPoint = q;
-            //groundSlipPoint = lastComputedGroundPoint;
+            groundSlipPoint = lastComputedGroundPoint;
             //lastComputedGroundDistance = Mathf.Abs(d);
         }
-        //else
-        //{
-        //    groundSlipPoint = Vector2.Lerp(lastComputedGroundPoint, q, slipPointSmoothingRate * Time.deltaTime);
-        //    lastComputedGroundDistance = Vector2.Distance(p, groundSlipPoint);
-        //}
+        else
+        {
+            groundSlipPoint = Vector2.Lerp(lastComputedGroundPoint, q, slipPointSmoothingRate * Time.deltaTime);
+            //lastComputedGroundDistance = Vector2.Distance(p, groundSlipPoint);
+        }
 
         SetGrounded(lastComputedGroundDistance < GroundednessTolerance);
     }
