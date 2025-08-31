@@ -60,71 +60,15 @@ public class LegAnimator : MonoBehaviour
         //approximate step start position and step goal
         RecalculateStepStart(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, maxStrideLength);
         RecalculateStepGoal(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, maxStrideLength, restProgress);
-
-        //var start = StepStartRaycast(bodyMovementRight, bodyUp, maxStrideLength);
-        //var goal = StepGoalRaycast(bodyMovementRight, bodyUp);
-
-        //if (start)
-        //{
-        //    stepStartPosition = start.point;
-        //}
-        //else
-        //{
-        //    var p = StaticStepStart(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, maxStrideLength);
-        //    var g = GroundRaycast(p, bodyUp);
-        //    stepStartPosition = g ? g.point : p;
-        //}
-
-        //if (goal)
-        //{
-        //    stepGoalPosition = goal.point;
-        //}
-        //else
-        //{
-        //    var p = StaticStepGoal(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp);
-        //    var g = GroundRaycast(p, bodyUp);
-        //    stepGoalPosition = g ? g.point : p;
-        //}
     }
 
-    //public void RepositionResting(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, 
-    //    float restProgress, float maxStrideLength)
-    //{
-    //    var start = StepStartRaycast(bodyMovementRight, bodyUp, maxStrideLength);
-    //    var goal = StepPosRaycast(bodyMovementRight, bodyUp, restProgress, maxStrideLength);
+    public void BeginStep(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, float maxStrideLength)
+    {
+        var stepStartRay = GroundRaycast(ikTarget.position, bodyUp);
+        stepStartPosition = stepStartRay ? stepStartRay.point : ikTarget.position;
 
-    //    if (start)
-    //    {
-    //        stepStartPosition = start.point;
-    //    }
-    //    else
-    //    {
-    //        var p = StaticStepStart(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, maxStrideLength);
-    //        var g = GroundRaycast(p, bodyUp);
-    //        stepStartPosition = g ? g.point : p;
-    //    }
-
-    //    if (goal)
-    //    {
-    //        stepGoalPosition = goal.point;
-    //    }
-    //    else
-    //    {
-    //        var p = StaticStepPos(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, restProgress, maxStrideLength);
-    //        var g = GroundRaycast(p, bodyUp);
-    //        stepGoalPosition = g ? g.point : p;
-    //    }
-    //}
-
-    //public void BeginStep(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp/*, float maxStrideLength*/)
-    //{
-    //    var stepStartRay = GroundRaycast(ikTarget.position, bodyUp);
-    //    stepStartPosition = stepStartRay ? stepStartRay.point : ikTarget.position;
-    //    //ClampStepStartPosition(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, maxStrideLength);
-
-    //    var stepGoalRay = StepGoalRaycast(bodyMovementRight, bodyUp);
-    //    stepGoalPosition = stepGoalRay ? stepGoalRay.point : StaticStepPos(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp);
-    //}
+        RecalculateStepGoal(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, maxStrideLength);
+    }
 
     /// <param name="stepProgress">btwn 0 & 1</param
     /// <param name="bodyRight">multiplied by sign of body local scale (i.e. points in direction body is facing)</param>
@@ -137,13 +81,8 @@ public class LegAnimator : MonoBehaviour
 
         //UPDATE STEPSTART AND STEPGOAL AS NEEDED
 
-        //ClampStepStartPosition(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, maxStrideLength);
-        //ConstrainStepStartPosition(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, maxStrideLength);
-        //RecalculateStepStart(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, maxStrideLength);
         ConstrainStepStartPosition(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, maxStrideLength, stepProgress);
         RecalculateStepGoal(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, maxStrideLength);
-        //var stepGoalRay = StepGoalRaycast(bodyMovementRight, bodyUp);
-        //stepGoalPosition = stepGoalRay ? stepGoalRay.point : StaticStepGoal(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp);
 
         //UPDATE IKTARGET POSITION
 
@@ -223,7 +162,7 @@ public class LegAnimator : MonoBehaviour
         var g = GroundRaycast(ikTarget.position, bodyUp);
         if (g)
         {
-            ikTarget.position = g.point;
+            ikTarget.position = Vector2.Lerp(ikTarget.position, g.point, smoothingRate * dt);
         }
     }
 
@@ -295,8 +234,8 @@ public class LegAnimator : MonoBehaviour
         else
         {
             var p = StaticStepPos(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, restProgress, maxStrideLength);
-            var g = GroundRaycast(p, bodyUp);
-            stepGoalPosition = g && g.distance > 0 ? g.point : p;
+            goal = GroundRaycast(p, bodyUp);
+            stepGoalPosition = goal && goal.distance > 0 ? goal.point : p;
         }
     }
 
@@ -314,6 +253,7 @@ public class LegAnimator : MonoBehaviour
         var g = AdjustedStepMax(1 + stepProgress, maxStrideLength);
         if (Mathf.Abs(h - g) > recalculateThreshold)
         {
+            Debug.Log($"{gameObject.name} correcting step start");
             RecalculateStepStart(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, maxStrideLength);
         }
     }
@@ -336,6 +276,7 @@ public class LegAnimator : MonoBehaviour
         //}
         if (Mathf.Abs(h - g) > recalculateThreshold)
         {
+            Debug.Log($"{gameObject.name} correcting step goal");
             RecalculateStepGoal(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, maxStrideLength);
         }
     }

@@ -16,7 +16,7 @@ public class SpiderController : MonoBehaviour
     [SerializeField] float airborneAccelMultiplier;
     [SerializeField] float steepSlopeGripStrength;
     [SerializeField] float steepSlopeGripDistancePower;
-    [SerializeField] float slipPointSmoothingRate;
+    //[SerializeField] float slipPointSmoothingRate;
     [SerializeField] float maxSpeed;
     [SerializeField] float maxSpeedAirborne;
     [SerializeField] float preferredRideHeight;
@@ -28,13 +28,12 @@ public class SpiderController : MonoBehaviour
     [SerializeField] float jumpForceCrouchBoostRate;
     [SerializeField] float uphillJumpDirectionRotationRate;
     [SerializeField] float jumpVerificationTime;
-    [SerializeField] float crouchHeightFraction;//fraction of preferred ground height that body will crouch down by
+    [SerializeField] float crouchHeightFraction;
     [SerializeField] float crouchTime;
     [SerializeField] float crouchReleaseSpeedMultiplier;
     [SerializeField] float airborneLegAnimationTimeScale;
     [SerializeField] float airborneLegDriftRate;
     [SerializeField] float airborneLegDriftMax;
-    //[SerializeField] Vector2 airborneLegDriftWeights;
 
     LegSynchronizer legSynchronizer;
     Rigidbody2D rb;
@@ -47,13 +46,12 @@ public class SpiderController : MonoBehaviour
     Vector2 predictiveGroundDirection;
     Vector2 lastComputedGroundDirection = Vector2.right;
     Vector2 lastComputedGroundPoint = new(Mathf.Infinity, Mathf.Infinity);
-    Vector2 groundSlipPoint;
+    //Vector2 groundSlipPoint;
     //to force it to initialize ground point (and then after it only gets set when moveInput != 0)
     float lastComputedGroundDistance = Mathf.Infinity;
     //use infinity instead of NaN, because equals check always fails for NaN (even if you check NaN == NaN)
 
     float crouchProgress;//0-1
-    //Vector2 crouchStartBodyLocalPos;
 
     int groundLayer;
 
@@ -68,6 +66,8 @@ public class SpiderController : MonoBehaviour
         legSynchronizer = GetComponent<LegSynchronizer>();
         rb = GetComponent<Rigidbody2D>();
         groundLayer = LayerMask.GetMask("Ground");
+
+        //Time.timeScale = 0.25f;//useful for spotting issues
     }
 
     private void Start()
@@ -159,23 +159,11 @@ public class SpiderController : MonoBehaviour
         {
             rb.AddForce(decelFactor * -spd * rb.mass * d);//simulate friction
             var grip = steepSlopeGripStrength * Mathf.Abs(lastComputedGroundDirection.y);
-            var h = Vector2.Dot(groundSlipPoint - (Vector2)heightReferencePoint.position, d);
+            var h = Vector2.Dot(lastComputedGroundPoint - (Vector2)heightReferencePoint.position, d);
             grip *= Mathf.Sign(h) * Mathf.Pow(Mathf.Abs(h), steepSlopeGripDistancePower);
             rb.AddForce(grip * rb.mass * d);//grip to steep slope
         }
     }
-
-    //private void UpdateJumpAim()
-    //{
-    //    var rotationCenter = JumpAimRotationCenter();//0.5f * (abdomenBone.position + headBone.position);
-    //    var headBoneRight = headBone.right;
-    //    var r = abdomenRightInLocalCoords.x * transform.right + abdomenRightInLocalCoords.y * transform.up;
-    //    var u = abdomenUpInLocalCoords.x * transform.right + abdomenUpInLocalCoords.y * transform.up;
-    //    abdomenBone.right = Mathf.Cos(jumpAimAngle) * r + Mathf.Sin(jumpAimAngle) * u;
-    //    var newCenter = JumpAimRotationCenter();
-    //    abdomenBone.position += rotationCenter - newCenter;
-    //    headBone.right = headBoneRight;
-    //}
 
     //pass negative dt when reversing crouch
     private void UpdateCrouch(float dt)
@@ -185,11 +173,6 @@ public class SpiderController : MonoBehaviour
         crouchProgress += progressDelta;
         abdomenBone.position -= progressDelta * crouchHeightFraction * preferredRideHeight * transform.up;
     }
-
-    //private Vector3 JumpAimRotationCenter()
-    //{
-    //    return 0.25f * abdomenBone.position + 0.75f * headBone.position;
-    //}
     
     //not checking anything here, bc i have it set up so it only collects jump input when you are able to jump
     //(i.e. when grounded and not verifying jump)
@@ -202,7 +185,6 @@ public class SpiderController : MonoBehaviour
             jumpVerificationTimer = jumpVerificationTime;
             var jumpDir = JumpDirection();
             lastComputedGroundDirection = jumpDir.CWPerp();
-            //Debug.DrawLine(transform.position, (Vector2)transform.position + lastComputedGroundDirection, Color.green, 3f);
             rb.AddForce(rb.mass * JumpForce() * jumpDir, ForceMode2D.Impulse);
         }
     }
@@ -216,11 +198,8 @@ public class SpiderController : MonoBehaviour
     {
         if (lastComputedGroundDirection.y * Orientation > 0)//if facing uphill add a little forward component to the jump
         {
-            //return Vector2.up;
             var t = uphillJumpDirectionRotationRate * Mathf.Abs(lastComputedGroundDirection.y);
             return MathTools.CheapRotationalLerp(transform.up, Vector2.up, t);
-            //return (1 - uphillJumpHeightReductionRate) * transform.up + t * Orientation * transform.right;
-            //return MathTools.CheapRotationalLerp(transform.up, Orientation * transform.right, t);
         }
 
         return transform.up;
@@ -243,13 +222,8 @@ public class SpiderController : MonoBehaviour
     private void Balance()
     {
         var c = Vector2.Dot(transform.up, grounded ? predictiveGroundDirection : lastComputedGroundDirection);
-        //if (!grounded)
-        //{
-        //    c *= airborneBalanceForceMultiplier;
-        //}
         var f = c * balanceSpringForce - balanceSpringDamping * rb.angularVelocity;
         rb.AddTorque(rb.mass * f);
-        //headBone.right = MathTools.CheapRotationalLerp(headBone.right, predictiveGroundDirection, headRotationSpeed * Time.deltaTime);
     }
 
     private void UpdateAirborneLegDrift()
@@ -265,7 +239,7 @@ public class SpiderController : MonoBehaviour
 
     private void SetGrounded(bool val)
     {
-        if (VerifyingJump() || grounded == val) return;
+        if (grounded == val) return;
         grounded = val;
         if (grounded)
         {
@@ -348,17 +322,20 @@ public class SpiderController : MonoBehaviour
         var q = p + d * up;
 
         lastComputedGroundDirection = right;
-        lastComputedGroundDistance = r.distance;
+        lastComputedGroundDistance = Mathf.Abs(d);
+        //lastComputedGroundDistance = r.distance;
 
         if (moveInput != 0 || !grounded || lastComputedGroundPoint.x == Mathf.Infinity)
         {
             lastComputedGroundPoint = q;
-            groundSlipPoint = lastComputedGroundPoint;
+            //groundSlipPoint = lastComputedGroundPoint;
+            //lastComputedGroundDistance = Mathf.Abs(d);
         }
-        else
-        {
-            groundSlipPoint = Vector2.Lerp(lastComputedGroundPoint, r.point, slipPointSmoothingRate * Time.deltaTime);
-        }
+        //else
+        //{
+        //    groundSlipPoint = Vector2.Lerp(lastComputedGroundPoint, q, slipPointSmoothingRate * Time.deltaTime);
+        //    lastComputedGroundDistance = Vector2.Distance(p, groundSlipPoint);
+        //}
 
         SetGrounded(lastComputedGroundDistance < GroundednessTolerance);
     }
@@ -380,13 +357,11 @@ public class SpiderController : MonoBehaviour
         //var l90 = 3 * length;
         yield return MathTools.DebugRaycast(origin, d30, length, groundLayer, Color.yellow);
         yield return MathTools.DebugRaycast(origin, d45, length, groundLayer, Color.yellow);
-
         //yield return MathTools.DebugRaycast(origin, d60, length, groundLayer, Color.yellow);
-        //yield return MathTools.DrawnRaycast(origin, tRight, length, groundLayer, Color.red);
+        //yield return MathTools.DebugRaycast(origin, tRight, length, groundLayer, Color.red);
         yield return MathTools.DebugRaycast(origin, dM30, length, groundLayer, Color.yellow);
         yield return MathTools.DebugRaycast(origin, dM45, length, groundLayer, Color.yellow);
-
         //yield return MathTools.DebugRaycast(origin, dM60, length, groundLayer, Color.yellow);
-        //yield return MathTools.DrawnRaycast(origin, -tRight, length, groundLayer, Color.red);
+        //yield return MathTools.DebugRaycast(origin, -tRight, length, groundLayer, Color.red);
     }
 }

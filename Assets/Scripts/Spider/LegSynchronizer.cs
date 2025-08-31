@@ -60,25 +60,25 @@ public class LegSynchronizer : MonoBehaviour
         }
 
         //returns whether stepping just turned to true
-        public void Update(float dt)
+        public bool Update(float dt)
         {
             timer += dt;
             if (timer > goalTime)
             {
                 timer -= goalTime;
                 stepping = !stepping;
-                goalTime = stepping ? stepTime : restTime;
-                //if (stepping)
-                //{
-                //    goalTime = stepTime;
-                //    //return true;
-                //}
+                //goalTime = stepping ? stepTime : restTime;
+                if (stepping)
+                {
+                    goalTime = stepTime;
+                    return true;
+                }
 
-                //goalTime = restTime;
-                //return false;
+                goalTime = restTime;
+                return false;
             }
 
-            //return false;
+            return false;
         }
     }
 
@@ -145,13 +145,14 @@ public class LegSynchronizer : MonoBehaviour
             {
                 var t = timers[i];
                 var l = synchronizedLegs[i].Leg;
-                t.Update(speedScaledDt);
-                //if (t.Update(speedScaledDt))
-                //{
-                //    l.Reposition(preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp,
-                //        t.RestTime, t.Stepping ? 0 : t.RestProgress);
-                //    //l.BeginStep(preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp);
-                //}
+                //t.Update(speedScaledDt);
+                if (t.Update(speedScaledDt))
+                {
+                    l.BeginStep(preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp,
+                        t.RestTime);
+                    continue;
+                    //l.BeginStep(preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp);
+                }
                 if (t.Stepping)
                 {
                     l.UpdateStep(dt, t.StepProgress, preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, facingRight, t.RestTime,
@@ -201,14 +202,6 @@ public class LegSynchronizer : MonoBehaviour
             var t = timers[i];
             synchronizedLegs[i].Leg.Reposition(preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp,
                 t.RestTime, t.Stepping ? 0 : t.RestProgress);
-            //if (t.Stepping)
-            //{
-            //    synchronizedLegs[i].Leg.RepositionStepping(preferredBodyPosGroundHeight, bPos, bodyMovementRight, bodyUp, t.RestTime);
-            //}
-            //else
-            //{
-            //    synchronizedLegs[i].Leg.RepositionResting(preferredBodyPosGroundHeight, bPos, bodyMovementRight, bodyUp, t.RestProgress, t.RestTime); 
-            //}
         }
     }
 
@@ -246,7 +239,8 @@ public class LegSynchronizer : MonoBehaviour
         {
             var t = timers[i];
             var restProgress = t.Stepping ? 1 - t.StepProgress : t.RestProgress;
-            synchronizedLegs[i].Leg.InitializePosition(preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, restProgress, t.RestTime);
+            synchronizedLegs[i].Leg.InitializePosition(preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, 
+                restProgress, t.RestTime);
         }
     }
 }
