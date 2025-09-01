@@ -138,7 +138,7 @@ public class SpiderController : MonoBehaviour
     {
         var s = transform.localScale;
         transform.localScale = new Vector3(-s.x, s.y, s.z);
-        legSynchronizer.OnBodyChangedDirection();
+        //legSynchronizer.OnBodyChangedDirection();
     }
 
     private void HandleMoveInput()

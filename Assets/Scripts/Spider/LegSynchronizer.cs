@@ -11,7 +11,6 @@ public class LegSynchronizer : MonoBehaviour
     [SerializeField] float baseStepHeightMultiplier;
     [SerializeField] float stepSmoothingRate;
     [SerializeField] float restSmoothingRate;
-    //[SerializeField] float footRotationSpeed;
     [SerializeField] SynchronizedLeg[] synchronizedLegs;
 
     class LegTimer
@@ -61,44 +60,27 @@ public class LegSynchronizer : MonoBehaviour
         }
 
         //returns whether stepping just turned to true
-        public bool Update(float dt)
+        public void Update(float dt)
         {
             timer += dt;
             if (timer > goalTime)
             {
                 timer -= goalTime;
                 stepping = !stepping;
-                //goalTime = stepping ? stepTime : restTime;
-                if (stepping)
-                {
-                    goalTime = stepTime;
-                    return true;
-                }
-
-                goalTime = restTime;
-                return false;
+                goalTime = stepping ? stepTime : restTime;
             }
-
-            return false;
         }
     }
 
-    //Rigidbody2D body;
     LegTimer[] timers;
     bool staticMode;
 
     public float bodyGroundSpeed;
-    //public Vector2 groundDirection;
     public float preferredBodyPosGroundHeight;
     public float timeScale = 1;
     public float stepHeightFraction;
     public float outwardDrift;
     public Vector2 outwardDriftWeights;
-
-    //private void Awake()
-    //{
-    //  body = GetComponent<Rigidbody2D>();
-    //}
 
     private void LateUpdate()
     {
@@ -122,8 +104,9 @@ public class LegSynchronizer : MonoBehaviour
             {
                 var t = timers[i];
                 var l = synchronizedLegs[i].Leg;
+
                 t.Update(speedScaledDt);
-                //we don't need a "BeginStep" bc in static mode the step start is recalculated on every update
+
                 if (t.Stepping)
                 {
                     l.UpdateStepStaticMode(dt,
@@ -147,11 +130,9 @@ public class LegSynchronizer : MonoBehaviour
             {
                 var t = timers[i];
                 var l = synchronizedLegs[i].Leg;
-                if (t.Update(speedScaledDt))
-                {
-                    l.BeginStep(preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp,
-                        t.StateProgress, t.StepTime, t.RestTime);
-                }
+
+                t.Update(speedScaledDt);
+
                 if (t.Stepping)
                 {
                     l.UpdateStep(dt, 
@@ -166,8 +147,6 @@ public class LegSynchronizer : MonoBehaviour
                 }
             }
         }
-
-
     }
 
     public void EnterStaticMode()
@@ -187,33 +166,7 @@ public class LegSynchronizer : MonoBehaviour
         if (staticMode)
         {
             staticMode = false;
-            RepositionAllLegs(bodyFacingRight, bodyRight);
-        }
-    }
-
-    //yes, legSynch has access to the rigidbody (so could get bodyRight) but you could e.g. pass groundDirection here instead
-    public void RepositionAllLegs(bool bodyFacingRight, Vector2 bodyRight)
-    {
-        Vector2 bodyPos = bodyRb.transform.position;
-        Vector2 bodyMovementRight = bodyFacingRight ? bodyRight : -bodyRight;
-        Vector2 bodyUp = bodyRight.CCWPerp();
-        for (int i = 0; i < synchronizedLegs.Length; i++)
-        {
-            var t = timers[i];
-            synchronizedLegs[i].Leg.RecalculateGuides(preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp,
-                t.Stepping, t.StateProgress, t.StepTime, t.RestTime);
-        }
-    }
-
-    public void OnBodyChangedDirection()
-    {
-        Vector2 p = bodyRb.transform.position;
-        Vector2 tRight = bodyRb.transform.right;
-        Vector2 tUp = bodyRb.transform.up;
-
-        for (int i = 0; i < synchronizedLegs.Length; i++)
-        {
-            synchronizedLegs[i].Leg.OnBodyChangedDirection(p, tRight, tUp);
+            //+other stuff that should only be done when exiting static mode
         }
     }
 
