@@ -68,7 +68,7 @@ public class SpiderController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         groundLayer = LayerMask.GetMask("Ground");
 
-        //Time.timeScale = 0.25f;//useful for spotting issues
+        Time.timeScale = 0.25f;//useful for spotting issues
     }
 
     private void Start()
@@ -266,7 +266,7 @@ public class SpiderController : MonoBehaviour
     {
         legSynchronizer.timeScale = 1;
         legSynchronizer.outwardDrift = 0;
-        legSynchronizer.EndStaticMode(FacingRight, predictiveGroundDirection);//makes more sense to use predictive GroundDir bc that's what we rotate towards?
+        legSynchronizer.EndStaticMode(/*FacingRight, predictiveGroundDirection*/);//makes more sense to use predictive GroundDir bc that's what we rotate towards?
     }
 
     //always "right pointing" (relative to ground outward normal)

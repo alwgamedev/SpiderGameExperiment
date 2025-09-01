@@ -161,7 +161,7 @@ public class LegSynchronizer : MonoBehaviour
         }
     }
 
-    public void EndStaticMode(bool bodyFacingRight, Vector2 bodyRight)
+    public void EndStaticMode(/*bool bodyFacingRight, Vector2 bodyRight*/)
     {
         if (staticMode)
         {
