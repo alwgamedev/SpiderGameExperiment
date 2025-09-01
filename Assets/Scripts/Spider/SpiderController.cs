@@ -6,7 +6,7 @@ public class SpiderController : MonoBehaviour
     [SerializeField] Transform abdomenBone;
     [SerializeField] Transform headBone;
     [SerializeField] Transform heightReferencePoint;
-    [SerializeField] float groundRaycastLengthFactor;
+    //[SerializeField] float groundRaycastLengthFactor;
     [SerializeField] float groundednessToleranceFactor;
     [SerializeField] float predictiveGroundDirectionSpacing;
     [SerializeField] float failedGroundRaycastSmoothingRate;
@@ -16,7 +16,7 @@ public class SpiderController : MonoBehaviour
     [SerializeField] float airborneAccelMultiplier;
     [SerializeField] float steepSlopeGripStrength;
     [SerializeField] float steepSlopeGripDistancePower;
-    [SerializeField] float slipPointSmoothingRate;
+    //[SerializeField] float groundPointSmoothingRate;
     [SerializeField] float maxSpeed;
     [SerializeField] float maxSpeedAirborne;
     [SerializeField] float preferredRideHeight;
@@ -46,7 +46,7 @@ public class SpiderController : MonoBehaviour
     Vector2 predictiveGroundDirection;
     Vector2 lastComputedGroundDirection = Vector2.right;
     Vector2 lastComputedGroundPoint = new(Mathf.Infinity, Mathf.Infinity);
-    Vector2 groundSlipPoint;
+    //Vector2 groundSlipPoint;
     //to force it to initialize ground point (and then after it only gets set when moveInput != 0)
     float lastComputedGroundDistance = Mathf.Infinity;
     //use infinity instead of NaN, because equals check always fails for NaN (even if you check NaN == NaN)
@@ -57,7 +57,7 @@ public class SpiderController : MonoBehaviour
 
     bool FacingRight => transform.localScale.x > 0;
     int Orientation => FacingRight ? 1 : -1;
-    float GroundRaycastLength => groundRaycastLengthFactor * preferredRideHeight;
+    //float GroundRaycastLength => groundRaycastLengthFactor * preferredRideHeight;
     float GroundednessTolerance => groundednessToleranceFactor * preferredRideHeight;
     float PreferredBodyPosGroundHeight => transform.position.y - heightReferencePoint.position.y + preferredRideHeight;
 
@@ -158,10 +158,13 @@ public class SpiderController : MonoBehaviour
         else if (moveInput == 0 && grounded)
         {
             rb.AddForce(decelFactor * -spd * rb.mass * d);//simulate friction
-            var grip = steepSlopeGripStrength * Mathf.Abs(lastComputedGroundDirection.y);
-            var h = Vector2.Dot(groundSlipPoint - (Vector2)heightReferencePoint.position, d);
-            grip *= Mathf.Sign(h) * Mathf.Pow(Mathf.Abs(h), steepSlopeGripDistancePower);
-            rb.AddForce(grip * rb.mass * d);//grip to steep slope
+            if (lastComputedGroundPoint.x != Mathf.Infinity)
+            {
+                var grip = steepSlopeGripStrength * Mathf.Abs(lastComputedGroundDirection.y);
+                var h = Vector2.Dot(lastComputedGroundPoint - (Vector2)heightReferencePoint.position, d);
+                grip *= Mathf.Sign(h) * Mathf.Pow(Mathf.Abs(h), steepSlopeGripDistancePower);
+                rb.AddForce(grip * rb.mass * d);//grip to steep slope
+            }
         }
     }
 
@@ -273,7 +276,7 @@ public class SpiderController : MonoBehaviour
             Vector2 o = heightReferencePoint.position;
             Vector2 tDown = -transform.up;
             Vector2 tRight = transform.right;
-            var l = GroundRaycastLength;
+            var l = GroundednessTolerance;
             var r = MathTools.DebugRaycast(o, tDown, l, groundLayer, Color.red);
 
             if (r)
@@ -328,14 +331,14 @@ public class SpiderController : MonoBehaviour
         if (moveInput != 0 || !grounded || lastComputedGroundPoint.x == Mathf.Infinity)
         {
             lastComputedGroundPoint = q;
-            groundSlipPoint = lastComputedGroundPoint;
+            //groundSlipPoint = lastComputedGroundPoint;
             //lastComputedGroundDistance = Mathf.Abs(d);
         }
-        else
-        {
-            groundSlipPoint = Vector2.Lerp(lastComputedGroundPoint, q, slipPointSmoothingRate * Time.deltaTime);
-            //lastComputedGroundDistance = Vector2.Distance(p, groundSlipPoint);
-        }
+        //else
+        //{
+        //    lastComputedGroundPoint = Vector2.Lerp(lastComputedGroundPoint, q, groundPointSmoothingRate * Time.deltaTime);
+        //    //lastComputedGroundDistance = Vector2.Distance(p, groundSlipPoint);
+        //}
 
         SetGrounded(lastComputedGroundDistance < GroundednessTolerance);
     }
@@ -352,15 +355,16 @@ public class SpiderController : MonoBehaviour
         var dM30 = MathTools.cos30 * tDown + MathTools.sin30 * tRight;
         var dM45 = MathTools.cos45 * tDown + MathTools.sin45 * tRight;
         //var dM60 = MathTools.cos60 * tDown - MathTools.sin60 * tRight;
-        //var l30 = length / MathTools.cos30;
+        var l30 = length / MathTools.cos30;
+        var l45 = length / MathTools.cos45;
         //var l60 = length / MathTools.cos60;
         //var l90 = 3 * length;
-        yield return MathTools.DebugRaycast(origin, d30, length, groundLayer, Color.yellow);
-        yield return MathTools.DebugRaycast(origin, d45, length, groundLayer, Color.yellow);
+        yield return MathTools.DebugRaycast(origin, d30, l30, groundLayer, Color.yellow);
+        yield return MathTools.DebugRaycast(origin, d45, l45, groundLayer, Color.yellow);
         //yield return MathTools.DebugRaycast(origin, d60, length, groundLayer, Color.yellow);
         //yield return MathTools.DebugRaycast(origin, tRight, length, groundLayer, Color.red);
-        yield return MathTools.DebugRaycast(origin, dM30, length, groundLayer, Color.yellow);
-        yield return MathTools.DebugRaycast(origin, dM45, length, groundLayer, Color.yellow);
+        yield return MathTools.DebugRaycast(origin, dM30, l30, groundLayer, Color.yellow);
+        yield return MathTools.DebugRaycast(origin, dM45, l45, groundLayer, Color.yellow);
         //yield return MathTools.DebugRaycast(origin, dM60, length, groundLayer, Color.yellow);
         //yield return MathTools.DebugRaycast(origin, -tRight, length, groundLayer, Color.red);
     }

@@ -1,8 +1,8 @@
-using UnityEditor;
 using UnityEngine;
 
 public class LegAnimator : MonoBehaviour
 {
+    [SerializeField] float raycastLength;
     [SerializeField] Transform hipBone;
     [SerializeField] Transform footBone;
     [SerializeField] Transform ikTarget;
@@ -24,15 +24,15 @@ public class LegAnimator : MonoBehaviour
     }
 
     //very useful for identifying issues (well it used to be until you started using local positions)
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.blue;
-        Gizmos.DrawSphere(ikTarget.position, .1f);
-        //Gizmos.color = Color.yellow;
-        ////Gizmos.DrawSphere(stepStartPosition, .06f);
-        //Gizmos.color = Color.green;
-        //Gizmos.DrawSphere(stepGoalPosition, 0.06f);
-    }
+    //private void OnDrawGizmos()
+    //{
+    //    Gizmos.color = Color.blue;
+    //    Gizmos.DrawSphere(ikTarget.position, .1f);
+    //    //Gizmos.color = Color.yellow;
+    //    ////Gizmos.DrawSphere(stepStartPosition, .06f);
+    //    //Gizmos.color = Color.green;
+    //    //Gizmos.DrawSphere(stepGoalPosition, 0.06f);
+    //}
 
     public void InitializePosition(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, 
         bool stepping, float stateProgress, float stepTime, float restTime)
@@ -189,7 +189,7 @@ public class LegAnimator : MonoBehaviour
 
     RaycastHit2D GroundRaycast(Vector2 origin, Vector2 bodyUp, float upwardBuffer = 2.5f)
     {
-        return Physics2D.Raycast(origin + upwardBuffer * bodyUp, -bodyUp, Mathf.Infinity, groundLayer);
+        return Physics2D.Raycast(origin + upwardBuffer * bodyUp, -bodyUp, raycastLength + upwardBuffer, groundLayer);
     }
 
     RaycastHit2D StepPosRaycast(Vector2 bodyMovementRight, Vector2 bodyUp, float horizontalOffset)
