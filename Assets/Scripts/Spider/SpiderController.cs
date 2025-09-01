@@ -7,7 +7,8 @@ public class SpiderController : MonoBehaviour
     [SerializeField] Transform headBone;
     [SerializeField] Transform heightReferencePoint;
     //[SerializeField] float groundRaycastLengthFactor;
-    [SerializeField] float groundednessToleranceFactor;
+    [SerializeField] float groundedExitToleranceFactor;
+    [SerializeField] float groundedEntryToleranceFactor;
     [SerializeField] float predictiveGroundDirectionSpacing;
     [SerializeField] float failedGroundRaycastSmoothingRate;
     [SerializeField] float accelFactor;
@@ -58,7 +59,7 @@ public class SpiderController : MonoBehaviour
     bool FacingRight => transform.localScale.x > 0;
     int Orientation => FacingRight ? 1 : -1;
     //float GroundRaycastLength => groundRaycastLengthFactor * preferredRideHeight;
-    float GroundednessTolerance => groundednessToleranceFactor * preferredRideHeight;
+    float GroundednessTolerance => (grounded ? groundedExitToleranceFactor : groundedEntryToleranceFactor) * preferredRideHeight;
     float PreferredBodyPosGroundHeight => transform.position.y - heightReferencePoint.position.y + preferredRideHeight;
 
     private void Awake()
