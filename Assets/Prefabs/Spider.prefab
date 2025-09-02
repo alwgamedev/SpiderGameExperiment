@@ -1152,11 +1152,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ced5325b94f52d54ab843a5e66a16699, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  raycastLength: 2
-  hipBone: {fileID: 2399890710218574748}
-  footBone: {fileID: 8378328544454571262}
-  ikTarget: {fileID: 4380958847150461223}
+  hipRaycastLength: 2
+  hipRaycastUpwardBuffer: 0.5
+  staticModeGroundDetectionRadius: 0.01
   stepMax: 0.9
+  extendFractionMax: 0.925
+  extendFractionMin: 0.45
   driftWeightsMax: {x: 0.125, y: 0.35}
   driftWeightsMin: {x: -0.85, y: -0.1}
 --- !u!1 &839944467269662652
@@ -1531,11 +1532,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ced5325b94f52d54ab843a5e66a16699, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  raycastLength: 2
-  hipBone: {fileID: 6996931359358265962}
-  footBone: {fileID: 3033994015570042515}
-  ikTarget: {fileID: 1238561792403655595}
+  hipRaycastLength: 2
+  hipRaycastUpwardBuffer: 0.5
+  staticModeGroundDetectionRadius: 0.01
   stepMax: 0.825
+  extendFractionMax: 0.925
+  extendFractionMin: 0.45
   driftWeightsMax: {x: 0.125, y: 0.35}
   driftWeightsMin: {x: -0.85, y: -0.1}
 --- !u!1 &1248638082500357407
@@ -2079,11 +2081,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ced5325b94f52d54ab843a5e66a16699, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  raycastLength: 2
-  hipBone: {fileID: 6932109180140675545}
-  footBone: {fileID: 3912250904285809636}
-  ikTarget: {fileID: 6915238945053128507}
+  hipRaycastLength: 2
+  hipRaycastUpwardBuffer: 0.5
+  staticModeGroundDetectionRadius: 0.01
   stepMax: -0.05
+  extendFractionMax: 0.925
+  extendFractionMin: 0.35
   driftWeightsMax: {x: 0.05, y: 0.4}
   driftWeightsMin: {x: -0.6, y: -0.1}
 --- !u!1 &2031487528006588093
@@ -2837,11 +2840,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ced5325b94f52d54ab843a5e66a16699, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  raycastLength: 2
-  hipBone: {fileID: 4593715000520413280}
-  footBone: {fileID: 1262494296321640506}
-  ikTarget: {fileID: 8327284446163506453}
+  hipRaycastLength: 2
+  hipRaycastUpwardBuffer: 0.5
+  staticModeGroundDetectionRadius: 0.01
   stepMax: -0.05
+  extendFractionMax: 0.925
+  extendFractionMin: 0.35
   driftWeightsMax: {x: 0.05, y: 0.4}
   driftWeightsMin: {x: -0.6, y: -0.1}
 --- !u!1 &2656875783498011584
@@ -3417,11 +3421,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ced5325b94f52d54ab843a5e66a16699, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  raycastLength: 2
-  hipBone: {fileID: 2680305816034372725}
-  footBone: {fileID: 871183515759155505}
-  ikTarget: {fileID: 2278123347475011000}
+  hipRaycastLength: 2
+  hipRaycastUpwardBuffer: 0.5
+  staticModeGroundDetectionRadius: 0.01
   stepMax: 0.9
+  extendFractionMax: 0.925
+  extendFractionMin: 0.45
   driftWeightsMax: {x: 0.125, y: 0.35}
   driftWeightsMin: {x: -0.85, y: -0.1}
 --- !u!1 &3319515992144099393
@@ -4914,11 +4919,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ced5325b94f52d54ab843a5e66a16699, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  raycastLength: 2
-  hipBone: {fileID: 596364321759533591}
-  footBone: {fileID: 7261066662746368589}
-  ikTarget: {fileID: 5994156311465296893}
+  hipRaycastLength: 2
+  hipRaycastUpwardBuffer: 0.5
+  staticModeGroundDetectionRadius: 0.01
   stepMax: -0.2
+  extendFractionMax: 0.925
+  extendFractionMin: 0.35
   driftWeightsMax: {x: 0.05, y: 0.4}
   driftWeightsMin: {x: -0.6, y: -0.1}
 --- !u!1 &5247813140874977512
@@ -5394,11 +5400,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ced5325b94f52d54ab843a5e66a16699, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  raycastLength: 2
-  hipBone: {fileID: 1671441735390870653}
-  footBone: {fileID: 7203260424078161818}
-  ikTarget: {fileID: 7491916336825498184}
+  hipRaycastLength: 2
+  hipRaycastUpwardBuffer: 0.5
+  staticModeGroundDetectionRadius: 0.01
   stepMax: -0.2
+  extendFractionMax: 0.925
+  extendFractionMin: 0.35
   driftWeightsMax: {x: 0.05, y: 0.4}
   driftWeightsMin: {x: -0.6, y: -0.1}
 --- !u!1 &6016693261962413811
@@ -6734,11 +6741,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ced5325b94f52d54ab843a5e66a16699, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  raycastLength: 2
-  hipBone: {fileID: 2749387138667642994}
-  footBone: {fileID: 2034791752815395644}
-  ikTarget: {fileID: 1137408330521889720}
+  hipRaycastLength: 2
+  hipRaycastUpwardBuffer: 0.5
+  staticModeGroundDetectionRadius: 0.01
   stepMax: 0.825
+  extendFractionMax: 0.925
+  extendFractionMin: 0.45
   driftWeightsMax: {x: 0.125, y: 0.35}
   driftWeightsMin: {x: -0.85, y: -0.1}
 --- !u!1 &6858911009439342665
@@ -7835,27 +7843,29 @@ MonoBehaviour:
   abdomenBone: {fileID: 4257679111386862312}
   headBone: {fileID: 1796735932416995084}
   heightReferencePoint: {fileID: 3708315842584664218}
-  groundednessToleranceFactor: 1.3
+  groundedExitToleranceFactor: 1.7
+  groundedEntryToleranceFactor: 1
   predictiveGroundDirectionSpacing: 1.25
-  failedGroundRaycastSmoothingRate: 10
+  failedGroundRaycastSmoothingRate: 2
   accelFactor: 45
-  accelCap: 0.5
+  accelCap: 0.25
   decelFactor: 45
-  airborneAccelMultiplier: 1
-  steepSlopeGripStrength: 600
+  airborneAccelMultiplier: 0.7
+  steepSlopeGripStrength: 500
   steepSlopeGripDistancePower: 1.25
   maxSpeed: 3.25
   maxSpeedAirborne: 7
   preferredRideHeight: 1.05
   heightSpringForce: 200
-  heightSpringDamping: 18
-  balanceSpringForce: 40
+  heightSpringDamping: 22
+  balanceSpringForce: 50
   balanceSpringDamping: 0.1
   jumpForce: 5
   jumpForceCrouchBoostRate: 16
   uphillJumpDirectionRotationRate: 0.8
+  uphillJumpTakeoffRotationFraction: 0.25
   jumpVerificationTime: 0.25
-  crouchHeightFraction: 0.175
+  crouchHeightFraction: 0.225
   crouchTime: 0.25
   crouchReleaseSpeedMultiplier: 3
   airborneLegAnimationTimeScale: 0.075
@@ -7879,8 +7889,9 @@ MonoBehaviour:
   speedCapMin: 0.05
   speedCapMax: 3
   baseStepHeightMultiplier: 0.5
-  stepSmoothingRate: 40
-  restSmoothingRate: 40
+  stepSmoothingRate: 25
+  restSmoothingRate: 25
+  extensionSmoothingRate: 100
   synchronizedLegs:
   - leg: {fileID: 3287121947862078546}
     timeOffset: 0

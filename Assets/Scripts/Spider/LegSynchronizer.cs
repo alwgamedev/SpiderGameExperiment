@@ -11,6 +11,7 @@ public class LegSynchronizer : MonoBehaviour
     [SerializeField] float baseStepHeightMultiplier;
     [SerializeField] float stepSmoothingRate;
     [SerializeField] float restSmoothingRate;
+    [SerializeField] float extensionSmoothingRate;
     [SerializeField] SynchronizedLeg[] synchronizedLegs;
 
     class LegTimer
@@ -107,6 +108,8 @@ public class LegSynchronizer : MonoBehaviour
 
                 t.Update(speedScaledDt);
 
+                //Vector2? groundNormal;
+
                 if (t.Stepping)
                 {
                     l.UpdateStepStaticMode(dt,
@@ -122,6 +125,11 @@ public class LegSynchronizer : MonoBehaviour
                         restSmoothingRate, t.StateProgress, t.RestTime,
                         outwardDrift * driftSpeedMultiplier);
                 }
+
+                if (l.KeepTargetAboveGround(/*dt,*/ bodyUp, extensionSmoothingRate, out var groundNormal))
+                {
+                    l.EnforceExtensionConstraint(dt, groundNormal, facingRight ? groundNormal.CWPerp() : groundNormal.CCWPerp(), extensionSmoothingRate);
+                }
             }
         }
         else
@@ -133,18 +141,22 @@ public class LegSynchronizer : MonoBehaviour
 
                 t.Update(speedScaledDt);
 
+                Vector2 groundNormal;
+
                 if (t.Stepping)
                 {
                     l.UpdateStep(dt, 
                         preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, facingRight,
                         baseStepHeightMultiplier, stepHeightSpeedMultiplier,
-                        stepSmoothingRate, t.StateProgress, t.StepTime, t.RestTime);
+                        stepSmoothingRate, t.StateProgress, t.StepTime, t.RestTime, out groundNormal);
                 }
                 else
                 {
                     l.UpdateRest(dt, preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, 
-                        restSmoothingRate, t.StateProgress, t.RestTime);
+                        restSmoothingRate, t.StateProgress, t.RestTime, out groundNormal);
                 }
+
+                l.EnforceExtensionConstraint(dt, groundNormal, facingRight ? groundNormal.CWPerp() : groundNormal.CCWPerp(), extensionSmoothingRate);
             }
         }
     }

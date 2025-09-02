@@ -28,6 +28,7 @@ public class SpiderController : MonoBehaviour
     [SerializeField] float jumpForce;
     [SerializeField] float jumpForceCrouchBoostRate;
     [SerializeField] float uphillJumpDirectionRotationRate;
+    [SerializeField] float uphillJumpTakeoffRotationFraction;
     [SerializeField] float jumpVerificationTime;
     [SerializeField] float crouchHeightFraction;
     [SerializeField] float crouchTime;
@@ -68,7 +69,7 @@ public class SpiderController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         groundLayer = LayerMask.GetMask("Ground");
 
-        Time.timeScale = 0.25f;//useful for spotting issues
+        //Time.timeScale = 0.25f;//useful for spotting issues
     }
 
     private void Start()
@@ -188,7 +189,7 @@ public class SpiderController : MonoBehaviour
             SetGrounded(false);
             jumpVerificationTimer = jumpVerificationTime;
             var jumpDir = JumpDirection();
-            lastComputedGroundDirection = jumpDir.CWPerp();
+            lastComputedGroundDirection = MathTools.CheapRotationalLerp(lastComputedGroundDirection, jumpDir.CWPerp(), uphillJumpTakeoffRotationFraction);
             rb.AddForce(rb.mass * JumpForce() * jumpDir, ForceMode2D.Impulse);
         }
     }
@@ -272,7 +273,7 @@ public class SpiderController : MonoBehaviour
     //always "right pointing" (relative to ground outward normal)
     private void UpdateGroundData()
     {
-        if (!VerifyingJump())
+        if (!VerifyingJump())//to avoid floaty/hovery rotation while taking off
         {
             Vector2 o = heightReferencePoint.position;
             Vector2 tDown = -transform.up;
