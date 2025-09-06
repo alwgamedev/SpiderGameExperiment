@@ -10,8 +10,12 @@ public class LegSynchronizer : MonoBehaviour
     [SerializeField] float speedCapMax;//at or above this speed, legs will use full step height;(may want to make this public so not indpt of mover)
     [SerializeField] float baseStepHeightMultiplier;
     [SerializeField] float stepSmoothingRate;
-    [SerializeField] float restSmoothingRate;
+    //[SerializeField] float restSmoothingRate;
+    //[SerializeField] float staticModeGroundCollisionSmoothingRate;
     [SerializeField] float extensionSmoothingRate;
+    [SerializeField] float groundCollisionSmoothingRate;
+    [SerializeField] float staticModeGroundDetectionOffsetRate;
+    [SerializeField] float staticModeGroundDectectionOffsetMax;
     [SerializeField] SynchronizedLeg[] synchronizedLegs;
 
     class LegTimer
@@ -26,10 +30,8 @@ public class LegSynchronizer : MonoBehaviour
         public bool Stepping => stepping;
         public float Timer => timer;
         public float StepTime => stepTime;
-        public float RestTime => restTime;// = max stride length
+        public float RestTime => restTime;
         public float StateProgress => stepping ? Timer / StepTime : Timer / RestTime;
-        //public float StepProgress => Timer / StepTime;
-        //public float RestProgress => Timer / RestTime;
 
         public LegTimer(float offset, float stepTime, float restTime)
         {
@@ -114,7 +116,7 @@ public class LegSynchronizer : MonoBehaviour
                 {
                     l.UpdateStepStaticMode(dt,
                         preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, facingRight,
-                        baseStepHeightMultiplier, stepHeightSpeedMultiplier,
+                        baseStepHeightMultiplier, /*stepHeightSpeedMultiplier,*/ 
                         stepSmoothingRate, t.StateProgress, t.StepTime, t.RestTime,
                         outwardDrift * driftSpeedMultiplier);
                 }
@@ -122,11 +124,12 @@ public class LegSynchronizer : MonoBehaviour
                 {
                     l.UpdateRestStaticMode(dt, 
                         preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp,
-                        restSmoothingRate, t.StateProgress, t.RestTime,
+                        stepSmoothingRate, t.StateProgress, t.RestTime,
                         outwardDrift * driftSpeedMultiplier);
                 }
 
-                if (l.KeepTargetAboveGround(/*dt,*/ bodyUp, extensionSmoothingRate, out var groundNormal))
+                if (l.KeepTargetAboveGround(dt, bodyUp, bodyRb.linearVelocity, staticModeGroundDetectionOffsetRate, staticModeGroundDectectionOffsetMax,
+                    groundCollisionSmoothingRate, out var groundNormal))
                 {
                     l.EnforceExtensionConstraint(dt, groundNormal, facingRight ? groundNormal.CWPerp() : groundNormal.CCWPerp(), extensionSmoothingRate);
                 }
@@ -153,7 +156,7 @@ public class LegSynchronizer : MonoBehaviour
                 else
                 {
                     l.UpdateRest(dt, preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, 
-                        restSmoothingRate, t.StateProgress, t.RestTime, out groundNormal);
+                        stepSmoothingRate, t.StateProgress, t.RestTime, out groundNormal);
                 }
 
                 l.EnforceExtensionConstraint(dt, groundNormal, facingRight ? groundNormal.CWPerp() : groundNormal.CCWPerp(), extensionSmoothingRate);

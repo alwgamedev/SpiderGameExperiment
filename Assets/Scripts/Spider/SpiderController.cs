@@ -32,6 +32,7 @@ public class SpiderController : MonoBehaviour
     [SerializeField] float jumpVerificationTime;
     [SerializeField] float crouchHeightFraction;
     [SerializeField] float crouchTime;
+    [SerializeField] float crouchBoostMinProgress;
     [SerializeField] float crouchReleaseSpeedMultiplier;
     [SerializeField] float airborneLegAnimationTimeScale;
     [SerializeField] float airborneLegDriftRate;
@@ -119,13 +120,13 @@ public class SpiderController : MonoBehaviour
         }
         else
         {
-            if (crouchProgress > 0)
+            if (!jumpInput && crouchProgress > 0)//don't start releasing crouch until jump input gets handled! (bc crouch progress affects jump force)
             {
                 UpdateCrouch(crouchReleaseSpeedMultiplier * -Time.deltaTime);
             }
             if (!jumpInput && grounded)
             {
-                jumpInput = Input.GetKeyUp(KeyCode.Space);
+                jumpInput = Input.GetKeyUp(KeyCode.Space);//handle jump input on next fixed update
             }
         }
 

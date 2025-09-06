@@ -12,23 +12,23 @@ public class LegAnimator : MonoBehaviour
     [SerializeField] float extendFractionMin;
     [SerializeField] Vector2 driftWeightsMax;
     [SerializeField] Vector2 driftWeightsMin;
-    //[SerializeField] float randomDriftWeightsSmoothingRate;
+    
 
     int groundLayer;
     Vector2 currentDriftWeights;
-    IKChain2D ikChain;
+    //IKChain2D ikChain;
     Transform hipBone;
     Transform ikTarget;
     float ikChainTotalLength;
-    float extendMax;//only use squared versions ATM
-    float extendMin;
+    //float extendMax;//only use squared versions ATM
+    //float extendMin;
     float extendMax2;
     float extendMin2;
 
     private void Awake()
     {
         groundLayer = LayerMask.GetMask("Ground");
-        ikChain = GetComponent<FabrikSolver2D>().GetChain(0);
+        var ikChain = GetComponent<Solver2D>().GetChain(0);
         hipBone = ikChain.transforms[0];
         ikTarget = ikChain.target;
         var lengths = ikChain.lengths;//because retrieving lengths rebuilds (and recalculates) the array every time...
@@ -37,9 +37,8 @@ public class LegAnimator : MonoBehaviour
             ikChainTotalLength += lengths[i];
         }
 
-        extendMax = ikChainTotalLength * extendFractionMax;
-        extendMin = ikChainTotalLength * extendFractionMin;
-        //extendGoal = ikChainTotalLength * extendFractionGoal;
+        var extendMax = ikChainTotalLength * extendFractionMax;
+        var extendMin = ikChainTotalLength * extendFractionMin;
         extendMax2 = extendMax * extendMax;
         extendMin2 = extendMin * extendMin;
     }
@@ -113,7 +112,6 @@ public class LegAnimator : MonoBehaviour
         var stepGoal = GetStepGoal(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, restProgress, restTime);
         ikTarget.position = Vector2.Lerp(ikTarget.position, stepGoal, smoothingRate * dt);
         var g = GroundRaycast(ikTarget.position, bodyUp, 1f, 1f);
-        //groundNormal = g ? g.normal : bodyUp;
         if (g)
         {
             groundNormal = g.normal;
@@ -127,7 +125,7 @@ public class LegAnimator : MonoBehaviour
 
     public void UpdateStepStaticMode(float dt,
         float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, bool bodyFacingRight,
-        float baseStepHeightMultiplier, float stepHeightSpeedMultiplier,
+        float baseStepHeightMultiplier, /*float stepHeightSpeedMultiplier,*/
         float smoothingRate, float stepProgress, float stepTime, float restTime,
         float driftAmount = 0)
     {
@@ -136,7 +134,6 @@ public class LegAnimator : MonoBehaviour
 
         if (driftAmount != 0)
         {
-            //PerturbDriftWeights(dt);
             stepStart = ApplyOutwardDrift(stepStart, bodyMovementRight, bodyUp,//but we don't apply drift to the stored stepStartLocalPosition!
                 driftAmount, currentDriftWeights.x, currentDriftWeights.y);
             stepGoal = ApplyOutwardDrift(stepGoal, bodyMovementRight, bodyUp,
@@ -150,11 +147,7 @@ public class LegAnimator : MonoBehaviour
 
         var newTargetPosition = stepCenter - stepRadius * Mathf.Cos(t) * stepRight + stepRadius * baseStepHeightMultiplier * Mathf.Sin(t) * stepUp;
 
-        //var c = StaticCurrentGroundPos(bodyPosGroundHeight, bodyPos, bodyUp);
-        //if (stepHeightSpeedMultiplier < 1)
-        //{
-        //    newTargetPosition = Vector2.Lerp(c, newTargetPosition, stepHeightSpeedMultiplier);
-        //}
+        //in static mode we aren't lerping vertically by stepHeightSpeedMultiplier
 
         ikTarget.position = Vector2.Lerp(ikTarget.position, newTargetPosition, smoothingRate * dt);
     }
@@ -168,7 +161,6 @@ public class LegAnimator : MonoBehaviour
 
         if (driftAmount != 0)
         {
-            //PerturbDriftWeights(dt);
             stepGoal = ApplyOutwardDrift(stepGoal, bodyMovementRight, bodyUp, 
                 driftAmount, currentDriftWeights.x, currentDriftWeights.y);
         }
@@ -207,16 +199,28 @@ public class LegAnimator : MonoBehaviour
         }
     }
 
-    public bool KeepTargetAboveGround(/*float dt,*/ Vector2 bodyUp, float smoothingRate, out Vector2 groundNormal)
+    //2do: this causes feet to cling to ground during jump takeoff
+    //maybe offset the overlap circle by body velocity in the up direction? (clamping the max offset)
+    //(hece offset up when taking off, and offset down when landing)
+    public bool KeepTargetAboveGround(float dt, Vector2 bodyUp, 
+        Vector2 bodyVelocity, float velocityOffsetRate, float velocityOffsetMax, 
+        float smoothingRate, out Vector2 groundNormal)
     {
         Vector2 ikTargetPos = ikTarget.position;
-        if (Physics2D.OverlapCircle(ikTargetPos, staticModeGroundDetectionRadius, groundLayer))
+        float verticalVelocity = Vector2.Dot(bodyVelocity, bodyUp);
+        Vector2 predictiveTargetPos = verticalVelocity > 0 ?
+            ikTargetPos + Mathf.Clamp(verticalVelocity * velocityOffsetRate, -velocityOffsetMax, velocityOffsetMax) * bodyUp 
+            : ikTargetPos;
+        if (Physics2D.OverlapCircle(predictiveTargetPos, staticModeGroundDetectionRadius, groundLayer))
         {
-            var g = GroundRaycast(ikTargetPos, bodyUp, 1, 1.5f);
+            var g = GroundRaycast(ikTargetPos, bodyUp, 1f, 1.5f);
             if (g)
             {
-                ikTarget.position = g.point;
-                //ikTarget.position = Vector2.Lerp(ikTargetPos, g.point, smoothingRate * dt);
+                //we could add smoothing, but should be naturally smoothed by physics
+                //-- actually we need to add smoothing, otherwise feet can snap to ground on landing
+                //ALSO 2DO: leg synch doesn't need stepSmoothRate and restSmoothRate -- may just separate smoothing
+                //rates for default mode and static mode
+                ikTarget.position = verticalVelocity > 0 ? Vector2.Lerp(ikTargetPos, g.point, smoothingRate * dt) : g.point;
                 groundNormal = g.normal;
                 return true;
             }
@@ -255,28 +259,6 @@ public class LegAnimator : MonoBehaviour
         }
         return StaticStepGoal(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, restProgress, restTime);
     }
-
-    //private Vector2 GetStepStartStaticMode(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp,
-    //    float stepProgress, float stepTime, float restTime)
-    //{
-    //    var s = StaticStepStart(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, stepProgress, stepTime, restTime);
-    //    if (Physics2D.OverlapCircle(s, staticModeGroundDetectionRadius, groundLayer))//can't be that big of a deal since colliders do something like this every frame
-    //    {
-    //        return GetStepStart(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, stepProgress, stepTime, restTime);
-    //    }
-    //    return s;
-    //}
-
-    //private Vector2 GetStepGoalStaticMode(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp,
-    //    float restProgress, float restTime)
-    //{
-    //    var s = StaticStepGoal(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, restProgress, restTime);
-    //    if (Physics2D.OverlapCircle(s, staticModeGroundDetectionRadius, groundLayer))//can't be that big of a deal since colliders do something like this every frame
-    //    {
-    //        return GetStepGoal(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, restProgress, restTime);
-    //    }
-    //    return s;
-    //}
 
     RaycastHit2D GroundRaycast(Vector2 origin, Vector2 bodyUp, float raycastLength, float upwardBuffer = .5f)
     {
