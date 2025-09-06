@@ -1157,7 +1157,7 @@ MonoBehaviour:
   staticModeGroundDetectionRadius: 0.01
   stepMax: 0.9
   extendFractionMax: 0.925
-  extendFractionMin: 0.45
+  extendFractionMin: 0.475
   driftWeightsMax: {x: 0.125, y: 0.35}
   driftWeightsMin: {x: -0.85, y: -0.1}
 --- !u!1 &839944467269662652
@@ -1537,7 +1537,7 @@ MonoBehaviour:
   staticModeGroundDetectionRadius: 0.01
   stepMax: 0.825
   extendFractionMax: 0.925
-  extendFractionMin: 0.45
+  extendFractionMin: 0.475
   driftWeightsMax: {x: 0.125, y: 0.35}
   driftWeightsMin: {x: -0.85, y: -0.1}
 --- !u!1 &1248638082500357407
@@ -3426,7 +3426,7 @@ MonoBehaviour:
   staticModeGroundDetectionRadius: 0.01
   stepMax: 0.9
   extendFractionMax: 0.925
-  extendFractionMin: 0.45
+  extendFractionMin: 0.475
   driftWeightsMax: {x: 0.125, y: 0.35}
   driftWeightsMin: {x: -0.85, y: -0.1}
 --- !u!1 &3319515992144099393
@@ -6746,7 +6746,7 @@ MonoBehaviour:
   staticModeGroundDetectionRadius: 0.01
   stepMax: 0.825
   extendFractionMax: 0.925
-  extendFractionMin: 0.45
+  extendFractionMin: 0.475
   driftWeightsMax: {x: 0.125, y: 0.35}
   driftWeightsMin: {x: -0.85, y: -0.1}
 --- !u!1 &6858911009439342665
@@ -7851,7 +7851,7 @@ MonoBehaviour:
   accelCap: 0.25
   decelFactor: 45
   airborneAccelMultiplier: 0.7
-  steepSlopeGripStrength: 500
+  steepSlopeGripStrength: 700
   steepSlopeGripDistancePower: 1.25
   maxSpeed: 3.25
   maxSpeedAirborne: 7
@@ -7891,7 +7891,7 @@ MonoBehaviour:
   speedCapMax: 3
   baseStepHeightMultiplier: 0.5
   stepSmoothingRate: 25
-  extensionSmoothingRate: 100
+  extensionSmoothingRate: 200
   groundCollisionSmoothingRate: 25
   staticModeGroundDetectionOffsetRate: 0.1
   staticModeGroundDectectionOffsetMax: 0.65
