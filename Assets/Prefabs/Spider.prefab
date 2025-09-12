@@ -704,8 +704,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 490526680940338516}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.7, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0.00000001816079, w: 1}
+  m_LocalPosition: {x: 0, y: 0.6999999, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7787,7 +7787,7 @@ Rigidbody2D:
   m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 1
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &3912472630339336116
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7843,19 +7843,21 @@ MonoBehaviour:
   abdomenBone: {fileID: 4257679111386862312}
   headBone: {fileID: 1796735932416995084}
   heightReferencePoint: {fileID: 3708315842584664218}
+  headRotationSpeed: 12
+  rotationSpeed: 3
   groundedExitToleranceFactor: 1.7
   groundedEntryToleranceFactor: 1
-  predictiveGroundDirectionSpacing: 1.25
-  failedGroundRaycastSmoothingRate: 2
+  predictiveGroundDirectionSpacing: 0.3
+  failedGroundRaycastSmoothingRate: 20
   accelFactor: 45
-  accelCap: 0.25
+  accelCap: 0.75
   decelFactor: 45
-  airborneAccelMultiplier: 0.7
+  airborneAccelMultiplier: 1
   steepSlopeGripStrength: 700
   steepSlopeGripDistancePower: 1.25
   maxSpeed: 3.25
-  maxSpeedAirborne: 7
-  preferredRideHeight: 1.05
+  maxSpeedAirborne: 3.25
+  preferredRideHeight: 0.95
   heightSpringForce: 400
   heightSpringDamping: 26
   balanceSpringForce: 50
@@ -7891,7 +7893,7 @@ MonoBehaviour:
   speedCapMax: 3
   baseStepHeightMultiplier: 0.5
   stepSmoothingRate: 25
-  extensionSmoothingRate: 200
+  extensionSmoothingRate: 100
   groundCollisionSmoothingRate: 25
   staticModeGroundDetectionOffsetRate: 0.1
   staticModeGroundDectectionOffsetMax: 0.65

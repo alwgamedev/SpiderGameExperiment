@@ -63,6 +63,15 @@ public static class MathTools
         return Vector2.Lerp(u1, u2, lerpAmount).normalized;
     }
 
+    //i.e. rotate keeping center pt fixed
+    public static void RotateAroundPoint(this Transform t, Vector3 center, Vector3 newRight)
+    {
+        var d = center - t.position;
+        t.position += d;
+        t.right = newRight;
+        t.position -= d;
+    }
+
     public static RaycastHit2D DebugRaycast(Vector2 origin, Vector2 direction, float length, int layerMask, Color drawColor)
     {
 #if UNITY_EDITOR

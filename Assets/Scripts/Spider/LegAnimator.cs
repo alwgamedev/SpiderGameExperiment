@@ -10,6 +10,7 @@ public class LegAnimator : MonoBehaviour
     [SerializeField] float stepMax;
     [SerializeField] float extendFractionMax;
     [SerializeField] float extendFractionMin;
+    //[SerializeField] float ikTargetGroundDetectionRadius;
     [SerializeField] Vector2 driftWeightsMax;
     [SerializeField] Vector2 driftWeightsMin;
     
@@ -180,6 +181,7 @@ public class LegAnimator : MonoBehaviour
             var y = Vector2.Dot(v, groundNormal);
             var x1 = Mathf.Sign(x) * Mathf.Sqrt(extendMin2 - y * y);
             var r = StepPosRaycast(orientedGroundDir, groundNormal, x1);
+            //var r = StepPosRaycast(orientedGroundDir, groundNormal, x1);
             if (r)
             {
                 ikTarget.position = Vector2.Lerp(ikTargetPos, r.point, smoothingRate * dt);
@@ -265,9 +267,33 @@ public class LegAnimator : MonoBehaviour
         return Physics2D.Raycast(origin + upwardBuffer * bodyUp, -bodyUp, raycastLength + upwardBuffer, groundLayer);
     }
 
-    RaycastHit2D StepPosRaycast(Vector2 bodyMovementRight, Vector2 bodyUp, float horizontalOffset)
+    //RaycastHit2D StepPosRaycast(float groundDetectionRadius, Vector2 defaultSearchRight, Vector2 defaultSearchUp, float horizontalOffset)
+    //{
+    //    Vector2 ikTargetPos = ikTarget.position;
+    //    var c = Physics2D.OverlapCircle(ikTarget.position, groundDetectionRadius, groundLayer);
+    //    if (c)
+    //    {
+    //        var p = c.ClosestPoint(ikTargetPos);
+    //        var ray = Physics2D.Raycast(ikTargetPos + defaultSearchUp, p - ikTargetPos, groundDetectionRadius + 1, groundLayer);
+    //        if (ray)
+    //        {
+    //            var u = ray.normal;
+    //            var r = u.CWPerp();
+    //            if (Vector2.Dot(r, defaultSearchRight) < 0)//in future we could pass a "facing right" parameter
+    //            {
+    //                r = -r;
+    //            }
+    //            Debug.Log(u);
+    //            return StepPosRaycast(r, u, horizontalOffset);
+    //        }
+    //    }
+
+    //    return StepPosRaycast(defaultSearchRight, defaultSearchUp, horizontalOffset);
+    //}
+
+    RaycastHit2D StepPosRaycast(Vector2 searchRight, Vector2 searchUp, float horizontalOffset)
     {
-        return GroundRaycast((Vector2)hipBone.position + horizontalOffset * bodyMovementRight, bodyUp, hipRaycastLength, hipRaycastUpwardBuffer);
+        return GroundRaycast((Vector2)hipBone.position + horizontalOffset * searchRight, searchUp, hipRaycastLength, hipRaycastUpwardBuffer);
     }
 
     RaycastHit2D StepGoalRaycast(Vector2 bodyMovementRight, Vector2 bodyUp, float restProgress, float restTime)
