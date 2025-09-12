@@ -7848,9 +7848,9 @@ MonoBehaviour:
   groundedExitToleranceFactor: 1.7
   groundedEntryToleranceFactor: 1
   predictiveGroundDirectionSpacing: 0.3
-  failedGroundRaycastSmoothingRate: 20
+  failedGroundRaycastSmoothingRate: 80
   accelFactor: 45
-  accelCap: 0.75
+  accelCap: 1
   decelFactor: 45
   airborneAccelMultiplier: 1
   steepSlopeGripStrength: 700
