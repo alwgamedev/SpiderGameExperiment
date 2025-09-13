@@ -38,6 +38,7 @@ public class SpiderController : MonoBehaviour
     [SerializeField] float airborneLegAnimationTimeScale;
     [SerializeField] float airborneLegDriftRate;
     [SerializeField] float airborneLegDriftMax;
+    [SerializeField] GroundMap groundMap;
 
     LegSynchronizer legSynchronizer;
     Rigidbody2D rb;
@@ -68,8 +69,14 @@ public class SpiderController : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.green;
-        Gizmos.DrawSphere(heightReferencePoint.position, .1f);
+        if (groundMap.map != null)
+        {
+            Gizmos.color = Color.green;
+            for (int i = 0; i < groundMap.map.Length; i++)
+            {
+                Gizmos.DrawSphere(groundMap.map[i].point, .1f);
+            }
+        }
     }
 
     private void Awake()
@@ -103,6 +110,8 @@ public class SpiderController : MonoBehaviour
 
         //Balance(Time.deltaTime);
         RotateHead(Time.deltaTime);
+
+        groundMap.BuildMap(heightReferencePoint.position, -transform.up);
     }
 
     private void FixedUpdate()
