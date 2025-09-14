@@ -1581,15 +1581,23 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: heightSpringForce
-      value: 400
+      value: 350
       objectReference: {fileID: 0}
     - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: heightSpringDamping
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
+      propertyPath: steepSlopeGripStrength
       value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
+      propertyPath: steepSlopeGripDistancePower
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: groundedEntryToleranceFactor
-      value: 1.1
+      value: 1.25
       objectReference: {fileID: 0}
     - target: {fileID: 8910507805382992582, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: m_LocalPosition.x

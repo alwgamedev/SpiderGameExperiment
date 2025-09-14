@@ -49,13 +49,13 @@ public class SpiderController : MonoBehaviour
 
     bool grounded;
     float groundednessTolerance;
-    Vector2 predictiveGroundDirection;
+    //Vector2 predictiveGroundDirection;
     Vector2 groundDirection = Vector2.right;
     Vector2 upcomingGroundDirection = Vector2.right;
     Vector2 groundPoint = new(Mathf.Infinity, Mathf.Infinity);
     //Vector2 groundSlipPoint;
     //to force it to initialize ground point (and then after it only gets set when moveInput != 0)
-    float lastComputedGroundDistance = Mathf.Infinity;
+    //float lastComputedGroundDistance = Mathf.Infinity;
     //use infinity instead of NaN, because equals check always fails for NaN (even if you check NaN == NaN)
 
     float crouchProgress;//0-1
@@ -195,7 +195,7 @@ public class SpiderController : MonoBehaviour
         //var f = c * balanceSpringForce - balanceSpringDamping * rb.angularVelocity;
         //rb.AddTorque(rb.mass * f);
 
-        transform.right = MathTools.CheapRotationalLerp(transform.right, grounded ? predictiveGroundDirection : groundDirection, rotationSpeed * dt);
+        transform.right = MathTools.CheapRotationalLerp(transform.right, groundDirection, rotationSpeed * dt);
     }
 
     //pass negative dt when reversing crouch
@@ -252,14 +252,17 @@ public class SpiderController : MonoBehaviour
 
     private void UpdateHeightSpring()
     {
-        if (groundPoint.x != Mathf.Infinity)
-        {
-            var direction = -transform.up;
-            var l = lastComputedGroundDistance - preferredRideHeight;
-            var f = heightSpringForce * l * direction;
-            var v = Vector2.Dot(rb.linearVelocity, direction) * direction;
-            rb.AddForce(rb.mass * (f - heightSpringDamping * v));
-        }
+        Vector2 d = -transform.up;
+        var l = groundMap.Center.raycastDistance - preferredRideHeight;
+        var f = heightSpringForce * l * d;
+        var v = Vector2.Dot(rb.linearVelocity, d) * d;
+        rb.AddForce(rb.mass * (f - heightSpringDamping * v));
+        //var g = groundPoint + preferredRideHeight * (Vector2)transform.up;
+        //var d = g - (Vector2)heightReferencePoint.position;
+        //var u = d.normalized;
+        //var f = heightSpringForce * d;
+        //var v = Vector2.Dot(rb.linearVelocity, u) * u;
+        //rb.AddForce(rb.mass * (f - heightSpringDamping * v));
     }
 
     private void UpdateAirborneLegDrift()
@@ -312,33 +315,33 @@ public class SpiderController : MonoBehaviour
     {
         groundMap.UpdateMap(heightReferencePoint.position, -transform.up, groundednessTolerance);
 
-        if (!VerifyingJump())
-        {
-            SetGrounded(groundMap.Center.hitGround);
-        }
-
         if (moveInput != 0 || !grounded || groundPoint.x == Mathf.Infinity)
         {
             groundPoint = groundMap.Center.point;
         }
 
-        if (groundMap.Center.hitGround)
+        if (!VerifyingJump())
         {
-            lastComputedGroundDistance = groundMap.Center.raycastDistance;
-            groundDirection = groundMap.Center.normal.CWPerp();
+            SetGrounded(groundMap.Center.hitGround);
         }
-        else
-        {
-            lastComputedGroundDistance = Mathf.Infinity;
-            groundDirection = MathTools.CheapRotationalLerp(groundDirection, Vector2.right, failedGroundRaycastSmoothingRate * Time.deltaTime);
-        }
-        //groundDirection = groundMap.Center.hitGround ?
-        //    groundMap.Center.normal.CWPerp()
-        //    : MathTools.CheapRotationalLerp(groundDirection, Vector2.right, failedGroundRaycastSmoothingRate * Time.deltaTime);
-        upcomingGroundDirection = FacingRight ? groundMap.RightEndPt.normal.CWPerp() : groundMap.LeftEndPt.normal.CWPerp();
-        predictiveGroundDirection = FacingRight ? 
-            (groundMap.RightEndPt.point - groundMap.Center.point).normalized
-            : (groundMap.Center.point - groundMap.LeftEndPt.point).normalized;
+
+        //if (groundMap.Center.hitGround)
+        //{
+        //    lastComputedGroundDistance = groundMap.Center.raycastDistance;
+        //    groundDirection = groundMap.Center.normal.CWPerp();
+        //}
+        //else
+        //{
+        //    lastComputedGroundDistance = Mathf.Infinity;
+        //    groundDirection = MathTools.CheapRotationalLerp(groundDirection, Vector2.right, failedGroundRaycastSmoothingRate * Time.deltaTime);
+        //}
+        groundDirection = groundMap.Center.hitGround ?
+            groundMap.Center.normal.CWPerp()
+            : MathTools.CheapRotationalLerp(groundDirection, Vector2.right, failedGroundRaycastSmoothingRate * Time.deltaTime);
+        upcomingGroundDirection = groundMap.PointFromCenter(FacingRight ? 1 : -1).normal.CWPerp();
+        //predictiveGroundDirection = FacingRight ? 
+        //    (groundMap.RightEndPt.point - groundMap.Center.point).normalized
+        //    : (groundMap.Center.point - groundMap.LeftEndPt.point).normalized;
     }
 
     //always "right pointing" (relative to ground outward normal)

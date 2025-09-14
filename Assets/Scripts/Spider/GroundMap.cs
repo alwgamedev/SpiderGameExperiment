@@ -16,6 +16,11 @@ public struct GroundMap
     public GroundMapPt LeftEndPt => map[0];
     public GroundMapPt RightEndPt => map[^1];
 
+    public GroundMapPt PointFromCenter(int i)
+    {
+        return map[numFwdIntervals + i];
+    }
+
     public void DrawGizmos()
     {
         if (map == null || map.Length == 0) return;
