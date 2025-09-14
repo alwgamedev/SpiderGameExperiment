@@ -60,7 +60,7 @@ public class SpiderController : MonoBehaviour
 
     float crouchProgress;//0-1
 
-    int groundLayer;
+    //int groundLayer;
 
     bool FacingRight => transform.localScale.x > 0;
     int Orientation => FacingRight ? 1 : -1;
@@ -77,7 +77,7 @@ public class SpiderController : MonoBehaviour
     {
         legSynchronizer = GetComponent<LegSynchronizer>();
         rb = GetComponent<Rigidbody2D>();
-        groundLayer = LayerMask.GetMask("Ground");
+        //groundLayer = LayerMask.GetMask("Ground");
 
         //Time.timeScale = 0.25f;//useful for spotting issues
     }
@@ -338,7 +338,7 @@ public class SpiderController : MonoBehaviour
         groundDirection = groundMap.Center.hitGround ?
             groundMap.Center.normal.CWPerp()
             : MathTools.CheapRotationalLerp(groundDirection, Vector2.right, failedGroundRaycastSmoothingRate * Time.deltaTime);
-        upcomingGroundDirection = groundMap.PointFromCenter(FacingRight ? 1 : -1).normal.CWPerp();
+        upcomingGroundDirection = groundMap.PointFromCenterByIndex(FacingRight ? 1 : -1).normal.CWPerp();
         //predictiveGroundDirection = FacingRight ? 
         //    (groundMap.RightEndPt.point - groundMap.Center.point).normalized
         //    : (groundMap.Center.point - groundMap.LeftEndPt.point).normalized;

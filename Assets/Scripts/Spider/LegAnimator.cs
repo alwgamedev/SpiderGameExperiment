@@ -81,6 +81,15 @@ public class LegAnimator : MonoBehaviour
         currentDriftWeights.y = MathTools.RandomFloat(driftWeightsMin.y, driftWeightsMax.y);
     }
 
+    //public void UpdateStep(float dt, GroundMap map, bool bodyFacingRight,
+    //    float baseStepHeightMultiplier, float stepHeightSpeedMultiplier,
+    //    float smoothingRate, float stepProgress, float stepTime, float restTime)
+    //{
+
+    //}
+
+    //public void UpdateRest()
+
     public void UpdateStep(float dt,
         float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, bool bodyFacingRight,
         float baseStepHeightMultiplier, float stepHeightSpeedMultiplier, 
@@ -239,6 +248,24 @@ public class LegAnimator : MonoBehaviour
     {
         return positionToDrift + driftAmount * (driftWeightX * bodyRight + driftWeightY * bodyUp);
     }
+
+    //private Vector2 GetStepStart(GroundMap map, bool bodyFacingRight, float stepProgress, float stepTime, float restTime)
+    //{
+    //    var c = map.Center;
+    //    var h = Vector2.Dot((Vector2)hipBone.position - c.point, c.normal.CWPerp());//we could also use body position and body right
+    //    h = bodyFacingRight ? h + StepStartHorizontalOffset(stepProgress, stepTime, restTime)
+    //        : h - StepStartHorizontalOffset(stepProgress, stepTime, restTime);
+    //    return map.PointFromCenterByPosition(h);
+    //}
+
+    //private Vector2 GetStepGoal(GroundMap map, bool bodyFacingRight, float restProgress, float restTime)
+    //{
+    //    var c = map.Center;
+    //    var h = Vector2.Dot((Vector2)hipBone.position - c.point, c.normal.CWPerp());//we could also use body position and body right
+    //    h = bodyFacingRight ? h + StepGoalHorizontalOffset(restProgress, restTime)
+    //        : h - StepGoalHorizontalOffset(restProgress, restTime);
+    //    return map.PointFromCenterByPosition(h);
+    //}
 
     private Vector2 GetStepStart(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, 
         float stepProgress, float stepTime, float restTime)
