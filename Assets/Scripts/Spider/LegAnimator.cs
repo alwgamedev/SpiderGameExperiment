@@ -81,14 +81,46 @@ public class LegAnimator : MonoBehaviour
         currentDriftWeights.y = MathTools.RandomFloat(driftWeightsMin.y, driftWeightsMax.y);
     }
 
-    //public void UpdateStep(float dt, GroundMap map, bool bodyFacingRight,
-    //    float baseStepHeightMultiplier, float stepHeightSpeedMultiplier,
-    //    float smoothingRate, float stepProgress, float stepTime, float restTime)
-    //{
+    public void UpdateStep(float dt, GroundMap map, bool bodyFacingRight,
+        float baseStepHeightMultiplier, float stepHeightSpeedMultiplier,
+        float smoothingRate, float stepProgress, float stepTime, float restTime)
+    {
+        var stepStart = GetStepStart(map, bodyFacingRight, stepProgress, stepTime, restTime);
+        var stepGoal = GetStepGoal(map, bodyFacingRight, 0, restTime);
+        var stepRight = (stepGoal - stepStart).normalized;
+        var stepUp = bodyFacingRight ? stepRight.CCWPerp() : stepRight.CWPerp();
+        var stepCenter = 0.5f * (stepGoal + stepStart);
+        var stepRadius = Vector2.Dot(stepGoal - stepCenter, stepRight);
+        var t = Mathf.PI * stepProgress;
 
-    //}
+        var newTargetPosition = stepCenter - stepRadius * Mathf.Cos(t) * stepRight + stepRadius * baseStepHeightMultiplier * Mathf.Sin(t) * stepUp;
 
-    //public void UpdateRest()
+        //var curGroundRay = GroundRaycast(newTargetPosition, map.Center.normal, 1f, 1f);
+        if (stepHeightSpeedMultiplier < 1)
+        {
+            var g = map.ProjectOntoGround(newTargetPosition);
+            newTargetPosition = Vector2.Lerp(g, newTargetPosition, stepHeightSpeedMultiplier);
+        }
+
+        ikTarget.position = Vector2.Lerp(ikTarget.position, newTargetPosition, smoothingRate * dt);
+    }
+
+    public void UpdateRest(float dt, GroundMap map, bool bodyFacingRight,
+        float smoothingRate, float restProgress, float restTime)
+    {
+        var stepGoal = GetStepGoal(map, bodyFacingRight, restProgress, restTime);
+        ikTarget.position = Vector2.Lerp(ikTarget.position, stepGoal, smoothingRate * dt);
+        //var g = GroundRaycast(ikTarget.position, bodyUp, 1f, 1f);
+        //if (g)
+        //{
+        //    groundNormal = g.normal;
+        //    ikTarget.position = Vector2.Lerp(ikTarget.position, g.point, smoothingRate * dt);
+        //}
+        //else
+        //{
+        //    groundNormal = bodyUp;
+        //}
+    }
 
     public void UpdateStep(float dt,
         float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, bool bodyFacingRight,
@@ -249,23 +281,23 @@ public class LegAnimator : MonoBehaviour
         return positionToDrift + driftAmount * (driftWeightX * bodyRight + driftWeightY * bodyUp);
     }
 
-    //private Vector2 GetStepStart(GroundMap map, bool bodyFacingRight, float stepProgress, float stepTime, float restTime)
-    //{
-    //    var c = map.Center;
-    //    var h = Vector2.Dot((Vector2)hipBone.position - c.point, c.normal.CWPerp());//we could also use body position and body right
-    //    h = bodyFacingRight ? h + StepStartHorizontalOffset(stepProgress, stepTime, restTime)
-    //        : h - StepStartHorizontalOffset(stepProgress, stepTime, restTime);
-    //    return map.PointFromCenterByPosition(h);
-    //}
+    private Vector2 GetStepStart(GroundMap map, bool bodyFacingRight, float stepProgress, float stepTime, float restTime)
+    {
+        var c = map.Center;
+        var h = Vector2.Dot((Vector2)hipBone.position - c.point, c.normal.CWPerp());//we could also use body position and body right
+        h = bodyFacingRight ? h + StepStartHorizontalOffset(stepProgress, stepTime, restTime)
+            : h - StepStartHorizontalOffset(stepProgress, stepTime, restTime);
+        return map.PointFromCenterByPosition(h);
+    }
 
-    //private Vector2 GetStepGoal(GroundMap map, bool bodyFacingRight, float restProgress, float restTime)
-    //{
-    //    var c = map.Center;
-    //    var h = Vector2.Dot((Vector2)hipBone.position - c.point, c.normal.CWPerp());//we could also use body position and body right
-    //    h = bodyFacingRight ? h + StepGoalHorizontalOffset(restProgress, restTime)
-    //        : h - StepGoalHorizontalOffset(restProgress, restTime);
-    //    return map.PointFromCenterByPosition(h);
-    //}
+    private Vector2 GetStepGoal(GroundMap map, bool bodyFacingRight, float restProgress, float restTime)
+    {
+        var c = map.Center;
+        var h = Vector2.Dot((Vector2)hipBone.position - c.point, c.normal.CWPerp());//we could also use body position and body right
+        h = bodyFacingRight ? h + StepGoalHorizontalOffset(restProgress, restTime)
+            : h - StepGoalHorizontalOffset(restProgress, restTime);
+        return map.PointFromCenterByPosition(h);
+    }
 
     private Vector2 GetStepStart(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, 
         float stepProgress, float stepTime, float restTime)

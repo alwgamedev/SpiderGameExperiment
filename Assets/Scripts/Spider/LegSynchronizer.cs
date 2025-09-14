@@ -85,13 +85,89 @@ public class LegSynchronizer : MonoBehaviour
     public float outwardDrift;
     public Vector2 outwardDriftWeights;
 
-    private void LateUpdate()
+    //private void LateUpdate()
+    //{
+    //    var facingRight = bodyRb.transform.localScale.x > 0;
+    //    Vector2 bodyMovementRight = facingRight ? bodyRb.transform.right : - bodyRb.transform.right;
+    //    Vector2 bodyUp = bodyRb.transform.up;
+    //    Vector2 bodyPos = bodyRb.transform.position;
+    //    var dt = Time.deltaTime * timeScale;
+
+    //    var sf = bodyGroundSpeed / speedCapMax;
+    //    var groundSpeedFrac = bodyGroundSpeed < speedCapMin ? 0 : sf;
+    //    var baseStepHeightMultiplier = this.baseStepHeightMultiplier * stepHeightFraction;
+    //    var stepHeightSpeedMultiplier = Mathf.Min(groundSpeedFrac, 1);
+    //    var speedScaledDt = groundSpeedFrac * dt;
+    //    dt = Mathf.Max(speedScaledDt, dt);
+
+    //    if (staticMode)
+    //    {
+    //        var driftSpeedMultiplier = Mathf.Clamp(sf, 0.5f, 1.25f);
+    //        for (int i = 0; i < timers.Length; i++)
+    //        {
+    //            var t = timers[i];
+    //            var l = synchronizedLegs[i].Leg;
+
+    //            t.Update(speedScaledDt);
+
+    //            //Vector2? groundNormal;
+
+    //            if (t.Stepping)
+    //            {
+    //                l.UpdateStepStaticMode(dt,
+    //                    preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, facingRight,
+    //                    baseStepHeightMultiplier, /*stepHeightSpeedMultiplier,*/ 
+    //                    stepSmoothingRate, t.StateProgress, t.StepTime, t.RestTime,
+    //                    outwardDrift * driftSpeedMultiplier);
+    //            }
+    //            else
+    //            {
+    //                l.UpdateRestStaticMode(dt, 
+    //                    preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp,
+    //                    stepSmoothingRate, t.StateProgress, t.RestTime,
+    //                    outwardDrift * driftSpeedMultiplier);
+    //            }
+
+    //            if (l.KeepTargetAboveGround(dt, bodyUp, bodyRb.linearVelocity, staticModeGroundDetectionOffsetRate, staticModeGroundDectectionOffsetMax,
+    //                groundCollisionSmoothingRate, out var groundNormal))
+    //            {
+    //                l.EnforceExtensionConstraint(dt, groundNormal, facingRight ? groundNormal.CWPerp() : groundNormal.CCWPerp(), extensionSmoothingRate);
+    //            }
+    //        }
+    //    }
+    //    else
+    //    {
+    //        for (int i = 0; i < timers.Length; i++)
+    //        {
+    //            var t = timers[i];
+    //            var l = synchronizedLegs[i].Leg;
+
+    //            t.Update(speedScaledDt);
+
+    //            Vector2 groundNormal;
+
+    //            if (t.Stepping)
+    //            {
+    //                l.UpdateStep(dt, 
+    //                    preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, facingRight,
+    //                    baseStepHeightMultiplier, stepHeightSpeedMultiplier,
+    //                    stepSmoothingRate, t.StateProgress, t.StepTime, t.RestTime, out groundNormal);
+    //            }
+    //            else
+    //            {
+    //                l.UpdateRest(dt, preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, 
+    //                    stepSmoothingRate, t.StateProgress, t.RestTime, out groundNormal);
+    //            }
+
+    //            l.EnforceExtensionConstraint(dt, groundNormal, facingRight ? groundNormal.CWPerp() : groundNormal.CCWPerp(), extensionSmoothingRate);
+    //        }
+    //    }
+    //}
+
+    public void UpdateAllLegs(float dt, GroundMap map)
     {
         var facingRight = bodyRb.transform.localScale.x > 0;
-        Vector2 bodyMovementRight = facingRight ? bodyRb.transform.right : - bodyRb.transform.right;
-        Vector2 bodyUp = bodyRb.transform.up;
-        Vector2 bodyPos = bodyRb.transform.position;
-        var dt = Time.deltaTime * timeScale;
+        dt *= timeScale;
 
         var sf = bodyGroundSpeed / speedCapMax;
         var groundSpeedFrac = bodyGroundSpeed < speedCapMin ? 0 : sf;
@@ -100,67 +176,28 @@ public class LegSynchronizer : MonoBehaviour
         var speedScaledDt = groundSpeedFrac * dt;
         dt = Mathf.Max(speedScaledDt, dt);
 
-        if (staticMode)
+        for (int i = 0; i < timers.Length; i++)
         {
-            var driftSpeedMultiplier = Mathf.Clamp(sf, 0.5f, 1.25f);
-            for (int i = 0; i < timers.Length; i++)
+            var t = timers[i];
+            var l = synchronizedLegs[i].Leg;
+
+            t.Update(speedScaledDt);
+
+            //Vector2 groundNormal;
+
+            if (t.Stepping)
             {
-                var t = timers[i];
-                var l = synchronizedLegs[i].Leg;
-
-                t.Update(speedScaledDt);
-
-                //Vector2? groundNormal;
-
-                if (t.Stepping)
-                {
-                    l.UpdateStepStaticMode(dt,
-                        preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, facingRight,
-                        baseStepHeightMultiplier, /*stepHeightSpeedMultiplier,*/ 
-                        stepSmoothingRate, t.StateProgress, t.StepTime, t.RestTime,
-                        outwardDrift * driftSpeedMultiplier);
-                }
-                else
-                {
-                    l.UpdateRestStaticMode(dt, 
-                        preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp,
-                        stepSmoothingRate, t.StateProgress, t.RestTime,
-                        outwardDrift * driftSpeedMultiplier);
-                }
-
-                if (l.KeepTargetAboveGround(dt, bodyUp, bodyRb.linearVelocity, staticModeGroundDetectionOffsetRate, staticModeGroundDectectionOffsetMax,
-                    groundCollisionSmoothingRate, out var groundNormal))
-                {
-                    l.EnforceExtensionConstraint(dt, groundNormal, facingRight ? groundNormal.CWPerp() : groundNormal.CCWPerp(), extensionSmoothingRate);
-                }
+                l.UpdateStep(dt, map, facingRight,
+                    baseStepHeightMultiplier, stepHeightSpeedMultiplier,
+                    stepSmoothingRate, t.StateProgress, t.StepTime, t.RestTime);
             }
-        }
-        else
-        {
-            for (int i = 0; i < timers.Length; i++)
+            else
             {
-                var t = timers[i];
-                var l = synchronizedLegs[i].Leg;
-
-                t.Update(speedScaledDt);
-
-                Vector2 groundNormal;
-
-                if (t.Stepping)
-                {
-                    l.UpdateStep(dt, 
-                        preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, facingRight,
-                        baseStepHeightMultiplier, stepHeightSpeedMultiplier,
-                        stepSmoothingRate, t.StateProgress, t.StepTime, t.RestTime, out groundNormal);
-                }
-                else
-                {
-                    l.UpdateRest(dt, preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, 
-                        stepSmoothingRate, t.StateProgress, t.RestTime, out groundNormal);
-                }
-
-                l.EnforceExtensionConstraint(dt, groundNormal, facingRight ? groundNormal.CWPerp() : groundNormal.CCWPerp(), extensionSmoothingRate);
+                l.UpdateRest(dt, map, facingRight,
+                    stepSmoothingRate, t.StateProgress, t.RestTime);
             }
+
+            //l.EnforceExtensionConstraint(dt, groundNormal, facingRight ? groundNormal.CWPerp() : groundNormal.CCWPerp(), extensionSmoothingRate);
         }
     }
 

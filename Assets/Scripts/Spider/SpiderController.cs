@@ -107,6 +107,11 @@ public class SpiderController : MonoBehaviour
         Balance(Time.deltaTime);
     }
 
+    private void LateUpdate()
+    {
+        legSynchronizer.UpdateAllLegs(Time.deltaTime, groundMap);
+    }
+
     private void FixedUpdate()
     {
         UpdateGroundData();
@@ -299,7 +304,7 @@ public class SpiderController : MonoBehaviour
     {
         legSynchronizer.timeScale = airborneLegAnimationTimeScale;
         legSynchronizer.outwardDrift = 0;
-        legSynchronizer.EnterStaticMode();
+        //legSynchronizer.EnterStaticMode();
         RecomputeGroundednessTolerance();
     }
 
@@ -307,7 +312,7 @@ public class SpiderController : MonoBehaviour
     {
         legSynchronizer.timeScale = 1;
         legSynchronizer.outwardDrift = 0;
-        legSynchronizer.EndStaticMode(/*FacingRight, predictiveGroundDirection*/);//makes more sense to use predictive GroundDir bc that's what we rotate towards?
+        //legSynchronizer.EndStaticMode(/*FacingRight, predictiveGroundDirection*/);//makes more sense to use predictive GroundDir bc that's what we rotate towards?
         RecomputeGroundednessTolerance();
     }
 

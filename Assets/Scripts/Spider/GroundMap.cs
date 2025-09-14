@@ -10,9 +10,10 @@ public struct GroundMap
 
     [SerializeField] GroundMapPt[] _map;
 
-    public GroundMapPt[] map => _map;
-    public int NumPts { get; private set; }
-    public float MapHalfWidth => intervalWidth * numFwdIntervals;//in future we could cache this (and make numFwdIntervals & intervalWidth private)
+    //public GroundMapPt[] map => _map;
+    //in future, can cache some of these and make numFwdIntervals and intervalWidth private
+    public int NumPts => (numFwdIntervals << 1) | 1;
+    public float MapHalfWidth => intervalWidth * numFwdIntervals;
     public GroundMapPt Center => _map[numFwdIntervals];
     public GroundMapPt LeftEndPt => _map[0];
     public GroundMapPt RightEndPt => _map[^1];
@@ -45,6 +46,14 @@ public struct GroundMap
             }
             return Vector2.Lerp(PointFromCenterByIndex(i).point, PointFromCenterByIndex(i + 1).point, dx);
         }
+    }
+
+    //it doesn't really "project" but travels an appropriate distance along the ground
+
+    public Vector2 ProjectOntoGround(Vector2 p)
+    {
+        var x = Vector2.Dot(p - Center.point, Center.normal.CWPerp());
+        return PointFromCenterByPosition(x);
     }
 
     public void UpdateMap(Vector2 origin, Vector2 originDown, float raycastLength)
