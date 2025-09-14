@@ -7874,6 +7874,14 @@ MonoBehaviour:
   airborneLegAnimationTimeScale: 0.075
   airborneLegDriftRate: 1.8
   airborneLegDriftMax: 1
+  groundMap:
+    numFwdIntervals: 5
+    intervalWidth: 0.25
+    raycastLength: 1.2
+    raycastLayerMask:
+      serializedVersion: 2
+      m_Bits: 64
+    map: []
 --- !u!114 &5843148394334628032
 MonoBehaviour:
   m_ObjectHideFlags: 0

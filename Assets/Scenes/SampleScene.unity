@@ -1580,20 +1580,16 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: groundMap.intervalWidth
-      value: 0.25
+      propertyPath: heightSpringForce
+      value: 400
       objectReference: {fileID: 0}
     - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: groundMap.raycastLength
-      value: 1.2
+      propertyPath: heightSpringDamping
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: groundMap.numFwdIntervals
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: groundMap.raycastLayerMask.m_Bits
-      value: 64
+      propertyPath: groundedEntryToleranceFactor
+      value: 1.1
       objectReference: {fileID: 0}
     - target: {fileID: 8910507805382992582, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: m_LocalPosition.x
