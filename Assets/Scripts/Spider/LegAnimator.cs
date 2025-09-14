@@ -45,14 +45,14 @@ public class LegAnimator : MonoBehaviour
     }
 
     //very useful for identifying issues (well it used to be until you started using local positions)
-    private void OnDrawGizmos()
-    {
-        if (ikTarget)//because still draws gizmos outside of play mode (and I'm not gonna create needless overhead from using getters with null checks)
-        {
-            Gizmos.color = Color.blue;
-            Gizmos.DrawSphere(ikTarget.position, .1f);
-        }
-    }
+    //private void OnDrawGizmos()
+    //{
+    //    if (ikTarget)//because still draws gizmos outside of play mode (and I'm not gonna create needless overhead from using getters with null checks)
+    //    {
+    //        Gizmos.color = Color.blue;
+    //        Gizmos.DrawSphere(ikTarget.position, .1f);
+    //    }
+    //}
 
     public void InitializePosition(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, 
         bool stepping, float stateProgress, float stepTime, float restTime)

@@ -14,6 +14,24 @@ public struct GroundMap
 
     public int NumPts => (numFwdIntervals << 1) | 1;
 
+    public void DrawGizmos()
+    {
+        if (map == null || map.Length == 0) return;
+
+        Gizmos.color = Color.green;
+        for (int i = 0; i < numFwdIntervals; i++)
+        {
+            Gizmos.DrawSphere(map[i].point, 0.1f);
+        }
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(map[numFwdIntervals].point, 0.1f);
+        Gizmos.color = Color.yellow;
+        for (int i = numFwdIntervals + 1; i < NumPts; i++)
+        {
+            Gizmos.DrawSphere(map[i].point, 0.1f);
+        }
+    }
+
     //2do: ALSO DEAL WITH CASE WHERE GROUND CUTS *UP* SHARPLY (resulting in raycast origin o being inside collider)
     public void BuildMap(Vector2 origin, Vector2 originDown)
     {
@@ -24,92 +42,100 @@ public struct GroundMap
             map = new GroundMapPt[n];
         }
 
-        var r = Physics2D.Raycast(origin, originDown, raycastLength, raycastLayerMask);
-        map[numFwdIntervals] = r ? new GroundMapPt(r.point, r.normal)
-            : new GroundMapPt(origin + raycastLength * originDown, -originDown);
-        var lastRaycastOrigin = origin;
+        var r = MathTools.DebugRaycast(origin, originDown, raycastLength, raycastLayerMask, Color.red);
+        map[numFwdIntervals] = r ? new GroundMapPt(r.point, r.normal, r.distance)
+            : new GroundMapPt(origin + raycastLength * originDown, -originDown, raycastLength);
+        //var lastRaycastOrigin = origin;
+        //float firstRaycastLength = r ? r.distance : raycastLength;
+        //float lastRaycastLength = firstRaycastLength;
 
         for (int i = numFwdIntervals; i < n - 1; i++)
         {
             //set map[i + 1]
             var lastMapPt = map[i];
-            var lastNormal = lastMapPt.colliderNormal;
+            var lastNormal = lastMapPt.normal;
             var lastTangent = lastNormal.CWPerp();
-            r = Physics2D.Raycast(lastRaycastOrigin, lastTangent, intervalWidth, raycastLayerMask);
+            var lastRaycastLength = lastMapPt.raycastDistance;
+            var o = lastMapPt.point + lastRaycastLength * lastNormal;
+
+            //first raycast horizontally to check if ground kicks UP suddenly (running into a wall e.g.)
+            r = MathTools.DebugRaycast(o, lastTangent, intervalWidth, raycastLayerMask, Color.blue);
             if (r)
             {
-                map[i + 1] = new GroundMapPt(r.point, r.normal);
-                //and keep last raycast origin the same
+                map[i + 1] = new GroundMapPt(r.point, r.normal, r.distance);
+                Debug.Log($"hit wall at index {i + 1}");
             }
             else
             {
-                var o = lastRaycastOrigin + intervalWidth * lastTangent;
-                r = Physics2D.Raycast(o, -lastNormal, raycastLength, raycastLayerMask);
+                //now shift forward and raycast down
+                o += intervalWidth * lastTangent;
+                r = MathTools.DebugRaycast(o, -lastNormal, raycastLength, raycastLayerMask, Color.cyan);
                 if (r)
                 {
-                    map[i + 1] = new GroundMapPt(r.point, r.normal);
-                    lastRaycastOrigin = o;
+                    map[i + 1] = new GroundMapPt(r.point, r.normal, r.distance * Vector2.Dot(lastNormal, r.normal));
                 }
                 else
                 {
-                    var oo = o - raycastLength * lastNormal;
+                    var l = Mathf.Min(lastRaycastLength + intervalWidth, raycastLength);
+                    var oo = o - l * lastNormal;
                     r = Physics2D.Raycast(oo, -lastTangent, 2 * intervalWidth, raycastLayerMask);
-                    map[i + 1] = r ? new GroundMapPt(r.point, r.normal) : new GroundMapPt(oo, lastNormal);
-                    lastRaycastOrigin = r ? oo : o;
+                    map[i + 1] = r ? new GroundMapPt(r.point, r.normal, r.distance) : new GroundMapPt(o - raycastLength * lastNormal, lastNormal, raycastLength);
                 }
             }
         }
 
-        lastRaycastOrigin = origin;
         for (int i = numFwdIntervals; i > 0; i--)
         {
-            //set map[i + 1]
+            //set map[i - 1]
             var lastMapPt = map[i];
-            var lastNormal = lastMapPt.colliderNormal;
+            var lastNormal = lastMapPt.normal;
             var lastTangent = lastNormal.CCWPerp();
-            r = Physics2D.Raycast(lastRaycastOrigin, lastTangent, intervalWidth, raycastLayerMask);
+            var lastRaycastLength = lastMapPt.raycastDistance;
+            var o = lastMapPt.point + lastRaycastLength * lastNormal;
+
+            r = MathTools.DebugRaycast(o, lastTangent, intervalWidth, raycastLayerMask, Color.blue);
             if (r)
             {
-                map[i - 1] = new GroundMapPt(r.point, r.normal);
-                //and keep last raycast origin the same
+                map[i - 1] = new GroundMapPt(r.point, r.normal, r.distance);
             }
             else
             {
-                var o = lastRaycastOrigin + intervalWidth * lastTangent;
-                r = Physics2D.Raycast(o, -lastNormal, raycastLength, raycastLayerMask);
+                o += intervalWidth * lastTangent;
+                r = MathTools.DebugRaycast(o, -lastNormal, raycastLength, raycastLayerMask, Color.cyan);
                 if (r)
                 {
-                    map[i - 1] = new GroundMapPt(r.point, r.normal);
-                    lastRaycastOrigin = o;
+                    map[i - 1] = new GroundMapPt(r.point, r.normal, r.distance * Vector2.Dot(lastNormal, r.normal));
                 }
                 else
                 {
-                    var oo = o - raycastLength * lastNormal;
+                    var l = Mathf.Min(lastRaycastLength + intervalWidth, raycastLength);
+                    var oo = o - l * lastNormal;
                     r = Physics2D.Raycast(oo, -lastTangent, 2 * intervalWidth, raycastLayerMask);
-                    map[i - 1] = r ? new GroundMapPt(r.point, r.normal) : new GroundMapPt(oo, lastNormal);
-                    lastRaycastOrigin = r ? oo : o;
+                    map[i - 1] = r ? new GroundMapPt(r.point, r.normal, r.distance) : new GroundMapPt(o - raycastLength * lastNormal, lastNormal, raycastLength);
                 }
             }
         }
     }
 
     //2DO
-    public GroundMapPt GetPointAtPosition(float x, out int lastIndexBeforePosition)
-    {
-        lastIndexBeforePosition = 0;
-        return new();
-    }
+    //public GroundMapPt GetPointAtPosition(float x, out int lastIndexBeforePosition)
+    //{
+    //    lastIndexBeforePosition = 0;
+    //    return new();
+    //}
 }
 
-//as a shortcut we will use position along map (of point i) = (i - numFwdIntervals) * intervalWidth
+[Serializable]//just so i can watch them in the inspector
 public struct GroundMapPt
 {
     public Vector2 point;
-    public Vector2 colliderNormal;
+    public Vector2 normal;
+    public float raycastDistance;
 
-    public GroundMapPt(Vector2 point, Vector2 colliderNormal)
+    public GroundMapPt(Vector2 point, Vector2 normal, float raycastDistance)
     {
         this.point = point;
-        this.colliderNormal = colliderNormal;
+        this.normal = normal;
+        this.raycastDistance = raycastDistance;
     }
 }

@@ -69,14 +69,7 @@ public class SpiderController : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (groundMap.map != null)
-        {
-            Gizmos.color = Color.green;
-            for (int i = 0; i < groundMap.map.Length; i++)
-            {
-                Gizmos.DrawSphere(groundMap.map[i].point, .1f);
-            }
-        }
+        groundMap.DrawGizmos();
     }
 
     private void Awake()
@@ -110,12 +103,12 @@ public class SpiderController : MonoBehaviour
 
         //Balance(Time.deltaTime);
         RotateHead(Time.deltaTime);
-
-        groundMap.BuildMap(heightReferencePoint.position, -transform.up);
     }
 
     private void FixedUpdate()
     {
+        groundMap.BuildMap(heightReferencePoint.position, -transform.up);
+
         UpdateGroundData();
         HandleMoveInput();
         HandleJumpInput();
@@ -321,14 +314,14 @@ public class SpiderController : MonoBehaviour
             Vector2 tDown = -transform.up;
             Vector2 tRight = transform.right;
             var l = GroundednessTolerance;
-            var r = MathTools.DebugRaycast(o, tDown, l, groundLayer, Color.red);
+            var r = MathTools.DebugRaycast(o, tDown, l, groundLayer, Color.clear);
 
             if (r)
             {
                 HandleSuccessfulGroundHit(r);
                 if (grounded)
                 {
-                    var r2 = MathTools.DebugRaycast(o + predictiveGroundDirectionSpacing * Orientation * tRight, tDown, l, groundLayer, Color.red);
+                    var r2 = MathTools.DebugRaycast(o + predictiveGroundDirectionSpacing * Orientation * tRight, tDown, l, groundLayer, Color.clear);
                     if (r2)
                     {
                         predictiveGroundDirection = FacingRight ? (r2.point - r.point).normalized : (r.point - r2.point).normalized;
@@ -406,12 +399,12 @@ public class SpiderController : MonoBehaviour
         var l45 = length / MathTools.cos45;
         //var l60 = length / MathTools.cos60;
         //var l90 = 3 * length;
-        yield return MathTools.DebugRaycast(origin, d30, l30, groundLayer, Color.yellow);
-        yield return MathTools.DebugRaycast(origin, d45, l45, groundLayer, Color.yellow);
+        yield return MathTools.DebugRaycast(origin, d30, l30, groundLayer, Color.clear);
+        yield return MathTools.DebugRaycast(origin, d45, l45, groundLayer, Color.clear);
         //yield return MathTools.DebugRaycast(origin, d60, length, groundLayer, Color.yellow);
         //yield return MathTools.DebugRaycast(origin, tRight, length, groundLayer, Color.red);
-        yield return MathTools.DebugRaycast(origin, dM30, l30, groundLayer, Color.yellow);
-        yield return MathTools.DebugRaycast(origin, dM45, l45, groundLayer, Color.yellow);
+        yield return MathTools.DebugRaycast(origin, dM30, l30, groundLayer, Color.clear);
+        yield return MathTools.DebugRaycast(origin, dM45, l45, groundLayer, Color.clear);
         //yield return MathTools.DebugRaycast(origin, dM60, length, groundLayer, Color.yellow);
         //yield return MathTools.DebugRaycast(origin, -tRight, length, groundLayer, Color.red);
     }
