@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class SpiderController : MonoBehaviour
 {
@@ -10,22 +9,26 @@ public class SpiderController : MonoBehaviour
     [SerializeField] float rotationSpeed;
     [SerializeField] float groundedExitToleranceFactor;
     [SerializeField] float groundedEntryToleranceFactor;
-    [SerializeField] float predictiveGroundDirectionSpacing;
+    [SerializeField] float upcomingGroundDirectionOffset;
+    //[SerializeField] float predictiveGroundDirectionSpacing;
     [SerializeField] float failedGroundRaycastSmoothingRate;
     //[SerializeField] float upcomingGroundDirectionSmoothingRate;
     [SerializeField] float accelFactor;
     [SerializeField] float accelCap;
     [SerializeField] float decelFactor;
     [SerializeField] float airborneAccelMultiplier;
-    [SerializeField] float steepSlopeGripStrength;
-    [SerializeField] float steepSlopeGripDistancePower;
+    [SerializeField] float gripStrength;
+    //[SerializeField] float steepSlopeGripDistancePower;
+    //[SerializeField] float steepSlopeGripDamping;
+    //[SerializeField] float groundPointSlipRate;
     [SerializeField] float maxSpeed;
     [SerializeField] float maxSpeedAirborne;
     [SerializeField] float preferredRideHeight;
     [SerializeField] float heightSpringForce;
     [SerializeField] float heightSpringDamping;
-    [SerializeField] float balanceSpringForce;
-    [SerializeField] float balanceSpringDamping;
+    [SerializeField] float heightSpringSampleWidth;
+    //[SerializeField] float balanceSpringForce;
+    //[SerializeField] float balanceSpringDamping;
     [SerializeField] float jumpForce;
     [SerializeField] float jumpForceCrouchBoostRate;
     [SerializeField] float uphillJumpDirectionRotationRate;
@@ -53,6 +56,8 @@ public class SpiderController : MonoBehaviour
     Vector2 groundDirection = Vector2.right;
     Vector2 upcomingGroundDirection = Vector2.right;
     Vector2 groundPoint = new(Mathf.Infinity, Mathf.Infinity);
+    Vector2 groundPointGroundDirection = Vector2.right;
+    //Vector2 slipPoint = new(Mathf.Infinity, Mathf.Infinity);
     //Vector2 groundSlipPoint;
     //to force it to initialize ground point (and then after it only gets set when moveInput != 0)
     //float lastComputedGroundDistance = Mathf.Infinity;
@@ -71,6 +76,11 @@ public class SpiderController : MonoBehaviour
     private void OnDrawGizmos()
     {
         groundMap.DrawGizmos();
+        if (groundPoint.x != Mathf.Infinity)
+        {
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawSphere(groundPoint, 0.1f);
+        }
     }
 
     private void Awake()
@@ -87,6 +97,7 @@ public class SpiderController : MonoBehaviour
         //rb.centerOfMass = (Vector2)heightReferencePoint.position - rb.centerOfMass;
         legSynchronizer.Initialize(PreferredBodyPosGroundHeight, FacingRight);
         RecomputeGroundednessTolerance();
+        InitializeGroundData();
     }
 
     private void Update()
@@ -164,34 +175,41 @@ public class SpiderController : MonoBehaviour
 
     private void HandleMoveInput()
     {
-        Vector2 d = FacingRight ? groundDirection : -groundDirection;//grounded ? (FacingRight ? transform.right : - transform.right) : (FacingRight ? Vector2.right : -Vector2.right);
-        var spd = Vector2.Dot(rb.linearVelocity, d);
-        var maxSpd = grounded ? maxSpeed : maxSpeedAirborne;
-        var a = grounded ? accelFactor : accelFactor * airborneAccelMultiplier;
-        var s = Mathf.Min(maxSpd - spd, accelCap * maxSpd);
+
         //otherwise if speed is highly negative, we get ungodly rates of acceleration
         //(and note that we are doing it in a way that scales with max speed
         //-- so you can limit maxSpd - spd to being e.g. double the maxSpeed or w/e)
         if (moveInput != 0)
         {
+            Vector2 d = FacingRight ? groundDirection : -groundDirection;//grounded ? (FacingRight ? transform.right : - transform.right) : (FacingRight ? Vector2.right : -Vector2.right);
+            var spd = Vector2.Dot(rb.linearVelocity, d);
+            var maxSpd = grounded ? maxSpeed : maxSpeedAirborne;
+            var a = grounded ? accelFactor : accelFactor * airborneAccelMultiplier;
+            var s = Mathf.Min(maxSpd - spd, accelCap * maxSpd);
             rb.AddForce(a * s * rb.mass * d);
         }
         else if (grounded && moveInput == 0)
         {
-            rb.AddForce(decelFactor * -spd * rb.mass * d);//simulate friction
-            Grip();
+            Vector2 d = FacingRight ? groundPointGroundDirection : -groundPointGroundDirection;
+            var spd = Vector2.Dot(rb.linearVelocity, d);
+            //var grip = gripStrength; //* Mathf.Abs(groundDirection.y);
+            var h = Vector2.Dot(groundPoint - (Vector2)heightReferencePoint.position, d);
+            //grip *= Mathf.Sign(h) * Mathf.Pow(Mathf.Abs(h), steepSlopeGripDistancePower);
+            rb.AddForce((gripStrength * h - decelFactor * spd) * rb.mass * d);//grip to steep slope
+            //Grip();
+            //rb.AddForce(decelFactor * -spd * rb.mass * d);//simulate friction
         }
 
-        void Grip()
-        {
-            if (groundPoint.x != Mathf.Infinity)
-            {
-                var grip = steepSlopeGripStrength * Mathf.Abs(groundDirection.y);
-                var h = Vector2.Dot(groundPoint - (Vector2)heightReferencePoint.position, d);
-                //grip *= Mathf.Sign(h) * Mathf.Pow(Mathf.Abs(h), steepSlopeGripDistancePower);
-                rb.AddForce(grip * h * rb.mass * d);//grip to steep slope
-            }
-        }
+        //void Grip()
+        //{
+        //    if (groundPoint.x != Mathf.Infinity)
+        //    {
+        //        var grip = steepSlopeGripStrength; //* Mathf.Abs(groundDirection.y);
+        //        var h = Vector2.Dot(groundPoint - (Vector2)heightReferencePoint.position, d);
+        //        grip *= Mathf.Sign(h) * Mathf.Pow(Mathf.Abs(h), steepSlopeGripDistancePower);
+        //        rb.AddForce(grip * rb.mass * d);//grip to steep slope
+        //    }
+        //}
     }
 
     private void Balance(float dt)
@@ -258,16 +276,19 @@ public class SpiderController : MonoBehaviour
     private void UpdateHeightSpring()
     {
         Vector2 d = -transform.up;
+        //Vector2 h = heightReferencePoint.position;
+        //var y0 = Vector2.Dot(groundMap.Center.point - h, d);
+        //var i1 = groundMap.IndexOfLastMarkedPointBeforePosition(heightSpringSampleWidth);
+        //var p1 = groundMap[i1];
+        //var y1 = Vector2.Dot(p1.point - h, d);
+        //var i2 = groundMap.IndexOfLastMarkedPointBeforePosition(-heightSpringSampleWidth);
+        //var p2 = groundMap[i2];
+        //var y2 = Vector2.Dot(p2.point - h, d);
+        //var l = (y0 + y1 + y2) / 3 - preferredRideHeight;
         var l = groundMap.Center.raycastDistance - preferredRideHeight;
         var f = heightSpringForce * l * d;
         var v = Vector2.Dot(rb.linearVelocity, d) * d;
         rb.AddForce(rb.mass * (f - heightSpringDamping * v));
-        //var g = groundPoint + preferredRideHeight * (Vector2)transform.up;
-        //var d = g - (Vector2)heightReferencePoint.position;
-        //var u = d.normalized;
-        //var f = heightSpringForce * d;
-        //var v = Vector2.Dot(rb.linearVelocity, u) * u;
-        //rb.AddForce(rb.mass * (f - heightSpringDamping * v));
     }
 
     private void UpdateAirborneLegDrift()
@@ -304,7 +325,6 @@ public class SpiderController : MonoBehaviour
     {
         legSynchronizer.timeScale = airborneLegAnimationTimeScale;
         legSynchronizer.outwardDrift = 0;
-        //legSynchronizer.EnterStaticMode();
         RecomputeGroundednessTolerance();
     }
 
@@ -312,144 +332,52 @@ public class SpiderController : MonoBehaviour
     {
         legSynchronizer.timeScale = 1;
         legSynchronizer.outwardDrift = 0;
-        //legSynchronizer.EndStaticMode(/*FacingRight, predictiveGroundDirection*/);//makes more sense to use predictive GroundDir bc that's what we rotate towards?
         RecomputeGroundednessTolerance();
     }
 
     private void UpdateGroundData()
     {
-        groundMap.UpdateMap(heightReferencePoint.position, -transform.up, groundednessTolerance);
+        UpdateGroundMap();
+        var i = FacingRight ? groundMap.IndexOfFirstForwardGroundHit() : groundMap.IndexOfFirstBackwardGroundHit();
+        var pt = groundMap[i];
 
-        if (moveInput != 0 || !grounded || groundPoint.x == Mathf.Infinity)
+        if (moveInput != 0 || !grounded /*|| groundPoint.x == Mathf.Infinity*/)
         {
-            groundPoint = groundMap.Center.point;
+            UpdateGroundPoint();
+            //slipPoint = groundPoint;
         }
 
         if (!VerifyingJump())
         {
-            SetGrounded(groundMap.Center.hitGround);
+            SetGrounded(pt.hitGround);
         }
 
-        //if (groundMap.Center.hitGround)
-        //{
-        //    lastComputedGroundDistance = groundMap.Center.raycastDistance;
-        //    groundDirection = groundMap.Center.normal.CWPerp();
-        //}
-        //else
-        //{
-        //    lastComputedGroundDistance = Mathf.Infinity;
-        //    groundDirection = MathTools.CheapRotationalLerp(groundDirection, Vector2.right, failedGroundRaycastSmoothingRate * Time.deltaTime);
-        //}
-        groundDirection = groundMap.Center.hitGround ?
-            groundMap.Center.normal.CWPerp()
+        //pt = groundMap.Center;
+        bool isCentralIndex = groundMap.IsCentralIndex(i);
+        groundDirection = pt.hitGround && isCentralIndex ?
+            pt.normal.CWPerp()
             : MathTools.CheapRotationalLerp(groundDirection, Vector2.right, failedGroundRaycastSmoothingRate * Time.deltaTime);
-        upcomingGroundDirection = groundMap.PointFromCenterByIndex(FacingRight ? 1 : -1).normal.CWPerp();
-        //predictiveGroundDirection = FacingRight ? 
-        //    (groundMap.RightEndPt.point - groundMap.Center.point).normalized
-        //    : (groundMap.Center.point - groundMap.LeftEndPt.point).normalized;
+        int j = isCentralIndex ? 
+            groundMap.IndexOfLastMarkedPointBeforePosition(FacingRight ? upcomingGroundDirectionOffset : -upcomingGroundDirectionOffset) 
+            : i;
+        //^instead of using upcomingGroundDirectionOffset, we could just use index i +/- 2, but then we have to re-adjust whenever we change groundMap intervalWidth
+        upcomingGroundDirection = groundMap[j].normal.CWPerp();
     }
 
-    //always "right pointing" (relative to ground outward normal)
-    //private void OldUpdateGroundData()
-    //{
-    //    if (!VerifyingJump())//to avoid floaty/hovery rotation while taking off
-    //    {
-    //        Vector2 o = heightReferencePoint.position;
-    //        Vector2 tDown = -transform.up;
-    //        Vector2 tRight = transform.right;
-    //        var l = GroundednessTolerance;
-    //        var r = MathTools.DebugRaycast(o, tDown, l, groundLayer, Color.clear);
+    private void UpdateGroundMap()
+    {
+        groundMap.UpdateMap(heightReferencePoint.position, -transform.up, groundednessTolerance);
+    }
 
-    //        if (r)
-    //        {
-    //            HandleSuccessfulGroundHit(r);
-    //            if (grounded)
-    //            {
-    //                var r2 = MathTools.DebugRaycast(o + predictiveGroundDirectionSpacing * Orientation * tRight, tDown, l, groundLayer, Color.clear);
-    //                if (r2)
-    //                {
-    //                    predictiveGroundDirection = FacingRight ? (r2.point - r.point).normalized : (r.point - r2.point).normalized;
-    //                    upcomingGroundDirection = r2.normal.CWPerp();
-    //                }
-    //                else
-    //                {
-    //                    predictiveGroundDirection = groundDirection;
-    //                    upcomingGroundDirection = groundDirection;//MathTools.CheapRotationalLerp(upcomingGroundDirection, groundDirection.CWPerp(), upcomingGroundDirectionSmoothingRate * Time.deltaTime);
-    //                }
+    private void UpdateGroundPoint()
+    {
+        groundPoint = groundMap.Center.point;
+        groundPointGroundDirection = groundMap.Center.normal.CWPerp();
+    }
 
-    //                return;
-    //            }
-    //        }
-
-    //        //if r1 fails or distance was too large to be considered grounded, compute backup ground hits and choose shortest one
-    //        float minDist = Mathf.Infinity;
-    //        foreach (var s in BackupGroundHits(o, tDown, tRight, l))
-    //        {
-    //            if (s && s.distance < minDist)
-    //            {
-    //                minDist = s.distance;
-    //                r = s;
-    //            }
-    //        }
-
-    //        if (r)
-    //        {
-    //            HandleSuccessfulGroundHit(r);
-    //            predictiveGroundDirection = groundDirection;
-    //            upcomingGroundDirection = groundDirection;//MathTools.CheapRotationalLerp(upcomingGroundDirection, groundDirection, upcomingGroundDirectionSmoothingRate * Time.deltaTime);
-    //            return;
-    //        }
-    //    }
-
-    //    lastComputedGroundDistance = Mathf.Infinity;
-    //    groundDirection = MathTools.CheapRotationalLerp(groundDirection, Vector2.right, failedGroundRaycastSmoothingRate * Time.deltaTime);
-    //    predictiveGroundDirection = groundDirection;//don't lerp in this one case because it affects the rate at which we level out when jumping... (a little tangled)
-    //    upcomingGroundDirection = groundDirection;//MathTools.CheapRotationalLerp(upcomingGroundDirection, groundDirection, upcomingGroundDirectionSmoothingRate * Time.deltaTime);
-    //    SetGrounded(false);
-    //}
-
-    //private void HandleSuccessfulGroundHit(RaycastHit2D r)
-    //{
-    //    Vector2 p = heightReferencePoint.position;//the raycast origin
-    //    var up = r.normal;
-    //    var right = r.normal.CWPerp();
-    //    var d = Vector2.Dot(r.point - p, up);
-    //    var q = p + d * up;
-
-    //    groundDirection = right;
-    //    lastComputedGroundDistance = r.distance;
-
-    //    if (moveInput != 0 || !grounded || groundPoint.x == Mathf.Infinity)
-    //    {
-    //        groundPoint = q;
-    //    }
-
-    //    SetGrounded(lastComputedGroundDistance < GroundednessTolerance);
-    //}
-
-    ////2do: should we distribute these "radially" or horizontally?
-    ////radial has the advantage the we can see ground in front of us (the 90 deg cast)
-    ////but horizontally would be simpler (and maybe if all horizontally spaced hits fail we want to slide anyway)
-    ////we could also just do horizontal casts + the two 90 deg casts
-    //private IEnumerable<RaycastHit2D> BackupGroundHits(Vector2 origin, Vector2 tDown, Vector2 tRight, float length)
-    //{
-    //    var d30 = MathTools.cos30 * tDown - MathTools.sin30 * tRight;
-    //    var d45 = MathTools.cos45 * tDown - MathTools.sin45 * tRight;
-    //    //var d60 = MathTools.cos60 * tDown + MathTools.sin60 * tRight;
-    //    var dM30 = MathTools.cos30 * tDown + MathTools.sin30 * tRight;
-    //    var dM45 = MathTools.cos45 * tDown + MathTools.sin45 * tRight;
-    //    //var dM60 = MathTools.cos60 * tDown - MathTools.sin60 * tRight;
-    //    var l30 = length / MathTools.cos30;
-    //    var l45 = length / MathTools.cos45;
-    //    //var l60 = length / MathTools.cos60;
-    //    //var l90 = 3 * length;
-    //    yield return MathTools.DebugRaycast(origin, d30, l30, groundLayer, Color.clear);
-    //    yield return MathTools.DebugRaycast(origin, d45, l45, groundLayer, Color.clear);
-    //    //yield return MathTools.DebugRaycast(origin, d60, length, groundLayer, Color.yellow);
-    //    //yield return MathTools.DebugRaycast(origin, tRight, length, groundLayer, Color.red);
-    //    yield return MathTools.DebugRaycast(origin, dM30, l30, groundLayer, Color.clear);
-    //    yield return MathTools.DebugRaycast(origin, dM45, l45, groundLayer, Color.clear);
-    //    //yield return MathTools.DebugRaycast(origin, dM60, length, groundLayer, Color.yellow);
-    //    //yield return MathTools.DebugRaycast(origin, -tRight, length, groundLayer, Color.red);
-    //}
+    private void InitializeGroundData()
+    {
+        UpdateGroundMap();
+        UpdateGroundPoint();
+    }
 }

@@ -10,12 +10,13 @@ public class LegSynchronizer : MonoBehaviour
     [SerializeField] float speedCapMax;//at or above this speed, legs will use full step height;(may want to make this public so not indpt of mover)
     [SerializeField] float baseStepHeightMultiplier;
     [SerializeField] float stepSmoothingRate;
+    //[SerializeField] float speedFracSmoothingRate;
     //[SerializeField] float restSmoothingRate;
     //[SerializeField] float staticModeGroundCollisionSmoothingRate;
-    [SerializeField] float extensionSmoothingRate;
-    [SerializeField] float groundCollisionSmoothingRate;
-    [SerializeField] float staticModeGroundDetectionOffsetRate;
-    [SerializeField] float staticModeGroundDectectionOffsetMax;
+    //[SerializeField] float extensionSmoothingRate;
+    //[SerializeField] float groundCollisionSmoothingRate;
+    //[SerializeField] float staticModeGroundDetectionOffsetRate;
+    //[SerializeField] float staticModeGroundDectectionOffsetMax;
     [SerializeField] SynchronizedLeg[] synchronizedLegs;
 
     class LegTimer
@@ -76,7 +77,7 @@ public class LegSynchronizer : MonoBehaviour
     }
 
     LegTimer[] timers;
-    bool staticMode;
+    //bool staticMode;
 
     public float bodyGroundSpeed;
     public float preferredBodyPosGroundHeight;
@@ -84,6 +85,8 @@ public class LegSynchronizer : MonoBehaviour
     public float stepHeightFraction;
     public float outwardDrift;
     public Vector2 outwardDriftWeights;
+
+    //float smoothedGroundSpeedFrac;
 
     //private void LateUpdate()
     //{
@@ -171,6 +174,7 @@ public class LegSynchronizer : MonoBehaviour
 
         var sf = bodyGroundSpeed / speedCapMax;
         var groundSpeedFrac = bodyGroundSpeed < speedCapMin ? 0 : sf;
+
         var baseStepHeightMultiplier = this.baseStepHeightMultiplier * stepHeightFraction;
         var stepHeightSpeedMultiplier = Mathf.Min(groundSpeedFrac, 1);
         var speedScaledDt = groundSpeedFrac * dt;
@@ -201,26 +205,26 @@ public class LegSynchronizer : MonoBehaviour
         }
     }
 
-    public void EnterStaticMode()
-    {
-        if (!staticMode)
-        {
-            staticMode = true;
-            for (int i = 0; i < synchronizedLegs.Length; i++)
-            {
-                synchronizedLegs[i].Leg.RandomizeDriftWeights();
-            }
-        }
-    }
+    //public void EnterStaticMode()
+    //{
+    //    if (!staticMode)
+    //    {
+    //        staticMode = true;
+    //        for (int i = 0; i < synchronizedLegs.Length; i++)
+    //        {
+    //            synchronizedLegs[i].Leg.RandomizeDriftWeights();
+    //        }
+    //    }
+    //}
 
-    public void EndStaticMode(/*bool bodyFacingRight, Vector2 bodyRight*/)
-    {
-        if (staticMode)
-        {
-            staticMode = false;
-            //+other stuff that should only be done when exiting static mode
-        }
-    }
+    //public void EndStaticMode(/*bool bodyFacingRight, Vector2 bodyRight*/)
+    //{
+    //    if (staticMode)
+    //    {
+    //        staticMode = false;
+    //        //+other stuff that should only be done when exiting static mode
+    //    }
+    //}
 
     public void Initialize(float bodyPosGroundHeight, bool bodyFacingRight)
     {
