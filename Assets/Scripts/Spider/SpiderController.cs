@@ -7,11 +7,14 @@ public class SpiderController : MonoBehaviour
     [SerializeField] Transform heightReferencePoint;
     [SerializeField] float headRotationSpeed;
     [SerializeField] float rotationSpeed;
+    //[SerializeField] float airborneRotationSpeed;
+    [SerializeField] LayerMask groundLayer;
     [SerializeField] float groundedExitToleranceFactor;
     [SerializeField] float groundedEntryToleranceFactor;
     [SerializeField] float upcomingGroundDirectionOffset;
     //[SerializeField] float predictiveGroundDirectionSpacing;
     [SerializeField] float failedGroundRaycastSmoothingRate;
+    //[SerializeField] float backupGroundPointSmoothingRate;
     //[SerializeField] float upcomingGroundDirectionSmoothingRate;
     [SerializeField] float accelFactor;
     [SerializeField] float accelCap;
@@ -34,6 +37,7 @@ public class SpiderController : MonoBehaviour
     [SerializeField] float uphillJumpDirectionRotationRate;
     [SerializeField] float uphillJumpTakeoffRotationFraction;
     [SerializeField] float jumpVerificationTime;
+    [SerializeField] float tapJumpVerificationTime;
     [SerializeField] float crouchHeightFraction;
     [SerializeField] float crouchTime;
     [SerializeField] float crouchBoostMinProgress;
@@ -72,6 +76,7 @@ public class SpiderController : MonoBehaviour
     //float GroundRaycastLength => groundRaycastLengthFactor * preferredRideHeight;
     //float GroundednessTolerance => (grounded ? groundedExitToleranceFactor : groundedEntryToleranceFactor) * preferredRideHeight;
     float PreferredBodyPosGroundHeight => transform.position.y - heightReferencePoint.position.y + preferredRideHeight;
+    bool StronglyGrounded => grounded && groundMap.Center.hitGround;
 
     private void OnDrawGizmos()
     {
@@ -128,7 +133,7 @@ public class SpiderController : MonoBehaviour
         UpdateGroundData();
         HandleMoveInput();
         HandleJumpInput();
-        if (grounded)
+        if (StronglyGrounded)
         {
             UpdateHeightSpring();
         }
@@ -184,20 +189,23 @@ public class SpiderController : MonoBehaviour
             Vector2 d = FacingRight ? groundDirection : -groundDirection;//grounded ? (FacingRight ? transform.right : - transform.right) : (FacingRight ? Vector2.right : -Vector2.right);
             var spd = Vector2.Dot(rb.linearVelocity, d);
             var maxSpd = grounded ? maxSpeed : maxSpeedAirborne;
-            var a = grounded ? accelFactor : accelFactor * airborneAccelMultiplier;
+            var a = (grounded || VerifyingJump()) ? accelFactor : accelFactor * airborneAccelMultiplier;
             var s = Mathf.Min(maxSpd - spd, accelCap * maxSpd);
             rb.AddForce(a * s * rb.mass * d);
         }
-        else if (grounded && moveInput == 0)
+        else if (StronglyGrounded && moveInput == 0)
         {
             Vector2 d = FacingRight ? groundPointGroundDirection : -groundPointGroundDirection;
             var spd = Vector2.Dot(rb.linearVelocity, d);
             //var grip = gripStrength; //* Mathf.Abs(groundDirection.y);
-            var h = Vector2.Dot(groundPoint - (Vector2)heightReferencePoint.position, d);
-            //grip *= Mathf.Sign(h) * Mathf.Pow(Mathf.Abs(h), steepSlopeGripDistancePower);
-            rb.AddForce((gripStrength * h - decelFactor * spd) * rb.mass * d);//grip to steep slope
+            if (groundMap.Center.hitGround)
+            {
+                var h = Vector2.Dot(groundPoint - (Vector2)heightReferencePoint.position, d);
+                //grip *= Mathf.Sign(h) * Mathf.Pow(Mathf.Abs(h), steepSlopeGripDistancePower);
+                rb.AddForce(gripStrength * h * rb.mass * d);//grip to steep slope
+            }
             //Grip();
-            //rb.AddForce(decelFactor * -spd * rb.mass * d);//simulate friction
+            rb.AddForce(decelFactor * -spd * rb.mass * d);//simulate friction
         }
 
         //void Grip()
@@ -218,7 +226,8 @@ public class SpiderController : MonoBehaviour
         //var f = c * balanceSpringForce - balanceSpringDamping * rb.angularVelocity;
         //rb.AddTorque(rb.mass * f);
 
-        transform.right = MathTools.CheapRotationalLerp(transform.right, groundDirection, rotationSpeed * dt);
+        transform.right = MathTools.CheapRotationalLerp(transform.right, groundDirection, 
+            rotationSpeed * dt);
     }
 
     //pass negative dt when reversing crouch
@@ -254,6 +263,10 @@ public class SpiderController : MonoBehaviour
 
     private float JumpForce()
     {
+        if (crouchProgress * crouchTime < tapJumpVerificationTime)
+        {
+            return jumpForce;
+        }
         return jumpForce + crouchProgress * jumpForceCrouchBoostRate;
     }
 
@@ -276,16 +289,8 @@ public class SpiderController : MonoBehaviour
     private void UpdateHeightSpring()
     {
         Vector2 d = -transform.up;
-        //Vector2 h = heightReferencePoint.position;
-        //var y0 = Vector2.Dot(groundMap.Center.point - h, d);
-        //var i1 = groundMap.IndexOfLastMarkedPointBeforePosition(heightSpringSampleWidth);
-        //var p1 = groundMap[i1];
-        //var y1 = Vector2.Dot(p1.point - h, d);
-        //var i2 = groundMap.IndexOfLastMarkedPointBeforePosition(-heightSpringSampleWidth);
-        //var p2 = groundMap[i2];
-        //var y2 = Vector2.Dot(p2.point - h, d);
-        //var l = (y0 + y1 + y2) / 3 - preferredRideHeight;
         var l = groundMap.Center.raycastDistance - preferredRideHeight;
+        //we can also do an average (or o/w) over hits near center to pull us closer to ground when on a sharp peak (to prevent legs overextending on sides)
         var f = heightSpringForce * l * d;
         var v = Vector2.Dot(rb.linearVelocity, d) * d;
         rb.AddForce(rb.mass * (f - heightSpringDamping * v));
@@ -338,13 +343,34 @@ public class SpiderController : MonoBehaviour
     private void UpdateGroundData()
     {
         UpdateGroundMap();
-        var i = FacingRight ? groundMap.IndexOfFirstForwardGroundHit() : groundMap.IndexOfFirstBackwardGroundHit();
+        var i = groundMap.IndexOfFirstGroundHitFromCenter();//FacingRight ? groundMap.IndexOfFirstRightGroundHit() : groundMap.IndexOfFirstLeftGroundHit();
         var pt = groundMap[i];
+        var ptRight = pt.normal.CWPerp();
+        bool isCentralIndex = groundMap.IsCentralIndex(i);
 
         if (moveInput != 0 || !grounded /*|| groundPoint.x == Mathf.Infinity*/)
         {
-            UpdateGroundPoint();
-            //slipPoint = groundPoint;
+            groundPoint = pt.point;
+            groundPointGroundDirection = ptRight;
+            //if (!isCentralIndex)
+            //{
+            //    var r = Physics2D.Raycast(heightReferencePoint.position, -pt.normal, 1.5f * groundednessTolerance, groundLayer);
+            //    if (r)
+            //    {
+            //        groundPoint = r.point;
+            //        groundPointGroundDirection = r.normal.CWPerp();
+            //    }
+            //    else
+            //    {
+            //        groundPoint = pt.point;
+            //        groundPointGroundDirection = ptRight;
+            //    }
+            //}
+            //else
+            //{
+            //    groundPoint = pt.point;
+            //    groundPointGroundDirection = ptRight;
+            //}
         }
 
         if (!VerifyingJump())
@@ -352,24 +378,30 @@ public class SpiderController : MonoBehaviour
             SetGrounded(pt.hitGround);
         }
 
-        //pt = groundMap.Center;
-        bool isCentralIndex = groundMap.IsCentralIndex(i);
-        groundDirection = pt.hitGround && isCentralIndex ?
-            pt.normal.CWPerp()
+        groundDirection = pt.hitGround?
+            ptRight
             : MathTools.CheapRotationalLerp(groundDirection, Vector2.right, failedGroundRaycastSmoothingRate * Time.deltaTime);
         int j = isCentralIndex ? 
             groundMap.IndexOfLastMarkedPointBeforePosition(FacingRight ? upcomingGroundDirectionOffset : -upcomingGroundDirectionOffset) 
             : i;
-        //^instead of using upcomingGroundDirectionOffset, we could just use index i +/- 2, but then we have to re-adjust whenever we change groundMap intervalWidth
         upcomingGroundDirection = groundMap[j].normal.CWPerp();
     }
 
     private void UpdateGroundMap()
     {
-        groundMap.UpdateMap(heightReferencePoint.position, -transform.up, groundednessTolerance);
+        groundMap.UpdateMap(heightReferencePoint.position, -transform.up, groundednessTolerance, groundMap.CentralIndex, groundLayer);
+        //issues rn:
+        //a) it prefers finding indexOfFirstGroundHit on right side (does not take facing direction into account)
+        //b) second map update should be allowed to give a better indexOfFirstGroundHit (i.e. closer to center)
+        //c) we're still sliding down when jumping at wall facing right (look at grip/decel fct again; really need a better friction simulation -- should be simple)
     }
 
-    private void UpdateGroundPoint()
+    private void UpdateGroundPoint(GroundMapPt firstGroundHit)
+    {
+
+    }
+
+    private void InitializeGroundPoint()
     {
         groundPoint = groundMap.Center.point;
         groundPointGroundDirection = groundMap.Center.normal.CWPerp();
@@ -378,6 +410,6 @@ public class SpiderController : MonoBehaviour
     private void InitializeGroundData()
     {
         UpdateGroundMap();
-        UpdateGroundPoint();
+        InitializeGroundPoint();
     }
 }

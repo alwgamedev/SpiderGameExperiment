@@ -6,11 +6,12 @@ public struct GroundMap
 {
     public int numFwdIntervals;
     public float intervalWidth;
-    public LayerMask raycastLayerMask;
+    //public LayerMask raycastLayerMask;
 
     [SerializeField] GroundMapPt[] map;
 
     //in future, can cache some of these and make numFwdIntervals and intervalWidth private
+    public int CentralIndex => numFwdIntervals;
     public int NumPts => (numFwdIntervals << 1) | 1;
     public float MapHalfWidth => intervalWidth * numFwdIntervals;
     public GroundMapPt Center => map[numFwdIntervals];
@@ -20,8 +21,7 @@ public struct GroundMap
     {
         get
         {
-            int n = NumPts;
-            if (i >= n)
+            if (i >= NumPts)
             {
                 return RightEndPt;
             }
@@ -38,7 +38,49 @@ public struct GroundMap
         return i == numFwdIntervals;
     }
 
-    public int IndexOfFirstForwardGroundHit()
+    public bool AllHitGround()
+    {
+        for (int i = 0; i < map.Length; i++)
+        {
+            if (!map[i].hitGround)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public int IndexOfFirstGroundHitFromCenter()
+    {
+        int i = CentralIndex;
+        if (map[i].hitGround)
+        {
+            return i;
+        }
+
+        i++;
+        int j = CentralIndex - 1;
+        int n = NumPts;
+        while (i < n && j > 0)
+        {
+            if (map[i].hitGround)
+            {
+                return i;
+            }
+            if (map[j].hitGround)
+            {
+                return j;
+            }
+
+            i++;
+            j--;
+        }
+
+        return CentralIndex;
+    }
+
+    public int IndexOfFirstRightGroundHit()
     {
         for (int i = numFwdIntervals; i < NumPts; i++)
         {
@@ -47,10 +89,10 @@ public struct GroundMap
                 return i;
             }
         }
-        return numFwdIntervals;
+        return CentralIndex;
     }
 
-    public int IndexOfFirstBackwardGroundHit()
+    public int IndexOfFirstLeftGroundHit()
     {
         for (int i = numFwdIntervals; i > -1; i--)
         {
@@ -59,7 +101,7 @@ public struct GroundMap
                 return i;
             }
         }
-        return numFwdIntervals;
+        return CentralIndex;
     }
 
     public GroundMapPt PointFromCenterByIndex(int i)
@@ -141,7 +183,7 @@ public struct GroundMap
         return 0;
     }
 
-    public void UpdateMap(Vector2 origin, Vector2 originDown, float raycastLength)
+    public void UpdateMap(Vector2 origin, Vector2 originDown, float raycastLength, int centralIndex, int raycastLayerMask)
     {
         //n = 2 * numFwdPts + 1
         int n = NumPts;
@@ -151,12 +193,10 @@ public struct GroundMap
         }
 
         var r = MathTools.DebugRaycast(origin, originDown, raycastLength, raycastLayerMask, Color.red);
-        map[numFwdIntervals] = r ? new GroundMapPt(r.point, r.normal, 0, r.distance, true)
+        map[centralIndex] = r ? new GroundMapPt(r.point, r.normal, 0, r.distance, true)
             : new GroundMapPt(origin + raycastLength * originDown, -originDown, 0, raycastLength, false);
-        var center = map[numFwdIntervals].point;
-        var centerCastRight = originDown.CCWPerp();
 
-        for (int i = numFwdIntervals; i < n - 1; i++)
+        for (int i = centralIndex; i < n - 1; i++)
         {
             //set map[i + 1]
             var lastMapPt = map[i];
@@ -201,7 +241,7 @@ public struct GroundMap
             }
         }
 
-        for (int i = numFwdIntervals; i > 0; i--)
+        for (int i = centralIndex; i > 0; i--)
         {
             //set map[i - 1]
             var lastMapPt = map[i];
@@ -214,7 +254,7 @@ public struct GroundMap
             if (r)
             {
                 var h = lastMapPt.horizontalPosition + Vector2.Distance(lastMapPt.point, r.point);
-                map[i + 1] = new GroundMapPt(r.point, r.normal, h, r.distance, true);
+                map[i - 1] = new GroundMapPt(r.point, r.normal, h, r.distance, true);
             }
             else
             {

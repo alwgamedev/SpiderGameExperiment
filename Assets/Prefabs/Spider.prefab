@@ -117,7 +117,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 596364321759533591}
-  - component: {fileID: 4148787820355194111}
   m_Layer: 0
   m_Name: leg l4 pt1 bone
   m_TagString: Untagged
@@ -141,43 +140,6 @@ Transform:
   - {fileID: 7560421742473523346}
   m_Father: {fileID: 4257679111386862312}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 176.617}
---- !u!70 &4148787820355194111
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 174235699028576439}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 1.25, y: 0}
-  m_Size: {x: 2.5, y: 0.2}
-  m_Direction: 1
 --- !u!1 &225004367435876655
 GameObject:
   m_ObjectHideFlags: 0
@@ -511,7 +473,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3602990434774389934}
-  - component: {fileID: 3936244264466182942}
   m_Layer: 0
   m_Name: leg l1 pt3 bone
   m_TagString: Untagged
@@ -535,43 +496,6 @@ Transform:
   - {fileID: 8378328544454571262}
   m_Father: {fileID: 3204698491393591131}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &3936244264466182942
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 362057468865663677}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.55, y: 0}
-  m_Size: {x: 1.2, y: 0.2}
-  m_Direction: 1
 --- !u!1 &459194793244736794
 GameObject:
   m_ObjectHideFlags: 0
@@ -936,7 +860,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7261066662746368589}
-  - component: {fileID: 9086655081073029832}
   m_Layer: 0
   m_Name: leg l4 pt4 bone
   m_TagString: Untagged
@@ -960,43 +883,6 @@ Transform:
   - {fileID: 1884732402649843420}
   m_Father: {fileID: 5738242297855828304}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &9086655081073029832
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 650917794866445785}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.375, y: 0}
-  m_Size: {x: 0.7, y: 1.4}
-  m_Direction: 0
 --- !u!1 &690683997197348463
 GameObject:
   m_ObjectHideFlags: 0
@@ -1006,7 +892,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5738242297855828304}
-  - component: {fileID: 110406705603438040}
   m_Layer: 0
   m_Name: leg l4 pt3 bone
   m_TagString: Untagged
@@ -1030,43 +915,6 @@ Transform:
   - {fileID: 7261066662746368589}
   m_Father: {fileID: 7560421742473523346}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &110406705603438040
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 690683997197348463}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.7, y: 0}
-  m_Size: {x: 1.5, y: 0.2}
-  m_Direction: 1
 --- !u!1 &712118790205915311
 GameObject:
   m_ObjectHideFlags: 0
@@ -1115,7 +963,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ConstrainRotation: 0
   m_SolveFromDefaultPose: 1
-  m_Weight: 1
+  m_Weight: 0.75
   m_Chain:
     m_EffectorTransform: {fileID: 3120058777622577783}
     m_TargetTransform: {fileID: 4380958847150461223}
@@ -1133,12 +981,12 @@ MonoBehaviour:
     - {x: 0, y: 0, z: -0.16589065, w: 0.9861442}
     - {x: -0, y: -0, z: 0.6813222, w: 0.7319837}
     m_StoredLocalRotations:
-    - {x: 0, y: 0, z: 0.23593095, w: 0.97176987}
-    - {x: 0, y: 0, z: -0.54681265, w: 0.837255}
-    - {x: 0, y: 0, z: -0.23273274, w: 0.97254074}
-    - {x: 0, y: 0, z: -0.14446479, w: 0.98950994}
-    - {x: 0, y: 0, z: 0.7743199, w: 0.6327944}
-  m_Iterations: 10
+    - {x: 0, y: 0, z: 0.23593096, w: 0.97176987}
+    - {x: 0, y: 0, z: -0.5468127, w: 0.837255}
+    - {x: 0, y: 0, z: -0.23273273, w: 0.97254074}
+    - {x: 0, y: 0, z: -0.1444648, w: 0.98950994}
+    - {x: 0, y: 0, z: 0.68003947, w: 0.7331756}
+  m_Iterations: 2
   m_Tolerance: 0.01
 --- !u!114 &289677099412839160
 MonoBehaviour:
@@ -1495,7 +1343,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ConstrainRotation: 0
   m_SolveFromDefaultPose: 1
-  m_Weight: 1
+  m_Weight: 0.75
   m_Chain:
     m_EffectorTransform: {fileID: 8714597820655926901}
     m_TargetTransform: {fileID: 1238561792403655595}
@@ -1513,12 +1361,12 @@ MonoBehaviour:
     - {x: 0, y: 0, z: -0.1334409, w: 0.9910568}
     - {x: -0, y: -0, z: 0.72823876, w: 0.68532354}
     m_StoredLocalRotations:
-    - {x: 0, y: 0, z: 0.3057056, w: 0.95212615}
-    - {x: 0, y: 0, z: -0.70414996, w: 0.7100513}
+    - {x: 0, y: 0, z: 0.30570564, w: 0.9521261}
+    - {x: 0, y: 0, z: -0.70415, w: 0.7100513}
     - {x: 0, y: 0, z: -0.2000053, w: 0.97979486}
-    - {x: 0, y: 0, z: -0.121243745, w: 0.99262285}
-    - {x: 0, y: 0, z: 0.80616343, w: 0.5916929}
-  m_Iterations: 10
+    - {x: 0, y: 0, z: -0.121243745, w: 0.9926228}
+    - {x: 0, y: 0, z: 0.73185056, w: 0.6814652}
+  m_Iterations: 2
   m_Tolerance: 0.01
 --- !u!114 &8139652597745638036
 MonoBehaviour:
@@ -1549,7 +1397,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2034791752815395644}
-  - component: {fileID: 3709883105821768162}
   m_Layer: 0
   m_Name: leg l2 pt4 bone
   m_TagString: Untagged
@@ -1573,43 +1420,6 @@ Transform:
   - {fileID: 7669166903120010156}
   m_Father: {fileID: 74713977280612927}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &3709883105821768162
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1248638082500357407}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.2125, y: 0}
-  m_Size: {x: 0.5, y: 1}
-  m_Direction: 0
 --- !u!1 &1250109435590007587
 GameObject:
   m_ObjectHideFlags: 0
@@ -2066,8 +1876,8 @@ MonoBehaviour:
     - {x: 0, y: 0, z: 0.7538812, w: 0.6570108}
     - {x: 0, y: 0, z: 0.2210226, w: 0.9752687}
     - {x: 0, y: 0, z: 0.12989065, w: 0.9915284}
-    - {x: 0, y: 0, z: -0.67734104, w: -0.7356692}
-  m_Iterations: 10
+    - {x: 0, y: 0, z: -0.6773413, w: -0.7356689}
+  m_Iterations: 2
   m_Tolerance: 0.01
 --- !u!114 &6337494717204129644
 MonoBehaviour:
@@ -2113,7 +1923,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2031487528006588093}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.72702587, w: 0.68661016}
+  m_LocalRotation: {x: 0, y: 0, z: 0.72702587, w: 0.68661016}
   m_LocalPosition: {x: 0.52, y: 0.01, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2237,7 +2047,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8378328544454571262}
-  - component: {fileID: 7124901041637126857}
   m_Layer: 0
   m_Name: leg l1 pt4 bone
   m_TagString: Untagged
@@ -2261,43 +2070,6 @@ Transform:
   - {fileID: 3120058777622577783}
   m_Father: {fileID: 3602990434774389934}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &7124901041637126857
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2141487913385041428}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.22, y: 0}
-  m_Size: {x: 0.6, y: 1.2}
-  m_Direction: 0
 --- !u!1 &2150763637009040213
 GameObject:
   m_ObjectHideFlags: 0
@@ -2322,7 +2094,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2150763637009040213}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.67734104, w: -0.7356692}
+  m_LocalRotation: {x: 0, y: 0, z: -0.6773413, w: -0.7356689}
   m_LocalPosition: {x: 0.48, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2338,7 +2110,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3001778642298697474}
-  - component: {fileID: 8401828517294288184}
   m_Layer: 0
   m_Name: leg r3 pt3 bone
   m_TagString: Untagged
@@ -2362,43 +2133,6 @@ Transform:
   - {fileID: 3912250904285809636}
   m_Father: {fileID: 8906266846264039690}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &8401828517294288184
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2184748555949781941}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.55, y: 0}
-  m_Size: {x: 1.25, y: 0.2}
-  m_Direction: 1
 --- !u!1 &2233476197617059428
 GameObject:
   m_ObjectHideFlags: 0
@@ -2516,7 +2250,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1671441735390870653}
-  - component: {fileID: 3419336184631048359}
   m_Layer: 0
   m_Name: leg r4 pt1 bone
   m_TagString: Untagged
@@ -2540,43 +2273,6 @@ Transform:
   - {fileID: 9157492295160507004}
   m_Father: {fileID: 4257679111386862312}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 168.134}
---- !u!70 &3419336184631048359
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2360843779812381518}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 1.25, y: 0}
-  m_Size: {x: 2.5, y: 0.2}
-  m_Direction: 1
 --- !u!1 &2393711380005563463
 GameObject:
   m_ObjectHideFlags: 0
@@ -2586,7 +2282,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 822636868363825723}
-  - component: {fileID: 7886338372847277962}
   m_Layer: 0
   m_Name: leg r1 pt2 bone
   m_TagString: Untagged
@@ -2610,43 +2305,6 @@ Transform:
   - {fileID: 7306302368925994026}
   m_Father: {fileID: 2680305816034372725}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &7886338372847277962
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2393711380005563463}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 1, y: 0}
-  m_Size: {x: 2.1, y: 0.2}
-  m_Direction: 1
 --- !u!1 &2526220690464828382
 GameObject:
   m_ObjectHideFlags: 0
@@ -2825,8 +2483,8 @@ MonoBehaviour:
     - {x: 0, y: 0, z: 0.76782286, w: 0.6406623}
     - {x: 0, y: 0, z: 0.20537561, w: 0.97868323}
     - {x: 0, y: 0, z: 0.13884047, w: 0.99031484}
-    - {x: 0, y: 0, z: -0.6727387, w: -0.73988026}
-  m_Iterations: 10
+    - {x: 0, y: 0, z: -0.6727389, w: -0.73987997}
+  m_Iterations: 2
   m_Tolerance: 0.01
 --- !u!114 &636268752888493604
 MonoBehaviour:
@@ -2907,7 +2565,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2658186893213490051}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.68003947, w: 0.7331756}
+  m_LocalRotation: {x: 0, y: 0, z: 0.68003947, w: 0.7331756}
   m_LocalPosition: {x: 0.54, y: -0.01, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2923,7 +2581,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1796735932416995084}
-  - component: {fileID: 5393388647258708683}
+  - component: {fileID: 2005577780734019697}
   m_Layer: 0
   m_Name: head bone
   m_TagString: Untagged
@@ -2950,14 +2608,14 @@ Transform:
   - {fileID: 2399890710218574748}
   m_Father: {fileID: 4257679111386862312}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 21.102}
---- !u!70 &5393388647258708683
-CapsuleCollider2D:
+--- !u!58 &2005577780734019697
+CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2710673058072674113}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -2966,7 +2624,7 @@ CapsuleCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 0
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -2984,9 +2642,8 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.675, y: -0.05}
-  m_Size: {x: 1.8, y: 1.25}
-  m_Direction: 1
+  m_Offset: {x: 0.7, y: -0.05}
+  m_Radius: 0.65
 --- !u!1 &2735900413683898725
 GameObject:
   m_ObjectHideFlags: 0
@@ -2996,7 +2653,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7560421742473523346}
-  - component: {fileID: 278534721589022453}
   m_Layer: 0
   m_Name: leg l4 pt2 bone
   m_TagString: Untagged
@@ -3020,43 +2676,6 @@ Transform:
   - {fileID: 5738242297855828304}
   m_Father: {fileID: 596364321759533591}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &278534721589022453
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2735900413683898725}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 1.05, y: 0}
-  m_Size: {x: 2.1, y: 0.2}
-  m_Direction: 1
 --- !u!1 &2736435694255886797
 GameObject:
   m_ObjectHideFlags: 0
@@ -3066,7 +2685,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 871183515759155505}
-  - component: {fileID: 6646255254531756931}
   m_Layer: 0
   m_Name: leg r1 pt4 bone
   m_TagString: Untagged
@@ -3090,43 +2708,6 @@ Transform:
   - {fileID: 8270222540382114309}
   m_Father: {fileID: 7306302368925994026}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &6646255254531756931
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2736435694255886797}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.255, y: 0}
-  m_Size: {x: 0.6, y: 1.2}
-  m_Direction: 0
 --- !u!1 &2834881589465346965
 GameObject:
   m_ObjectHideFlags: 0
@@ -3136,7 +2717,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8134172703908562749}
-  - component: {fileID: 2721499075941992203}
   m_Layer: 0
   m_Name: leg r4 pt3 bone
   m_TagString: Untagged
@@ -3160,43 +2740,6 @@ Transform:
   - {fileID: 7203260424078161818}
   m_Father: {fileID: 9157492295160507004}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &2721499075941992203
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2834881589465346965}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.7, y: 0}
-  m_Size: {x: 1.5, y: 0.2}
-  m_Direction: 1
 --- !u!1 &3161798817042704260
 GameObject:
   m_ObjectHideFlags: 0
@@ -3221,7 +2764,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3161798817042704260}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.6615538, w: -0.7498978}
+  m_LocalRotation: {x: 0, y: 0, z: -0.6615541, w: -0.7498975}
   m_LocalPosition: {x: 0.72, y: -0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3384,7 +2927,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ConstrainRotation: 0
   m_SolveFromDefaultPose: 1
-  m_Weight: 1
+  m_Weight: 0.75
   m_Chain:
     m_EffectorTransform: {fileID: 8270222540382114309}
     m_TargetTransform: {fileID: 2278123347475011000}
@@ -3403,11 +2946,11 @@ MonoBehaviour:
     - {x: -0, y: -0, z: 0.672842, w: 0.7397863}
     m_StoredLocalRotations:
     - {x: 0, y: 0, z: 0.23278719, w: 0.97252774}
-    - {x: 0, y: 0, z: -0.54675996, w: 0.83728945}
+    - {x: 0, y: 0, z: -0.54676, w: 0.8372894}
     - {x: 0, y: 0, z: -0.22711325, w: 0.97386837}
-    - {x: 0, y: 0, z: -0.13381958, w: 0.9910058}
-    - {x: 0, y: 0, z: 0.77704287, w: 0.6294477}
-  m_Iterations: 10
+    - {x: 0, y: 0, z: -0.1338196, w: 0.9910057}
+    - {x: 0, y: 0, z: 0.67018884, w: 0.74219066}
+  m_Iterations: 2
   m_Tolerance: 0.01
 --- !u!114 &3287121947862078546
 MonoBehaviour:
@@ -3500,7 +3043,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3033994015570042515}
-  - component: {fileID: 4267882021629713187}
   m_Layer: 0
   m_Name: leg r2 pt4 bone
   m_TagString: Untagged
@@ -3524,43 +3066,6 @@ Transform:
   - {fileID: 8714597820655926901}
   m_Father: {fileID: 1208839048729888145}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 160.371}
---- !u!70 &4267882021629713187
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3448916021493439678}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.18, y: 0}
-  m_Size: {x: 0.5, y: 1}
-  m_Direction: 0
 --- !u!1 &3532197951122130248
 GameObject:
   m_ObjectHideFlags: 0
@@ -3713,7 +3218,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7306302368925994026}
-  - component: {fileID: 7448165261662375133}
   m_Layer: 0
   m_Name: leg r1 pt3 bone
   m_TagString: Untagged
@@ -3737,43 +3241,6 @@ Transform:
   - {fileID: 871183515759155505}
   m_Father: {fileID: 822636868363825723}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &7448165261662375133
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3716491933581912858}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.55, y: 0}
-  m_Size: {x: 1.2, y: 0.2}
-  m_Direction: 1
 --- !u!1 &3824376880245498785
 GameObject:
   m_ObjectHideFlags: 0
@@ -4215,7 +3682,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9157492295160507004}
-  - component: {fileID: 102217395405791658}
   m_Layer: 0
   m_Name: leg r4 pt2 bone
   m_TagString: Untagged
@@ -4239,43 +3705,6 @@ Transform:
   - {fileID: 8134172703908562749}
   m_Father: {fileID: 1671441735390870653}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &102217395405791658
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4187706972372940199}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 1.05, y: 0}
-  m_Size: {x: 2.1, y: 0.2}
-  m_Direction: 1
 --- !u!1 &4256320658433803893
 GameObject:
   m_ObjectHideFlags: 0
@@ -4285,7 +3714,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1262494296321640506}
-  - component: {fileID: 3457760693988720035}
   m_Layer: 0
   m_Name: leg l3 pt4 bone
   m_TagString: Untagged
@@ -4309,43 +3737,6 @@ Transform:
   - {fileID: 4109640117689536782}
   m_Father: {fileID: 752940509849597149}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &3457760693988720035
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4256320658433803893}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.2, y: 0}
-  m_Size: {x: 0.5, y: 1}
-  m_Direction: 0
 --- !u!1 &4397359159708987378
 GameObject:
   m_ObjectHideFlags: 0
@@ -4513,7 +3904,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4648109211383792129}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.6727387, w: -0.73988026}
+  m_LocalRotation: {x: 0, y: 0, z: -0.6727389, w: -0.73987997}
   m_LocalPosition: {x: 0.457, y: -0.009, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4560,7 +3951,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2399890710218574748}
-  - component: {fileID: 5159983790036684454}
   m_Layer: 0
   m_Name: leg l1 pt1 bone
   m_TagString: Untagged
@@ -4584,43 +3974,6 @@ Transform:
   - {fileID: 3204698491393591131}
   m_Father: {fileID: 1796735932416995084}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -43.672}
---- !u!70 &5159983790036684454
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4744702835880208751}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.9, y: 0}
-  m_Size: {x: 1.85, y: 0.2}
-  m_Direction: 1
 --- !u!1 &4794559226346589072
 GameObject:
   m_ObjectHideFlags: 0
@@ -4630,7 +3983,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3204698491393591131}
-  - component: {fileID: 8658684412186734150}
   m_Layer: 0
   m_Name: leg l1 pt2 bone
   m_TagString: Untagged
@@ -4654,43 +4006,6 @@ Transform:
   - {fileID: 3602990434774389934}
   m_Father: {fileID: 2399890710218574748}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &8658684412186734150
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4794559226346589072}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 1, y: 0}
-  m_Size: {x: 2.1, y: 0.2}
-  m_Direction: 1
 --- !u!1 &4801443516212247964
 GameObject:
   m_ObjectHideFlags: 0
@@ -4904,8 +4219,8 @@ MonoBehaviour:
     - {x: 0, y: 0, z: 0.5981202, w: 0.8014064}
     - {x: 0, y: 0, z: 0.22616962, w: 0.974088}
     - {x: 0, y: 0, z: 0.21461177, w: 0.9766995}
-    - {x: 0, y: 0, z: -0.6739072, w: -0.73881596}
-  m_Iterations: 10
+    - {x: 0, y: 0, z: -0.67390764, w: -0.73881567}
+  m_Iterations: 2
   m_Tolerance: 0.01
 --- !u!114 &5076699777365114807
 MonoBehaviour:
@@ -5044,7 +4359,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8906266846264039690}
-  - component: {fileID: 5615021533101320977}
   m_Layer: 0
   m_Name: leg r3 pt2 bone
   m_TagString: Untagged
@@ -5068,43 +4382,6 @@ Transform:
   - {fileID: 3001778642298697474}
   m_Father: {fileID: 6932109180140675545}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &5615021533101320977
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5402962238274146728}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 1.05, y: 0}
-  m_Size: {x: 2.2, y: 0.2}
-  m_Direction: 1
 --- !u!1 &5509401913209774970
 GameObject:
   m_ObjectHideFlags: 0
@@ -5114,7 +4391,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 74713977280612927}
-  - component: {fileID: 980719360105035765}
   m_Layer: 0
   m_Name: leg l2 pt3 bone
   m_TagString: Untagged
@@ -5138,43 +4414,6 @@ Transform:
   - {fileID: 2034791752815395644}
   m_Father: {fileID: 4114279246918961293}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &980719360105035765
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5509401913209774970}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.4, y: 0}
-  m_Size: {x: 1, y: 0.2}
-  m_Direction: 1
 --- !u!1 &5555185981846932118
 GameObject:
   m_ObjectHideFlags: 0
@@ -5184,7 +4423,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4593715000520413280}
-  - component: {fileID: 2874326526977848623}
   m_Layer: 0
   m_Name: leg l3 pt1 bone
   m_TagString: Untagged
@@ -5208,43 +4446,6 @@ Transform:
   - {fileID: 3580165909359640762}
   m_Father: {fileID: 4257679111386862312}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 156.947}
---- !u!70 &2874326526977848623
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5555185981846932118}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.89, y: 0}
-  m_Size: {x: 2, y: 0.2}
-  m_Direction: 1
 --- !u!1 &5814272727016347195
 GameObject:
   m_ObjectHideFlags: 0
@@ -5254,7 +4455,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5581961485169521177}
-  - component: {fileID: 2450599831643566373}
   m_Layer: 0
   m_Name: leg r2 pt2 bone
   m_TagString: Untagged
@@ -5278,43 +4478,6 @@ Transform:
   - {fileID: 1208839048729888145}
   m_Father: {fileID: 6996931359358265962}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &2450599831643566373
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5814272727016347195}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.9, y: 0}
-  m_Size: {x: 2, y: 0.2}
-  m_Direction: 1
 --- !u!1 &5926562736923434425
 GameObject:
   m_ObjectHideFlags: 0
@@ -5385,8 +4548,8 @@ MonoBehaviour:
     - {x: 0, y: 0, z: 0.60930216, w: 0.7929382}
     - {x: 0, y: 0, z: 0.22151917, w: 0.97515607}
     - {x: 0, y: 0, z: 0.22962093, w: 0.9732802}
-    - {x: 0, y: 0, z: -0.6615538, w: -0.7498978}
-  m_Iterations: 10
+    - {x: 0, y: 0, z: -0.6615541, w: -0.7498975}
+  m_Iterations: 2
   m_Tolerance: 0.01
 --- !u!114 &1298602695105135040
 MonoBehaviour:
@@ -5556,7 +4719,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6932109180140675545}
-  - component: {fileID: 3109875151489081539}
   m_Layer: 0
   m_Name: leg r3 pt1 bone
   m_TagString: Untagged
@@ -5580,43 +4742,6 @@ Transform:
   - {fileID: 8906266846264039690}
   m_Father: {fileID: 4257679111386862312}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 172.365}
---- !u!70 &3109875151489081539
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6081748104377677409}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.89, y: 0}
-  m_Size: {x: 2, y: 0.2}
-  m_Direction: 1
 --- !u!1 &6127275030434282118
 GameObject:
   m_ObjectHideFlags: 0
@@ -5842,7 +4967,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6996931359358265962}
-  - component: {fileID: 2240374955350666254}
   m_Layer: 0
   m_Name: leg r2 pt1 bone
   m_TagString: Untagged
@@ -5866,43 +4990,6 @@ Transform:
   - {fileID: 5581961485169521177}
   m_Father: {fileID: 1796735932416995084}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -25.962}
---- !u!70 &2240374955350666254
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6177052866903249966}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.75, y: 0}
-  m_Size: {x: 1.6, y: 0.2}
-  m_Direction: 1
 --- !u!1 &6229138575272074973
 GameObject:
   m_ObjectHideFlags: 0
@@ -6128,7 +5215,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1208839048729888145}
-  - component: {fileID: 7529569265578119203}
   m_Layer: 0
   m_Name: leg r2 pt3 bone
   m_TagString: Untagged
@@ -6152,43 +5238,6 @@ Transform:
   - {fileID: 3033994015570042515}
   m_Father: {fileID: 5581961485169521177}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &7529569265578119203
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6259604372759008763}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.4, y: 0}
-  m_Size: {x: 1, y: 0.2}
-  m_Direction: 1
 --- !u!1 &6289338611581681098
 GameObject:
   m_ObjectHideFlags: 0
@@ -6704,7 +5753,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ConstrainRotation: 0
   m_SolveFromDefaultPose: 1
-  m_Weight: 1
+  m_Weight: 0.75
   m_Chain:
     m_EffectorTransform: {fileID: 7669166903120010156}
     m_TargetTransform: {fileID: 1137408330521889720}
@@ -6722,12 +5771,12 @@ MonoBehaviour:
     - {x: 0, y: 0, z: -0.12782164, w: 0.9917972}
     - {x: -0, y: -0, z: 0.7213943, w: 0.69252455}
     m_StoredLocalRotations:
-    - {x: 0, y: 0, z: 0.30514896, w: 0.9523047}
+    - {x: 0, y: 0, z: 0.305149, w: 0.95230466}
     - {x: 0, y: 0, z: -0.70052886, w: 0.7136241}
-    - {x: 0, y: 0, z: -0.20035508, w: 0.97972333}
-    - {x: 0, y: 0, z: -0.11835694, w: 0.9929712}
-    - {x: 0, y: 0, z: 0.8094346, w: 0.58721006}
-  m_Iterations: 10
+    - {x: 0, y: 0, z: -0.2003551, w: 0.97972333}
+    - {x: 0, y: 0, z: -0.118356936, w: 0.9929712}
+    - {x: 0, y: 0, z: 0.72702587, w: 0.68661016}
+  m_Iterations: 2
   m_Tolerance: 0.01
 --- !u!114 &12206713449588117
 MonoBehaviour:
@@ -6773,7 +5822,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6858911009439342665}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.7318505, w: 0.68146515}
+  m_LocalRotation: {x: 0, y: 0, z: 0.73185056, w: 0.6814652}
   m_LocalPosition: {x: 0.44, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -6789,7 +5838,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3580165909359640762}
-  - component: {fileID: 2648314665636354654}
   m_Layer: 0
   m_Name: leg l3 pt2 bone
   m_TagString: Untagged
@@ -6813,43 +5861,6 @@ Transform:
   - {fileID: 752940509849597149}
   m_Father: {fileID: 4593715000520413280}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &2648314665636354654
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7402302345158306404}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 1.05, y: 0}
-  m_Size: {x: 2.2, y: 0.2}
-  m_Direction: 1
 --- !u!1 &7413566729365570708
 GameObject:
   m_ObjectHideFlags: 0
@@ -6859,7 +5870,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2680305816034372725}
-  - component: {fileID: 2490409331382685494}
   m_Layer: 0
   m_Name: leg r1 pt1 bone
   m_TagString: Untagged
@@ -6883,43 +5893,6 @@ Transform:
   - {fileID: 822636868363825723}
   m_Father: {fileID: 1796735932416995084}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -24.281}
---- !u!70 &2490409331382685494
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7413566729365570708}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.9, y: 0}
-  m_Size: {x: 1.85, y: 0.2}
-  m_Direction: 1
 --- !u!1 &7493680828052448664
 GameObject:
   m_ObjectHideFlags: 0
@@ -6929,7 +5902,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3912250904285809636}
-  - component: {fileID: 4503106861262133734}
   m_Layer: 0
   m_Name: leg r3 pt4 bone
   m_TagString: Untagged
@@ -6953,43 +5925,6 @@ Transform:
   - {fileID: 4327750774746436712}
   m_Father: {fileID: 3001778642298697474}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &4503106861262133734
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7493680828052448664}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.225, y: 0}
-  m_Size: {x: 0.5, y: 1}
-  m_Direction: 0
 --- !u!1 &7510525530624609443
 GameObject:
   m_ObjectHideFlags: 0
@@ -6999,7 +5934,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2749387138667642994}
-  - component: {fileID: 1994549562452067136}
   m_Layer: 0
   m_Name: leg l2 pt1 bone
   m_TagString: Untagged
@@ -7023,43 +5957,6 @@ Transform:
   - {fileID: 4114279246918961293}
   m_Father: {fileID: 1796735932416995084}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -34.316}
---- !u!70 &1994549562452067136
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7510525530624609443}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.75, y: 0}
-  m_Size: {x: 1.6, y: 0.2}
-  m_Direction: 1
 --- !u!1 &7544975949659689791
 GameObject:
   m_ObjectHideFlags: 0
@@ -7084,7 +5981,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7544975949659689791}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.6739072, w: -0.73881596}
+  m_LocalRotation: {x: 0, y: 0, z: -0.67390764, w: -0.73881567}
   m_LocalPosition: {x: 0.733, y: -0.003, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -7100,7 +5997,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7203260424078161818}
-  - component: {fileID: 3604210091382106364}
   m_Layer: 0
   m_Name: leg r4 pt4 bone
   m_TagString: Untagged
@@ -7124,43 +6020,6 @@ Transform:
   - {fileID: 4199633852037162369}
   m_Father: {fileID: 8134172703908562749}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &3604210091382106364
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7855915478660951283}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.36, y: 0}
-  m_Size: {x: 0.7, y: 1.4}
-  m_Direction: 0
 --- !u!1 &8233080391227424747
 GameObject:
   m_ObjectHideFlags: 0
@@ -7238,7 +6097,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4114279246918961293}
-  - component: {fileID: 2220519864090175294}
   m_Layer: 0
   m_Name: leg l2 pt2 bone
   m_TagString: Untagged
@@ -7262,43 +6120,6 @@ Transform:
   - {fileID: 74713977280612927}
   m_Father: {fileID: 2749387138667642994}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &2220519864090175294
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8406567198824328484}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.9, y: 0}
-  m_Size: {x: 2, y: 0.2}
-  m_Direction: 1
 --- !u!1 &8459196700872151742
 GameObject:
   m_ObjectHideFlags: 0
@@ -7505,7 +6326,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8707036530917231661}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.67018884, w: 0.74219066}
+  m_LocalRotation: {x: 0, y: 0, z: 0.67018884, w: 0.74219066}
   m_LocalPosition: {x: 0.57, y: -0.02, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -7521,7 +6342,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 752940509849597149}
-  - component: {fileID: 2229827131006063478}
   m_Layer: 0
   m_Name: leg l3 pt3 bone
   m_TagString: Untagged
@@ -7545,43 +6365,6 @@ Transform:
   - {fileID: 1262494296321640506}
   m_Father: {fileID: 3580165909359640762}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &2229827131006063478
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8772371884197178333}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.55, y: 0}
-  m_Size: {x: 1.25, y: 0.2}
-  m_Direction: 1
 --- !u!1 &8773133144574097762
 GameObject:
   m_ObjectHideFlags: 0
@@ -7843,28 +6626,32 @@ MonoBehaviour:
   abdomenBone: {fileID: 4257679111386862312}
   headBone: {fileID: 1796735932416995084}
   heightReferencePoint: {fileID: 3708315842584664218}
-  headRotationSpeed: 15
-  rotationSpeed: 4
+  headRotationSpeed: 2
+  rotationSpeed: 12
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
   groundedExitToleranceFactor: 1.7
-  groundedEntryToleranceFactor: 1.15
-  predictiveGroundDirectionSpacing: 0.3
-  failedGroundRaycastSmoothingRate: 80
+  groundedEntryToleranceFactor: 0.9
+  upcomingGroundDirectionOffset: 0.35
+  failedGroundRaycastSmoothingRate: 25
   accelFactor: 45
-  accelCap: 1
-  decelFactor: 60
+  accelCap: 0.5
+  decelFactor: 45
   airborneAccelMultiplier: 1
-  steepSlopeGripStrength: 200
-  steepSlopeGripDistancePower: 1
+  gripStrength: 400
   maxSpeed: 3.25
   maxSpeedAirborne: 3.25
   preferredRideHeight: 0.95
   heightSpringForce: 400
-  heightSpringDamping: 27
-  jumpForce: 7
+  heightSpringDamping: 25
+  heightSpringSampleWidth: 0.1
+  jumpForce: 10
   jumpForceCrouchBoostRate: 14
   uphillJumpDirectionRotationRate: 0.8
   uphillJumpTakeoffRotationFraction: 0.25
-  jumpVerificationTime: 0.25
+  jumpVerificationTime: 0.05
+  tapJumpVerificationTime: 0.25
   crouchHeightFraction: 0.25
   crouchTime: 0.3
   crouchBoostMinProgress: 0.4
@@ -7873,11 +6660,8 @@ MonoBehaviour:
   airborneLegDriftRate: 1.8
   airborneLegDriftMax: 1
   groundMap:
-    numFwdIntervals: 10
-    intervalWidth: 0.125
-    raycastLayerMask:
-      serializedVersion: 2
-      m_Bits: 64
+    numFwdIntervals: 15
+    intervalWidth: 0.1
     map: []
 --- !u!114 &5843148394334628032
 MonoBehaviour:
@@ -7896,12 +6680,8 @@ MonoBehaviour:
   stepTime: 0.3
   speedCapMin: 0.05
   speedCapMax: 3
-  baseStepHeightMultiplier: 0.75
+  baseStepHeightMultiplier: 0.8
   stepSmoothingRate: 25
-  extensionSmoothingRate: 100
-  groundCollisionSmoothingRate: 25
-  staticModeGroundDetectionOffsetRate: 0.1
-  staticModeGroundDectectionOffsetMax: 0.65
   synchronizedLegs:
   - leg: {fileID: 3287121947862078546}
     timeOffset: 0
