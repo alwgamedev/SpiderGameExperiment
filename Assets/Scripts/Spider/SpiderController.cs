@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Assertions.Must;
 
 public class SpiderController : MonoBehaviour
 {
@@ -29,7 +30,7 @@ public class SpiderController : MonoBehaviour
     [SerializeField] float preferredRideHeight;
     [SerializeField] float heightSpringForce;
     [SerializeField] float heightSpringDamping;
-    [SerializeField] float heightSpringSampleWidth;
+    //[SerializeField] float heightSpringSampleWidth;
     //[SerializeField] float balanceSpringForce;
     //[SerializeField] float balanceSpringDamping;
     [SerializeField] float jumpForce;
@@ -61,11 +62,9 @@ public class SpiderController : MonoBehaviour
     Vector2 upcomingGroundDirection = Vector2.right;
     Vector2 groundPoint = new(Mathf.Infinity, Mathf.Infinity);
     Vector2 groundPointGroundDirection = Vector2.right;
-    //Vector2 slipPoint = new(Mathf.Infinity, Mathf.Infinity);
-    //Vector2 groundSlipPoint;
-    //to force it to initialize ground point (and then after it only gets set when moveInput != 0)
-    //float lastComputedGroundDistance = Mathf.Infinity;
-    //use infinity instead of NaN, because equals check always fails for NaN (even if you check NaN == NaN)
+    //Vector2 rbLastVelocity;
+    //Vector2 rbAccel;
+
 
     float crouchProgress;//0-1
 
@@ -80,7 +79,10 @@ public class SpiderController : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        groundMap.DrawGizmos();
+        if (Application.isPlaying)
+        {
+            groundMap.DrawGizmos();
+        }
         if (groundPoint.x != Mathf.Infinity)
         {
             Gizmos.color = Color.cyan;
@@ -130,6 +132,9 @@ public class SpiderController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        //rbAccel = rb.linearVelocity - rbLastVelocity;
+        //rbLastVelocity = rb.linearVelocity;
+        
         UpdateGroundData();
         HandleMoveInput();
         HandleJumpInput();
@@ -189,35 +194,18 @@ public class SpiderController : MonoBehaviour
             Vector2 d = FacingRight ? groundDirection : -groundDirection;//grounded ? (FacingRight ? transform.right : - transform.right) : (FacingRight ? Vector2.right : -Vector2.right);
             var spd = Vector2.Dot(rb.linearVelocity, d);
             var maxSpd = grounded ? maxSpeed : maxSpeedAirborne;
-            var a = (grounded || VerifyingJump()) ? accelFactor : accelFactor * airborneAccelMultiplier;
+            var a = grounded ? accelFactor : accelFactor * airborneAccelMultiplier;
             var s = Mathf.Min(maxSpd - spd, accelCap * maxSpd);
             rb.AddForce(a * s * rb.mass * d);
         }
-        else if (StronglyGrounded && moveInput == 0)
+        else if (StronglyGrounded)
         {
             Vector2 d = FacingRight ? groundPointGroundDirection : -groundPointGroundDirection;
             var spd = Vector2.Dot(rb.linearVelocity, d);
-            //var grip = gripStrength; //* Mathf.Abs(groundDirection.y);
-            if (groundMap.Center.hitGround)
-            {
-                var h = Vector2.Dot(groundPoint - (Vector2)heightReferencePoint.position, d);
-                //grip *= Mathf.Sign(h) * Mathf.Pow(Mathf.Abs(h), steepSlopeGripDistancePower);
-                rb.AddForce(gripStrength * h * rb.mass * d);//grip to steep slope
-            }
-            //Grip();
-            rb.AddForce(decelFactor * -spd * rb.mass * d);//simulate friction
+            var h = Vector2.Dot(groundPoint - (Vector2)heightReferencePoint.position, d);
+            rb.AddForce((gripStrength * h - decelFactor * spd) * rb.mass * d);//grip to steep slope
+            //rb.AddForce(decelFactor * -spd * rb.mass * d);//simulate friction
         }
-
-        //void Grip()
-        //{
-        //    if (groundPoint.x != Mathf.Infinity)
-        //    {
-        //        var grip = steepSlopeGripStrength; //* Mathf.Abs(groundDirection.y);
-        //        var h = Vector2.Dot(groundPoint - (Vector2)heightReferencePoint.position, d);
-        //        grip *= Mathf.Sign(h) * Mathf.Pow(Mathf.Abs(h), steepSlopeGripDistancePower);
-        //        rb.AddForce(grip * rb.mass * d);//grip to steep slope
-        //    }
-        //}
     }
 
     private void Balance(float dt)
@@ -272,11 +260,11 @@ public class SpiderController : MonoBehaviour
 
     private Vector2 JumpDirection()
     {
-        if (groundDirection.y * Orientation > 0 && !(groundDirection.x < 0))//if facing uphill (but not upside down) add a little forward component to the jump
-        {
-            var t = uphillJumpDirectionRotationRate * Mathf.Abs(groundDirection.y);
-            return MathTools.CheapRotationalLerp(transform.up, Vector2.up, t);
-        }
+        //if (groundDirection.y * Orientation > 0 && !(groundDirection.x < 0))//if facing uphill (but not upside down) add a little forward component to the jump
+        //{
+        //    var t = uphillJumpDirectionRotationRate * Mathf.Abs(groundDirection.y);
+        //    return MathTools.CheapRotationalLerp(transform.up, Vector2.up, t);
+        //}
 
         return transform.up;
     }
@@ -348,29 +336,16 @@ public class SpiderController : MonoBehaviour
         var ptRight = pt.normal.CWPerp();
         bool isCentralIndex = groundMap.IsCentralIndex(i);
 
+        //if (pt.hitGround)
+        //{
+        //    var f = rb.mass * Vector2.Dot(rbAccel, -pt.normal);
+        //    rb.AddForce(f * pt.normal);
+        //}
+
         if (moveInput != 0 || !grounded /*|| groundPoint.x == Mathf.Infinity*/)
         {
             groundPoint = pt.point;
             groundPointGroundDirection = ptRight;
-            //if (!isCentralIndex)
-            //{
-            //    var r = Physics2D.Raycast(heightReferencePoint.position, -pt.normal, 1.5f * groundednessTolerance, groundLayer);
-            //    if (r)
-            //    {
-            //        groundPoint = r.point;
-            //        groundPointGroundDirection = r.normal.CWPerp();
-            //    }
-            //    else
-            //    {
-            //        groundPoint = pt.point;
-            //        groundPointGroundDirection = ptRight;
-            //    }
-            //}
-            //else
-            //{
-            //    groundPoint = pt.point;
-            //    groundPointGroundDirection = ptRight;
-            //}
         }
 
         if (!VerifyingJump())
@@ -378,11 +353,11 @@ public class SpiderController : MonoBehaviour
             SetGrounded(pt.hitGround);
         }
 
-        groundDirection = pt.hitGround?
+        groundDirection = pt.hitGround ?
             ptRight
             : MathTools.CheapRotationalLerp(groundDirection, Vector2.right, failedGroundRaycastSmoothingRate * Time.deltaTime);
-        int j = isCentralIndex ? 
-            groundMap.IndexOfLastMarkedPointBeforePosition(FacingRight ? upcomingGroundDirectionOffset : -upcomingGroundDirectionOffset) 
+        int j = isCentralIndex ?
+            groundMap.IndexOfLastMarkedPointBeforePosition(FacingRight ? upcomingGroundDirectionOffset : -upcomingGroundDirectionOffset)
             : i;
         upcomingGroundDirection = groundMap[j].normal.CWPerp();
     }
