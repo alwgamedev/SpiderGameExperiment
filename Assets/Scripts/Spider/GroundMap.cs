@@ -51,7 +51,7 @@ public struct GroundMap
         return true;
     }
 
-    public int IndexOfFirstGroundHitFromCenter()
+    public int IndexOfFirstGroundHitFromCenter(float leftMinPos, float rightMaxPos)
     {
         int i = CentralIndex;
         if (map[i].hitGround)
@@ -61,14 +61,25 @@ public struct GroundMap
 
         i++;
         int j = CentralIndex - 1;
+        bool checkRight = true;
+        bool checkLeft = true;
         int n = NumPts;
         while (i < n && j > 0)
         {
-            if (map[i].hitGround)
+            if (checkRight && map[i].horizontalPosition > rightMaxPos)
+            {
+                checkRight = false;
+            }
+            if (checkRight && map[i].hitGround)
             {
                 return i;
             }
-            if (map[j].hitGround)
+
+            if (checkLeft && map[i].horizontalPosition < leftMinPos)
+            {
+                checkLeft = false;
+            }
+            if (checkLeft && map[j].hitGround)
             {
                 return j;
             }

@@ -53,6 +53,12 @@ public static class MathTools
     {
         return new Vector2(v.y, -v.x);
     }
+    
+    //when v1, v2 are unit vectors, this equals the sine of the angle from v1 to v2
+    public static float Cross2D(Vector2 v1, Vector2 v2)
+    {
+        return v1.x * v2.y - v1.y * v2.x;
+    }
 
     /// <summary>
     /// u1, u2 unit vectors
@@ -61,6 +67,21 @@ public static class MathTools
     {
         //better than using explicit angles etc.
         return Vector2.Lerp(u1, u2, lerpAmount).normalized;
+    }
+
+    /// <summary>
+    /// u1, u2 unit vectors
+    /// </summary>
+    public static Vector2 CheapRotationBySpeed(Vector2 u1, Vector2 u2, float rotationalSpeed, float dt)
+    {
+        var c = Mathf.Abs(Cross2D(u1, u2));
+        if (c == 0)
+        {
+            return u1;
+        }
+        var l = rotationalSpeed * dt / c; 
+        return CheapRotationalLerp(u1, u2, l);
+        //the lerp amount should really be rotationalSpeed * dt / theta, but we use the approximation theta ~ sin(theta) for small theta
     }
 
     //i.e. rotate keeping center pt fixed
