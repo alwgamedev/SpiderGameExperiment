@@ -1585,7 +1585,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: accelCap
-      value: 0.75
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: feetFriction
@@ -1597,11 +1597,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: heightSpringForce
-      value: 400
+      value: 650
       objectReference: {fileID: 0}
     - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: heightSpringDamping
-      value: 25
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: jumpVerificationTime
@@ -1624,8 +1624,16 @@ PrefabInstance:
       value: 0.125
       objectReference: {fileID: 0}
     - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
+      propertyPath: groundMap.map.Array.size
+      value: 97
+      objectReference: {fileID: 0}
+    - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: groundMap.numFwdIntervals
       value: 48
+      objectReference: {fileID: 0}
+    - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
+      propertyPath: groundedExitToleranceFactor
+      value: 1.4
       objectReference: {fileID: 0}
     - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: groundedEntryToleranceFactor
@@ -1633,7 +1641,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: failedGroundRaycastSmoothingRate
-      value: 12.5
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 8910507805382992582, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: m_LocalPosition.x

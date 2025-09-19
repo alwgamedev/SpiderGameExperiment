@@ -75,7 +75,7 @@ public class SpiderController : MonoBehaviour
     //float GroundRaycastLength => groundRaycastLengthFactor * preferredRideHeight;
     //float GroundednessTolerance => (grounded ? groundedExitToleranceFactor : groundedEntryToleranceFactor) * preferredRideHeight;
     float PreferredBodyPosGroundHeight => transform.position.y - heightReferencePoint.position.y + preferredRideHeight;
-    bool StronglyGrounded => grounded && groundMap.Center.hitGround;
+    bool StronglyGrounded => grounded && groundMap.AllHitGround();//groundMap.Center.hitGround;
 
     private void OnDrawGizmos()
     {
