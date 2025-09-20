@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 [Serializable]
 public struct GroundMap
@@ -49,6 +50,35 @@ public struct GroundMap
         }
 
         return true;
+    }
+
+    public int IndexOfFirstGroundHitFromCenter()
+    {
+        int i = CentralIndex;
+        if (map[i].hitGround)
+        {
+            return i;
+        }
+
+        i++;
+        int j = CentralIndex - 1;
+        int n = NumPts;
+        while (i < n && j > 0)
+        {
+            if (map[i].hitGround)
+            {
+                return i;
+            }
+            if (map[j].hitGround)
+            {
+                return j;
+            }
+
+            i++;
+            j--;
+        }
+
+        return CentralIndex;
     }
 
     public int IndexOfFirstGroundHitFromCenter(float leftMinPos, float rightMaxPos)

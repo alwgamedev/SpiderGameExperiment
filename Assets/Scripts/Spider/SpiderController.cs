@@ -55,6 +55,9 @@ public class SpiderController : MonoBehaviour
     Vector2 groundPoint = new(Mathf.Infinity, Mathf.Infinity);
     Vector2 groundPointGroundDirection = Vector2.right;
 
+    Vector2 rbAccel;
+    Vector2 rbLastVel;
+
     float crouchProgress;//0-1
 
     bool FacingRight => transform.localScale.x > 0;
@@ -112,6 +115,9 @@ public class SpiderController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        rbAccel = rb.linearVelocity - rbLastVel;
+        rbLastVel = rb.linearVelocity;
+
         UpdateGroundData();
         HandleMoveInput();
         HandleJumpInput();
@@ -307,30 +313,32 @@ public class SpiderController : MonoBehaviour
     private void UpdateGroundData()
     {
         UpdateGroundMap();
-        var i = groundMap.IndexOfFirstGroundHitFromCenter(-groundedSearchWidth, groundedSearchWidth);//FacingRight ? groundMap.IndexOfFirstRightGroundHit() : groundMap.IndexOfFirstLeftGroundHit();
+        var i = groundMap.IndexOfFirstGroundHitFromCenter();
+            //groundMap.IndexOfFirstGroundHitFromCenter(-groundedSearchWidth, groundedSearchWidth);
+        //FacingRight ? groundMap.IndexOfFirstRightGroundHit() : groundMap.IndexOfFirstLeftGroundHit();
         var pt = groundMap[i];
         var ptRight = pt.normal.CWPerp();
         var isCentralIndex = groundMap.IsCentralIndex(i);
 
-        //if (pt.hitGround)
-        //{
-        //    var f = rb.mass * Vector2.Dot(rbAccel, -pt.normal);
-        //    rb.AddForce(f * pt.normal);
-        //}
+        if (pt.hitGround)
+        {
+            var f = rb.mass * Vector2.Dot(rbAccel, -pt.normal);
+            rb.AddForce(f * pt.normal);
+        }
 
         if (moveInput != 0 || !grounded /*|| groundPoint.x == Mathf.Infinity*/)
         {
-            if (pt.hitGround && !isCentralIndex)
-            {
-                var r = Physics2D.Raycast(heightReferencePoint.position, -pt.normal, 
-                    backupGroundPtRaycastLengthFactor * groundednessTolerance, groundLayer);
-                if (r)
-                {
-                    pt = new GroundMapPt(r.point, r.normal, 0, 0, true);
-                    ptRight = pt.normal.CWPerp();
-                    isCentralIndex = true;
-                }
-            }
+            //if (pt.hitGround && !isCentralIndex)
+            //{
+            //    var r = Physics2D.Raycast(heightReferencePoint.position, -pt.normal,
+            //        backupGroundPtRaycastLengthFactor * groundednessTolerance, groundLayer);
+            //    if (r)
+            //    {
+            //        pt = new GroundMapPt(r.point, r.normal, 0, 0, true);
+            //        ptRight = pt.normal.CWPerp();
+            //        isCentralIndex = true;
+            //    }
+            //}
 
             groundPoint = pt.point;
             groundPointGroundDirection = ptRight;
