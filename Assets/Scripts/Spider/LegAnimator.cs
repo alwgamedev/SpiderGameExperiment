@@ -93,23 +93,24 @@ public class LegAnimator : MonoBehaviour
         var stepRadius = Vector2.Dot(stepGoal - stepCenter, stepRight);
         var t = Mathf.PI * stepProgress;
 
-        var newTargetPosition = stepCenter - stepRadius * Mathf.Cos(t) * stepRight + stepRadius * baseStepHeightMultiplier * Mathf.Sin(t) * stepUp;
+        //to-do: parabola instead of trig fcts
+        var newTargetPos = stepCenter - stepRadius * Mathf.Cos(t) * stepRight + stepRadius * baseStepHeightMultiplier * Mathf.Sin(t) * stepUp;
 
         //var curGroundRay = GroundRaycast(newTargetPosition, map.Center.normal, 1f, 1f);
         if (stepHeightSpeedMultiplier < 1)
         {
-            var g = map.ProjectOntoGround(newTargetPosition);
-            newTargetPosition = Vector2.Lerp(g, newTargetPosition, stepHeightSpeedMultiplier);
+            var g = map.ProjectOntoGround(newTargetPos);
+            newTargetPos = Vector2.Lerp(g, newTargetPos, stepHeightSpeedMultiplier);
         }
 
-        ikTarget.position = Vector2.Lerp(ikTarget.position, newTargetPosition, smoothingRate * dt);
+        ikTarget.position = Vector2.Lerp(ikTarget.position, newTargetPos, smoothingRate * dt);
     }
 
     public void UpdateRest(float dt, GroundMap map, bool bodyFacingRight,
         float smoothingRate, float restProgress, float restTime)
     {
-        var stepGoal = GetStepGoal(map, bodyFacingRight, restProgress, restTime);
-        ikTarget.position = Vector2.Lerp(ikTarget.position, stepGoal, smoothingRate * dt);
+        var newTargetPos = GetStepGoal(map, bodyFacingRight, restProgress, restTime);
+        ikTarget.position = Vector2.Lerp(ikTarget.position, newTargetPos, smoothingRate * dt);
         //var g = GroundRaycast(ikTarget.position, bodyUp, 1f, 1f);
         //if (g)
         //{
@@ -122,92 +123,92 @@ public class LegAnimator : MonoBehaviour
         //}
     }
 
-    public void UpdateStep(float dt,
-        float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, bool bodyFacingRight,
-        float baseStepHeightMultiplier, float stepHeightSpeedMultiplier, 
-        float smoothingRate, float stepProgress, float stepTime, float restTime, out Vector2 groundNormal)
-    {
-        var stepStart = GetStepStart(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, stepProgress, stepTime, restTime);
-        var stepGoal = GetStepGoal(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, 0, restTime);
-        var stepRight = (stepGoal - stepStart).normalized;
-        var stepUp = bodyFacingRight ? stepRight.CCWPerp() : stepRight.CWPerp();
-        var stepCenter = 0.5f * (stepGoal + stepStart);
-        var stepRadius = Vector2.Dot(stepGoal - stepCenter, stepRight);
-        var t = Mathf.PI * stepProgress;
+    //public void UpdateStep(float dt,
+    //    float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, bool bodyFacingRight,
+    //    float baseStepHeightMultiplier, float stepHeightSpeedMultiplier, 
+    //    float smoothingRate, float stepProgress, float stepTime, float restTime, out Vector2 groundNormal)
+    //{
+    //    var stepStart = GetStepStart(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, stepProgress, stepTime, restTime);
+    //    var stepGoal = GetStepGoal(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, 0, restTime);
+    //    var stepRight = (stepGoal - stepStart).normalized;
+    //    var stepUp = bodyFacingRight ? stepRight.CCWPerp() : stepRight.CWPerp();
+    //    var stepCenter = 0.5f * (stepGoal + stepStart);
+    //    var stepRadius = Vector2.Dot(stepGoal - stepCenter, stepRight);
+    //    var t = Mathf.PI * stepProgress;
 
-        var newTargetPosition = stepCenter - stepRadius * Mathf.Cos(t) * stepRight + stepRadius * baseStepHeightMultiplier * Mathf.Sin(t) * stepUp;
+    //    var newTargetPosition = stepCenter - stepRadius * Mathf.Cos(t) * stepRight + stepRadius * baseStepHeightMultiplier * Mathf.Sin(t) * stepUp;
 
-        var curGroundRay = GroundRaycast(newTargetPosition, bodyUp, 1f, 1f);
-        groundNormal = curGroundRay ? curGroundRay.normal : bodyUp;
-        if (stepHeightSpeedMultiplier < 1 && curGroundRay)
-        {
-            newTargetPosition = Vector2.Lerp(curGroundRay.point, newTargetPosition, stepHeightSpeedMultiplier);
-        }
+    //    var curGroundRay = GroundRaycast(newTargetPosition, bodyUp, 1f, 1f);
+    //    groundNormal = curGroundRay ? curGroundRay.normal : bodyUp;
+    //    if (stepHeightSpeedMultiplier < 1 && curGroundRay)
+    //    {
+    //        newTargetPosition = Vector2.Lerp(curGroundRay.point, newTargetPosition, stepHeightSpeedMultiplier);
+    //    }
 
-        ikTarget.position = Vector2.Lerp(ikTarget.position, newTargetPosition, smoothingRate * dt);
-    }
+    //    ikTarget.position = Vector2.Lerp(ikTarget.position, newTargetPosition, smoothingRate * dt);
+    //}
 
-    public void UpdateRest(float dt, 
-        float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp,
-        float smoothingRate, float restProgress, float restTime, out Vector2 groundNormal)
-    {
-        var stepGoal = GetStepGoal(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, restProgress, restTime);
-        ikTarget.position = Vector2.Lerp(ikTarget.position, stepGoal, smoothingRate * dt);
-        var g = GroundRaycast(ikTarget.position, bodyUp, 1f, 1f);
-        if (g)
-        {
-            groundNormal = g.normal;
-            ikTarget.position = Vector2.Lerp(ikTarget.position, g.point, smoothingRate * dt);
-        }
-        else
-        {
-            groundNormal = bodyUp;
-        }
-    }
+    //public void UpdateRest(float dt, 
+    //    float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp,
+    //    float smoothingRate, float restProgress, float restTime, out Vector2 groundNormal)
+    //{
+    //    var stepGoal = GetStepGoal(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, restProgress, restTime);
+    //    ikTarget.position = Vector2.Lerp(ikTarget.position, stepGoal, smoothingRate * dt);
+    //    var g = GroundRaycast(ikTarget.position, bodyUp, 1f, 1f);
+    //    if (g)
+    //    {
+    //        groundNormal = g.normal;
+    //        ikTarget.position = Vector2.Lerp(ikTarget.position, g.point, smoothingRate * dt);
+    //    }
+    //    else
+    //    {
+    //        groundNormal = bodyUp;
+    //    }
+    //}
 
-    public void UpdateStepStaticMode(float dt,
-        float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, bool bodyFacingRight,
-        float baseStepHeightMultiplier, /*float stepHeightSpeedMultiplier,*/
-        float smoothingRate, float stepProgress, float stepTime, float restTime,
-        float driftAmount = 0)
-    {
-        var stepStart = StaticStepStart(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, stepProgress, stepTime, restTime);
-        var stepGoal = StaticStepGoal(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, 0, restTime);
+    //public void UpdateStepStaticMode(float dt,
+    //    float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, bool bodyFacingRight,
+    //    float baseStepHeightMultiplier, /*float stepHeightSpeedMultiplier,*/
+    //    float smoothingRate, float stepProgress, float stepTime, float restTime,
+    //    float driftAmount = 0)
+    //{
+    //    var stepStart = StaticStepStart(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, stepProgress, stepTime, restTime);
+    //    var stepGoal = StaticStepGoal(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, 0, restTime);
 
-        if (driftAmount != 0)
-        {
-            stepStart = ApplyOutwardDrift(stepStart, bodyMovementRight, bodyUp,//but we don't apply drift to the stored stepStartLocalPosition!
-                driftAmount, currentDriftWeights.x, currentDriftWeights.y);
-            stepGoal = ApplyOutwardDrift(stepGoal, bodyMovementRight, bodyUp,
-                driftAmount, currentDriftWeights.x, currentDriftWeights.y);
-        }
-        var stepRight = (stepGoal - stepStart).normalized;
-        var stepUp = bodyFacingRight ? stepRight.CCWPerp() : stepRight.CWPerp();
-        var stepCenter = 0.5f * (stepGoal + stepStart);
-        var stepRadius = Vector2.Dot(stepGoal - stepCenter, stepRight);
-        var t = Mathf.PI * stepProgress;
+    //    if (driftAmount != 0)
+    //    {
+    //        stepStart = ApplyOutwardDrift(stepStart, bodyMovementRight, bodyUp,//but we don't apply drift to the stored stepStartLocalPosition!
+    //            driftAmount, currentDriftWeights.x, currentDriftWeights.y);
+    //        stepGoal = ApplyOutwardDrift(stepGoal, bodyMovementRight, bodyUp,
+    //            driftAmount, currentDriftWeights.x, currentDriftWeights.y);
+    //    }
+    //    var stepRight = (stepGoal - stepStart).normalized;
+    //    var stepUp = bodyFacingRight ? stepRight.CCWPerp() : stepRight.CWPerp();
+    //    var stepCenter = 0.5f * (stepGoal + stepStart);
+    //    var stepRadius = Vector2.Dot(stepGoal - stepCenter, stepRight);
+    //    var t = Mathf.PI * stepProgress;
 
-        var newTargetPosition = stepCenter - stepRadius * Mathf.Cos(t) * stepRight + stepRadius * baseStepHeightMultiplier * Mathf.Sin(t) * stepUp;
+    //    var newTargetPosition = stepCenter - stepRadius * Mathf.Cos(t) * stepRight + stepRadius * baseStepHeightMultiplier * Mathf.Sin(t) * stepUp;
 
-        //in static mode we aren't lerping vertically by stepHeightSpeedMultiplier
+    //    //in static mode we aren't lerping vertically by stepHeightSpeedMultiplier
 
-        ikTarget.position = Vector2.Lerp(ikTarget.position, newTargetPosition, smoothingRate * dt);
-    }
+    //    ikTarget.position = Vector2.Lerp(ikTarget.position, newTargetPosition, smoothingRate * dt);
+    //}
 
-    public void UpdateRestStaticMode(float dt, 
-        float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp,
-        float smoothingRate, float restProgress, float restTime,
-        float driftAmount = 0)
-    {
-        var stepGoal = StaticStepGoal(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, restProgress, restTime);
+    //public void UpdateRestStaticMode(float dt, 
+    //    float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp,
+    //    float smoothingRate, float restProgress, float restTime,
+    //    float driftAmount = 0)
+    //{
+    //    var stepGoal = StaticStepGoal(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, restProgress, restTime);
 
-        if (driftAmount != 0)
-        {
-            stepGoal = ApplyOutwardDrift(stepGoal, bodyMovementRight, bodyUp, 
-                driftAmount, currentDriftWeights.x, currentDriftWeights.y);
-        }
-        ikTarget.position = Vector2.Lerp(ikTarget.position, stepGoal, smoothingRate * dt);
-    }
+    //    if (driftAmount != 0)
+    //    {
+    //        stepGoal = ApplyOutwardDrift(stepGoal, bodyMovementRight, bodyUp, 
+    //            driftAmount, currentDriftWeights.x, currentDriftWeights.y);
+    //    }
+    //    ikTarget.position = Vector2.Lerp(ikTarget.position, stepGoal, smoothingRate * dt);
+    //}
 
     public void EnforceExtensionConstraint(float dt, Vector2 groundNormal, Vector2 orientedGroundDir, float smoothingRate)
     {

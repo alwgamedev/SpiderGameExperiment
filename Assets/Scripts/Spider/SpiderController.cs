@@ -55,8 +55,8 @@ public class SpiderController : MonoBehaviour
     Vector2 groundPoint = new(Mathf.Infinity, Mathf.Infinity);
     Vector2 groundPointGroundDirection = Vector2.right;
 
-    Vector2 rbAccel;
-    Vector2 rbLastVel;
+    //Vector2 rbAccel;
+    //Vector2 rbLastVel;
 
     float crouchProgress;//0-1
 
@@ -64,6 +64,9 @@ public class SpiderController : MonoBehaviour
     int Orientation => FacingRight ? 1 : -1;
     float PreferredBodyPosGroundHeight => transform.position.y - heightReferencePoint.position.y + preferredRideHeight;
     bool StronglyGrounded => grounded && groundMap.AllHitGround();
+    //we can store this in a field, but then we have to worry about whether we're updating it everytime we need to (e.g. on jump takeoff have to set to false)
+    //so for now it's much easier to just leave like this
+    
 
     private void OnDrawGizmos()
     {
@@ -115,11 +118,14 @@ public class SpiderController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rbAccel = rb.linearVelocity - rbLastVel;
-        rbLastVel = rb.linearVelocity;
+        //rbAccel = rb.linearVelocity - rbLastVel;
+        //rbLastVel = rb.linearVelocity;
 
         UpdateGroundData();
-        HandleMoveInput();
+        if (!VerifyingJump())//ignoring move input during jump verification prevents jittery hovering
+        { 
+            HandleMoveInput(); 
+        }
         HandleJumpInput();
         if (StronglyGrounded)
         {
@@ -320,33 +326,33 @@ public class SpiderController : MonoBehaviour
         var ptRight = pt.normal.CWPerp();
         var isCentralIndex = groundMap.IsCentralIndex(i);
 
-        if (pt.hitGround)
-        {
-            var f = rb.mass * Vector2.Dot(rbAccel, -pt.normal);
-            rb.AddForce(f * pt.normal);
-        }
-
-        if (moveInput != 0 || !grounded /*|| groundPoint.x == Mathf.Infinity*/)
-        {
-            //if (pt.hitGround && !isCentralIndex)
-            //{
-            //    var r = Physics2D.Raycast(heightReferencePoint.position, -pt.normal,
-            //        backupGroundPtRaycastLengthFactor * groundednessTolerance, groundLayer);
-            //    if (r)
-            //    {
-            //        pt = new GroundMapPt(r.point, r.normal, 0, 0, true);
-            //        ptRight = pt.normal.CWPerp();
-            //        isCentralIndex = true;
-            //    }
-            //}
-
-            groundPoint = pt.point;
-            groundPointGroundDirection = ptRight;
-        }
+        //if (pt.hitGround)
+        //{
+        //    var f = rb.mass * Vector2.Dot(rbAccel, -pt.normal);
+        //    rb.AddForce(f * pt.normal);
+        //}
 
         if (!VerifyingJump())
         {
             SetGrounded(pt.hitGround);
+        }
+
+        if (moveInput != 0 || !StronglyGrounded)//updating when !StronglyGrounded allows groundpt to slip to an accurate position while settling down on landing
+        {
+            if (pt.hitGround && !isCentralIndex)
+            {
+                var r = Physics2D.Raycast(heightReferencePoint.position, -pt.normal,
+                    backupGroundPtRaycastLengthFactor * groundednessTolerance, groundLayer);
+                if (r)
+                {
+                    pt = new GroundMapPt(r.point, r.normal, 0, 0, true);
+                    ptRight = pt.normal.CWPerp();
+                    isCentralIndex = true;
+                }
+            }
+
+            groundPoint = pt.point;
+            groundPointGroundDirection = ptRight;
         }
 
         groundDirection = pt.hitGround ?
