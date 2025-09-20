@@ -1579,54 +1579,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 5843148394334628032, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: stepSmoothingRate
-      value: 50
-      objectReference: {fileID: 0}
-    - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: accelCap
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: maxSpeedAirborne
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: heightSpringForce
-      value: 600
-      objectReference: {fileID: 0}
-    - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: heightSpringDamping
-      value: 25
-      objectReference: {fileID: 0}
-    - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: jumpVerificationTime
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: airborneRotationSpeed
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: groundedRotationSpeed
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: airborneAccelMultiplier
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: groundedExitToleranceFactor
-      value: 1.75
-      objectReference: {fileID: 0}
-    - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: groundedEntryToleranceFactor
-      value: 1.125
-      objectReference: {fileID: 0}
-    - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: backupGroundPtRaycastLengthFactor
-      value: 1.25
-      objectReference: {fileID: 0}
     - target: {fileID: 8910507805382992582, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: m_LocalPosition.x
       value: -25.15

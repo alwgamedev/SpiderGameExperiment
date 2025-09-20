@@ -6558,7 +6558,7 @@ Rigidbody2D:
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDamping: 0
-  m_AngularDamping: 0
+  m_AngularDamping: 0.05
   m_GravityScale: 1
   m_Material: {fileID: 6200000, guid: 0fb3a02a58aa5114b8ef3cbdb77daef0, type: 2}
   m_IncludeLayers:
@@ -6570,7 +6570,7 @@ Rigidbody2D:
   m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 1
-  m_Constraints: 4
+  m_Constraints: 0
 --- !u!114 &3912472630339336116
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6627,32 +6627,34 @@ MonoBehaviour:
   headBone: {fileID: 1796735932416995084}
   heightReferencePoint: {fileID: 3708315842584664218}
   headRotationSpeed: 4
-  groundedRotationSpeed: 4
-  airborneRotationSpeed: 2.5
+  groundedRotationSpeed: 6
+  airborneRotationSpeed: 4.5
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  groundedExitToleranceFactor: 1.3
-  groundedEntryToleranceFactor: 1
+  groundedExitToleranceFactor: 1.75
+  groundedEntryToleranceFactor: 1.25
   groundedSearchWidth: 0.25
-  backupGroundPtRaycastLengthFactor: 1.25
+  backupGroundPtRaycastLengthFactor: 1.1
   upcomingGroundDirectionOffset: 0.35
   failedGroundRaycastSmoothingRate: 25
   accelFactor: 45
-  accelCap: 1
+  accelCap: 5
   decelFactor: 45
   airborneAccelMultiplier: 1
   gripStrength: 250
   maxSpeed: 3.25
-  maxSpeedAirborne: 3.25
+  maxSpeedAirborne: 5
   preferredRideHeight: 0.95
-  heightSpringForce: 800
-  heightSpringDamping: 35
+  heightSpringForce: 600
+  heightSpringDamping: 22
+  balanceSpringForce: 32.5
+  balanceSpringDamping: 0.05
   jumpForce: 10
   jumpForceCrouchBoostRate: 14
   uphillJumpDirectionRotationRate: 0.8
   uphillJumpTakeoffRotationFraction: 0.25
-  jumpVerificationTime: 0.1
+  jumpVerificationTime: 0.2
   tapJumpVerificationTime: 0.125
   crouchHeightFraction: 0.25
   crouchTime: 0.3
@@ -6662,7 +6664,7 @@ MonoBehaviour:
   airborneLegDriftRate: 1.8
   airborneLegDriftMax: 1
   groundMap:
-    numFwdIntervals: 48
+    numFwdIntervals: 52
     intervalWidth: 0.025
     map: []
 --- !u!114 &5843148394334628032
@@ -6683,7 +6685,7 @@ MonoBehaviour:
   speedCapMin: 0.05
   speedCapMax: 3
   baseStepHeightMultiplier: 0.8
-  stepSmoothingRate: 250
+  stepSmoothingRate: 50
   synchronizedLegs:
   - leg: {fileID: 3287121947862078546}
     timeOffset: 0
