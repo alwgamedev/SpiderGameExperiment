@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System;
-using System.Collections.Generic;
+using UnityEditor.ShaderGraph.Internal;
+using Unity.VisualScripting;
 
 [Serializable]
 public struct GroundMap
@@ -8,6 +9,14 @@ public struct GroundMap
     public int numFwdIntervals;
     public float intervalWidth;
     //public LayerMask raycastLayerMask;
+
+    Color RaycastColor0 => Color.clear;//Color.red;
+    Color RaycastColor1 => Color.clear;//Color.blue;
+    Color RaycastColor2 => Color.clear;//Color.cyan;
+
+    Color GizmoColorCenter => Color.red;
+    Color GizmoColorRight => Color.green;
+    Color GizmoColorLeft => Color.yellow;
 
     [SerializeField] GroundMapPt[] map;
 
@@ -81,70 +90,6 @@ public struct GroundMap
         return CentralIndex;
     }
 
-    public int IndexOfFirstGroundHitFromCenter(float leftMinPos, float rightMaxPos)
-    {
-        int i = CentralIndex;
-        if (map[i].hitGround)
-        {
-            return i;
-        }
-
-        i++;
-        int j = CentralIndex - 1;
-        bool checkRight = true;
-        bool checkLeft = true;
-        int n = NumPts;
-        while (i < n && j > 0)
-        {
-            if (checkRight && map[i].horizontalPosition > rightMaxPos)
-            {
-                checkRight = false;
-            }
-            if (checkRight && map[i].hitGround)
-            {
-                return i;
-            }
-
-            if (checkLeft && map[i].horizontalPosition < leftMinPos)
-            {
-                checkLeft = false;
-            }
-            if (checkLeft && map[j].hitGround)
-            {
-                return j;
-            }
-
-            i++;
-            j--;
-        }
-
-        return CentralIndex;
-    }
-
-    public int IndexOfFirstRightGroundHit()
-    {
-        for (int i = numFwdIntervals; i < NumPts; i++)
-        {
-            if (map[i].hitGround)
-            {
-                return i;
-            }
-        }
-        return CentralIndex;
-    }
-
-    public int IndexOfFirstLeftGroundHit()
-    {
-        for (int i = numFwdIntervals; i > -1; i--)
-        {
-            if (map[i].hitGround)
-            {
-                return i;
-            }
-        }
-        return CentralIndex;
-    }
-
     public GroundMapPt PointFromCenterByIndex(int i)
     {
         if (i >= numFwdIntervals)
@@ -167,7 +112,7 @@ public struct GroundMap
     {
         if (x > 0)
         {
-            for (int i = numFwdIntervals; i < numFwdIntervals << 1; i++)
+            for (int i = numFwdIntervals; i < map.Length - 1; i++)
             {
                 var p = map[i + 1];
                 if (p.horizontalPosition > x)
@@ -201,8 +146,7 @@ public struct GroundMap
     {
         if (x > 0)
         {
-            int n = NumPts;
-            for (int i = numFwdIntervals + 1; i < NumPts; i++)
+            for (int i = numFwdIntervals + 1; i < map.Length; i++)
             {
                 if (map[i].horizontalPosition > x)
                 {
@@ -210,7 +154,7 @@ public struct GroundMap
                 }
             }
 
-            return n - 1;
+            return map.Length - 1;
         }
 
         for (int i = numFwdIntervals - 1; i > -1; i--)
@@ -224,6 +168,44 @@ public struct GroundMap
         return 0;
     }
 
+    public Vector2 AveragePointFromCenter(float minPos, float maxPos)
+    {
+        maxPos += Mathf.Epsilon;//so we can use < instead of <= (probably pointless)
+        minPos -= Mathf.Epsilon;
+        Vector2 sum = default;
+        int ct = 0;
+
+        for (int i = 0; i < map.Length; i++)
+        {
+            if (map[i].horizontalPosition < maxPos && map[i].horizontalPosition > minPos)
+            {
+                sum += map[i].point;
+                ct++;
+            }
+        }
+
+        return ct == 0 ? sum : sum / ct;
+    }
+
+    public Vector2 AverageNormalFromCenter(float minPos, float maxPos)
+    {
+        maxPos += Mathf.Epsilon;//so we can use < instead of <= (probably pointless)
+        minPos -= Mathf.Epsilon;
+        Vector2 sum = default;
+        int ct = 0;
+
+        for (int i = 0; i < map.Length; i++)
+        {
+            if (map[i].horizontalPosition < maxPos && map[i].horizontalPosition > minPos)
+            {
+                sum += map[i].normal;
+                ct++;
+            }
+        }
+
+        return ct == 0 ? sum : sum / ct;
+    }
+
     public void UpdateMap(Vector2 origin, Vector2 originDown, float raycastLength, int centralIndex, int raycastLayerMask)
     {
         //n = 2 * numFwdPts + 1
@@ -233,7 +215,7 @@ public struct GroundMap
             map = new GroundMapPt[n];
         }
 
-        var r = MathTools.DebugRaycast(origin, originDown, raycastLength, raycastLayerMask, Color.red);
+        var r = MathTools.DebugRaycast(origin, originDown, raycastLength, raycastLayerMask, RaycastColor0);
         map[centralIndex] = r ? new GroundMapPt(r.point, r.normal, 0, r.distance, true)
             : new GroundMapPt(origin + raycastLength * originDown, -originDown, 0, raycastLength, false);
 
@@ -247,7 +229,7 @@ public struct GroundMap
             var o = lastMapPt.point + lastRaycastLength * lastNormal;
 
             //first raycast horizontally to check if ground kicks UP suddenly (running into a wall e.g.)
-            r = MathTools.DebugRaycast(o, lastTangent, intervalWidth, raycastLayerMask, Color.blue);
+            r = MathTools.DebugRaycast(o, lastTangent, intervalWidth, raycastLayerMask, RaycastColor1);
             if (r)
             {
                 var h = lastMapPt.horizontalPosition + Vector2.Distance(lastMapPt.point, r.point);
@@ -257,7 +239,7 @@ public struct GroundMap
             {
                 //now shift forward and raycast down
                 o += intervalWidth * lastTangent;
-                r = MathTools.DebugRaycast(o, -lastNormal, raycastLength, raycastLayerMask, Color.cyan);
+                r = MathTools.DebugRaycast(o, -lastNormal, raycastLength, raycastLayerMask, RaycastColor2);
                 if (r)
                 {
                     var h = lastMapPt.horizontalPosition + Vector2.Distance(lastMapPt.point, r.point);
@@ -291,7 +273,7 @@ public struct GroundMap
             var lastRaycastLength = lastMapPt.raycastDistance;
             var o = lastMapPt.point + lastRaycastLength * lastNormal;
 
-            r = MathTools.DebugRaycast(o, lastTangent, intervalWidth, raycastLayerMask, Color.blue);
+            r = MathTools.DebugRaycast(o, lastTangent, intervalWidth, raycastLayerMask, RaycastColor1);
             if (r)
             {
                 var h = lastMapPt.horizontalPosition + Vector2.Distance(lastMapPt.point, r.point);
@@ -301,7 +283,7 @@ public struct GroundMap
             {
                 //now shift forward and raycast down
                 o += intervalWidth * lastTangent;
-                r = MathTools.DebugRaycast(o, -lastNormal, raycastLength, raycastLayerMask, Color.cyan);
+                r = MathTools.DebugRaycast(o, -lastNormal, raycastLength, raycastLayerMask, RaycastColor2);
                 if (r)
                 {
                     var h = lastMapPt.horizontalPosition - Vector2.Distance(lastMapPt.point, r.point);
@@ -331,14 +313,14 @@ public struct GroundMap
     {
         if (map == null || map.Length == 0) return;
 
-        Gizmos.color = Color.green;
+        Gizmos.color = GizmoColorLeft;
         for (int i = 0; i < numFwdIntervals; i++)
         {
             Gizmos.DrawSphere(map[i].point, 0.1f);
         }
-        Gizmos.color = Color.red;
+        Gizmos.color = GizmoColorCenter;
         Gizmos.DrawSphere(map[numFwdIntervals].point, 0.1f);
-        Gizmos.color = Color.yellow;
+        Gizmos.color = GizmoColorRight;
         for (int i = numFwdIntervals + 1; i < NumPts; i++)
         {
             Gizmos.DrawSphere(map[i].point, 0.1f);

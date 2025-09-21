@@ -6632,22 +6632,24 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  groundedExitToleranceFactor: 1.75
-  groundedEntryToleranceFactor: 1.25
-  groundedSearchWidth: 0.25
+  groundedExitToleranceFactor: 1.5
+  groundedEntryToleranceFactor: 1.05
+  groundDirectionSampleWidth: 0.325
   backupGroundPtRaycastLengthFactor: 1.1
-  upcomingGroundDirectionOffset: 0.35
+  upcomingGroundDirectionMinPos: 0
+  upcomingGroundDirectionMaxPos: 0.4
   failedGroundRaycastSmoothingRate: 25
   accelFactor: 45
   accelCap: 5
   decelFactor: 45
   airborneAccelMultiplier: 1
-  gripStrength: 250
+  gripStrength: 400
   maxSpeed: 3.25
   maxSpeedAirborne: 5
-  preferredRideHeight: 0.95
+  preferredRideHeight: 1
   heightSpringForce: 600
   heightSpringDamping: 22
+  heightSampleWidth: 0.8
   balanceSpringForce: 32.5
   balanceSpringDamping: 0.05
   jumpForce: 10
@@ -6684,8 +6686,8 @@ MonoBehaviour:
   stepTime: 0.3
   speedCapMin: 0.05
   speedCapMax: 3
-  baseStepHeightMultiplier: 0.8
-  stepSmoothingRate: 50
+  baseStepHeightMultiplier: 0.925
+  stepSmoothingRate: 12.5
   synchronizedLegs:
   - leg: {fileID: 3287121947862078546}
     timeOffset: 0
