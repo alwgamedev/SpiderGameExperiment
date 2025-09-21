@@ -1461,6 +1461,55 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1738152319
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1738152321}
+  - component: {fileID: 1738152320}
+  m_Layer: 0
+  m_Name: Rope Test
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1738152320
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1738152319}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f45732bb4cfd3a84a9cf1acd1a0541c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  silkDrag: 0.1
+  silkWidth: 0.1
+  silkNodeSpacing: 0.1
+  silkNumNodes: 30
+  silkConstraintIterations: 20
+--- !u!4 &1738152321
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1738152319}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -21.483023, y: 12.847019, z: -0.0049190545}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1910163370
 GameObject:
   m_ObjectHideFlags: 0
@@ -1621,7 +1670,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: groundedEntryToleranceFactor
-      value: 0.95
+      value: 1.05
       objectReference: {fileID: 0}
     - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: failedGroundRaycastSmoothingRate
@@ -1687,3 +1736,4 @@ SceneRoots:
   - {fileID: 919489308}
   - {fileID: 514720425}
   - {fileID: 1910163373}
+  - {fileID: 1738152321}

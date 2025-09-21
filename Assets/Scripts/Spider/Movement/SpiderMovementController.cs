@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Assertions.Must;
 
-public class SpiderController : MonoBehaviour
+public class SpiderMovementController : MonoBehaviour
 {
     [SerializeField] Transform abdomenBone;
     [SerializeField] Transform headBone;
@@ -291,6 +291,7 @@ public class SpiderController : MonoBehaviour
     {
         var p = groundMap.AveragePointFromCenter(-heightSampleWidth, heightSampleWidth);
         //^so that body sinks a little as it rounds a sharp peak (keeping leg extension natural)
+        //--note you only want to do this when strongly grounded
         Vector2 d = -transform.up;
         var l = Vector2.Dot(p - (Vector2)heightReferencePoint.position, d) - preferredRideHeight;
         var f = heightSpringForce * l * d;
