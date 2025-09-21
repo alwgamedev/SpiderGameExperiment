@@ -70,7 +70,7 @@ public class SpiderController : MonoBehaviour
     float PreferredBodyPosGroundHeight => transform.position.y - heightReferencePoint.position.y + preferredRideHeight;
     float MaxSpeed => grounded ? maxSpeed : maxSpeedAirborne;
     float AccelFactor => grounded ? accelFactor : accelFactor * airborneAccelMultiplier;
-    float AccelCap => VerifyingJump() ? Mathf.Lerp(0, accelCap, 1 - Mathf.Pow(jumpVerificationTimer / jumpVerificationTime, 2)) : accelCap;
+    //float AccelCap => VerifyingJump() ? Mathf.Lerp(0, accelCap, 1 - Mathf.Pow(jumpVerificationTimer / jumpVerificationTime, 2)) : accelCap;
     float Speed => grounded ? Mathf.Abs(Vector2.Dot(rb.linearVelocity, groundDirection)) : rb.linearVelocity.magnitude;
     float SpeedFraction => Speed / MaxSpeed;
     bool StronglyGrounded => grounded && groundMap.AllHitGround();
@@ -118,10 +118,10 @@ public class SpiderController : MonoBehaviour
         //Balance(/*Time.deltaTime*/);
     }
 
-    private void LateUpdate()
-    {
-        legSynchronizer.UpdateAllLegs(Time.deltaTime, groundMap);
-    }
+    //private void LateUpdate()
+    //{
+    //    legSynchronizer.UpdateAllLegs(Time.deltaTime, groundMap);
+    //}
 
     private void FixedUpdate()
     {
@@ -137,6 +137,8 @@ public class SpiderController : MonoBehaviour
         legSynchronizer.bodyGroundSpeed = Speed;
         legSynchronizer.preferredBodyPosGroundHeight = PreferredBodyPosGroundHeight;
         legSynchronizer.stepHeightFraction = 1 - crouchProgress * crouchHeightFraction;
+
+        legSynchronizer.UpdateAllLegs(Time.deltaTime, groundMap);//when done in late update get weird things like legs lagging behind (up) during long freefalls
     }
 
     private void CaptureInput()
@@ -185,11 +187,17 @@ public class SpiderController : MonoBehaviour
             Vector2 d = FacingRight ? groundDirection : -groundDirection;
             var spd = Vector2.Dot(rb.linearVelocity, d);
             var maxSpd = MaxSpeed;//grounded ? maxSpeed : maxSpeedAirborne;
-            //var a = grounded ? accelFactor : accelFactor * airborneAccelMultiplier;
-            //var aCap = VerifyingJump() ? Mathf.Lerp(0, accelCap, 1 - Mathf.Pow(jumpVerificationTimer / jumpVerificationTime, 2)) : accelCap;
-            //    //^reduce accelCap during jump verification to prevent jittery floating if holding move input into slope while jumping
-            var s = Mathf.Min(maxSpd - spd, AccelCap * maxSpd);
-            rb.AddForce(AccelFactor * s * rb.mass * d);
+            var accCap = accelCap;
+            var accelFactor = AccelFactor;
+            if (VerifyingJump())
+            {
+                var lerpAmt = 1 - Mathf.Pow(jumpVerificationTimer / jumpVerificationTime, 1);
+                maxSpd = JumpVerificationMaxSpeed(lerpAmt);
+                accCap = JumpVerificationAccelCap(lerpAmt);
+                accelFactor = JumpVerificationAccelFactor(accelFactor, lerpAmt);
+            }
+            var s = Mathf.Min(maxSpd - spd, accCap * maxSpd);
+            rb.AddForce(accelFactor * s * rb.mass * d);
         }
         else if (StronglyGrounded)
         {
@@ -198,6 +206,21 @@ public class SpiderController : MonoBehaviour
             var h = Vector2.Dot(groundPoint - (Vector2)heightReferencePoint.position, d);
             rb.AddForce((gripStrength * h - decelFactor * spd) * rb.mass * d);//grip to steep slope
         }
+    }
+
+    private float JumpVerificationAccelFactor(float accelFactor, float lerpAmt)
+    {
+        return Mathf.Lerp(0, accelFactor, lerpAmt);
+    }
+
+    private float JumpVerificationAccelCap(float lerpAmt)
+    {
+        return Mathf.Lerp(0, accelCap, lerpAmt);
+    }
+
+    private float JumpVerificationMaxSpeed(float lerpAmt)
+    {
+        return Mathf.Lerp(maxSpeed, maxSpeedAirborne, lerpAmt);
     }
 
     private void Balance(/*float dt*/)
