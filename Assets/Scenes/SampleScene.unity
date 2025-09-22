@@ -1490,11 +1490,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f45732bb4cfd3a84a9cf1acd1a0541c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  silkDrag: 0.1
+  silkDrag: 0.2
+  silkBounciness: 0.35
+  collisionRadius: 0.125
   silkWidth: 0.1
   silkNodeSpacing: 0.1
   silkNumNodes: 30
-  silkConstraintIterations: 20
+  silkCollisionIterations: 15
+  silkConstraintIterations: 25
 --- !u!4 &1738152321
 Transform:
   m_ObjectHideFlags: 0

@@ -4,9 +4,12 @@ using UnityEngine.Experimental.Rendering;
 public class SpiderSilkShooter : MonoBehaviour
 {
     [SerializeField] float silkDrag;
+    [SerializeField] float silkBounciness = 1;
+    [SerializeField] float collisionRadius;
     [SerializeField] float silkWidth;
     [SerializeField] float silkNodeSpacing;
     [SerializeField] int silkNumNodes;
+    [SerializeField] int silkCollisionIterations;
     [SerializeField] int silkConstraintIterations;
 
     Rope rope;
@@ -30,11 +33,12 @@ public class SpiderSilkShooter : MonoBehaviour
 
             if (rope == null)
             {
-                rope = new Rope(mousePos, silkWidth, silkNodeSpacing, silkNumNodes, silkDrag, silkConstraintIterations);
+                rope = new Rope(mousePos, silkWidth, silkNodeSpacing, silkNumNodes, silkDrag, 
+                    silkBounciness, collisionRadius, silkCollisionIterations, silkConstraintIterations);
             }
             else
             {
-                rope.nodes[0].position = mousePos;
+                rope.nodes[0].Position = mousePos;
                 rope.FixedUpate(Time.deltaTime);
             }
         }
@@ -48,7 +52,7 @@ public class SpiderSilkShooter : MonoBehaviour
     {
         for (int i = 1; i < rope.nodes.Length; i++)
         {
-            Debug.DrawLine(rope.nodes[i - 1].position, rope.nodes[i].position, Color.red);
+            Debug.DrawLine(rope.nodes[i - 1].Position, rope.nodes[i].Position, Color.red);
         }
     }
 }

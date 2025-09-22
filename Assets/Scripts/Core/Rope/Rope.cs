@@ -10,13 +10,14 @@ public class Rope
     public readonly RopeNode[] nodes;
 
     public Rope(Vector2 position, float width, float nodeSpacing, int numNodes, 
-        float nodeDrag, int spacingConstraintIterations)
+        float nodeDrag, float nodeBounciness, float collisionRadius, int collisionIterations, int spacingConstraintIterations)
     {
         this.width = width;
         this.nodeSpacing = nodeSpacing;
         this.spacingConstraintIterations = spacingConstraintIterations;
         var a = Physics2D.gravity;
-        nodes = Enumerable.Range(0, numNodes).Select(i => new RopeNode(position, Vector2.zero, a, nodeDrag, i == 0)).ToArray();
+        nodes = Enumerable.Range(0, numNodes).Select(i => new RopeNode(position, Vector2.zero, a, nodeDrag, collisionRadius, 
+            nodeBounciness, collisionIterations, i == 0)).ToArray();
     }
 
     //this will be a very basic rope struct
@@ -62,17 +63,17 @@ public class Rope
                 var error = l - nodeSpacing;
                 if (nodes[i - 1].Anchored)
                 {
-                    nodes[i].position -= error * u;
+                    nodes[i].Position -= error * u;
                 }
                 else if (nodes[i].Anchored)
                 {
-                    nodes[i - 1].position += error * u;
+                    nodes[i - 1].Position += error * u;
                 }
                 else
                 {
                     var c = 0.5f * error * u;
-                    nodes[i - 1].position += c;
-                    nodes[i].position -= c;
+                    nodes[i - 1].Position += c;
+                    nodes[i].Position -= c;
                 }
             }
         }

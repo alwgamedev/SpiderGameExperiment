@@ -100,4 +100,38 @@ public static class MathTools
 #endif
         return Physics2D.Raycast(origin, direction, length, layerMask);
     }
+
+    //public static Vector2 ClosestPointOnPerimeter(this Bounds bounds, Vector2 point)
+    //{
+    //    var x = point.x;
+    //    var y = point.y;
+    //    var x1 = x < bounds.center.x ? bounds.min.x : bounds.max.x;
+    //    var y1 = y < bounds.center.y ? bounds.min.y : bounds.max.y;
+    //    var dx = Mathf.Abs(x - x1);
+    //    var dy = Mathf.Abs(y - y1);
+    //    return dx < dy ? new Vector2(x1, y) : new Vector2(x, y1);
+    //}
+
+    ////point will only move horizontally or vertically, works well when point is very near edge of collider
+    ////yeah but then our collision only pushes us back horizontally or vertically...
+    //public static Vector2 CheapClosestPointOnPerimeter(this Collider2D collider, Vector2 point, RaycastHit2D[] buffer)
+    //{
+    //    var b = collider.bounds.ClosestPointOnPerimeter(point);
+    //    var d = point - b;
+    //    var dir = d.x == 0 ? (d.y > 0 ? Vector2.up : Vector2.down) : (d.x > 0 ? Vector2.right : Vector2.left);
+    //    var dist = d.x == 0 ? Mathf.Abs(d.y) : Mathf.Abs(d.x);
+    //    var layer = 1 << collider.gameObject.layer;
+    //    buffer ??= new RaycastHit2D[64];
+    //    Physics2D.RaycastNonAlloc(b, dir, buffer, dist, layer);
+    //    Vector2 lastHit = b;
+    //    for (int i = 0; i < buffer.Length; i++)
+    //    {
+    //        if (buffer[i].collider == collider)
+    //        {
+    //            lastHit = buffer[i].point;
+    //        }
+    //    }
+
+    //    return lastHit;
+    //}
 }
