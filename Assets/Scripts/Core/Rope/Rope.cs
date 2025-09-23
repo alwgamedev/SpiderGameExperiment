@@ -10,14 +10,15 @@ public class Rope
     public readonly RopeNode[] nodes;
 
     public Rope(Vector2 position, float width, float nodeSpacing, int numNodes, 
-        float nodeDrag, float nodeBounciness, float collisionRadius, int collisionIterations, int spacingConstraintIterations)
+        float nodeDrag, float collisionRadius, float collisionThresholdFraction, float collisionBounciness,/*int collisionIterations,*/ int spacingConstraintIterations)
     {
         this.width = width;
         this.nodeSpacing = nodeSpacing;
         this.spacingConstraintIterations = spacingConstraintIterations;
         var a = Physics2D.gravity;
+        var collisionThreshold = collisionThresholdFraction * collisionRadius;
         nodes = Enumerable.Range(0, numNodes).Select(i => new RopeNode(position, Vector2.zero, a, nodeDrag, collisionRadius, 
-            nodeBounciness, collisionIterations, i == 0)).ToArray();
+            collisionThreshold, collisionBounciness,/*collisionIterations,*/ i == 0)).ToArray();
     }
 
     //this will be a very basic rope struct
@@ -33,16 +34,18 @@ public class Rope
 
     public void FixedUpate(float dt)
     {
-        UpdateVerletSimulation(dt);
+        var dt2 = dt * dt;
+        UpdateVerletSimulation(dt, dt2);
+        //ResolveCollisions();
         for (int i = 0; i < spacingConstraintIterations; i++)
         {
             SpacingConstraintsIteration();
+            ResolveCollisions();
         }
     }
 
-    private void UpdateVerletSimulation(float dt)
+    private void UpdateVerletSimulation(float dt, float dt2)
     {
-        var dt2 = dt * dt;
         for (int i = 0; i < nodes.Length; i++)
         {
             nodes[i].UpdateVerletSimulation(dt, dt2);
@@ -55,7 +58,7 @@ public class Rope
         {
             if (nodes[i - 1].Anchored && nodes[i].Anchored) continue;
 
-            var d = nodes[i].Position - nodes[i - 1].Position;
+            var d = nodes[i].position - nodes[i - 1].position;
             var l = d.magnitude;
             if (l > 10E-05f)
             {
@@ -63,19 +66,27 @@ public class Rope
                 var error = l - nodeSpacing;
                 if (nodes[i - 1].Anchored)
                 {
-                    nodes[i].Position -= error * u;
+                    nodes[i].position -= error * u;
                 }
                 else if (nodes[i].Anchored)
                 {
-                    nodes[i - 1].Position += error * u;
+                    nodes[i - 1].position += error * u;
                 }
                 else
                 {
                     var c = 0.5f * error * u;
-                    nodes[i - 1].Position += c;
-                    nodes[i].Position -= c;
+                    nodes[i - 1].position += c;
+                    nodes[i].position -= c;
                 }
             }
+        }
+    }
+
+    private void ResolveCollisions()
+    {
+        for (int i = 0; i < nodes.Length; i++)
+        {
+            nodes[i].ResolveCollisions();
         }
     }
 }
