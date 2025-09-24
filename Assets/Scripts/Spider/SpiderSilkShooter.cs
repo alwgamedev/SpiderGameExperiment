@@ -6,7 +6,7 @@ public class SpiderSilkShooter : MonoBehaviour
     [SerializeField] float silkDrag;
     [SerializeField] float silkBounciness;
     [SerializeField] float silkCollisionRadius;
-    [Range(0,1)][SerializeField] float silkCollisionThresholdFraction;
+    //[SerializeField] float silkCollisionThreshold;
     [SerializeField] float silkWidth;
     [SerializeField] float silkNodeSpacing;
     [SerializeField] int silkNumNodes;
@@ -15,14 +15,20 @@ public class SpiderSilkShooter : MonoBehaviour
 
     Rope rope;
     bool mouseDown;
+    LineRenderer lineRenderer;
+
+    private void Awake()
+    {
+        lineRenderer = GetComponent<LineRenderer>();
+    }
 
     private void Update()
     {
         mouseDown = Input.GetKey(KeyCode.Mouse0);
-        if (rope != null)
-        {
-            DebugDrawRope();
-        }
+        //if (rope != null)
+        //{
+        //    DebugDrawRope();
+        //}
     }
 
     private void FixedUpdate()
@@ -34,8 +40,14 @@ public class SpiderSilkShooter : MonoBehaviour
 
             if (rope == null)
             {
+                if (lineRenderer.positionCount != silkNumNodes)
+                {
+                    lineRenderer.positionCount = silkNumNodes;
+                }
+                lineRenderer.startWidth = silkWidth;
+                lineRenderer.endWidth = silkWidth;
                 rope = new Rope(mousePos, silkWidth, silkNodeSpacing, silkNumNodes, silkDrag, 
-                    silkCollisionRadius, silkCollisionThresholdFraction, silkBounciness, /*silkCollisionIterations,*/ silkConstraintIterations);
+                    silkCollisionRadius, /*silkCollisionThresholdFraction,*/ silkBounciness, /*silkCollisionIterations,*/ silkConstraintIterations);
                 rope.nodes[0].Anchor();
             }
             else
@@ -48,6 +60,11 @@ public class SpiderSilkShooter : MonoBehaviour
         {
             rope = null;
         }
+    }
+
+    private void LateUpdate()
+    {
+        rope?.Render(lineRenderer);
     }
 
     private void DebugDrawRope()

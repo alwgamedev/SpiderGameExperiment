@@ -2581,7 +2581,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1796735932416995084}
-  - component: {fileID: 2005577780734019697}
+  - component: {fileID: 4161556469149567743}
   m_Layer: 0
   m_Name: head bone
   m_TagString: Untagged
@@ -2608,8 +2608,8 @@ Transform:
   - {fileID: 2399890710218574748}
   m_Father: {fileID: 4257679111386862312}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 21.102}
---- !u!58 &2005577780734019697
-CircleCollider2D:
+--- !u!70 &4161556469149567743
+CapsuleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -2624,7 +2624,7 @@ CircleCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -2642,8 +2642,9 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.7, y: -0.05}
-  m_Radius: 0.5
+  m_Offset: {x: 0.65, y: -0.05}
+  m_Size: {x: 1.75, y: 1.2}
+  m_Direction: 1
 --- !u!1 &2735900413683898725
 GameObject:
   m_ObjectHideFlags: 0
@@ -6192,7 +6193,7 @@ CapsuleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 1.3, y: 0}
-  m_Size: {x: 3, y: 2.25}
+  m_Size: {x: 2.6, y: 2.25}
   m_Direction: 1
 --- !u!1 &8683807235678294465
 GameObject:
@@ -6638,7 +6639,7 @@ MonoBehaviour:
   backupGroundPtRaycastLengthFactor: 1.1
   upcomingGroundDirectionMinPos: 0
   upcomingGroundDirectionMaxPos: 0.4
-  failedGroundRaycastSmoothingRate: 25
+  failedGroundRaycastSmoothingRate: 12
   accelFactor: 45
   accelCap: 5
   decelFactor: 45
@@ -6647,7 +6648,7 @@ MonoBehaviour:
   maxSpeed: 3.25
   maxSpeedAirborne: 5
   preferredRideHeight: 1
-  heightSpringForce: 600
+  heightSpringForce: 400
   heightSpringDamping: 22
   heightSampleWidth: 0.8
   balanceSpringForce: 32.5
@@ -6656,7 +6657,7 @@ MonoBehaviour:
   jumpForceCrouchBoostRate: 14
   uphillJumpDirectionRotationRate: 0.8
   uphillJumpTakeoffRotationFraction: 0.25
-  jumpVerificationTime: 0.2
+  jumpVerificationTime: 0.125
   tapJumpVerificationTime: 0.125
   crouchHeightFraction: 0.25
   crouchTime: 0.3
@@ -6687,7 +6688,7 @@ MonoBehaviour:
   speedCapMin: 0.05
   speedCapMax: 3
   baseStepHeightMultiplier: 0.925
-  stepSmoothingRate: 12.5
+  stepSmoothingRate: 15
   synchronizedLegs:
   - leg: {fileID: 3287121947862078546}
     timeOffset: 0
