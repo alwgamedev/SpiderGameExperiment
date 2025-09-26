@@ -1,18 +1,21 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 
 public struct RopeNode
 {
-    public Vector3 position;
-    public Vector3 lastPosition;
-    public Vector3 acceleration;
+    public Vector2 position;
+    public Vector2 lastPosition;
+    public Vector2 acceleration;
+
+    Vector2 storedVelocity;
+    int[] storedVelocityIds;
+    int storedVelocityPointer;
 
     bool anchored;
     float drag;
     float collisionRadius;
     float collisionThreshold;
     float collisionBounciness;
-
-    //public readonly Rigidbody2D rb;
 
     public bool Anchored => anchored;
 
@@ -24,10 +27,13 @@ public struct RopeNode
         this.position = position;
         lastPosition = position - velocity * Time.fixedDeltaTime;
         this.acceleration = acceleration;
+        storedVelocity = Vector2.zero;
         this.drag = drag;
         this.collisionRadius = collisionRadius;
         this.collisionThreshold = collisionThreshold;
         this.collisionBounciness = collisionBounciness;
+        storedVelocityIds = new int[Rope.MAX_NUM_COLLISIONS];
+        storedVelocityPointer = 0;
 
         //CircleCollider2D c = Object.Instantiate(prefab, position, Quaternion.identity);
         //c.radius = collisionThreshold;
@@ -63,7 +69,7 @@ public struct RopeNode
         lastPosition = position;
     }
 
-    public void DeAnchor(Vector3 initialVelocity)
+    public void DeAnchor(Vector2 initialVelocity)
     {
         anchored = false;
         lastPosition = position - initialVelocity * Time.fixedDeltaTime;
@@ -80,6 +86,19 @@ public struct RopeNode
     {
         var p = position;
         position += NextPositionStep(dt, dt2);//USE PROPERTY POSITION SO THAT COLLISIONS GET UPDATED
+        if (storedVelocity != Vector2.zero)
+        {
+            position += dt * storedVelocity;
+            storedVelocity = Vector2.zero;
+        }
+        if (storedVelocityPointer != 0)
+        {
+            for (int i = 0; i < storedVelocityIds.Length; i++)
+            {
+                storedVelocityIds[i] = 0;
+            }
+            storedVelocityPointer = 0;
+        }
         lastPosition = p;
     }
 
@@ -110,56 +129,73 @@ public struct RopeNode
         }
         if (l < collisionThreshold)
         {
-            ResolveCollision(dt, p, l);
+            ResolveCollision(dt, p, l, c.attachedRigidbody);
 
         }
     }
 
-    private void ResolveCollision(float dt, Vector3 contactPoint, float distanceToContactPoint)
+    private void ResolveCollision(float dt, Vector2 contactPoint, float distanceToContactPoint, Rigidbody2D attachedRb)
     {
         if (distanceToContactPoint > 10E-05f)
         {
             var collisionOffset = contactPoint - position;
             var collisionNormal = -collisionOffset / distanceToContactPoint;
             var velocity = (position - lastPosition) / dt;
-            if (Vector2.Dot(velocity, collisionNormal) < 0)
+            //var collisionAngle = Vector2.Dot(velocity, collisionNormal);
+
+            var spd = velocity.magnitude;
+            if (spd > 10E-05f)
             {
-                position += (collisionThreshold - distanceToContactPoint) * collisionNormal;
+                var velocityDirection = velocity / spd;
+                var y = Vector2.Dot(collisionOffset, velocityDirection);
+                var distanceTravelledSinceCollision = -y
+                    + Mathf.Sqrt(y * y + collisionThreshold * collisionThreshold - distanceToContactPoint * distanceToContactPoint);
+                var timeSinceCollision = distanceTravelledSinceCollision / spd;
+                var newVelocity = collisionBounciness * Mathf.Sign(Vector2.Dot(velocity, collisionNormal))
+                    * (2 * Vector2.Dot(velocity, collisionNormal) * collisionNormal - velocity);
+                position += (collisionThreshold - distanceToContactPoint) * collisionNormal + newVelocity * timeSinceCollision;
+                //position += -distanceTravelledSinceCollision * velocityDirection
+                //    + newVelocity * timeSinceCollision;
+                lastPosition = position - newVelocity * dt;
+                if (attachedRb)
+                {
+                    var id = attachedRb.GetInstanceID();
+                    if (storedVelocityPointer < storedVelocityIds.Length && !storedVelocityIds.Contains(id))
+                    {
+                        storedVelocity += attachedRb.linearVelocity;
+                        //position += c.attachedRigidbody.linearVelocity * dt;
+                        storedVelocityIds[storedVelocityPointer] = id;
+                        storedVelocityPointer++;
+                    }
+                    //really we should be doing +=, but only once for each rb seen
+                }
             }
             else
             {
-                var spd = velocity.magnitude;
-                if (spd > 10E-05f)
-                {
-                    var velocityDirection = velocity / spd;
-                    var y = Vector2.Dot(collisionOffset, velocityDirection);
-                    var distanceTravelledSinceCollision = -y
-                        + Mathf.Sqrt(y * y + collisionThreshold * collisionThreshold - distanceToContactPoint * distanceToContactPoint);
-                    var timeSinceCollision = distanceTravelledSinceCollision / spd;
-                    var newVelocity = collisionBounciness * (2 * Vector2.Dot(velocity, collisionNormal) * collisionNormal - velocity);
-                    position += -distanceTravelledSinceCollision * velocityDirection
-                        + newVelocity * timeSinceCollision;
-                    lastPosition = position - newVelocity * dt;
-                }
-                else
-                {
-                    position += (collisionThreshold - distanceToContactPoint) * collisionNormal;
-                }
+                position += (collisionThreshold - distanceToContactPoint) * collisionNormal;
             }
-            //lastPosition = position - collisionBounciness * MathTools.ReflectAcrossHyperplane(position - lastPosition, u);
-
-            //remember to set lastPos! (to reflect new velocity
-            //or let's try it without first... (bc it's more accurate to the verlet model)
-            //but setting the lastPos will give stronger bounceback on collision
         }
     }
+
+    //private bool RbIdSeen(int rbId)
+    //{
+    //    for (int i = 0; i < rbIds.Length; i++)
+    //    {
+    //        if (rbIds[i] == rbId)
+    //        {
+    //            return true;
+    //        }
+    //    }
+
+    //    return false;
+    //}
 
     //public Vector3 LastStepVelocity(float dt)
     //{
     //    return (position - lastPosition) / dt;
     //}
 
-    public Vector3 NextPositionStep(float dt, float dt2)
+    public Vector2 NextPositionStep(float dt, float dt2)
     {
         var d = position - lastPosition;
         var v = d / dt;

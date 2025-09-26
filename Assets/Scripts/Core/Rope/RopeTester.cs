@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
-using UnityEngine.Experimental.Rendering;
 
-public class SpiderSilkShooter : MonoBehaviour
+public class RopeTester : MonoBehaviour
 {
     [SerializeField] float silkDrag;
     [SerializeField] float silkBounciness;
@@ -10,6 +9,8 @@ public class SpiderSilkShooter : MonoBehaviour
     [SerializeField] float silkNodeSpacing;
     [SerializeField] int silkNumNodes;
     [SerializeField] int silkConstraintIterations;
+    //[SerializeField] float silkConstraintWeighting;
+    //[SerializeField] float silkConstraintSmoothing;
     //[SerializeField] CircleCollider2D silkNodePrefab;
 
     Rope rope;
@@ -56,7 +57,8 @@ public class SpiderSilkShooter : MonoBehaviour
                 lineRenderer.startWidth = silkWidth;
                 lineRenderer.endWidth = silkWidth;
                 rope = new Rope(mousePos, silkWidth, silkNodeSpacing, silkNumNodes, silkDrag,
-                    /*silkNodePrefab,*/ silkCollisionRadius, /*silkCollisionThresholdFraction,*/ silkBounciness, /*silkCollisionIterations,*/ silkConstraintIterations);
+                    silkCollisionRadius, silkBounciness, 
+                    silkConstraintIterations/*, silkConstraintWeighting, silkConstraintSmoothing*/);
                 //rope.nodes[0].Anchor();
             }
             else

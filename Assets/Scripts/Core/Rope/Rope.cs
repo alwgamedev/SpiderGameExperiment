@@ -3,12 +3,15 @@ using UnityEngine;
 
 public class Rope
 {
-    public const int MAX_NUM_COLLISIONS = 8;
-    public const int PHYSICS_SUBSTEPS = 2;
+    public const int MAX_NUM_COLLISIONS = 4;
+    //public const int PHYSICS_SUBSTEPS = 1;
 
     public float width;
     public float nodeSpacing;
     public float spacingConstraintIterations;
+    //public float spacingConstraintWeightRight;
+    //public float spacingConstraintWeightLeft;
+    //public float spacingConstraintSmoothing;
     
     public readonly RopeNode[] nodes;
 
@@ -19,16 +22,20 @@ public class Rope
     ContactFilter2D collisionContactFilter;
 
     public Rope(Vector3 position, float width, float nodeSpacing, int numNodes, 
-        float nodeDrag, /*CircleCollider2D prefab,*/ float collisionRadius, float collisionBounciness, int spacingConstraintIterations)
+        float nodeDrag, /*CircleCollider2D prefab,*/ float collisionRadius, float collisionBounciness, 
+        int spacingConstraintIterations/*, float spacingConstraintWeighting, float spacingConstraintSmoothing*/)
     {
         this.width = width;
         this.nodeSpacing = nodeSpacing;
         this.spacingConstraintIterations = spacingConstraintIterations;
+        //spacingConstraintWeightRight = spacingConstraintWeighting;
+        //spacingConstraintWeightLeft = 1 - spacingConstraintWeightRight;
+        //this.spacingConstraintSmoothing = spacingConstraintSmoothing;
         var a = Physics2D.gravity;
         var collisionThreshold = 0.5f * width;
         nodes = Enumerable.Range(0, numNodes).Select(i => new RopeNode(position, Vector2.zero, a, nodeDrag, 
             /*prefab,*/ collisionRadius, collisionThreshold, collisionBounciness, i == 0)).ToArray();
-        renderPositions = nodes.Select(x => x.position).ToArray();
+        renderPositions = nodes.Select(x => (Vector3)x.position).ToArray();
         collisionBuffer = new Collider2D[MAX_NUM_COLLISIONS];
         collisionContactFilter = new();
         collisionContactFilter.NoFilter();
@@ -36,12 +43,13 @@ public class Rope
 
     public void FixedUpate(float dt)
     {
-        dt /= PHYSICS_SUBSTEPS;
+        //dt /= PHYSICS_SUBSTEPS;
         var dt2 = dt * dt;
-        for (int i = 0; i < PHYSICS_SUBSTEPS; i++)
-        {
-            UpdateRopePhysics(dt, dt2);
-        }
+        UpdateRopePhysics(dt, dt2);
+        //for (int i = 0; i < PHYSICS_SUBSTEPS; i++)
+        //{
+        //    UpdateRopePhysics(dt, dt2);
+        //}
 
         renderPositionsNeedUpdate = true;
     }
@@ -113,20 +121,16 @@ public class Rope
                 if (nodes[i - 1].Anchored)
                 {
                     nodes[i].position -= c;
-                    //nodes[i].ResolveCollisions(collisionContactFilter, collisionBuffer);
                 }
                 else if (nodes[i].Anchored)
                 {
                     nodes[i - 1].position += c;
-                    //nodes[i - 1].ResolveCollisions(collisionContactFilter, collisionBuffer);
                 }
                 else
                 {
                     c = 0.5f * c;
                     nodes[i - 1].position +=  c;
                     nodes[i].position -= c;
-                    //nodes[i - 1].ResolveCollisions(collisionContactFilter, collisionBuffer);
-                    //nodes[i].ResolveCollisions(collisionContactFilter, collisionBuffer);
                 }
             }
         }
