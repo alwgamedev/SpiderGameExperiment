@@ -1495,9 +1495,9 @@ MonoBehaviour:
   silkBounciness: 1
   silkCollisionRadius: 1
   silkWidth: 0.1
-  silkNodeSpacing: 0.2
-  silkNumNodes: 25
-  silkConstraintIterations: 25
+  silkNodeSpacing: 0.1
+  silkNumNodes: 40
+  silkConstraintIterations: 10
 --- !u!4 &1738152321
 Transform:
   m_ObjectHideFlags: 0

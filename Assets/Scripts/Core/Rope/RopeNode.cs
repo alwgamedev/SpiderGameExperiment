@@ -1,37 +1,24 @@
-﻿using Unity.Mathematics;
-using UnityEngine;
+﻿using UnityEngine;
 
 public struct RopeNode
 {
-    public Vector2 position;
-    public Vector2 lastPosition;
-    public Vector2 acceleration;
+    public Vector3 position;
+    public Vector3 lastPosition;
+    public Vector3 acceleration;
 
     bool anchored;
     float drag;
     float collisionRadius;
     float collisionThreshold;
     float collisionBounciness;
-    //int collisionIterations;
 
-    //RaycastHit2D incomingCollision;//in future we may store an array
-
-    //Vector2 lastPositionBeforeCollision;
+    //public readonly Rigidbody2D rb;
 
     public bool Anchored => anchored;
-    //public Vector2 Position
-    //{
-    //    get => position;
-    //    set
-    //    {
-    //        position = value;
-    //        ResolveCollisions();
-    //    }
-    //}
-
 
     public RopeNode(Vector2 position, Vector2 velocity, Vector2 acceleration, float drag,
-        float collisionRadius, float collisionThreshold, float collisionBounciness, /*int collisionIterations,*/ bool anchored)
+        /*CircleCollider2D prefab,*/ float collisionRadius, float collisionThreshold, float collisionBounciness, 
+        bool anchored)
     {
         this.anchored = anchored;
         this.position = position;
@@ -41,11 +28,34 @@ public struct RopeNode
         this.collisionRadius = collisionRadius;
         this.collisionThreshold = collisionThreshold;
         this.collisionBounciness = collisionBounciness;
+
+        //CircleCollider2D c = Object.Instantiate(prefab, position, Quaternion.identity);
+        //c.radius = collisionThreshold;
+        //rb = c.attachedRigidbody;
+        //if (anchored)
+        //{
+        //    rb.bodyType = RigidbodyType2D.Kinematic;
+        //}
+
         //lastPositionBeforeCollision = position;
         //this.collisionBounciness = collisionBounciness;
         //this.collisionIterations = collisionIterations;
         //incomingCollision = new RaycastHit2D();
     }
+
+    //public void MoveRigidbody()
+    //{
+    //    //transform.position = position;
+    //    //rb.MovePosition(position);
+    //    if (anchored)
+    //    {
+    //        rb.MovePosition(position);
+    //    }
+    //    else
+    //    {
+    //        rb.linearVelocity = (position - lastPosition) / Time.deltaTime;
+    //    }
+    //}
 
     public void Anchor()
     {
@@ -53,109 +63,103 @@ public struct RopeNode
         lastPosition = position;
     }
 
-    public void DeAnchor(Vector2 initialVelocity)
+    public void DeAnchor(Vector3 initialVelocity)
     {
         anchored = false;
         lastPosition = position - initialVelocity * Time.fixedDeltaTime;
     }
 
-    public void UpdateVerletSimulation(float dt, float dt2)
+    public void UpdateVerletSimulation(float dt, float dt2, ContactFilter2D collisionContactFilter, Collider2D[] collisionBuffer)
     {
         if (anchored) return;
 
+        UpdateVerletSimulationCore(dt, dt2);
+    }
+
+    private void UpdateVerletSimulationCore(float dt, float dt2)
+    {
         var p = position;
-        var v = (p - lastPosition) / dt;
         position += NextPositionStep(dt, dt2);//USE PROPERTY POSITION SO THAT COLLISIONS GET UPDATED
         lastPosition = p;
     }
 
-    public void ResolveCollisions()
+    public void ResolveCollisions(float dt, ContactFilter2D contactFilter, Collider2D[] buffer)
     {
-        //maybe instead of trying to handle a murky case where we are already inside collider,
-        //we should do a better job of preventing that (i.e. check for "pass-through" collisions coming in next step,
-        //and deal with it then or leave some data to know it's coming (we are already doing a larger than necessary overlap circle))
+        //another idea: do a single overlap circle.
+        //if there's a collision (within collisionThreshold), resolve it (get new pos), and repeat (up to max_num_collisions times)
+        //if no overlap circle or closest point is outside collisionThreshold, we can stop iterating
 
-        var colls = Physics2D.OverlapCircleAll(position, collisionRadius);
-        foreach (var c in colls)
+        Physics2D.OverlapCircle(position, collisionRadius, contactFilter, buffer);
+
+        foreach (var c in buffer)
         {
-            var p = c.ClosestPoint(position);
-            var l = Vector2.Distance(position, p);
-            if (l <= 10E-05f)
-            {
-                //2do...
-                p = 2 * position - lastPosition;
-                l = Vector2.Distance(position, p);
-            }
-            if (l < collisionThreshold && l > 10E-05f)
-            {
-                var u = (position - p) / l;
-                l = collisionThreshold - l;
-                position += l * u;
-                lastPosition = position - collisionBounciness * MathTools.ReflectAcrossHyperplane(position - lastPosition, u);
-            }
+            HandlePotentialCollision(dt, c);
         }
-
-        //ResolveCollisions(1, Time.deltaTime, 0, out var dt);
-        //if (dt != 0)
-        //{
-        //    UpdateVerletSimulation(dt, dt * dt);
-        //}
     }
 
-    //private void ResolveCollisions(int iteration, float lastDt, float dtRemaining, out float newDtRemaining)
-    //{
-    //    newDtRemaining = dtRemaining;
-    //    if (anchored || lastDt == 0 || iteration > 5) return;
+    private void HandlePotentialCollision(float dt, Collider2D c)
+    {
+        if (c == null) return;
+        var p = c.ClosestPoint(position);
+        var l = Vector2.Distance(position, p);
+        if (l <= 10E-05f)
+        {
+            //2do...
+            p = position + (position - lastPosition).normalized * 0.1f * collisionThreshold;
+            l = 0.1f * collisionThreshold;
+        }
+        if (l < collisionThreshold)
+        {
+            ResolveCollision(dt, p, l);
 
-    //    var r = Physics2D.Linecast(lastPosition, position);
-    //    if (r && r.distance > 0)
-    //    {
-    //        var v = position - lastPosition;//(position - lastPosition) / lastDt;
-    //        var spd = v.magnitude;
-    //        if (spd > 10E-05f)
-    //        {
-    //            var distToCollision = r.distance - collisionThreshold;
-    //            var timeOfCollision = distToCollision / spd;
-    //            newDtRemaining += lastDt - timeOfCollision;
-    //            lastDt = timeOfCollision;
-    //            position = lastPosition + timeOfCollision * v;//set position to where it would have been at time collision was detected;
-    //            if (ResolveCollision(r.point, distToCollision))
-    //            {
-    //                ResolveCollisions(++iteration, lastDt, newDtRemaining, out newDtRemaining);
-    //            }
-    //        }
-    //    }
+        }
+    }
 
-    //    //var colls = Physics2D.OverlapCircleAll(lastPosition, collisionRadius);
-    //    //foreach (var c in colls)
-    //    //{
-    //    //    var p = c.ClosestPoint(position);
-    //    //    var l = Vector2.Distance(position, p);
-    //    //    if (l < collisionThreshold && l > 10E-05f)
-    //    //    {
-    //    //        var u = (position - p) / l;
-    //    //        l = collisionThreshold - l;
-    //    //        position += l * u;
-    //    //        //lastPosition = position - collisionBounciness * MathTools.ReflectAcrossHyperplane(position - lastPosition, u);
-    //    //    }
-    //    //}
-    //}
-
-    private void ResolveCollision(Vector2 contactPoint, float distanceToContactPoint)
+    private void ResolveCollision(float dt, Vector3 contactPoint, float distanceToContactPoint)
     {
         if (distanceToContactPoint > 10E-05f)
         {
-            var u = (position - contactPoint) / distanceToContactPoint;
-            position += (collisionThreshold - distanceToContactPoint) * u;
+            var collisionOffset = contactPoint - position;
+            var collisionNormal = -collisionOffset / distanceToContactPoint;
+            var velocity = (position - lastPosition) / dt;
+            if (Vector2.Dot(velocity, collisionNormal) < 0)
+            {
+                position += (collisionThreshold - distanceToContactPoint) * collisionNormal;
+            }
+            else
+            {
+                var spd = velocity.magnitude;
+                if (spd > 10E-05f)
+                {
+                    var velocityDirection = velocity / spd;
+                    var y = Vector2.Dot(collisionOffset, velocityDirection);
+                    var distanceTravelledSinceCollision = -y
+                        + Mathf.Sqrt(y * y + collisionThreshold * collisionThreshold - distanceToContactPoint * distanceToContactPoint);
+                    var timeSinceCollision = distanceTravelledSinceCollision / spd;
+                    var newVelocity = collisionBounciness * (2 * Vector2.Dot(velocity, collisionNormal) * collisionNormal - velocity);
+                    position += -distanceTravelledSinceCollision * velocityDirection
+                        + newVelocity * timeSinceCollision;
+                    lastPosition = position - newVelocity * dt;
+                }
+                else
+                {
+                    position += (collisionThreshold - distanceToContactPoint) * collisionNormal;
+                }
+            }
+            //lastPosition = position - collisionBounciness * MathTools.ReflectAcrossHyperplane(position - lastPosition, u);
+
+            //remember to set lastPos! (to reflect new velocity
+            //or let's try it without first... (bc it's more accurate to the verlet model)
+            //but setting the lastPos will give stronger bounceback on collision
         }
     }
 
-    public Vector2 LastStepVelocity(float dt)
-    {
-        return (position - lastPosition) / dt;
-    }
+    //public Vector3 LastStepVelocity(float dt)
+    //{
+    //    return (position - lastPosition) / dt;
+    //}
 
-    public Vector2 NextPositionStep(float dt, float dt2)
+    public Vector3 NextPositionStep(float dt, float dt2)
     {
         var d = position - lastPosition;
         var v = d / dt;

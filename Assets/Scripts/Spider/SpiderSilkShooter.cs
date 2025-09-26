@@ -6,12 +6,11 @@ public class SpiderSilkShooter : MonoBehaviour
     [SerializeField] float silkDrag;
     [SerializeField] float silkBounciness;
     [SerializeField] float silkCollisionRadius;
-    //[SerializeField] float silkCollisionThreshold;
     [SerializeField] float silkWidth;
     [SerializeField] float silkNodeSpacing;
     [SerializeField] int silkNumNodes;
-    //[SerializeField] int silkCollisionIterations;
     [SerializeField] int silkConstraintIterations;
+    //[SerializeField] CircleCollider2D silkNodePrefab;
 
     Rope rope;
     bool mouseDown;
@@ -29,9 +28,19 @@ public class SpiderSilkShooter : MonoBehaviour
         //{
         //    DebugDrawRope();
         //}
+        //UpdateRopePhysics();
     }
 
     private void FixedUpdate()
+    {
+        UpdateRopePhysics();
+        //else if (rope != null)
+        //{
+        //    //rope = null;
+        //}
+    }
+
+    private void UpdateRopePhysics()
     {
         if (mouseDown)
         {
@@ -46,9 +55,9 @@ public class SpiderSilkShooter : MonoBehaviour
                 }
                 lineRenderer.startWidth = silkWidth;
                 lineRenderer.endWidth = silkWidth;
-                rope = new Rope(mousePos, silkWidth, silkNodeSpacing, silkNumNodes, silkDrag, 
-                    silkCollisionRadius, /*silkCollisionThresholdFraction,*/ silkBounciness, /*silkCollisionIterations,*/ silkConstraintIterations);
-                rope.nodes[0].Anchor();
+                rope = new Rope(mousePos, silkWidth, silkNodeSpacing, silkNumNodes, silkDrag,
+                    /*silkNodePrefab,*/ silkCollisionRadius, /*silkCollisionThresholdFraction,*/ silkBounciness, /*silkCollisionIterations,*/ silkConstraintIterations);
+                //rope.nodes[0].Anchor();
             }
             else
             {
@@ -64,7 +73,7 @@ public class SpiderSilkShooter : MonoBehaviour
 
     private void LateUpdate()
     {
-        rope?.Render(lineRenderer);
+        rope?.UpdateRenderer(lineRenderer);
     }
 
     private void DebugDrawRope()
