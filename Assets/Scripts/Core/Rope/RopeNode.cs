@@ -8,7 +8,7 @@ public struct RopeNode
     public Vector2 acceleration;
 
     Vector2 storedVelocity;
-    int[] storedVelocityIds;
+    Rigidbody2D[] storedVelocityRbs;
     int storedVelocityPointer;
 
     bool anchored;
@@ -32,7 +32,7 @@ public struct RopeNode
         this.collisionRadius = collisionRadius;
         this.collisionThreshold = collisionThreshold;
         this.collisionBounciness = collisionBounciness;
-        storedVelocityIds = new int[Rope.MAX_NUM_COLLISIONS];
+        storedVelocityRbs = new Rigidbody2D[Rope.MAX_NUM_COLLISIONS];
         storedVelocityPointer = 0;
 
         //CircleCollider2D c = Object.Instantiate(prefab, position, Quaternion.identity);
@@ -93,9 +93,9 @@ public struct RopeNode
         }
         if (storedVelocityPointer != 0)
         {
-            for (int i = 0; i < storedVelocityIds.Length; i++)
+            for (int i = 0; i < storedVelocityRbs.Length; i++)
             {
-                storedVelocityIds[i] = 0;
+                storedVelocityRbs[i] = null;
             }
             storedVelocityPointer = 0;
         }
@@ -146,11 +146,11 @@ public struct RopeNode
             var spd = velocity.magnitude;
             if (spd > 10E-05f)
             {
-                var velocityDirection = velocity / spd;
-                var y = Vector2.Dot(collisionOffset, velocityDirection);
-                var distanceTravelledSinceCollision = -y
-                    + Mathf.Sqrt(y * y + collisionThreshold * collisionThreshold - distanceToContactPoint * distanceToContactPoint);
-                var timeSinceCollision = distanceTravelledSinceCollision / spd;
+                //var velocityDirection = velocity / spd;
+                //var y = Vector2.Dot(collisionOffset, velocityDirection);
+                //var distanceTravelledSinceCollision = -y
+                //    + Mathf.Sqrt(y * y + collisionThreshold * collisionThreshold - distanceToContactPoint * distanceToContactPoint);
+                var timeSinceCollision = (collisionThreshold - distanceToContactPoint) / spd;//distanceTravelledSinceCollision / spd;
                 var newVelocity = collisionBounciness * Mathf.Sign(Vector2.Dot(velocity, collisionNormal))
                     * (2 * Vector2.Dot(velocity, collisionNormal) * collisionNormal - velocity);
                 position += (collisionThreshold - distanceToContactPoint) * collisionNormal + newVelocity * timeSinceCollision;
@@ -159,12 +159,12 @@ public struct RopeNode
                 lastPosition = position - newVelocity * dt;
                 if (attachedRb)
                 {
-                    var id = attachedRb.GetInstanceID();
-                    if (storedVelocityPointer < storedVelocityIds.Length && !storedVelocityIds.Contains(id))
+                    //var id = attachedRb.GetInstanceID();
+                    if (storedVelocityPointer < storedVelocityRbs.Length && !storedVelocityRbs.Contains(attachedRb))
                     {
-                        storedVelocity += attachedRb.linearVelocity;
-                        //position += c.attachedRigidbody.linearVelocity * dt;
-                        storedVelocityIds[storedVelocityPointer] = id;
+                        storedVelocity += attachedRb.linearVelocity
+                            + collisionBounciness * Vector2.Dot(attachedRb.linearVelocity, collisionNormal) * collisionNormal;
+                        storedVelocityRbs[storedVelocityPointer] = attachedRb;
                         storedVelocityPointer++;
                     }
                     //really we should be doing +=, but only once for each rb seen

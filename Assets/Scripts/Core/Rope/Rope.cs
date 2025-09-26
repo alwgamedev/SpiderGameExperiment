@@ -4,6 +4,7 @@ using UnityEngine;
 public class Rope
 {
     public const int MAX_NUM_COLLISIONS = 4;
+    public const float CONSTRAINTS_TOLERANCE = 0.001f;
     //public const int PHYSICS_SUBSTEPS = 1;
 
     public float width;
@@ -62,7 +63,11 @@ public class Rope
         //ResolveCollisions(dt);
         for (int i = 0; i < spacingConstraintIterations; i++)
         {
-            SpacingConstraintsIteration();
+
+            if (!SpacingConstraintsIteration())
+            {
+                break;
+            }
             ResolveCollisions(dt);
         }
 
@@ -105,8 +110,9 @@ public class Rope
         }
     }
 
-    private void SpacingConstraintsIteration()
+    private bool SpacingConstraintsIteration()
     {
+        bool shouldIterateAgain = false;
         for (int i = 1; i < nodes.Length; i++)
         {
             if (nodes[i - 1].Anchored && nodes[i].Anchored) continue;
@@ -117,6 +123,12 @@ public class Rope
             {
                 var u = d / l;
                 var error = l - nodeSpacing;
+                if (l < CONSTRAINTS_TOLERANCE)
+                {
+                    continue;
+                }
+
+                shouldIterateAgain = true;
                 var c = error * u;
                 if (nodes[i - 1].Anchored)
                 {
@@ -134,6 +146,8 @@ public class Rope
                 }
             }
         }
+
+        return shouldIterateAgain;
     }
 
     //different feel to the rope, but can get by with ONE constraint iteration!

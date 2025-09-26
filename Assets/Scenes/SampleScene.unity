@@ -1661,8 +1661,20 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 3990323971637696282, guid: d7779ac66577cae4ba5e0b8f7b69ea22, type: 3}
+      propertyPath: silkNumNodes
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 3990323971637696282, guid: d7779ac66577cae4ba5e0b8f7b69ea22, type: 3}
+      propertyPath: silkBounciness
+      value: 0.925
+      objectReference: {fileID: 0}
+    - target: {fileID: 3990323971637696282, guid: d7779ac66577cae4ba5e0b8f7b69ea22, type: 3}
+      propertyPath: silkNodeSpacing
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 3990323971637696282, guid: d7779ac66577cae4ba5e0b8f7b69ea22, type: 3}
       propertyPath: silkConstraintIterations
-      value: 10
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5037421112451980839, guid: d7779ac66577cae4ba5e0b8f7b69ea22, type: 3}
       propertyPath: m_LocalPosition.x
