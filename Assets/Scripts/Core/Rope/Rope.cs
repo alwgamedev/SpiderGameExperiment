@@ -1,29 +1,25 @@
 ﻿using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Rope
 {
     public const int MAX_NUM_COLLISIONS = 1;
     public const float CONSTRAINTS_TOLERANCE = 0.001f;
-    //public const int PHYSICS_SUBSTEPS = 1;
 
     public float width;
     public float nodeSpacing;
     public float constraintIterations;
-    //public float spacingConstraintWeightRight;
-    //public float spacingConstraintWeightLeft;
-    //public float spacingConstraintSmoothing;
     
     public readonly RopeNode[] nodes;
 
     public readonly Vector3[] renderPositions;
     bool renderPositionsNeedUpdate;
 
-    //Collider2D[] collisionBuffer;
-    //ContactFilter2D collisionContactFilter;
+    public float Length => nodeSpacing * nodes.Length;
 
-    public Rope(Vector3 position, float width, float nodeSpacing, int numNodes, 
-        float nodeDrag, int collisionMask, /*float collisionRadius,*/ float collisionBounciness, 
+    public Rope(Vector2 position, float width, float nodeSpacing, int numNodes, 
+        float nodeDrag, int collisionMask, float collisionBounciness, 
         int constraintIterations)
     {
         this.width = width;
@@ -31,23 +27,31 @@ public class Rope
         this.constraintIterations = constraintIterations;
         var a = Physics2D.gravity;
         var collisionThreshold = 0.5f * width;
-        nodes = Enumerable.Range(0, numNodes).Select(i => new RopeNode(position, Vector2.zero, a, nodeDrag, 
-            collisionMask, /*collisionRadius,*/ collisionThreshold, collisionBounciness, i == 0)).ToArray();
+        nodes = Enumerable.Range(0, numNodes).Select(i => new RopeNode(position, Vector2.zero, a, 1, nodeDrag, 
+            collisionMask, collisionThreshold, collisionBounciness, false)).ToArray();
         renderPositions = nodes.Select(x => (Vector3)x.position).ToArray();
-        //collisionBuffer = new Collider2D[MAX_NUM_COLLISIONS];
-        //collisionContactFilter = new();
-        //collisionContactFilter.NoFilter();
     }
 
-    public void FixedUpate(float dt)
+    //anchored rope with end given an initial velocity
+    public Rope(Vector2 position, Vector2 velocity, float width, float nodeSpacing, int numNodes,
+        float nodeDrag, int collisionMask, float collisionBounciness,
+        int constraintIterations)
     {
-        //dt /= PHYSICS_SUBSTEPS;
-        var dt2 = dt * dt;
+        
+        this.width = width;
+        this.nodeSpacing = nodeSpacing;
+        this.constraintIterations = constraintIterations;
+        var a = Physics2D.gravity;
+        var collisionThreshold = 0.5f * width;
+        int end = numNodes - 1;
+        nodes = Enumerable.Range(0, numNodes).Select(i => new RopeNode(position, i == end ? velocity : Vector2.zero, a, 1, nodeDrag,
+            collisionMask, collisionThreshold, collisionBounciness, false)).ToArray();
+        renderPositions = nodes.Select(x => (Vector3)x.position).ToArray();
+    }
+
+    public void FixedUpate(float dt, float dt2)
+    {
         UpdateRopePhysics(dt, dt2);
-        //for (int i = 0; i < PHYSICS_SUBSTEPS; i++)
-        //{
-        //    UpdateRopePhysics(dt, dt2);
-        //}
 
         renderPositionsNeedUpdate = true;
     }
@@ -56,37 +60,38 @@ public class Rope
     {
         UpdateVerletSimulation(dt, dt2);
         ResolveCollisions(dt);
-        //SemiHardConstraints();
-        //ResolveCollisions(dt);
+
         for (int i = 0; i < constraintIterations; i++)
         {
-
             SpacingConstraintIteration();
             ResolveCollisions(dt);
         }
-
-        //MoveRigidbodies();
-
-        //ResolveCollisions();
     }
 
-    //public void MoveRigidbodies()
-    //{
-    //    for (int i = 0; i < nodes.Length; i++)
-    //    {
-    //        nodes[i].MoveRigidbody();
-    //    }
-    //}
-
-    public void UpdateRenderer(LineRenderer lr)
+    public void SetLineRendererPositions(LineRenderer lr)
     {
         if (renderPositionsNeedUpdate)
         {
             UpdateRenderPositions();
             renderPositionsNeedUpdate = false;
         }
+
         lr.SetPositions(renderPositions);
     }
+
+    //public void GrowRopeFromBase(float lengthChange)
+    //{
+    //    var lengthPerSegment = lengthChange / (nodes.Length - 1);
+    //    nodeSpacing += lengthPerSegment;
+    //    for (int i = nodes.Length - 1; i > 0; i--)
+    //    {
+    //        var d = 0.25f * lengthPerSegment * (nodes[i].position - nodes[i - 1].position).normalized;
+    //        for (int j = i; j < nodes.Length; j++)
+    //        {
+    //            nodes[j].lastPosition -= d;
+    //        }
+    //    }
+    //}
 
     private void UpdateRenderPositions()
     {
@@ -100,11 +105,11 @@ public class Rope
     {
         for (int i = 0; i < nodes.Length; i++)
         {
-            nodes[i].UpdateVerletSimulation(dt, dt2/*, collisionContactFilter, collisionBuffer*/);
+            nodes[i].UpdateVerletSimulation(dt, dt2);
         }
     }
 
-    private void SpacingConstraintIteration()
+    public void SpacingConstraintIteration()
     {
         for (int i = 1; i < nodes.Length; i++)
         {
@@ -112,70 +117,41 @@ public class Rope
 
             var d = nodes[i].position - nodes[i - 1].position;
             var l = d.magnitude;
-            if (l > 10E-05f)
+
+            if (l <= 10E-05f)
+                continue;
+
+            var error = l - nodeSpacing;
+
+            if (error > CONSTRAINTS_TOLERANCE || error < -CONSTRAINTS_TOLERANCE)
             {
-                var error = l - nodeSpacing;
-                if (l > CONSTRAINTS_TOLERANCE || l < -CONSTRAINTS_TOLERANCE)
+                var c = (error / l) * d;
+                if (nodes[i - 1].Anchored)
                 {
-                    var c = (error / l) * d;
-                    if (nodes[i - 1].Anchored)
-                    {
-                        nodes[i].position -= c;
-                    }
-                    else if (nodes[i].Anchored)
-                    {
-                        nodes[i - 1].position += c;
-                    }
-                    else
-                    {
-                        c = 0.5f * c;
-                        nodes[i - 1].position += c;
-                        nodes[i].position -= c;
-                    }
+                    nodes[i].position -= c;
+                }
+                else if (nodes[i].Anchored)
+                {
+                    nodes[i - 1].position += c;
+                }
+                else
+                {
+                    //c = 0.5f * c;
+                    var m1 = 1 / (nodes[i - 1].mass + nodes[i].mass);
+                    nodes[i - 1].position += nodes[i].mass * m1 * c;
+                    nodes[i].position -= nodes[i - 1].mass * m1 * c;
                 }
             }
         }
     }
 
-    //private bool SpacingConstraintsIteration()
-    //{
-    //    bool shouldIterateAgain = false;
-    //    for (int i = 1; i < nodes.Length; i++)
-    //    {
-    //        if (nodes[i - 1].Anchored && nodes[i].Anchored) continue;
-
-    //        var d = nodes[i].position - nodes[i - 1].position;
-    //        var l = d.magnitude;
-    //        if (l > 10E-05f)
-    //        {
-    //            var u = d / l;
-    //            var error = l - nodeSpacing;
-    //            if (l < CONSTRAINTS_TOLERANCE)
-    //            {
-    //                continue;
-    //            }
-
-    //            shouldIterateAgain = true;
-    //            var c = error * u;
-    //            if (nodes[i - 1].Anchored)
-    //            {
-    //                nodes[i].position -= c;
-    //            }
-    //            else if (nodes[i].Anchored)
-    //            {
-    //                nodes[i - 1].position += c;
-    //            }
-    //            else
-    //            {
-    //                c = 0.5f * c;
-    //                nodes[i - 1].position += c;
-    //                nodes[i].position -= c;
-    //            }
-    //        }
-    //    }
-
-    //    return shouldIterateAgain;
-    //}
+    private void ResolveCollisions(float dt)
+    {
+        for (int i = 0; i < nodes.Length; i++)
+        {
+            nodes[i].ResolveCollisions(dt/*, collisionContactFilter, collisionBuffer*/);
+        }
+    }
 
     //different feel to the rope, but can get by with ONE constraint iteration!
     //(you could also probably blend it a bit with the other method (i.e. move nodes[i-1] a little) to make the feel more like original)
@@ -219,14 +195,6 @@ public class Rope
                 //    nodes[i].ResolveCollisions(collisionContactFilter, collisionBuffer);
                 //}
             }
-        }
-    }
-
-    private void ResolveCollisions(float dt)
-    {
-        for (int i = 0; i < nodes.Length; i++)
-        {
-            nodes[i].ResolveCollisions(dt/*, collisionContactFilter, collisionBuffer*/);
         }
     }
 }

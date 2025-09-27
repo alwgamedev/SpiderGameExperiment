@@ -62,7 +62,7 @@ public class RopeTester : MonoBehaviour
             else
             {
                 rope.nodes[0].position = mousePos;
-                rope.FixedUpate(Time.deltaTime);
+                rope.FixedUpate(Time.deltaTime, Time.deltaTime * Time.deltaTime);
             }
         }
         else if (rope != null)
@@ -73,7 +73,7 @@ public class RopeTester : MonoBehaviour
 
     private void LateUpdate()
     {
-        rope?.UpdateRenderer(lineRenderer);
+        rope?.SetLineRendererPositions(lineRenderer);
     }
 
     private void DebugDrawRope()

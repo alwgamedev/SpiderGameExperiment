@@ -7,6 +7,8 @@ public struct RopeNode
     public Vector2 lastPosition;
     public Vector2 acceleration;
 
+    public float mass;
+
     Vector2 storedVelocity;
     readonly Rigidbody2D[] storedVelocityRbs;
     int storedVelocityPointer;
@@ -24,18 +26,23 @@ public struct RopeNode
     float collisionThreshold;
     float collisionBounciness;
     readonly Vector2[] raycastDirections;
+    int currentCollisionLayer;
 
     public bool Anchored => anchored;
 
-    public RopeNode(Vector2 position, Vector2 velocity, Vector2 acceleration, float drag,
-        int collisionMask, float collisionThreshold, float collisionBounciness, 
+    public RopeNode(Vector2 position, Vector2 velocity, Vector2 acceleration, float mass, float drag,
+        int collisionMask, float collisionThreshold, float collisionBounciness,
         bool anchored)
     {
         this.anchored = anchored;
         this.position = position;
-        lastPosition = position - velocity * Time.fixedDeltaTime;
+        lastPosition = anchored ? position : position - Time.fixedDeltaTime * velocity;// - Time.fixedDeltaTime * Time.fixedDeltaTime * acceleration;
         this.acceleration = acceleration;
+        this.mass = mass;
+
         storedVelocity = Vector2.zero;
+        storedVelocityRbs = new Rigidbody2D[Rope.MAX_NUM_COLLISIONS];
+        storedVelocityPointer = 0;
 
         var r = velocity.normalized;
         if (r != Vector2.zero)
@@ -54,8 +61,10 @@ public struct RopeNode
         this.collisionMask = collisionMask;
         this.collisionThreshold = collisionThreshold;
         this.collisionBounciness = collisionBounciness;
-        storedVelocityRbs = new Rigidbody2D[Rope.MAX_NUM_COLLISIONS];
-        storedVelocityPointer = 0;
+        currentCollisionLayer = 0;
+
+
+
     }
 
     public void Anchor()
@@ -129,6 +138,10 @@ public struct RopeNode
         {
             HandlePotentialCollision(dt, r);
         }
+        else
+        {
+            currentCollisionLayer = 0;
+        }
     }
 
     private void HandlePotentialCollision(float dt, RaycastHit2D r)
@@ -145,7 +158,8 @@ public struct RopeNode
             var w = collisionThreshold * n;
             position += w;
             lastPosition -= collisionBounciness * w;
-            HandleCollisionVelocityInfluence(r.collider.attachedRigidbody, n);
+            StoreCollisionVelocity(r.collider.attachedRigidbody, n);
+            currentCollisionLayer = 1 << r.collider.gameObject.layer;
             return;
 
         }
@@ -153,6 +167,11 @@ public struct RopeNode
         if (l < collisionThreshold)
         {
             ResolveCollision(dt, l, n, r.collider.attachedRigidbody);
+            currentCollisionLayer = 1 << r.collider.gameObject.layer;
+        }
+        else
+        {
+            currentCollisionLayer = 0;
         }
     }
 
@@ -169,7 +188,7 @@ public struct RopeNode
             var collisionNormal = (lastPosition - position).normalized;
             position += collisionThreshold * collisionNormal;
             lastPosition -= collisionBounciness * collisionNormal;//we need this
-            HandleCollisionVelocityInfluence(c.attachedRigidbody, collisionNormal);
+            StoreCollisionVelocity(c.attachedRigidbody, collisionNormal);
             return true;
 
         }
@@ -199,7 +218,7 @@ public struct RopeNode
             position += (collisionThreshold - distanceToContactPoint) * collisionNormal + newVelocity * timeSinceCollision;
             lastPosition = position - newVelocity * dt;
 
-            HandleCollisionVelocityInfluence(attachedRb, collisionNormal);
+            StoreCollisionVelocity(attachedRb, collisionNormal);
         }
         else
         {
@@ -230,7 +249,7 @@ public struct RopeNode
             //    + newVelocity * timeSinceCollision;
             lastPosition = position - newVelocity * dt;
 
-            HandleCollisionVelocityInfluence(attachedRb, collisionNormal);
+            StoreCollisionVelocity(attachedRb, collisionNormal);
         }
         else
         {
@@ -238,7 +257,7 @@ public struct RopeNode
         }
     }
 
-    private void HandleCollisionVelocityInfluence(Rigidbody2D attachedRb, Vector2 collisionNormal)
+    private void StoreCollisionVelocity(Rigidbody2D attachedRb, Vector2 collisionNormal)
     {
         if (attachedRb)
         {
