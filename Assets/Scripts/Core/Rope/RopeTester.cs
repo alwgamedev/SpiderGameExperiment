@@ -9,9 +9,6 @@ public class RopeTester : MonoBehaviour
     [SerializeField] float silkNodeSpacing;
     [SerializeField] int silkNumNodes;
     [SerializeField] int silkConstraintIterations;
-    //[SerializeField] float silkConstraintWeighting;
-    //[SerializeField] float silkConstraintSmoothing;
-    //[SerializeField] CircleCollider2D silkNodePrefab;
 
     Rope rope;
     bool mouseDown;
@@ -58,8 +55,8 @@ public class RopeTester : MonoBehaviour
                 lineRenderer.endWidth = silkWidth;
                 rope = new Rope(mousePos, silkWidth, silkNodeSpacing, silkNumNodes, silkDrag,
                     silkCollisionRadius, silkBounciness, 
-                    silkConstraintIterations/*, silkConstraintWeighting, silkConstraintSmoothing*/);
-                //rope.nodes[0].Anchor();
+                    silkConstraintIterations);
+                rope.nodes[0].Anchor();
             }
             else
             {

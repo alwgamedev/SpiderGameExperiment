@@ -3,13 +3,13 @@ using UnityEngine;
 
 public class Rope
 {
-    public const int MAX_NUM_COLLISIONS = 4;
+    public const int MAX_NUM_COLLISIONS = 2;
     public const float CONSTRAINTS_TOLERANCE = 0.001f;
     //public const int PHYSICS_SUBSTEPS = 1;
 
     public float width;
     public float nodeSpacing;
-    public float spacingConstraintIterations;
+    public float constraintIterations;
     //public float spacingConstraintWeightRight;
     //public float spacingConstraintWeightLeft;
     //public float spacingConstraintSmoothing;
@@ -19,27 +19,24 @@ public class Rope
     public readonly Vector3[] renderPositions;
     bool renderPositionsNeedUpdate;
 
-    Collider2D[] collisionBuffer;
-    ContactFilter2D collisionContactFilter;
+    //Collider2D[] collisionBuffer;
+    //ContactFilter2D collisionContactFilter;
 
     public Rope(Vector3 position, float width, float nodeSpacing, int numNodes, 
-        float nodeDrag, /*CircleCollider2D prefab,*/ float collisionRadius, float collisionBounciness, 
-        int spacingConstraintIterations/*, float spacingConstraintWeighting, float spacingConstraintSmoothing*/)
+        float nodeDrag, float collisionRadius, float collisionBounciness, 
+        int constraintIterations)
     {
         this.width = width;
         this.nodeSpacing = nodeSpacing;
-        this.spacingConstraintIterations = spacingConstraintIterations;
-        //spacingConstraintWeightRight = spacingConstraintWeighting;
-        //spacingConstraintWeightLeft = 1 - spacingConstraintWeightRight;
-        //this.spacingConstraintSmoothing = spacingConstraintSmoothing;
+        this.constraintIterations = constraintIterations;
         var a = Physics2D.gravity;
         var collisionThreshold = 0.5f * width;
         nodes = Enumerable.Range(0, numNodes).Select(i => new RopeNode(position, Vector2.zero, a, nodeDrag, 
-            /*prefab,*/ collisionRadius, collisionThreshold, collisionBounciness, i == 0)).ToArray();
+            collisionRadius, collisionThreshold, collisionBounciness, i == 0)).ToArray();
         renderPositions = nodes.Select(x => (Vector3)x.position).ToArray();
-        collisionBuffer = new Collider2D[MAX_NUM_COLLISIONS];
-        collisionContactFilter = new();
-        collisionContactFilter.NoFilter();
+        //collisionBuffer = new Collider2D[MAX_NUM_COLLISIONS];
+        //collisionContactFilter = new();
+        //collisionContactFilter.NoFilter();
     }
 
     public void FixedUpate(float dt)
@@ -58,10 +55,10 @@ public class Rope
     public void UpdateRopePhysics(float dt, float dt2)
     {
         UpdateVerletSimulation(dt, dt2);
-        ResolveCollisions(dt);
+        //ResolveCollisions(dt);
         //SemiHardConstraints();
         //ResolveCollisions(dt);
-        for (int i = 0; i < spacingConstraintIterations; i++)
+        for (int i = 0; i < constraintIterations; i++)
         {
 
             if (!SpacingConstraintsIteration())
@@ -106,7 +103,7 @@ public class Rope
     {
         for (int i = 0; i < nodes.Length; i++)
         {
-            nodes[i].UpdateVerletSimulation(dt, dt2, collisionContactFilter, collisionBuffer);
+            nodes[i].UpdateVerletSimulation(dt, dt2/*, collisionContactFilter, collisionBuffer*/);
         }
     }
 
@@ -141,7 +138,7 @@ public class Rope
                 else
                 {
                     c = 0.5f * c;
-                    nodes[i - 1].position +=  c;
+                    nodes[i - 1].position += c;
                     nodes[i].position -= c;
                 }
             }
@@ -199,7 +196,7 @@ public class Rope
     {
         for (int i = 0; i < nodes.Length; i++)
         {
-            nodes[i].ResolveCollisions(dt, collisionContactFilter, collisionBuffer);
+            nodes[i].ResolveCollisions(dt/*, collisionContactFilter, collisionBuffer*/);
         }
     }
 }

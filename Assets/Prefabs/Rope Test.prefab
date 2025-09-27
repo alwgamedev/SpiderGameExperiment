@@ -47,11 +47,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   silkDrag: 0.05
   silkBounciness: 0.925
-  silkCollisionRadius: 0.5
+  silkCollisionRadius: 0.1
   silkWidth: 0.1
   silkNodeSpacing: 0.05
-  silkNumNodes: 60
-  silkConstraintIterations: 20
+  silkNumNodes: 100
+  silkConstraintIterations: 15
 --- !u!120 &3839262232580398529
 LineRenderer:
   serializedVersion: 2

@@ -75,7 +75,7 @@ public struct RopeNode
         lastPosition = position - initialVelocity * Time.fixedDeltaTime;
     }
 
-    public void UpdateVerletSimulation(float dt, float dt2, ContactFilter2D collisionContactFilter, Collider2D[] collisionBuffer)
+    public void UpdateVerletSimulation(float dt, float dt2)
     {
         if (anchored) return;
 
@@ -102,36 +102,45 @@ public struct RopeNode
         lastPosition = p;
     }
 
-    public void ResolveCollisions(float dt, ContactFilter2D contactFilter, Collider2D[] buffer)
+    public void ResolveCollisions(float dt/*, ContactFilter2D contactFilter, Collider2D[] buffer*/)
     {
         //another idea: do a single overlap circle.
         //if there's a collision (within collisionThreshold), resolve it (get new pos), and repeat (up to max_num_collisions times)
         //if no overlap circle or closest point is outside collisionThreshold, we can stop iterating
 
-        Physics2D.OverlapCircle(position, collisionRadius, contactFilter, buffer);
-
-        foreach (var c in buffer)
+        int i = 0;
+        while (i < Rope.MAX_NUM_COLLISIONS)
         {
-            HandlePotentialCollision(dt, c);
+            var c = Physics2D.OverlapCircle(position, collisionRadius/*, contactFilter, buffer*/);
+            if (!HandlePotentialCollision(dt, c))
+                break;
+            i++;
         }
+
+        //foreach (var c in buffer)
+        //{
+        //    HandlePotentialCollision(dt, c);
+        //}
     }
 
-    private void HandlePotentialCollision(float dt, Collider2D c)
+    private bool HandlePotentialCollision(float dt, Collider2D c)
     {
-        if (c == null) return;
+        if (c == null) return false;
         var p = c.ClosestPoint(position);
         var l = Vector2.Distance(position, p);
         if (l <= 10E-05f)
         {
             //2do...
-            p = position + (position - lastPosition).normalized * 0.1f * collisionThreshold;
-            l = 0.1f * collisionThreshold;
+            l = 0.01f * collisionThreshold;
+            p = position + l * (position - lastPosition).normalized;
         }
         if (l < collisionThreshold)
         {
             ResolveCollision(dt, p, l, c.attachedRigidbody);
-
+            return true;
         }
+
+        return false;
     }
 
     private void ResolveCollision(float dt, Vector2 contactPoint, float distanceToContactPoint, Rigidbody2D attachedRb)
@@ -159,7 +168,6 @@ public struct RopeNode
                 lastPosition = position - newVelocity * dt;
                 if (attachedRb)
                 {
-                    //var id = attachedRb.GetInstanceID();
                     if (storedVelocityPointer < storedVelocityRbs.Length && !storedVelocityRbs.Contains(attachedRb))
                     {
                         storedVelocity += attachedRb.linearVelocity
@@ -167,7 +175,6 @@ public struct RopeNode
                         storedVelocityRbs[storedVelocityPointer] = attachedRb;
                         storedVelocityPointer++;
                     }
-                    //really we should be doing +=, but only once for each rb seen
                 }
             }
             else
