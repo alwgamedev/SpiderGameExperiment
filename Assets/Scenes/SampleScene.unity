@@ -594,19 +594,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   source: {fileID: 996698999}
-  drag: 0.025
-  bounciness: 0.9
+  drag: 0.0125
+  bounciness: 0.5
   collisionMask:
     serializedVersion: 2
     m_Bits: 72
-  width: 0.1
-  numNodes: 125
-  constraintIterations: 8
-  initialLength: 1
-  maxLength: 20
-  growthRate: 4
-  shootSpeed: 50
-  leadMass: 50
+  width: 0.075
+  nodeSpacing: 0.05
+  numNodes: 450
+  initialAnchorIndex: 443
+  growIntervalMultiplier: 1
+  shootSpeed: 30
+  leadMass: 1
+  constraintIterations: 3
 --- !u!212 &996698998
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -773,8 +773,8 @@ LineRenderer:
       m_ColorSpace: -1
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    numCornerVertices: 20
-    numCapVertices: 20
+    numCornerVertices: 0
+    numCapVertices: 0
     alignment: 0
     textureMode: 0
     textureScale: {x: 1, y: 1}

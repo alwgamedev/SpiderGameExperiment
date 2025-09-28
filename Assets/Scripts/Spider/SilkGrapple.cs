@@ -7,22 +7,25 @@ public class SilkGrapple : MonoBehaviour
     [SerializeField] float bounciness;
     [SerializeField] LayerMask collisionMask;
     [SerializeField] float width;
+    [SerializeField] float nodeSpacing;
     [SerializeField] int numNodes;
-    [SerializeField] int constraintIterations;
-    [SerializeField] float initialLength;
-    [SerializeField] float maxLength;
-    [SerializeField] float growthRate;
+    [SerializeField] int initialAnchorIndex;
+    [SerializeField] float growIntervalMultiplier;
     [SerializeField] float shootSpeed;
     [SerializeField] float leadMass;
+    [SerializeField] int constraintIterations;
 
     bool growing;
-    float currentLength;
+    float growTimer;
+    int anchorIndex;
 
     Rope grapple;
     LineRenderer lineRenderer;
 
     float fixedDt;
     float fixedDt2;
+
+    float GrowInterval => growIntervalMultiplier * nodeSpacing / shootSpeed;
 
     private void Awake()
     {
@@ -51,9 +54,15 @@ public class SilkGrapple : MonoBehaviour
                 DestroyGrapple();
                 return;
             }
-            if (growing)
+
+            if (Input.GetKeyDown(KeyCode.F) && anchorIndex > 0)
             {
-                UpdateGrow();
+                growing = true;
+            }
+            else if (growing && Input.GetKeyUp(KeyCode.F))
+            {
+                growing = false;
+                grapple.nodeSpacing = nodeSpacing;
             }
         }
     }
@@ -67,8 +76,11 @@ public class SilkGrapple : MonoBehaviour
     {
         if (grapple != null)
         {
-            grapple.nodes[0].position = source.position;
             grapple.FixedUpate(fixedDt, fixedDt2);
+            if (growing)
+            {
+                UpdateGrow();
+            }
         }
     }
 
@@ -105,27 +117,35 @@ public class SilkGrapple : MonoBehaviour
 
     private void UpdateGrow()
     {
-        if (Input.GetKeyUp(KeyCode.F))
+        var growInterval = GrowInterval;
+        growTimer += Time.deltaTime;
+
+        if (growTimer > growInterval && anchorIndex > 0)
+        {
+            Vector2 d = fixedDt * shootSpeed * source.up;
+            //var c = fixedDt * d;
+            while (growTimer > growInterval && anchorIndex > 0)
+            {
+                //for (int j = anchorIndex + 1; j < grapple.nodes.Length; j++)
+                //{
+                //    grapple.nodes[j].lastPosition -= c;
+                //}
+                grapple.nodes[anchorIndex].DeAnchor(d);
+                anchorIndex--;
+                growTimer -= growInterval;
+            }
+        }
+
+        if (anchorIndex == 0)
         {
             growing = false;
+            growTimer = 0;
+            grapple.nodeSpacing = nodeSpacing;
         }
         else
         {
-            var lengthIncrease = growthRate * maxLength * Time.deltaTime;
-            currentLength += lengthIncrease;
-            //we'll just see how this goes but in future you may also want to provide a boost to existing nodes (based on length increase)
-            //we also consider the approach of releasing dormant nodes with an initial velocity
-
-            if (currentLength > maxLength)
-            {
-                currentLength = maxLength;
-                growing = false;
-            }
-
-            grapple.nodeSpacing = currentLength / (grapple.nodes.Length - 1);
-            grapple.SpacingConstraintIteration();
-            //grapple.GrowRopeFromBase(lengthIncrease);
-
+            var extra = (growTimer / growInterval) * nodeSpacing / (grapple.nodes.Length - anchorIndex - 1);
+            grapple.nodeSpacing = nodeSpacing + extra;
         }
     }
 
@@ -133,20 +153,24 @@ public class SilkGrapple : MonoBehaviour
 
     private void SpawnGrapple()
     {
-        currentLength = initialLength;
-        grapple = new Rope(source.position, shootSpeed * source.up, width, initialLength / numNodes, numNodes, drag,
+        grapple = new Rope(source.position, shootSpeed * source.up, width, nodeSpacing, numNodes, drag,
                     collisionMask, bounciness, constraintIterations);
-        grapple.nodes[0].Anchor();
+        anchorIndex = initialAnchorIndex;
+        for (int i = 0; i < anchorIndex + 1; i++)
+        {
+            grapple.nodes[i].Anchor();
+        }
+
         grapple.nodes[^1].mass = leadMass;
         growing = true;
-        Debug.Log("shooting grapple!");
+        growTimer = 0;
     }
 
     private void DestroyGrapple()
     {
         grapple = null;
         growing = false;
-        currentLength = 0;
-        Debug.Log("destroyed grapple");
+        anchorIndex = 0;
+        growTimer = 0;
     }
 }

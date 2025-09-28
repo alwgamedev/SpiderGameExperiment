@@ -73,10 +73,16 @@ public struct RopeNode
         lastPosition = position;
     }
 
-    public void DeAnchor(Vector2 initialVelocity)
+    public void DeAnchor(float dt, Vector2 initialVelocity)
     {
         anchored = false;
-        lastPosition = position - initialVelocity * Time.fixedDeltaTime;
+        lastPosition = position - initialVelocity * dt;
+    }
+
+    public void DeAnchor(Vector2 lastPosOffset)
+    {
+        anchored = false;
+        lastPosition = position - lastPosOffset;
     }
 
     public void UpdateVerletSimulation(float dt, float dt2)

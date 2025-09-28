@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Rope
@@ -43,8 +42,8 @@ public class Rope
         this.constraintIterations = constraintIterations;
         var a = Physics2D.gravity;
         var collisionThreshold = 0.5f * width;
-        int end = numNodes - 1;
-        nodes = Enumerable.Range(0, numNodes).Select(i => new RopeNode(position, i == end ? velocity : Vector2.zero, a, 1, nodeDrag,
+        //int end = numNodes - 1;
+        nodes = Enumerable.Range(0, numNodes).Select(i => new RopeNode(position, velocity, a, 1, nodeDrag,
             collisionMask, collisionThreshold, collisionBounciness, false)).ToArray();
         renderPositions = nodes.Select(x => (Vector3)x.position).ToArray();
     }
