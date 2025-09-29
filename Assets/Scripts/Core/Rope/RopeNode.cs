@@ -36,7 +36,7 @@ public struct RopeNode
     {
         this.anchored = anchored;
         this.position = position;
-        lastPosition = anchored ? position : position - Time.fixedDeltaTime * velocity;// - Time.fixedDeltaTime * Time.fixedDeltaTime * acceleration;
+        lastPosition = anchored ? position : position - Time.fixedDeltaTime * velocity;// - 0.5f * Time.fixedDeltaTime * Time.fixedDeltaTime * acceleration;
         this.acceleration = acceleration;
         this.mass = mass;
 
@@ -129,6 +129,7 @@ public struct RopeNode
 
     public void ResolveCollisions(float dt)
     {
+        if (anchored) return;
         var r = Physics2D.Raycast(position, raycastDirections[0], collisionThreshold, collisionMask);
         if (!r)
         {

@@ -594,18 +594,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   source: {fileID: 996698999}
-  drag: 0.0125
-  bounciness: 0.5
+  drag: 0.01
+  bounciness: 0.95
   collisionMask:
     serializedVersion: 2
     m_Bits: 72
-  width: 0.075
-  nodeSpacing: 0.05
-  numNodes: 450
-  initialAnchorIndex: 443
-  growIntervalMultiplier: 1
-  shootSpeed: 30
-  leadMass: 1
+  width: 0.05
+  nodeSpacing: 0.1
+  numNodes: 300
+  initialAnchorIndex: 298
+  timeStepsPerGrow: 1
   constraintIterations: 3
 --- !u!212 &996698998
 SpriteRenderer:
@@ -670,13 +668,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 996698996}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0.34880918, w: 0.9371938}
+  m_LocalRotation: {x: -0, y: -0, z: -0.88144296, w: 0.47229043}
   m_LocalPosition: {x: -18.7, y: 6, z: 0}
   m_LocalScale: {x: 0.4618, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -40.829}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -123.634}
 --- !u!120 &996699000
 LineRenderer:
   serializedVersion: 2

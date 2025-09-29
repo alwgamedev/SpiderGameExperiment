@@ -10,13 +10,15 @@ public class SilkGrapple : MonoBehaviour
     [SerializeField] float nodeSpacing;
     [SerializeField] int numNodes;
     [SerializeField] int initialAnchorIndex;
-    [SerializeField] float growIntervalMultiplier;
-    [SerializeField] float shootSpeed;
-    [SerializeField] float leadMass;
+    [SerializeField] int timeStepsPerGrow;
+    //[SerializeField] int shootSpeedInt;
+    //[SerializeField] float leadMass;
     [SerializeField] int constraintIterations;
 
     bool growing;
     float growTimer;
+    float growInterval;
+    float shootSpeed;
     int anchorIndex;
 
     Rope grapple;
@@ -25,17 +27,18 @@ public class SilkGrapple : MonoBehaviour
     float fixedDt;
     float fixedDt2;
 
-    float GrowInterval => growIntervalMultiplier * nodeSpacing / shootSpeed;
+    //float GrowInterval => growIntervalMultiplier * nodeSpacing / shootSpeed;
 
     private void Awake()
     {
-        lineRenderer = GetComponent<LineRenderer>();
+        lineRenderer = GetComponent<LineRenderer>(); 
+        fixedDt = Time.fixedDeltaTime;
+        fixedDt2 = fixedDt * fixedDt;
     }
 
     private void Start()
     {
-        fixedDt = Time.fixedDeltaTime;
-        fixedDt2 = fixedDt * fixedDt;
+        lineRenderer.enabled = false;
     }
 
     private void Update()
@@ -76,11 +79,11 @@ public class SilkGrapple : MonoBehaviour
     {
         if (grapple != null)
         {
-            grapple.FixedUpate(fixedDt, fixedDt2);
             if (growing)
             {
                 UpdateGrow();
             }
+            grapple.FixedUpate(fixedDt, fixedDt2);
         }
     }
 
@@ -117,7 +120,7 @@ public class SilkGrapple : MonoBehaviour
 
     private void UpdateGrow()
     {
-        var growInterval = GrowInterval;
+        //var growInterval = GrowInterval;
         growTimer += Time.deltaTime;
 
         if (growTimer > growInterval && anchorIndex > 0)
@@ -142,11 +145,11 @@ public class SilkGrapple : MonoBehaviour
             growTimer = 0;
             grapple.nodeSpacing = nodeSpacing;
         }
-        else
-        {
-            var extra = (growTimer / growInterval) * nodeSpacing / (grapple.nodes.Length - anchorIndex - 1);
-            grapple.nodeSpacing = nodeSpacing + extra;
-        }
+        //else
+        //{
+        //    var extra = (growTimer / growInterval) * nodeSpacing / (grapple.nodes.Length - anchorIndex - 1);
+        //    grapple.nodeSpacing = nodeSpacing + extra;
+        //}
     }
 
     //SPAWNING
@@ -161,7 +164,13 @@ public class SilkGrapple : MonoBehaviour
             grapple.nodes[i].Anchor();
         }
 
-        grapple.nodes[^1].mass = leadMass;
+        //var g = -Physics2D.gravity.y;
+        //growInterval = (-shootSpeed + Mathf.Sqrt(shootSpeed * shootSpeed + 2 * g * nodeSpacing)) / g;
+        //^this is a lower estimate of how long it takes first active node to travel nodeSpacing distance from anchor
+        //so we make sure we release next node before constraints kick in
+        growInterval = timeStepsPerGrow * fixedDt;
+        shootSpeed = nodeSpacing / growInterval;
+        //Debug.Log(shootSpeed);
         growing = true;
         growTimer = 0;
     }
