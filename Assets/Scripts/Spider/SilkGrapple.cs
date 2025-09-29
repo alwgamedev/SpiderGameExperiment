@@ -10,14 +10,14 @@ public class SilkGrapple : MonoBehaviour
     [SerializeField] float nodeSpacing;
     [SerializeField] int numNodes;
     [SerializeField] int initialAnchorIndex;
-    [SerializeField] int timeStepsPerGrow;
-    //[SerializeField] int shootSpeedInt;
-    //[SerializeField] float leadMass;
+    [SerializeField] int timeStepsPerRelease;
+    [SerializeField] int nodesPerRelease;
+    [SerializeField] int nodesPerRetract;
     [SerializeField] int constraintIterations;
 
-    bool growing;
-    float growTimer;
-    float growInterval;
+    int grappleReleaseInput;//1 = release, -1 = retract, 0 = none
+    int releaseTimer;
+    //float growInterval;
     float shootSpeed;
     int anchorIndex;
 
@@ -52,21 +52,13 @@ public class SilkGrapple : MonoBehaviour
         }
         else
         {
-            if (Input.GetKeyDown(KeyCode.G))
+            if (Input.GetKeyDown(KeyCode.Z))
             {
                 DestroyGrapple();
                 return;
             }
 
-            if (Input.GetKeyDown(KeyCode.F) && anchorIndex > 0)
-            {
-                growing = true;
-            }
-            else if (growing && Input.GetKeyUp(KeyCode.F))
-            {
-                growing = false;
-                grapple.nodeSpacing = nodeSpacing;
-            }
+            grappleReleaseInput = Input.GetKey(KeyCode.F) && anchorIndex > 0 ? 1 : (Input.GetKey(KeyCode.G) && anchorIndex < grapple.nodes.Length - 1 ? -1 : 0);
         }
     }
 
@@ -79,7 +71,7 @@ public class SilkGrapple : MonoBehaviour
     {
         if (grapple != null)
         {
-            if (growing)
+            if (grappleReleaseInput != 0)
             {
                 UpdateGrow();
             }
@@ -120,36 +112,44 @@ public class SilkGrapple : MonoBehaviour
 
     private void UpdateGrow()
     {
-        //var growInterval = GrowInterval;
-        growTimer += Time.deltaTime;
+        releaseTimer += grappleReleaseInput;
+        var n = grapple.nodes.Length - 1;
 
-        if (growTimer > growInterval && anchorIndex > 0)
+        if (releaseTimer == timeStepsPerRelease && anchorIndex > 0)
         {
             Vector2 d = fixedDt * shootSpeed * source.up;
-            //var c = fixedDt * d;
-            while (growTimer > growInterval && anchorIndex > 0)
+            int i = nodesPerRelease;
+            while (i > 0 && anchorIndex > 0)
             {
-                //for (int j = anchorIndex + 1; j < grapple.nodes.Length; j++)
-                //{
-                //    grapple.nodes[j].lastPosition -= c;
-                //}
+                i--;
+                grapple.nodes[anchorIndex].position += (i / nodesPerRelease) * d;
                 grapple.nodes[anchorIndex].DeAnchor(d);
                 anchorIndex--;
-                growTimer -= growInterval;
             }
+            
+            releaseTimer -= timeStepsPerRelease;
+        }
+        else if (releaseTimer == -timeStepsPerRelease && anchorIndex < n)
+        {
+            int i = nodesPerRetract;
+            while (i > 0 && anchorIndex < n)
+            {
+                var a = anchorIndex + 1;
+                grapple.nodes[a].position = grapple.nodes[anchorIndex].position;
+                grapple.nodes[a].Anchor();
+                anchorIndex++;
+                i--;
+            }
+
+            releaseTimer += timeStepsPerRelease;
         }
 
-        if (anchorIndex == 0)
+        var nextA = anchorIndex + grappleReleaseInput;
+        if (nextA < 0 || nextA > n)
         {
-            growing = false;
-            growTimer = 0;
-            grapple.nodeSpacing = nodeSpacing;
+            grappleReleaseInput = 0;
+            releaseTimer = 0;
         }
-        //else
-        //{
-        //    var extra = (growTimer / growInterval) * nodeSpacing / (grapple.nodes.Length - anchorIndex - 1);
-        //    grapple.nodeSpacing = nodeSpacing + extra;
-        //}
     }
 
     //SPAWNING
@@ -168,18 +168,16 @@ public class SilkGrapple : MonoBehaviour
         //growInterval = (-shootSpeed + Mathf.Sqrt(shootSpeed * shootSpeed + 2 * g * nodeSpacing)) / g;
         //^this is a lower estimate of how long it takes first active node to travel nodeSpacing distance from anchor
         //so we make sure we release next node before constraints kick in
-        growInterval = timeStepsPerGrow * fixedDt;
-        shootSpeed = nodeSpacing / growInterval;
+        //growInterval = timeStepsPerRelease * fixedDt;
+        shootSpeed = nodeSpacing * nodesPerRelease / (timeStepsPerRelease * fixedDt);
         //Debug.Log(shootSpeed);
-        growing = true;
-        growTimer = 0;
     }
 
     private void DestroyGrapple()
     {
         grapple = null;
-        growing = false;
+        grappleReleaseInput = 0;
         anchorIndex = 0;
-        growTimer = 0;
+        releaseTimer = 0;
     }
 }
