@@ -2,7 +2,9 @@
 
 public class SilkGrapple : MonoBehaviour
 {
-    [SerializeField] Transform source;
+    [SerializeField] Transform source;//shoot from here
+    [SerializeField] Transform barrel;//rotate this
+    [SerializeField] Rigidbody2D shooterRb;
     [SerializeField] float drag;
     [SerializeField] float bounciness;
     [SerializeField] LayerMask terminusAnchorMask;
@@ -34,6 +36,7 @@ public class SilkGrapple : MonoBehaviour
     float fixedDt2;
 
     int AnchorIndexMax => grapple.nodes[^1].Anchored ? grapple.nodes.Length - 2 : grapple.nodes.Length - 1;
+    Vector2 AnchorPosition => source.position;
 
     //float GrowInterval => growIntervalMultiplier * nodeSpacing / shootSpeed;
 
@@ -47,7 +50,7 @@ public class SilkGrapple : MonoBehaviour
     private void Start()
     {
         lineRenderer.enabled = false;
-        aimRotation0 = source.rotation.eulerAngles.z * Mathf.Deg2Rad;
+        aimRotation0 = barrel.rotation.eulerAngles.z * Mathf.Deg2Rad;
     }
 
     private void Update()
@@ -90,11 +93,7 @@ public class SilkGrapple : MonoBehaviour
             {
                 UpdateGrow();
             }
-            var p = source.position;
-            for (int i = 0; i < anchorIndex + 1; i++)
-            {
-                grapple.nodes[i].position = p;
-            }
+            PositionAnchoredPoints();
             grapple.FixedUpate(fixedDt, fixedDt2);
         }
     }
@@ -135,7 +134,16 @@ public class SilkGrapple : MonoBehaviour
         aimRotation += aimInput * aimRotationSpeed * fixedDt;
         aimRotation = Mathf.Clamp(aimRotation, aimRotationMin, aimRotationMax);
         var a = aimRotation0 + aimRotation;
-        source.right = new Vector3(Mathf.Cos(a), Mathf.Sin(a), 0);
+        barrel.right = new Vector3(Mathf.Cos(a), Mathf.Sin(a), 0);
+    }
+
+    private void PositionAnchoredPoints()
+    {
+        var p = AnchorPosition;
+        for (int i = 0; i < anchorIndex + 1; i++)
+        {
+            grapple.nodes[i].position = p;
+        }
     }
 
     private void UpdateGrow()

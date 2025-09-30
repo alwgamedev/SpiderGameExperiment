@@ -145,26 +145,7 @@ public class Rope
                 {
                     nodes[i].position -= c;
                     nodes[i].lastPosition -= 0.99f * c;
-                    //nodes[i].ResolveCollisions(collisionContactFilter, collisionBuffer);
                 }
-                //if (nodes[i - 1].Anchored)
-                //{
-                //    nodes[i].position -= c;
-                //    nodes[i].lastPosition -= 0.95f * c;
-                //    nodes[i].ResolveCollisions(collisionContactFilter, collisionBuffer);
-                //}
-                //else if (nodes[i].Anchored)
-                //{
-                //    nodes[i - 1].position += c;
-                //    nodes[i - 1].lastPosition += 0.95f * c;
-                //    nodes[i - 1].ResolveCollisions(collisionContactFilter, collisionBuffer);
-                //}
-                //else
-                //{
-                //    nodes[i].position -= c;
-                //    nodes[i].lastPosition -= 0.95f * c;
-                //    nodes[i].ResolveCollisions(collisionContactFilter, collisionBuffer);
-                //}
             }
         }
     }

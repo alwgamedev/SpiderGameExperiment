@@ -13,8 +13,6 @@ public struct RopeNode
     readonly Rigidbody2D[] storedVelocityRbs;
     int storedVelocityPointer;
 
-    //Vector2 lastPositionOutsideTunnel;
-
     Vector2 right;
     Vector2 up;
 
@@ -22,7 +20,6 @@ public struct RopeNode
     float drag;
 
     int collisionMask;
-    //float collisionRadius;
     float collisionThreshold;
     float collisionBounciness;
     readonly Vector2[] raycastDirections;
@@ -37,7 +34,7 @@ public struct RopeNode
     {
         this.anchored = anchored;
         this.position = position;
-        lastPosition = anchored ? position : position - Time.fixedDeltaTime * velocity;// - 0.5f * Time.fixedDeltaTime * Time.fixedDeltaTime * acceleration;
+        lastPosition = anchored ? position : position - Time.fixedDeltaTime * velocity;
         this.acceleration = acceleration;
         this.mass = mass;
 
@@ -183,36 +180,6 @@ public struct RopeNode
         }
     }
 
-    private bool HandlePotentialCollision(float dt, Collider2D c)
-    {
-        if (c == null) return false;
-
-        var p = c.ClosestPoint(position);
-        var l = Vector2.Distance(position, p);
-
-        if (l <= 10E-05f)
-        {
-            //this is not great (normal may be in wrong direction or zero)
-            var collisionNormal = (lastPosition - position).normalized;
-            position += collisionThreshold * collisionNormal;
-            lastPosition -= collisionBounciness * collisionNormal;//we need this
-            StoreCollisionVelocity(c.attachedRigidbody, collisionNormal);
-            return true;
-
-        }
-
-        //tunnelEscapeDirection = Vector2.zero;
-        if (l < collisionThreshold)
-        {
-            ResolveCollision(dt, p, l, c.attachedRigidbody);
-            //lastPositionOutsideTunnel = position;
-            return true;
-        }
-
-        //lastPositionOutsideTunnel = position;
-        return false;
-    }
-
     private void ResolveCollision(float dt, float distanceToContactPoint, Vector2 collisionNormal, Rigidbody2D attachedRb)
     {
         var velocity = (position - lastPosition) / dt;
@@ -224,37 +191,6 @@ public struct RopeNode
             var newVelocity = collisionBounciness * Mathf.Sign(Vector2.Dot(velocity, collisionNormal))
                 * (2 * Vector2.Dot(velocity, collisionNormal) * collisionNormal - velocity);
             position += (collisionThreshold - distanceToContactPoint) * collisionNormal + newVelocity * timeSinceCollision;
-            lastPosition = position - newVelocity * dt;
-
-            StoreCollisionVelocity(attachedRb, collisionNormal);
-        }
-        else
-        {
-            position += (collisionThreshold - distanceToContactPoint) * collisionNormal;
-        }
-    }
-
-    //only gets called when distance > 10E-05f, so removed the check
-    private void ResolveCollision(float dt, Vector2 contactPoint, float distanceToContactPoint, Rigidbody2D attachedRb)
-    {
-        var collisionOffset = contactPoint - position;
-        var collisionNormal = -collisionOffset / distanceToContactPoint;
-
-        var velocity = (position - lastPosition) / dt;
-        var speed = velocity.magnitude;
-
-        if (speed > 10E-05f)
-        {
-            //var velocityDirection = velocity / spd;
-            //var y = Vector2.Dot(collisionOffset, velocityDirection);
-            //var distanceTravelledSinceCollision = -y
-            //    + Mathf.Sqrt(y * y + collisionThreshold * collisionThreshold - distanceToContactPoint * distanceToContactPoint);
-            var timeSinceCollision = (collisionThreshold - distanceToContactPoint) / speed;//distanceTravelledSinceCollision / spd;
-            var newVelocity = collisionBounciness * Mathf.Sign(Vector2.Dot(velocity, collisionNormal))
-                * (2 * Vector2.Dot(velocity, collisionNormal) * collisionNormal - velocity);
-            position += (collisionThreshold - distanceToContactPoint) * collisionNormal + newVelocity * timeSinceCollision;
-            //position += -distanceTravelledSinceCollision * velocityDirection
-            //    + newVelocity * timeSinceCollision;
             lastPosition = position - newVelocity * dt;
 
             StoreCollisionVelocity(attachedRb, collisionNormal);
@@ -286,7 +222,4 @@ public struct RopeNode
         var v = d / dt;
         return d + dt2 * (acceleration - drag * v.magnitude * v);
     }
-
-    //for now we'll just have constant acceleration from gravity
-    //but later we could add methods for adding force
 }
