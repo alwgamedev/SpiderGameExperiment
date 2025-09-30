@@ -5,6 +5,7 @@ public class RopeTester : MonoBehaviour
     [SerializeField] float silkDrag;
     [SerializeField] float silkBounciness;
     [SerializeField] LayerMask silkCollisionMask;
+    [SerializeField] LayerMask terminusAnchorMask;
     //[SerializeField] float silkCollisionRadius;
     [SerializeField] float silkWidth;
     [SerializeField] float silkNodeSpacing;
@@ -55,7 +56,7 @@ public class RopeTester : MonoBehaviour
                 lineRenderer.startWidth = silkWidth;
                 lineRenderer.endWidth = silkWidth;
                 rope = new Rope(mousePos, silkWidth, silkNodeSpacing, silkNumNodes, silkDrag,
-                    silkCollisionMask, /*silkCollisionRadius,*/ silkBounciness, 
+                    silkCollisionMask, silkBounciness, terminusAnchorMask,
                     silkConstraintIterations);
                 rope.nodes[0].Anchor();
             }

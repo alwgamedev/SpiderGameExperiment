@@ -3,12 +3,13 @@ using UnityEngine;
 
 public class Rope
 {
-    public const int MAX_NUM_COLLISIONS = 1;
+    public const int MAX_NUM_COLLISIONS = 4;
     public const float CONSTRAINTS_TOLERANCE = 0.001f;
 
     public float width;
     public float nodeSpacing;
     public float constraintIterations;
+    public int terminusAnchorMask;
     
     public readonly RopeNode[] nodes;
 
@@ -18,32 +19,16 @@ public class Rope
     public float Length => nodeSpacing * nodes.Length;
 
     public Rope(Vector2 position, float width, float nodeSpacing, int numNodes, 
-        float nodeDrag, int collisionMask, float collisionBounciness, 
+        float nodeDrag, int collisionMask, float collisionBounciness, int terminusAnchorMask,
         int constraintIterations)
     {
         this.width = width;
         this.nodeSpacing = nodeSpacing;
         this.constraintIterations = constraintIterations;
+        this.terminusAnchorMask = terminusAnchorMask;
         var a = Physics2D.gravity;
         var collisionThreshold = 0.5f * width;
         nodes = Enumerable.Range(0, numNodes).Select(i => new RopeNode(position, Vector2.zero, a, 1, nodeDrag, 
-            collisionMask, collisionThreshold, collisionBounciness, false)).ToArray();
-        renderPositions = nodes.Select(x => (Vector3)x.position).ToArray();
-    }
-
-    //anchored rope with end given an initial velocity
-    public Rope(Vector2 position, Vector2 velocity, float width, float nodeSpacing, int numNodes,
-        float nodeDrag, int collisionMask, float collisionBounciness,
-        int constraintIterations)
-    {
-        
-        this.width = width;
-        this.nodeSpacing = nodeSpacing;
-        this.constraintIterations = constraintIterations;
-        var a = Physics2D.gravity;
-        var collisionThreshold = 0.5f * width;
-        //int end = numNodes - 1;
-        nodes = Enumerable.Range(0, numNodes).Select(i => new RopeNode(position, velocity, a, 1, nodeDrag,
             collisionMask, collisionThreshold, collisionBounciness, false)).ToArray();
         renderPositions = nodes.Select(x => (Vector3)x.position).ToArray();
     }
@@ -78,20 +63,6 @@ public class Rope
         lr.SetPositions(renderPositions);
     }
 
-    //public void GrowRopeFromBase(float lengthChange)
-    //{
-    //    var lengthPerSegment = lengthChange / (nodes.Length - 1);
-    //    nodeSpacing += lengthPerSegment;
-    //    for (int i = nodes.Length - 1; i > 0; i--)
-    //    {
-    //        var d = 0.25f * lengthPerSegment * (nodes[i].position - nodes[i - 1].position).normalized;
-    //        for (int j = i; j < nodes.Length; j++)
-    //        {
-    //            nodes[j].lastPosition -= d;
-    //        }
-    //    }
-    //}
-
     private void UpdateRenderPositions()
     {
         for (int i = 0; i < nodes.Length; i++)
@@ -117,14 +88,9 @@ public class Rope
             var d = nodes[i].position - nodes[i - 1].position;
             var l = d.magnitude;
 
-            //if (l <= 10E-05f)
-            //{
-            //    d = 
-            //}
-
             var error = l - nodeSpacing;
 
-            if (error > CONSTRAINTS_TOLERANCE /*|| error < -CONSTRAINTS_TOLERANCE*/)
+            if (error > CONSTRAINTS_TOLERANCE)
             {
                 var c = (error / l) * d;
                 if (nodes[i - 1].Anchored)
@@ -137,7 +103,6 @@ public class Rope
                 }
                 else
                 {
-                    //c = 0.5f * c;
                     var m1 = 1 / (nodes[i - 1].mass + nodes[i].mass);
                     nodes[i - 1].position += nodes[i].mass * m1 * c;
                     nodes[i].position -= nodes[i - 1].mass * m1 * c;
@@ -150,7 +115,12 @@ public class Rope
     {
         for (int i = 0; i < nodes.Length; i++)
         {
-            nodes[i].ResolveCollisions(dt/*, collisionContactFilter, collisionBuffer*/);
+            nodes[i].ResolveCollisions(dt);
+        }
+
+        if (!nodes[^1].Anchored && (nodes[^1].CurrentCollisionLayer & terminusAnchorMask) != 0)
+        {
+            nodes[^1].Anchor();
         }
     }
 

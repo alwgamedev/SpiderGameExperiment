@@ -29,6 +29,7 @@ public struct RopeNode
     int currentCollisionLayer;
 
     public bool Anchored => anchored;
+    public int CurrentCollisionLayer => currentCollisionLayer;
 
     public RopeNode(Vector2 position, Vector2 velocity, Vector2 acceleration, float mass, float drag,
         int collisionMask, float collisionThreshold, float collisionBounciness,
