@@ -29,9 +29,10 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: -0.42372513, w: 0.9057908}
   m_LocalPosition: {x: -18.7, y: 6, z: 0}
-  m_LocalScale: {x: 0.4618, y: 1, z: 1}
+  m_LocalScale: {x: 0.23382783, y: 0.58548, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 7665133355956088305}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -50.14}
 --- !u!212 &6261748120169448502
@@ -101,10 +102,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39cf6fb3f759589459e82fbbe8682d00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  source: {fileID: 8656116072042997637}
+  source: {fileID: 7665133355956088305}
+  barrel: {fileID: 8656116072042997637}
+  shooterRb: {fileID: 0}
   drag: 0.02
   bounciness: 0.9
-  terminusAnchorMask:
+  grappleAnchorMask:
     serializedVersion: 2
     m_Bits: 64
   collisionMask:
@@ -113,10 +116,15 @@ MonoBehaviour:
   width: 0.08
   nodeSpacing: 0.08
   numNodes: 350
+  aimRotationMax: 0.3926991
+  aimRotationMin: -0.7853982
+  aimRotationSpeed: 1.570796
   timeStepsPerRelease: 1
   nodesPerRelease: 2
   nodesPerRetract: 1
   constraintIterations: 1
+  carrySpringForce: 25
+  carrySpringDamping: 0
 --- !u!120 &6059036553827033380
 LineRenderer:
   serializedVersion: 2
@@ -224,3 +232,34 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
+--- !u!1 &8493433065924055583
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7665133355956088305}
+  m_Layer: 0
+  m_Name: Source
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7665133355956088305
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8493433065924055583}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.49, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8656116072042997637}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

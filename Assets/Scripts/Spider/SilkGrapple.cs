@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Mono.Cecil.Cil;
+using UnityEngine;
 
 public class SilkGrapple : MonoBehaviour
 {
@@ -7,7 +8,7 @@ public class SilkGrapple : MonoBehaviour
     [SerializeField] Rigidbody2D shooterRb;
     [SerializeField] float drag;
     [SerializeField] float bounciness;
-    [SerializeField] LayerMask terminusAnchorMask;
+    [SerializeField] LayerMask grappleAnchorMask;
     [SerializeField] LayerMask collisionMask;
     [SerializeField] float width;
     [SerializeField] float nodeSpacing;
@@ -19,6 +20,8 @@ public class SilkGrapple : MonoBehaviour
     [SerializeField] int nodesPerRelease;
     [SerializeField] int nodesPerRetract;
     [SerializeField] int constraintIterations;
+    [SerializeField] float carrySpringForce;
+    [SerializeField] float carrySpringDamping;
 
     int grappleReleaseInput;//1 = release, -1 = retract, 0 = none
     int releaseTimer;
@@ -35,7 +38,8 @@ public class SilkGrapple : MonoBehaviour
     float fixedDt;
     float fixedDt2;
 
-    int AnchorIndexMax => grapple.nodes[^1].Anchored ? grapple.nodes.Length - 2 : grapple.nodes.Length - 1;
+    bool GrappleAnchored => grapple.nodes[^1].Anchored;
+    int AnchorIndexMax => GrappleAnchored ? grapple.nodes.Length - 2 : grapple.nodes.Length - 1;
     Vector2 AnchorPosition => source.position;
 
     //float GrowInterval => growIntervalMultiplier * nodeSpacing / shootSpeed;
@@ -95,6 +99,10 @@ public class SilkGrapple : MonoBehaviour
             }
             PositionAnchoredPoints();
             grapple.FixedUpate(fixedDt, fixedDt2);
+            if (GrappleAnchored)
+            {
+                UpdateCarrySpring();
+            }
         }
     }
 
@@ -127,7 +135,7 @@ public class SilkGrapple : MonoBehaviour
         lineRenderer.endWidth = width;
     }
 
-    //FIXED UPDATE FUNCTIONS
+    //fIXED UPDATE FUNCTIONS
 
     private void UpdateAim()
     {
@@ -144,6 +152,24 @@ public class SilkGrapple : MonoBehaviour
         {
             grapple.nodes[i].position = p;
         }
+    }
+
+    private void UpdateCarrySpring()
+    {
+        var a1 = anchorIndex + 1;
+        if (a1 == grapple.nodes.Length) return;
+        var d = grapple.nodes[a1].position - grapple.nodes[anchorIndex].position;
+        var l = d.magnitude;
+        var error = l - nodeSpacing;
+        if (error > 0)
+        {
+            d /= l;
+            var v = Vector2.Dot(shooterRb.linearVelocity, d);
+            var f = shooterRb.mass * carrySpringForce * error;
+            shooterRb.AddForceAtPosition((f - carrySpringDamping * v) * d, barrel.position);
+            //using barrel position instead of source pos for where the force is applied (because that will be really where it's anchored to the body
+        }
+
     }
 
     private void UpdateGrow()
@@ -193,7 +219,7 @@ public class SilkGrapple : MonoBehaviour
     private void SpawnGrapple()
     {
         grapple = new Rope(source.position, width, nodeSpacing, numNodes, drag,
-                    collisionMask, bounciness, terminusAnchorMask, constraintIterations);
+                    collisionMask, bounciness, grappleAnchorMask, constraintIterations);
         anchorIndex = numNodes - 1;
         for (int i = 0; i < numNodes; i++)
         {
