@@ -292,10 +292,10 @@ public class SpiderMovementController : MonoBehaviour
         var p = groundMap.AveragePointFromCenter(-heightSampleWidth, heightSampleWidth);
         //^so that body sinks a little as it rounds a sharp peak (keeping leg extension natural)
         //--note you only want to do this when strongly grounded
-        Vector2 d = -transform.up;
-        var l = Vector2.Dot(p - (Vector2)heightReferencePoint.position, d) - preferredRideHeight;
-        var f = heightSpringForce * l * d;
-        var v = Vector2.Dot(rb.linearVelocity, d) * d;
+        Vector2 down = -transform.up;
+        var l = Vector2.Dot(p - (Vector2)heightReferencePoint.position, down) - preferredRideHeight;
+        var f = heightSpringForce * l * down;
+        var v = Vector2.Dot(rb.linearVelocity, down) * down;
         rb.AddForce(rb.mass * (f - heightSpringDamping * v));
     }
 

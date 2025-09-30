@@ -19,7 +19,9 @@ public class SilkGrapple : MonoBehaviour
     [SerializeField] int timeStepsPerRelease;
     [SerializeField] int nodesPerRelease;
     [SerializeField] int nodesPerRetract;
+    [SerializeField] int anchorIndexMaxOffset;//counted backwards (so min # nodes past anchor is this number - 1)
     [SerializeField] int constraintIterations;
+    [SerializeField] int tensionSampleSize;
     [SerializeField] float carrySpringForce;
     [SerializeField] float carrySpringDamping;
 
@@ -27,6 +29,7 @@ public class SilkGrapple : MonoBehaviour
     int releaseTimer;
     float shootSpeed;
     int anchorIndex;
+    //int terminusIndex;
 
     int aimInput;
     float aimRotation0;//inefficient (should just add aimRotation0 to max & min values) but for now allows us to tweak max and min live
@@ -38,15 +41,15 @@ public class SilkGrapple : MonoBehaviour
     float fixedDt;
     float fixedDt2;
 
-    bool GrappleAnchored => grapple.nodes[^1].Anchored;
-    int AnchorIndexMax => GrappleAnchored ? grapple.nodes.Length - 2 : grapple.nodes.Length - 1;
+    bool GrappleAnchored => anchorIndex != grapple.terminusIndex && grapple.nodes[grapple.terminusIndex].Anchored;
+    int AnchorIndexMax => grapple.nodes.Length - anchorIndexMaxOffset;
     Vector2 AnchorPosition => source.position;
 
     //float GrowInterval => growIntervalMultiplier * nodeSpacing / shootSpeed;
 
     private void Awake()
     {
-        lineRenderer = GetComponent<LineRenderer>(); 
+        lineRenderer = GetComponent<LineRenderer>();
         fixedDt = Time.fixedDeltaTime;
         fixedDt2 = fixedDt * fixedDt;
     }
@@ -156,20 +159,33 @@ public class SilkGrapple : MonoBehaviour
 
     private void UpdateCarrySpring()
     {
-        var a1 = anchorIndex + 1;
-        if (a1 == grapple.nodes.Length) return;
-        var d = grapple.nodes[a1].position - grapple.nodes[anchorIndex].position;
-        var l = d.magnitude;
-        var error = l - nodeSpacing;
-        if (error > 0)
+        var t = CarryTension();
+        var d = (grapple.nodes[anchorIndex + 1].position - grapple.nodes[anchorIndex].position).normalized;
+        var v = Vector2.Dot(shooterRb.linearVelocity, d);
+        var f = carrySpringForce * t;
+        shooterRb.AddForceAtPosition(shooterRb.mass * (f - carrySpringDamping * v) * d, barrel.position);
+
+    }
+
+    //2do: should probably only sample the first few nodes near anchor (and average, so that changing how many are sampled won't throw things off)
+    private float CarryTension()
+    {
+        float total = 0;
+        int j = 0;
+        int m = Mathf.Min(grapple.nodes.Length, anchorIndex + tensionSampleSize + 1);
+        for (int i = anchorIndex + 1; i < m; i++)
         {
-            d /= l;
-            var v = Vector2.Dot(shooterRb.linearVelocity, d);
-            var f = shooterRb.mass * carrySpringForce * error;
-            shooterRb.AddForceAtPosition((f - carrySpringDamping * v) * d, barrel.position);
-            //using barrel position instead of source pos for where the force is applied (because that will be really where it's anchored to the body
+            var t = (grapple.nodes[i].position - grapple.nodes[i - 1].position).magnitude - nodeSpacing;
+            if (t < 0)
+            {
+                return 0;
+            }
+
+            total += t;
+            j++;
         }
 
+        return total / j;
     }
 
     private void UpdateGrow()
@@ -188,7 +204,7 @@ public class SilkGrapple : MonoBehaviour
                 grapple.nodes[anchorIndex].DeAnchor(d);
                 anchorIndex--;
             }
-            
+
             releaseTimer = 0;
         }
         else if (releaseTimer == -timeStepsPerRelease && anchorIndex < anchorIndexMax)
