@@ -10,7 +10,7 @@ public class Rope
     public float nodeSpacing;
     public float constraintIterations;
     public int terminusAnchorMask;
-    public readonly float length;
+    //public readonly float length;
     
     public readonly RopeNode[] nodes;
     public readonly int lastIndex;
@@ -18,14 +18,21 @@ public class Rope
     public readonly Vector3[] renderPositions;
     bool renderPositionsNeedUpdate;
 
-    public float Length => nodeSpacing * nodes.Length;
+    public float Length
+    {
+        get => nodeSpacing * lastIndex;
+        set
+        {
+            nodeSpacing = value / lastIndex;
+        }
+    }
 
     public Rope(Vector2 position, float width, float nodeSpacing, int numNodes, 
         float nodeDrag, int collisionMask, float collisionBounciness, int terminusAnchorMask,
         int constraintIterations)
     {
         this.width = width;
-        length = (numNodes - 1) * nodeSpacing;
+        //length = (numNodes - 1) * nodeSpacing;
         this.nodeSpacing = nodeSpacing;
         this.constraintIterations = constraintIterations;
         this.terminusAnchorMask = terminusAnchorMask;

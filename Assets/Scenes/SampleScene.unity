@@ -1664,6 +1664,38 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
+      propertyPath: numNodes
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
+      propertyPath: maxLength
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
+      propertyPath: minLength
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
+      propertyPath: grappleMass
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
+      propertyPath: releaseRate
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
+      propertyPath: baseShootSpeed
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
+      propertyPath: shootSpeedPowerUpMax
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
+      propertyPath: shootSpeedPowerUpRate
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8910507805382992582, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: m_LocalPosition.x
       value: -25.15
