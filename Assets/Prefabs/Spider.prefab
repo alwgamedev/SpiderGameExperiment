@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4372309095061764429}
   - component: {fileID: 1365678075684611177}
   - component: {fileID: 3655398860561040686}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 2L pt 4 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -117,7 +117,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 596364321759533591}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l4 pt1 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -151,7 +151,7 @@ GameObject:
   - component: {fileID: 474709405076546212}
   - component: {fileID: 3313150796463680953}
   - component: {fileID: 4912505634920626491}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 1L pt 4 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -259,7 +259,7 @@ GameObject:
   - component: {fileID: 3202631017305475327}
   - component: {fileID: 6037709030508278376}
   - component: {fileID: 8677566242062234759}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 4L pt 1 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -367,7 +367,7 @@ GameObject:
   - component: {fileID: 2606150414628750457}
   - component: {fileID: 931472736073194821}
   - component: {fileID: 6664353690762559845}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Abdomen '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -473,7 +473,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3602990434774389934}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l1 pt3 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -507,7 +507,7 @@ GameObject:
   - component: {fileID: 1026940500833890800}
   - component: {fileID: 3463714261963708848}
   - component: {fileID: 461579225185132305}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 3R pt 1 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -613,7 +613,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3708315842584664218}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Height Reference Point
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -646,7 +646,7 @@ GameObject:
   - component: {fileID: 3265580943022004748}
   - component: {fileID: 1429904724246785572}
   - component: {fileID: 8031323811112732012}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 3R pt 2 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -754,7 +754,7 @@ GameObject:
   - component: {fileID: 5749652492369674264}
   - component: {fileID: 260555917074814100}
   - component: {fileID: 8718687180271899212}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 2L pt 3 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -860,7 +860,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7261066662746368589}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l4 pt4 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -892,7 +892,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5738242297855828304}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l4 pt3 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -926,7 +926,7 @@ GameObject:
   - component: {fileID: 4277313386029005658}
   - component: {fileID: 4687600851182422805}
   - component: {fileID: 289677099412839160}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg L1 IK Solver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1019,7 +1019,7 @@ GameObject:
   - component: {fileID: 1764005628381732879}
   - component: {fileID: 1599058170865233858}
   - component: {fileID: 7579265831240288495}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 4R pt 2 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1127,7 +1127,7 @@ GameObject:
   - component: {fileID: 1141551414359463509}
   - component: {fileID: 9220600026438715626}
   - component: {fileID: 3775532494306624811}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 3R pt 3 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1233,7 +1233,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2278123347475011000}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg R1 IK Solver_Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1264,7 +1264,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7243160359675373736}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Sprites
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1306,7 +1306,7 @@ GameObject:
   - component: {fileID: 1070332136075376317}
   - component: {fileID: 1125138727679458079}
   - component: {fileID: 8139652597745638036}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg R2 IK Solver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1397,7 +1397,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2034791752815395644}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l2 pt4 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1431,7 +1431,7 @@ GameObject:
   - component: {fileID: 665244775029642816}
   - component: {fileID: 8317852353678234152}
   - component: {fileID: 121213946617906322}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 2L pt 2 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1539,7 +1539,7 @@ GameObject:
   - component: {fileID: 5740206831628578248}
   - component: {fileID: 8311544530766513561}
   - component: {fileID: 6808560385370646578}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 3L pt 4 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1645,7 +1645,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1238561792403655595}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg R2 IK Solver_Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1678,7 +1678,7 @@ GameObject:
   - component: {fileID: 7499063563959074572}
   - component: {fileID: 5170741825974452032}
   - component: {fileID: 8802478145148554730}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 1L pt 3 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1784,7 +1784,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1137408330521889720}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg L2 IK Solver_Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1817,7 +1817,7 @@ GameObject:
   - component: {fileID: 3511974389587122621}
   - component: {fileID: 2937978095686542317}
   - component: {fileID: 6337494717204129644}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg R3 IK Solver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1908,7 +1908,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7669166903120010156}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l2 effector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1941,7 +1941,7 @@ GameObject:
   - component: {fileID: 5817456310865565763}
   - component: {fileID: 3313538309163144356}
   - component: {fileID: 5037736015111198664}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 2R pt 4 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2047,7 +2047,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8378328544454571262}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l1 pt4 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2079,7 +2079,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4327750774746436712}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r3 effector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2110,7 +2110,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3001778642298697474}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r3 pt3 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2144,7 +2144,7 @@ GameObject:
   - component: {fileID: 1346380298940630365}
   - component: {fileID: 8309660287699833449}
   - component: {fileID: 4336596949968379654}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 1L pt 2 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2250,7 +2250,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1671441735390870653}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r4 pt1 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2282,7 +2282,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 822636868363825723}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r1 pt2 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2316,7 +2316,7 @@ GameObject:
   - component: {fileID: 5948368218588633132}
   - component: {fileID: 5974602042518349439}
   - component: {fileID: 1644575394016394709}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 4L pt 2 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2424,7 +2424,7 @@ GameObject:
   - component: {fileID: 8026515719453795389}
   - component: {fileID: 1451770863002819162}
   - component: {fileID: 636268752888493604}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg L3 IK Solver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2515,7 +2515,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9204524004644337057}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg 4R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2550,7 +2550,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3120058777622577783}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l1 effector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2582,7 +2582,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1796735932416995084}
   - component: {fileID: 4161556469149567743}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: head bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2654,7 +2654,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7560421742473523346}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l4 pt2 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2686,7 +2686,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 871183515759155505}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r1 pt4 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2718,7 +2718,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8134172703908562749}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r4 pt3 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2750,7 +2750,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4199633852037162369}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r4 effector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2783,7 +2783,7 @@ GameObject:
   - component: {fileID: 4371901453534340588}
   - component: {fileID: 1595259262419114904}
   - component: {fileID: 125380317500962722}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 4R pt 3 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2891,7 +2891,7 @@ GameObject:
   - component: {fileID: 1800059060081104840}
   - component: {fileID: 1490506524318266383}
   - component: {fileID: 3287121947862078546}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg R1 IK Solver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2982,7 +2982,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4380958847150461223}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg L1 IK Solver_Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3013,7 +3013,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6915238945053128507}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg R3 IK Solver_Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3044,7 +3044,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3033994015570042515}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r2 pt4 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3078,7 +3078,7 @@ GameObject:
   - component: {fileID: 918404528066940508}
   - component: {fileID: 8179152155691053553}
   - component: {fileID: 698424331884825342}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 2L pt 1 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3184,7 +3184,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 715929159587521850}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg 1R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3219,7 +3219,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7306302368925994026}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r1 pt3 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3253,7 +3253,7 @@ GameObject:
   - component: {fileID: 8684810249258536782}
   - component: {fileID: 8853716369860558384}
   - component: {fileID: 5977746543635963296}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 4L pt 4 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3361,7 +3361,7 @@ GameObject:
   - component: {fileID: 6036337991988185305}
   - component: {fileID: 3109030643666054824}
   - component: {fileID: 2283893505155311205}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 1R pt 3 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3469,7 +3469,7 @@ GameObject:
   - component: {fileID: 8105826537942203610}
   - component: {fileID: 6006106186500085366}
   - component: {fileID: 6669813394300376278}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 2R pt 3 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3577,7 +3577,7 @@ GameObject:
   - component: {fileID: 3726144016719807161}
   - component: {fileID: 8425521445784097638}
   - component: {fileID: 5417066961172563877}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 2R pt 2 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3683,7 +3683,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9157492295160507004}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r4 pt2 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3715,7 +3715,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1262494296321640506}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l3 pt4 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3747,7 +3747,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3230862963093722263}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg 3R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3784,7 +3784,7 @@ GameObject:
   - component: {fileID: 9110039129033299603}
   - component: {fileID: 2660580890505964044}
   - component: {fileID: 3375358633495638348}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Head '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3890,7 +3890,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4109640117689536782}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l3 effector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3921,7 +3921,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5994156311465296893}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg L4 IK Solver_Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3952,7 +3952,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2399890710218574748}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l1 pt1 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3984,7 +3984,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3204698491393591131}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l1 pt2 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4016,7 +4016,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6838583549023017118}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg 4L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4053,7 +4053,7 @@ GameObject:
   - component: {fileID: 3347578262330597752}
   - component: {fileID: 8863658223714239351}
   - component: {fileID: 6047751472834794952}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 1R pt 1 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4161,7 +4161,7 @@ GameObject:
   - component: {fileID: 4602841384621670868}
   - component: {fileID: 4253360384396832163}
   - component: {fileID: 5076699777365114807}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg L4 IK Solver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4254,7 +4254,7 @@ GameObject:
   - component: {fileID: 4834390261806063309}
   - component: {fileID: 278049317391698258}
   - component: {fileID: 8314552796560619936}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 3R pt 4 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4360,7 +4360,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8906266846264039690}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r3 pt2 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4392,7 +4392,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 74713977280612927}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l2 pt3 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4424,7 +4424,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4593715000520413280}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l3 pt1 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4456,7 +4456,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5581961485169521177}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r2 pt2 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4490,7 +4490,7 @@ GameObject:
   - component: {fileID: 4696038751128294864}
   - component: {fileID: 2730730680806837894}
   - component: {fileID: 1298602695105135040}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg R4 IK Solver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4581,7 +4581,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7491916336825498184}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg R4 IK Solver_Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4614,7 +4614,7 @@ GameObject:
   - component: {fileID: 3185268585469352587}
   - component: {fileID: 8177019448601666385}
   - component: {fileID: 7899723539949450057}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 3L pt 2 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4720,7 +4720,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6932109180140675545}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r3 pt1 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4754,7 +4754,7 @@ GameObject:
   - component: {fileID: 6689177782578917973}
   - component: {fileID: 3761230426565291247}
   - component: {fileID: 6675206760601950069}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 1R pt 4 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4862,7 +4862,7 @@ GameObject:
   - component: {fileID: 8852325005216646358}
   - component: {fileID: 8099145857239095522}
   - component: {fileID: 5226618195051612669}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 4L pt 3 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4968,7 +4968,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6996931359358265962}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r2 pt1 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5002,7 +5002,7 @@ GameObject:
   - component: {fileID: 6624459839212727703}
   - component: {fileID: 9038579673827566997}
   - component: {fileID: 86897615866813519}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 3L pt 3 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5110,7 +5110,7 @@ GameObject:
   - component: {fileID: 881623428575663835}
   - component: {fileID: 4981694405921881807}
   - component: {fileID: 7631819190716871734}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 2R pt 1 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5216,7 +5216,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1208839048729888145}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r2 pt3 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5250,7 +5250,7 @@ GameObject:
   - component: {fileID: 1759975595024286876}
   - component: {fileID: 925506155173885325}
   - component: {fileID: 3278937761650090701}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 1R pt 2 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5358,7 +5358,7 @@ GameObject:
   - component: {fileID: 8031264882277135401}
   - component: {fileID: 3912796509502753877}
   - component: {fileID: 195897750961035380}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 4R pt 4 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5466,7 +5466,7 @@ GameObject:
   - component: {fileID: 4169003853390715555}
   - component: {fileID: 1347211746199434412}
   - component: {fileID: 7096703787902915344}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 3L pt 1 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5572,7 +5572,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 234118039690805374}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg 3L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5609,7 +5609,7 @@ GameObject:
   - component: {fileID: 7384214199792798743}
   - component: {fileID: 8765152861001796335}
   - component: {fileID: 8299908067690836783}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 1L pt 1 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5717,7 +5717,7 @@ GameObject:
   - component: {fileID: 7420705949270110681}
   - component: {fileID: 5780194694785847411}
   - component: {fileID: 12206713449588117}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg L2 IK Solver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5808,7 +5808,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8714597820655926901}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r2 effector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5839,7 +5839,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3580165909359640762}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l3 pt2 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5871,7 +5871,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2680305816034372725}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r1 pt1 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5903,7 +5903,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3912250904285809636}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r3 pt4 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5935,7 +5935,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2749387138667642994}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l2 pt1 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5967,7 +5967,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1884732402649843420}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l4 effector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5998,7 +5998,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7203260424078161818}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r4 pt4 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6030,7 +6030,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3778219042312251034}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg 2L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6065,7 +6065,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5212808090601651790}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: blank_spider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6098,7 +6098,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4114279246918961293}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l2 pt2 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6131,7 +6131,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4257679111386862312}
   - component: {fileID: 2647139100762919223}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: abdomen bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6156,6 +6156,7 @@ Transform:
   - {fileID: 1671441735390870653}
   - {fileID: 4593715000520413280}
   - {fileID: 596364321759533591}
+  - {fileID: 4349527747444524243}
   m_Father: {fileID: 5212808090601651790}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -23.922}
 --- !u!70 &2647139100762919223
@@ -6206,7 +6207,7 @@ GameObject:
   - component: {fileID: 1338361084817694941}
   - component: {fileID: 3532414465633414021}
   - component: {fileID: 3140062776632305362}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 4R pt 1 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6312,7 +6313,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8270222540382114309}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r1 effector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6343,7 +6344,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 752940509849597149}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l3 pt3 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6375,7 +6376,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6907697402867962351}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg 1L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6410,7 +6411,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8327284446163506453}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg L3 IK Solver_Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6441,7 +6442,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5681179030466294059}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6474,7 +6475,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3581278769126459003}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg 2R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6513,7 +6514,7 @@ GameObject:
   - component: {fileID: 3912472630339336116}
   - component: {fileID: 7385854493773830215}
   - component: {fileID: 5843148394334628032}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Spider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6627,6 +6628,7 @@ MonoBehaviour:
   abdomenBone: {fileID: 4257679111386862312}
   headBone: {fileID: 1796735932416995084}
   heightReferencePoint: {fileID: 3708315842584664218}
+  grapple: {fileID: 1051379001623071205}
   headRotationSpeed: 4
   groundedRotationSpeed: 6
   airborneRotationSpeed: 4.5
@@ -6712,3 +6714,108 @@ MonoBehaviour:
   stepHeightFraction: 0
   outwardDrift: 0
   outwardDriftWeights: {x: 0, y: 0}
+--- !u!1001 &4934841031197647702
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 4257679111386862312}
+    m_Modifications:
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: numNodes
+      value: 250
+      objectReference: {fileID: 0}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: shooterRb
+      value: 
+      objectReference: {fileID: 2582591312671585704}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: nodesPerRelease
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: carrySpringForce
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: carrySpringDamping
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: anchorIndexMaxOffset
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: collisionMask.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: nodesPerReleaseAnchored
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7337905512642426967, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_Name
+      value: Silk Grapple
+      objectReference: {fileID: 0}
+    - target: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.211
+      objectReference: {fileID: 0}
+    - target: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.192
+      objectReference: {fileID: 0}
+    - target: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.97766775
+      objectReference: {fileID: 0}
+    - target: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.21015674
+      objectReference: {fileID: 0}
+    - target: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+--- !u!114 &1051379001623071205 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+  m_PrefabInstance: {fileID: 4934841031197647702}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39cf6fb3f759589459e82fbbe8682d00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &4349527747444524243 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+  m_PrefabInstance: {fileID: 4934841031197647702}
+  m_PrefabAsset: {fileID: 0}

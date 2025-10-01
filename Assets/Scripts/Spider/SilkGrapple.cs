@@ -1,5 +1,4 @@
-﻿using Mono.Cecil.Cil;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class SilkGrapple : MonoBehaviour
 {
@@ -18,16 +17,16 @@ public class SilkGrapple : MonoBehaviour
     [SerializeField] float aimRotationSpeed;
     [SerializeField] int timeStepsPerRelease;
     [SerializeField] int nodesPerRelease;
-    [SerializeField] int nodesPerRetract;
+    [SerializeField] int nodesPerReleaseAnchored;
     [SerializeField] int anchorIndexMaxOffset;//counted backwards (so min # nodes past anchor is this number - 1)
     [SerializeField] int constraintIterations;
-    [SerializeField] int tensionSampleSize;
+    //[SerializeField] int tensionSampleSize;
     [SerializeField] float carrySpringForce;
     [SerializeField] float carrySpringDamping;
 
     int grappleReleaseInput;//1 = release, -1 = retract, 0 = none
     int releaseTimer;
-    float shootSpeed;
+    //float shootSpeed;
     int anchorIndex;
     //int terminusIndex;
 
@@ -41,7 +40,10 @@ public class SilkGrapple : MonoBehaviour
     float fixedDt;
     float fixedDt2;
 
-    bool GrappleAnchored => anchorIndex != grapple.terminusIndex && grapple.nodes[grapple.terminusIndex].Anchored;
+    public bool GrappleAnchored => grapple != null && anchorIndex != grapple.lastIndex && grapple.nodes[grapple.lastIndex].Anchored;
+    public int GrappleReleaseInput => grappleReleaseInput;
+    int NodesPerRelease => GrappleAnchored ? nodesPerReleaseAnchored : nodesPerRelease;
+    float ShootSpeed => nodeSpacing * nodesPerRelease / (timeStepsPerRelease * fixedDt);
     int AnchorIndexMax => grapple.nodes.Length - anchorIndexMaxOffset;
     Vector2 AnchorPosition => source.position;
 
@@ -106,6 +108,7 @@ public class SilkGrapple : MonoBehaviour
             {
                 UpdateCarrySpring();
             }
+
         }
     }
 
@@ -159,29 +162,36 @@ public class SilkGrapple : MonoBehaviour
 
     private void UpdateCarrySpring()
     {
+        //var l0 = grapple.nodeSpacing * (grapple.lastIndex - anchorIndex);
+        //var d = grapple.nodes[grapple.lastIndex].position - grapple.nodes[anchorIndex].position;
+        //var l = d.magnitude;
+        //var error = d.magnitude - l0;
+        //if (error > 0)
+        //{
+        //    d /= l;
+        //    var v = Vector2.Dot(shooterRb.linearVelocity, d);
+        //    shooterRb.AddForceAtPosition(shooterRb.mass * (carrySpringForce * error - carrySpringDamping * v) * d, barrel.position);
+        //}
+
         var t = CarryTension();
-        var d = (grapple.nodes[anchorIndex + 1].position - grapple.nodes[anchorIndex].position).normalized;
-        var v = Vector2.Dot(shooterRb.linearVelocity, d);
-        var f = carrySpringForce * t;
-        shooterRb.AddForceAtPosition(shooterRb.mass * (f - carrySpringDamping * v) * d, barrel.position);
+        if (t > 0)
+        {
+            var d = (grapple.nodes[grapple.lastIndex].position - grapple.nodes[anchorIndex].position).normalized;
+            var v = Vector2.Dot(shooterRb.linearVelocity, d);
+            shooterRb.AddForceAtPosition(shooterRb.mass * (carrySpringForce * t - carrySpringDamping * v) * d, barrel.position);
+        }
 
     }
 
-    //2do: should probably only sample the first few nodes near anchor (and average, so that changing how many are sampled won't throw things off)
+    //2do: should probably only sample the first few nodes near anchor(and average, so that changing how many are sampled won't throw things off)
     private float CarryTension()
     {
         float total = 0;
         int j = 0;
-        int m = Mathf.Min(grapple.nodes.Length, anchorIndex + tensionSampleSize + 1);
-        for (int i = anchorIndex + 1; i < m; i++)
+        //int m = Mathf.Min(grapple.nodes.Length, anchorIndex + tensionSampleSize + 1);
+        for (int i = anchorIndex + 1; i < grapple.lastIndex; i++)
         {
-            var t = (grapple.nodes[i].position - grapple.nodes[i - 1].position).magnitude - nodeSpacing;
-            if (t < 0)
-            {
-                return 0;
-            }
-
-            total += t;
+            total += (grapple.nodes[i].position - grapple.nodes[i - 1].position).magnitude - nodeSpacing;
             j++;
         }
 
@@ -195,12 +205,14 @@ public class SilkGrapple : MonoBehaviour
 
         if (releaseTimer == timeStepsPerRelease && anchorIndex > 0)
         {
-            Vector2 d = fixedDt * shootSpeed * source.up;
-            int i = nodesPerRelease;
+            int n = NodesPerRelease;
+            Vector2 d = fixedDt * ShootSpeed * barrel.up;
+
+            int i = n;
             while (i > 0 && anchorIndex > 0)
             {
                 i--;
-                grapple.nodes[anchorIndex].position += (i / nodesPerRelease) * d;
+                grapple.nodes[anchorIndex].position += (i * timeStepsPerRelease / n) * d;
                 grapple.nodes[anchorIndex].DeAnchor(d);
                 anchorIndex--;
             }
@@ -209,25 +221,35 @@ public class SilkGrapple : MonoBehaviour
         }
         else if (releaseTimer == -timeStepsPerRelease && anchorIndex < anchorIndexMax)
         {
-            int i = nodesPerRetract;
+            int i = NodesPerRelease;
+            Vector2 lastPos = grapple.nodes[anchorIndex].position;
             while (i > 0 && anchorIndex < anchorIndexMax)
             {
                 var a = anchorIndex + 1;
+                lastPos = grapple.nodes[a].position;
                 grapple.nodes[a].position = grapple.nodes[anchorIndex].position;
                 grapple.nodes[a].Anchor();
                 anchorIndex++;
                 i--;
             }
 
+            var offset = grapple.nodes[anchorIndex].position - lastPos;
+            offset = 1 / (grapple.lastIndex - anchorIndex) * offset;
+            for (int j = anchorIndex + 1; j < grapple.nodes.Length; j++)
+            {
+                grapple.nodes[j].position += offset;
+            }
+
             releaseTimer = 0;
         }
 
-        var nextA = anchorIndex + grappleReleaseInput;
-        if (nextA < 0 || nextA > anchorIndexMax)
-        {
-            grappleReleaseInput = 0;
-            releaseTimer = 0;
-        }
+        //was there any point in this? (other than maybe "performance" in a not very important scenario)
+        //var nextA = anchorIndex - releaseTimer + grappleReleaseInput
+        //if (nextA < 0 || nextA > anchorIndexMax)
+        //{
+        //    grappleReleaseInput = 0;
+        //    releaseTimer = 0;
+        //}
     }
 
     //SPAWNING
@@ -236,13 +258,13 @@ public class SilkGrapple : MonoBehaviour
     {
         grapple = new Rope(source.position, width, nodeSpacing, numNodes, drag,
                     collisionMask, bounciness, grappleAnchorMask, constraintIterations);
-        anchorIndex = numNodes - 1;
+        anchorIndex = grapple.lastIndex;
         for (int i = 0; i < numNodes; i++)
         {
             grapple.nodes[i].Anchor();
         }
 
-        shootSpeed = nodeSpacing * nodesPerRelease / (timeStepsPerRelease * fixedDt);
+        //shootSpeed = nodeSpacing * nodesPerRelease / (timeStepsPerRelease * fixedDt);
     }
 
     private void DestroyGrapple()

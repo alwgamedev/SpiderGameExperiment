@@ -10,9 +10,10 @@ public class Rope
     public float nodeSpacing;
     public float constraintIterations;
     public int terminusAnchorMask;
+    public readonly float length;
     
     public readonly RopeNode[] nodes;
-    public readonly int terminusIndex;
+    public readonly int lastIndex;
 
     public readonly Vector3[] renderPositions;
     bool renderPositionsNeedUpdate;
@@ -24,6 +25,7 @@ public class Rope
         int constraintIterations)
     {
         this.width = width;
+        length = (numNodes - 1) * nodeSpacing;
         this.nodeSpacing = nodeSpacing;
         this.constraintIterations = constraintIterations;
         this.terminusAnchorMask = terminusAnchorMask;
@@ -32,7 +34,7 @@ public class Rope
         nodes = Enumerable.Range(0, numNodes).Select(i => new RopeNode(position, Vector2.zero, a, 1, nodeDrag, 
             collisionMask, collisionThreshold, collisionBounciness, false)).ToArray();
         renderPositions = nodes.Select(x => (Vector3)x.position).ToArray();
-        terminusIndex = numNodes - 1;
+        lastIndex = numNodes - 1;
     }
 
     public void FixedUpate(float dt, float dt2)
@@ -120,9 +122,9 @@ public class Rope
             nodes[i].ResolveCollisions(dt);
         }
 
-        if (!nodes[terminusIndex].Anchored && (nodes[terminusIndex].CurrentCollisionLayer & terminusAnchorMask) != 0)
+        if (!nodes[lastIndex].Anchored && (nodes[lastIndex].CurrentCollisionLayer & terminusAnchorMask) != 0)
         {
-            nodes[terminusIndex].Anchor();
+            nodes[lastIndex].Anchor();
         }
     }
 

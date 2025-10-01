@@ -105,7 +105,7 @@ MonoBehaviour:
   source: {fileID: 7665133355956088305}
   barrel: {fileID: 8656116072042997637}
   shooterRb: {fileID: 0}
-  drag: 0.02
+  drag: 0
   bounciness: 0.9
   grappleAnchorMask:
     serializedVersion: 2
@@ -113,7 +113,7 @@ MonoBehaviour:
   collisionMask:
     serializedVersion: 2
     m_Bits: 72
-  width: 0.08
+  width: 0.1
   nodeSpacing: 0.08
   numNodes: 350
   aimRotationMax: 0.3926991
@@ -122,9 +122,11 @@ MonoBehaviour:
   timeStepsPerRelease: 1
   nodesPerRelease: 2
   nodesPerRetract: 1
-  constraintIterations: 1
-  carrySpringForce: 25
-  carrySpringDamping: 0
+  anchorIndexMaxOffset: 5
+  constraintIterations: 15
+  tensionSampleSize: 10
+  carrySpringForce: 400
+  carrySpringDamping: 5
 --- !u!120 &6059036553827033380
 LineRenderer:
   serializedVersion: 2

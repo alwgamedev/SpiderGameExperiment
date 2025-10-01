@@ -6,6 +6,7 @@ public class SpiderMovementController : MonoBehaviour
     [SerializeField] Transform abdomenBone;
     [SerializeField] Transform headBone;
     [SerializeField] Transform heightReferencePoint;
+    [SerializeField] SilkGrapple grapple;
     [SerializeField] float headRotationSpeed;
     [SerializeField] float groundedRotationSpeed;
     [SerializeField] float airborneRotationSpeed;
@@ -49,8 +50,9 @@ public class SpiderMovementController : MonoBehaviour
     [SerializeField] float airborneLegDriftMax;
     [SerializeField] GroundMap groundMap;
 
-    LegSynchronizer legSynchronizer;
     Rigidbody2D rb;
+    LegSynchronizer legSynchronizer;
+
     int moveInput;
 
     bool jumpInput;
@@ -78,23 +80,23 @@ public class SpiderMovementController : MonoBehaviour
     //so for now it's much easier to just leave like this
 
 
-    private void OnDrawGizmos()
-    {
-        if (Application.isPlaying)
-        {
-            groundMap.DrawGizmos();
-        }
-        if (groundPoint.x != Mathf.Infinity)
-        {
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawSphere(groundPoint, 0.1f);
-        }
-    }
+    //private void OnDrawGizmos()
+    //{
+    //    if (Application.isPlaying)
+    //    {
+    //        groundMap.DrawGizmos();
+    //    }
+    //    if (groundPoint.x != Mathf.Infinity)
+    //    {
+    //        Gizmos.color = Color.cyan;
+    //        Gizmos.DrawSphere(groundPoint, 0.1f);
+    //    }
+    //}
 
     private void Awake()
     {
-        legSynchronizer = GetComponent<LegSynchronizer>();
         rb = GetComponent<Rigidbody2D>();
+        legSynchronizer = GetComponent<LegSynchronizer>();
 
         //Time.timeScale = 0.25f;//useful for spotting issues
     }
@@ -225,12 +227,18 @@ public class SpiderMovementController : MonoBehaviour
 
     private void Balance(/*float dt*/)
     {
+        //if (grounded || grapple.GrappleReleaseInput == 0)
+        //{
+        //    var c = Vector2.Dot(transform.up, groundDirection);
+        //    rb.AddTorque(rb.mass * (c * balanceSpringForce - balanceSpringDamping * rb.angularVelocity));
+        //}
+        //else
+        //{
+        //    rb.AddTorque(-rb.mass * balanceSpringDamping * rb.angularVelocity);
+        //}
         var c = Vector2.Dot(transform.up, /*grounded ? predictiveGroundDirection :*/ groundDirection);
         var f = c * balanceSpringForce - balanceSpringDamping * rb.angularVelocity;
         rb.AddTorque(rb.mass * f);
-
-        //var r = grounded ? groundedRotationSpeed : airborneRotationSpeed;
-        //transform.right = MathTools.CheapRotationBySpeed(transform.right, groundDirection, r, dt);
     }
 
     //pass negative dt when reversing crouch
@@ -294,9 +302,14 @@ public class SpiderMovementController : MonoBehaviour
         //--note you only want to do this when strongly grounded
         Vector2 down = -transform.up;
         var l = Vector2.Dot(p - (Vector2)heightReferencePoint.position, down) - preferredRideHeight;
-        var f = heightSpringForce * l * down;
+        if (l < 0 || grapple.GrappleReleaseInput == 0)
+        {
+            var f = heightSpringForce * l * down;
+            rb.AddForce(rb.mass * f);
+        }
+
         var v = Vector2.Dot(rb.linearVelocity, down) * down;
-        rb.AddForce(rb.mass * (f - heightSpringDamping * v));
+        rb.AddForce(rb.mass * - heightSpringDamping * v);
     }
 
     private void UpdateAirborneLegDrift()
