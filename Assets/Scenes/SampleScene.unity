@@ -1674,7 +1674,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: minLength
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: grappleMass
@@ -1687,6 +1687,18 @@ PrefabInstance:
     - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: baseShootSpeed
       value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
+      propertyPath: carrySpringForce
+      value: 2500
+      objectReference: {fileID: 0}
+    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
+      propertyPath: carrySpringDamping
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
+      propertyPath: constraintIterations
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: shootSpeedPowerUpMax

@@ -83,29 +83,16 @@ public class SilkGrapple : MonoBehaviour
 
         if (grapple == null)
         {
-            if (poweringUp)
+            if (poweringUp && shootSpeedPowerUp < shootSpeedPowerUpMax)
             {
-                if (shootSpeedPowerUp < shootSpeedPowerUpMax)
-                {
-                    shootSpeedPowerUp += shootSpeedPowerUpRate * Time.deltaTime;
-                }
+                shootSpeedPowerUp += shootSpeedPowerUpRate * Time.deltaTime;
                 if (shootSpeedPowerUp > shootSpeedPowerUpMax)
                 {
                     shootSpeedPowerUp = shootSpeedPowerUpMax;
                     //but we keep poweringUp = true, so grapple doesn't shoot until you release W
                 }
-                if (!Input.GetKey(KeyCode.W))
-                {
-                    poweringUp = false;
-                }
             }
-            else
-            {
-                if (Input.GetKey(KeyCode.W))
-                {
-                    poweringUp = true;
-                }
-            }
+            poweringUp = Input.GetKey(KeyCode.W);
         }
         else
         {
@@ -218,9 +205,10 @@ public class SilkGrapple : MonoBehaviour
         //    shooterRb.AddForceAtPosition(shooterRb.mass * (carrySpringForce * error - carrySpringDamping * v) * d, barrel.position);
         //}
 
-        var t = CarryTension();
+        var t = NetTension();
         if (t > 0)
         {
+            t /= grapple.lastIndex;//average tension
             var d = (grapple.nodes[grapple.lastIndex].position - grapple.nodes[0].position).normalized;
             var v = Vector2.Dot(shooterRb.linearVelocity, d);
             shooterRb.AddForceAtPosition(shooterRb.mass * (carrySpringForce * t - carrySpringDamping * v) * d, barrel.position);
@@ -229,18 +217,16 @@ public class SilkGrapple : MonoBehaviour
     }
 
     //2do: should probably only sample the first few nodes near anchor(and average, so that changing how many are sampled won't throw things off)
-    private float CarryTension()
+    private float NetTension()
     {
         float total = 0;
-        int j = 0;
         //int m = Mathf.Min(grapple.nodes.Length, anchorIndex + tensionSampleSize + 1);
         for (int i = 1; i < grapple.lastIndex; i++)
         {
             total += (grapple.nodes[i].position - grapple.nodes[i - 1].position).magnitude - grapple.nodeSpacing;
-            j++;
         }
 
-        return total / j;
+        return total;
     }
 
     private void UpdateGrappleLength()
@@ -252,7 +238,7 @@ public class SilkGrapple : MonoBehaviour
                 AddGrappleLength(grappleReleaseInput * releaseRate * fixedDt);
             }
         }
-        else if (grapple.Length < maxLength)
+        else if (grapple.Length < maxLength && NetTension() > 0)
         {
             AddGrappleLength(ShootSpeed * fixedDt);
         }
