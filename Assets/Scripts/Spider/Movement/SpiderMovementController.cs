@@ -33,9 +33,11 @@ public class SpiderMovementController : MonoBehaviour
     [SerializeField] float heightSpringDamping;
     [SerializeField] float heightSampleWidth;
     [SerializeField] float balanceSpringForce;
+    [SerializeField] float airborneBalanceSpringForce;
     //[SerializeField] float balanceSpringPower;
     [SerializeField] float balanceSpringDamping;
     [SerializeField] float jumpForce;
+    //[SerializeField] float jumpForceTorqueFactor;
     [SerializeField] float jumpForceCrouchBoostRate;
     [SerializeField] float uphillJumpDirectionRotationRate;
     [SerializeField] float uphillJumpTakeoffRotationFraction;
@@ -127,10 +129,16 @@ public class SpiderMovementController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        //2DO: computing strongly grounded multiple times per fixedupdate is inefficient and dumb
         UpdateGroundData();
-        HandleMoveInput(); 
+        var stronglyGrounded = StronglyGrounded;
+        HandleMoveInput(stronglyGrounded);
         HandleJumpInput();
-        if (StronglyGrounded)
+        if (!grounded)//bc this might change after handling jump input (and we need to do jump before height spring, so height spring doesn't fight jump force
+        {
+            stronglyGrounded = false;
+        }
+        if (stronglyGrounded)
         {
             UpdateHeightSpring();
         }
@@ -175,10 +183,9 @@ public class SpiderMovementController : MonoBehaviour
     {
         var s = transform.localScale;
         transform.localScale = new Vector3(-s.x, s.y, s.z);
-        //legSynchronizer.OnBodyChangedDirection();
     }
 
-    private void HandleMoveInput()
+    private void HandleMoveInput(bool stronglyGrounded)
     {
 
         //accelCap bc otherwise if speed is highly negative, we get ungodly rates of acceleration
@@ -201,7 +208,7 @@ public class SpiderMovementController : MonoBehaviour
             var s = Mathf.Min(maxSpd - spd, accCap * maxSpd);
             rb.AddForce(accelFactor * s * rb.mass * d);
         }
-        else if (StronglyGrounded)
+        else if (stronglyGrounded)
         {
             Vector2 d = FacingRight ? groundPointGroundDirection : -groundPointGroundDirection;
             var spd = Vector2.Dot(rb.linearVelocity, d);
@@ -225,19 +232,14 @@ public class SpiderMovementController : MonoBehaviour
         return Mathf.Lerp(maxSpeed, maxSpeedAirborne, lerpAmt);
     }
 
-    private void Balance(/*float dt*/)
+    private void Balance()
     {
-        //if (grounded || grapple.GrappleReleaseInput == 0)
-        //{
-        //    var c = Vector2.Dot(transform.up, groundDirection);
-        //    rb.AddTorque(rb.mass * (c * balanceSpringForce - balanceSpringDamping * rb.angularVelocity));
-        //}
-        //else
-        //{
-        //    rb.AddTorque(-rb.mass * balanceSpringDamping * rb.angularVelocity);
-        //}
-        var c = Vector2.Dot(transform.up, /*grounded ? predictiveGroundDirection :*/ groundDirection);
-        var f = c * balanceSpringForce - balanceSpringDamping * rb.angularVelocity;
+        var f = - balanceSpringDamping * rb.angularVelocity;
+        if (grounded || !grapple.GrappleAnchored)
+        {
+            var c = Vector2.Dot(transform.up, groundDirection);
+            f += c * (grounded ? balanceSpringForce : airborneBalanceSpringForce);
+        }
         rb.AddTorque(rb.mass * f);
     }
 
@@ -298,18 +300,16 @@ public class SpiderMovementController : MonoBehaviour
     private void UpdateHeightSpring()
     {
         var p = groundMap.AveragePointFromCenter(-heightSampleWidth, heightSampleWidth);
-        //^so that body sinks a little as it rounds a sharp peak (keeping leg extension natural)
+        //^average point so that body sinks a little as it rounds a sharp peak (keeping leg extension natural)
         //--note you only want to do this when strongly grounded
         Vector2 down = -transform.up;
+        var f = -heightSpringDamping * Vector2.Dot(rb.linearVelocity, down);
         var l = Vector2.Dot(p - (Vector2)heightReferencePoint.position, down) - preferredRideHeight;
         if (l < 0 || grapple.GrappleReleaseInput == 0)
         {
-            var f = heightSpringForce * l * down;
-            rb.AddForce(rb.mass * f);
+            f += heightSpringForce * l;
         }
-
-        var v = Vector2.Dot(rb.linearVelocity, down) * down;
-        rb.AddForce(rb.mass * - heightSpringDamping * v);
+        rb.AddForce(rb.mass * f * down);
     }
 
     private void UpdateAirborneLegDrift()
