@@ -224,7 +224,7 @@ public class SpiderMovementController : MonoBehaviour
     {
         var f = - balanceSpringDamping * rb.angularVelocity;
         if (grounded || !grapple.GrappleAnchored || VerifyingJump() || !grapple.SourceIsBelowGrapple)
-            //in the future maybe i want to base this on tension? so balance if not hanging below grapple or if tension is low
+            //2DO: grapple still f'ing up jumps
         {
             var c = Vector2.Dot(transform.up, groundDirection);
             f += c * (grounded ? balanceSpringForce : airborneBalanceSpringForce);

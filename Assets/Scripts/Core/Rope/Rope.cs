@@ -99,9 +99,14 @@ public class Rope
             var d = nodes[i].position - nodes[i - 1].position;
             var l = d.magnitude;
 
+            //if (!(l > 10E-05f))
+            //{
+            //    return;
+            //}
+
             var error = l - nodeSpacing;
 
-            if (error > CONSTRAINTS_TOLERANCE)
+            if (error > CONSTRAINTS_TOLERANCE /*|| error < -CONSTRAINTS_TOLERANCE*/)
             {
                 var c = (error / l) * d;
                 if (nodes[i - 1].Anchored)
