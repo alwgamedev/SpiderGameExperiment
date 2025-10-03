@@ -32,11 +32,6 @@ public class SilkGrapple : MonoBehaviour
     [SerializeField] float carrySpringDamping;
 
     int grappleReleaseInput;//1 = release, -1 = retract, 0 = none
-    //float grappleLength;
-    //int releaseTimer;
-    ////float shootSpeed;
-    //int anchorIndex;
-    //int terminusIndex;
     bool poweringUp;
     float shootSpeedPowerUp;
 
@@ -50,11 +45,15 @@ public class SilkGrapple : MonoBehaviour
     float fixedDt;
     float fixedDt2;
 
-    public bool GrappleAnchored => grapple != null /*&& anchorIndex != grapple.lastIndex*/ && grapple.nodes[grapple.lastIndex].Anchored;
-    public int GrappleReleaseInput => grappleReleaseInput;
-    //int NodesPerRelease => GrappleAnchored ? nodesPerReleaseAnchored : nodesPerRelease;
-    //float ShootSpeed => nodeSpacing * nodesPerRelease / (timeStepsPerRelease * fixedDt);
-    //int AnchorIndexMax => grapple.nodes.Length - anchorIndexMaxOffset;
+    public bool GrappleAnchored => grapple != null && grapple.nodes[grapple.lastIndex].Anchored;
+    public int GrappleReleaseInput => grapple == null ? 0 : grappleReleaseInput;
+    //public bool JustStoppedPullingRb { get; private set; }
+    //public float LastTension { get; private set; }
+    public bool PullingRb { get; private set; }
+    public bool StronglyPullingRb { get; private set; }
+    public Vector2 GrappleExtent => GrapplePosition - AnchorPosition;
+    public Vector2 GrapplePosition => grapple.nodes[grapple.lastIndex].position;
+    public bool SourceIsBelowGrapple => GrapplePosition.y > source.position.y;
     float ShootSpeed => shootSpeedPowerUp * baseShootSpeed;
     Vector2 AnchorPosition => source.position;
 
@@ -102,7 +101,10 @@ public class SilkGrapple : MonoBehaviour
             }
             else if (GrappleAnchored)
             {
-                grappleReleaseInput = (Input.GetKey(KeyCode.W) && grapple.Length < maxLength ? 1 : 0) + (Input.GetKey(KeyCode.S) && grapple.Length > minLength ? -1 : 0);
+                //bool neg = grappleReleaseInput < 0;
+                grappleReleaseInput = (Input.GetKey(KeyCode.W) && grapple.Length < maxLength ? 1 : 0) 
+                    + (Input.GetKey(KeyCode.S) && grapple.Length > minLength ? -1 : 0);
+                //JustStoppedPullingRb = neg && !(grappleReleaseInput < 0);
             }
         }
     }
@@ -120,12 +122,13 @@ public class SilkGrapple : MonoBehaviour
         }
         if (grapple != null)
         {
-            UpdateGrappleLength();
             UpdateAnchorPosition();
             grapple.FixedUpate(fixedDt, fixedDt2);
+            var t = Tension();
+            UpdateGrappleLength(t);
             if (GrappleAnchored)
             {
-                UpdateCarrySpring();
+                UpdateCarrySpring(t);
             }
 
         }
@@ -183,53 +186,40 @@ public class SilkGrapple : MonoBehaviour
         grapple.nodes[0].position = AnchorPosition;
     }
 
-    //private void PositionAnchoredPoints()
-    //{
-    //    var p = AnchorPosition;
-    //    for (int i = 0; i < anchorIndex + 1; i++)
-    //    {
-    //        grapple.nodes[i].position = p;
-    //    }
-    //}
-
-    private void UpdateCarrySpring()
+    private void UpdateCarrySpring(float tension)
     {
-        //var l0 = grapple.nodeSpacing * (grapple.lastIndex - anchorIndex);
-        //var d = grapple.nodes[grapple.lastIndex].position - grapple.nodes[anchorIndex].position;
-        //var l = d.magnitude;
-        //var error = d.magnitude - l0;
-        //if (error > 0)
-        //{
-        //    d /= l;
-        //    var v = Vector2.Dot(shooterRb.linearVelocity, d);
-        //    shooterRb.AddForceAtPosition(shooterRb.mass * (carrySpringForce * error - carrySpringDamping * v) * d, barrel.position);
-        //}
-
-        var t = NetTension();
-        if (t > 0)
+        PullingRb = tension > 0;
+        StronglyPullingRb = PullingRb && Vector2.Dot(shooterRb.linearVelocity, GrappleExtent) > 0;
+        if (PullingRb)
         {
-            t /= grapple.lastIndex;//average tension
-            var d = (grapple.nodes[grapple.lastIndex].position - grapple.nodes[0].position).normalized;
+            
+            tension /= grapple.lastIndex;//average tension -- if tension calculation returned early (less segments), then tension was 0 anyway
+            var d = (grapple.nodes[1].position - grapple.nodes[0].position).normalized;//can use direction from anchor to grapple, but doesn't work well when grapple is wrapped tightly around a corner
             var v = Vector2.Dot(shooterRb.linearVelocity, d);
-            shooterRb.AddForceAtPosition(shooterRb.mass * (carrySpringForce * t - carrySpringDamping * v) * d, barrel.position);
+            shooterRb.AddForceAtPosition(shooterRb.mass * (carrySpringForce * tension - carrySpringDamping * v) * d, barrel.position);
         }
 
     }
 
     //2do: should probably only sample the first few nodes near anchor(and average, so that changing how many are sampled won't throw things off)
-    private float NetTension()
+    private float Tension()
     {
         float total = 0;
-        //int m = Mathf.Min(grapple.nodes.Length, anchorIndex + tensionSampleSize + 1);
         for (int i = 1; i < grapple.lastIndex; i++)
         {
+
             total += (grapple.nodes[i].position - grapple.nodes[i - 1].position).magnitude - grapple.nodeSpacing;
+            if (total < 0)
+            {
+                //this makes sense bc we're counting from anchor up, so we've got net slack *near anchor*
+                return 0;
+            }
         }
 
         return total;
     }
 
-    private void UpdateGrappleLength()
+    private void UpdateGrappleLength(float tension)
     {
         if (GrappleAnchored)
         {
@@ -238,7 +228,7 @@ public class SilkGrapple : MonoBehaviour
                 AddGrappleLength(grappleReleaseInput * releaseRate * fixedDt);
             }
         }
-        else if (grapple.Length < maxLength && NetTension() > 0)
+        else if (grapple.Length < maxLength && tension > 0)
         {
             AddGrappleLength(ShootSpeed * fixedDt);
         }
@@ -334,6 +324,8 @@ public class SilkGrapple : MonoBehaviour
         grapple = null;
         grappleReleaseInput = 0;
         shootSpeedPowerUp = 0;
+        PullingRb = false;
+        //JustStoppedPullingRb = false;
         //anchorIndex = 0;
         //releaseTimer = 0;
     }

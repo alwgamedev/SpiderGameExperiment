@@ -6647,14 +6647,16 @@ MonoBehaviour:
   decelFactor: 45
   airborneAccelMultiplier: 1
   gripStrength: 400
+  weakGripStrength: 4
   maxSpeed: 3.25
   maxSpeedAirborne: 5
   preferredRideHeight: 1
   heightSpringForce: 400
-  heightSpringDamping: 22
+  weakHeightSpringForce: 4
+  heightSpringDamping: 25
   heightSampleWidth: 0.8
   balanceSpringForce: 32.5
-  airborneBalanceSpringForce: 13
+  airborneBalanceSpringForce: 18
   balanceSpringDamping: 0.05
   jumpForce: 10
   jumpForceCrouchBoostRate: 14
@@ -6745,7 +6747,7 @@ PrefabInstance:
       objectReference: {fileID: 2582591312671585704}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: grappleMass
-      value: 500
+      value: 2500
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: releaseRate
@@ -6761,11 +6763,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: carrySpringForce
-      value: 2500
+      value: 3000
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: carrySpringDamping
-      value: 1
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: anchorIndexMaxOffset
