@@ -1589,8 +1589,8 @@ Transform:
   m_GameObject: {fileID: 1910163370}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.25, y: 5.43, z: 0}
-  m_LocalScale: {x: 8.211646, y: 11.933304, z: 1}
+  m_LocalPosition: {x: 6.25, y: 7.162, z: 0}
+  m_LocalScale: {x: 8.211646, y: 8.469066, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -1664,54 +1664,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: numNodes
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: grappleMass
-      value: 99
-      objectReference: {fileID: 0}
-    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: carrySpringForce
-      value: 300
-      objectReference: {fileID: 0}
-    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: carrySpringDamping
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: constraintIterations
-      value: 15
-      objectReference: {fileID: 0}
-    - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: decelFactor
-      value: 60
-      objectReference: {fileID: 0}
-    - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: groundPtSlipRate
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: weakGripStrength
-      value: 50
-      objectReference: {fileID: 0}
-    - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: groundPtSlipThreshold
-      value: 0.15
-      objectReference: {fileID: 0}
-    - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: gripStrengthSmoothingRate
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: groundedExitToleranceFactor
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: heightSpringForceSmoothingRate
-      value: 3
-      objectReference: {fileID: 0}
     - target: {fileID: 8910507805382992582, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: m_LocalPosition.x
       value: -25.15

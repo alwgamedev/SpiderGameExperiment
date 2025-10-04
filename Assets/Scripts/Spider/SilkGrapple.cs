@@ -53,8 +53,9 @@ public class SilkGrapple : MonoBehaviour
     public int GrappleReleaseInput => grapple == null ? 0 : grappleReleaseInput;
     //public bool JustStoppedPullingRb { get; private set; }
     //public float LastTension { get; private set; }
-    public bool PullingShooter { get; private set; }
+    public bool PositiveTension { get; private set; }
     //public bool StronglyPullingRb { get; private set; }
+    public Vector2 LastCarryForceApplied { get; private set; }
     public bool ShooterMovingTowardsGrapple => Vector2.Dot(shooterRb.linearVelocity, GrappleExtent) > 0;
     public Vector2 GrappleExtent => GrapplePosition - AnchorPosition;
     public Vector2 GrapplePosition => grapple.nodes[grapple.lastIndex].position;
@@ -195,19 +196,16 @@ public class SilkGrapple : MonoBehaviour
     {
         var d = grapple.nodes[1].position - grapple.nodes[0].position;
         var l = d.magnitude;
-        PullingShooter = l > grapple.nodeSpacing;
-        if (PullingShooter)
+        PositiveTension = l > grapple.nodeSpacing;
+        if (PositiveTension)
         {
             var t = (l - grapple.nodeSpacing) / grapple.nodeSpacing;
             d /= l;
-            shooterRb.AddForce/*AtPosition*/(shooterRb.mass * (carrySpringForce * t - carrySpringDamping * Vector2.Dot(shooterRb.linearVelocity, d)) * d/*, source.position*/);
+            LastCarryForceApplied = shooterRb.mass * carrySpringForce * t * d;
+            shooterRb.AddForce/*AtPosition*/(LastCarryForceApplied - shooterRb.mass * carrySpringDamping * Vector2.Dot(shooterRb.linearVelocity, d) * d/*, source.position*/);
         }
-        //var d = (grapple.nodes[5].position - grapple.nodes[0].position).normalized;//can use direction from anchor to grapple, but doesn't work well when grapple is wrapped tightly around a corner
-        //var v = Vector2.Dot(shooterRb.linearVelocity, d);
-        //shooterRb.AddForceAtPosition(shooterRb.mass * (carrySpringForce * tension - carrySpringDamping * v) * d, barrel.position);
     }
 
-    //2do: should probably only sample the first few nodes near anchor(and average, so that changing how many are sampled won't throw things off)
     private float NormalizedTension()
     {
         float total = 0;
@@ -274,7 +272,7 @@ public class SilkGrapple : MonoBehaviour
         grapple = null;
         grappleReleaseInput = 0;
         shootSpeedPowerUp = 0;
-        PullingShooter = false;
+        PositiveTension = false;
         //StronglyPullingRb = false;
         //JustStoppedPullingRb = false;
         //anchorIndex = 0;

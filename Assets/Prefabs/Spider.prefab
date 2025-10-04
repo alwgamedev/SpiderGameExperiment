@@ -6639,6 +6639,8 @@ MonoBehaviour:
   groundedEntryToleranceFactor: 1.05
   groundDirectionSampleWidth: 0.325
   backupGroundPtRaycastLengthFactor: 1.1
+  groundPtSlipRate: 0.5
+  groundPtSlipThreshold: 0.25
   upcomingGroundDirectionMinPos: 0
   upcomingGroundDirectionMaxPos: 0.4
   failedGroundRaycastSmoothingRate: 12
@@ -6647,12 +6649,10 @@ MonoBehaviour:
   decelFactor: 60
   airborneAccelMultiplier: 1
   gripStrength: 400
-  weakGripStrength: 4
   maxSpeed: 3.25
   maxSpeedAirborne: 5
-  preferredRideHeight: 1
+  preferredRideHeight: 0.92
   heightSpringForce: 400
-  weakHeightSpringForce: 4
   heightSpringDamping: 25
   heightSampleWidth: 0.8
   balanceSpringForce: 32.5
@@ -6746,6 +6746,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2582591312671585704}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: bounciness
+      value: 0.95
+      objectReference: {fileID: 0}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: grappleMass
       value: 99
       objectReference: {fileID: 0}
@@ -6763,7 +6767,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: carrySpringForce
-      value: 200
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: carrySpringDamping

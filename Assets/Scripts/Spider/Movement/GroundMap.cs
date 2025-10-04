@@ -147,6 +147,44 @@ public struct GroundMap
         return LeftEndPt.point + u * LeftEndPt.normal.CWPerp();
     }
 
+    public Vector2 PointFromCenterByPositionClamped(float x, out Vector2 normal)
+    {
+        if (x > 0)
+        {
+            for (int i = numFwdIntervals; i < map.Length - 1; i++)
+            {
+                var p = map[i + 1];
+                if (p.horizontalPosition > x)
+                {
+                    var q = map[i];
+                    var s = p.horizontalPosition - q.horizontalPosition;
+                    normal = q.normal;
+                    return Vector2.Lerp(q.point, p.point, (x - q.horizontalPosition) / s);
+                }
+            }
+
+            var t = x - RightEndPt.horizontalPosition;
+            normal = RightEndPt.normal;
+            return RightEndPt.point;
+        }
+
+        for (int i = numFwdIntervals; i > 0; i--)
+        {
+            var p = map[i - 1];
+            if (p.horizontalPosition < x)
+            {
+                var q = map[i];
+                var s = p.horizontalPosition - q.horizontalPosition;
+                normal = q.normal;
+                return Vector2.Lerp(q.point, p.point, (x - q.horizontalPosition) / s);
+            }
+        }
+
+        var u = x - LeftEndPt.horizontalPosition;
+        normal = LeftEndPt.normal;
+        return LeftEndPt.point;
+    }
+
     public int IndexOfLastMarkedPointBeforePosition(float x)
     {
         if (x > 0)

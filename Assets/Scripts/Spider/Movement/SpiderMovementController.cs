@@ -233,12 +233,14 @@ public class SpiderMovementController : MonoBehaviour
     private void Balance()
     {
         var f = -balanceSpringDamping * rb.angularVelocity;
-        if (grounded || !grapple.GrappleAnchored || VerifyingJump() || !grapple.SourceIsBelowGrapple)
-        //2DO: grapple still f'ing up jumps
-        {
-            var c = Vector2.Dot(transform.up, groundDirection);
-            f += c * (grounded ? balanceSpringForce : airborneBalanceSpringForce);
-        }
+        var c = Vector2.Dot(transform.up, groundDirection);
+        f += c * (grounded ? balanceSpringForce : airborneBalanceSpringForce);
+        //if (grounded || !grapple.GrappleAnchored || VerifyingJump() || !grapple.SourceIsBelowGrapple)
+        ////2DO: grapple still f'ing up jumps
+        //{
+        //    var c = Vector2.Dot(transform.up, groundDirection);
+        //    f += c * (grounded ? balanceSpringForce : airborneBalanceSpringForce);
+        //}
         rb.AddTorque(rb.mass * f);
     }
 
@@ -304,7 +306,20 @@ public class SpiderMovementController : MonoBehaviour
         Vector2 down = -transform.up;
         var v = Vector2.Dot(rb.linearVelocity, down);
         var l = Vector2.Dot(p - (Vector2)heightReferencePoint.position, down) - preferredRideHeight;
-        rb.AddForce(rb.mass * (heightSpringForce * l - heightSpringDamping * v) * down);
+        Debug.Log(l);
+        var f = - heightSpringDamping * v;
+        if (down.y > 0 ||!grapple.GrappleAnchored || l < 0 || !(Vector2.Dot(grapple.LastCarryForceApplied, down) < 0))
+        {
+            //if (down.y > 0)
+            //{
+            //    f -= Vector2.Dot(Physics2D.gravity, down);
+            //}
+            f += l * heightSpringForce;
+        }
+        rb.AddForce(rb.mass * (f - Vector2.Dot(Physics2D.gravity, down)) * down);
+        //remove affect of gravity while height spring engaged, otherwise you will settle at a height which is off by -Vector2.Dot(Physics2D.gravity, down) / heightSpringForce
+        //(meaning you will be under height when upright, and over height when upside down (which was causing feet to not reach ground while upside down))
+        //(e.g. before ride height on flat ground was always off by plus or minus 400/32 = 0.08)
     }
 
     private void UpdateAirborneLegDrift()
@@ -381,7 +396,7 @@ public class SpiderMovementController : MonoBehaviour
                 if (Mathf.Sign(l) != Mathf.Sign(v))
                 {
                     l = l < 0 ? Mathf.Min(l - groundPtSlipRate * l * v, 0) : Mathf.Max(l + groundPtSlipRate * l * v, 0);
-                    groundPoint = groundMap.PointFromCenterByPosition(l, out var n);//project onto ground does the same thing
+                    groundPoint = groundMap.PointFromCenterByPositionClamped(l, out var n);//project onto ground does the same thing
                     groundPointGroundDirection = n.CWPerp();
                 }
             }
