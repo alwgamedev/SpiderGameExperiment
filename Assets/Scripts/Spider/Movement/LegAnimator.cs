@@ -99,7 +99,7 @@ public class LegAnimator : MonoBehaviour
         //var curGroundRay = GroundRaycast(newTargetPosition, map.Center.normal, 1f, 1f);
         if (stepHeightSpeedMultiplier < 1)
         {
-            var g = map.ProjectOntoGround(newTargetPos);
+            var g = map.ProjectOntoGround(newTargetPos, out _);
             newTargetPos = Vector2.Lerp(g, newTargetPos, stepHeightSpeedMultiplier);
         }
 
@@ -288,7 +288,7 @@ public class LegAnimator : MonoBehaviour
         var h = Vector2.Dot((Vector2)hipBone.position - c.point, c.normal.CWPerp());//we could also use body position and body right
         h = bodyFacingRight ? h + StepStartHorizontalOffset(stepProgress, stepTime, restTime)
             : h - StepStartHorizontalOffset(stepProgress, stepTime, restTime);
-        return map.PointFromCenterByPosition(h);
+        return map.PointFromCenterByPosition(h, out _);
     }
 
     private Vector2 GetStepGoal(GroundMap map, bool bodyFacingRight, float restProgress, float restTime)
@@ -297,7 +297,7 @@ public class LegAnimator : MonoBehaviour
         var h = Vector2.Dot((Vector2)hipBone.position - c.point, c.normal.CWPerp());//we could also use body position and body right
         h = bodyFacingRight ? h + StepGoalHorizontalOffset(restProgress, restTime)
             : h - StepGoalHorizontalOffset(restProgress, restTime);
-        return map.PointFromCenterByPosition(h);
+        return map.PointFromCenterByPosition(h, out _);
     }
 
     private Vector2 GetStepStart(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, 

@@ -102,13 +102,14 @@ public struct GroundMap
         }
         return map[numFwdIntervals + i];
     }
-    public Vector2 ProjectOntoGround(Vector2 p)
+
+    public Vector2 ProjectOntoGround(Vector2 p, out Vector2 normal)
     {
         var x = Vector2.Dot(p - Center.point, Center.normal.CWPerp());
-        return PointFromCenterByPosition(x);
+        return PointFromCenterByPosition(x, out normal);
     }
 
-    public Vector2 PointFromCenterByPosition(float x)
+    public Vector2 PointFromCenterByPosition(float x, out Vector2 normal)
     {
         if (x > 0)
         {
@@ -119,11 +120,13 @@ public struct GroundMap
                 {
                     var q = map[i];
                     var s = p.horizontalPosition - q.horizontalPosition;
+                    normal = q.normal;
                     return Vector2.Lerp(q.point, p.point, (x - q.horizontalPosition) / s);
                 }
             }
 
             var t = x - RightEndPt.horizontalPosition;
+            normal = RightEndPt.normal;
             return RightEndPt.point + t * RightEndPt.normal.CWPerp();
         }
 
@@ -134,11 +137,13 @@ public struct GroundMap
             {
                 var q = map[i];
                 var s = p.horizontalPosition - q.horizontalPosition;
+                normal = q.normal;
                 return Vector2.Lerp(q.point, p.point, (x - q.horizontalPosition) / s);
             }
         }
 
         var u = x - LeftEndPt.horizontalPosition;
+        normal = LeftEndPt.normal;
         return LeftEndPt.point + u * LeftEndPt.normal.CWPerp();
     }
 
