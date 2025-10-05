@@ -12,6 +12,7 @@ public class SilkGrapple : MonoBehaviour
     [SerializeField] LayerMask collisionMask;
     [SerializeField] float width;
     [SerializeField] int numNodes;
+    [SerializeField] float collisionSearchRadiusBuffer;
     [SerializeField] float minLength;
     [SerializeField] float maxLength;
     [SerializeField] float baseShootSpeed;
@@ -19,7 +20,7 @@ public class SilkGrapple : MonoBehaviour
     [SerializeField] float shootSpeedPowerUpMax;
     [SerializeField] float grappleMass;
     [SerializeField] float releaseRate;
-    //[SerializeField] float retractMaxTension;0.15-.2 was reasonable (for real distance)
+    //[SerializeField] float retractMaxTension;
     [SerializeField] float aimRotationMax;
     [SerializeField] float aimRotationMin;
     [SerializeField] float aimRotationSpeed;
@@ -28,6 +29,7 @@ public class SilkGrapple : MonoBehaviour
     [SerializeField] float carrySpringDamping;
 
     int grappleReleaseInput;//1 = release, -1 = retract, 0 = none
+    //bool releaseInputEnabled;
     bool poweringUp;
     float shootSpeedPowerUp;
     float shootTimer;
@@ -52,8 +54,20 @@ public class SilkGrapple : MonoBehaviour
     public Vector2 GrappleExtent => GrapplePosition - AnchorPosition;
     public Vector2 GrapplePosition => grapple.nodes[grapple.lastIndex].position;
     public bool SourceIsBelowGrapple => GrapplePosition.y > source.position.y;
-    float ShootSpeed => shootSpeedPowerUp * baseShootSpeed;
+    float ShootSpeed => (1 + shootSpeedPowerUp) * baseShootSpeed;
     Vector2 AnchorPosition => source.position;
+
+    //private void OnDrawGizmos()
+    //{
+    //    if (grapple != null)
+    //    {
+    //        Gizmos.color = Color.yellow;
+    //        for (int i = 0; i < grapple.nodes.Length; i++)
+    //        {
+    //            Gizmos.DrawSphere(grapple.nodes[i].position, 0.1f);
+    //        }
+    //    }
+    //}
 
     private void Awake()
     {
@@ -120,21 +134,17 @@ public class SilkGrapple : MonoBehaviour
         {
             UpdateAnchorPosition();
             grapple.FixedUpate(fixedDt, fixedDt2);
-            //var t = NormalizedTension();
-            //PositiveTension = t > 0;
             UpdateGrappleLength();
             if (GrappleAnchored)
             {
                 UpdateCarrySpring();
             }
-            //StronglyPullingRb = PullingRb && Vector2.Dot(shooterRb.linearVelocity, GrappleExtent) > 0;
         }
         else
         {
             if (!poweringUp && shootSpeedPowerUp > 0)
             {
                 ShootGrapple();
-                //shootSpeedPowerUp = 0;
             }
         }
     }
@@ -242,6 +252,10 @@ public class SilkGrapple : MonoBehaviour
     {
         if (GrappleAnchored)
         {
+            //if (grappleReleaseInput < 0 && MaxTension() > retractMaxTension)
+            //{
+            //    return;
+            //}
             if (grappleReleaseInput != 0)
             {
                 AddGrappleLength(grappleReleaseInput * releaseRate * fixedDt);
@@ -250,10 +264,11 @@ public class SilkGrapple : MonoBehaviour
         else if (grapple.Length < maxLength)
         {
             shootTimer += fixedDt;
-            if (shootTimer > 0 && Vector2.Dot(GrappleExtent, shootDirection) > grapple.Length)
+            if (shootTimer > 0 && GrappleExtent.magnitude > grapple.Length)
             {
                 grapple.Length = Mathf.Clamp(0.5f * Physics2D.gravity.y * shootDirection.y * shootTimer * shootTimer + ShootSpeed * shootTimer + minLength, grapple.Length, maxLength);
             }
+            //2do: if grapple length stagnant for certain amount of time (i.e. we have reached max length or the dot > length fails for number of updates), then enable release input)
         }
     }
 
@@ -268,7 +283,7 @@ public class SilkGrapple : MonoBehaviour
     {
         var nodeSpacing = minLength / (numNodes - 1);
         grapple = new Rope(source.position, width, nodeSpacing, numNodes, drag,
-                    collisionMask, bounciness, grappleAnchorMask, constraintIterations);
+                    collisionMask, collisionSearchRadiusBuffer, bounciness, grappleAnchorMask, constraintIterations);
         grapple.nodes[0].Anchor();
         grapple.nodes[grapple.lastIndex].mass = grappleMass;
         var shootSpeed = ShootSpeed;
@@ -278,6 +293,7 @@ public class SilkGrapple : MonoBehaviour
         var g = Physics2D.gravity.y;
         //var t0 = - 2 * shootSpeed / g;
         shootTimer = - minLength / shootSpeed;//(-shootSpeed + Mathf.Sqrt(shootSpeed * shootSpeed + 2 * g * minLength)) / g;//-minLength / shootSpeed;
+        //releaseInputEnabled = false;
     }
 
     private void DestroyGrapple()
@@ -285,6 +301,8 @@ public class SilkGrapple : MonoBehaviour
         grapple = null;
         grappleReleaseInput = 0;
         shootSpeedPowerUp = 0;
+        LastCarryForceApplied = Vector2.zero;
+        //releaseInputEnabled = false;
         //PositiveCarryForce = false;
     }
 }

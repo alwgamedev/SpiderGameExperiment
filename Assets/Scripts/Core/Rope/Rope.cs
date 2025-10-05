@@ -28,7 +28,7 @@ public class Rope
     }
 
     public Rope(Vector2 position, float width, float nodeSpacing, int numNodes, 
-        float nodeDrag, int collisionMask, float collisionBounciness, int terminusAnchorMask,
+        float nodeDrag, int collisionMask, float collisionSearchRadiusBuffer, float collisionBounciness, int terminusAnchorMask,
         int constraintIterations)
     {
         this.width = width;
@@ -39,7 +39,7 @@ public class Rope
         var a = Physics2D.gravity;
         var collisionThreshold = 0.5f * width;
         nodes = Enumerable.Range(0, numNodes).Select(i => new RopeNode(position, Vector2.zero, a, 1, nodeDrag, 
-            collisionMask, collisionThreshold, collisionBounciness, false)).ToArray();
+            collisionMask, collisionThreshold, collisionSearchRadiusBuffer, collisionBounciness, false)).ToArray();
         renderPositions = nodes.Select(x => (Vector3)x.position).ToArray();
         lastIndex = numNodes - 1;
     }
@@ -99,7 +99,7 @@ public class Rope
             var d = nodes[i].position - nodes[i - 1].position;
             var l = d.magnitude;
 
-            //if (!(l > 10E-05f))
+            //if (!(l > MathTools.o51))
             //{
             //    return;
             //}
@@ -129,14 +129,28 @@ public class Rope
 
     private void ResolveCollisions(float dt)
     {
-        for (int i = 0; i < nodes.Length; i++)
+        if (nodes[lastIndex].Anchored)
         {
-            nodes[i].ResolveCollisions(dt);
+            for (int i = 0; i < nodes.Length; i++)
+            {
+                nodes[i].ResolveCollisions(dt);
+            }
         }
-
-        if (!nodes[lastIndex].Anchored && (nodes[lastIndex].CurrentCollisionLayer & terminusAnchorMask) != 0)
+        else
         {
-            nodes[lastIndex].Anchor();
+            var p = nodes[lastIndex].position;
+            for (int i = 0; i < nodes.Length; i++)
+            {
+                nodes[i].ResolveCollisions(dt);
+            }
+            if ((nodes[lastIndex].CurrentCollisionLayer & terminusAnchorMask) != 0)
+            {
+                if (!Physics2D.OverlapCircle(nodes[lastIndex].position, nodes[lastIndex].CollisionThreshold, terminusAnchorMask))
+                {
+                    nodes[lastIndex].position = p;
+                }
+                nodes[lastIndex].Anchor();
+            }
         }
     }
 
@@ -152,7 +166,7 @@ public class Rope
 
             var d = nodes[i].position - nodes[i - 1].position;
             var l = d.magnitude;
-            if (l > 10E-05f)
+            if (l > MathTools.o51)
             {
                 var u = d / l;
                 var error = l - nodeSpacing;

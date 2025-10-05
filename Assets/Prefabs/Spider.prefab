@@ -6654,7 +6654,7 @@ MonoBehaviour:
   preferredRideHeight: 0.92
   heightSpringForce: 400
   heightSpringDamping: 25
-  heightSpringBreakThreshold: 0.3
+  heightSpringBreakThreshold: 0.2
   heightSampleWidth: 0.8
   balanceSpringForce: 32.5
   airborneBalanceSpringForce: 14
@@ -6760,7 +6760,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: baseShootSpeed
-      value: 30
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: nodesPerRelease
@@ -6788,7 +6788,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: constraintIterations
-      value: 20
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: shootSpeedPowerUpMax

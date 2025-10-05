@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class SpiderMovementController : MonoBehaviour
 {
@@ -30,7 +29,8 @@ public class SpiderMovementController : MonoBehaviour
     [SerializeField] float preferredRideHeight;
     [SerializeField] float heightSpringForce;
     [SerializeField] float heightSpringDamping;
-    [SerializeField] float heightSpringBreakThreshold;
+    //[SerializeField] float heightSpringBreakThreshold;
+    [SerializeField] float grappleSquatReduction;
     [SerializeField] float heightSampleWidth;//2do: scale with spider size (and other fields)
     [SerializeField] float balanceSpringForce;
     [SerializeField] float airborneBalanceSpringForce;
@@ -53,7 +53,7 @@ public class SpiderMovementController : MonoBehaviour
     Rigidbody2D rb;
     Collider2D headCollider;
     Collider2D abdomenCollider;
-    Collider2D[] bodyCollisionBuffer = new Collider2D[4];
+    Collider2D[] bodyCollisionBuffer = new Collider2D[1];
     ContactFilter2D bodyCollisionFilter;
     LegSynchronizer legSynchronizer;
 
@@ -221,7 +221,17 @@ public class SpiderMovementController : MonoBehaviour
             Vector2 d = FacingRight ? GroundPtGroundDirection : -GroundPtGroundDirection;
             var spd = Vector2.Dot(rb.linearVelocity, d);
             var h = Vector2.Dot(groundPt.point - (Vector2)heightReferencePoint.position, d);
-            var f = rb.mass * (gripStrength * h - decelFactor * spd) * d;
+            var grip = gripStrength * h;
+            if (grapple.GrappleAnchored)
+            {
+                //so grip doesn't fight against carry force
+                var c = Vector2.Dot(grapple.LastCarryForceApplied, d);
+                if (Mathf.Sign(grip) != Mathf.Sign(c))
+                {
+                    grip += c;
+                }
+            }
+            var f = rb.mass * (grip - decelFactor * spd) * d;
             rb.AddForce(f);//grip to steep slope
         }
     }
@@ -342,11 +352,27 @@ public class SpiderMovementController : MonoBehaviour
         Vector2 down = -transform.up;
         var v = Vector2.Dot(rb.linearVelocity, down);
         var l = Vector2.Dot(p - (Vector2)heightReferencePoint.position, down) - preferredRideHeight;
-        var f = - heightSpringDamping * v;
-        if (down.y > 0 ||!grapple.GrappleAnchored || l < heightSpringBreakThreshold || !(Vector2.Dot(grapple.LastCarryForceApplied, down) < 0))
+        var f = l * heightSpringForce - heightSpringDamping * v;
+        if (grapple.GrappleAnchored)
         {
-            f += l * heightSpringForce;
+            var dot = Vector2.Dot(grapple.LastCarryForceApplied, down);
+            //if (Mathf.Sign(l) != Mathf.Sign(dot))
+            //{
+            //    f += dot;
+            //}
+            if (dot < 0 && l > 0)
+            {
+                f += dot;//don't fight grapple when it's pulling you away from ground
+            }
+            else if (dot > 0 && l < 0)
+            {
+                f -= grappleSquatReduction * dot;//fight grapple a little when it's pulling you into the ground
+            }
         }
+        //if (down.y > 0 ||!grapple.GrappleAnchored || l < heightSpringBreakThreshold || !(Vector2.Dot(grapple.LastCarryForceApplied, down) < 0))
+        //{
+        //    f += l * heightSpringForce;
+        //}
         rb.AddForce(rb.mass * (f - Vector2.Dot(Physics2D.gravity, down)) * down);
         //remove affect of gravity while height spring engaged, otherwise you will settle at a height which is off by -Vector2.Dot(Physics2D.gravity, down) / heightSpringForce
         //(meaning you will be under height when upright, and over height when upside down (which was causing feet to not reach ground while upside down))

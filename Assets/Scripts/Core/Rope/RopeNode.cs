@@ -20,16 +20,19 @@ public struct RopeNode
     float drag;
 
     int collisionMask;
+    float collisionSearchRadius;
     float collisionThreshold;
     float collisionBounciness;
     readonly Vector2[] raycastDirections;
-    int currentCollisionLayer;
+    int currentCollisionLayerMask;
+    Vector2 lastTrueCollisionNormal;
 
     public bool Anchored => anchored;
-    public int CurrentCollisionLayer => currentCollisionLayer;
+    public int CurrentCollisionLayer => currentCollisionLayerMask;
+    public float CollisionThreshold => collisionThreshold;
 
     public RopeNode(Vector2 position, Vector2 velocity, Vector2 acceleration, float mass, float drag,
-        int collisionMask, float collisionThreshold, float collisionBounciness,
+        int collisionMask, float collisionThreshold, float collisionSearchRadiusBuffer, float collisionBounciness,
         bool anchored)
     {
         this.anchored = anchored;
@@ -43,23 +46,24 @@ public struct RopeNode
         storedVelocityPointer = 0;
 
         var r = velocity.normalized;
-        if (r != Vector2.zero)
-        {
-            right = r;
-            up = r.CCWPerp();
-        }
-        else
+        if (r == Vector2.zero)
         {
             right = Vector2.right;
-            up = Vector2.up;
         }
-        raycastDirections = new Vector2[]{ right, -right, up, -up };
+        var u = r.CCWPerp();
+        right = r;
+        up = u;
+        var rr = MathTools.cos45 * r;
+        var uu = MathTools.cos45 * u;
+        raycastDirections = new Vector2[]{ right, -right, up, -up, rr + uu, -rr - uu, -rr + uu, rr - uu };
 
         this.drag = drag;
         this.collisionMask = collisionMask;
         this.collisionThreshold = collisionThreshold;
+        collisionSearchRadius = collisionThreshold + collisionSearchRadiusBuffer;
         this.collisionBounciness = collisionBounciness;
-        currentCollisionLayer = 0;
+        currentCollisionLayerMask = 0;
+        lastTrueCollisionNormal = Vector2.zero;
 
 
 
@@ -118,86 +122,169 @@ public struct RopeNode
         {
             right = r;
             up = r.CCWPerp();
+            var rr = MathTools.cos45 * right;
+            var uu = MathTools.cos45 * up;
             raycastDirections[0] = right;
             raycastDirections[1] = -right;
             raycastDirections[2] = up;
             raycastDirections[3] = -up;
+            raycastDirections[4] = rr + uu;
+            raycastDirections[5] = -rr - uu;
+            raycastDirections[6] = -rr + uu;
+            raycastDirections[7] = rr - uu;
         }
     }
 
     public void ResolveCollisions(float dt)
     {
         if (anchored) return;
-        var r = Physics2D.Raycast(position, raycastDirections[0], collisionThreshold, collisionMask);
+
+        //var r = Physics2D.Raycast(position, raycastDirections[0], collisionThreshold, collisionMask);
+        //if (r && r.distance == 0)
+        //{
+        //    r = Physics2D.Linecast(lastPosition, position, collisionMask);
+        //}
+        //else
+        //{
+        //    var r0 = r;
+        //    //var d0 = d;
+        //    var min = r && r.distance > 0 ? r.distance : Mathf.Infinity;
+        //    for (int i = 1; i < raycastDirections.Length; i++)
+        //    {
+        //        var s = Physics2D.Raycast(position, raycastDirections[i], collisionThreshold, collisionMask);
+        //        if (s && s.distance < min)
+        //        {
+        //            if (s.distance > 0)
+        //            {
+        //                r = s;
+        //                min = s.distance;
+        //            }
+        //            else if (!r0 || r0.distance > 0)
+        //            {
+        //                r0 = s;
+        //            }
+        //        }
+        //    }
+        //    if (!r)
+        //    {
+        //        r = r0;
+        //    }
+        //}
+
+        var l = collisionThreshold;
+        var r = Physics2D.Raycast(position, raycastDirections[0], collisionSearchRadius, collisionMask);
         if (!r)
         {
-            int i = 0;
-            while (!r && i < raycastDirections.Length - 1)
+            int i = 1;
+            while (!r && i < raycastDirections.Length)
             {
+                if (r)
+                {
+                    r = Physics2D.Raycast(position, raycastDirections[i], collisionSearchRadius, collisionMask);
+                    break;
+                }
                 i++;
-                r = Physics2D.Raycast(position, raycastDirections[i], collisionThreshold, collisionMask);
             }
+        }
+        else if (r.distance == 0)
+        {
+            l = collisionSearchRadius;
+            //var c = l - collisionThreshold + Mathf.Epsilon;
+            r = Physics2D.Raycast(position + l * raycastDirections[0], -raycastDirections[0], l, collisionMask);
+            for (int i = 1; i < raycastDirections.Length; i++)
+            {
+                var s = Physics2D.Raycast(position + l * raycastDirections[i], -raycastDirections[i], l, collisionMask);
+                if (s && s.distance > r.distance)
+                {
+                    r = s;
+                }
+            }
+            //if (!r || r.distance < c)
+            //{
+            //    int i = 1;
+            //    while ((!r || r.distance < c) && i < raycastDirections.Length)
+            //    {
+            //        var s = Physics2D.Raycast(position + l * raycastDirections[i], -raycastDirections[i], l, collisionMask);
+            //        if (s.distance > r.distance)
+            //        {
+            //            r = s;
+            //        }
+            //        i++;
+            //    }
+            //}
+            r.distance = l - r.distance;
+            //2do: what to do if distance is still zero (entire search radius is inside collider)
         }
 
         if (r)
         {
-            HandlePotentialCollision(dt, r);
+            //2do: creating variable l is overhead
+            HandlePotentialCollision(dt, r, l);
         }
         else
         {
-            currentCollisionLayer = 0;
+            currentCollisionLayerMask = 0;
+            lastTrueCollisionNormal = Vector2.zero;//can try to get rid of this
         }
     }
 
-    private void HandlePotentialCollision(float dt, RaycastHit2D r)
+    private void HandlePotentialCollision(float dt, RaycastHit2D r, float collisionThreshold)
     {
-        var p = r.point;
+        //var p = r.point;
         var l = r.distance;
         var n = r.normal;
 
-        if (l <= 10E-05f)
+        if (l <= MathTools.o51)
         {
-            //this is not great (normal may be in wrong direction or zero)
-            //last major 2D0
-            n = (lastPosition - position).normalized;
-            var w = collisionThreshold * n;
+            n = lastTrueCollisionNormal != Vector2.zero ? lastTrueCollisionNormal : (lastPosition - position).normalized;
+            var w = this.collisionThreshold * n;
+            var velocity = (position - lastPosition) / dt;
+            var a = Vector2.Dot(velocity, n);
+            var newVelocity = collisionBounciness * Mathf.Sign(a) * (2 * a * n - velocity);
             position += w;
-            lastPosition -= collisionBounciness * w;
+            lastPosition = position - newVelocity * dt;
             StoreCollisionVelocity(r.collider.attachedRigidbody, n);
-            currentCollisionLayer = 1 << r.collider.gameObject.layer;
+            currentCollisionLayerMask = 1 << r.collider.gameObject.layer;
             return;
-
+        }
+        else
+        {
+            lastTrueCollisionNormal = n;
         }
 
         if (l < collisionThreshold)
         {
-            ResolveCollision(dt, l, n, r.collider.attachedRigidbody);
-            currentCollisionLayer = 1 << r.collider.gameObject.layer;
+            ResolveCollision(dt, l, collisionThreshold, n, r.collider.attachedRigidbody);
+            currentCollisionLayerMask = 1 << r.collider.gameObject.layer;
         }
         else
         {
-            currentCollisionLayer = 0;
+            currentCollisionLayerMask = 0;
+            //but we don't set lastTrueCollisionNormal = 0, bc we still had a successful raycast, which could be useful for an upcoming collision!
         }
     }
 
-    private void ResolveCollision(float dt, float distanceToContactPoint, Vector2 collisionNormal, Rigidbody2D attachedRb)
+    private void ResolveCollision(float dt, float distanceToContactPoint, float collisionThreshold, Vector2 collisionNormal, Rigidbody2D attachedRb)
     {
         var velocity = (position - lastPosition) / dt;
         var speed = velocity.magnitude;
+        var diff = Mathf.Min(collisionThreshold - distanceToContactPoint, this.collisionThreshold);
+        var a = Vector2.Dot(velocity, collisionNormal);
+        var newVelocity = collisionBounciness * Mathf.Sign(a) * (2 * a * collisionNormal - velocity);
 
-        if (speed > 10E-05f)
+        if (speed > MathTools.o51)
         {
-            var timeSinceCollision = (collisionThreshold - distanceToContactPoint) / speed;
-            var newVelocity = collisionBounciness * Mathf.Sign(Vector2.Dot(velocity, collisionNormal))
-                * (2 * Vector2.Dot(velocity, collisionNormal) * collisionNormal - velocity);
-            position += (collisionThreshold - distanceToContactPoint) * collisionNormal + newVelocity * timeSinceCollision;
+            var timeSinceCollision = diff / speed;
+            position += diff * collisionNormal + newVelocity * timeSinceCollision;
             lastPosition = position - newVelocity * dt;
 
             StoreCollisionVelocity(attachedRb, collisionNormal);
         }
         else
         {
-            position += (collisionThreshold - distanceToContactPoint) * collisionNormal;
+            //lastPosition = position;
+            position += diff * collisionNormal;
+            lastPosition = position - newVelocity * dt;
         }
     }
 

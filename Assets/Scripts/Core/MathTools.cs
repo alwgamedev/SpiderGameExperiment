@@ -4,6 +4,8 @@ public static class MathTools
 {
     static System.Random rng;
 
+    public const float o51 = 10E-05f;
+
     public const float cos30 = 0.8660254f;//sqrt(3)/2
     public const float sin30 = 0.5f;
     public const float tan30 = 0.5773502f;// 1/sqrt(3)
