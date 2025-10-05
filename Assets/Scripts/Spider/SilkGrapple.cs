@@ -19,6 +19,7 @@ public class SilkGrapple : MonoBehaviour
     [SerializeField] float shootSpeedPowerUpMax;
     [SerializeField] float grappleMass;
     [SerializeField] float releaseRate;
+    //[SerializeField] float retractMaxTension;0.15-.2 was reasonable (for real distance)
     [SerializeField] float aimRotationMax;
     [SerializeField] float aimRotationMin;
     [SerializeField] float aimRotationSpeed;
@@ -46,10 +47,6 @@ public class SilkGrapple : MonoBehaviour
 
     public bool GrappleAnchored => grapple != null && grapple.nodes[grapple.lastIndex].Anchored;
     public int GrappleReleaseInput => grapple == null ? 0 : grappleReleaseInput;
-    //public bool JustStoppedPullingRb { get; private set; }
-    //public float LastTension { get; private set; }
-    //public bool PositiveCarryForce { get; private set; }
-    //public bool StronglyPullingRb { get; private set; }
     public Vector2 LastCarryForceApplied { get; private set; }
     public bool ShooterMovingTowardsGrapple => Vector2.Dot(shooterRb.linearVelocity, GrappleExtent) > 0;
     public Vector2 GrappleExtent => GrapplePosition - AnchorPosition;
@@ -57,7 +54,6 @@ public class SilkGrapple : MonoBehaviour
     public bool SourceIsBelowGrapple => GrapplePosition.y > source.position.y;
     float ShootSpeed => shootSpeedPowerUp * baseShootSpeed;
     Vector2 AnchorPosition => source.position;
-    //float GrowInterval => growIntervalMultiplier * nodeSpacing / shootSpeed;
 
     private void Awake()
     {
@@ -147,7 +143,7 @@ public class SilkGrapple : MonoBehaviour
     {
         float total = 0;
         //float cap = 0.35f * grapple.nodeSpacing;
-        for (int i = 1; i < grapple.lastIndex; i++)
+        for (int i = 1; i < grapple.nodes.Length; i++)
         {
 
             total += (grapple.nodes[i].position - grapple.nodes[i - 1].position).magnitude - grapple.nodeSpacing;
@@ -159,6 +155,21 @@ public class SilkGrapple : MonoBehaviour
         }
 
         return total;
+    }
+
+    public float MaxTension()
+    {
+        float max = -Mathf.Infinity;
+        for (int i = 1; i < grapple.nodes.Length; i++)
+        {
+            var t = (grapple.nodes[i].position - grapple.nodes[i - 1].position).magnitude - grapple.nodeSpacing;
+            if (t > max)
+            {
+                max = t;
+            }
+        }
+
+        return max;
     }
 
     public float NormalizedTension() => Tension() / grapple.Length;
@@ -259,12 +270,11 @@ public class SilkGrapple : MonoBehaviour
         grapple = new Rope(source.position, width, nodeSpacing, numNodes, drag,
                     collisionMask, bounciness, grappleAnchorMask, constraintIterations);
         grapple.nodes[0].Anchor();
-        var lastIndex = grapple.lastIndex;
-        grapple.nodes[lastIndex].mass = grappleMass;
+        grapple.nodes[grapple.lastIndex].mass = grappleMass;
         var shootSpeed = ShootSpeed;
         shootDirection = barrel.up;
         Vector2 shootVelocity = shootSpeed * shootDirection;
-        grapple.nodes[lastIndex].lastPosition -= fixedDt * shootVelocity;
+        grapple.nodes[grapple.lastIndex].lastPosition -= fixedDt * shootVelocity;
         var g = Physics2D.gravity.y;
         //var t0 = - 2 * shootSpeed / g;
         shootTimer = - minLength / shootSpeed;//(-shootSpeed + Mathf.Sqrt(shootSpeed * shootSpeed + 2 * g * minLength)) / g;//-minLength / shootSpeed;

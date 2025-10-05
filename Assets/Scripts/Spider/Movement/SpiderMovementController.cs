@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class SpiderMovementController : MonoBehaviour
 {
@@ -50,6 +51,10 @@ public class SpiderMovementController : MonoBehaviour
     [SerializeField] GroundMap groundMap;
 
     Rigidbody2D rb;
+    Collider2D headCollider;
+    Collider2D abdomenCollider;
+    Collider2D[] bodyCollisionBuffer = new Collider2D[4];
+    ContactFilter2D bodyCollisionFilter;
     LegSynchronizer legSynchronizer;
 
     int moveInput;
@@ -63,8 +68,9 @@ public class SpiderMovementController : MonoBehaviour
     float groundednessTolerance;
     Vector2 groundDirection = Vector2.right;
     Vector2 upcomingGroundDirection = Vector2.right;
-    Vector2 groundPoint = new(Mathf.Infinity, Mathf.Infinity);
-    Vector2 groundPointGroundDirection = Vector2.right;
+    //Vector2 groundPoint = new(Mathf.Infinity, Mathf.Infinity);
+    //Vector2 groundPointGroundDirection = Vector2.right;
+    GroundMapPt groundPt = new GroundMapPt(new(Mathf.Infinity, Mathf.Infinity), Vector2.up, 0, Mathf.Infinity, -1);
 
     bool allGroundMapPtsHitGround;
 
@@ -77,6 +83,7 @@ public class SpiderMovementController : MonoBehaviour
     float AccelFactor => grounded ? accelFactor : accelFactor * airborneAccelMultiplier;
     float Speed => grounded ? Mathf.Abs(Vector2.Dot(rb.linearVelocity, groundDirection)) : rb.linearVelocity.magnitude;
     bool StronglyGrounded => grounded && allGroundMapPtsHitGround;
+    Vector2 GroundPtGroundDirection => groundPt.normal.CWPerp();
 
 
     //private void OnDrawGizmos()
@@ -102,7 +109,11 @@ public class SpiderMovementController : MonoBehaviour
 
     private void Start()
     {
+        headCollider = headBone.GetComponent<Collider2D>();
+        abdomenCollider = abdomenBone.GetComponent<Collider2D>();
         legSynchronizer.Initialize(PreferredBodyPosGroundHeight, FacingRight);
+        bodyCollisionFilter.NoFilter();
+        bodyCollisionFilter.layerMask = groundLayer;
         InitializeGroundData();
     }
 
@@ -207,9 +218,9 @@ public class SpiderMovementController : MonoBehaviour
         }
         else if (StronglyGrounded)
         {
-            Vector2 d = FacingRight ? groundPointGroundDirection : -groundPointGroundDirection;
+            Vector2 d = FacingRight ? GroundPtGroundDirection : -GroundPtGroundDirection;
             var spd = Vector2.Dot(rb.linearVelocity, d);
-            var h = Vector2.Dot(groundPoint - (Vector2)heightReferencePoint.position, d);
+            var h = Vector2.Dot(groundPt.point - (Vector2)heightReferencePoint.position, d);
             var f = rb.mass * (gripStrength * h - decelFactor * spd) * d;
             rb.AddForce(f);//grip to steep slope
         }
@@ -243,7 +254,7 @@ public class SpiderMovementController : MonoBehaviour
     //only called when !grounded
     private void UpdateFreeHangingState()
     {
-        if (grapple.freeHanging && !grapple.GrappleAnchored)
+        if (grapple.freeHanging && (!grapple.GrappleAnchored || IsTouchingGroundCollider(headCollider) || IsTouchingGroundCollider(abdomenCollider)))
         {
             grapple.freeHanging = false;
         }
@@ -251,6 +262,28 @@ public class SpiderMovementController : MonoBehaviour
         {
             grapple.freeHanging = true;
         }
+    }
+
+    private bool IsTouchingGroundCollider(Collider2D c)
+    {
+        if (!(groundPt.groundColliderId  > 0))
+        {
+            return false;
+        }
+
+        c.GetContacts(bodyCollisionFilter, bodyCollisionBuffer);
+        for (int i = 0; i < bodyCollisionBuffer.Length; i++)
+        {
+            if (bodyCollisionBuffer[i] == null)
+            {
+                break;
+            }
+            if (bodyCollisionBuffer[i].GetInstanceID() == groundPt.groundColliderId)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     //pass negative dt when reversing crouch
@@ -370,11 +403,11 @@ public class SpiderMovementController : MonoBehaviour
         UpdateGroundMap();
         var i = groundMap.IndexOfFirstGroundHitFromCenter();
         var pt = groundMap[i];
-        var ptRight = pt.normal.CWPerp();
+        //var ptRight = pt.normal.CWPerp();
         var isCentralIndex = groundMap.IsCentralIndex(i);
         var goalGroundDirection = pt.hitGround && isCentralIndex ?
             groundMap.AverageNormalFromCenter(-groundDirectionSampleWidth, groundDirectionSampleWidth).CWPerp()
-            : ptRight;
+            : pt.normal.CWPerp();
 
         if (!VerifyingJump())
         {
@@ -388,15 +421,16 @@ public class SpiderMovementController : MonoBehaviour
         }
         else
         {
-            var l = Vector2.Dot(groundPoint - pt.point, goalGroundDirection);
+            var l = Vector2.Dot(groundPt.point - pt.point, goalGroundDirection);
             if (l > groundPtSlipThreshold || l < -groundPtSlipThreshold)
             {
                 var v = Vector2.Dot(rb.linearVelocity, goalGroundDirection);
                 if (Mathf.Sign(l) != Mathf.Sign(v))
                 {
                     l = l < 0 ? Mathf.Min(l - groundPtSlipRate * l * v, 0) : Mathf.Max(l + groundPtSlipRate * l * v, 0);
-                    groundPoint = groundMap.PointFromCenterByPositionClamped(l, out var n);//project onto ground does the same thing
-                    groundPointGroundDirection = n.CWPerp();
+                    groundPt = groundMap.PointFromCenterByPositionClamped(l);//project onto ground does the same thing
+                    //var groundPointGroundDirection = n.CWPerp();
+                    //groundPt = new(groundPt, n, 0, 0)
                 }
             }
         }
@@ -409,14 +443,13 @@ public class SpiderMovementController : MonoBehaviour
                     backupGroundPtRaycastLengthFactor * groundednessTolerance, groundLayer);
                 if (r)
                 {
-                    pt = new GroundMapPt(r.point, r.normal, 0, 0, true);
-                    ptRight = pt.normal.CWPerp();
-                    goalGroundDirection = ptRight;
+                    pt = new GroundMapPt(r.point, r.normal, 0, 0, r.collider.GetInstanceID());
+                    //ptRight = pt.normal.CWPerp();
+                    goalGroundDirection = pt.normal.CWPerp();
                 }
             }
 
-            groundPoint = pt.point;
-            groundPointGroundDirection = ptRight;
+            groundPt = pt;
         }
 
         groundDirection = pt.hitGround ?
@@ -435,8 +468,9 @@ public class SpiderMovementController : MonoBehaviour
 
     private void InitializeGroundPoint()
     {
-        groundPoint = groundMap.Center.point;
-        groundPointGroundDirection = groundMap.Center.normal.CWPerp();
+        //groundPoint = groundMap.Center.point;
+        //groundPointGroundDirection = groundMap.Center.normal.CWPerp();
+        groundPt = groundMap.Center;
     }
 
     private void InitializeGroundData()
