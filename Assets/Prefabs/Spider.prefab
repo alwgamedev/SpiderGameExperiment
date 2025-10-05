@@ -6654,9 +6654,10 @@ MonoBehaviour:
   preferredRideHeight: 0.92
   heightSpringForce: 400
   heightSpringDamping: 25
+  heightSpringBreakThreshold: 0.3
   heightSampleWidth: 0.8
   balanceSpringForce: 32.5
-  airborneBalanceSpringForce: 18
+  airborneBalanceSpringForce: 14
   balanceSpringDamping: 0.05
   jumpForce: 10
   jumpForceCrouchBoostRate: 14
@@ -6771,7 +6772,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: carrySpringDamping
-      value: 10
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: anchorIndexMaxOffset

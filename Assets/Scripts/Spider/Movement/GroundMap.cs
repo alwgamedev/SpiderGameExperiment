@@ -61,6 +61,70 @@ public struct GroundMap
         return true;
     }
 
+    public bool AllHitGroundFromCenter(float maxPosition)
+    {
+        if (!Center.hitGround)
+        {
+            return false;
+        }
+
+        maxPosition += Mathf.Epsilon;
+        var minPosition = -maxPosition - Mathf.Epsilon;
+        for (int i = 1; i < numFwdIntervals; i++)
+        {
+            var r = map[numFwdIntervals + i];
+            if (r.horizontalPosition < maxPosition && !r.hitGround)
+            {
+                return false;
+            }
+
+            var l = map[numFwdIntervals - i];
+            if (l.horizontalPosition > minPosition && l.hitGround)
+            {
+                return false;
+            }
+
+            if (r.horizontalPosition > maxPosition && l.horizontalPosition < minPosition)
+            {
+                return true;
+            }
+        }
+
+        return true;
+    }
+
+    public bool AnyHitGroundFromCenter(float maxPosition)
+    {
+        if (Center.hitGround)
+        {
+            return true;
+        }
+
+        maxPosition += Mathf.Epsilon;
+        var minPosition = -maxPosition - Mathf.Epsilon;
+        for (int i = 1; i < numFwdIntervals; i++)
+        {
+            var r = map[numFwdIntervals + i];
+            if (r.horizontalPosition < maxPosition && r.hitGround)
+            {
+                return true;
+            }
+
+            var l = map[numFwdIntervals - i];
+            if (l.horizontalPosition > minPosition && l.hitGround)
+            {
+                return true;
+            }
+
+            if (r.horizontalPosition > maxPosition && l.horizontalPosition < minPosition)
+            {
+                return false;
+            }
+        }
+
+        return false;
+    }
+
     public int IndexOfFirstGroundHitFromCenter()
     {
         int i = CentralIndex;
