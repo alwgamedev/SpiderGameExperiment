@@ -2070,6 +2070,37 @@ Transform:
   - {fileID: 3120058777622577783}
   m_Father: {fileID: 3602990434774389934}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2147308122184780249
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2489851693374189352}
+  m_Layer: 0
+  m_Name: Base
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2489851693374189352
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2147308122184780249}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0, y: -0.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4349527747444524243}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2150763637009040213
 GameObject:
   m_ObjectHideFlags: 0
@@ -6635,11 +6666,11 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  groundedExitToleranceFactor: 1.5
+  groundedExitToleranceFactor: 1.65
   groundedEntryToleranceFactor: 1.05
   groundDirectionSampleWidth: 0.325
   backupGroundPtRaycastLengthFactor: 1.1
-  groundPtSlipRate: 0.95
+  groundPtSlipRate: 0.85
   groundPtSlipThreshold: 0.15
   upcomingGroundDirectionMinPos: 0
   upcomingGroundDirectionMaxPos: 0.4
@@ -6649,13 +6680,14 @@ MonoBehaviour:
   accelCap: 5
   decelFactor: 60
   gripStrength: 400
+  grapplePullGripReduction: 0.9
   maxSpeed: 3.25
   maxSpeedAirborne: 5
   preferredRideHeight: 0.92
   heightSpringForce: 400
   heightSpringDamping: 25
-  heightSpringBreakThreshold: 0.5
-  grappleSquatReduction: 0.75
+  heightSpringBreakThreshold: 0.1
+  grappleSquatReduction: 0.25
   heightSampleWidth: 0.8
   balanceSpringForce: 32.5
   airborneBalanceSpringForce: 14
@@ -6748,6 +6780,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2582591312671585704}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: barrelBase
+      value: 
+      objectReference: {fileID: 2489851693374189352}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: bounciness
       value: 0.9
       objectReference: {fileID: 0}
@@ -6777,7 +6813,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: carrySpringDamping
-      value: 2.5
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: anchorIndexMaxOffset
@@ -6869,7 +6905,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2489851693374189352}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
 --- !u!114 &1051379001623071205 stripped

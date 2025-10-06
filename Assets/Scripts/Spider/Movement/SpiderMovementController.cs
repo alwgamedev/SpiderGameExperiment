@@ -26,6 +26,7 @@ public class SpiderMovementController : MonoBehaviour
     [SerializeField] float decelFactor;
     //[SerializeField] float airborneAccelMultiplier;
     [SerializeField] float gripStrength;
+    [SerializeField] float grapplePullGripReduction;
     [SerializeField] float maxSpeed;
     [SerializeField] float maxSpeedAirborne;
     //[SerializeField] float maxSpeedFreeHanging;
@@ -125,6 +126,7 @@ public class SpiderMovementController : MonoBehaviour
         if (VerifyingJump())
         {
             jumpVerificationTimer -= Time.deltaTime;
+            //grapple.carryForceMultiplier = jumpVerificationTimer < 0 ? 1 : 1 - (jumpVerificationTimer / jumpVerificationTime);
         }
 
         CaptureInput();
@@ -136,18 +138,12 @@ public class SpiderMovementController : MonoBehaviour
     private void FixedUpdate()
     {
         UpdateGroundData();
+        UpdateFreeHangingState();
         HandleMoveInput();
         HandleJumpInput();
-        if (!StronglyGrounded)
+
+        if (StronglyGrounded)
         {
-            UpdateFreeHangingState();
-        }
-        else
-        {
-            if (grapple.freeHanging)
-            {
-                grapple.freeHanging = false;
-            }
             UpdateHeightSpring();
         }
         Balance();
@@ -160,6 +156,8 @@ public class SpiderMovementController : MonoBehaviour
         //when done in late update get weird things like legs lagging behind (up) during long freefalls
         //for performance's sake we could try just updating legSynch in one fixed update between each update? (i.e. use a flag "legSynchNeedsUpdate")
         //and see if that works
+
+        grapple.carryForceMultiplier = VerifyingJump() ? 1 - (jumpVerificationTimer / jumpVerificationTime) : 1;
     }
 
     private void CaptureInput()
@@ -248,7 +246,7 @@ public class SpiderMovementController : MonoBehaviour
                 var c = Vector2.Dot(grapple.LastCarryForceApplied, d);
                 if (Mathf.Sign(grip) != Mathf.Sign(c))
                 {
-                    grip += c;
+                    grip += grapplePullGripReduction * c;
                 }
             }
             var f = rb.mass * (grip - decelFactor * spd) * d;
@@ -290,11 +288,11 @@ public class SpiderMovementController : MonoBehaviour
     //only called when !grounded
     private void UpdateFreeHangingState()
     {
-        if (grapple.freeHanging && (!grapple.GrappleAnchored || IsTouchingGroundCollider(headCollider) || IsTouchingGroundCollider(abdomenCollider)))
+        if (grapple.freeHanging && (grounded || !grapple.GrappleAnchored || IsTouchingGroundCollider(headCollider) || IsTouchingGroundCollider(abdomenCollider)))
         {
             grapple.freeHanging = false;
         }
-        else if (!grapple.freeHanging && grapple.GrappleAnchored && !VerifyingJump() && grapple.Tension() > 0 && Vector2.Dot(rb.linearVelocity, grapple.GrappleExtent) < 0)
+        else if (!grapple.freeHanging && grapple.GrappleAnchored && !grounded && !VerifyingJump() && grapple.Tension() > 0 && Vector2.Dot(rb.linearVelocity, grapple.GrappleExtent) < 0)
         {
             grapple.freeHanging = true;
         }
@@ -345,6 +343,7 @@ public class SpiderMovementController : MonoBehaviour
         {
             jumpInput = false;
             jumpVerificationTimer = jumpVerificationTime;//needs to be first bc SetGround > OnTakeoff depends on VerifyingJump()
+            //grapple.carryForceMultiplier = 0;
             SetGrounded(false);
             var jumpDir = JumpDirection();
             rb.AddForce(rb.mass * JumpForce() * jumpDir, ForceMode2D.Impulse);
@@ -388,7 +387,7 @@ public class SpiderMovementController : MonoBehaviour
             //}
             if (dot < 0 && l > 0)
             {
-                f += l > heightSpringBreakThreshold ? dot : (l / heightSpringBreakThreshold) * dot;
+                f += l > heightSpringBreakThreshold ? dot : l / heightSpringBreakThreshold * dot;
             }
             else if (dot > 0 && l < 0)
             {
@@ -448,6 +447,7 @@ public class SpiderMovementController : MonoBehaviour
         legSynchronizer.timeScale = 1;
         legSynchronizer.outwardDrift = 0;
         RecomputeGroundednessTolerance();
+        //grapple.carryForceMultiplier = 1;
     }
 
     private void UpdateGroundData()

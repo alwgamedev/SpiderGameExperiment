@@ -5,6 +5,7 @@ public class SilkGrapple : MonoBehaviour
 {
     [SerializeField] Transform source;//shoot from here
     [SerializeField] Transform barrel;//rotate this
+    [SerializeField] Transform barrelBase;
     [SerializeField] Rigidbody2D shooterRb;
     [SerializeField] float drag;
     [SerializeField] float bounciness;
@@ -45,7 +46,9 @@ public class SilkGrapple : MonoBehaviour
     float fixedDt;
     float fixedDt2;
 
+    //public bool carryForceDisabled;
     public bool freeHanging;
+    public float carryForceMultiplier = 1;
 
     public bool GrappleAnchored => grapple != null && grapple.nodes[grapple.lastIndex].Anchored;
     public int GrappleReleaseInput => grapple == null ? 0 : grappleReleaseInput;
@@ -57,7 +60,7 @@ public class SilkGrapple : MonoBehaviour
     public bool SourceIsBelowGrapple => GrapplePosition.y > source.position.y;
     float ShootSpeed => (1 + shootSpeedPowerUp) * baseShootSpeed;
     Vector2 AnchorPosition => source.position;
-    public Vector2 FreeHangLeveragePoint => source.position;
+    public Vector2 FreeHangLeveragePoint => barrelBase.position;
     public Vector2 FreeHangUp => (FreeHangLeveragePoint - shooterRb.centerOfMass).normalized;
 
     //private void OnDrawGizmos()
@@ -240,7 +243,7 @@ public class SilkGrapple : MonoBehaviour
             var t = (l - grapple.nodeSpacing) / grapple.nodeSpacing;
             //LastCarryForceDirection = d / l;
             d /= l;
-            LastCarryForceApplied = shooterRb.mass * carrySpringForce * t * d;
+            LastCarryForceApplied = shooterRb.mass * carrySpringForce * carryForceMultiplier * t * d;
             if (freeHanging)
             {
                 shooterRb.AddForceAtPosition(LastCarryForceApplied - shooterRb.mass * carrySpringDamping * Vector2.Dot(shooterRb.linearVelocity, d) * d, FreeHangLeveragePoint);
@@ -249,6 +252,10 @@ public class SilkGrapple : MonoBehaviour
             {
                 shooterRb.AddForce(LastCarryForceApplied - shooterRb.mass * carrySpringDamping * Vector2.Dot(shooterRb.linearVelocity, d) * d);
             }
+        }
+        else
+        {
+            LastCarryForceApplied = Vector2.zero;
         }
     }
 
