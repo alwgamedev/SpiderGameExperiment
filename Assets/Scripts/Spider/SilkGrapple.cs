@@ -49,6 +49,7 @@ public class SilkGrapple : MonoBehaviour
 
     public bool GrappleAnchored => grapple != null && grapple.nodes[grapple.lastIndex].Anchored;
     public int GrappleReleaseInput => grapple == null ? 0 : grappleReleaseInput;
+    //public Vector2 LastCarryForceDirection { get; private set; }
     public Vector2 LastCarryForceApplied { get; private set; }
     public bool ShooterMovingTowardsGrapple => Vector2.Dot(shooterRb.linearVelocity, GrappleExtent) > 0;
     public Vector2 GrappleExtent => GrapplePosition - AnchorPosition;
@@ -56,6 +57,8 @@ public class SilkGrapple : MonoBehaviour
     public bool SourceIsBelowGrapple => GrapplePosition.y > source.position.y;
     float ShootSpeed => (1 + shootSpeedPowerUp) * baseShootSpeed;
     Vector2 AnchorPosition => source.position;
+    public Vector2 FreeHangLeveragePoint => source.position;
+    public Vector2 FreeHangUp => (FreeHangLeveragePoint - shooterRb.centerOfMass).normalized;
 
     //private void OnDrawGizmos()
     //{
@@ -235,11 +238,12 @@ public class SilkGrapple : MonoBehaviour
         if (l > grapple.nodeSpacing)
         {
             var t = (l - grapple.nodeSpacing) / grapple.nodeSpacing;
+            //LastCarryForceDirection = d / l;
             d /= l;
             LastCarryForceApplied = shooterRb.mass * carrySpringForce * t * d;
             if (freeHanging)
             {
-                shooterRb.AddForceAtPosition(LastCarryForceApplied - shooterRb.mass * carrySpringDamping * Vector2.Dot(shooterRb.linearVelocity, d) * d, barrel.position);
+                shooterRb.AddForceAtPosition(LastCarryForceApplied - shooterRb.mass * carrySpringDamping * Vector2.Dot(shooterRb.linearVelocity, d) * d, FreeHangLeveragePoint);
             }
             else
             {
