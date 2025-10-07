@@ -6645,7 +6645,7 @@ MonoBehaviour:
   upcomingGroundDirectionMaxPos: 0.4
   failedGroundRaycastSmoothingRate: 12
   accelFactor: 45
-  accelFactorFreeHanging: 10
+  accelFactorFreeHanging: 6
   accelCap: 5
   decelFactor: 60
   gripStrength: 400
@@ -6667,7 +6667,7 @@ MonoBehaviour:
   uphillJumpTakeoffRotationFraction: 0.25
   jumpVerificationTime: 0.25
   tapJumpVerificationTime: 0.125
-  freeHangEntryTension: 0.75
+  freeHangEntryTension: 0.5
   freeHangExitTension: 0
   crouchHeightFraction: 0.25
   crouchTime: 0.3
@@ -6784,7 +6784,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: freeHangSmoothTime
-      value: 0.5
+      value: 0.15
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: anchorIndexMaxOffset
@@ -6813,6 +6813,10 @@ PrefabInstance:
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: stronglyPullingThreshold
       value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: tensionCalculationInterval
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: collisionSearchRadiusBuffer

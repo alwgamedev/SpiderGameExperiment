@@ -199,6 +199,7 @@ public class SpiderMovementController : MonoBehaviour
 
     private void ChangeDirection()
     {
+        //2do: can we interpolate between theese by free hang strength in a reasonable way (or is there no need to do that)
         if (!grapple.FreeHanging)
         {
             var s = transform.localScale;
@@ -228,18 +229,29 @@ public class SpiderMovementController : MonoBehaviour
         //-- so you can limit maxSpd - spd to being e.g. double the maxSpeed or w/e)
         if (moveInput != 0)
         {
-            if (grapple.FreeHanging)
+            var fhs = grapple.FreeHangStrength;
+            if (fhs > 0)
             {
-                rb.AddForce(rb.mass * accelFactorFreeHanging * FreeHangingMoveDirection());
-                return;
+                rb.AddForceAtPosition(rb.mass * accelFactorFreeHanging * fhs * FreeHangingMoveDirection(), grapple.SmoothedFreeHangLeveragePoint);
+                if (fhs == 1)
+                {
+                    return;
+                }
+                //var r = FacingRight ? transform.right : -transform.right;
+                //var moveDir = FreeHangingMoveDirection(out var g);
+                //if (Vector2.Dot(r, g) < 0 && Vector2.Dot(r, moveDir) > -MathTools.cos45)
+                //{
+                //    rb.AddForce(rb.mass * accelFactorFreeHanging * moveDir);
+                //    //return;
+                //}
             }
 
-            Vector2 d = FacingRight? groundDirection : -groundDirection;
+            Vector2 d = grapple.FreeHanging ? (FacingRight ? transform.right : -transform.right) : FacingRight ? groundDirection : -groundDirection;
             var spd = Vector2.Dot(rb.linearVelocity, d);
             var maxSpd = MaxSpeed;
 
             var accCap = accelCap;
-            var accFactor = accelFactor;
+            var accFactor = fhs > 0 ? (1 - fhs) * accelFactor : accelFactor;
             if (VerifyingJump())
             {
                 var lerpAmt = 1 - Mathf.Pow(jumpVerificationTimer / jumpVerificationTime, 1);
@@ -274,9 +286,10 @@ public class SpiderMovementController : MonoBehaviour
         }
     }
 
-    private Vector2 FreeHangingMoveDirection()
+    private Vector2 FreeHangingMoveDirection(/*out Vector2 grappleExtentNormalized*/)
     {
-        //2DO
+        //grappleExtentNormalized = grapple.GrappleExtent.normalized;
+        //return FacingRight ? grappleExtentNormalized.CWPerp() : grappleExtentNormalized.CCWPerp();
         return FacingRight ? grapple.GrappleExtent.normalized.CWPerp() : grapple.GrappleExtent.normalized.CCWPerp();
     }
 
@@ -317,7 +330,7 @@ public class SpiderMovementController : MonoBehaviour
             //&& grapple.SourceIsBelowGrapple
             /*&& Vector2.Dot(FacingRight ? transform.right : -transform.right, grapple.GrappleExtent.normalized) < -MathTools.cos60*/
             //&& (grapple.GrappleExtent.normalized.y > MathTools.sin60 || !FreeHangCast())
-            && grapple.NonnegativeTension() > freeHangEntryTension)
+            && grapple.StrictTension() > freeHangEntryTension)
         {
             grapple.FreeHanging = true;
         }
