@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unity.VisualScripting;
+using UnityEngine;
 
 public class SpiderMovementController : MonoBehaviour
 {
@@ -45,6 +46,9 @@ public class SpiderMovementController : MonoBehaviour
     [SerializeField] float uphillJumpTakeoffRotationFraction;
     [SerializeField] float jumpVerificationTime;
     [SerializeField] float tapJumpVerificationTime;
+    //[SerializeField] float jumpCarryForceEasingPower;
+    //[SerializeField] float jumpCarryForceEaseTime;
+    [SerializeField] float freeHangTensionThreshold;
     [SerializeField] float crouchHeightFraction;
     [SerializeField] float crouchTime;
     [SerializeField] float crouchBoostMinProgress;
@@ -65,6 +69,7 @@ public class SpiderMovementController : MonoBehaviour
 
     bool jumpInput;
     float jumpVerificationTimer;
+    //float jumpCarryForceEaseTimer = Mathf.Infinity;
 
     //bool freeHanging;
 
@@ -123,12 +128,6 @@ public class SpiderMovementController : MonoBehaviour
 
     private void Update()
     {
-        if (VerifyingJump())
-        {
-            jumpVerificationTimer -= Time.deltaTime;
-            //grapple.carryForceMultiplier = jumpVerificationTimer < 0 ? 1 : 1 - (jumpVerificationTimer / jumpVerificationTime);
-        }
-
         CaptureInput();
 
         RotateHead(Time.deltaTime);
@@ -137,6 +136,16 @@ public class SpiderMovementController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (VerifyingJump())
+        {
+            jumpVerificationTimer -= Time.deltaTime;
+        }
+        //if (jumpCarryForceEaseTimer < jumpCarryForceEaseTime)
+        //{
+        //    jumpCarryForceEaseTimer += Time.deltaTime;
+        //    grapple.carryForceMultiplier = jumpCarryForceEaseTimer < jumpCarryForceEaseTime ? Mathf.Pow(jumpCarryForceEaseTimer / jumpCarryForceEaseTime, jumpCarryForceEasingPower) : 1;
+        //}
+
         UpdateGroundData();
         UpdateFreeHangingState();
         HandleMoveInput();
@@ -156,8 +165,6 @@ public class SpiderMovementController : MonoBehaviour
         //when done in late update get weird things like legs lagging behind (up) during long freefalls
         //for performance's sake we could try just updating legSynch in one fixed update between each update? (i.e. use a flag "legSynchNeedsUpdate")
         //and see if that works
-
-        grapple.carryForceMultiplier = VerifyingJump() ? 1 - (jumpVerificationTimer / jumpVerificationTime) : 1;
     }
 
     private void CaptureInput()
@@ -190,31 +197,35 @@ public class SpiderMovementController : MonoBehaviour
 
     private void ChangeDirection()
     {
-        var s = transform.localScale;
-        transform.localScale = new Vector3(-s.x, s.y, s.z);
-        if (grapple.freeHanging)
+        if (!grapple.StronglyFreeHanging)
         {
-            transform.right = FacingRight ? -transform.up : transform.up;
+            var s = transform.localScale;
+            transform.localScale = new Vector3(-s.x, s.y, s.z);
+        }
+        else
+        {
+            Vector2 o = grapple.SmoothedFreeHangLeveragePoint;
+            var s = transform.localScale;
+            transform.localScale = new Vector3(-s.x, s.y, s.z);
+            transform.up = MathTools.ReflectAcrossHyperplane((Vector2)transform.up, grapple.GrappleExtent.normalized.CCWPerp());
+            transform.position += (Vector3)(o - grapple.SmoothedFreeHangLeveragePoint);
         }
     }
 
     private void HandleMoveInput()
     {
-
         //accelCap bc otherwise if speed is highly negative, we get ungodly rates of acceleration
         //(and note that we are doing it in a way that scales with max speed
         //-- so you can limit maxSpd - spd to being e.g. double the maxSpeed or w/e)
         if (moveInput != 0)
         {
-            Vector2 d = grapple.freeHanging ? FreeHangingMoveDirection()
-                : FacingRight ? groundDirection : -groundDirection;
-
-            if (grapple.freeHanging)
+            if (grapple.FreeHanging)
             {
-                rb.AddForce(rb.mass * accelFactorFreeHanging * d);
+                rb.AddForce(rb.mass * accelFactorFreeHanging * FreeHangingMoveDirection());
                 return;
             }
 
+            Vector2 d = FacingRight? groundDirection : -groundDirection;
             var spd = Vector2.Dot(rb.linearVelocity, d);
             var maxSpd = MaxSpeed;
 
@@ -256,6 +267,7 @@ public class SpiderMovementController : MonoBehaviour
 
     private Vector2 FreeHangingMoveDirection()
     {
+        //2DO
         return FacingRight ? grapple.GrappleExtent.normalized.CWPerp() : grapple.GrappleExtent.normalized.CCWPerp();
     }
 
@@ -277,7 +289,7 @@ public class SpiderMovementController : MonoBehaviour
     private void Balance()
     {
         var f = -balanceSpringDamping * rb.angularVelocity;
-        if (!grapple.freeHanging)
+        if (!grapple.FreeHanging)
         {
             var c = Vector2.Dot(transform.up, groundDirection);
             f += c * (grounded ? balanceSpringForce : airborneBalanceSpringForce);
@@ -288,13 +300,14 @@ public class SpiderMovementController : MonoBehaviour
     //only called when !grounded
     private void UpdateFreeHangingState()
     {
-        if (grapple.freeHanging && (grounded || !grapple.GrappleAnchored || IsTouchingGroundCollider(headCollider) || IsTouchingGroundCollider(abdomenCollider)))
+        if (grapple.FreeHanging && (grounded || !grapple.GrappleAnchored || IsTouchingGroundCollider(headCollider) || IsTouchingGroundCollider(abdomenCollider)))
         {
-            grapple.freeHanging = false;
+            grapple.FreeHanging = false;
         }
-        else if (!grapple.freeHanging && grapple.GrappleAnchored && !grounded && !VerifyingJump() && grapple.Tension() > 0 && Vector2.Dot(rb.linearVelocity, grapple.GrappleExtent) < 0)
+        else if (!grapple.FreeHanging && grapple.GrappleAnchored && !grounded && grapple.NormalizedTension() > freeHangTensionThreshold 
+            && Vector2.Dot(rb.linearVelocity, grapple.GrappleExtent) < 0)
         {
-            grapple.freeHanging = true;
+            grapple.FreeHanging = true;
         }
     }
 
@@ -344,6 +357,7 @@ public class SpiderMovementController : MonoBehaviour
             jumpInput = false;
             jumpVerificationTimer = jumpVerificationTime;//needs to be first bc SetGround > OnTakeoff depends on VerifyingJump()
             //grapple.carryForceMultiplier = 0;
+            //jumpCarryForceEaseTimer = 0;
             SetGrounded(false);
             var jumpDir = JumpDirection();
             rb.AddForce(rb.mass * JumpForce() * jumpDir, ForceMode2D.Impulse);
@@ -439,7 +453,7 @@ public class SpiderMovementController : MonoBehaviour
         legSynchronizer.timeScale = airborneLegAnimationTimeScale;
         legSynchronizer.outwardDrift = 0;
         RecomputeGroundednessTolerance();
-        grapple.freeHanging = !VerifyingJump();
+        grapple.FreeHanging = !VerifyingJump();
     }
 
     private void OnLanding()
@@ -447,6 +461,7 @@ public class SpiderMovementController : MonoBehaviour
         legSynchronizer.timeScale = 1;
         legSynchronizer.outwardDrift = 0;
         RecomputeGroundednessTolerance();
+        //jumpCarryForceEaseTimer = Mathf.Infinity;
         //grapple.carryForceMultiplier = 1;
     }
 
