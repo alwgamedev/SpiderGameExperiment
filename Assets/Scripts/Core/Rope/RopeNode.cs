@@ -24,11 +24,12 @@ public struct RopeNode
     float collisionThreshold;
     float collisionBounciness;
     readonly Vector2[] raycastDirections;
-    int currentCollisionLayerMask;
+    //int currentCollisionLayerMask;
     Vector2 lastTrueCollisionNormal;
 
     public bool Anchored => anchored;
-    public int CurrentCollisionLayer => currentCollisionLayerMask;
+    public int CurrentCollisionLayerMask => CurrentCollision ? 1 << CurrentCollision.gameObject.layer : 0;//currentCollisionLayerMask;
+    public Collider2D CurrentCollision { get; private set; }
     public float CollisionThreshold => collisionThreshold;
 
     public RopeNode(Vector2 position, Vector2 velocity, Vector2 acceleration, float mass, float drag,
@@ -62,7 +63,8 @@ public struct RopeNode
         this.collisionThreshold = collisionThreshold;
         collisionSearchRadius = collisionThreshold + collisionSearchRadiusBuffer;
         this.collisionBounciness = collisionBounciness;
-        currentCollisionLayerMask = 0;
+        //currentCollisionLayerMask = 0;
+        CurrentCollision = null;
         lastTrueCollisionNormal = Vector2.zero;
 
 
@@ -223,7 +225,8 @@ public struct RopeNode
         }
         else
         {
-            currentCollisionLayerMask = 0;
+            //currentCollisionLayerMask = 0;
+            CurrentCollision = null;
             lastTrueCollisionNormal = Vector2.zero;//can try to get rid of this
         }
     }
@@ -244,7 +247,8 @@ public struct RopeNode
             position += w;
             lastPosition = position - newVelocity * dt;
             StoreCollisionVelocity(r.collider.attachedRigidbody, n);
-            currentCollisionLayerMask = 1 << r.collider.gameObject.layer;
+            //currentCollisionLayerMask = 1 << r.collider.gameObject.layer;
+            CurrentCollision = r.collider;
             return;
         }
         else
@@ -255,11 +259,13 @@ public struct RopeNode
         if (l < collisionThreshold)
         {
             ResolveCollision(dt, l, collisionThreshold, n, r.collider.attachedRigidbody);
-            currentCollisionLayerMask = 1 << r.collider.gameObject.layer;
+            //currentCollisionLayerMask = 1 << r.collider.gameObject.layer;
+            CurrentCollision = r.collider;
         }
         else
         {
-            currentCollisionLayerMask = 0;
+            CurrentCollision = null;
+            //currentCollisionLayerMask = 0;
             //but we don't set lastTrueCollisionNormal = 0, bc we still had a successful raycast, which could be useful for an upcoming collision!
         }
     }

@@ -48,7 +48,9 @@ public class SpiderMovementController : MonoBehaviour
     [SerializeField] float tapJumpVerificationTime;
     //[SerializeField] float jumpCarryForceEasingPower;
     //[SerializeField] float jumpCarryForceEaseTime;
-    [SerializeField] float freeHangTensionThreshold;
+    //[SerializeField] float freeHangCastLengthFactor;
+    [SerializeField] float freeHangEntryTension;
+    [SerializeField] float freeHangExitTension;
     [SerializeField] float crouchHeightFraction;
     [SerializeField] float crouchTime;
     [SerializeField] float crouchBoostMinProgress;
@@ -197,7 +199,7 @@ public class SpiderMovementController : MonoBehaviour
 
     private void ChangeDirection()
     {
-        if (!grapple.StronglyFreeHanging)
+        if (!grapple.FreeHanging)
         {
             var s = transform.localScale;
             transform.localScale = new Vector3(-s.x, s.y, s.z);
@@ -211,6 +213,13 @@ public class SpiderMovementController : MonoBehaviour
             transform.position += (Vector3)(o - grapple.SmoothedFreeHangLeveragePoint);
         }
     }
+
+    //private bool UseFreeHangDirectionChange()
+    //{
+    //    return grapple.FreeHanging
+    //        && Mathf.Abs(transform.right.y) > MathTools.sin15 
+    //        && Vector2.Dot(FacingRight ? transform.right : - transform.right, grapple.GrappleExtent) < -MathTools.cos60;
+    //}
 
     private void HandleMoveInput()
     {
@@ -300,16 +309,29 @@ public class SpiderMovementController : MonoBehaviour
     //only called when !grounded
     private void UpdateFreeHangingState()
     {
-        if (grapple.FreeHanging && (grounded || !grapple.GrappleAnchored || IsTouchingGroundCollider(headCollider) || IsTouchingGroundCollider(abdomenCollider)))
+        if (grapple.FreeHanging && (grounded || !grapple.GrappleAnchored || grapple.Tension() < freeHangExitTension || IsTouchingGroundCollider(headCollider) || IsTouchingGroundCollider(abdomenCollider)))
         {
             grapple.FreeHanging = false;
         }
-        else if (!grapple.FreeHanging && grapple.GrappleAnchored && !grounded && grapple.NormalizedTension() > freeHangTensionThreshold 
-            && Vector2.Dot(rb.linearVelocity, grapple.GrappleExtent) < 0)
+        else if (!grapple.FreeHanging && grapple.GrappleAnchored && !grounded 
+            //&& grapple.SourceIsBelowGrapple
+            /*&& Vector2.Dot(FacingRight ? transform.right : -transform.right, grapple.GrappleExtent.normalized) < -MathTools.cos60*/
+            //&& (grapple.GrappleExtent.normalized.y > MathTools.sin60 || !FreeHangCast())
+            && grapple.NonnegativeTension() > freeHangEntryTension)
         {
             grapple.FreeHanging = true;
         }
     }
+
+    //private bool TrulyFreeHanging()
+    //{
+    //    return grapple.FreeHanging && (Vector2.Dot(FacingRight ? transform.right : -transform.right, grapple.GrappleExtent.normalized) < -MathTools.cos60 || !FreeHangCast());
+    //}
+
+    //private bool FreeHangCast()
+    //{
+    //    return Physics2D.Raycast(heightReferencePoint.position, -transform.up, freeHangCastLengthFactor * preferredRideHeight, groundLayer);
+    //}
 
     private bool IsTouchingGroundCollider(Collider2D c)
     {

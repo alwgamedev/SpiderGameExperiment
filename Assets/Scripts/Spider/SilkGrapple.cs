@@ -74,7 +74,7 @@ public class SilkGrapple : MonoBehaviour
             return FreeHangLeveragePoint;
         }
     }
-    //public Vector2 FreeHangUp => (FreeHangLeveragePoint - shooterRb.centerOfMass).normalized;
+    public Vector2 FreeHangUp => (SmoothedFreeHangLeveragePoint - shooterRb.centerOfMass).normalized;
     public bool FreeHanging
     {
         get => freeHanging;
@@ -83,14 +83,11 @@ public class SilkGrapple : MonoBehaviour
             if (value != freeHanging)
             {
                 freeHanging = value;
-                if (freeHanging)
-                {
-                    freeHangSmoothingTimer = 0;
-                }
+                freeHangSmoothingTimer = 0;
             }
         }
     }
-    public bool StronglyFreeHanging => FreeHanging && !(freeHangSmoothingTimer < freeHangSmoothTime);
+    //public bool StronglyFreeHanging => FreeHanging && !(freeHangSmoothingTimer < freeHangSmoothTime);
 
     //private void OnDrawGizmos()
     //{
@@ -196,6 +193,19 @@ public class SilkGrapple : MonoBehaviour
         {
 
             total += (grapple.nodes[i].position - grapple.nodes[i - 1].position).magnitude - grapple.nodeSpacing;
+        }
+
+        return total;
+    }
+
+    public float NonnegativeTension()
+    {
+        float total = 0;
+        //float cap = 0.35f * grapple.nodeSpacing;
+        for (int i = 1; i < grapple.nodes.Length; i++)
+        {
+
+            total += (grapple.nodes[i].position - grapple.nodes[i - 1].position).magnitude - grapple.nodeSpacing;
             if (total < 0)
             {
                 //this makes sense bc we're counting from anchor up, so we've got net slack *near anchor*
@@ -222,6 +232,8 @@ public class SilkGrapple : MonoBehaviour
     }
 
     public float NormalizedTension() => Tension() / grapple.Length;
+
+    public float NonnegativeNormalizedTension() => NonnegativeTension() / grapple.Length;
 
     //RENDERING
 

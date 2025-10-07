@@ -143,7 +143,7 @@ public class Rope
             {
                 nodes[i].ResolveCollisions(dt);
             }
-            if ((nodes[lastIndex].CurrentCollisionLayer & terminusAnchorMask) != 0)
+            if ((nodes[lastIndex].CurrentCollisionLayerMask & terminusAnchorMask) != 0)
             {
                 if (!Physics2D.OverlapCircle(nodes[lastIndex].position, nodes[lastIndex].CollisionThreshold, terminusAnchorMask))
                 {

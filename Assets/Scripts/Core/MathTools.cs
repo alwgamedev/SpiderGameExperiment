@@ -6,6 +6,7 @@ public static class MathTools
 
     public const float o51 = 10E-05f;
 
+    public const float sin15 = 0.2588190f;
     public const float cos30 = 0.8660254f;//sqrt(3)/2
     public const float sin30 = 0.5f;
     public const float tan30 = 0.5773502f;// 1/sqrt(3)
