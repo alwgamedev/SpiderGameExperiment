@@ -63,19 +63,19 @@ public class SilkGrapple : MonoBehaviour
     public bool SourceIsBelowGrapple => GrapplePosition.y > source.position.y;
     float ShootSpeed => (1 + shootSpeedPowerUp) * baseShootSpeed;
     Vector2 AnchorPosition => source.position;
-    Vector2 FreeHangLeveragePoint => source.position;
-    public Vector2 SmoothedFreeHangLeveragePoint
-    {
-        get
-        {
-            if (freeHangSmoothingTimer < freeHangSmoothTime)
-            {
-                return Vector2.Lerp(shooterRb.worldCenterOfMass, FreeHangLeveragePoint, FreeHangStrength);
-            }
-            return FreeHangLeveragePoint;
-        }
-    }
-    public Vector2 FreeHangUp => (SmoothedFreeHangLeveragePoint - shooterRb.centerOfMass).normalized;
+    public Vector2 FreeHangLeveragePoint => source.position;
+    //public Vector2 SmoothedFreeHangLeveragePoint => FreeHangLeveragePoint;
+    //{
+    //    get
+    //    {
+    //        if (freeHangSmoothingTimer < freeHangSmoothTime)
+    //        {
+    //            return Vector2.Lerp(shooterRb.worldCenterOfMass, FreeHangLeveragePoint, FreeHangStrength);
+    //        }
+    //        return FreeHangLeveragePoint;
+    //    }
+    //}
+    public Vector2 FreeHangUp => (/*Smoothed*/FreeHangLeveragePoint - shooterRb.centerOfMass).normalized;
     public bool FreeHanging
     {
         get => GrappleAnchored && freeHanging;
@@ -352,7 +352,7 @@ public class SilkGrapple : MonoBehaviour
             if (FreeHanging)
             {
                 shooterRb.AddForceAtPosition(LastCarryForceApplied - shooterRb.mass * carrySpringDamping * Vector2.Dot(shooterRb.linearVelocity, d) * d, 
-                    SmoothedFreeHangLeveragePoint);
+                    /*Smoothed*/FreeHangLeveragePoint);
             }
             else
             {

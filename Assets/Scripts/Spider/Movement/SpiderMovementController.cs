@@ -207,11 +207,11 @@ public class SpiderMovementController : MonoBehaviour
         }
         else
         {
-            Vector2 o = grapple.SmoothedFreeHangLeveragePoint;
+            Vector2 o = grapple./*Smoothed*/FreeHangLeveragePoint;
             var s = transform.localScale;
             transform.localScale = new Vector3(-s.x, s.y, s.z);
             transform.up = MathTools.ReflectAcrossHyperplane((Vector2)transform.up, grapple.GrappleExtent.normalized.CCWPerp());
-            transform.position += (Vector3)(o - grapple.SmoothedFreeHangLeveragePoint);
+            transform.position += (Vector3)(o - grapple./*Smoothed*/FreeHangLeveragePoint);
         }
     }
 
@@ -232,7 +232,7 @@ public class SpiderMovementController : MonoBehaviour
             var fhs = grapple.FreeHangStrength;
             if (fhs > 0)
             {
-                rb.AddForceAtPosition(rb.mass * accelFactorFreeHanging * fhs * FreeHangingMoveDirection(), grapple.SmoothedFreeHangLeveragePoint);
+                rb.AddForceAtPosition(rb.mass * accelFactorFreeHanging * fhs * FreeHangingMoveDirection(), grapple./*Smoothed*/FreeHangLeveragePoint);
                 if (fhs == 1)
                 {
                     return;

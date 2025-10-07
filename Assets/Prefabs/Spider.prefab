@@ -6635,7 +6635,7 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  groundedExitToleranceFactor: 1.65
+  groundedExitToleranceFactor: 1.5
   groundedEntryToleranceFactor: 1.05
   groundDirectionSampleWidth: 0.325
   backupGroundPtRaycastLengthFactor: 1.1
@@ -6658,8 +6658,8 @@ MonoBehaviour:
   heightSpringBreakThreshold: 0.1
   grappleSquatReduction: 0.25
   heightSampleWidth: 0.8
-  balanceSpringForce: 32.5
-  airborneBalanceSpringForce: 14
+  balanceSpringForce: 65
+  airborneBalanceSpringForce: 28
   balanceSpringDamping: 0.05
   jumpForce: 10
   jumpForceCrouchBoostRate: 14
@@ -6667,7 +6667,7 @@ MonoBehaviour:
   uphillJumpTakeoffRotationFraction: 0.25
   jumpVerificationTime: 0.25
   tapJumpVerificationTime: 0.125
-  freeHangEntryTension: 0.5
+  freeHangEntryTension: 0.75
   freeHangExitTension: 0
   crouchHeightFraction: 0.25
   crouchTime: 0.3
@@ -6732,7 +6732,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: drag
-      value: 0.025
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: numNodes
@@ -6784,7 +6784,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: freeHangSmoothTime
-      value: 0.15
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: anchorIndexMaxOffset
