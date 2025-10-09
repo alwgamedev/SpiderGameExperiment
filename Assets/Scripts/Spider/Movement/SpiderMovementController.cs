@@ -246,12 +246,12 @@ public class SpiderMovementController : MonoBehaviour
                 //}
             }
 
-            Vector2 d = grapple.FreeHanging ? (FacingRight ? transform.right : -transform.right) : FacingRight ? groundDirection : -groundDirection;
+            Vector2 d = FacingRight ? groundDirection : -groundDirection;
             var spd = Vector2.Dot(rb.linearVelocity, d);
             var maxSpd = MaxSpeed;
 
             var accCap = accelCap;
-            var accFactor = (1 - fhs) * accelFactor;
+            var accFactor = fhs > 0 ? (1 - fhs) * accelFactor : accelFactor;
             if (VerifyingJump())
             {
                 var lerpAmt = 1 - Mathf.Pow(jumpVerificationTimer / jumpVerificationTime, 1);
@@ -336,9 +336,6 @@ public class SpiderMovementController : MonoBehaviour
             grapple.FreeHanging = false;
         }
         else if (!grapple.FreeHanging && grapple.GrappleAnchored && !grounded 
-            //&& grapple.SourceIsBelowGrapple
-            /*&& Vector2.Dot(FacingRight ? transform.right : -transform.right, grapple.GrappleExtent.normalized) < -MathTools.cos60*/
-            //&& (grapple.GrappleExtent.normalized.y > MathTools.sin60 || !FreeHangCast())
             && grapple.StrictTension() > freeHangEntryTension)
         {
             grapple.FreeHanging = true;

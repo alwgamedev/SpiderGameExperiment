@@ -6667,8 +6667,8 @@ MonoBehaviour:
   uphillJumpTakeoffRotationFraction: 0.25
   jumpVerificationTime: 0.25
   tapJumpVerificationTime: 0.125
-  freeHangEntryTension: 0.75
-  freeHangExitTension: 0
+  freeHangEntryTension: 1.75
+  freeHangExitTension: 0.5
   crouchHeightFraction: 0.25
   crouchTime: 0.3
   crouchBoostMinProgress: 0.4
@@ -6780,11 +6780,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: carrySpringDamping
-      value: 3
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: freeHangSmoothTime
-      value: 0.2
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: anchorIndexMaxOffset
@@ -6803,8 +6803,16 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: carryTensionThreshold
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: shootSpeedPowerUpRate
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: carryForceSmoothingRate
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: nodesPerReleaseAnchored

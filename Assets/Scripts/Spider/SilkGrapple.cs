@@ -29,6 +29,8 @@ public class SilkGrapple : MonoBehaviour
     [SerializeField] int constraintIterations;
     [SerializeField] float carrySpringForce;
     [SerializeField] float carrySpringDamping;
+    //[SerializeField] float carryTensionThreshold;
+    //[SerializeField] float carryForceSmoothingRate;
     [SerializeField] float freeHangSmoothTime;
 
     int grappleReleaseInput;//1 = release, -1 = retract, 0 = none
@@ -341,13 +343,16 @@ public class SilkGrapple : MonoBehaviour
     private void UpdateCarrySpring()
     {
         //var k = (int)Mathf.Ceil(tensionCalculationInterval / grapple.nodeSpacing);
-        var d = grapple.nodes[1].position - grapple.nodes[0].position;
+        //var d = grapple.nodes[1].position - grapple.nodes[0].position;
         //var r = k * grapple.nodeSpacing;
-        var l = d.magnitude;
-        if (l > grapple.nodeSpacing)
+        //var l = d.magnitude;
+        var t = NormalizedStrictTension();
+        if (t > 0)
         {
-            var t = (l - grapple.nodeSpacing) / grapple.nodeSpacing;
-            d /= l;
+            //var t = (l - grapple.nodeSpacing) / grapple.nodeSpacing;
+            var d = GrappleExtent.normalized;
+
+            //d /= l;
             LastCarryForceApplied = shooterRb.mass * carrySpringForce * t * d;
             if (FreeHanging)
             {
