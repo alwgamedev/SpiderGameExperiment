@@ -4,7 +4,7 @@ using UnityEngine;
 public class Rope
 {
     public const int MAX_NUM_COLLISIONS = 4;
-    public const float CONSTRAINTS_TOLERANCE = 0.001f;
+    public const float CONSTRAINTS_TOLERANCE = 0f;//0.005f;
 
     public float width;
     public float nodeSpacing;
@@ -27,7 +27,7 @@ public class Rope
         }
     }
 
-    public Rope(Vector2 position, float width, float nodeSpacing, int numNodes, 
+    public Rope(Vector2 position, float width, float nodeSpacing, int numNodes,
         float nodeDrag, int collisionMask, float collisionSearchRadiusBuffer, float collisionBounciness, int terminusAnchorMask,
         int constraintIterations)
     {
@@ -40,7 +40,7 @@ public class Rope
         var collisionThreshold = 0.5f * width;
         nodes = Enumerable.Range(0, numNodes).Select(i => new RopeNode(position, Vector2.zero, a, 1, nodeDrag, 
             collisionMask, collisionThreshold, collisionSearchRadiusBuffer, collisionBounciness, false)).ToArray();
-        renderPositions = nodes.Select(x => (Vector3)x.position).ToArray();
+        renderPositions = nodes.Select(x=> (Vector3)x.position).ToArray();
         lastIndex = numNodes - 1;
     }
 

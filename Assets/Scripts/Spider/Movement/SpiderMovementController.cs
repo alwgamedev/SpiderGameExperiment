@@ -51,6 +51,7 @@ public class SpiderMovementController : MonoBehaviour
     //[SerializeField] float freeHangCastLengthFactor;
     [SerializeField] float freeHangEntryTension;
     [SerializeField] float freeHangExitTension;
+    [SerializeField] float freeHangCastLengthFactor;
     [SerializeField] float crouchHeightFraction;
     [SerializeField] float crouchTime;
     [SerializeField] float crouchBoostMinProgress;
@@ -215,13 +216,6 @@ public class SpiderMovementController : MonoBehaviour
         }
     }
 
-    //private bool UseFreeHangDirectionChange()
-    //{
-    //    return grapple.FreeHanging
-    //        && Mathf.Abs(transform.right.y) > MathTools.sin15 
-    //        && Vector2.Dot(FacingRight ? transform.right : - transform.right, grapple.GrappleExtent) < -MathTools.cos60;
-    //}
-
     private void HandleMoveInput()
     {
         //accelCap bc otherwise if speed is highly negative, we get ungodly rates of acceleration
@@ -330,27 +324,23 @@ public class SpiderMovementController : MonoBehaviour
     //only called when !grounded
     private void UpdateFreeHangingState()
     {
-        if (grapple.FreeHanging && (grounded || !grapple.GrappleAnchored /*|| grapple.Tension() < freeHangExitTension*/ || IsTouchingGroundCollider(headCollider) || IsTouchingGroundCollider(abdomenCollider)))
+        if (grapple.FreeHanging && (grounded || !grapple.GrappleAnchored || /*grapple.Tension() < freeHangExitTension ||*/ IsTouchingGroundCollider(headCollider) || IsTouchingGroundCollider(abdomenCollider)))
         {
             grapple.FreeHanging = false;
         }
         else if (!grapple.FreeHanging && grapple.GrappleAnchored && !grounded
-            && grapple.LastCarryForceApplied.y > 0
+            && !AboveAnchorGround() //2do: OR ARE HANGING "STRAIGHT DOWN" (for the rare case where a piece of ground curves over itself)
             && grapple.StrictTension() > freeHangEntryTension)
         {
             grapple.FreeHanging = true;
         }
     }
 
-    //private bool TrulyFreeHanging()
-    //{
-    //    return grapple.FreeHanging && (Vector2.Dot(FacingRight ? transform.right : -transform.right, grapple.GrappleExtent.normalized) < -MathTools.cos60 || !FreeHangCast());
-    //}
-
-    //private bool FreeHangCast()
-    //{
-    //    return Physics2D.Raycast(heightReferencePoint.position, -transform.up, freeHangCastLengthFactor * preferredRideHeight, groundLayer);
-    //}
+    private bool AboveAnchorGround()
+    {
+        var r = Physics2D.Raycast(heightReferencePoint.position, Vector2.down, freeHangCastLengthFactor * preferredRideHeight, grapple.AnchorMask);
+        return r && r.collider == grapple.AnchorCollider;
+    }
 
     private bool IsTouchingGroundCollider(Collider2D c)
     {

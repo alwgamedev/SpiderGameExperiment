@@ -61,23 +61,25 @@ public class SilkGrapple : MonoBehaviour
     public Vector2 LastCarryForceApplied { get; private set; }
     public bool ShooterMovingTowardsGrapple => Vector2.Dot(shooterRb.linearVelocity, GrappleExtent) > 0;
     public Vector2 GrappleExtent => GrapplePosition - AnchorPosition;
-    public Vector2 GrappleExtentFromGround
-    {
-        get
-        {
-            int i = 1;
-            while (i < grapple.nodes.Length && !grapple.nodes[i].CurrentCollision)
-            {
-                i++;
-            }
+    //public Vector2 GrappleExtentFromGround
+    //{
+    //    get
+    //    {
+    //        int i = 1;
+    //        while (i < grapple.nodes.Length && !grapple.nodes[i].CurrentCollision)
+    //        {
+    //            i++;
+    //        }
 
-            return grapple.nodes[i].position - AnchorPosition;
-        }
-    }
+    //        return grapple.nodes[i].position - AnchorPosition;
+    //    }
+    //}
     public Vector2 GrapplePosition => grapple.nodes[grapple.lastIndex].position;
     public bool SourceIsBelowGrapple => GrapplePosition.y > source.position.y;
     float ShootSpeed => (1 + shootSpeedPowerUp) * baseShootSpeed;
     Vector2 AnchorPosition => source.position;
+    public Collider2D AnchorCollider => grapple.nodes[grapple.lastIndex].CurrentCollision;
+    public int AnchorMask => grapple.terminusAnchorMask;
     public Vector2 FreeHangLeveragePoint => source.position;
     //public Vector2 SmoothedFreeHangLeveragePoint => FreeHangLeveragePoint;
     //{
@@ -198,6 +200,17 @@ public class SilkGrapple : MonoBehaviour
         }
     }
 
+    private Vector2 GrappleExtentFromFirstCollision(out int firstCollisionIndex)
+    {
+        firstCollisionIndex = 1;
+        while (firstCollisionIndex < grapple.nodes.Length && !grapple.nodes[firstCollisionIndex].CurrentCollision)
+        {
+            firstCollisionIndex++;
+        }
+
+        return grapple.nodes[firstCollisionIndex].position - AnchorPosition;
+    }
+
     private void UpdateFreeHangSmoothingTimer()
     {
         if (freeHanging && freeHangSmoothingTimer < freeHangSmoothTime)
@@ -245,6 +258,30 @@ public class SilkGrapple : MonoBehaviour
         return total;
     }
 
+    public float Tension(int lastIndex, out float length)
+    {
+        int nodesPerSeg = (int)Mathf.Ceil(tensionCalculationInterval / grapple.nodeSpacing);
+        float total = 0;
+        int i = 0;
+        int j = 0;
+        var d = nodesPerSeg * grapple.nodeSpacing;
+        length = 0;
+        while (i < lastIndex)
+        {
+            j += nodesPerSeg;
+            if (j > lastIndex)
+            {
+                j = lastIndex;
+                d = (j - i) * grapple.nodeSpacing;
+            }
+            length += d;
+            total += (grapple.nodes[j].position - grapple.nodes[i].position).magnitude - d;
+            i = j;
+        }
+
+        return total;
+    }
+
     public float StrictTension()
     {
         int nodesPerSeg = (int)Mathf.Ceil(tensionCalculationInterval / grapple.nodeSpacing);
@@ -263,31 +300,40 @@ public class SilkGrapple : MonoBehaviour
             total += (grapple.nodes[j].position - grapple.nodes[i].position).magnitude - d;
             if (total < 0)
             {
-                return 0;
+                return total;
             }
             i = j;
         }
-        //for (int i = 1; i < grapple.nodes.Length; i++)
-        //{
-
-        //    total += (grapple.nodes[i].position - grapple.nodes[i - 1].position).magnitude - grapple.nodeSpacing;
-        //}
 
         return total;
-        //float total = 0;
-        ////float cap = 0.35f * grapple.nodeSpacing;
-        //for (int i = 1; i < grapple.nodes.Length; i++)
-        //{
+    }
 
-        //    total += (grapple.nodes[i].position - grapple.nodes[i - 1].position).magnitude - grapple.nodeSpacing;
-        //    if (total < 0)
-        //    {
-        //        //this makes sense bc we're counting from anchor up, so we've got net slack *near anchor*
-        //        return 0;
-        //    }
-        //}
+    public float StrictTension(int lastIndex, out float length)
+    {
+        int nodesPerSeg = (int)Mathf.Ceil(tensionCalculationInterval / grapple.nodeSpacing);
+        float total = 0;
+        int i = 0;
+        int j = 0;
+        var d = nodesPerSeg * grapple.nodeSpacing;
+        length = 0;
+        while (i < lastIndex)
+        {
+            j += nodesPerSeg;
+            if (j > lastIndex)
+            {
+                j = lastIndex;
+                d = (j - i) * grapple.nodeSpacing;
+            }
+            length += d;
+            total += (grapple.nodes[j].position - grapple.nodes[i].position).magnitude - d;
+            if (total < 0)
+            {
+                return total;
+            }
+            i = j;
+        }
 
-        //return total;
+        return total;
     }
 
     public float MaxTension()
@@ -306,8 +352,10 @@ public class SilkGrapple : MonoBehaviour
     }
 
     public float NormalizedTension() => Tension() / grapple.Length;
+    public float NormalizedTension(int lastIndex) => Tension(lastIndex, out var length) / length;
 
     public float NormalizedStrictTension() => StrictTension() / grapple.Length;
+    public float NormalizedStrictTension(int lastIndex) => StrictTension(lastIndex, out var length) / length;
 
     //RENDERING
 
@@ -330,9 +378,9 @@ public class SilkGrapple : MonoBehaviour
     private void EnableLineRenderer()
     {
         lineRenderer.enabled = true;
-        if (lineRenderer.positionCount != numNodes)
+        if (lineRenderer.positionCount != grapple.renderPositions.Length)
         {
-            lineRenderer.positionCount = numNodes;
+            lineRenderer.positionCount = grapple.renderPositions.Length;
         }
         lineRenderer.startWidth = width;
         lineRenderer.endWidth = width;
@@ -355,21 +403,14 @@ public class SilkGrapple : MonoBehaviour
 
     private void UpdateCarrySpring()
     {
-        //var k = (int)Mathf.Ceil(tensionCalculationInterval / grapple.nodeSpacing);
-        //var d = grapple.nodes[1].position - grapple.nodes[0].position;
-        //var r = k * grapple.nodeSpacing;
-        //var l = d.magnitude;
-        var t = NormalizedStrictTension();
+        var d = GrappleExtentFromFirstCollision(out int lastIndex).normalized;
+        var t = NormalizedStrictTension(lastIndex);
         if (t > 0)
         {
-            //var t = (l - grapple.nodeSpacing) / grapple.nodeSpacing;
-            var d = GrappleExtentFromGround.normalized;
-
-            //d /= l;
             LastCarryForceApplied = shooterRb.mass * carrySpringForce * t * d;
             if (FreeHanging)
             {
-                shooterRb.AddForceAtPosition(LastCarryForceApplied - shooterRb.mass * carrySpringDamping * Vector2.Dot(shooterRb.linearVelocity, d) * d, 
+                shooterRb.AddForceAtPosition(LastCarryForceApplied - shooterRb.mass * carrySpringDamping * Vector2.Dot(shooterRb.linearVelocity, d) * d,
                     /*Smoothed*/FreeHangLeveragePoint);
             }
             else
@@ -417,8 +458,8 @@ public class SilkGrapple : MonoBehaviour
     private void ShootGrapple()
     {
         var nodeSpacing = minLength / (numNodes - 1);
-        grapple = new Rope(source.position, width, nodeSpacing, numNodes, drag,
-                    collisionMask, collisionSearchRadiusBuffer, bounciness, grappleAnchorMask, constraintIterations);
+        grapple = new Rope(source.position, width, nodeSpacing, numNodes,
+                    drag, collisionMask, collisionSearchRadiusBuffer, bounciness, grappleAnchorMask, constraintIterations);
         grapple.nodes[0].Anchor();
         grapple.nodes[grapple.lastIndex].mass = grappleMass;
         var shootSpeed = ShootSpeed;
