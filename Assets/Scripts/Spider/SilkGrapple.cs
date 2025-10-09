@@ -61,6 +61,19 @@ public class SilkGrapple : MonoBehaviour
     public Vector2 LastCarryForceApplied { get; private set; }
     public bool ShooterMovingTowardsGrapple => Vector2.Dot(shooterRb.linearVelocity, GrappleExtent) > 0;
     public Vector2 GrappleExtent => GrapplePosition - AnchorPosition;
+    public Vector2 GrappleExtentFromGround
+    {
+        get
+        {
+            int i = 1;
+            while (i < grapple.nodes.Length && !grapple.nodes[i].CurrentCollision)
+            {
+                i++;
+            }
+
+            return grapple.nodes[i].position - AnchorPosition;
+        }
+    }
     public Vector2 GrapplePosition => grapple.nodes[grapple.lastIndex].position;
     public bool SourceIsBelowGrapple => GrapplePosition.y > source.position.y;
     float ShootSpeed => (1 + shootSpeedPowerUp) * baseShootSpeed;
@@ -350,7 +363,7 @@ public class SilkGrapple : MonoBehaviour
         if (t > 0)
         {
             //var t = (l - grapple.nodeSpacing) / grapple.nodeSpacing;
-            var d = GrappleExtent.normalized;
+            var d = GrappleExtentFromGround.normalized;
 
             //d /= l;
             LastCarryForceApplied = shooterRb.mass * carrySpringForce * t * d;
@@ -425,6 +438,7 @@ public class SilkGrapple : MonoBehaviour
         shootSpeedPowerUp = 0;
         LastCarryForceApplied = Vector2.zero;
         freeHangSmoothingTimer = 0;
+        freeHanging = false;
         //releaseInputEnabled = false;
         //PositiveCarryForce = false;
     }

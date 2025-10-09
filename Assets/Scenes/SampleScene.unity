@@ -1665,20 +1665,44 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
+      propertyPath: drag
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
+      propertyPath: width
+      value: 0.125
+      objectReference: {fileID: 0}
+    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
+      propertyPath: numNodes
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
+      propertyPath: minLength
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: grappleMass
       value: 500
       objectReference: {fileID: 0}
     - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: carrySpringForce
-      value: 200
+      value: 400
       objectReference: {fileID: 0}
     - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: carrySpringDamping
-      value: 2.5
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: carryForceBounciness
       value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
+      propertyPath: constraintIterations
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
+      propertyPath: shootSpeedPowerUpMax
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: carryTensionThreshold
@@ -1688,21 +1712,37 @@ PrefabInstance:
       propertyPath: carryForceSmoothingRate
       value: 40
       objectReference: {fileID: 0}
+    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
+      propertyPath: collisionSearchRadiusBuffer
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 4349527747444524243, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.112
+      value: -0.192
       objectReference: {fileID: 0}
     - target: {fileID: 4349527747444524243, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.404
+      value: -0.011
+      objectReference: {fileID: 0}
+    - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
+      propertyPath: groundPtSlipRate
+      value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: freeHangExitTension
-      value: 0.05
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
+      propertyPath: balanceSpringDamping
+      value: 0.065
       objectReference: {fileID: 0}
     - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: freeHangEntryTension
-      value: 0.75
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
+      propertyPath: grapplePullGripReduction
+      value: 0.9
       objectReference: {fileID: 0}
     - target: {fileID: 8910507805382992582, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: m_LocalPosition.x

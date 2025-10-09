@@ -252,13 +252,13 @@ public class SpiderMovementController : MonoBehaviour
 
             var accCap = accelCap;
             var accFactor = fhs > 0 ? (1 - fhs) * accelFactor : accelFactor;
-            if (VerifyingJump())
-            {
-                var lerpAmt = 1 - Mathf.Pow(jumpVerificationTimer / jumpVerificationTime, 1);
-                maxSpd = JumpVerificationMaxSpeed(lerpAmt);
-                accCap = JumpVerificationAccelCap(lerpAmt);
-                accFactor = JumpVerificationAccelFactor(accFactor, lerpAmt);
-            }
+            //if (VerifyingJump())
+            //{
+            //    var lerpAmt = 1 - Mathf.Pow(jumpVerificationTimer / jumpVerificationTime, 1);
+            //    maxSpd = JumpVerificationMaxSpeed(lerpAmt);
+            //    accCap = JumpVerificationAccelCap(lerpAmt);
+            //    accFactor = JumpVerificationAccelFactor(accFactor, lerpAmt);
+            //}
 
             var s = Mathf.Min(maxSpd - spd, accCap * maxSpd);
             if (grounded || s > 0)
@@ -322,7 +322,6 @@ public class SpiderMovementController : MonoBehaviour
             x = x > 0 ? Mathf.Sqrt(0.5f * (1 - y)) : -Mathf.Sqrt(0.5f * (1 - y));
             //result is x = cos(0.5f(t + pi/2)), which smoothly decreases from 1 to -1 as t goes from -pi/2 to 3pi/2
             //where t is angle between transform.up and groundDirection
-            //2DO: we can probably can use a polynomial instead of sqrt
             f += x * (grounded ? balanceSpringForce : airborneBalanceSpringForce);
         }
         rb.AddTorque(rb.mass * f);
@@ -331,11 +330,12 @@ public class SpiderMovementController : MonoBehaviour
     //only called when !grounded
     private void UpdateFreeHangingState()
     {
-        if (grapple.FreeHanging && (grounded || !grapple.GrappleAnchored || grapple.Tension() < freeHangExitTension || IsTouchingGroundCollider(headCollider) || IsTouchingGroundCollider(abdomenCollider)))
+        if (grapple.FreeHanging && (grounded || !grapple.GrappleAnchored /*|| grapple.Tension() < freeHangExitTension*/ || IsTouchingGroundCollider(headCollider) || IsTouchingGroundCollider(abdomenCollider)))
         {
             grapple.FreeHanging = false;
         }
-        else if (!grapple.FreeHanging && grapple.GrappleAnchored && !grounded 
+        else if (!grapple.FreeHanging && grapple.GrappleAnchored && !grounded
+            && grapple.LastCarryForceApplied.y > 0
             && grapple.StrictTension() > freeHangEntryTension)
         {
             grapple.FreeHanging = true;
@@ -494,7 +494,7 @@ public class SpiderMovementController : MonoBehaviour
         legSynchronizer.timeScale = airborneLegAnimationTimeScale;
         legSynchronizer.outwardDrift = 0;
         RecomputeGroundednessTolerance();
-        grapple.FreeHanging = !VerifyingJump();
+        //grapple.FreeHanging = !VerifyingJump();
     }
 
     private void OnLanding()

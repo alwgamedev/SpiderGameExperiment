@@ -239,11 +239,17 @@ public struct RopeNode
 
         if (l <= MathTools.o51)
         {
-            n = lastTrueCollisionNormal != Vector2.zero ? lastTrueCollisionNormal : (lastPosition - position).normalized;
+            if (lastTrueCollisionNormal == Vector2.zero)
+            {
+                lastTrueCollisionNormal = (r.point - (Vector2)r.collider.bounds.center).normalized;
+            }
+            n = lastTrueCollisionNormal;
             var w = this.collisionThreshold * n;
             var velocity = (position - lastPosition) / dt;
-            var a = Vector2.Dot(velocity, n);
-            var newVelocity = collisionBounciness * Mathf.Sign(a) * (2 * a * n - velocity);
+            var tang = n.CWPerp();
+            var a = Vector2.Dot(velocity, tang);
+            var b = Vector2.Dot(velocity, n);
+            var newVelocity = collisionBounciness * Mathf.Sign(b) * (velocity - 2 * a * tang);
             position += w;
             lastPosition = position - newVelocity * dt;
             StoreCollisionVelocity(r.collider.attachedRigidbody, n);
@@ -275,8 +281,10 @@ public struct RopeNode
         var velocity = (position - lastPosition) / dt;
         var speed = velocity.magnitude;
         var diff = Mathf.Min(collisionThreshold - distanceToContactPoint, this.collisionThreshold);
-        var a = Vector2.Dot(velocity, collisionNormal);
-        var newVelocity = collisionBounciness * Mathf.Sign(a) * (2 * a * collisionNormal - velocity);
+        var tang = collisionNormal.CWPerp();
+        var a = Vector2.Dot(velocity, tang);
+        var b = Vector2.Dot(velocity, collisionNormal);
+        var newVelocity = collisionBounciness * Mathf.Sign(b) * (velocity - 2 * a * tang);
 
         if (speed > MathTools.o51)
         {
