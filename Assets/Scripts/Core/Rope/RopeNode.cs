@@ -25,12 +25,13 @@ public struct RopeNode
     float collisionBounciness;
     readonly Vector2[] raycastDirections;
     //int currentCollisionLayerMask;
-    Vector2 lastTrueCollisionNormal;
+    Vector2 lastCollisionNormal;
 
     public bool Anchored => anchored;
     public int CurrentCollisionLayerMask => CurrentCollision ? 1 << CurrentCollision.gameObject.layer : 0;//currentCollisionLayerMask;
     public Collider2D CurrentCollision { get; private set; }
     public float CollisionThreshold => collisionThreshold;
+    public Vector2 LastCollisionNormal => lastCollisionNormal;
 
     public RopeNode(Vector2 position, Vector2 velocity, Vector2 acceleration, float mass, float drag,
         int collisionMask, float collisionThreshold, float collisionSearchRadiusBuffer, float collisionBounciness,
@@ -65,7 +66,7 @@ public struct RopeNode
         this.collisionBounciness = collisionBounciness;
         //currentCollisionLayerMask = 0;
         CurrentCollision = null;
-        lastTrueCollisionNormal = Vector2.zero;
+        lastCollisionNormal = Vector2.zero;
 
 
 
@@ -227,7 +228,7 @@ public struct RopeNode
         {
             //currentCollisionLayerMask = 0;
             CurrentCollision = null;
-            lastTrueCollisionNormal = Vector2.zero;//can try to get rid of this
+            lastCollisionNormal = Vector2.zero;//can try to get rid of this
         }
     }
 
@@ -239,11 +240,11 @@ public struct RopeNode
 
         if (l <= MathTools.o51)
         {
-            if (lastTrueCollisionNormal == Vector2.zero)
+            if (lastCollisionNormal == Vector2.zero)
             {
-                lastTrueCollisionNormal = (r.point - (Vector2)r.collider.bounds.center).normalized;
+                lastCollisionNormal = (r.point - (Vector2)r.collider.bounds.center).normalized;
             }
-            n = lastTrueCollisionNormal;
+            n = lastCollisionNormal;
             var w = this.collisionThreshold * n;
             var velocity = (position - lastPosition) / dt;
             var tang = n.CWPerp();
@@ -259,7 +260,7 @@ public struct RopeNode
         }
         else
         {
-            lastTrueCollisionNormal = n;
+            lastCollisionNormal = n;
         }
 
         if (l < collisionThreshold)

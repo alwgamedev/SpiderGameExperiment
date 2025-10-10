@@ -1,4 +1,4 @@
-﻿using Unity.VisualScripting;
+﻿using System;
 using UnityEngine;
 
 public class SpiderMovementController : MonoBehaviour
@@ -46,12 +46,7 @@ public class SpiderMovementController : MonoBehaviour
     [SerializeField] float uphillJumpTakeoffRotationFraction;
     [SerializeField] float jumpVerificationTime;
     [SerializeField] float tapJumpVerificationTime;
-    //[SerializeField] float jumpCarryForceEasingPower;
-    //[SerializeField] float jumpCarryForceEaseTime;
-    //[SerializeField] float freeHangCastLengthFactor;
-    [SerializeField] float freeHangEntryTension;
-    [SerializeField] float freeHangExitTension;
-    [SerializeField] float freeHangCastLengthFactor;
+    [SerializeField] float freeHangEntryThreshold;
     [SerializeField] float crouchHeightFraction;
     [SerializeField] float crouchTime;
     [SerializeField] float crouchBoostMinProgress;
@@ -74,6 +69,8 @@ public class SpiderMovementController : MonoBehaviour
     float jumpVerificationTimer;
     //float jumpCarryForceEaseTimer = Mathf.Infinity;
 
+    int orientation = 1;
+
     //bool freeHanging;
 
     bool grounded;
@@ -89,7 +86,6 @@ public class SpiderMovementController : MonoBehaviour
     float crouchProgress;//0-1
 
     bool FacingRight => transform.localScale.x > 0;
-    int Orientation => FacingRight ? 1 : -1;
     float PreferredBodyPosGroundHeight => transform.position.y - heightReferencePoint.position.y + preferredRideHeight;
     float MaxSpeed => grounded ? maxSpeed : maxSpeedAirborne;
     //float AccelFactor => grounded ? accelFactor : accelFactor * airborneAccelMultiplier;
@@ -192,7 +188,7 @@ public class SpiderMovementController : MonoBehaviour
         }
 
         moveInput = (Input.GetKey(KeyCode.RightArrow) ? 1 : 0) + (Input.GetKey(KeyCode.LeftArrow) ? -1 : 0);
-        if (moveInput * Orientation < 0)
+        if (MathTools.OppositeSigns(moveInput, orientation))
         {
             ChangeDirection();
         }
@@ -214,6 +210,8 @@ public class SpiderMovementController : MonoBehaviour
             transform.up = MathTools.ReflectAcrossHyperplane((Vector2)transform.up, grapple.GrappleExtent.normalized.CCWPerp());
             transform.position += (Vector3)(o - grapple./*Smoothed*/FreeHangLeveragePoint);
         }
+
+        orientation = FacingRight ? 1 : -1;
     }
 
     private void HandleMoveInput()
@@ -223,21 +221,11 @@ public class SpiderMovementController : MonoBehaviour
         //-- so you can limit maxSpd - spd to being e.g. double the maxSpeed or w/e)
         if (moveInput != 0)
         {
-            var fhs = grapple.FreeHangStrength;
-            if (fhs > 0)
+            //var fhs = grapple.FreeHangStrength;
+            if (grapple.FreeHanging)
             {
-                rb.AddForceAtPosition(rb.mass * accelFactorFreeHanging * fhs * FreeHangingMoveDirection(), grapple./*Smoothed*/FreeHangLeveragePoint);
-                if (fhs == 1)
-                {
-                    return;
-                }
-                //var r = FacingRight ? transform.right : -transform.right;
-                //var moveDir = FreeHangingMoveDirection(out var g);
-                //if (Vector2.Dot(r, g) < 0 && Vector2.Dot(r, moveDir) > -MathTools.cos45)
-                //{
-                //    rb.AddForce(rb.mass * accelFactorFreeHanging * moveDir);
-                //    //return;
-                //}
+                rb.AddForceAtPosition(rb.mass * accelFactorFreeHanging * /*fhs **/ FreeHangingMoveDirection(), grapple./*Smoothed*/FreeHangLeveragePoint);
+                return;
             }
 
             Vector2 d = FacingRight ? groundDirection : -groundDirection;
@@ -245,7 +233,7 @@ public class SpiderMovementController : MonoBehaviour
             var maxSpd = MaxSpeed;
 
             var accCap = accelCap;
-            var accFactor = fhs > 0 ? (1 - fhs) * accelFactor : accelFactor;
+            var accFactor = /*fhs > 0 ? (1 - fhs) **/ accelFactor;// : accelFactor;
             //if (VerifyingJump())
             //{
             //    var lerpAmt = 1 - Mathf.Pow(jumpVerificationTimer / jumpVerificationTime, 1);
@@ -269,8 +257,8 @@ public class SpiderMovementController : MonoBehaviour
             if (grapple.GrappleAnchored)
             {
                 //so grip doesn't fight against carry force
-                var c = Vector2.Dot(grapple.LastCarryForceApplied, d);
-                if (Mathf.Sign(grip) != Mathf.Sign(c))
+                var c = Vector2.Dot(grapple.LastCarryForce, d);
+                if (MathTools.OppositeSigns(grip, c))
                 {
                     grip += grapplePullGripReduction * c;
                 }
@@ -280,27 +268,25 @@ public class SpiderMovementController : MonoBehaviour
         }
     }
 
-    private Vector2 FreeHangingMoveDirection(/*out Vector2 grappleExtentNormalized*/)
+    private Vector2 FreeHangingMoveDirection()
     {
-        //grappleExtentNormalized = grapple.GrappleExtent.normalized;
-        //return FacingRight ? grappleExtentNormalized.CWPerp() : grappleExtentNormalized.CCWPerp();
         return FacingRight ? grapple.GrappleExtent.normalized.CWPerp() : grapple.GrappleExtent.normalized.CCWPerp();
     }
 
-    private float JumpVerificationAccelFactor(float accelFactor, float lerpAmt)
-    {
-        return Mathf.Lerp(0, accelFactor, lerpAmt);
-    }
+    //private float JumpVerificationAccelFactor(float accelFactor, float lerpAmt)
+    //{
+    //    return Mathf.Lerp(0, accelFactor, lerpAmt);
+    //}
 
-    private float JumpVerificationAccelCap(float lerpAmt)
-    {
-        return Mathf.Lerp(0, accelCap, lerpAmt);
-    }
+    //private float JumpVerificationAccelCap(float lerpAmt)
+    //{
+    //    return Mathf.Lerp(0, accelCap, lerpAmt);
+    //}
 
-    private float JumpVerificationMaxSpeed(float lerpAmt)
-    {
-        return Mathf.Lerp(maxSpeed, maxSpeedAirborne, lerpAmt);
-    }
+    //private float JumpVerificationMaxSpeed(float lerpAmt)
+    //{
+    //    return Mathf.Lerp(maxSpeed, maxSpeedAirborne, lerpAmt);
+    //}
 
     private void Balance()
     {
@@ -324,23 +310,45 @@ public class SpiderMovementController : MonoBehaviour
     //only called when !grounded
     private void UpdateFreeHangingState()
     {
-        if (grapple.FreeHanging && (grounded || !grapple.GrappleAnchored || /*grapple.Tension() < freeHangExitTension ||*/ IsTouchingGroundCollider(headCollider) || IsTouchingGroundCollider(abdomenCollider)))
+        if (grapple.FreeHanging && (grounded || !grapple.GrappleAnchored || IsTouchingGroundCollider(headCollider) || IsTouchingGroundCollider(abdomenCollider)))
         {
             grapple.FreeHanging = false;
         }
-        else if (!grapple.FreeHanging && grapple.GrappleAnchored && !grounded
-            && !AboveAnchorGround() //2do: OR ARE HANGING "STRAIGHT DOWN" (for the rare case where a piece of ground curves over itself)
-            && grapple.StrictTension() > freeHangEntryTension)
+        else if (!grapple.FreeHanging && !grounded && grapple.GrappleAnchored && grapple.LastCarryForceMagnitude / rb.mass > freeHangEntryThreshold && (!VerifyingJump() || transform.up.y < 0))
         {
             grapple.FreeHanging = true;
         }
+        //{
+        //    var t = grapple.StrictTension() - freeHangEntryTension;
+        //    if (t > 0)
+        //    {
+        //        if (moveInput == 0 || freeHangCooldownTimer > freeHangCooldownTime)
+        //        {
+        //            grapple.FreeHanging = true;
+        //        }
+        //        else
+        //        {
+        //            freeHangCooldownTimer += t * freeHangCooldownRate *  Time.deltaTime;
+        //        }
+        //    }
+        //    else if (freeHangCooldownTimer > 0)
+        //    {
+        //        freeHangCooldownTimer -= Time.deltaTime;
+        //    }
+        //}
     }
 
-    private bool AboveAnchorGround()
-    {
-        var r = Physics2D.Raycast(heightReferencePoint.position, Vector2.down, freeHangCastLengthFactor * preferredRideHeight, grapple.AnchorMask);
-        return r && r.collider == grapple.AnchorCollider;
-    }
+    //private bool AboveAnchorGround()
+    //{
+    //    var r = Physics2D.Raycast(heightReferencePoint.position, Vector2.down, freeHangDownCastLengthFactor * preferredRideHeight, grapple.AnchorMask);
+    //    return r && r.collider == grapple.AnchorCollider;
+    //}
+
+    //private bool AnchorGroundIsOverhead()
+    //{
+    //    var r = Physics2D.Raycast(heightReferencePoint.position, Vector2.up, freeHangDownCastLengthFactor * grapple.Grapple.Length, grapple.AnchorMask);
+    //    return r && r.collider == grapple.AnchorCollider;
+    //}
 
     private bool IsTouchingGroundCollider(Collider2D c)
     {
@@ -425,7 +433,7 @@ public class SpiderMovementController : MonoBehaviour
         var f = l * heightSpringForce - heightSpringDamping * v;
         if (grapple.GrappleAnchored)
         {
-            var dot = Vector2.Dot(grapple.LastCarryForceApplied, down);
+            var dot = Vector2.Dot(grapple.LastCarryForce, down);
             //if (Mathf.Sign(l) != Mathf.Sign(dot))
             //{
             //    f += dot;
@@ -523,7 +531,7 @@ public class SpiderMovementController : MonoBehaviour
             if (l > groundPtSlipThreshold || l < -groundPtSlipThreshold)
             {
                 var v = Vector2.Dot(rb.linearVelocity, goalGroundDirection);
-                if (Mathf.Sign(l) != Mathf.Sign(v))
+                if (MathTools.OppositeSigns(l, v))
                 {
                     l = l < 0 ? Mathf.Min(l - groundPtSlipRate * l * v, 0) : Mathf.Max(l + groundPtSlipRate * l * v, 0);
                     groundPt = groundMap.PointFromCenterByPositionClamped(l);//project onto ground does the same thing

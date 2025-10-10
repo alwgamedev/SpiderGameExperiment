@@ -31,7 +31,7 @@ public class SilkGrapple : MonoBehaviour
     [SerializeField] float carrySpringDamping;
     //[SerializeField] float carryTensionThreshold;
     //[SerializeField] float carryForceSmoothingRate;
-    [SerializeField] float freeHangSmoothTime;
+    //[SerializeField] float freeHangSmoothTime;
 
     int grappleReleaseInput;//1 = release, -1 = retract, 0 = none
     //bool releaseInputEnabled;
@@ -51,14 +51,17 @@ public class SilkGrapple : MonoBehaviour
     float fixedDt2;
 
     bool freeHanging;
-    float freeHangSmoothingTimer;
+    //float freeHangSmoothingTimer;
 
     //public float carryForceMultiplier = 1;
 
+    public Rope Grapple => grapple;
     public bool GrappleAnchored => grapple != null && grapple.nodes[grapple.lastIndex].Anchored;
     public int GrappleReleaseInput => grapple == null ? 0 : grappleReleaseInput;
     //public Vector2 LastCarryForceDirection { get; private set; }
-    public Vector2 LastCarryForceApplied { get; private set; }
+    public Vector2 LastCarryForce { get; private set; }
+    public float LastCarryForceMagnitude { get; private set; }
+    public Vector2 LastCarryForceDirection { get; private set; }
     public bool ShooterMovingTowardsGrapple => Vector2.Dot(shooterRb.linearVelocity, GrappleExtent) > 0;
     public Vector2 GrappleExtent => GrapplePosition - AnchorPosition;
     //public Vector2 GrappleExtentFromGround
@@ -105,7 +108,7 @@ public class SilkGrapple : MonoBehaviour
             }
         }
     }
-    public float FreeHangStrength => freeHangSmoothingTimer / freeHangSmoothTime;
+    //public float FreeHangStrength => freeHangSmoothingTimer / freeHangSmoothTime;
 
     //private void OnDrawGizmos()
     //{
@@ -182,7 +185,7 @@ public class SilkGrapple : MonoBehaviour
         }
         if (grapple != null)
         {
-            UpdateFreeHangSmoothingTimer();
+            //UpdateFreeHangSmoothingTimer();
             UpdateAnchorPosition();
             grapple.FixedUpate(fixedDt, fixedDt2);
             UpdateGrappleLength();
@@ -211,25 +214,25 @@ public class SilkGrapple : MonoBehaviour
         return grapple.nodes[firstCollisionIndex].position - AnchorPosition;
     }
 
-    private void UpdateFreeHangSmoothingTimer()
-    {
-        if (freeHanging && freeHangSmoothingTimer < freeHangSmoothTime)
-        {
-            freeHangSmoothingTimer += fixedDt;
-            if (freeHangSmoothingTimer > freeHangSmoothTime)
-            {
-                freeHangSmoothingTimer = freeHangSmoothTime;
-            }
-        }
-        else if (!freeHanging && freeHangSmoothingTimer > 0)
-        {
-            freeHangSmoothingTimer -= fixedDt;
-            if (freeHangSmoothingTimer < 0)
-            {
-                freeHangSmoothingTimer = 0;
-            }
-        }
-    }
+    //private void UpdateFreeHangSmoothingTimer()
+    //{
+    //    if (freeHanging && freeHangSmoothingTimer < freeHangSmoothTime)
+    //    {
+    //        freeHangSmoothingTimer += fixedDt;
+    //        if (freeHangSmoothingTimer > freeHangSmoothTime)
+    //        {
+    //            freeHangSmoothingTimer = freeHangSmoothTime;
+    //        }
+    //    }
+    //    else if (!freeHanging && freeHangSmoothingTimer > 0)
+    //    {
+    //        freeHangSmoothingTimer -= fixedDt;
+    //        if (freeHangSmoothingTimer < 0)
+    //        {
+    //            freeHangSmoothingTimer = 0;
+    //        }
+    //    }
+    //}
 
     public float Tension()
     {
@@ -403,24 +406,25 @@ public class SilkGrapple : MonoBehaviour
 
     private void UpdateCarrySpring()
     {
-        var d = GrappleExtentFromFirstCollision(out int lastIndex).normalized;
+        LastCarryForceDirection = GrappleExtentFromFirstCollision(out int lastIndex).normalized;
         var t = NormalizedStrictTension(lastIndex);
         if (t > 0)
         {
-            LastCarryForceApplied = shooterRb.mass * carrySpringForce * t * d;
+            LastCarryForceMagnitude = shooterRb.mass * carrySpringForce * t;
+            LastCarryForce = LastCarryForceMagnitude * LastCarryForceDirection;
             if (FreeHanging)
             {
-                shooterRb.AddForceAtPosition(LastCarryForceApplied - shooterRb.mass * carrySpringDamping * Vector2.Dot(shooterRb.linearVelocity, d) * d,
+                shooterRb.AddForceAtPosition(LastCarryForce - shooterRb.mass * carrySpringDamping * Vector2.Dot(shooterRb.linearVelocity, LastCarryForceDirection) * LastCarryForceDirection,
                     /*Smoothed*/FreeHangLeveragePoint);
             }
             else
             {
-                shooterRb.AddForce(LastCarryForceApplied - shooterRb.mass * carrySpringDamping * Vector2.Dot(shooterRb.linearVelocity, d) * d);
+                shooterRb.AddForce(LastCarryForce - shooterRb.mass * carrySpringDamping * Vector2.Dot(shooterRb.linearVelocity, LastCarryForceDirection) * LastCarryForceDirection);
             }
         }
         else
         {
-            LastCarryForceApplied = Vector2.zero;
+            LastCarryForce = Vector2.zero;
         }
     }
 
@@ -477,8 +481,9 @@ public class SilkGrapple : MonoBehaviour
         grapple = null;
         grappleReleaseInput = 0;
         shootSpeedPowerUp = 0;
-        LastCarryForceApplied = Vector2.zero;
-        freeHangSmoothingTimer = 0;
+        LastCarryForce = Vector2.zero;
+        LastCarryForceMagnitude = 0;
+        //freeHangSmoothingTimer = 0;
         freeHanging = false;
         //releaseInputEnabled = false;
         //PositiveCarryForce = false;

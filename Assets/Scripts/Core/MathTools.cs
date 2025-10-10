@@ -30,6 +30,16 @@ public static class MathTools
         }
     }
 
+    public static bool OppositeSigns(int x, int y)
+    {
+        return (x > 0 && y < 0) || (x < 0 && y > 0);
+    }
+
+    public static bool OppositeSigns(float x, float y)
+    {
+        return (x > 0 && y < 0) || (x < 0 && y > 0);
+    }
+
     public static float RandomFloat(float min, float max)
     {
         return min + (max - min) * (float)RNG.NextDouble();
