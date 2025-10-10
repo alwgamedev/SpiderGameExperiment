@@ -443,10 +443,11 @@ public class SilkGrapple : MonoBehaviour
         }
         else if (grapple.Length < maxLength)
         {
-            shootTimer += fixedDt;
-            if (shootTimer > 0 && GrappleExtent.magnitude > grapple.Length)
+            shootTimer += fixedDt;//shoot timer starts negative so doesn't start growing until grapple has extended out it's initial length, ideally
+            if (shootTimer > 0 && GrappleExtent.magnitude > grapple.Length) 
             {
-                grapple.Length = Mathf.Clamp(0.5f * Physics2D.gravity.y * shootDirection.y * shootTimer * shootTimer + ShootSpeed * shootTimer + minLength, grapple.Length, maxLength);
+                var p = (0.5f * shootTimer * Physics2D.gravity + ShootSpeed * shootDirection) * shootTimer + minLength * shootDirection;
+                grapple.Length = Mathf.Clamp(p.magnitude, grapple.Length, maxLength);
             }
             //2do: if grapple length stagnant for certain amount of time (i.e. we have reached max length or the dot > length fails for number of updates), then enable release input)
         }

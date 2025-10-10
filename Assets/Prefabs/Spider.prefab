@@ -6665,11 +6665,9 @@ MonoBehaviour:
   jumpForceCrouchBoostRate: 14
   uphillJumpDirectionRotationRate: 0.8
   uphillJumpTakeoffRotationFraction: 0.25
-  jumpVerificationTime: 0.25
+  jumpVerificationTime: 0.125
   tapJumpVerificationTime: 0.125
-  freeHangEntryTension: 0.6
-  freeHangExitTension: 0
-  freeHangCastLengthFactor: 20
+  freeHangEntryThreshold: 20
   crouchHeightFraction: 0.25
   crouchTime: 0.3
   crouchBoostMinProgress: 0.4
@@ -6777,7 +6775,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: carrySpringForce
-      value: 400
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: retractMaxTension
@@ -6785,7 +6783,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: carrySpringDamping
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: freeHangSmoothTime
