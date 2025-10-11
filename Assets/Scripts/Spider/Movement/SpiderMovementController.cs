@@ -44,14 +44,15 @@ public class SpiderMovementController : MonoBehaviour
     [SerializeField] float tapJumpVerificationTime;
     [SerializeField] float freeHangEntryThreshold;
     [SerializeField] float freeHangGroundedToleranceMultiplier;
-    [SerializeField] float freeHangStrideMultiplier;
     [SerializeField] float crouchHeightFraction;
     [SerializeField] float crouchTime;
     [SerializeField] float crouchBoostMinProgress;
     [SerializeField] float crouchReleaseSpeedMultiplier;
     [SerializeField] float airborneLegAnimationTimeScale;
-    [SerializeField] float airborneLegDriftRate;
-    [SerializeField] float airborneLegDriftMax;
+    //[SerializeField] float airborneLegDriftRate;
+    //[SerializeField] float airborneLegDriftMax;
+    [SerializeField] float airborneStrideMultiplier;
+    [SerializeField] float strideMultiplierSmoothingRate;
     [SerializeField] GroundMap groundMap;
 
     Rigidbody2D rb;
@@ -145,13 +146,14 @@ public class SpiderMovementController : MonoBehaviour
         legSynchronizer.bodyGroundSpeed = Speed;
         legSynchronizer.preferredBodyPosGroundHeight = PreferredBodyPosGroundHeight;
         legSynchronizer.stepHeightFraction = 1 - crouchProgress * crouchHeightFraction;
-        if (grapple.FreeHanging)
+        if (!grounded)
         {
             var r = FacingRight ? transform.right : -transform.right;
-            var f = ClampedFreeHangeAngle(r);
-            legSynchronizer.strideMultiplier = f > MathTools.sin30 ? 1 : f > 0 ? Mathf.Lerp(freeHangStrideMultiplier, 1, f / MathTools.sin30) : Mathf.Lerp(freeHangStrideMultiplier, 1, -f);
+            var f = ClampedRotation(r);
+            legSynchronizer.strideMultiplier = MathTools.LerpAtConstantRate(legSynchronizer.strideMultiplier, AirborneStrideMultiplier(f),
+                strideMultiplierSmoothingRate, Time.deltaTime);
         }
-        else
+        else if (legSynchronizer.strideMultiplier != 1)
         {
             legSynchronizer.strideMultiplier = 1;
         }
@@ -159,6 +161,13 @@ public class SpiderMovementController : MonoBehaviour
         legSynchronizer.UpdateAllLegs(Time.deltaTime, groundMap);
         //when done in late update get weird things like legs lagging behind (up) during long freefalls.
         //we can do it on one fixed update per update, but then speed is not always accurate, so get moonwalking.
+    }
+
+    private float AirborneStrideMultiplier(float clampedRotation)
+    {
+        return clampedRotation > MathTools.sin30 ? 1 :
+            clampedRotation > 0 ? Mathf.Lerp(airborneStrideMultiplier, 1, clampedRotation / MathTools.sin30)
+            : Mathf.Lerp(airborneStrideMultiplier, 1, -clampedRotation);
     }
 
     private void CaptureInput()
@@ -312,7 +321,7 @@ public class SpiderMovementController : MonoBehaviour
         else if (!grapple.FreeHanging && !grounded && grapple.GrappleAnchored && grapple.LastCarryForceMagnitude / rb.mass > freeHangEntryThreshold && !VerifyingJump())
         {
             grapple.FreeHanging = true;
-            legSynchronizer.strideMultiplier = freeHangStrideMultiplier;
+            legSynchronizer.strideMultiplier = airborneStrideMultiplier;
         }
     }
 
@@ -425,13 +434,13 @@ public class SpiderMovementController : MonoBehaviour
         //(e.g. before ride height on flat ground was always off by plus or minus 400/32 = 0.08)
     }
 
-    private void UpdateAirborneLegDrift()
-    {
-        if (legSynchronizer.outwardDrift < airborneLegDriftMax)
-        {
-            legSynchronizer.outwardDrift += airborneLegDriftRate * Time.deltaTime;
-        }
-    }
+    //private void UpdateAirborneLegDrift()
+    //{
+    //    if (legSynchronizer.outwardDrift < airborneLegDriftMax)
+    //    {
+    //        legSynchronizer.outwardDrift += airborneLegDriftRate * Time.deltaTime;
+    //    }
+    //}
 
 
     //GROUND DETECTION
@@ -541,18 +550,18 @@ public class SpiderMovementController : MonoBehaviour
     private Vector2 FreeHangGroundMapDown()
     {
         var r = FacingRight ? transform.right : -transform.right;
-        var f = ClampedFreeHangeAngle(r);
+        var f = ClampedRotation(r);
         return f == Mathf.Infinity ? -transform.up :
             f > MathTools.sin30 ? -transform.up : f < -MathTools.sin30 ? MathTools.cos60 * r - MathTools.sin60 * transform.up : Vector2.down;
     }
 
-    private float ClampedFreeHangeAngle(Vector2 r)
+    private float ClampedRotation(Vector2 orientedRight)
     {
         if (transform.up.y < 0)//upside down
         {
             return Mathf.Infinity;
         }
-        return r.y;
+        return orientedRight.y;
     }
 
     private void InitializeGroundPoint()

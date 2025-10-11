@@ -6669,14 +6669,13 @@ MonoBehaviour:
   tapJumpVerificationTime: 0.125
   freeHangEntryThreshold: 40
   freeHangGroundedToleranceMultiplier: 1.125
-  freeHangStrideMultiplier: 1.7
   crouchHeightFraction: 0.25
   crouchTime: 0.5
   crouchBoostMinProgress: 0.4
   crouchReleaseSpeedMultiplier: 3
   airborneLegAnimationTimeScale: 0.075
-  airborneLegDriftRate: 1.8
-  airborneLegDriftMax: 1
+  airborneStrideMultiplier: 1.5
+  strideMultiplierSmoothingRate: 0.25
   groundMap:
     numFwdIntervals: 52
     intervalWidth: 0.025

@@ -33,6 +33,11 @@ public static class MathTools
         }
     }
 
+    public static float LerpAtConstantRate(float from, float to, float rate, float dt)
+    {
+        return from == to ? from : from < to ? Mathf.Min(from + rate * dt, to) : Mathf.Max(from - rate * dt, to);
+    }
+
     public static bool OppositeSigns(int x, int y)
     {
         return (x > 0 && y < 0) || (x < 0 && y > 0);
