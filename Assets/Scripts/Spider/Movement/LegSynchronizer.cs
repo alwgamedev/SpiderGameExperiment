@@ -67,11 +67,17 @@ public class LegSynchronizer : MonoBehaviour
         public void Update(float dt)
         {
             timer += dt;
-            if (timer > goalTime)
+            while (timer > goalTime)
             {
                 timer -= goalTime;
                 stepping = !stepping;
                 goalTime = stepping ? stepTime : restTime;
+            }
+            while (timer < 0)
+            {
+                stepping = !stepping;
+                goalTime = stepping ? stepTime : restTime;
+                timer += goalTime;
             }
         }
     }
@@ -79,7 +85,8 @@ public class LegSynchronizer : MonoBehaviour
     LegTimer[] timers;
     //bool staticMode;
 
-    public float bodyGroundSpeed;
+    public float bodyGroundSpeedSign;
+    public float absoluteBodyGroundSpeed;
     public float preferredBodyPosGroundHeight;
     public float timeScale = 1;
     public float stepHeightFraction;
@@ -87,17 +94,16 @@ public class LegSynchronizer : MonoBehaviour
     public float outwardDrift;
     public Vector2 outwardDriftWeights;
 
+    //2DO: adjust to allow bodyGroundSpeed negative
     public void UpdateAllLegs(float dt, GroundMap map)
     {
         var facingRight = bodyRb.transform.localScale.x > 0;
         dt *= timeScale;
 
-        var sf = bodyGroundSpeed / speedCapMax;
-        var groundSpeedFrac = bodyGroundSpeed < speedCapMin ? 0 : sf;
-
+        var sf = absoluteBodyGroundSpeed < speedCapMin ? 0 : absoluteBodyGroundSpeed / speedCapMax;
         var baseStepHeightMultiplier = this.baseStepHeightMultiplier * stepHeightFraction;
-        var stepHeightSpeedMultiplier = Mathf.Min(groundSpeedFrac, 1);
-        var speedScaledDt = groundSpeedFrac * dt;
+        var stepHeightSpeedMultiplier = Mathf.Min(sf, 1);
+        var speedScaledDt = sf * dt;
         dt = Mathf.Max(speedScaledDt, dt);
 
         for (int i = 0; i < timers.Length; i++)
@@ -105,7 +111,7 @@ public class LegSynchronizer : MonoBehaviour
             var t = timers[i];
             var l = synchronizedLegs[i].Leg;
 
-            t.Update(speedScaledDt);
+            t.Update(bodyGroundSpeedSign * speedScaledDt);
 
             if (t.Stepping)
             {

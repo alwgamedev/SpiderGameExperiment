@@ -44,6 +44,7 @@ public class SpiderMovementController : MonoBehaviour
     [SerializeField] float tapJumpVerificationTime;
     [SerializeField] float freeHangEntryThreshold;
     [SerializeField] float freeHangGroundedToleranceMultiplier;
+    //[SerializeField] float freeHangGMDownSmoothingRate;
     [SerializeField] float crouchHeightFraction;
     [SerializeField] float crouchTime;
     [SerializeField] float crouchBoostMinProgress;
@@ -74,6 +75,7 @@ public class SpiderMovementController : MonoBehaviour
     Vector2 groundDirection = Vector2.right;
     Vector2 upcomingGroundDirection = Vector2.right;
     GroundMapPt groundPt = new GroundMapPt(new(Mathf.Infinity, Mathf.Infinity), Vector2.up, Vector2.right, 0, Mathf.Infinity, -1);
+    //Vector2 groundMapDown;
 
     bool allGroundMapPtsHitGround;
 
@@ -82,6 +84,7 @@ public class SpiderMovementController : MonoBehaviour
     bool FacingRight => transform.localScale.x > 0;
     float PreferredBodyPosGroundHeight => transform.position.y - heightReferencePoint.position.y + preferredRideHeight;
     float MaxSpeed => grounded ? maxSpeed : maxSpeedAirborne;
+    float GroundVelocity => Vector2.Dot(rb.linearVelocity, FacingRight ? groundDirection : - groundDirection);
     float Speed => grounded ? Mathf.Abs(Vector2.Dot(rb.linearVelocity, groundDirection)) : rb.linearVelocity.magnitude;
     bool StronglyGrounded => grounded && allGroundMapPtsHitGround;
     Vector2 GroundPtGroundDirection => groundPt.normal.CWPerp();
@@ -143,7 +146,9 @@ public class SpiderMovementController : MonoBehaviour
         }
         Balance();
 
-        legSynchronizer.bodyGroundSpeed = Speed;
+        var v = GroundVelocity;
+        legSynchronizer.bodyGroundSpeedSign = grounded && grapple.GrappleAnchored ? 1 : Mathf.Sign(v);
+        legSynchronizer.absoluteBodyGroundSpeed = Mathf.Abs(v);
         legSynchronizer.preferredBodyPosGroundHeight = PreferredBodyPosGroundHeight;
         legSynchronizer.stepHeightFraction = 1 - crouchProgress * crouchHeightFraction;
         if (!grounded)
@@ -211,7 +216,9 @@ public class SpiderMovementController : MonoBehaviour
             Vector2 o = grapple./*Smoothed*/FreeHangLeveragePoint;
             var s = transform.localScale;
             transform.localScale = new Vector3(-s.x, s.y, s.z);
-            transform.up = MathTools.ReflectAcrossHyperplane((Vector2)transform.up, grapple.GrappleExtent.normalized.CCWPerp());
+            var n = grapple.GrappleExtent.normalized.CCWPerp();//2do: try LastCarryForceDirection instead? (bc already normalized)
+            transform.up = MathTools.ReflectAcrossHyperplane((Vector2)transform.up, n);
+            //groundMapDown = MathTools.ReflectAcrossHyperplane(groundMapDown, n);
             transform.position += (Vector3)(o - grapple./*Smoothed*/FreeHangLeveragePoint);
         }
 
@@ -541,18 +548,31 @@ public class SpiderMovementController : MonoBehaviour
 
     private void UpdateGroundMap()
     {
-        groundMap.UpdateMap(heightReferencePoint.position, grapple.FreeHanging ? FreeHangGroundMapDown() : -transform.up, transform.right, 
+        //groundMapDown = grapple.FreeHanging ? MathTools.CheapRotationBySpeed(groundMapDown, FreeHangGroundMapDown(), freeHangGMDownSmoothingRate, Time.deltaTime) : -transform.up;
+        groundMap.UpdateMap(heightReferencePoint.position, 
+            grapple.FreeHanging ? FreeHangGroundMapDown() : -transform.up, 
+            grapple.FreeHanging ? FreeHangGroundMapRight() : transform.right, 
             grapple.FreeHanging ? freeHangGroundedToleranceMultiplier * groundednessTolerance : groundednessTolerance, 
             groundMap.CentralIndex, groundLayer);
         allGroundMapPtsHitGround = groundMap.AllHitGround();
     }
 
+    //2do: allow the threshold to be variable (make a field, and cache on awake), and make clamped rotation a parameter of this and next method
     private Vector2 FreeHangGroundMapDown()
     {
         var r = FacingRight ? transform.right : -transform.right;
         var f = ClampedRotation(r);
         return f == Mathf.Infinity ? -transform.up :
             f > MathTools.sin30 ? -transform.up : f < -MathTools.sin30 ? MathTools.cos60 * r - MathTools.sin60 * transform.up : Vector2.down;
+    }
+
+    //2do: right idea, but want no skew when upright (so scale skew with "clampedrotation"), plus make skew angle a field
+    //the skew scaling with clamped rotation will allow the legs to continue to "dangle freely" even when we've hit the threshold for ground map down
+    //(we still NEED the groundMapDown threshold, because we can't have groundMapDown ending up parallel to the body and creating a disaster of a ground map)
+    private Vector2 FreeHangGroundMapRight()
+    {
+        return transform.right;
+        //return MathTools.cos15 * transform.right + MathTools.sin15 * (FacingRight ? -transform.up : transform.up);
     }
 
     private float ClampedRotation(Vector2 orientedRight)
