@@ -6629,14 +6629,14 @@ MonoBehaviour:
   headBone: {fileID: 1796735932416995084}
   heightReferencePoint: {fileID: 3708315842584664218}
   grapple: {fileID: 1051379001623071205}
-  headRotationSpeed: 4
+  headRotationSpeed: 2
   groundedRotationSpeed: 6
   airborneRotationSpeed: 4.5
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  groundedExitToleranceFactor: 1.5
-  groundedEntryToleranceFactor: 1.05
+  groundedExitToleranceFactor: 1.25
+  groundedEntryToleranceFactor: 1.1
   groundDirectionSampleWidth: 0.325
   backupGroundPtRaycastLengthFactor: 1.1
   groundPtSlipRate: 0.6
@@ -6667,13 +6667,18 @@ MonoBehaviour:
   uphillJumpTakeoffRotationFraction: 0.25
   jumpVerificationTime: 0.125
   tapJumpVerificationTime: 0.125
-  freeHangEntryThreshold: 40
-  freeHangGroundedToleranceMultiplier: 1.125
+  freeHangEntryThreshold: 30
+  weakFreeHangEntryThreshold: 15
+  freeHangGroundedToleranceMultiplier: 1
+  freeHangLegAngleMin: 1.0471976
+  freeHangLegAngleSkew: 0.1308997
+  freeHangHeadAngle: 0.2094395
+  freeHangStepHeightMultiplier: 0.25
   crouchHeightFraction: 0.25
   crouchTime: 0.5
   crouchBoostMinProgress: 0.4
   crouchReleaseSpeedMultiplier: 3
-  airborneLegAnimationTimeScale: 0.075
+  airborneLegAnimationTimeScale: 0.05
   airborneStrideMultiplier: 1.5
   strideMultiplierSmoothingRate: 0.25
   groundMap:
@@ -6698,7 +6703,7 @@ MonoBehaviour:
   speedCapMin: 0.05
   speedCapMax: 3
   baseStepHeightMultiplier: 0.925
-  stepSmoothingRate: 15
+  stepSmoothingRate: 25
   synchronizedLegs:
   - leg: {fileID: 3287121947862078546}
     timeOffset: 0
@@ -6786,7 +6791,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: carrySpringDamping
-      value: 3
+      value: 2.25
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: freeHangSmoothTime
