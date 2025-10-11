@@ -6667,9 +6667,9 @@ MonoBehaviour:
   uphillJumpTakeoffRotationFraction: 0.25
   jumpVerificationTime: 0.125
   tapJumpVerificationTime: 0.125
-  freeHangEntryThreshold: 20
+  freeHangEntryThreshold: 40
   crouchHeightFraction: 0.25
-  crouchTime: 0.3
+  crouchTime: 0.5
   crouchBoostMinProgress: 0.4
   crouchReleaseSpeedMultiplier: 3
   airborneLegAnimationTimeScale: 0.075
@@ -6775,7 +6775,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: carrySpringForce
-      value: 200
+      value: 250
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: retractMaxTension
@@ -6783,7 +6783,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: carrySpringDamping
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: freeHangSmoothTime
