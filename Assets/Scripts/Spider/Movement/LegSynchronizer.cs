@@ -83,6 +83,7 @@ public class LegSynchronizer : MonoBehaviour
     public float preferredBodyPosGroundHeight;
     public float timeScale = 1;
     public float stepHeightFraction;
+    public float strideMultiplier = 1;
     public float outwardDrift;
     public Vector2 outwardDriftWeights;
 
@@ -110,12 +111,15 @@ public class LegSynchronizer : MonoBehaviour
             {
                 l.UpdateStep(dt, map, facingRight,
                     baseStepHeightMultiplier, stepHeightSpeedMultiplier,
-                    stepSmoothingRate, t.StateProgress, t.StepTime, t.RestTime);
+                    stepSmoothingRate, t.StateProgress, 
+                    strideMultiplier == 1 ? t.StepTime : strideMultiplier * t.StepTime, 
+                    strideMultiplier == 1 ? t.RestTime : strideMultiplier * t.RestTime);
             }
             else
             {
                 l.UpdateRest(dt, map, facingRight,
-                    stepSmoothingRate, t.StateProgress, t.RestTime);
+                    stepSmoothingRate, t.StateProgress, 
+                    strideMultiplier == 1 ? t.RestTime : strideMultiplier * t.RestTime);
             }
         }
     }

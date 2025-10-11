@@ -6,6 +6,7 @@ public static class MathTools
 
     public const float o51 = 10E-05f;
 
+    public const float cos15 = 0.9659258f;
     public const float sin15 = 0.2588190f;
     public const float cos30 = 0.8660254f;//sqrt(3)/2
     public const float sin30 = 0.5f;
@@ -16,6 +17,8 @@ public static class MathTools
     public const float cos60 = sin30;
     public const float sin60 = cos30;
     public const float tan60 = 1.7320508f;//sqrt(3)
+    public const float cos75 = 0.2588190f;
+    public const float sin75 = 0.9659258f;
 
     public static System.Random RNG
     {

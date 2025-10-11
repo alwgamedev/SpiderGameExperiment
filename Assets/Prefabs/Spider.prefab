@@ -6668,6 +6668,8 @@ MonoBehaviour:
   jumpVerificationTime: 0.125
   tapJumpVerificationTime: 0.125
   freeHangEntryThreshold: 40
+  freeHangGroundedToleranceMultiplier: 1.125
+  freeHangStrideMultiplier: 1.7
   crouchHeightFraction: 0.25
   crouchTime: 0.5
   crouchBoostMinProgress: 0.4
@@ -6719,6 +6721,7 @@ MonoBehaviour:
   preferredBodyPosGroundHeight: 0.400751
   timeScale: 1
   stepHeightFraction: 0
+  strideMultiplier: 1
   outwardDrift: 0
   outwardDriftWeights: {x: 0, y: 0}
 --- !u!1001 &4934841031197647702
