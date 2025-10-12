@@ -6637,19 +6637,19 @@ MonoBehaviour:
     m_Bits: 64
   groundedExitToleranceFactor: 1.25
   groundedEntryToleranceFactor: 1.05
-  groundDirectionSampleWidth: 0.325
+  groundDirectionSampleWidth: 0.35
   backupGroundPtRaycastLengthFactor: 1.1
-  groundPtSlipRate: 0.6
+  groundPtSlipRate: 0.5
   groundPtSlipThreshold: 0.15
   upcomingGroundDirectionMinPos: 0
   upcomingGroundDirectionMaxPos: 0.4
-  failedGroundRaycastSmoothingRate: 12
+  failedGroundRaycastSmoothingRate: 30
   accelFactor: 45
   accelFactorFreeHanging: 6
   accelCap: 5
   decelFactor: 60
   gripStrength: 400
-  grapplePullGripReduction: 0.9
+  grapplePullGripReduction: 0.8
   maxSpeed: 3.25
   maxSpeedAirborne: 5
   preferredRideHeight: 0.92
@@ -6659,8 +6659,8 @@ MonoBehaviour:
   grappleSquatReduction: 0.25
   heightSampleWidth: 0.8
   balanceSpringForce: 65
-  airborneBalanceSpringForce: 28
-  balanceSpringDamping: 0.065
+  airborneBalanceSpringForce: 40
+  balanceSpringDamping: 0.09
   jumpForce: 10
   jumpForceCrouchBoostRate: 14
   uphillJumpDirectionRotationRate: 0.8

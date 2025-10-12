@@ -217,7 +217,7 @@ public class SpiderMovementController : MonoBehaviour
         //make sure you update before changing direction
         if (grapple.GrappleAnchored)
         {
-            grapple.FreeHanging = (moveInput == 0 || (!Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.RightShift)))
+            grapple.FreeHanging = (moveInput == 0 || Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
                 && !(StronglyGrounded || IsTouchingGroundPtCollider(headCollider) || IsTouchingGroundPtCollider(abdomenCollider));
         }
 
@@ -328,16 +328,17 @@ public class SpiderMovementController : MonoBehaviour
 
         if (!grapple.FreeHanging)
         {
-            var x = Vector2.Dot(transform.up, groundDirection);
-            var y = Vector2.Dot(transform.up, groundDirection.CCWPerp());
-            if (y > 1)//in case of rounding errors
-            {
-                y = 1;
-            }
-            x = x < 0 ? -Mathf.Sqrt(0.5f * (1 - y)) : Mathf.Sqrt(0.5f * (1 - y));
-            //result is x = cos(0.5f(t + pi/2)), which smoothly decreases from 1 to -1 as t goes from -pi/2 to 3pi/2
-            //where t is angle between transform.up and groundDirection
-            f += x * (grounded ? balanceSpringForce : airborneBalanceSpringForce);
+            //var x = Vector2.Dot(transform.up, groundDirection);
+            //var y = Vector2.Dot(transform.up, groundDirection.CCWPerp());
+            //if (y > 1)//in case of rounding errors
+            //{
+            //    y = 1;
+            //}
+            //x = x < 0 ? -Mathf.Sqrt(0.5f * (1 - y)) : Mathf.Sqrt(0.5f * (1 - y));
+            ////result is x = cos(0.5f(t + pi/2)), which smoothly decreases from 1 to -1 as t goes from -pi/2 to 3pi/2
+            ////where t is angle between transform.up and groundDirection
+            var a = MathTools.PseudoAngle(transform.right, groundDirection);
+            f += a * (grounded ? balanceSpringForce : airborneBalanceSpringForce);
         }
 
         rb.AddTorque(rb.mass * f);
