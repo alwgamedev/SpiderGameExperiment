@@ -82,12 +82,46 @@ public static class MathTools
     }
 
     /// <summary>
+    /// as angle from u1 to u2 varies over (-pi,pi], output varies smoothly from -1 to 1 (specifically output is sin(theta/2), where theta is the correct angle)
+    /// (~5-10x faster than arctan)
+    /// </summary>
+    public static float PseudoAngle(Vector2 u1, Vector2 u2)
+    {
+        var cos = Vector2.Dot(u1, u2);
+        var sin = Cross2D(u1, u2);
+        if (cos > 1)//just in case of rounding errors
+        {
+            cos = 1;
+        }
+        return sin < 0 ? -Mathf.Sqrt(0.5f * (1 - cos)) : Mathf.Sqrt(0.5f * (1 - cos));
+    }
+
+    public static float AbsolutePseudoAngle(Vector2 u1, Vector2 u2)
+    {
+        var cos = Vector2.Dot(u1, u2);
+        var sin = Cross2D(u1, u2);
+        if (cos > 1)//just in case of rounding errors
+        {
+            cos = 1;
+        }
+        return Mathf.Sqrt(0.5f * (1 - cos));
+    }
+
+    /// <summary>
     /// u1, u2 unit vectors
     /// </summary>
     public static Vector2 CheapRotationalLerp(Vector2 u1, Vector2 u2, float lerpAmount)
     {
         //better than using explicit angles etc.
-        return Vector2.Lerp(u1, u2, lerpAmount).normalized;
+        if (u1 == u2)
+        {
+            return u1;
+        }
+        if (u1 == -u2)
+        {
+            return Vector2.LerpUnclamped(u1, u2.CCWPerp(), 2 * lerpAmount).normalized;
+        }
+        return Vector2.LerpUnclamped(u1, u2, lerpAmount).normalized;
     }
 
     //2do: this sometimes rotates wrong way and settles on -u2 instead of u2
@@ -96,15 +130,12 @@ public static class MathTools
     /// </summary>
     public static Vector2 CheapRotationBySpeed(Vector2 u1, Vector2 u2, float rotationalSpeed, float dt)
     {
-        var c = Mathf.Abs(Cross2D(u1, u2));
+        var c = AbsolutePseudoAngle(u1, u2);
         if (c == 0)
         {
             return u1;
         }
-        var l = rotationalSpeed * dt / c;
-        return CheapRotationalLerp(u1, u2, l);
-        //the lerp amount should really be rotationalSpeed * dt / theta, but we use the approximation theta ~ sin(theta) for small theta
-        //yeah well that's bad when theta is not small -- maybe we can use something like the half angle magic from earlier
+        return CheapRotationalLerp(u1, u2, rotationalSpeed * dt / (Mathf.PI * c));
     }
 
     //i.e. rotate keeping center pt fixed

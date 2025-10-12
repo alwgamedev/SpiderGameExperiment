@@ -134,7 +134,6 @@ public class SpiderMovementController : MonoBehaviour
     private void Update()
     {
         CaptureInput();
-
         RotateHead(Time.deltaTime);
     }
 
@@ -218,8 +217,8 @@ public class SpiderMovementController : MonoBehaviour
         //make sure you update before changing direction
         if (grapple.GrappleAnchored)
         {
-            var fhGrounded = StronglyGrounded || IsTouchingGroundPtCollider(headCollider) || IsTouchingGroundPtCollider(abdomenCollider);
-            grapple.FreeHanging = !fhGrounded && (moveInput == 0 || Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
+            grapple.FreeHanging = (moveInput == 0 || (!Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.RightShift)))
+                && !(StronglyGrounded || IsTouchingGroundPtCollider(headCollider) || IsTouchingGroundPtCollider(abdomenCollider));
         }
 
         if (MathTools.OppositeSigns(moveInput, orientation))
@@ -230,7 +229,7 @@ public class SpiderMovementController : MonoBehaviour
 
     private void ChangeDirection()
     {
-        //2do: can we interpolate between theese by free hang strength in a reasonable way (or is there no need to do that)
+        //2do: can we interpolate between these by free hang strength in a reasonable way (or is there no need to do that)
         if (!grapple.FreeHanging)
         {
             var s = transform.localScale;
@@ -335,12 +334,12 @@ public class SpiderMovementController : MonoBehaviour
             {
                 y = 1;
             }
-            x = x > 0 ? Mathf.Sqrt(0.5f * (1 - y)) : -Mathf.Sqrt(0.5f * (1 - y));
+            x = x < 0 ? -Mathf.Sqrt(0.5f * (1 - y)) : Mathf.Sqrt(0.5f * (1 - y));
             //result is x = cos(0.5f(t + pi/2)), which smoothly decreases from 1 to -1 as t goes from -pi/2 to 3pi/2
             //where t is angle between transform.up and groundDirection
             f += x * (grounded ? balanceSpringForce : airborneBalanceSpringForce);
         }
-        
+
         rb.AddTorque(rb.mass * f);
     }
 
@@ -567,9 +566,8 @@ public class SpiderMovementController : MonoBehaviour
             groundPt = pt;
         }
 
-        groundDirection = grounded ?
-        goalGroundDirection
-        : MathTools.CheapRotationBySpeed(groundDirection, Vector2.right, failedGroundRaycastSmoothingRate, Time.deltaTime);
+        groundDirection = grounded ? goalGroundDirection
+            : MathTools.CheapRotationBySpeed(groundDirection, Vector2.right, failedGroundRaycastSmoothingRate, Time.deltaTime);
         upcomingGroundDirection = FacingRight ? groundMap.AverageNormalFromCenter(upcomingGroundDirectionMinPos, upcomingGroundDirectionMaxPos)
             : groundMap.AverageNormalFromCenter(-upcomingGroundDirectionMaxPos, -upcomingGroundDirectionMinPos);
         upcomingGroundDirection = upcomingGroundDirection.CWPerp();
