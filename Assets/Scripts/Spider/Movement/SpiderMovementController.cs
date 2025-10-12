@@ -97,18 +97,13 @@ public class SpiderMovementController : MonoBehaviour
     Vector2 GroundPtGroundDirection => groundPt.normal.CWPerp();
 
 
-    //private void OnDrawGizmos()
-    //{
-    //    if (Application.isPlaying)
-    //    {
-    //        groundMap.DrawGizmos();
-    //    }
-    //    if (groundPoint.x != Mathf.Infinity)
-    //    {
-    //        Gizmos.color = Color.cyan;
-    //        Gizmos.DrawSphere(groundPoint, 0.1f);
-    //    }
-    //}
+    private void OnDrawGizmos()
+    {
+        if (Application.isPlaying)
+        {
+            groundMap.DrawGizmos();
+        }
+    }
 
     private void Awake()
     {
@@ -134,7 +129,12 @@ public class SpiderMovementController : MonoBehaviour
     private void Update()
     {
         CaptureInput();
+    }
+
+    private void LateUpdate()
+    {
         RotateHead(Time.deltaTime);
+        legSynchronizer.UpdateAllLegs(Time.deltaTime, groundMap);
     }
 
     private void FixedUpdate()
@@ -177,7 +177,7 @@ public class SpiderMovementController : MonoBehaviour
             legSynchronizer.strideMultiplier = 1;
         }
 
-        legSynchronizer.UpdateAllLegs(Time.deltaTime, groundMap);
+        //legSynchronizer.UpdateAllLegs(Time.deltaTime, groundMap);
         //when done in late update get weird things like legs lagging behind (up) during long freefalls.
         //we can do it on one fixed update per update, but then speed is not always accurate, so get moonwalking.
     }
@@ -328,15 +328,6 @@ public class SpiderMovementController : MonoBehaviour
 
         if (!grapple.FreeHanging)
         {
-            //var x = Vector2.Dot(transform.up, groundDirection);
-            //var y = Vector2.Dot(transform.up, groundDirection.CCWPerp());
-            //if (y > 1)//in case of rounding errors
-            //{
-            //    y = 1;
-            //}
-            //x = x < 0 ? -Mathf.Sqrt(0.5f * (1 - y)) : Mathf.Sqrt(0.5f * (1 - y));
-            ////result is x = cos(0.5f(t + pi/2)), which smoothly decreases from 1 to -1 as t goes from -pi/2 to 3pi/2
-            ////where t is angle between transform.up and groundDirection
             var a = MathTools.PseudoAngle(transform.right, groundDirection);
             f += a * (grounded ? balanceSpringForce : airborneBalanceSpringForce);
         }
@@ -396,7 +387,9 @@ public class SpiderMovementController : MonoBehaviour
     private void RotateHead(float dt)
     {
         var g = grounded ? upcomingGroundDirection : (grapple.FreeHanging ? FreeHangingHeadRight() : (Vector2)transform.right);
-        headBone.transform.right = MathTools.CheapRotationBySpeed(headBone.transform.right, g, headRotationSpeed, dt);
+        g = MathTools.CheapRotationalLerpClamped(headBone.right, g, headRotationSpeed * dt);//if rotate at constant speed, it starts to flicker when rotation is small
+        headBone.rotation = MathTools.QuaternionFrom2DUnitVector(g);
+        //headBone.right = MathTools.CheapRotationBySpeed(headBone.transform.right, g, headRotationSpeed, dt);
     }
 
     private Vector2 FreeHangingHeadRight()

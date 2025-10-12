@@ -6629,7 +6629,7 @@ MonoBehaviour:
   headBone: {fileID: 1796735932416995084}
   heightReferencePoint: {fileID: 3708315842584664218}
   grapple: {fileID: 1051379001623071205}
-  headRotationSpeed: 2
+  headRotationSpeed: 12
   groundedRotationSpeed: 6
   airborneRotationSpeed: 4.5
   groundLayer:
@@ -6643,7 +6643,7 @@ MonoBehaviour:
   groundPtSlipThreshold: 0.15
   upcomingGroundDirectionMinPos: 0
   upcomingGroundDirectionMaxPos: 0.4
-  failedGroundRaycastSmoothingRate: 30
+  failedGroundRaycastSmoothingRate: 40
   accelFactor: 45
   accelFactorFreeHanging: 6
   accelCap: 5
@@ -6659,7 +6659,7 @@ MonoBehaviour:
   grappleSquatReduction: 0.25
   heightSampleWidth: 0.8
   balanceSpringForce: 65
-  airborneBalanceSpringForce: 40
+  airborneBalanceSpringForce: 45
   balanceSpringDamping: 0.09
   jumpForce: 10
   jumpForceCrouchBoostRate: 14

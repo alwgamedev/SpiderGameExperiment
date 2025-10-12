@@ -50,7 +50,7 @@ public class LegSynchronizer : MonoBehaviour
                 timer -= cycleTime;
             }
 
-            if (timer > stepTime)
+            if (timer >= stepTime)
             {
                 timer -= stepTime;
                 stepping = false;

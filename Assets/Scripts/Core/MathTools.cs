@@ -81,6 +81,15 @@ public static class MathTools
         return v1.x * v2.y - v1.y * v2.x;
     }
 
+    public static Quaternion QuaternionFrom2DUnitVector(Vector2 u)
+    {
+        if (u.x >= 1)
+        {
+            return Quaternion.identity;
+        }
+        return new Quaternion(0, 0, Mathf.Sqrt(0.5f * (1 - u.x)), u.y < 0 ? -Mathf.Sqrt(0.5f * (1 + u.x)) : Mathf.Sqrt(0.5f * (1 + u.x)));
+    }
+
     /// <summary>
     /// as angle from u1 to u2 varies over (-pi,pi], output varies smoothly from -1 to 1 (specifically output is sin(theta/2), where theta is the correct angle; ~5-10x faster than arctan)
     /// </summary>
@@ -125,6 +134,20 @@ public static class MathTools
         return Vector2.LerpUnclamped(u1, u2, lerpAmount).normalized;
     }
 
+    public static Vector2 CheapRotationalLerpClamped(Vector2 u1, Vector2 u2, float lerpAmount)
+    {
+        //better than using explicit angles etc.
+        if (u1 == u2)
+        {
+            return u1;
+        }
+        if (u1 == -u2)
+        {
+            return Vector2.Lerp(u1, u2.CCWPerp(), 2 * lerpAmount).normalized;
+        }
+        return Vector2.Lerp(u1, u2, lerpAmount).normalized;
+    }
+
     //2do: this sometimes rotates wrong way and settles on -u2 instead of u2
     /// <summary>
     /// u1, u2 unit vectors
@@ -137,6 +160,16 @@ public static class MathTools
             return u1;
         }
         return CheapRotationalLerp(u1, u2, rotationalSpeed * dt / (Mathf.PI * c));
+    }
+
+    public static Vector2 CheapRotationBySpeedClamped(Vector2 u1, Vector2 u2, float rotationalSpeed, float dt)
+    {
+        var c = AbsolutePseudoAngle(u1, u2);
+        if (c == 0)
+        {
+            return u1;
+        }
+        return CheapRotationalLerpClamped(u1, u2, rotationalSpeed * dt / (Mathf.PI * c));
     }
 
     //i.e. rotate keeping center pt fixed
