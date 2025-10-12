@@ -75,7 +75,7 @@ public static class MathTools
         return new Vector2(v.y, -v.x);
     }
     
-    //when v1, v2 are unit vectors, this equals the sine of the angle from v1 to v2
+    //when v1, v2 are unit vectors, this equals the sine of the angle from v1 to v2 (being dot(v1, v2.CWPerp()) = cos(theta-90))
     public static float Cross2D(Vector2 v1, Vector2 v2)
     {
         return v1.x * v2.y - v1.y * v2.x;
@@ -90,6 +90,7 @@ public static class MathTools
         return Vector2.Lerp(u1, u2, lerpAmount).normalized;
     }
 
+    //2do: this sometimes rotates wrong way and settles on -u2 instead of u2
     /// <summary>
     /// u1, u2 unit vectors
     /// </summary>
@@ -100,9 +101,10 @@ public static class MathTools
         {
             return u1;
         }
-        var l = rotationalSpeed * dt / c; 
+        var l = rotationalSpeed * dt / c;
         return CheapRotationalLerp(u1, u2, l);
         //the lerp amount should really be rotationalSpeed * dt / theta, but we use the approximation theta ~ sin(theta) for small theta
+        //yeah well that's bad when theta is not small -- maybe we can use something like the half angle magic from earlier
     }
 
     //i.e. rotate keeping center pt fixed

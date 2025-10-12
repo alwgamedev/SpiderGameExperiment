@@ -48,7 +48,7 @@ public class SpiderMovementController : MonoBehaviour
     [SerializeField] float freeHangLegAngleMin;
     [SerializeField] float freeHangLegAngleSkew;
     [SerializeField] float freeHangHeadAngle;
-    [SerializeField] float freeHangStepHeightMultiplier;
+    //[SerializeField] float freeHangStepHeightMultiplier;
     [SerializeField] float crouchHeightFraction;
     [SerializeField] float crouchTime;
     [SerializeField] float crouchBoostMinProgress;
@@ -76,7 +76,7 @@ public class SpiderMovementController : MonoBehaviour
     float groundednessTolerance;
     Vector2 groundDirection = Vector2.right;
     Vector2 upcomingGroundDirection = Vector2.right;
-    GroundMapPt groundPt = new GroundMapPt(new(Mathf.Infinity, Mathf.Infinity), Vector2.up, Vector2.right, 0, Mathf.Infinity, -1);
+    GroundMapPt groundPt = new GroundMapPt(new(Mathf.Infinity, Mathf.Infinity), Vector2.up, Vector2.right, 0, Mathf.Infinity, null);
     //Vector2 groundMapDown;
 
     float cosLegAngleMin;
@@ -146,7 +146,10 @@ public class SpiderMovementController : MonoBehaviour
         }
 
         UpdateGroundData();
-        UpdateFreeHangingState();
+        //if (grapple.GrappleAnchored)
+        //{
+        //    UpdateFreeHangingState();
+        //}
         HandleMoveInput();
         HandleJumpInput();
 
@@ -161,11 +164,11 @@ public class SpiderMovementController : MonoBehaviour
         legSynchronizer.absoluteBodyGroundSpeed = grounded ? Mathf.Abs(v) : rb.linearVelocity.magnitude;
         legSynchronizer.preferredBodyPosGroundHeight = PreferredBodyPosGroundHeight;
         legSynchronizer.stepHeightFraction = 1 - crouchProgress * crouchHeightFraction;
+        //if (grapple.FreeHanging)
+        //{
+        //    legSynchronizer.stepHeightFraction *= freeHangStepHeightMultiplier;
+        //}
         if (grapple.FreeHanging)
-        {
-            legSynchronizer.stepHeightFraction *= freeHangStepHeightMultiplier;
-        }
-        if (!grounded)
         {
             legSynchronizer.strideMultiplier = MathTools.LerpAtConstantRate(legSynchronizer.strideMultiplier, AirborneStrideMultiplier(),
                 strideMultiplierSmoothingRate, Time.deltaTime);
@@ -211,6 +214,14 @@ public class SpiderMovementController : MonoBehaviour
         }
 
         moveInput = (Input.GetKey(KeyCode.RightArrow) ? 1 : 0) + (Input.GetKey(KeyCode.LeftArrow) ? -1 : 0);
+
+        //make sure you update before changing direction
+        if (grapple.GrappleAnchored)
+        {
+            var fhGrounded = StronglyGrounded || IsTouchingGroundPtCollider(headCollider) || IsTouchingGroundPtCollider(abdomenCollider);
+            grapple.FreeHanging = !fhGrounded && (moveInput == 0 || Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
+        }
+
         if (MathTools.OppositeSigns(moveInput, orientation))
         {
             ChangeDirection();
@@ -336,7 +347,7 @@ public class SpiderMovementController : MonoBehaviour
     //only called when !grounded
     private void UpdateFreeHangingState()
     {
-        if (grapple.FreeHanging && (StronglyGrounded || !grapple.GrappleAnchored || IsTouchingGroundCollider(headCollider) || IsTouchingGroundCollider(abdomenCollider)))
+        if (grapple.FreeHanging && (StronglyGrounded || !grapple.GrappleAnchored || IsTouchingGroundPtCollider(headCollider) || IsTouchingGroundPtCollider(abdomenCollider)))
         {
             grapple.FreeHanging = false;
             legSynchronizer.strideMultiplier = 1;
@@ -362,26 +373,15 @@ public class SpiderMovementController : MonoBehaviour
     //    return r && r.collider == grapple.AnchorCollider;
     //}
 
-    private bool IsTouchingGroundCollider(Collider2D c)
+    private bool IsTouchingGroundPtCollider(Collider2D c)
     {
-        if (!(groundPt.groundColliderId > 0))
+        if (groundPt.groundCollider == null)
         {
             return false;
         }
 
         c.GetContacts(bodyCollisionFilter, bodyCollisionBuffer);
-        for (int i = 0; i < bodyCollisionBuffer.Length; i++)
-        {
-            if (bodyCollisionBuffer[i] == null)
-            {
-                break;
-            }
-            if (bodyCollisionBuffer[i].GetInstanceID() == groundPt.groundColliderId)
-            {
-                return true;
-            }
-        }
-        return false;
+        return bodyCollisionBuffer[0] == groundPt.groundCollider;
     }
 
     //pass negative dt when reversing crouch
@@ -558,7 +558,7 @@ public class SpiderMovementController : MonoBehaviour
                     backupGroundPtRaycastLengthFactor * groundednessTolerance, groundLayer);
                 if (r)
                 {
-                    pt = new GroundMapPt(r.point, r.normal, r.normal.CWPerp(), 0, 0, r.collider.GetInstanceID());
+                    pt = new GroundMapPt(r.point, r.normal, r.normal.CWPerp(), 0, 0, r.collider);
                     //ptRight = pt.normal.CWPerp();
                     goalGroundDirection = pt.normal.CWPerp();
                 }

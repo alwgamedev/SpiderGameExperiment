@@ -221,7 +221,7 @@ public struct GroundMap
                     var q = map[i];
                     var s = p.horizontalPosition - q.horizontalPosition;
                     //normal = q.normal;
-                    return new(Vector2.Lerp(q.point, p.point, (x - q.horizontalPosition) / s), q.normal, q.right, 0, 0, q.groundColliderId);
+                    return new(Vector2.Lerp(q.point, p.point, (x - q.horizontalPosition) / s), q.normal, q.right, 0, 0, q.groundCollider);
                 }
             }
 
@@ -238,7 +238,7 @@ public struct GroundMap
                 var q = map[i];
                 var s = p.horizontalPosition - q.horizontalPosition;
                 //normal = q.normal;
-                return new(Vector2.Lerp(q.point, p.point, (x - q.horizontalPosition) / s), q.normal, q.right, 0, 0, q.groundColliderId);
+                return new(Vector2.Lerp(q.point, p.point, (x - q.horizontalPosition) / s), q.normal, q.right, 0, 0, q.groundCollider);
             }
         }
 
@@ -321,8 +321,8 @@ public struct GroundMap
         }
 
         var r = MathTools.DebugRaycast(origin, originDown, raycastLength, raycastLayerMask, RaycastColor0);
-        map[centralIndex] = r ? new GroundMapPt(r.point, r.normal, r.normal.CWPerp(), 0, r.distance, r.collider.GetInstanceID())
-            : new GroundMapPt(origin + raycastLength * originDown, -originDown, originRight, 0, raycastLength, 0);
+        map[centralIndex] = r ? new GroundMapPt(r.point, r.normal, r.normal.CWPerp(), 0, r.distance, r.collider)
+            : new GroundMapPt(origin + raycastLength * originDown, -originDown, originRight, 0, raycastLength, null);
 
         for (int i = centralIndex; i < n - 1; i++)
         {
@@ -338,7 +338,7 @@ public struct GroundMap
             if (r)
             {
                 var h = lastMapPt.horizontalPosition + Vector2.Distance(lastMapPt.point, r.point);
-                map[i + 1] = new GroundMapPt(r.point, r.normal, r.normal.CWPerp(), h, r.distance, r.collider.GetInstanceID());
+                map[i + 1] = new GroundMapPt(r.point, r.normal, r.normal.CWPerp(), h, r.distance, r.collider);
             }
             else
             {
@@ -348,7 +348,7 @@ public struct GroundMap
                 if (r)
                 {
                     var h = lastMapPt.horizontalPosition + Vector2.Distance(lastMapPt.point, r.point);
-                    map[i + 1] = new GroundMapPt(r.point, r.normal, r.normal.CWPerp(), h, r.distance * Vector2.Dot(lastNormal, r.normal), r.collider.GetInstanceID());
+                    map[i + 1] = new GroundMapPt(r.point, r.normal, r.normal.CWPerp(), h, r.distance * Vector2.Dot(lastNormal, r.normal), r.collider);
                 }
                 else
                 {
@@ -357,13 +357,13 @@ public struct GroundMap
                     if (r)
                     {
                         var h = lastMapPt.horizontalPosition + Vector2.Distance(lastMapPt.point, r.point);
-                        map[i + 1] = new GroundMapPt(r.point, r.normal, r.normal.CWPerp(), h, r.distance, r.collider.GetInstanceID());
+                        map[i + 1] = new GroundMapPt(r.point, r.normal, r.normal.CWPerp(), h, r.distance, r.collider);
                     }
                     else
                     {
                         var p = o - raycastLength * lastNormal;
                         var h = lastMapPt.horizontalPosition + Vector2.Distance(lastMapPt.point, p);
-                        map[i + 1] = new GroundMapPt(p, lastNormal, lastMapPt.right, h, raycastLength, 0);
+                        map[i + 1] = new GroundMapPt(p, lastNormal, lastMapPt.right, h, raycastLength, null);
                     }
                 }
             }
@@ -382,7 +382,7 @@ public struct GroundMap
             if (r)
             {
                 var h = lastMapPt.horizontalPosition + Vector2.Distance(lastMapPt.point, r.point);
-                map[i - 1] = new GroundMapPt(r.point, r.normal, r.normal.CWPerp(), h, r.distance, r.collider.GetInstanceID());
+                map[i - 1] = new GroundMapPt(r.point, r.normal, r.normal.CWPerp(), h, r.distance, r.collider);
             }
             else
             {
@@ -392,7 +392,7 @@ public struct GroundMap
                 if (r)
                 {
                     var h = lastMapPt.horizontalPosition - Vector2.Distance(lastMapPt.point, r.point);
-                    map[i - 1] = new GroundMapPt(r.point, r.normal, r.normal.CWPerp(), h, r.distance * Vector2.Dot(lastNormal, r.normal), r.collider.GetInstanceID());
+                    map[i - 1] = new GroundMapPt(r.point, r.normal, r.normal.CWPerp(), h, r.distance * Vector2.Dot(lastNormal, r.normal), r.collider);
                 }
                 else
                 {
@@ -401,13 +401,13 @@ public struct GroundMap
                     if (r)
                     {
                         var h = lastMapPt.horizontalPosition - Vector2.Distance(lastMapPt.point, r.point);
-                        map[i - 1] = new GroundMapPt(r.point, r.normal, r.normal.CWPerp(), h, r.distance, r.collider.GetInstanceID());
+                        map[i - 1] = new GroundMapPt(r.point, r.normal, r.normal.CWPerp(), h, r.distance, r.collider);
                     }
                     else
                     {
                         var p = o - raycastLength * lastNormal;
                         var h = lastMapPt.horizontalPosition - Vector2.Distance(lastMapPt.point, p);
-                        map[i - 1] = new GroundMapPt(p, lastNormal, lastMapPt.right, h, raycastLength, 0);
+                        map[i - 1] = new GroundMapPt(p, lastNormal, lastMapPt.right, h, raycastLength, null);
                     }
                 }
             }
@@ -441,17 +441,18 @@ public readonly struct GroundMapPt
     public readonly Vector2 right;
     public readonly float horizontalPosition;
     public readonly float raycastDistance;
-    public readonly int groundColliderId;
+    //public readonly int groundColliderId;
+    public readonly Collider2D groundCollider;
 
-    public bool hitGround => groundColliderId > 0;
+    public bool hitGround => groundCollider != null;
 
-    public GroundMapPt(Vector2 point, Vector2 normal, Vector2 right, float horizontalPosition, float raycastDistance, int groundColliderId)
+    public GroundMapPt(Vector2 point, Vector2 normal, Vector2 right, float horizontalPosition, float raycastDistance, Collider2D groundCollider)
     {
         this.point = point;
         this.normal = normal;
         this.right = right;
         this.horizontalPosition = horizontalPosition;
         this.raycastDistance = raycastDistance;
-        this.groundColliderId = groundColliderId;
+        this.groundCollider = groundCollider;
     }
 }

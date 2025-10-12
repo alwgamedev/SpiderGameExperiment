@@ -6636,7 +6636,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   groundedExitToleranceFactor: 1.25
-  groundedEntryToleranceFactor: 1.1
+  groundedEntryToleranceFactor: 1.05
   groundDirectionSampleWidth: 0.325
   backupGroundPtRaycastLengthFactor: 1.1
   groundPtSlipRate: 0.6
@@ -6673,7 +6673,6 @@ MonoBehaviour:
   freeHangLegAngleMin: 1.0471976
   freeHangLegAngleSkew: 0.1308997
   freeHangHeadAngle: 0.2094395
-  freeHangStepHeightMultiplier: 0.25
   crouchHeightFraction: 0.25
   crouchTime: 0.5
   crouchBoostMinProgress: 0.4
