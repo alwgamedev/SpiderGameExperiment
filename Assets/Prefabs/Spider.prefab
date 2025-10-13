@@ -6646,7 +6646,8 @@ MonoBehaviour:
   failedGroundRaycastSmoothingRate: 40
   accelFactor: 45
   accelFactorFreeHanging: 6
-  accelCap: 5
+  accelFactorAirborneGrappling: 12
+  accelCap: 4
   decelFactor: 60
   gripStrength: 400
   grapplePullGripReduction: 0.8

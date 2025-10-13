@@ -21,6 +21,7 @@ public class SpiderMovementController : MonoBehaviour
     [SerializeField] float failedGroundRaycastSmoothingRate;
     [SerializeField] float accelFactor;
     [SerializeField] float accelFactorFreeHanging;
+    [SerializeField] float accelFactorAirborneGrappling;
     [SerializeField] float accelCap;
     [SerializeField] float decelFactor;
     [SerializeField] float gripStrength;
@@ -217,6 +218,7 @@ public class SpiderMovementController : MonoBehaviour
         //make sure you update before changing direction
         if (grapple.GrappleAnchored)
         {
+            //hold shift to enter freehang/swing mode (if it's the default state, then repelling gets annoying)
             grapple.FreeHanging = (moveInput == 0 || Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
                 && !(StronglyGrounded || IsTouchingGroundPtCollider(headCollider) || IsTouchingGroundPtCollider(abdomenCollider));
         }
@@ -230,7 +232,7 @@ public class SpiderMovementController : MonoBehaviour
     private void ChangeDirection()
     {
         //2do: can we interpolate between these by free hang strength in a reasonable way (or is there no need to do that)
-        if (!grapple.FreeHanging)
+        if (grounded || !grapple.GrappleAnchored)
         {
             var s = transform.localScale;
             transform.localScale = new Vector3(-s.x, s.y, s.z);
@@ -240,9 +242,8 @@ public class SpiderMovementController : MonoBehaviour
             Vector2 o = grapple./*Smoothed*/FreeHangLeveragePoint;
             var s = transform.localScale;
             transform.localScale = new Vector3(-s.x, s.y, s.z);
-            var n = grapple.LastCarryForceDirection.CCWPerp();
+            var n = grapple.FreeHanging ? grapple.LastCarryForceDirection.CWPerp() : Vector2.right;//normal to the hyperplane we're reflecting over
             transform.up = MathTools.ReflectAcrossHyperplane((Vector2)transform.up, n);
-            //groundMapDown = MathTools.ReflectAcrossHyperplane(groundMapDown, n);
             transform.position += (Vector3)(o - grapple./*Smoothed*/FreeHangLeveragePoint);
         }
 
@@ -267,7 +268,7 @@ public class SpiderMovementController : MonoBehaviour
             var maxSpd = MaxSpeed;
 
             var accCap = accelCap;
-            var accFactor = accelFactor;
+            var accFactor = grounded || !grapple.GrappleAnchored ? accelFactor : accelFactorAirborneGrappling;
             //if (VerifyingJump())
             //{
             //    var lerpAmt = 1 - Mathf.Pow(jumpVerificationTimer / jumpVerificationTime, 1);
