@@ -6643,10 +6643,10 @@ MonoBehaviour:
   groundPtSlipThreshold: 0.15
   upcomingGroundDirectionMinPos: 0
   upcomingGroundDirectionMaxPos: 0.4
-  failedGroundRaycastSmoothingRate: 40
+  failedGroundRaycastSmoothingRate: 45
   accelFactor: 45
   accelFactorFreeHanging: 6
-  accelFactorAirborneGrappling: 12
+  accelFactorGrappleScurrying: 25
   accelCap: 4
   decelFactor: 60
   gripStrength: 400
@@ -6661,7 +6661,9 @@ MonoBehaviour:
   heightSampleWidth: 0.8
   balanceSpringForce: 65
   airborneBalanceSpringForce: 45
-  balanceSpringDamping: 0.09
+  balanceSpringDamping: 0.1
+  airborneBalanceSpringDamping: 0.04
+  grappleScurryResistanceMax: 60
   jumpForce: 10
   jumpForceCrouchBoostRate: 14
   uphillJumpDirectionRotationRate: 0.8
@@ -6678,7 +6680,8 @@ MonoBehaviour:
   crouchTime: 0.5
   crouchBoostMinProgress: 0.4
   crouchReleaseSpeedMultiplier: 3
-  airborneLegAnimationTimeScale: 0.05
+  airborneLegAnimationTimeScale: 0.06
+  airborneReverseLegAnimationTimeScale: 0.035
   airborneStrideMultiplier: 1.5
   strideMultiplierSmoothingRate: 0.25
   groundMap:
@@ -6771,7 +6774,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: releaseRate
-      value: 4
+      value: 3.5
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: baseShootSpeed
