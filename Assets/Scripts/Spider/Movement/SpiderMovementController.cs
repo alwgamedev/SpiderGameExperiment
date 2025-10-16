@@ -57,7 +57,7 @@ public class SpiderMovementController : MonoBehaviour
     [SerializeField] float crouchBoostMinProgress;
     [SerializeField] float crouchReleaseSpeedMultiplier;
     [SerializeField] float airborneLegAnimationTimeScale;
-    [SerializeField] float airborneReverseLegAnimationTimeScale;
+    //[SerializeField] float airborneReverseLegAnimationTimeScale;
     [SerializeField] float airborneStrideMultiplier;
     [SerializeField] float strideMultiplierSmoothingRate;
     [SerializeField] GroundMap groundMap;
@@ -103,7 +103,7 @@ public class SpiderMovementController : MonoBehaviour
     Vector2 GroundPtGroundDirection => groundPt.normal.CWPerp();
     float GrappleScurryResistance => MathTools.OppositeSigns(grapple.LastCarryForce.y, transform.up.y) ? 0
         : (FacingRight ? - grapple.LastCarryForce.x : grapple.LastCarryForce.x);
-    float GrappleScurryResistanceFraction => GrappleScurryResistance / grappleScurryResistanceMax;
+    float GrappleScurryResistanceFraction => Mathf.Clamp(GrappleScurryResistance / grappleScurryResistanceMax, 0, 1);
 
 
     private void OnDrawGizmos()
@@ -154,7 +154,7 @@ public class SpiderMovementController : MonoBehaviour
         }
 
         UpdateGroundData();
-        grappleScurrying = !grounded && moveInput != 0 && grapple.GrappleAnchored && !grapple.FreeHanging;
+        grappleScurrying = !StronglyGrounded && moveInput != 0 && grapple.GrappleAnchored && !grapple.FreeHanging;
 
         HandleMoveInput();
         HandleJumpInput();
@@ -175,7 +175,7 @@ public class SpiderMovementController : MonoBehaviour
         legSynchronizer.absoluteBodyGroundSpeed = grounded || moveInput != 0 ? Mathf.Abs(v) : rb.linearVelocity.magnitude;
         legSynchronizer.preferredBodyPosGroundHeight = PreferredBodyPosGroundHeight;
         legSynchronizer.stepHeightFraction = 1 - crouchProgress * crouchHeightFraction;
-        legSynchronizer.timeScale = (grounded || moveInput != 0) && !grapple.FreeHanging ? 1 : (legSynchronizer.bodyGroundSpeedSign > 0 ? airborneLegAnimationTimeScale : airborneReverseLegAnimationTimeScale);
+        legSynchronizer.timeScale = (grounded || moveInput != 0) && !grapple.FreeHanging ? 1 : airborneLegAnimationTimeScale;
         //if (grapple.FreeHanging)
         //{
         //    legSynchronizer.stepHeightFraction *= freeHangStepHeightMultiplier;
@@ -189,7 +189,6 @@ public class SpiderMovementController : MonoBehaviour
         {
             legSynchronizer.strideMultiplier = 1;
         }
-
         //legSynchronizer.UpdateAllLegs(Time.deltaTime, groundMap);
         //when done in late update get weird things like legs lagging behind (up) during long freefalls.
         //we can do it on one fixed update per update, but then speed is not always accurate, so get moonwalking.
@@ -197,11 +196,11 @@ public class SpiderMovementController : MonoBehaviour
 
     private float AirborneStrideMultiplier()
     {
-        var clampedRotation = ClampedRotation();
+        var y = transform.right.y;//ClampedRotation();
         //using cosLegAngleMax b/c we really want sin(90 - legAngleMax)
-        return clampedRotation > cosLegAngleMin ? 1 :
-            clampedRotation > 0 ? Mathf.Lerp(airborneStrideMultiplier, 1, clampedRotation / cosLegAngleMin)
-            : Mathf.Lerp(airborneStrideMultiplier, 1, -clampedRotation);
+        return y > cosLegAngleMin ? 1 :
+            y > 0 ? Mathf.Lerp(airborneStrideMultiplier, 1, y / cosLegAngleMin)
+            : Mathf.Lerp(airborneStrideMultiplier, 1, -y);
     }
 
     private void CaptureInput()
@@ -412,11 +411,11 @@ public class SpiderMovementController : MonoBehaviour
 
     private Vector2 FreeHangingHeadRight()
     {
-        var f = ClampedRotation();
-        if (f < 0)
+        var y = transform.right.y;
+        if (y < 0)
         {
-            f = -f * freeHangHeadAngle;
-            return Mathf.Cos(f) * transform.right + Mathf.Sin(f) * (FacingRight ? transform.up : -transform.up);
+            y = -y * freeHangHeadAngle;
+            return Mathf.Cos(y) * transform.right + Mathf.Sin(y) * (FacingRight ? transform.up : -transform.up);
         }
         return transform.right;
     }
@@ -590,10 +589,11 @@ public class SpiderMovementController : MonoBehaviour
         //groundMapDown = grapple.FreeHanging ? MathTools.CheapRotationBySpeed(groundMapDown, FreeHangGroundMapDown(), freeHangGMDownSmoothingRate, Time.deltaTime) : -transform.up;
         if (grapple.FreeHanging)
         {
-            var f = ClampedRotation();
+            //var f = ClampedRotation();
+            //Debug.Log(f);
             groundMap.UpdateMap(heightReferencePoint.position,
-                FreeHangGroundMapDown(f),
-                FreeHangGroundMapRight(f),
+                FreeHangGroundMapDown(),
+                FreeHangGroundMapRight(),
                 freeHangGroundedToleranceMultiplier * groundednessTolerance,
                 groundMap.CentralIndex, 
                 groundLayer);
@@ -616,20 +616,43 @@ public class SpiderMovementController : MonoBehaviour
         return MathTools.CheapRotationalLerpClamped(transform.right, groundDirection, GrappleScurryResistanceFraction);
     }
 
-    private Vector2 FreeHangGroundMapDown(float clampedRotation)
+    private Vector2 FreeHangGroundMapDown(/*float clampedRotation*/)
     {
-        return clampedRotation == Mathf.Infinity ? -transform.up :
-            clampedRotation > cosLegAngleMin ? -transform.up : clampedRotation < -cosLegAngleMin ?  cosLegAngleMin * OrientedRight - sinLegAngleMin * (Vector2)transform.up : Vector2.down;
+        var r = OrientedRight;
+        if (r.y > 0)
+        {
+            return -transform.up;
+        }
+
+        //r.y *= -r.y;
+        if (MathTools.OppositeSigns(r.x, orientation))//upside down
+        {
+            return r.y < -cosLegAngleMin ? cosLegAngleMin * OrientedRight - sinLegAngleMin * (Vector2)transform.up :
+            MathTools.ReflectAcrossHyperplane(Vector2.down, (Vector2)transform.up);
+        }
+
+        return r.y < -cosLegAngleMin ? cosLegAngleMin * OrientedRight - sinLegAngleMin * (Vector2)transform.up : Vector2.down;
+        //return clampedRotation == Mathf.Infinity ? -transform.up :
+            //clampedRotation > cosLegAngleMin ? -transform.up : clampedRotation < -cosLegAngleMin ?  cosLegAngleMin * OrientedRight - sinLegAngleMin * (Vector2)transform.up : Vector2.down;
     }
 
-    private Vector2 FreeHangGroundMapRight(float clampedRotation)
+    private Vector2 FreeHangGroundMapRight(/*float clampedRotation*/)
     {
-        if (clampedRotation < 0)
+        var y = transform.right.y;
+        if (y > 0)
         {
-            clampedRotation = -clampedRotation * freeHangLegAngleSkew;
-            return Mathf.Cos(clampedRotation) * transform.right + Mathf.Sin(clampedRotation) * (FacingRight ? -transform.up : transform.up);
+            return transform.right;
         }
-        return transform.right;
+
+        //y *= -y * freeHangLegAngleSkew;
+        y *= FacingRight? -freeHangLegAngleSkew : freeHangLegAngleSkew;//to get -/+ tUp based on FacingRight
+        return Mathf.Cos(y) * transform.right + Mathf.Sin(y) * transform.up;
+        //if (clampedRotation < 0)
+        //{
+        //    clampedRotation = -clampedRotation * freeHangLegAngleSkew;
+        //    return Mathf.Cos(clampedRotation) * transform.right + Mathf.Sin(clampedRotation) * (FacingRight ? -transform.up : transform.up);
+        //}
+        //return transform.right;
     }
 
     private float ClampedRotation()

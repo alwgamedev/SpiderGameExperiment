@@ -3706,6 +3706,37 @@ Transform:
   - {fileID: 8134172703908562749}
   m_Father: {fileID: 1671441735390870653}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &4247646854323931270
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9163132822740144379}
+  m_Layer: 0
+  m_Name: Base
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9163132822740144379
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4247646854323931270}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0, y: -0.44, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4349527747444524243}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4256320658433803893
 GameObject:
   m_ObjectHideFlags: 0
@@ -6646,7 +6677,7 @@ MonoBehaviour:
   failedGroundRaycastSmoothingRate: 45
   accelFactor: 45
   accelFactorFreeHanging: 6
-  accelFactorGrappleScurrying: 25
+  accelFactorGrappleScurrying: 20
   accelCap: 4
   decelFactor: 60
   gripStrength: 400
@@ -6673,15 +6704,14 @@ MonoBehaviour:
   freeHangEntryThreshold: 30
   weakFreeHangEntryThreshold: 15
   freeHangGroundedToleranceMultiplier: 1
-  freeHangLegAngleMin: 1.0471976
+  freeHangLegAngleMin: 1.047198
   freeHangLegAngleSkew: 0.1308997
   freeHangHeadAngle: 0.2094395
   crouchHeightFraction: 0.25
   crouchTime: 0.5
   crouchBoostMinProgress: 0.4
   crouchReleaseSpeedMultiplier: 3
-  airborneLegAnimationTimeScale: 0.06
-  airborneReverseLegAnimationTimeScale: 0.035
+  airborneLegAnimationTimeScale: 0.05
   airborneStrideMultiplier: 1.5
   strideMultiplierSmoothingRate: 0.25
   groundMap:
@@ -6764,6 +6794,10 @@ PrefabInstance:
       propertyPath: shooterRb
       value: 
       objectReference: {fileID: 2582591312671585704}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: barrelBase
+      value: 
+      objectReference: {fileID: 9163132822740144379}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: bounciness
       value: 0.9
@@ -6861,12 +6895,16 @@ PrefabInstance:
       value: Silk Grapple
       objectReference: {fileID: 0}
     - target: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.93618244
+      objectReference: {fileID: 0}
+    - target: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.192
+      value: -0.218
       objectReference: {fileID: 0}
     - target: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.011
+      value: -0.103
       objectReference: {fileID: 0}
     - target: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: m_LocalPosition.z
@@ -6902,7 +6940,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 9163132822740144379}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
 --- !u!114 &1051379001623071205 stripped
