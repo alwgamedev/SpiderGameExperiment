@@ -5,7 +5,7 @@ public class SilkGrapple : MonoBehaviour
 {
     [SerializeField] Transform source;//shoot from here
     [SerializeField] Transform barrel;//rotate this
-    [SerializeField] Transform barrelBase;
+    //[SerializeField] Transform barrelBase;
     [SerializeField] Rigidbody2D shooterRb;
     [SerializeField] float drag;
     [SerializeField] float bounciness;
@@ -83,7 +83,7 @@ public class SilkGrapple : MonoBehaviour
     Vector2 AnchorPosition => source.position;
     public Collider2D AnchorCollider => grapple.nodes[grapple.lastIndex].CurrentCollision;
     public int AnchorMask => grapple.terminusAnchorMask;
-    public Vector2 FreeHangLeveragePoint => barrelBase.position;//source.position;
+    public Vector2 FreeHangLeveragePoint => /*barrelBase.position;*/source.position;
     //public Vector2 SmoothedFreeHangLeveragePoint => FreeHangLeveragePoint;
     //{
     //    get

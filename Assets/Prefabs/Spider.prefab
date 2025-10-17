@@ -3721,7 +3721,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &9163132822740144379
 Transform:
   m_ObjectHideFlags: 0
@@ -6671,7 +6671,7 @@ MonoBehaviour:
   groundDirectionSampleWidth: 0.35
   backupGroundPtRaycastLengthFactor: 1.1
   groundPtSlipRate: 0.5
-  groundPtSlipThreshold: 0.15
+  groundPtSlipThreshold: 0.25
   upcomingGroundDirectionMinPos: 0
   upcomingGroundDirectionMaxPos: 0.4
   failedGroundRaycastSmoothingRate: 45
@@ -6681,7 +6681,7 @@ MonoBehaviour:
   accelCap: 4
   decelFactor: 60
   gripStrength: 400
-  grapplePullGripReduction: 0.8
+  grapplePullGripReduction: 0.65
   maxSpeed: 3.25
   maxSpeedAirborne: 5
   preferredRideHeight: 0.92
@@ -6694,7 +6694,8 @@ MonoBehaviour:
   airborneBalanceSpringForce: 45
   balanceSpringDamping: 0.1
   airborneBalanceSpringDamping: 0.04
-  grappleScurryResistanceMax: 60
+  grappleScurryResistanceMax: 150
+  grappleScurryAngleMax: 0.418879
   jumpForce: 10
   jumpForceCrouchBoostRate: 14
   uphillJumpDirectionRotationRate: 0.8
@@ -6844,7 +6845,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: constraintIterations
-      value: 25
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: shootSpeedPowerUpMax
