@@ -6694,8 +6694,8 @@ MonoBehaviour:
   airborneBalanceSpringForce: 45
   balanceSpringDamping: 0.1
   airborneBalanceSpringDamping: 0.04
-  grappleScurryResistanceMax: 150
-  grappleScurryAngleMax: 0.418879
+  grappleScurryResistanceMax: 200
+  grappleScurryAngleMax: 0.5235988
   jumpForce: 10
   jumpForceCrouchBoostRate: 14
   uphillJumpDirectionRotationRate: 0.8
