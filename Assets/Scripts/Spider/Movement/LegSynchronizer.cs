@@ -6,17 +6,10 @@ public class LegSynchronizer : MonoBehaviour
     [SerializeField] Rigidbody2D bodyRb;
     [SerializeField] float restTime;
     [SerializeField] float stepTime;
-    [SerializeField] float speedCapMin;//below this speed, legs will be on ground (no step height);
-    [SerializeField] float speedCapMax;//at or above this speed, legs will use full step height;(may want to make this public so not indpt of mover)
+    [SerializeField] float speedCapMin;//at or below this speed, stepHeight is zero
+    [SerializeField] float speedCapMax;//at or above this speed, use full stepHeight
     [SerializeField] float baseStepHeightMultiplier;
     [SerializeField] float stepSmoothingRate;
-    //[SerializeField] float speedFracSmoothingRate;
-    //[SerializeField] float restSmoothingRate;
-    //[SerializeField] float staticModeGroundCollisionSmoothingRate;
-    //[SerializeField] float extensionSmoothingRate;
-    //[SerializeField] float groundCollisionSmoothingRate;
-    //[SerializeField] float staticModeGroundDetectionOffsetRate;
-    //[SerializeField] float staticModeGroundDectectionOffsetMax;
     [SerializeField] SynchronizedLeg[] synchronizedLegs;
 
     class LegTimer
@@ -83,7 +76,6 @@ public class LegSynchronizer : MonoBehaviour
     }
 
     LegTimer[] timers;
-    //bool staticMode;
 
     public float bodyGroundSpeedSign;
     public float absoluteBodyGroundSpeed;
@@ -94,7 +86,6 @@ public class LegSynchronizer : MonoBehaviour
     public float outwardDrift;
     public Vector2 outwardDriftWeights;
 
-    //2DO: adjust to allow bodyGroundSpeed negative
     public void UpdateAllLegs(float dt, GroundMap map)
     {
         var facingRight = bodyRb.transform.localScale.x > 0;

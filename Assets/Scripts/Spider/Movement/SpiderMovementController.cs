@@ -24,7 +24,7 @@ public class SpiderMovementController : MonoBehaviour
     [Header("Movement")]
     [SerializeField] float accelFactor;
     [SerializeField] float accelFactorFreeHanging;
-    [SerializeField] float accelFactorGrappleScurrying;
+    [SerializeField] float thrustingAccelFactor;
     [SerializeField] float accelCap;
     [SerializeField] float decelFactor;
     [SerializeField] float gripStrength;
@@ -75,7 +75,7 @@ public class SpiderMovementController : MonoBehaviour
     [SerializeField] float freeHangHeadAngle;
 
     [Header("Thrusters")]
-    [SerializeField] 
+    [SerializeField] Thrusters thrusters;
 
     Rigidbody2D rb;
     Collider2D headCollider;
@@ -109,6 +109,8 @@ public class SpiderMovementController : MonoBehaviour
 
     bool grappleScurrying;
 
+    bool thrustersCooldownWarningSent;
+
     bool FacingRight => transform.localScale.x > 0;
     Vector2 OrientedRight => FacingRight ? transform.right : -transform.right;
     Vector2 OrientedGroundDirection => FacingRight ? groundDirection : -groundDirection;
@@ -119,15 +121,21 @@ public class SpiderMovementController : MonoBehaviour
     Vector2 GroundPtGroundDirection => groundPt.normal.CWPerp();
     float GrappleScurryResistance => Vector2.Dot(grapple.LastCarryForce, -OrientedGroundDirection);
     float GrappleScurryResistanceFraction => GrappleScurryResistance / grappleScurryResistanceMax;
+    //float GroundedGroundednessTolerance => groundedExitToleranceFactor * preferredRideHeight;
+    //float AirborneGroundednessTolerance => groundedEntryToleranceFactor * preferredRideHeight;
+    //float ThrustingGroundednessTolerance => thrustingGroundedToleranceFactor * preferredRideHeight;
+
+    public float ThrusterCharge => thrusters.Charge;
 
 
-    private void OnDrawGizmos()
-    {
-        if (Application.isPlaying)
-        {
-            groundMap.DrawGizmos();
-        }
-    }
+
+    //private void OnDrawGizmos()
+    //{
+    //    if (Application.isPlaying)
+    //    {
+    //        groundMap.DrawGizmos();
+    //    }
+    //}
 
     private void Awake()
     {
@@ -149,6 +157,7 @@ public class SpiderMovementController : MonoBehaviour
 
         rb.centerOfMass = heightReferencePoint.position - transform.position;
 
+        thrusters.Initialize();
         legSynchronizer.Initialize(PreferredBodyPosGroundHeight, FacingRight);
         bodyCollisionFilter.NoFilter();
         bodyCollisionFilter.layerMask = groundLayer;
@@ -172,8 +181,9 @@ public class SpiderMovementController : MonoBehaviour
         {
             jumpVerificationTimer -= Time.deltaTime;
         }
-
+        
         UpdateGroundData();
+        UpdateThrusters();//be careful bc both UpdateGroundData and UpdataThrusters can set 
         grappleScurrying = StronglyGrounded && moveInput != 0 && grapple.GrappleAnchored;
 
         HandleMoveInput();
@@ -195,7 +205,7 @@ public class SpiderMovementController : MonoBehaviour
         legSynchronizer.absoluteBodyGroundSpeed = grounded || moveInput != 0 ? Mathf.Abs(v) : rb.linearVelocity.magnitude;
         legSynchronizer.preferredBodyPosGroundHeight = PreferredBodyPosGroundHeight;
         legSynchronizer.stepHeightFraction = 1 - crouchProgress * crouchHeightFraction;
-        legSynchronizer.timeScale = (grounded || moveInput != 0) && !grapple.FreeHanging ? 1 : airborneLegAnimationTimeScale;
+        legSynchronizer.timeScale = grounded || thrusters.Engaged ? 1 : airborneLegAnimationTimeScale;
         if (!grounded)
         {
             legSynchronizer.strideMultiplier = MathTools.LerpAtConstantRate(legSynchronizer.strideMultiplier, AirborneStrideMultiplier(),
@@ -214,6 +224,95 @@ public class SpiderMovementController : MonoBehaviour
         return y > cosLegAngleMin ? 1 :
             y > 0 ? Mathf.Lerp(airborneStrideMultiplier, 1, y / cosLegAngleMin)
             : Mathf.Lerp(airborneStrideMultiplier, 1, -y);
+    }
+
+    //THRUSTERS
+
+    //do before you handle any move input
+    //i want to do in fixed update, because 
+    private void UpdateThrusters()
+    {
+        switch(thrusters.Update(Time.deltaTime))
+        {
+            case Thrusters.ThrustersUpdateResult.ChargeRanOut:
+                OnThrustersRanOutOfCharge();
+                break;
+            case Thrusters.ThrustersUpdateResult.CooldownEnded:
+                OnThrustersCooldownEnded();
+                UpdateThrustersEngagement();
+                break;
+            case Thrusters.ThrustersUpdateResult.None:
+                UpdateThrustersEngagement();
+                break;
+
+        }
+    }
+
+    private void UpdateThrustersEngagement()
+    {
+        if (thrusters.Engaged)
+        {
+            if (grounded || moveInput == 0 || grapple.FreeHanging)
+            {
+                DisengageThrusters();
+            }
+        }
+        else if (!grounded && moveInput != 0 && !grapple.FreeHanging)
+        {
+            TryEngageThrusters();
+        }
+    }
+
+    private void TryEngageThrusters()
+    {
+        if (thrusters.Engage())
+        {
+            OnThrustersEngaged();
+        }
+        else
+        {
+            OnThrustersEngageFailed();
+        }
+    }
+
+    private void DisengageThrusters()
+    {
+        thrusters.Disengage();
+        OnThrustersDisengaged();
+    }
+
+    private void OnThrustersRanOutOfCharge()
+    {
+        Debug.Log("thrusters ran out of charge");
+        OnThrustersDisengaged();
+    }
+
+    private void OnThrustersCooldownEnded()
+    {
+        Debug.Log("thrusters cooldown ended");
+    }
+
+    private void OnThrustersEngaged()
+    {
+        Debug.Log("engaging thrusters!");
+        //RecomputeGroundednessTolerance();
+        //rb.gravityScale = thrustingGravityScale;
+    }
+
+    private void OnThrustersEngageFailed()
+    {
+        if (!thrustersCooldownWarningSent)
+        {
+            Debug.Log("thrusters on cooldown...");
+            thrustersCooldownWarningSent = true;
+        }
+    }
+
+    private void OnThrustersDisengaged()
+    {
+        Debug.Log("disengaging thrusters.");
+        //RecomputeGroundednessTolerance();
+        //rb.gravityScale = 1;
     }
 
     //INPUT
@@ -255,6 +354,12 @@ public class SpiderMovementController : MonoBehaviour
         if (MathTools.OppositeSigns(moveInput, orientation))
         {
             ChangeDirection();
+        }
+
+        if (thrustersCooldownWarningSent && moveInput == 0)
+        {
+            thrustersCooldownWarningSent = false;
+            //so that you will only get the cooldown warning when you first press input or right after thrusters ran out of charge if you enter cooldown while holding input
         }
     }
 
@@ -301,14 +406,17 @@ public class SpiderMovementController : MonoBehaviour
                 return;
             }
 
+            if (!grounded && !thrusters.Engaged)
+            {
+                return;
+            }
+
             Vector2 d = OrientedGroundDirection;
             var spd = Vector2.Dot(rb.linearVelocity, d);
             var maxSpd = MaxSpeed;
+            var accFactor = grounded ? accelFactor : thrustingAccelFactor;
 
-            var accCap = accelCap;
-            var accFactor = grounded || !grapple.GrappleAnchored ? accelFactor : accelFactorGrappleScurrying;
-
-            var s = Mathf.Min(maxSpd - spd, accCap * maxSpd);
+            var s = Mathf.Min(maxSpd - spd, accelCap * maxSpd);
             if (grounded || s > 0)
             {
                 rb.AddForce(accFactor * s * rb.mass * d);

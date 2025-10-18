@@ -6660,9 +6660,6 @@ MonoBehaviour:
   headBone: {fileID: 1796735932416995084}
   heightReferencePoint: {fileID: 3708315842584664218}
   grapple: {fileID: 1051379001623071205}
-  headRotationSpeed: 12
-  groundedRotationSpeed: 6
-  airborneRotationSpeed: 4.5
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -6675,9 +6672,13 @@ MonoBehaviour:
   upcomingGroundDirectionMinPos: 0
   upcomingGroundDirectionMaxPos: 0.4
   failedGroundRaycastSmoothingRate: 45
+  groundMap:
+    numFwdIntervals: 52
+    intervalWidth: 0.025
+    map: []
   accelFactor: 45
-  accelFactorFreeHanging: 6
-  accelFactorGrappleScurrying: 20
+  accelFactorFreeHanging: 7
+  thrustingAccelFactor: 60
   accelCap: 4
   decelFactor: 60
   gripStrength: 400
@@ -6690,6 +6691,9 @@ MonoBehaviour:
   heightSpringBreakThreshold: 0.1
   grappleSquatReduction: 0.25
   heightSampleWidth: 0.8
+  headRotationSpeed: 12
+  groundedRotationSpeed: 6
+  airborneRotationSpeed: 4.5
   balanceSpringForce: 65
   airborneBalanceSpringForce: 45
   balanceSpringDamping: 0.1
@@ -6702,23 +6706,23 @@ MonoBehaviour:
   uphillJumpTakeoffRotationFraction: 0.25
   jumpVerificationTime: 0.125
   tapJumpVerificationTime: 0.125
+  crouchHeightFraction: 0.25
+  crouchTime: 0.5
+  crouchBoostMinProgress: 0.4
+  crouchReleaseSpeedMultiplier: 3
+  airborneLegAnimationTimeScale: 0.1
+  airborneStrideMultiplier: 1.5
+  strideMultiplierSmoothingRate: 0.25
   freeHangEntryThreshold: 30
   weakFreeHangEntryThreshold: 15
   freeHangGroundedToleranceMultiplier: 1
   freeHangLegAngleMin: 1.047198
   freeHangLegAngleSkew: 0.1308997
   freeHangHeadAngle: 0.2094395
-  crouchHeightFraction: 0.25
-  crouchTime: 0.5
-  crouchBoostMinProgress: 0.4
-  crouchReleaseSpeedMultiplier: 3
-  airborneLegAnimationTimeScale: 0.05
-  airborneStrideMultiplier: 1.5
-  strideMultiplierSmoothingRate: 0.25
-  groundMap:
-    numFwdIntervals: 52
-    intervalWidth: 0.025
-    map: []
+  thrusters:
+    drainRate: 0.2
+    rechargeRate: 0.1
+    rechargeThreshold: 0.1
 --- !u!114 &5843148394334628032
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6845,7 +6849,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: constraintIterations
-      value: 18
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: shootSpeedPowerUpMax
