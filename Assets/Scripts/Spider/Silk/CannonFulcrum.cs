@@ -49,13 +49,12 @@ public class CannonFulcrum
 
     public void UpdateKinematic(float dt, int rotationInput, Transform shooterTransform)
     {
-        bool facingRight = shooterTransform.localScale.x > 0;
         if (rotationInput != 0)
         {
-            kinematicRotation = Mathf.Clamp(kinematicRotation + (facingRight ? rotationInput : - rotationInput) * kinematicRotationSpeed * dt, kinematicRotationMin, kinematicRotationMax);
+            kinematicRotation = Mathf.Clamp(kinematicRotation + rotationInput * kinematicRotationSpeed * dt, kinematicRotationMin, kinematicRotationMax);
         }
         var a = kinematicRotation0 + kinematicRotation;
-        var g = Mathf.Cos(a) * shooterTransform.right + (facingRight ? Mathf.Sin(a) : -Mathf.Sin(a)) * shooterTransform.transform.up;
+        var g = Mathf.Cos(a) * shooterTransform.right + (shooterTransform.localScale.x > 0 ? Mathf.Sin(a) : -Mathf.Sin(a)) * shooterTransform.transform.up;
         lever.ApplyCheapRotationBySpeedClamped(g, 2 * kinematicRotationSpeed, dt);
         RecenterLever();
     }

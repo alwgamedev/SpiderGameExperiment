@@ -19,6 +19,7 @@ public class SpiderMovementController : MonoBehaviour
     [SerializeField] float upcomingGroundDirectionMinPos;
     [SerializeField] float upcomingGroundDirectionMaxPos;
     [SerializeField] float failedGroundRaycastSmoothingRate;
+    //[SerializeField] float grappleLandingVerificationTime;
     [SerializeField] GroundMap groundMap;
 
     [Header("Movement")]
@@ -76,6 +77,7 @@ public class SpiderMovementController : MonoBehaviour
 
     [Header("Thrusters")]
     [SerializeField] Thrusters thrusters;
+    //[SerializeField] float thrustingGravityScale;
 
     Rigidbody2D rb;
     Collider2D headCollider;
@@ -97,6 +99,7 @@ public class SpiderMovementController : MonoBehaviour
     Vector2 groundDirection = Vector2.right;
     Vector2 upcomingGroundDirection = Vector2.right;
     GroundMapPt groundPt = new GroundMapPt(new(Mathf.Infinity, Mathf.Infinity), Vector2.up, Vector2.right, 0, Mathf.Infinity, null);
+    //float grappleLandingVerificationTimer;
 
     float cosFreeHangLegAngleMin;
     float sinFreeHangLegAngleMin;
@@ -155,7 +158,7 @@ public class SpiderMovementController : MonoBehaviour
         headCollider = headBone.GetComponent<Collider2D>();
         abdomenCollider = abdomenBone.GetComponent<Collider2D>();
 
-        rb.centerOfMass = heightReferencePoint.position - transform.position;
+        //rb.centerOfMass = heightReferencePoint.position - transform.position;
 
         legSynchronizer.Initialize(PreferredBodyPosGroundHeight, FacingRight);
         bodyCollisionFilter.NoFilter();
@@ -180,7 +183,18 @@ public class SpiderMovementController : MonoBehaviour
         {
             jumpVerificationTimer -= Time.deltaTime;
         }
-        
+        //if (VerifyingGrappleLanding())
+        //{
+        //    if (!grapple.GrappleAnchored || moveInput == 0)
+        //    {
+        //        grappleLandingVerificationTimer = 0;
+        //    }
+        //    else
+        //    {
+        //        grappleLandingVerificationTimer -= Time.deltaTime;
+        //    }
+        //}
+
         UpdateGroundData();
         UpdateThrusters();//be careful bc both UpdateGroundData and UpdataThrusters can set 
         grappleScurrying = StronglyGrounded && moveInput != 0 && grapple.GrappleAnchored;
@@ -189,7 +203,7 @@ public class SpiderMovementController : MonoBehaviour
         HandleJumpInput();
 
         if (StronglyGrounded)
-        {
+        {  
             UpdateHeightSpring();
         }
         Balance();
@@ -303,6 +317,7 @@ public class SpiderMovementController : MonoBehaviour
     private void OnThrustersEngaged()
     {
         //Debug.Log("engaging thrusters!");
+        //rb.gravityScale = thrustingGravityScale;
     }
 
     private void OnThrustersEngageFailed()
@@ -317,6 +332,7 @@ public class SpiderMovementController : MonoBehaviour
     private void OnThrustersDisengaged()
     {
         //Debug.Log("disengaging thrusters.");
+        //rb.gravityScale = 1;
     }
 
     //INPUT
@@ -599,6 +615,7 @@ public class SpiderMovementController : MonoBehaviour
     private void RecomputeGroundednessTolerance()
     {
         groundednessTolerance = (grounded ? groundedExitToleranceFactor : groundedEntryToleranceFactor) * preferredRideHeight;
+        //rb.centerOfMass = heightReferencePoint.position - groundednessTolerance * transform.up - transform.position;
     }
 
     private void OnTakeOff()
@@ -611,7 +628,16 @@ public class SpiderMovementController : MonoBehaviour
     {
         //legSynchronizer.outwardDrift = 0;
         RecomputeGroundednessTolerance();
+        //if (grapple.GrappleAnchored && moveInput != 0)
+        //{
+        //    grappleLandingVerificationTimer = grappleLandingVerificationTime;
+        //}
     }
+
+    //private bool VerifyingGrappleLanding()
+    //{
+    //    return grappleLandingVerificationTimer > 0;
+    //}
 
     private void UpdateGroundData()
     {

@@ -6647,7 +6647,7 @@ MonoBehaviour:
     map: []
   accelFactor: 45
   accelFactorFreeHanging: 9
-  thrustingAccelFactor: 60
+  thrustingAccelFactor: 45
   accelCap: 4
   decelFactor: 60
   gripStrength: 400
