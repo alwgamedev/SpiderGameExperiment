@@ -6689,8 +6689,8 @@ MonoBehaviour:
   freeHangLegAngleSkew: 0.1308997
   freeHangHeadAngle: 0.2094395
   thrusters:
-    drainRate: 0.2
-    rechargeRate: 0.1
+    drainRate: 0.1
+    rechargeRate: 0.05
     rechargeThreshold: 0.25
 --- !u!114 &5843148394334628032
 MonoBehaviour:
@@ -6754,7 +6754,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: constraintIterations
-      value: 22
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: cannonFulcrum.baseAnchor
@@ -6766,7 +6766,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: cannonFulcrum.linearDamping
-      value: 5
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: cannonFulcrum.angularDamping

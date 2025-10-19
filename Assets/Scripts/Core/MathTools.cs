@@ -109,7 +109,6 @@ public static class MathTools
     public static float AbsolutePseudoAngle(Vector2 u1, Vector2 u2)
     {
         var cos = Vector2.Dot(u1, u2);
-        var sin = Cross2D(u1, u2);
         if (cos > 1)//just in case of rounding errors
         {
             cos = 1;
@@ -120,38 +119,44 @@ public static class MathTools
     /// <summary>
     /// u1, u2 unit vectors
     /// </summary>
-    public static Vector2 CheapRotationalLerp(Vector2 u1, Vector2 u2, float lerpAmount)
+    public static Vector2 CheapRotationalLerp(Vector2 u1, Vector2 u2, float lerpAmount, out bool changed)
     {
         //better than using explicit angles etc.
-        if (u1 == u2)
+        if (lerpAmount == 0 || u1 == u2)
         {
+            changed = false;
             return u1;
         }
         if (u1 == -u2)
         {
+            changed = true;
             return Vector2.LerpUnclamped(u1, u2.CCWPerp(), 2 * lerpAmount).normalized;
         }
+        changed = true;
         return Vector2.LerpUnclamped(u1, u2, lerpAmount).normalized;
     }
 
-    public static Vector2 CheapRotationalLerpClamped(Vector2 u1, Vector2 u2, float lerpAmount)
+    public static Vector2 CheapRotationalLerpClamped(Vector2 u1, Vector2 u2, float lerpAmount, out bool changed)
     {
         //better than using explicit angles etc.
-        if (u1 == u2)
+        if (lerpAmount == 0 || u1 == u2)
         {
+            changed = false;
             return u1;
         }
         if (u1 == -u2)
         {
+            changed = true;
             return Vector2.Lerp(u1, u2.CCWPerp(), 2 * lerpAmount).normalized;
         }
+        changed = true;
         return Vector2.Lerp(u1, u2, lerpAmount).normalized;
     }
 
     public static void ApplyCheapRotationalLerp(this Transform t, Vector2 goalRight, float lerpAmount)
     {
-        var v = CheapRotationalLerp(t.right, goalRight, lerpAmount);
-        if (v.x != t.right.x || v.y != t.right.y)
+        var v = CheapRotationalLerp(t.right, goalRight, lerpAmount, out bool changed);
+        if (changed)
         {
             t.rotation = QuaternionFrom2DUnitVector(v);
         }
@@ -159,8 +164,8 @@ public static class MathTools
 
     public static void ApplyCheapRotationLerpClamped(this Transform t, Vector2 goalRight, float lerpAmount)
     {
-        var v = CheapRotationalLerpClamped(t.right, goalRight, lerpAmount);
-        if (v.x != t.right.x || v.y != t.right.y)
+        var v = CheapRotationalLerpClamped(t.right, goalRight, lerpAmount, out bool changed);
+        if (changed)
         {
             t.rotation = QuaternionFrom2DUnitVector(v);
         }
@@ -170,31 +175,33 @@ public static class MathTools
     /// <summary>
     /// u1, u2 unit vectors
     /// </summary>
-    public static Vector2 CheapRotationBySpeed(Vector2 u1, Vector2 u2, float rotationalSpeed, float dt)
+    public static Vector2 CheapRotationBySpeed(Vector2 u1, Vector2 u2, float rotationalSpeed, float dt, out bool changed)
     {
         var c = AbsolutePseudoAngle(u1, u2);
         if (c == 0)
         {
+            changed = false;
             return u1;
         }
-        return CheapRotationalLerp(u1, u2, rotationalSpeed * dt / (Mathf.PI * c));
+        return CheapRotationalLerp(u1, u2, rotationalSpeed * dt / (Mathf.PI * c), out changed);
     }
 
-    public static Vector2 CheapRotationBySpeedClamped(Vector2 u1, Vector2 u2, float rotationalSpeed, float dt)
+    public static Vector2 CheapRotationBySpeedClamped(Vector2 u1, Vector2 u2, float rotationalSpeed, float dt, out bool changed)
     {
         var c = AbsolutePseudoAngle(u1, u2);
-        if (c == 0)
+        if (c == 0)//bc need to divide by 
         {
+            changed = false;
             return u1;
         }
-        return CheapRotationalLerpClamped(u1, u2, rotationalSpeed * dt / (Mathf.PI * c));
+        return CheapRotationalLerpClamped(u1, u2, rotationalSpeed * dt / (Mathf.PI * c), out changed);
     }
 
     //in this method you do two square roots instead of a cos and a sin (say of a float angle you're tracking)
     public static void ApplyCheapRotationBySpeed(this Transform t, float rotationalSpeed, float dt)
     {
-        var v = CheapRotationBySpeed(t.right, t.up, rotationalSpeed, dt);
-        if (v.x != t.right.x || v.y != t.right.y)
+        var v = CheapRotationBySpeed(t.right, t.up, rotationalSpeed, dt, out bool changed);
+        if (changed)
         {
             t.rotation = QuaternionFrom2DUnitVector(v);
         }
@@ -202,8 +209,8 @@ public static class MathTools
 
     public static void ApplyCheapRotationBySpeedClamped(this Transform t, Vector2 goalRight, float rotationalSpeed, float dt)
     {
-        var v = CheapRotationBySpeedClamped(t.right, goalRight, rotationalSpeed, dt);
-        if (v.x != t.right.x || v.y != t.right.y)
+        var v = CheapRotationBySpeedClamped(t.right, goalRight, rotationalSpeed, dt, out bool changed);
+        if (changed)
         {
             t.rotation = QuaternionFrom2DUnitVector(v);
         }

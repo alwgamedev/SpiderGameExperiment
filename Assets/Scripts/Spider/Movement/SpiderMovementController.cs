@@ -363,7 +363,7 @@ public class SpiderMovementController : MonoBehaviour
 
         moveInput = (Input.GetKey(KeyCode.RightArrow) ? 1 : 0) + (Input.GetKey(KeyCode.LeftArrow) ? -1 : 0);
 
-        freeHangInput = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+        freeHangInput = grapple.GrappleAnchored && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
 
         //make sure you update freeHanging before changing direction
         if (grapple.GrappleAnchored)
@@ -422,26 +422,23 @@ public class SpiderMovementController : MonoBehaviour
         //-- so you can limit maxSpd - spd to being e.g. double the maxSpeed or w/e)
         if (moveInput != 0)
         {
-            if (freeHangInput)//only swing when freeHangInput held... hence no move input processed when no freeHangInput and thrusters are on cooldown
+            if (grounded || thrusters.Engaged)
             {
-                rb.AddForceAtPosition(rb.mass * accelFactorFreeHanging * FreeHangingMoveDirection(), grapple.FreeHangLeveragePoint);
-                return;
+                Vector2 d = OrientedGroundDirection;
+                var spd = Vector2.Dot(rb.linearVelocity, d);
+                var maxSpd = MaxSpeed;
+                var accFactor = grounded ? accelFactor : thrustingAccelFactor;
+
+                var s = Mathf.Min(maxSpd - spd, accelCap * maxSpd);
+                if (grounded || s > 0)
+                {
+                    rb.AddForce(accFactor * s * rb.mass * d);
+                }
             }
-
-            if (!grounded && !thrusters.Engaged)
+            else if (freeHangInput)
             {
-                return;
-            }
-
-            Vector2 d = OrientedGroundDirection;
-            var spd = Vector2.Dot(rb.linearVelocity, d);
-            var maxSpd = MaxSpeed;
-            var accFactor = grounded ? accelFactor : thrustingAccelFactor;
-
-            var s = Mathf.Min(maxSpd - spd, accelCap * maxSpd);
-            if (grounded || s > 0)
-            {
-                rb.AddForce(accFactor * s * rb.mass * d);
+                var u = FreeHangingMoveDirection();
+                rb.AddForceAtPosition(rb.mass * (accelFactorFreeHanging * u), grapple.FreeHangLeveragePoint);
             }
         }
         else if (StronglyGrounded)
@@ -490,7 +487,7 @@ public class SpiderMovementController : MonoBehaviour
         var f = GrappleScurryResistanceFraction;
         if (f > 0)
         {
-            return MathTools.CheapRotationalLerpClamped(groundDirection, ScurryAngleMax(), f);
+            return MathTools.CheapRotationalLerpClamped(groundDirection, ScurryAngleMax(), f, out _);
         }
         return groundDirection;
     }
@@ -690,7 +687,7 @@ public class SpiderMovementController : MonoBehaviour
         }
 
         groundDirection = grounded ? goalGroundDirection
-            : MathTools.CheapRotationBySpeed(groundDirection, Vector2.right, failedGroundRaycastSmoothingRate, Time.deltaTime);
+            : MathTools.CheapRotationBySpeed(groundDirection, Vector2.right, failedGroundRaycastSmoothingRate, Time.deltaTime, out _);
         upcomingGroundDirection = FacingRight ? groundMap.AverageNormalFromCenter(upcomingGroundDirectionMinPos, upcomingGroundDirectionMaxPos)
             : groundMap.AverageNormalFromCenter(-upcomingGroundDirectionMaxPos, -upcomingGroundDirectionMinPos);
         upcomingGroundDirection = upcomingGroundDirection.CWPerp();
