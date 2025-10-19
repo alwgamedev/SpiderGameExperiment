@@ -1754,7 +1754,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 100, y: -100}
+  m_AnchoredPosition: {x: 50, y: -100}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1384479357
@@ -1810,6 +1810,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fillBar: {fileID: 1270727938}
+  cooldownColor: {r: 1, g: 0.42139542, b: 0, a: 1}
+  defaultColor: {r: 0, g: 1, b: 0.61615276, a: 1}
 --- !u!1 &1501271588
 GameObject:
   m_ObjectHideFlags: 0

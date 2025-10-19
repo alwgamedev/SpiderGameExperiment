@@ -6,7 +6,7 @@ public class SpiderMovementController : MonoBehaviour
     [SerializeField] Transform abdomenBone;
     [SerializeField] Transform headBone;
     [SerializeField] Transform heightReferencePoint;
-    [SerializeField] SilkGrapple grapple;
+    [SerializeField] GrappleCannon grapple;
 
     [Header("Ground Data")]
     [SerializeField] LayerMask groundLayer;
@@ -92,24 +92,24 @@ public class SpiderMovementController : MonoBehaviour
     int orientation = 1;
 
     bool grounded;
+    bool allGroundMapPtsHitGround;
     float groundednessTolerance;
     Vector2 groundDirection = Vector2.right;
     Vector2 upcomingGroundDirection = Vector2.right;
     GroundMapPt groundPt = new GroundMapPt(new(Mathf.Infinity, Mathf.Infinity), Vector2.up, Vector2.right, 0, Mathf.Infinity, null);
 
-    float cosLegAngleMin;
-    float sinLegAngleMin;
-
+    float cosFreeHangLegAngleMin;
+    float sinFreeHangLegAngleMin;
     float cosScurryAngleMax;
     float sinScurryAngleMax;
-
-    bool allGroundMapPtsHitGround;
 
     float crouchProgress;//0-1
 
     bool grappleScurrying;
 
     bool thrustersCooldownWarningSent;
+
+    bool freeHangInput;
 
     bool FacingRight => transform.localScale.x > 0;
     Vector2 OrientedRight => FacingRight ? transform.right : -transform.right;
@@ -125,9 +125,7 @@ public class SpiderMovementController : MonoBehaviour
     //float AirborneGroundednessTolerance => groundedEntryToleranceFactor * preferredRideHeight;
     //float ThrustingGroundednessTolerance => thrustingGroundedToleranceFactor * preferredRideHeight;
 
-    public float ThrusterCharge => thrusters.Charge;
-
-
+    public Thrusters Thrusters => thrusters;
 
     //private void OnDrawGizmos()
     //{
@@ -142,10 +140,12 @@ public class SpiderMovementController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         legSynchronizer = GetComponent<LegSynchronizer>();
 
-        cosLegAngleMin = Mathf.Cos(freeHangLegAngleMin);
-        sinLegAngleMin = Mathf.Sin(freeHangLegAngleMin);
+        cosFreeHangLegAngleMin = Mathf.Cos(freeHangLegAngleMin);
+        sinFreeHangLegAngleMin = Mathf.Sin(freeHangLegAngleMin);
         cosScurryAngleMax = Mathf.Cos(grappleScurryAngleMax);
         sinScurryAngleMax = Mathf.Sin(grappleScurryAngleMax);
+
+        thrusters.Initialize();
 
         //Time.timeScale = 0.25f;//useful for spotting issues
     }
@@ -157,7 +157,6 @@ public class SpiderMovementController : MonoBehaviour
 
         rb.centerOfMass = heightReferencePoint.position - transform.position;
 
-        thrusters.Initialize();
         legSynchronizer.Initialize(PreferredBodyPosGroundHeight, FacingRight);
         bodyCollisionFilter.NoFilter();
         bodyCollisionFilter.layerMask = groundLayer;
@@ -221,10 +220,11 @@ public class SpiderMovementController : MonoBehaviour
     {
         var y = transform.right.y;
         //using y > cosLegAngleMax b/c we really want sin(90 - legAngleMax)
-        return y > cosLegAngleMin ? 1 :
-            y > 0 ? Mathf.Lerp(airborneStrideMultiplier, 1, y / cosLegAngleMin)
+        return y > cosFreeHangLegAngleMin ? 1 :
+            y > 0 ? Mathf.Lerp(airborneStrideMultiplier, 1, y / cosFreeHangLegAngleMin)
             : Mathf.Lerp(airborneStrideMultiplier, 1, -y);
     }
+
 
     //THRUSTERS
 
@@ -236,6 +236,10 @@ public class SpiderMovementController : MonoBehaviour
         {
             case Thrusters.ThrustersUpdateResult.ChargeRanOut:
                 OnThrustersRanOutOfCharge();
+                if (!StronglyGrounded && grapple.GrappleAnchored)
+                {
+                    grapple.FreeHanging = true;
+                }
                 break;
             case Thrusters.ThrustersUpdateResult.CooldownEnded:
                 OnThrustersCooldownEnded();
@@ -252,12 +256,12 @@ public class SpiderMovementController : MonoBehaviour
     {
         if (thrusters.Engaged)
         {
-            if (grounded || moveInput == 0 || grapple.FreeHanging)
+            if (grounded || grapple.FreeHanging)
             {
                 DisengageThrusters();
             }
         }
-        else if (!grounded && moveInput != 0 && !grapple.FreeHanging)
+        else if (!grounded && moveInput != 0 && !freeHangInput)
         {
             TryEngageThrusters();
         }
@@ -283,36 +287,36 @@ public class SpiderMovementController : MonoBehaviour
 
     private void OnThrustersRanOutOfCharge()
     {
-        Debug.Log("thrusters ran out of charge");
+        //Debug.Log("thrusters ran out of charge");
         OnThrustersDisengaged();
+        //if (grapple.GrappleAnchored && !StronglyGrounded)
+        //{
+        //    grapple.FreeHanging = true;
+        //}
     }
 
     private void OnThrustersCooldownEnded()
     {
-        Debug.Log("thrusters cooldown ended");
+        //Debug.Log("thrusters cooldown ended");
     }
 
     private void OnThrustersEngaged()
     {
-        Debug.Log("engaging thrusters!");
-        //RecomputeGroundednessTolerance();
-        //rb.gravityScale = thrustingGravityScale;
+        //Debug.Log("engaging thrusters!");
     }
 
     private void OnThrustersEngageFailed()
     {
         if (!thrustersCooldownWarningSent)
         {
-            Debug.Log("thrusters on cooldown...");
+            //Debug.Log("thrusters on cooldown...");
             thrustersCooldownWarningSent = true;
         }
     }
 
     private void OnThrustersDisengaged()
     {
-        Debug.Log("disengaging thrusters.");
-        //RecomputeGroundednessTolerance();
-        //rb.gravityScale = 1;
+        //Debug.Log("disengaging thrusters.");
     }
 
     //INPUT
@@ -343,11 +347,13 @@ public class SpiderMovementController : MonoBehaviour
 
         moveInput = (Input.GetKey(KeyCode.RightArrow) ? 1 : 0) + (Input.GetKey(KeyCode.LeftArrow) ? -1 : 0);
 
+        freeHangInput = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+
         //make sure you update freeHanging before changing direction
         if (grapple.GrappleAnchored)
         {
             //hold shift to enter freehang/swing mode (if it's the default state, then repelling and direction change gets annoying)
-            grapple.FreeHanging = (moveInput == 0 || Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+            grapple.FreeHanging = (moveInput == 0 || freeHangInput || thrusters.Cooldown)
                 && !(StronglyGrounded || IsTouchingGroundPtCollider(headCollider) || IsTouchingGroundPtCollider(abdomenCollider));
         }
 
@@ -400,7 +406,7 @@ public class SpiderMovementController : MonoBehaviour
         //-- so you can limit maxSpd - spd to being e.g. double the maxSpeed or w/e)
         if (moveInput != 0)
         {
-            if (grapple.FreeHanging)
+            if (freeHangInput)//only swing when freeHangInput held... hence no move input processed when no freeHangInput and thrusters are on cooldown
             {
                 rb.AddForceAtPosition(rb.mass * accelFactorFreeHanging * FreeHangingMoveDirection(), grapple.FreeHangLeveragePoint);
                 return;
@@ -481,8 +487,10 @@ public class SpiderMovementController : MonoBehaviour
     private void RotateHead(float dt)
     {
         var g = grounded ? upcomingGroundDirection : (grapple.FreeHanging ? FreeHangingHeadRight() : (Vector2)transform.right);
-        g = MathTools.CheapRotationalLerpClamped(headBone.right, g, headRotationSpeed * dt);//if rotate at constant speed, it starts to flicker when rotation is small
-        headBone.rotation = MathTools.QuaternionFrom2DUnitVector(g);
+        headBone.ApplyCheapRotationLerpClamped(g, headRotationSpeed * dt);//if rotate at constant speed, it starts to flicker when rotation is small
+
+        //g = MathTools.CheapRotationalLerpClamped(headBone.right, g, headRotationSpeed * dt);
+        //headBone.rotation = MathTools.QuaternionFrom2DUnitVector(g);
         //setting headBone.right instead of headBone.rotation occasionally causes flickering
     }
 
@@ -696,11 +704,11 @@ public class SpiderMovementController : MonoBehaviour
 
         if (MathTools.OppositeSigns(r.x, orientation))//upside down
         {
-            return r.y < -cosLegAngleMin ? cosLegAngleMin * OrientedRight - sinLegAngleMin * (Vector2)transform.up :
+            return r.y < -cosFreeHangLegAngleMin ? cosFreeHangLegAngleMin * OrientedRight - sinFreeHangLegAngleMin * (Vector2)transform.up :
             MathTools.ReflectAcrossHyperplane(Vector2.down, (Vector2)transform.up);
         }
 
-        return r.y < -cosLegAngleMin ? cosLegAngleMin * OrientedRight - sinLegAngleMin * (Vector2)transform.up : Vector2.down;
+        return r.y < -cosFreeHangLegAngleMin ? cosFreeHangLegAngleMin * OrientedRight - sinFreeHangLegAngleMin * (Vector2)transform.up : Vector2.down;
     }
 
     private Vector2 FreeHangGroundMapRight()

@@ -2,14 +2,13 @@
 using UnityEngine;
 
 [Serializable]
-public struct Thrusters
+public class Thrusters
 {
     [SerializeField] float drainRate;//charge lost per second
     [SerializeField] float rechargeRate;//charge gained per second
     [SerializeField] float rechargeThreshold;
-
-    bool cooldown;//cooldown kicks in when you drain charge all the way to 0, then you can't engage again until back above rechargeThreshold
    
+    public bool Cooldown { get; private set; }//cooldown kicks in when you drain charge all the way to 0, then you can't engage again until back above rechargeThreshold
     public float Charge { get; private set; }
     public bool Engaged { get; private set; }
 
@@ -45,11 +44,11 @@ public struct Thrusters
             {
                 Charge = 1;
             }
-            if (cooldown && Charge > rechargeThreshold)
+            if (Cooldown && Charge > rechargeThreshold)
                 //use > rechargeThreshold so that we can set rechargeThreshold = 0;(if we end up doing that tho, we can get rid of cooldown)
                 //but I think we want a (small) positive threshold, otherwise you basically never run out of charge (well when at zero charge you alternate on and off every update)
             {
-                cooldown = false;
+                Cooldown = false;
                 return ThrustersUpdateResult.CooldownEnded;
             }
             return ThrustersUpdateResult.None;
@@ -62,7 +61,7 @@ public struct Thrusters
     //should only called Engage when input is first pressed down, therefore we will assume that Engaged is false when this method is called
     public bool Engage()
     {
-        Engaged = !cooldown;
+        Engaged = !Cooldown;
         return Engaged;
     }
 
@@ -74,7 +73,7 @@ public struct Thrusters
         }
 
         Engaged = false;
-        cooldown = Charge == 0;
+        Cooldown = Charge == 0;
         return true;
     }
 }

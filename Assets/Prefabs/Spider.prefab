@@ -3706,37 +3706,6 @@ Transform:
   - {fileID: 8134172703908562749}
   m_Father: {fileID: 1671441735390870653}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &4247646854323931270
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 9163132822740144379}
-  m_Layer: 0
-  m_Name: Base
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &9163132822740144379
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4247646854323931270}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: -0.44, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 4349527747444524243}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4256320658433803893
 GameObject:
   m_ObjectHideFlags: 0
@@ -6677,7 +6646,7 @@ MonoBehaviour:
     intervalWidth: 0.025
     map: []
   accelFactor: 45
-  accelFactorFreeHanging: 7
+  accelFactorFreeHanging: 9
   thrustingAccelFactor: 60
   accelCap: 4
   decelFactor: 60
@@ -6687,7 +6656,7 @@ MonoBehaviour:
   maxSpeedAirborne: 5
   preferredRideHeight: 0.92
   heightSpringForce: 400
-  heightSpringDamping: 25
+  heightSpringDamping: 28
   heightSpringBreakThreshold: 0.1
   grappleSquatReduction: 0.25
   heightSampleWidth: 0.8
@@ -6722,7 +6691,7 @@ MonoBehaviour:
   thrusters:
     drainRate: 0.2
     rechargeRate: 0.1
-    rechargeThreshold: 0.1
+    rechargeThreshold: 0.25
 --- !u!114 &5843148394334628032
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6776,140 +6745,44 @@ PrefabInstance:
     m_TransformParent: {fileID: 4257679111386862312}
     m_Modifications:
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
-      propertyPath: drag
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
-      propertyPath: width
-      value: 0.125
-      objectReference: {fileID: 0}
-    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
-      propertyPath: numNodes
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
-      propertyPath: maxLength
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
-      propertyPath: minLength
-      value: 2.25
-      objectReference: {fileID: 0}
-    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: shooterRb
       value: 
       objectReference: {fileID: 2582591312671585704}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
-      propertyPath: barrelBase
-      value: 
-      objectReference: {fileID: 9163132822740144379}
-    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
-      propertyPath: bounciness
-      value: 0.9
-      objectReference: {fileID: 0}
-    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
-      propertyPath: grappleMass
-      value: 500
-      objectReference: {fileID: 0}
-    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: releaseRate
-      value: 3.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
-      propertyPath: baseShootSpeed
-      value: 15
-      objectReference: {fileID: 0}
-    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
-      propertyPath: nodesPerRelease
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
-      propertyPath: carrySpringForce
-      value: 250
-      objectReference: {fileID: 0}
-    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
-      propertyPath: retractMaxTension
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
-      propertyPath: carrySpringDamping
-      value: 2.25
-      objectReference: {fileID: 0}
-    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
-      propertyPath: freeHangSmoothTime
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
-      propertyPath: anchorIndexMaxOffset
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
-      propertyPath: collisionMask.m_Bits
-      value: 64
+      value: 4.5
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: constraintIterations
-      value: 20
+      value: 22
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
-      propertyPath: shootSpeedPowerUpMax
-      value: 3
-      objectReference: {fileID: 0}
+      propertyPath: cannonFulcrum.baseAnchor
+      value: 
+      objectReference: {fileID: 3165804772939969779}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
-      propertyPath: carryTensionThreshold
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
-      propertyPath: shootSpeedPowerUpRate
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
-      propertyPath: carryForceSmoothingRate
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
-      propertyPath: nodesPerReleaseAnchored
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
-      propertyPath: stronglyPullingThreshold
+      propertyPath: cannonFulcrum.floppiness
       value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
-      propertyPath: tensionCalculationInterval
-      value: 1
+      propertyPath: cannonFulcrum.linearDamping
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
-      propertyPath: collisionSearchRadiusBuffer
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6059036553827033380, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
-      propertyPath: m_SortingOrder
-      value: -100
-      objectReference: {fileID: 0}
-    - target: {fileID: 6059036553827033380, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
-      propertyPath: m_Parameters.numCapVertices
-      value: 12
-      objectReference: {fileID: 0}
-    - target: {fileID: 6059036553827033380, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
-      propertyPath: m_Parameters.numCornerVertices
-      value: 12
+      propertyPath: cannonFulcrum.angularDamping
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7337905512642426967, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: m_Name
       value: Silk Grapple
       objectReference: {fileID: 0}
     - target: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.93618244
-      objectReference: {fileID: 0}
-    - target: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.218
+      value: -0.16
       objectReference: {fileID: 0}
     - target: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.103
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: m_LocalPosition.z
@@ -6945,10 +6818,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 9163132822740144379}
+    m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
 --- !u!114 &1051379001623071205 stripped
@@ -6962,6 +6832,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39cf6fb3f759589459e82fbbe8682d00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &3165804772939969779 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8039806522170824613, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+  m_PrefabInstance: {fileID: 4934841031197647702}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4349527747444524243 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}

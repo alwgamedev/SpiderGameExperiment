@@ -1,10 +1,9 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class SilkGrapple : MonoBehaviour
+public class GrappleCannon : MonoBehaviour
 {
-    [SerializeField] Transform source;//shoot from here
-    [SerializeField] Transform barrel;//rotate this
+    //[SerializeField] Transform source;//shoot from here
+    //[SerializeField] Transform barrel;//rotate this
     //[SerializeField] Transform barrelBase;
     [SerializeField] Rigidbody2D shooterRb;
     [SerializeField] float drag;
@@ -23,12 +22,13 @@ public class SilkGrapple : MonoBehaviour
     [SerializeField] float releaseRate;
     [SerializeField] float tensionCalculationInterval;
     [SerializeField] float retractMaxTension;
-    [SerializeField] float aimRotationMax;
-    [SerializeField] float aimRotationMin;
-    [SerializeField] float aimRotationSpeed;
+    //[SerializeField] float aimRotationMax;
+    //[SerializeField] float aimRotationMin;
+    //[SerializeField] float aimRotationSpeed;
     [SerializeField] int constraintIterations;
     [SerializeField] float carrySpringForce;
-    [SerializeField] float carrySpringDamping;
+    //[SerializeField] float carrySpringDamping;
+    [SerializeField] CannonFulcrum cannonFulcrum;
     //[SerializeField] float carryTensionThreshold;
     //[SerializeField] float carryForceSmoothingRate;
     //[SerializeField] float freeHangSmoothTime;
@@ -41,8 +41,8 @@ public class SilkGrapple : MonoBehaviour
     Vector2 shootDirection;
 
     int aimInput;
-    float aimRotation0;//inefficient (should just add aimRotation0 to max & min values) but for now allows us to tweak max and min live
-    float aimRotation;
+    //float aimRotation0;//inefficient (should just add aimRotation0 to max & min values) but for now allows us to tweak max and min live
+    //float aimRotation;
 
     Rope grapple;
     LineRenderer lineRenderer;
@@ -60,10 +60,10 @@ public class SilkGrapple : MonoBehaviour
     public int GrappleReleaseInput => grapple == null ? 0 : grappleReleaseInput;
     //public Vector2 LastCarryForceDirection { get; private set; }
     public Vector2 LastCarryForce { get; private set; }
-    public float LastCarryForceMagnitude { get; private set; }
+    //public float LastCarryForceMagnitude { get; private set; }
     public Vector2 LastCarryForceDirection { get; private set; }
     public bool ShooterMovingTowardsGrapple => Vector2.Dot(shooterRb.linearVelocity, GrappleExtent) > 0;
-    public Vector2 GrappleExtent => GrapplePosition - AnchorPosition;
+    public Vector2 GrappleExtent => GrapplePosition - SourcePosition;
     //public Vector2 GrappleExtentFromGround
     //{
     //    get
@@ -78,12 +78,12 @@ public class SilkGrapple : MonoBehaviour
     //    }
     //}
     public Vector2 GrapplePosition => grapple.nodes[grapple.lastIndex].position;
-    public bool SourceIsBelowGrapple => GrapplePosition.y > source.position.y;
+    //public bool SourceIsBelowGrapple => GrapplePosition.y > source.position.y;
     float ShootSpeed => (1 + shootSpeedPowerUp) * baseShootSpeed;
-    Vector2 AnchorPosition => source.position;
+    Vector2 SourcePosition => cannonFulcrum.LeveragePoint;//source.position;
     public Collider2D AnchorCollider => grapple.nodes[grapple.lastIndex].CurrentCollision;
     public int AnchorMask => grapple.terminusAnchorMask;
-    public Vector2 FreeHangLeveragePoint => /*barrelBase.position;*/source.position;
+    public Vector2 FreeHangLeveragePoint => cannonFulcrum.FulcrumPosition;/*barrelBase.position;*///source.position;
     //public Vector2 SmoothedFreeHangLeveragePoint => FreeHangLeveragePoint;
     //{
     //    get
@@ -95,7 +95,7 @@ public class SilkGrapple : MonoBehaviour
     //        return FreeHangLeveragePoint;
     //    }
     //}
-    public Vector2 FreeHangUp => (/*Smoothed*/FreeHangLeveragePoint - shooterRb.centerOfMass).normalized;
+    //public Vector2 FreeHangUp => (/*Smoothed*/FreeHangLeveragePoint - shooterRb.centerOfMass).normalized;
     public bool FreeHanging
     {
         get => GrappleAnchored && freeHanging;
@@ -104,6 +104,10 @@ public class SilkGrapple : MonoBehaviour
             if (value != freeHanging)
             {
                 freeHanging = value;
+                if (!value)
+                {
+                    cannonFulcrum.ResetPhysics();
+                }
                 //freeHangSmoothingTimer = 0;
             }
         }
@@ -132,7 +136,8 @@ public class SilkGrapple : MonoBehaviour
     private void Start()
     {
         lineRenderer.enabled = false;
-        aimRotation0 = barrel.rotation.eulerAngles.z * Mathf.Deg2Rad;
+        cannonFulcrum.Initialize();
+        //aimRotation0 = barrel.rotation.eulerAngles.z * Mathf.Deg2Rad;
     }
 
     //2do: length should gradually increase in the first period after shooting
@@ -179,10 +184,13 @@ public class SilkGrapple : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (aimInput != 0)
-        {
-            UpdateAim();
-        }
+        //if (aimInput != 0)
+        //{
+        //    UpdateAim();
+        //}
+
+        UpdateCannonFulcrum();
+
         if (grapple != null)
         {
             //UpdateFreeHangSmoothingTimer();
@@ -211,7 +219,7 @@ public class SilkGrapple : MonoBehaviour
             firstCollisionIndex++;
         }
 
-        return grapple.nodes[firstCollisionIndex].position - AnchorPosition;
+        return grapple.nodes[firstCollisionIndex].position - SourcePosition;
     }
 
     //private void UpdateFreeHangSmoothingTimer()
@@ -391,17 +399,29 @@ public class SilkGrapple : MonoBehaviour
 
     //fIXED UPDATE FUNCTIONS
 
-    private void UpdateAim()
+    //private void UpdateAim()
+    //{
+    //    aimRotation += aimInput * aimRotationSpeed * fixedDt;
+    //    aimRotation = Mathf.Clamp(aimRotation, aimRotationMin, aimRotationMax);
+    //    var a = aimRotation0 + aimRotation;
+    //    barrel.right = new Vector3(Mathf.Cos(a), Mathf.Sin(a), 0);
+    //}
+
+    private void UpdateCannonFulcrum()
     {
-        aimRotation += aimInput * aimRotationSpeed * fixedDt;
-        aimRotation = Mathf.Clamp(aimRotation, aimRotationMin, aimRotationMax);
-        var a = aimRotation0 + aimRotation;
-        barrel.right = new Vector3(Mathf.Cos(a), Mathf.Sin(a), 0);
+        if (GrappleAnchored)
+        {
+            cannonFulcrum.UpdateDynamic(fixedDt);
+        }
+        else
+        {
+            cannonFulcrum.UpdateKinematic(fixedDt, aimInput, shooterRb.transform);
+        }
     }
 
     private void UpdateAnchorPosition()
     {
-        grapple.nodes[0].position = AnchorPosition;
+        grapple.nodes[0].position = SourcePosition;
     }
 
     private void UpdateCarrySpring()
@@ -410,17 +430,18 @@ public class SilkGrapple : MonoBehaviour
         var t = NormalizedStrictTension(lastIndex);
         if (t > 0)
         {
-            LastCarryForceMagnitude = shooterRb.mass * carrySpringForce * t;
-            LastCarryForce = LastCarryForceMagnitude * LastCarryForceDirection;
-            if (FreeHanging)
-            {
-                shooterRb.AddForceAtPosition(LastCarryForce - shooterRb.mass * carrySpringDamping * Vector2.Dot(shooterRb.linearVelocity, LastCarryForceDirection) * LastCarryForceDirection,
-                    /*Smoothed*/FreeHangLeveragePoint);
-            }
-            else
-            {
-                shooterRb.AddForce(LastCarryForce - shooterRb.mass * carrySpringDamping * Vector2.Dot(shooterRb.linearVelocity, LastCarryForceDirection) * LastCarryForceDirection);
-            }
+            //LastCarryForceMagnitude = shooterRb.mass * carrySpringForce * t;
+            LastCarryForce = shooterRb.mass * carrySpringForce * t * LastCarryForceDirection;//LastCarryForceMagnitude * LastCarryForceDirection;
+            cannonFulcrum.ApplyForce(LastCarryForce, LastCarryForceDirection, shooterRb, FreeHanging);
+            //if (FreeHanging)
+            //{
+            //    shooterRb.AddForceAtPosition(LastCarryForce - shooterRb.mass * carrySpringDamping * Vector2.Dot(shooterRb.linearVelocity, LastCarryForceDirection) * LastCarryForceDirection,
+            //        FreeHangLeveragePoint);
+            //}
+            //else
+            //{
+            //    shooterRb.AddForce(LastCarryForce - shooterRb.mass * carrySpringDamping * Vector2.Dot(shooterRb.linearVelocity, LastCarryForceDirection) * LastCarryForceDirection);
+            //}
         }
         else
         {
@@ -463,12 +484,12 @@ public class SilkGrapple : MonoBehaviour
     private void ShootGrapple()
     {
         var nodeSpacing = minLength / (numNodes - 1);
-        grapple = new Rope(source.position, width, nodeSpacing, numNodes,
+        grapple = new Rope(SourcePosition, width, nodeSpacing, numNodes,
                     drag, collisionMask, collisionSearchRadiusBuffer, bounciness, grappleAnchorMask, constraintIterations);
         grapple.nodes[0].Anchor();
         grapple.nodes[grapple.lastIndex].mass = grappleMass;
         var shootSpeed = ShootSpeed;
-        shootDirection = barrel.up;
+        shootDirection = cannonFulcrum.LeverDirection;//barrel.up;
         Vector2 shootVelocity = shootSpeed * shootDirection;
         grapple.nodes[grapple.lastIndex].lastPosition -= fixedDt * shootVelocity;
         var g = Physics2D.gravity.y;
@@ -483,9 +504,9 @@ public class SilkGrapple : MonoBehaviour
         grappleReleaseInput = 0;
         shootSpeedPowerUp = 0;
         LastCarryForce = Vector2.zero;
-        LastCarryForceMagnitude = 0;
+        //LastCarryForceMagnitude = 0;
         //freeHangSmoothingTimer = 0;
-        freeHanging = false;
+        FreeHanging = false;
         //releaseInputEnabled = false;
         //PositiveCarryForce = false;
     }

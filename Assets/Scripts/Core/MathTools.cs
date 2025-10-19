@@ -148,6 +148,24 @@ public static class MathTools
         return Vector2.Lerp(u1, u2, lerpAmount).normalized;
     }
 
+    public static void ApplyCheapRotationalLerp(this Transform t, Vector2 goalRight, float lerpAmount)
+    {
+        var v = CheapRotationalLerp(t.right, goalRight, lerpAmount);
+        if (v.x != t.right.x || v.y != t.right.y)
+        {
+            t.rotation = QuaternionFrom2DUnitVector(v);
+        }
+    }
+
+    public static void ApplyCheapRotationLerpClamped(this Transform t, Vector2 goalRight, float lerpAmount)
+    {
+        var v = CheapRotationalLerpClamped(t.right, goalRight, lerpAmount);
+        if (v.x != t.right.x || v.y != t.right.y)
+        {
+            t.rotation = QuaternionFrom2DUnitVector(v);
+        }
+    }
+
     //2do: this sometimes rotates wrong way and settles on -u2 instead of u2
     /// <summary>
     /// u1, u2 unit vectors
@@ -172,14 +190,33 @@ public static class MathTools
         return CheapRotationalLerpClamped(u1, u2, rotationalSpeed * dt / (Mathf.PI * c));
     }
 
-    //i.e. rotate keeping center pt fixed
-    public static void RotateAroundPoint(this Transform t, Vector3 center, Vector3 newRight)
+    //in this method you do two square roots instead of a cos and a sin (say of a float angle you're tracking)
+    public static void ApplyCheapRotationBySpeed(this Transform t, float rotationalSpeed, float dt)
     {
-        var d = center - t.position;
-        t.position += d;
-        t.right = newRight;
-        t.position -= d;
+        var v = CheapRotationBySpeed(t.right, t.up, rotationalSpeed, dt);
+        if (v.x != t.right.x || v.y != t.right.y)
+        {
+            t.rotation = QuaternionFrom2DUnitVector(v);
+        }
     }
+
+    public static void ApplyCheapRotationBySpeedClamped(this Transform t, Vector2 goalRight, float rotationalSpeed, float dt)
+    {
+        var v = CheapRotationBySpeedClamped(t.right, goalRight, rotationalSpeed, dt);
+        if (v.x != t.right.x || v.y != t.right.y)
+        {
+            t.rotation = QuaternionFrom2DUnitVector(v);
+        }
+    }
+
+    //i.e. rotate keeping center pt fixed
+    //public static void RotateAroundPoint(this Transform t, Vector3 center, Vector3 newRight)
+    //{
+    //    var d = center - t.position;
+    //    t.position += d;
+    //    t.right = newRight;
+    //    t.position -= d;
+    //}
 
     public static RaycastHit2D DebugRaycast(Vector2 origin, Vector2 direction, float length, int layerMask, Color drawColor)
     {
