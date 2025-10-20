@@ -130,13 +130,13 @@ public class SpiderMovementController : MonoBehaviour
 
     public Thrusters Thrusters => thrusters;
 
-    //private void OnDrawGizmos()
-    //{
-    //    if (Application.isPlaying)
-    //    {
-    //        groundMap.DrawGizmos();
-    //    }
-    //}
+    private void OnDrawGizmos()
+    {
+        if (Application.isPlaying)
+        {
+            groundMap.DrawGizmos();
+        }
+    }
 
     private void Awake()
     {
@@ -196,18 +196,17 @@ public class SpiderMovementController : MonoBehaviour
         //}
 
         UpdateGroundData();
-        UpdateThrusters();//be careful bc both UpdateGroundData and UpdataThrusters can set 
+        UpdateThrusters();
         grappleScurrying = StronglyGrounded && moveInput != 0 && grapple.GrappleAnchored;
 
         HandleMoveInput();
         HandleJumpInput();
 
-        if (StronglyGrounded)
+        if (grounded)//was strongly grdd
         {  
             UpdateHeightSpring();
         }
         Balance();
-
 
         //we don't need to do all of these in fixed update (e.g. step height fraction only needs to be update where crouchProgress is updated)
         //but for now it's just easier have them all here.
@@ -215,7 +214,7 @@ public class SpiderMovementController : MonoBehaviour
         //(for now this is more flexible)
         var v = GroundVelocity;
         legSynchronizer.bodyGroundSpeedSign = grounded && grapple.GrappleAnchored ? 1 : Mathf.Sign(v);
-        legSynchronizer.absoluteBodyGroundSpeed = grounded || moveInput != 0 ? Mathf.Abs(v) : rb.linearVelocity.magnitude;
+        legSynchronizer.absoluteBodyGroundSpeed = grounded || thrusters.Engaged ? Mathf.Abs(v) : rb.linearVelocity.magnitude;
         legSynchronizer.preferredBodyPosGroundHeight = PreferredBodyPosGroundHeight;
         legSynchronizer.stepHeightFraction = 1 - crouchProgress * crouchHeightFraction;
         legSynchronizer.timeScale = grounded || thrusters.Engaged ? 1 : airborneLegAnimationTimeScale;
@@ -270,7 +269,7 @@ public class SpiderMovementController : MonoBehaviour
     {
         if (thrusters.Engaged)
         {
-            if (grounded || grapple.FreeHanging)
+            if (grounded || grapple.FreeHanging || moveInput == 0)
             {
                 DisengageThrusters();
             }
@@ -437,8 +436,7 @@ public class SpiderMovementController : MonoBehaviour
             }
             else if (freeHangInput)
             {
-                var u = FreeHangingMoveDirection();
-                rb.AddForceAtPosition(rb.mass * (accelFactorFreeHanging * u), grapple.FreeHangLeveragePoint);
+                rb.AddForceAtPosition(rb.mass * (accelFactorFreeHanging * FreeHangingMoveDirection()), grapple.FreeHangLeveragePoint);
             }
         }
         else if (StronglyGrounded)

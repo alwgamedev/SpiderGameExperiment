@@ -6646,14 +6646,14 @@ MonoBehaviour:
     intervalWidth: 0.025
     map: []
   accelFactor: 45
-  accelFactorFreeHanging: 9
+  accelFactorFreeHanging: 12
   thrustingAccelFactor: 45
   accelCap: 4
   decelFactor: 60
   gripStrength: 400
   grapplePullGripReduction: 0.65
   maxSpeed: 3.25
-  maxSpeedAirborne: 5
+  maxSpeedAirborne: 6
   preferredRideHeight: 0.92
   heightSpringForce: 400
   heightSpringDamping: 28
@@ -6661,7 +6661,7 @@ MonoBehaviour:
   grappleSquatReduction: 0.25
   heightSampleWidth: 0.8
   headRotationSpeed: 12
-  groundedRotationSpeed: 6
+  groundedRotationSpeed: 9
   airborneRotationSpeed: 4.5
   balanceSpringForce: 65
   airborneBalanceSpringForce: 45
@@ -6766,11 +6766,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: cannonFulcrum.linearDamping
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: cannonFulcrum.angularDamping
-      value: 1
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 7337905512642426967, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: m_Name

@@ -51,9 +51,6 @@ public class GrappleCannon : MonoBehaviour
     float fixedDt2;
 
     bool freeHanging;
-    //float freeHangSmoothingTimer;
-
-    //public float carryForceMultiplier = 1;
 
     public Rope Grapple => grapple;
     public bool GrappleAnchored => grapple != null && grapple.nodes[grapple.lastIndex].Anchored;
