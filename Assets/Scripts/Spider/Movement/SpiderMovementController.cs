@@ -64,6 +64,7 @@ public class SpiderMovementController : MonoBehaviour
     [SerializeField] float crouchBoostMinProgress;
     [SerializeField] float crouchReleaseSpeedMultiplier;
     [SerializeField] float airborneLegAnimationTimeScale;
+    [SerializeField] float airborneReverseLegAnimationTimeScale;
     [SerializeField] float airborneStrideMultiplier;
     [SerializeField] float strideMultiplierSmoothingRate;
 
@@ -202,7 +203,7 @@ public class SpiderMovementController : MonoBehaviour
         HandleMoveInput();
         HandleJumpInput();
 
-        if (grounded)//was strongly grdd
+        if (StronglyGrounded)//was strongly grdd
         {  
             UpdateHeightSpring();
         }
@@ -217,7 +218,7 @@ public class SpiderMovementController : MonoBehaviour
         legSynchronizer.absoluteBodyGroundSpeed = grounded || thrusters.Engaged ? Mathf.Abs(v) : rb.linearVelocity.magnitude;
         legSynchronizer.preferredBodyPosGroundHeight = PreferredBodyPosGroundHeight;
         legSynchronizer.stepHeightFraction = 1 - crouchProgress * crouchHeightFraction;
-        legSynchronizer.timeScale = grounded || thrusters.Engaged ? 1 : airborneLegAnimationTimeScale;
+        legSynchronizer.timeScale = grounded || thrusters.Engaged ? 1 : legSynchronizer.bodyGroundSpeedSign < 0 ? airborneReverseLegAnimationTimeScale : airborneLegAnimationTimeScale;
         if (!grounded)
         {
             legSynchronizer.strideMultiplier = MathTools.LerpAtConstantRate(legSynchronizer.strideMultiplier, AirborneStrideMultiplier(),
@@ -227,6 +228,8 @@ public class SpiderMovementController : MonoBehaviour
         {
             legSynchronizer.strideMultiplier = 1;
         }
+
+        legSynchronizer.driftWeight = (grapple.FreeHanging ? Mathf.Max(-OrientedRight.y, 0) : 0);
     }
 
     private float AirborneStrideMultiplier()

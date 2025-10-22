@@ -1,4 +1,3 @@
-using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.U2D.IK;
 
@@ -8,23 +7,25 @@ public class LegAnimator : MonoBehaviour
     [SerializeField] float hipRaycastUpwardBuffer = 0.5f;
     [SerializeField] float staticModeGroundDetectionRadius;
     [SerializeField] float stepMax;
-    [SerializeField] float extendFractionMax;
-    [SerializeField] float extendFractionMin;
+    //[SerializeField] float extendFractionMax;
+    //[SerializeField] float extendFractionMin;
     //[SerializeField] float ikTargetGroundDetectionRadius;
-    [SerializeField] Vector2 driftWeightsMax;
-    [SerializeField] Vector2 driftWeightsMin;
+    //[SerializeField] Vector2 driftWeightsMax;
+    //[SerializeField] Vector2 driftWeightsMin;
+
+    public Vector2 drift;
     
 
     int groundLayer;
-    Vector2 currentDriftWeights;
+    //Vector2 currentDriftWeights;
     //IKChain2D ikChain;
     Transform hipBone;
     Transform ikTarget;
-    float ikChainTotalLength;
+    //float ikChainTotalLength;
     //float extendMax;//only use squared versions ATM
     //float extendMin;
-    float extendMax2;
-    float extendMin2;
+    //float extendMax2;
+    //float extendMin2;
 
     private void Awake()
     {
@@ -32,16 +33,16 @@ public class LegAnimator : MonoBehaviour
         var ikChain = GetComponent<Solver2D>().GetChain(0);
         hipBone = ikChain.transforms[0];
         ikTarget = ikChain.target;
-        var lengths = ikChain.lengths;//because retrieving lengths rebuilds (and recalculates) the array every time...
-        for (int i = 0; i < lengths.Length; i++)
-        {
-            ikChainTotalLength += lengths[i];
-        }
+        //var lengths = ikChain.lengths;//because retrieving lengths rebuilds (and recalculates) the array every time...
+        //for (int i = 0; i < lengths.Length; i++)
+        //{
+        //    ikChainTotalLength += lengths[i];
+        //}
 
-        var extendMax = ikChainTotalLength * extendFractionMax;
-        var extendMin = ikChainTotalLength * extendFractionMin;
-        extendMax2 = extendMax * extendMax;
-        extendMin2 = extendMin * extendMin;
+        //var extendMax = ikChainTotalLength * extendFractionMax;
+        //var extendMin = ikChainTotalLength * extendFractionMin;
+        //extendMax2 = extendMax * extendMax;
+        //extendMin2 = extendMin * extendMin;
     }
 
     //very useful for identifying issues (well it used to be until you started using local positions)
@@ -75,18 +76,19 @@ public class LegAnimator : MonoBehaviour
         }
     }
 
-    public void RandomizeDriftWeights()
-    {
-        currentDriftWeights.x = MathTools.RandomFloat(driftWeightsMin.x, driftWeightsMax.x);
-        currentDriftWeights.y = MathTools.RandomFloat(driftWeightsMin.y, driftWeightsMax.y);
-    }
+    //public void RandomizeDriftWeights()
+    //{
+    //    currentDriftWeights.x = MathTools.RandomFloat(driftWeightsMin.x, driftWeightsMax.x);
+    //    currentDriftWeights.y = MathTools.RandomFloat(driftWeightsMin.y, driftWeightsMax.y);
+    //}
 
     public void UpdateStep(float dt, GroundMap map, bool bodyFacingRight,
         float baseStepHeightMultiplier, float stepHeightSpeedMultiplier,
-        float smoothingRate, float stepProgress, float stepTime, float restTime)
+        float smoothingRate, float stepProgress, float stepTime, float restTime, float driftWeight)
     {
-        var stepStart = GetStepStart(map, bodyFacingRight, stepProgress, stepTime, restTime);
-        var stepGoal = GetStepGoal(map, bodyFacingRight, 0, restTime);
+        var drift = driftWeight * this.drift;
+        var stepStart = GetStepStart(map, bodyFacingRight, stepProgress, stepTime, restTime, drift);
+        var stepGoal = GetStepGoal(map, bodyFacingRight, 0, restTime, drift);
         var stepRight = (stepGoal - stepStart).normalized;
         var stepUp = bodyFacingRight ? stepRight.CCWPerp() : stepRight.CWPerp();
         var stepCenter = 0.5f * (stepGoal + stepStart);
@@ -99,7 +101,7 @@ public class LegAnimator : MonoBehaviour
         //var curGroundRay = GroundRaycast(newTargetPosition, map.Center.normal, 1f, 1f);
         if (stepHeightSpeedMultiplier < 1)
         {
-            var g = map.ProjectOntoGround(newTargetPos, out _);
+            var g = map.ProjectOntoGround(newTargetPos, out var n) + drift.y * n;
             newTargetPos = Vector2.Lerp(g, newTargetPos, stepHeightSpeedMultiplier);
         }
 
@@ -107,9 +109,9 @@ public class LegAnimator : MonoBehaviour
     }
 
     public void UpdateRest(float dt, GroundMap map, bool bodyFacingRight,
-        float smoothingRate, float restProgress, float restTime)
+        float smoothingRate, float restProgress, float restTime, float driftWeight)
     {
-        var newTargetPos = GetStepGoal(map, bodyFacingRight, restProgress, restTime);
+        var newTargetPos = GetStepGoal(map, bodyFacingRight, restProgress, restTime, driftWeight * drift);
         ikTarget.position = Vector2.Lerp(ikTarget.position, newTargetPos, smoothingRate * dt);
         //var g = GroundRaycast(ikTarget.position, bodyUp, 1f, 1f);
         //if (g)
@@ -210,38 +212,38 @@ public class LegAnimator : MonoBehaviour
     //    ikTarget.position = Vector2.Lerp(ikTarget.position, stepGoal, smoothingRate * dt);
     //}
 
-    public void EnforceExtensionConstraint(float dt, Vector2 groundNormal, Vector2 orientedGroundDir, float smoothingRate)
-    {
-        //may want to do multiple iterations too
-        Vector2 hipBonePos = hipBone.position;
-        Vector2 ikTargetPos = ikTarget.position;
-        var v = ikTargetPos - hipBonePos;
-        var d2 = Vector2.SqrMagnitude(v);
-        if (d2 < extendMin2)
-        {
-            var x = Vector2.Dot(v, orientedGroundDir);
-            var y = Vector2.Dot(v, groundNormal);
-            var x1 = Mathf.Sign(x) * Mathf.Sqrt(extendMin2 - y * y);
-            var r = StepPosRaycast(orientedGroundDir, groundNormal, x1);
-            //var r = StepPosRaycast(orientedGroundDir, groundNormal, x1);
-            if (r)
-            {
-                ikTarget.position = Vector2.Lerp(ikTargetPos, r.point, smoothingRate * dt);
-            }
-        }
-        else if (d2 > extendMax2)
-        {
-            var x = Vector2.Dot(v, orientedGroundDir);
-            var y = Vector2.Dot(v, groundNormal);
-            var y2 = Mathf.Min(y * y, extendMax2);//bc in this case it's not granted that extendMax2 - y * y >= 0
-            var x1 = Mathf.Sign(x) * Mathf.Sqrt(extendMax2 - y2);
-            var r = StepPosRaycast(orientedGroundDir, groundNormal, x1);
-            if (r)
-            {
-                ikTarget.position = Vector2.Lerp(ikTargetPos, r.point, smoothingRate * dt);
-            }
-        }
-    }
+    //public void EnforceExtensionConstraint(float dt, Vector2 groundNormal, Vector2 orientedGroundDir, float smoothingRate)
+    //{
+    //    //may want to do multiple iterations too
+    //    Vector2 hipBonePos = hipBone.position;
+    //    Vector2 ikTargetPos = ikTarget.position;
+    //    var v = ikTargetPos - hipBonePos;
+    //    var d2 = Vector2.SqrMagnitude(v);
+    //    if (d2 < extendMin2)
+    //    {
+    //        var x = Vector2.Dot(v, orientedGroundDir);
+    //        var y = Vector2.Dot(v, groundNormal);
+    //        var x1 = Mathf.Sign(x) * Mathf.Sqrt(extendMin2 - y * y);
+    //        var r = StepPosRaycast(orientedGroundDir, groundNormal, x1);
+    //        //var r = StepPosRaycast(orientedGroundDir, groundNormal, x1);
+    //        if (r)
+    //        {
+    //            ikTarget.position = Vector2.Lerp(ikTargetPos, r.point, smoothingRate * dt);
+    //        }
+    //    }
+    //    else if (d2 > extendMax2)
+    //    {
+    //        var x = Vector2.Dot(v, orientedGroundDir);
+    //        var y = Vector2.Dot(v, groundNormal);
+    //        var y2 = Mathf.Min(y * y, extendMax2);//bc in this case it's not granted that extendMax2 - y * y >= 0
+    //        var x1 = Mathf.Sign(x) * Mathf.Sqrt(extendMax2 - y2);
+    //        var r = StepPosRaycast(orientedGroundDir, groundNormal, x1);
+    //        if (r)
+    //        {
+    //            ikTarget.position = Vector2.Lerp(ikTargetPos, r.point, smoothingRate * dt);
+    //        }
+    //    }
+    //}
 
     //2do: this causes feet to cling to ground during jump takeoff
     //maybe offset the overlap circle by body velocity in the up direction? (clamping the max offset)
@@ -282,22 +284,22 @@ public class LegAnimator : MonoBehaviour
         return positionToDrift + driftAmount * (driftWeightX * bodyRight + driftWeightY * bodyUp);
     }
 
-    private Vector2 GetStepStart(GroundMap map, bool bodyFacingRight, float stepProgress, float stepTime, float restTime)
+    private Vector2 GetStepStart(GroundMap map, bool bodyFacingRight, float stepProgress, float stepTime, float restTime, Vector2 drift)
     {
         var c = map.Center;
         var h = Vector2.Dot((Vector2)hipBone.position - c.point, c.normal.CWPerp());//we could also use body position and body right
         h = bodyFacingRight ? h + StepStartHorizontalOffset(stepProgress, stepTime, restTime)
             : h - StepStartHorizontalOffset(stepProgress, stepTime, restTime);
-        return map.PointFromCenterByPosition(h, out _);
+        return map.PointFromCenterByPosition(bodyFacingRight ? h + drift.x : h - drift.x, out var n) + drift.y * n;
     }
 
-    private Vector2 GetStepGoal(GroundMap map, bool bodyFacingRight, float restProgress, float restTime)
+    private Vector2 GetStepGoal(GroundMap map, bool bodyFacingRight, float restProgress, float restTime, Vector2 drift)
     {
         var c = map.Center;
         var h = Vector2.Dot((Vector2)hipBone.position - c.point, c.normal.CWPerp());//we could also use body position and body right
         h = bodyFacingRight ? h + StepGoalHorizontalOffset(restProgress, restTime)
             : h - StepGoalHorizontalOffset(restProgress, restTime);
-        return map.PointFromCenterByPosition(h, out _);
+        return map.PointFromCenterByPosition(bodyFacingRight ? h + drift.x : h - drift.x, out var n) + drift.y * n;
     }
 
     private Vector2 GetStepStart(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, 
