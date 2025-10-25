@@ -1,3 +1,4 @@
+using Unity.Burst.Intrinsics;
 using UnityEngine;
 
 public static class MathTools
@@ -71,9 +72,26 @@ public static class MathTools
         return new(Vector2.Dot(v, b1), Vector2.Dot(v, b2));
     }
 
+    //to avoid casting
+    public static Vector2 InFrame(this Vector2 v, Vector3 b1, Vector3 b2)
+    {
+        return new(v.x * b1.x + v.y * b1.y, v.x * b2.x + v.y * b2.y);
+    }
+
     public static Vector3 InFrame(this Vector3 v, Vector3 b1, Vector3 b2, Vector3 b3)
     {
         return new(Vector3.Dot(v, b1), Vector3.Dot(v, b2), Vector3.Dot(v, b3));
+    }    
+    
+    //to avoid casting... OK getting a little stupid at this point
+    public static Vector2 InFrameV2(this Vector3 v, Vector3 b1, Vector3 b2)
+    {
+        return new(v.x * b1.x + v.y * b1.y, v.x * b2.x + v.y * b2.y);
+    }
+
+    public static Vector2 InFrameV2(this Vector3 v, Vector2 b1, Vector2 b2)
+    {
+        return new(v.x * b1.x + v.y * b1.y, v.x * b2.x + v.y * b2.y);
     }
 
     /// <param name="p">point to be reflect</param>

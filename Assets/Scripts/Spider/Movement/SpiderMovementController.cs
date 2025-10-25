@@ -4,6 +4,7 @@ public class SpiderMovementController : MonoBehaviour
 {
     [Header("Body")]
     [SerializeField] Transform abdomenBone;
+    [SerializeField] Transform abdomenBonePivot;
     [SerializeField] Transform headBone;
     [SerializeField] Transform heightReferencePoint;
     [SerializeField] GrappleCannon grapple;
@@ -98,8 +99,12 @@ public class SpiderMovementController : MonoBehaviour
     float cosJumpAngleMin;
     float sinJumpAngleMin;
 
-    Vector2 abdomenBoneDefaultRight;//in local coordinates
-    Vector2 abdomenBoneDefaultUp;
+    Vector2 abdomenBoneBaseRight;
+    Vector2 abdomenBoneBaseRightL;
+    Vector2 abdomenBoneBaseUp;
+    Vector2 abdomenBoneBaseUpL;
+    Quaternion abdomenBoneBaseLocalRotation;
+    Quaternion abdomenBoneBaseLocalRotationL;
 
     int orientation = 1;
 
@@ -152,8 +157,13 @@ public class SpiderMovementController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         legSynchronizer = GetComponent<LegSynchronizer>();
 
-        abdomenBoneDefaultRight = abdomenBone.right.InFrame(transform.right, transform.up, transform.forward);
-        abdomenBoneDefaultUp = abdomenBone.right.InFrame(transform.right, transform.up, transform.forward);
+        abdomenBoneBaseRight = abdomenBone.right.InFrameV2(transform.right, transform.up);
+        abdomenBoneBaseRightL = new(abdomenBoneBaseRight.x, -abdomenBoneBaseRight.y);
+        abdomenBoneBaseUp = abdomenBoneBaseRight.CCWPerp();
+        abdomenBoneBaseUpL = abdomenBoneBaseRightL.CCWPerp();
+        abdomenBoneBaseLocalRotation = MathTools.QuaternionFrom2DUnitVector(abdomenBoneBaseRight);
+        abdomenBoneBaseLocalRotationL = MathTools.QuaternionFrom2DUnitVector(abdomenBoneBaseRightL);
+        //bc abdomenBone is not a direct child of this.transform (so abdomenBone.localRotation is not what we want)
 
         cosFreeHangLegAngleMin = Mathf.Cos(freeHangLegAngleMin);
         sinFreeHangLegAngleMin = Mathf.Sin(freeHangLegAngleMin);
@@ -447,10 +457,10 @@ public class SpiderMovementController : MonoBehaviour
         {
             var s = transform.localScale;
             transform.localScale = new Vector3(-s.x, s.y, s.z);
-            if (Leaning)
-            {
-                transform.right = MathTools.ReflectAcrossHyperplane(transform.right, (Vector3)groundDirection.CCWPerp());
-            }
+            //if (Leaning)
+            //{
+            //    transform.right = MathTools.ReflectAcrossHyperplane(transform.right, (Vector3)groundDirection.CCWPerp());
+            //}
         }
         else
         {
@@ -565,39 +575,61 @@ public class SpiderMovementController : MonoBehaviour
 
     private void RotateAbdomen(float dt)
     {
-        Vector2 b = AbdomenAngle();
-        var r = b.ApplyTransformation(transform.right, FacingRight ? transform.up : -transform.up);
-        abdomenBone.ApplyCheapRotationLerpClamped(r, abdomenRotationSpeed * dt);
+        //2do: maybe this could be faster working solely with quaternions
+        //the only overhead that would remove is computing AbdomenBoneRightInBaseLocalCoords, but the equivalent would be reversing two quaternion rotations
+        //(i.e. taking current abdomenBone.rotation relative to transform.rotation and removing base rotation)
+        //and after two quaternion products, we've probably done just as much work as the vector version
+        //we can check if that's really what we'd need to do
+        var r = MathTools.CheapRotationalLerpClamped(AbdomenBoneRightInBaseLocalCoords(), AbdomenAngle(), abdomenRotationSpeed * dt, out bool changed);
+        if (changed)
+        {
+            var p = abdomenBonePivot.position;
+            abdomenBone.rotation = transform.rotation * (FacingRight ? abdomenBoneBaseLocalRotation : abdomenBoneBaseLocalRotationL) * MathTools.QuaternionFrom2DUnitVector(r);
+            abdomenBone.position += p - abdomenBonePivot.position;
+        }
     }
 
+    private Vector2 AbdomenBoneRightInBaseLocalCoords()
+    {
+        return FacingRight ? abdomenBone.right.InFrameV2(transform.right, transform.up).InFrame(abdomenBoneBaseRight, abdomenBoneBaseUp) : 
+            abdomenBone.right.InFrameV2(transform.right, transform.up).InFrame(abdomenBoneBaseRightL, abdomenBoneBaseUpL);
+    }
+
+    private Vector2 AbdomenBoneUpInBaseLocalCoords()
+    {
+        return FacingRight ? abdomenBone.up.InFrameV2(transform.right, transform.up).InFrame(abdomenBoneBaseRight, abdomenBoneBaseUp) 
+            : abdomenBone.up.InFrameV2(transform.right, transform.up).InFrame(abdomenBoneBaseRightL, abdomenBoneBaseUpL);
+    }
+
+    //in abdomen bone's "base local coords" (i.e. right = abdomenBoneBaseRight)
     private Vector2 AbdomenAngle()
     {
-        return jumpInputHeld ? JumpAngle() : grappleScurrying ? ScurryAngle() : abdomenBoneDefaultRight;
+        return jumpInputHeld ? JumpAbdomenAngle() : grappleScurrying ? ScurryAbdomenAngle() : Vector2.right;
     }
 
-    private Vector2 JumpAngle()
+    private Vector2 JumpAbdomenAngle()
     {
-        return jumpAngleFraction > 0 ? MathTools.CheapRotationalLerpClamped(abdomenBoneDefaultRight, JumpAngleMin(), jumpAngleFraction, out _) : groundDirection;
+        return jumpAngleFraction > 0 ? MathTools.CheapRotationalLerpClamped(Vector2.right, JumpAbdomenAngleMin(), jumpAngleFraction, out _) : Vector2.right;
     }
 
-    private Vector2 JumpAngleMin()
+    private Vector2 JumpAbdomenAngleMin()
     {
-        return cosJumpAngleMin * abdomenBoneDefaultRight + /*(FacingRight ? sinJumpAngleMin : -sinJumpAngleMin)*/ sinJumpAngleMin * abdomenBoneDefaultUp;
+        return new(cosJumpAngleMin, FacingRight ? sinJumpAngleMin : -sinJumpAngleMin);
     }
 
-    private Vector2 ScurryAngle()
+    private Vector2 ScurryAbdomenAngle()
     {
         var f = GrappleScurryResistanceFraction;
         if (f > 0)
         {
-            return MathTools.CheapRotationalLerpClamped(abdomenBoneDefaultRight, ScurryAngleMin(), f, out _);
+            return MathTools.CheapRotationalLerpClamped(Vector2.right, ScurryAbdomenAngleMin(), f, out _);
         }
-        return abdomenBoneDefaultRight;
+        return Vector2.right;
     }
 
-    private Vector2 ScurryAngleMin()
+    private Vector2 ScurryAbdomenAngleMin()
     {
-        return cosScurryAngleMin * abdomenBoneDefaultRight + /*(FacingRight ? sinScurryAngleMin : -sinScurryAngleMin)*/sinScurryAngleMin * abdomenBoneDefaultUp;
+        return new(cosScurryAngleMin, FacingRight ? sinScurryAngleMin : -sinScurryAngleMin);
     }
 
     private void RotateHead(float dt)
@@ -645,7 +677,8 @@ public class SpiderMovementController : MonoBehaviour
 
     private Vector2 JumpDirection()
     {
-        return transform.up;
+        var u = AbdomenBoneUpInBaseLocalCoords();
+        return u.x * transform.right + u.y * transform.up;
     }
 
     private bool VerifyingJump()
@@ -807,11 +840,13 @@ public class SpiderMovementController : MonoBehaviour
         }
         else
         {
-            bool useGroundDir = grappleScurrying || (jumpInputHeld && (moveInput == 0 || jumpAngleFraction > 0));
+            //bool useGroundDir = grappleScurrying || (jumpInputHeld && (moveInput == 0 || jumpAngleFraction > 0));
             //var down = GroundMapDown();
             groundMap.UpdateMap(heightReferencePoint.position,
-                useGroundDir ? groundDirection.CWPerp() : -transform.up,
-                useGroundDir ? groundDirection : transform.right,
+                -transform.up,
+                transform.right,
+                //useGroundDir ? groundDirection.CWPerp() : -transform.up,
+                //useGroundDir ? groundDirection : transform.right,
                 //down,
                 //down.CCWPerp(),
                 groundednessTolerance,

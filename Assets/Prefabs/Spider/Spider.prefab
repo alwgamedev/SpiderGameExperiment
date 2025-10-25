@@ -5863,8 +5863,8 @@ Transform:
   m_GameObject: {fileID: 7040435755840891707}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.21015674, w: 0.97766775}
-  m_LocalPosition: {x: -2.876, y: -2.019, z: 0}
-  m_LocalScale: {x: 4.037958, y: 1.0785812, z: 1}
+  m_LocalPosition: {x: -2.845, y: -2.089, z: 0}
+  m_LocalScale: {x: 4.037958, y: 0.9027725, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3254518024213778436}
@@ -6253,6 +6253,7 @@ Transform:
   - {fileID: 596364321759533591}
   - {fileID: 4349527747444524243}
   - {fileID: 6672012779752912219}
+  - {fileID: 4636016392783388535}
   m_Father: {fileID: 5212808090601651790}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -23.922}
 --- !u!70 &2647139100762919223
@@ -6498,6 +6499,37 @@ Transform:
   - {fileID: 7384214199792798743}
   m_Father: {fileID: 7243160359675373736}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8826655904027013381
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4636016392783388535}
+  m_Layer: 3
+  m_Name: Abdomen Bone Pivot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4636016392783388535
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8826655904027013381}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.6, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4257679111386862312}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8956091232752726303
 GameObject:
   m_ObjectHideFlags: 0
@@ -6722,13 +6754,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   abdomenBone: {fileID: 4257679111386862312}
+  abdomenBonePivot: {fileID: 4636016392783388535}
   headBone: {fileID: 1796735932416995084}
   heightReferencePoint: {fileID: 3708315842584664218}
   grapple: {fileID: 1051379001623071205}
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  groundedExitToleranceFactor: 1.25
+  groundedExitToleranceFactor: 1.5
   groundedEntryToleranceFactor: 1.05
   groundDirectionSampleWidth: 0.35
   backupGroundPtRaycastLengthFactor: 1.1
@@ -6736,7 +6769,7 @@ MonoBehaviour:
   groundPtSlipThreshold: 0.25
   upcomingGroundDirectionMinPos: 0
   upcomingGroundDirectionMaxPos: 0.4
-  failedGroundRaycastSmoothingRate: 45
+  failedGroundDirectionSmoothingRate: 45
   groundMap:
     numFwdIntervals: 52
     intervalWidth: 0.025
@@ -6748,7 +6781,7 @@ MonoBehaviour:
   accelCap: 4
   decelFactor: 60
   gripStrength: 400
-  grapplePullGripReduction: 0.65
+  grapplePullGripReduction: 0.4
   maxSpeed: 4
   maxSpeedAirborne: 8
   preferredRideHeight: 0.92
@@ -6757,8 +6790,9 @@ MonoBehaviour:
   heightSpringBreakThreshold: 0.1
   grappleSquatReduction: 0.6
   heightSampleWidth: 0.8
+  abdomenRotationSpeed: 6
   headRotationSpeed: 12
-  groundedRotationSpeed: 9
+  groundedRotationSpeed: 12
   airborneRotationSpeed: 4.5
   balanceSpringForce: 65
   airborneBalanceSpringForce: 45
@@ -6769,7 +6803,7 @@ MonoBehaviour:
   jumpForce: 10
   jumpForceCrouchBoostRate: 14
   jumpAngleMin: -0.5235988
-  jumpAngleLerpRate: 1
+  jumpAngleLerpRate: 3
   jumpVerificationTime: 0.125
   tapJumpVerificationTime: 0.125
   crouchHeightFraction: 0.25
@@ -6791,11 +6825,11 @@ MonoBehaviour:
     rechargeThreshold: 0.2
   thrusterFlame:
     hook: {fileID: 3254518024213778436}
-    widthMin: 0.5
-    widthMax: 5
-    intensityMin: 0
+    widthMin: 1.5
+    widthMax: 6.5
+    intensityMin: 1.5
     intensityMax: 3.5
-    intensityLerpRate: 13
+    intensityLerpRate: 9
     disengageLerpRate: 15
     sr: {fileID: 4522143551512331849}
   thrustingGravityScale: 0.7
