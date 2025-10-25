@@ -53,6 +53,29 @@ public static class MathTools
         return min + (max - min) * (float)RNG.NextDouble();
     }
 
+    /// <summary>
+    /// Apply matrix (c1, c2) to v
+    /// </summary>
+    public static Vector2 ApplyTransformation(this Vector2 v, Vector2 c1, Vector2 c2)
+    {
+        return new(c1.x * v.x + c2.x * v.y, c1.y * v.x + c2.y * v.y);
+    }
+
+    public static Vector3 ApplyTransformation(this Vector3 v, Vector3 c1, Vector3 c2, Vector3 c3)
+    {
+        return new(c1.x * v.x + c2.x * v.y + c3.x * v.z, c1.y * v.x + c2.y * v.y + c3.y * v.z, c1.z * v.x + c2.z + v.y + c3.z * v.z);
+    }
+
+    public static Vector2 InFrame(this Vector2 v, Vector2 b1, Vector2 b2)
+    {
+        return new(Vector2.Dot(v, b1), Vector2.Dot(v, b2));
+    }
+
+    public static Vector3 InFrame(this Vector3 v, Vector3 b1, Vector3 b2, Vector3 b3)
+    {
+        return new(Vector3.Dot(v, b1), Vector3.Dot(v, b2), Vector3.Dot(v, b3));
+    }
+
     /// <param name="p">point to be reflect</param>
     /// <param name="planeNormal">unit vector</param>
     public static Vector3 ReflectAcrossHyperplane(this Vector3 p, Vector3 planeNormal)
@@ -169,6 +192,29 @@ public static class MathTools
         {
             t.rotation = QuaternionFrom2DUnitVector(v);
         }
+    }
+
+    public static Vector2 CheapFromToRotation(Vector2 u1, Vector2 u2, float angleInRadians, out bool changed)
+    {
+        //we could also return early if angle = 0, but we should just avoid passing in 0 if we're worried about it
+        var t = AbsolutePseudoAngle(u1, u2);
+        if (t == 0)
+        {
+            changed = false;
+            return u1;
+        }
+        return CheapRotationalLerp(u1, u2, angleInRadians / (Mathf.PI * t), out changed);
+    }
+
+    public static Vector2 CheapFromToRotationClamped(Vector2 u1, Vector2 u2, float angleInRadians, out bool changed)
+    {
+        var t = AbsolutePseudoAngle(u1, u2);
+        if (t == 0)
+        {
+            changed = false;
+            return u1;
+        }
+        return CheapRotationalLerpClamped(u1, u2, angleInRadians / (Mathf.PI * t), out changed);
     }
 
     //2do: this sometimes rotates wrong way and settles on -u2 instead of u2

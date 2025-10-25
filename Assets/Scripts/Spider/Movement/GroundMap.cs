@@ -8,9 +8,9 @@ public struct GroundMap
     public float intervalWidth;
     //public LayerMask raycastLayerMask;
 
-    Color RaycastColor0 => Color.clear;//Color.red;
-    Color RaycastColor1 => Color.clear;//Color.blue;
-    Color RaycastColor2 => Color.clear;//Color.cyan;
+    Color RaycastColor0 => /*Color.clear;*/Color.red;
+    Color RaycastColor1 => /*Color.clear;*/Color.blue;
+    Color RaycastColor2 => /*Color.clear;*/Color.cyan;
 
     Color GizmoColorCenter => Color.red;
     Color GizmoColorRight => Color.green;

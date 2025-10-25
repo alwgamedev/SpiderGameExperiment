@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [Serializable]
-public class Thrusters
+public class Thruster
 {
     [SerializeField] float drainRate;//charge lost per second
     [SerializeField] float rechargeRate;//charge gained per second

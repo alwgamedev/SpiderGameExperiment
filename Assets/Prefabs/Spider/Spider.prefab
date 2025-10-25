@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4372309095061764429}
   - component: {fileID: 1365678075684611177}
   - component: {fileID: 3655398860561040686}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 2L pt 4 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -117,8 +117,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 596364321759533591}
-  - component: {fileID: 4148787820355194111}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l4 pt1 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -133,51 +132,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 174235699028576439}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.99909514, w: 0.042531557}
+  m_LocalRotation: {x: 0, y: 0, z: 0.99909514, w: 0.042531796}
   m_LocalPosition: {x: 2.1244352, y: -0.7018983, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7560421742473523346}
   m_Father: {fileID: 4257679111386862312}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 176.617}
---- !u!70 &4148787820355194111
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 174235699028576439}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 1.25, y: 0}
-  m_Size: {x: 2.5, y: 0.2}
-  m_Direction: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 174.696}
 --- !u!1 &225004367435876655
 GameObject:
   m_ObjectHideFlags: 0
@@ -189,7 +151,7 @@ GameObject:
   - component: {fileID: 474709405076546212}
   - component: {fileID: 3313150796463680953}
   - component: {fileID: 4912505634920626491}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 1L pt 4 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -297,7 +259,7 @@ GameObject:
   - component: {fileID: 3202631017305475327}
   - component: {fileID: 6037709030508278376}
   - component: {fileID: 8677566242062234759}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 4L pt 1 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -405,7 +367,7 @@ GameObject:
   - component: {fileID: 2606150414628750457}
   - component: {fileID: 931472736073194821}
   - component: {fileID: 6664353690762559845}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Abdomen '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -511,8 +473,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3602990434774389934}
-  - component: {fileID: 3936244264466182942}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l1 pt3 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -527,7 +488,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 362057468865663677}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.23273492, w: 0.97254026}
+  m_LocalRotation: {x: 0, y: 0, z: -0.23273273, w: 0.97254074}
   m_LocalPosition: {x: 1.9402691, y: 0.0000001244033, z: 0}
   m_LocalScale: {x: 0.9999999, y: 0.9999999, z: 1}
   m_ConstrainProportionsScale: 0
@@ -535,43 +496,6 @@ Transform:
   - {fileID: 8378328544454571262}
   m_Father: {fileID: 3204698491393591131}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &3936244264466182942
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 362057468865663677}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.55, y: 0}
-  m_Size: {x: 1.2, y: 0.2}
-  m_Direction: 1
 --- !u!1 &459194793244736794
 GameObject:
   m_ObjectHideFlags: 0
@@ -583,7 +507,7 @@ GameObject:
   - component: {fileID: 1026940500833890800}
   - component: {fileID: 3463714261963708848}
   - component: {fileID: 461579225185132305}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 3R pt 1 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -689,7 +613,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3708315842584664218}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Height Reference Point
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -704,8 +628,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 490526680940338516}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.7, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0.00000001816079, w: 1}
+  m_LocalPosition: {x: 0, y: 0.70000076, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -722,7 +646,7 @@ GameObject:
   - component: {fileID: 3265580943022004748}
   - component: {fileID: 1429904724246785572}
   - component: {fileID: 8031323811112732012}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 3R pt 2 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -830,7 +754,7 @@ GameObject:
   - component: {fileID: 5749652492369674264}
   - component: {fileID: 260555917074814100}
   - component: {fileID: 8718687180271899212}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 2L pt 3 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -936,8 +860,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7261066662746368589}
-  - component: {fileID: 9086655081073029832}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l4 pt4 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -952,7 +875,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 650917794866445785}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.21460739, w: 0.9767004}
+  m_LocalRotation: {x: 0, y: 0, z: 0.214603, w: 0.9767014}
   m_LocalPosition: {x: 1.426967, y: -0.0000002959878, z: 0}
   m_LocalScale: {x: 0.5, y: 0.99999976, z: 1}
   m_ConstrainProportionsScale: 0
@@ -960,43 +883,6 @@ Transform:
   - {fileID: 1884732402649843420}
   m_Father: {fileID: 5738242297855828304}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &9086655081073029832
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 650917794866445785}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.375, y: 0}
-  m_Size: {x: 0.7, y: 1.4}
-  m_Direction: 0
 --- !u!1 &690683997197348463
 GameObject:
   m_ObjectHideFlags: 0
@@ -1006,8 +892,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5738242297855828304}
-  - component: {fileID: 110406705603438040}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l4 pt3 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1022,7 +907,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 690683997197348463}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.22617185, w: 0.9740875}
+  m_LocalRotation: {x: 0, y: 0, z: 0.22617295, w: 0.97408724}
   m_LocalPosition: {x: 2.0067244, y: -0.00000025206538, z: 0}
   m_LocalScale: {x: 1.0000004, y: 1.0000004, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1030,43 +915,6 @@ Transform:
   - {fileID: 7261066662746368589}
   m_Father: {fileID: 7560421742473523346}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &110406705603438040
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 690683997197348463}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.7, y: 0}
-  m_Size: {x: 1.5, y: 0.2}
-  m_Direction: 1
 --- !u!1 &712118790205915311
 GameObject:
   m_ObjectHideFlags: 0
@@ -1076,9 +924,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4277313386029005658}
-  - component: {fileID: 5391033307346868730}
+  - component: {fileID: 4687600851182422805}
   - component: {fileID: 289677099412839160}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg L1 IK Solver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1101,7 +949,7 @@ Transform:
   - {fileID: 4380958847150461223}
   m_Father: {fileID: 8910507805382992582}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5391033307346868730
+--- !u!114 &4687600851182422805
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1110,12 +958,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 712118790205915311}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef93bb9fe9d240e418a7fb8b476f3d34, type: 3}
+  m_Script: {fileID: 11500000, guid: d9a419daec90432458cae4e9ae74d26e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_ConstrainRotation: 0
   m_SolveFromDefaultPose: 1
-  m_Weight: 1
+  m_Weight: 0.6
   m_Chain:
     m_EffectorTransform: {fileID: 3120058777622577783}
     m_TargetTransform: {fileID: 4380958847150461223}
@@ -1127,20 +975,19 @@ MonoBehaviour:
     - {fileID: 8378328544454571262}
     - {fileID: 3120058777622577783}
     m_DefaultLocalRotations:
-    - {x: 0, y: 0, z: 0.2359313, w: 0.97176975}
-    - {x: 0, y: 0, z: -0.5468127, w: 0.837255}
-    - {x: 0, y: 0, z: -0.23273492, w: 0.97254026}
-    - {x: 0, y: 0, z: -0.14445664, w: 0.98951113}
-    - {x: 0, y: 0, z: 0.7743199, w: 0.6327944}
+    - {x: 0, y: 0, z: 0.27382392, w: 0.96177983}
+    - {x: 0, y: 0, z: -0.57374597, w: 0.8190333}
+    - {x: 0, y: 0, z: -0.21980958, w: 0.97554284}
+    - {x: 0, y: 0, z: -0.16589065, w: 0.9861442}
+    - {x: -0, y: -0, z: 0.6813222, w: 0.7319837}
     m_StoredLocalRotations:
-    - {x: 0, y: 0, z: 0.2359313, w: 0.97176975}
+    - {x: 0, y: 0, z: 0.23593096, w: 0.97176987}
     - {x: 0, y: 0, z: -0.5468127, w: 0.837255}
-    - {x: 0, y: 0, z: -0.23273492, w: 0.97254026}
-    - {x: 0, y: 0, z: -0.14445664, w: 0.98951113}
-    - {x: -0, y: -0, z: 0.68003476, w: 0.7331799}
-  m_Iterations: 10
+    - {x: 0, y: 0, z: -0.23273273, w: 0.97254074}
+    - {x: 0, y: 0, z: -0.1444648, w: 0.98950994}
+    - {x: 0, y: 0, z: 0.68003947, w: 0.7331756}
+  m_Iterations: 2
   m_Tolerance: 0.01
-  m_Velocity: 0.25
 --- !u!114 &289677099412839160
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1157,10 +1004,7 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   staticModeGroundDetectionRadius: 0.01
   stepMax: 0.9
-  extendFractionMax: 0.925
-  extendFractionMin: 0.45
-  driftWeightsMax: {x: 0.125, y: 0.35}
-  driftWeightsMin: {x: -0.85, y: -0.1}
+  drift: {x: 0.45, y: 0.2}
 --- !u!1 &839944467269662652
 GameObject:
   m_ObjectHideFlags: 0
@@ -1172,7 +1016,7 @@ GameObject:
   - component: {fileID: 1764005628381732879}
   - component: {fileID: 1599058170865233858}
   - component: {fileID: 7579265831240288495}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 4R pt 2 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1280,7 +1124,7 @@ GameObject:
   - component: {fileID: 1141551414359463509}
   - component: {fileID: 9220600026438715626}
   - component: {fileID: 3775532494306624811}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 3R pt 3 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1386,7 +1230,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2278123347475011000}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg R1 IK Solver_Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1417,7 +1261,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7243160359675373736}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Sprites
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1457,9 +1301,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1070332136075376317}
-  - component: {fileID: 6290658098684244730}
+  - component: {fileID: 1125138727679458079}
   - component: {fileID: 8139652597745638036}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg R2 IK Solver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1482,7 +1326,7 @@ Transform:
   - {fileID: 1238561792403655595}
   m_Father: {fileID: 8910507805382992582}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6290658098684244730
+--- !u!114 &1125138727679458079
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1491,12 +1335,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1217860243235450653}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef93bb9fe9d240e418a7fb8b476f3d34, type: 3}
+  m_Script: {fileID: 11500000, guid: d9a419daec90432458cae4e9ae74d26e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_ConstrainRotation: 0
   m_SolveFromDefaultPose: 1
-  m_Weight: 1
+  m_Weight: 0.6
   m_Chain:
     m_EffectorTransform: {fileID: 8714597820655926901}
     m_TargetTransform: {fileID: 1238561792403655595}
@@ -1508,20 +1352,19 @@ MonoBehaviour:
     - {fileID: 3033994015570042515}
     - {fileID: 8714597820655926901}
     m_DefaultLocalRotations:
-    - {x: 0, y: 0, z: 0.3057071, w: 0.9521256}
-    - {x: 0, y: 0, z: -0.70415086, w: 0.7100505}
-    - {x: 0, y: 0, z: -0.2000053, w: 0.97979486}
-    - {x: 0, y: 0, z: -0.121243745, w: 0.9926228}
-    - {x: 0, y: 0, z: 0.80616343, w: 0.5916929}
+    - {x: 0, y: 0, z: 0.34309793, w: 0.93929964}
+    - {x: 0, y: -0, z: -0.72188, w: 0.69201833}
+    - {x: 0, y: 0, z: -0.19673306, w: 0.9804571}
+    - {x: 0, y: 0, z: -0.1334409, w: 0.9910568}
+    - {x: -0, y: -0, z: 0.72823876, w: 0.68532354}
     m_StoredLocalRotations:
-    - {x: 0, y: 0, z: 0.3057071, w: 0.9521256}
-    - {x: 0, y: 0, z: -0.70415086, w: 0.7100505}
-    - {x: 0, y: 0, z: -0.2000053, w: 0.97979486}
-    - {x: 0, y: 0, z: -0.121243745, w: 0.9926228}
-    - {x: -0, y: -0, z: 0.73185027, w: 0.6814656}
-  m_Iterations: 10
+    - {x: 0, y: 0, z: 0.30570564, w: 0.9521261}
+    - {x: 0, y: 0, z: -0.70415, w: 0.7100513}
+    - {x: 0, y: 0, z: -0.20000091, w: 0.97979575}
+    - {x: 0, y: 0, z: -0.121254586, w: 0.9926215}
+    - {x: 0, y: 0, z: 0.73185056, w: 0.6814652}
+  m_Iterations: 2
   m_Tolerance: 0.01
-  m_Velocity: 0.25
 --- !u!114 &8139652597745638036
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1538,10 +1381,7 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   staticModeGroundDetectionRadius: 0.01
   stepMax: 0.825
-  extendFractionMax: 0.925
-  extendFractionMin: 0.45
-  driftWeightsMax: {x: 0.125, y: 0.35}
-  driftWeightsMin: {x: -0.85, y: -0.1}
+  drift: {x: 0.3, y: 0.1}
 --- !u!1 &1248638082500357407
 GameObject:
   m_ObjectHideFlags: 0
@@ -1551,8 +1391,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2034791752815395644}
-  - component: {fileID: 3709883105821768162}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l2 pt4 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1567,7 +1406,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1248638082500357407}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.11847088, w: 0.99295753}
+  m_LocalRotation: {x: 0, y: 0, z: -0.11846774, w: 0.99295795}
   m_LocalPosition: {x: 0.8845642, y: -0.00000015290085, z: 0}
   m_LocalScale: {x: 0.7, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1575,43 +1414,6 @@ Transform:
   - {fileID: 7669166903120010156}
   m_Father: {fileID: 74713977280612927}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &3709883105821768162
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1248638082500357407}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.2125, y: 0}
-  m_Size: {x: 0.5, y: 1}
-  m_Direction: 0
 --- !u!1 &1250109435590007587
 GameObject:
   m_ObjectHideFlags: 0
@@ -1623,7 +1425,7 @@ GameObject:
   - component: {fileID: 665244775029642816}
   - component: {fileID: 8317852353678234152}
   - component: {fileID: 121213946617906322}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 2L pt 2 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1731,7 +1533,7 @@ GameObject:
   - component: {fileID: 5740206831628578248}
   - component: {fileID: 8311544530766513561}
   - component: {fileID: 6808560385370646578}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 3L pt 4 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1837,7 +1639,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1238561792403655595}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg R2 IK Solver_Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1870,7 +1672,7 @@ GameObject:
   - component: {fileID: 7499063563959074572}
   - component: {fileID: 5170741825974452032}
   - component: {fileID: 8802478145148554730}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 1L pt 3 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1976,7 +1778,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1137408330521889720}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg L2 IK Solver_Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2007,9 +1809,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3511974389587122621}
-  - component: {fileID: 2881444453080830353}
+  - component: {fileID: 2937978095686542317}
   - component: {fileID: 6337494717204129644}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg R3 IK Solver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2032,7 +1834,7 @@ Transform:
   - {fileID: 6915238945053128507}
   m_Father: {fileID: 8910507805382992582}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2881444453080830353
+--- !u!114 &2937978095686542317
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2041,12 +1843,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1915647648307339759}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef93bb9fe9d240e418a7fb8b476f3d34, type: 3}
+  m_Script: {fileID: 11500000, guid: d9a419daec90432458cae4e9ae74d26e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_ConstrainRotation: 0
   m_SolveFromDefaultPose: 1
-  m_Weight: 1
+  m_Weight: 0.5
   m_Chain:
     m_EffectorTransform: {fileID: 4327750774746436712}
     m_TargetTransform: {fileID: 6915238945053128507}
@@ -2058,20 +1860,19 @@ MonoBehaviour:
     - {fileID: 3912250904285809636}
     - {fileID: 4327750774746436712}
     m_DefaultLocalRotations:
-    - {x: 0, y: 0, z: 0.985807, w: 0.16788262}
-    - {x: 0, y: 0, z: 0.7538813, w: 0.65701073}
-    - {x: 0, y: 0, z: 0.2210139, w: 0.9752707}
-    - {x: 0, y: 0, z: 0.12991226, w: 0.99152553}
-    - {x: 0, y: 0, z: -0.59747744, w: -0.8018857}
+    - {x: 0, y: -0, z: 0.97940636, w: 0.20189904}
+    - {x: 0, y: -0, z: 0.76401925, w: 0.64519346}
+    - {x: 0, y: 0, z: 0.22425996, w: 0.9745294}
+    - {x: 0, y: 0, z: 0.14141402, w: 0.9899506}
+    - {x: -0, y: -0, z: -0.6803463, w: -0.7328909}
     m_StoredLocalRotations:
-    - {x: 0, y: 0, z: 0.985807, w: 0.16788262}
-    - {x: 0, y: 0, z: 0.7538813, w: 0.65701073}
+    - {x: 0, y: 0, z: 0.9858069, w: 0.16788349}
+    - {x: 0, y: 0, z: 0.7538812, w: 0.6570108}
     - {x: 0, y: 0, z: 0.2210139, w: 0.9752707}
-    - {x: 0, y: 0, z: 0.12991226, w: 0.99152553}
-    - {x: -0, y: -0, z: -0.67733127, w: -0.73567826}
-  m_Iterations: 10
+    - {x: 0, y: 0, z: 0.12991607, w: 0.99152505}
+    - {x: 0, y: 0, z: -0.6773413, w: -0.7356689}
+  m_Iterations: 2
   m_Tolerance: 0.01
-  m_Velocity: 0.25
 --- !u!114 &6337494717204129644
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2088,10 +1889,7 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   staticModeGroundDetectionRadius: 0.01
   stepMax: -0.05
-  extendFractionMax: 0.925
-  extendFractionMin: 0.35
-  driftWeightsMax: {x: 0.05, y: 0.4}
-  driftWeightsMin: {x: -0.6, y: -0.1}
+  drift: {x: 0, y: 0}
 --- !u!1 &2031487528006588093
 GameObject:
   m_ObjectHideFlags: 0
@@ -2101,7 +1899,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7669166903120010156}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l2 effector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2116,7 +1914,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2031487528006588093}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.7270725, w: 0.68656075}
+  m_LocalRotation: {x: 0, y: 0, z: 0.72702587, w: 0.68661016}
   m_LocalPosition: {x: 0.52, y: 0.01, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2134,7 +1932,7 @@ GameObject:
   - component: {fileID: 5817456310865565763}
   - component: {fileID: 3313538309163144356}
   - component: {fileID: 5037736015111198664}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 2R pt 4 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2240,8 +2038,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8378328544454571262}
-  - component: {fileID: 7124901041637126857}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l1 pt4 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2256,7 +2053,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2141487913385041428}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.14445664, w: 0.98951113}
+  m_LocalRotation: {x: 0, y: 0, z: -0.1444648, w: 0.98950994}
   m_LocalPosition: {x: 1.1158813, y: -0.00000041846295, z: 0}
   m_LocalScale: {x: 0.7, y: 1.0000001, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2264,43 +2061,6 @@ Transform:
   - {fileID: 3120058777622577783}
   m_Father: {fileID: 3602990434774389934}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &7124901041637126857
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2141487913385041428}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.22, y: 0}
-  m_Size: {x: 0.6, y: 1.2}
-  m_Direction: 0
 --- !u!1 &2150763637009040213
 GameObject:
   m_ObjectHideFlags: 0
@@ -2310,7 +2070,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4327750774746436712}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r3 effector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2325,7 +2085,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2150763637009040213}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0.67733127, w: -0.73567826}
+  m_LocalRotation: {x: 0, y: 0, z: -0.6773413, w: -0.7356689}
   m_LocalPosition: {x: 0.48, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2341,8 +2101,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3001778642298697474}
-  - component: {fileID: 8401828517294288184}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r3 pt3 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2365,43 +2124,6 @@ Transform:
   - {fileID: 3912250904285809636}
   m_Father: {fileID: 8906266846264039690}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &8401828517294288184
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2184748555949781941}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.55, y: 0}
-  m_Size: {x: 1.25, y: 0.2}
-  m_Direction: 1
 --- !u!1 &2233476197617059428
 GameObject:
   m_ObjectHideFlags: 0
@@ -2413,7 +2135,7 @@ GameObject:
   - component: {fileID: 1346380298940630365}
   - component: {fileID: 8309660287699833449}
   - component: {fileID: 4336596949968379654}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 1L pt 2 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2519,8 +2241,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1671441735390870653}
-  - component: {fileID: 3419336184631048359}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r4 pt1 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2535,7 +2256,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2360843779812381518}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.99872017, w: 0.05057724}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9987202, w: 0.050576746}
   m_LocalPosition: {x: 2.1429734, y: -0.743691, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2543,43 +2264,6 @@ Transform:
   - {fileID: 9157492295160507004}
   m_Father: {fileID: 4257679111386862312}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 168.134}
---- !u!70 &3419336184631048359
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2360843779812381518}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 1.25, y: 0}
-  m_Size: {x: 2.5, y: 0.2}
-  m_Direction: 1
 --- !u!1 &2393711380005563463
 GameObject:
   m_ObjectHideFlags: 0
@@ -2589,8 +2273,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 822636868363825723}
-  - component: {fileID: 7886338372847277962}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r1 pt2 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2605,7 +2288,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2393711380005563463}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.5467607, w: 0.8372889}
+  m_LocalRotation: {x: 0, y: 0, z: -0.54676, w: 0.8372894}
   m_LocalPosition: {x: 1.7624054, y: -0.00000026069657, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2613,43 +2296,6 @@ Transform:
   - {fileID: 7306302368925994026}
   m_Father: {fileID: 2680305816034372725}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &7886338372847277962
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2393711380005563463}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 1, y: 0}
-  m_Size: {x: 2.1, y: 0.2}
-  m_Direction: 1
 --- !u!1 &2526220690464828382
 GameObject:
   m_ObjectHideFlags: 0
@@ -2661,7 +2307,7 @@ GameObject:
   - component: {fileID: 5948368218588633132}
   - component: {fileID: 5974602042518349439}
   - component: {fileID: 1644575394016394709}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 4L pt 2 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2767,9 +2413,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8026515719453795389}
-  - component: {fileID: 492834634260950514}
+  - component: {fileID: 1451770863002819162}
   - component: {fileID: 636268752888493604}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg L3 IK Solver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2792,7 +2438,7 @@ Transform:
   - {fileID: 8327284446163506453}
   m_Father: {fileID: 8910507805382992582}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &492834634260950514
+--- !u!114 &1451770863002819162
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2801,12 +2447,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 2589208693050198997}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef93bb9fe9d240e418a7fb8b476f3d34, type: 3}
+  m_Script: {fileID: 11500000, guid: d9a419daec90432458cae4e9ae74d26e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_ConstrainRotation: 0
   m_SolveFromDefaultPose: 1
-  m_Weight: 1
+  m_Weight: 0.5
   m_Chain:
     m_EffectorTransform: {fileID: 4109640117689536782}
     m_TargetTransform: {fileID: 8327284446163506453}
@@ -2818,20 +2464,19 @@ MonoBehaviour:
     - {fileID: 1262494296321640506}
     - {fileID: 4109640117689536782}
     m_DefaultLocalRotations:
-    - {x: 0, y: 0, z: 0.9843858, w: 0.17602475}
-    - {x: 0, y: 0, z: 0.7678241, w: 0.64066076}
-    - {x: 0, y: 0, z: 0.2053676, w: 0.97868496}
-    - {x: 0, y: 0, z: 0.13885123, w: 0.9903133}
-    - {x: 0, y: 0, z: -0.6025772, w: -0.79806066}
+    - {x: 0, y: -0, z: 0.97810423, w: 0.20811583}
+    - {x: 0, y: -0, z: 0.7770635, w: 0.62942225}
+    - {x: 0, y: 0, z: 0.20892228, w: 0.9779323}
+    - {x: 0, y: 0, z: 0.14699547, w: 0.9891372}
+    - {x: -0, y: -0, z: -0.6773762, w: -0.7356367}
     m_StoredLocalRotations:
-    - {x: 0, y: 0, z: 0.9843858, w: 0.17602475}
+    - {x: 0, y: 0, z: 0.9843857, w: 0.17602518}
     - {x: 0, y: 0, z: 0.7678241, w: 0.64066076}
     - {x: 0, y: 0, z: 0.2053676, w: 0.97868496}
-    - {x: 0, y: 0, z: 0.13885123, w: 0.9903133}
-    - {x: -0, y: -0, z: -0.6727355, w: -0.73988307}
-  m_Iterations: 10
+    - {x: 0, y: 0, z: 0.13885301, w: 0.99031305}
+    - {x: 0, y: 0, z: -0.6727389, w: -0.73987997}
+  m_Iterations: 2
   m_Tolerance: 0.01
-  m_Velocity: 0.25
 --- !u!114 &636268752888493604
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2848,10 +2493,7 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   staticModeGroundDetectionRadius: 0.01
   stepMax: -0.05
-  extendFractionMax: 0.925
-  extendFractionMin: 0.35
-  driftWeightsMax: {x: 0.05, y: 0.4}
-  driftWeightsMin: {x: -0.6, y: -0.1}
+  drift: {x: 0, y: 0}
 --- !u!1 &2656875783498011584
 GameObject:
   m_ObjectHideFlags: 0
@@ -2861,7 +2503,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9204524004644337057}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg 4R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2896,7 +2538,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3120058777622577783}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l1 effector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2911,7 +2553,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2658186893213490051}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.68003476, w: 0.7331799}
+  m_LocalRotation: {x: 0, y: 0, z: 0.68003947, w: 0.7331756}
   m_LocalPosition: {x: 0.54, y: -0.01, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2927,8 +2569,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1796735932416995084}
-  - component: {fileID: 5393388647258708683}
-  m_Layer: 0
+  - component: {fileID: 4161556469149567743}
+  m_Layer: 3
   m_Name: head bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2954,7 +2596,7 @@ Transform:
   - {fileID: 2399890710218574748}
   m_Father: {fileID: 4257679111386862312}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 21.102}
---- !u!70 &5393388647258708683
+--- !u!70 &4161556469149567743
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2988,8 +2630,8 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.675, y: -0.05}
-  m_Size: {x: 1.8, y: 1.25}
+  m_Offset: {x: 0.65, y: -0.05}
+  m_Size: {x: 1.6, y: 1.3}
   m_Direction: 1
 --- !u!1 &2735900413683898725
 GameObject:
@@ -3000,8 +2642,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7560421742473523346}
-  - component: {fileID: 278534721589022453}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l4 pt2 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3024,43 +2665,6 @@ Transform:
   - {fileID: 5738242297855828304}
   m_Father: {fileID: 596364321759533591}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &278534721589022453
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2735900413683898725}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 1.05, y: 0}
-  m_Size: {x: 2.1, y: 0.2}
-  m_Direction: 1
 --- !u!1 &2736435694255886797
 GameObject:
   m_ObjectHideFlags: 0
@@ -3070,8 +2674,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 871183515759155505}
-  - component: {fileID: 6646255254531756931}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r1 pt4 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3086,7 +2689,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2736435694255886797}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.13382536, w: 0.99100494}
+  m_LocalRotation: {x: 0, y: 0, z: -0.13382305, w: 0.99100524}
   m_LocalPosition: {x: 1.0642108, y: -0.00000041697814, z: 0}
   m_LocalScale: {x: 0.7, y: 0.9999999, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3094,43 +2697,6 @@ Transform:
   - {fileID: 8270222540382114309}
   m_Father: {fileID: 7306302368925994026}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &6646255254531756931
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2736435694255886797}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.255, y: 0}
-  m_Size: {x: 0.6, y: 1.2}
-  m_Direction: 0
 --- !u!1 &2834881589465346965
 GameObject:
   m_ObjectHideFlags: 0
@@ -3140,8 +2706,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8134172703908562749}
-  - component: {fileID: 2721499075941992203}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r4 pt3 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3156,7 +2721,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2834881589465346965}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.22152013, w: 0.97515583}
+  m_LocalRotation: {x: 0, y: 0, z: 0.22151873, w: 0.9751562}
   m_LocalPosition: {x: 2.038006, y: -0.00000019863813, z: 0}
   m_LocalScale: {x: 0.9999996, y: 0.9999996, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3164,43 +2729,37 @@ Transform:
   - {fileID: 7203260424078161818}
   m_Father: {fileID: 9157492295160507004}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &2721499075941992203
-CapsuleCollider2D:
+--- !u!1 &2972413698428545500
+GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2834881589465346965}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.7, y: 0}
-  m_Size: {x: 1.5, y: 0.2}
-  m_Direction: 1
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3254518024213778436}
+  m_Layer: 0
+  m_Name: Jet Flame Hook
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3254518024213778436
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2972413698428545500}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6672012779752912219}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3161798817042704260
 GameObject:
   m_ObjectHideFlags: 0
@@ -3210,7 +2769,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4199633852037162369}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r4 effector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3225,7 +2784,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3161798817042704260}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0.66155523, w: -0.7498966}
+  m_LocalRotation: {x: 0, y: 0, z: -0.6615541, w: -0.7498975}
   m_LocalPosition: {x: 0.72, y: -0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3243,7 +2802,7 @@ GameObject:
   - component: {fileID: 4371901453534340588}
   - component: {fileID: 1595259262419114904}
   - component: {fileID: 125380317500962722}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 4R pt 3 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3349,9 +2908,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1800059060081104840}
-  - component: {fileID: 3607852728144219763}
+  - component: {fileID: 1490506524318266383}
   - component: {fileID: 3287121947862078546}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg R1 IK Solver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3374,7 +2933,7 @@ Transform:
   - {fileID: 2278123347475011000}
   m_Father: {fileID: 8910507805382992582}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3607852728144219763
+--- !u!114 &1490506524318266383
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3383,12 +2942,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 3311677323218551632}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef93bb9fe9d240e418a7fb8b476f3d34, type: 3}
+  m_Script: {fileID: 11500000, guid: d9a419daec90432458cae4e9ae74d26e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_ConstrainRotation: 0
   m_SolveFromDefaultPose: 1
-  m_Weight: 1
+  m_Weight: 0.6
   m_Chain:
     m_EffectorTransform: {fileID: 8270222540382114309}
     m_TargetTransform: {fileID: 2278123347475011000}
@@ -3400,20 +2959,19 @@ MonoBehaviour:
     - {fileID: 871183515759155505}
     - {fileID: 8270222540382114309}
     m_DefaultLocalRotations:
-    - {x: 0, y: 0, z: 0.23278753, w: 0.9725276}
-    - {x: 0, y: 0, z: -0.5467607, w: 0.8372889}
-    - {x: 0, y: 0, z: -0.22711138, w: 0.97386885}
-    - {x: 0, y: 0, z: -0.13382536, w: 0.99100494}
-    - {x: 0, y: 0, z: 0.77704287, w: 0.6294477}
+    - {x: 0, y: 0, z: 0.2732149, w: 0.96195304}
+    - {x: 0, y: 0, z: -0.5759383, w: 0.8174932}
+    - {x: 0, y: 0, z: -0.21195577, w: 0.9772793}
+    - {x: 0, y: 0, z: -0.15918843, w: 0.98724824}
+    - {x: -0, y: -0, z: 0.672842, w: 0.7397863}
     m_StoredLocalRotations:
-    - {x: 0, y: 0, z: 0.23278753, w: 0.9725276}
-    - {x: 0, y: 0, z: -0.5467607, w: 0.8372889}
+    - {x: 0, y: 0, z: 0.23278682, w: 0.9725278}
+    - {x: 0, y: 0, z: -0.54676, w: 0.8372894}
     - {x: 0, y: 0, z: -0.22711138, w: 0.97386885}
-    - {x: 0, y: 0, z: -0.13382536, w: 0.99100494}
-    - {x: -0, y: -0, z: 0.6701921, w: 0.74218774}
-  m_Iterations: 10
+    - {x: 0, y: 0, z: -0.13382305, w: 0.99100524}
+    - {x: 0, y: 0, z: 0.67018884, w: 0.74219066}
+  m_Iterations: 2
   m_Tolerance: 0.01
-  m_Velocity: 0.25
 --- !u!114 &3287121947862078546
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3430,10 +2988,7 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   staticModeGroundDetectionRadius: 0.01
   stepMax: 0.9
-  extendFractionMax: 0.925
-  extendFractionMin: 0.45
-  driftWeightsMax: {x: 0.125, y: 0.35}
-  driftWeightsMin: {x: -0.85, y: -0.1}
+  drift: {x: 0.45, y: 0.2}
 --- !u!1 &3319515992144099393
 GameObject:
   m_ObjectHideFlags: 0
@@ -3443,7 +2998,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4380958847150461223}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg L1 IK Solver_Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3474,7 +3029,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6915238945053128507}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg R3 IK Solver_Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3505,8 +3060,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3033994015570042515}
-  - component: {fileID: 4267882021629713187}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r2 pt4 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3521,7 +3075,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3448916021493439678}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.121243745, w: 0.9926228}
+  m_LocalRotation: {x: 0, y: 0, z: -0.121254586, w: 0.9926215}
   m_LocalPosition: {x: 0.8653582, y: 0.00000027801028, z: 0}
   m_LocalScale: {x: 0.7, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3529,43 +3083,6 @@ Transform:
   - {fileID: 8714597820655926901}
   m_Father: {fileID: 1208839048729888145}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 160.371}
---- !u!70 &4267882021629713187
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3448916021493439678}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.18, y: 0}
-  m_Size: {x: 0.5, y: 1}
-  m_Direction: 0
 --- !u!1 &3532197951122130248
 GameObject:
   m_ObjectHideFlags: 0
@@ -3577,7 +3094,7 @@ GameObject:
   - component: {fileID: 918404528066940508}
   - component: {fileID: 8179152155691053553}
   - component: {fileID: 698424331884825342}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 2L pt 1 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3683,7 +3200,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 715929159587521850}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg 1R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3718,8 +3235,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7306302368925994026}
-  - component: {fileID: 7448165261662375133}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r1 pt3 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3742,43 +3258,6 @@ Transform:
   - {fileID: 871183515759155505}
   m_Father: {fileID: 822636868363825723}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &7448165261662375133
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3716491933581912858}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.55, y: 0}
-  m_Size: {x: 1.2, y: 0.2}
-  m_Direction: 1
 --- !u!1 &3824376880245498785
 GameObject:
   m_ObjectHideFlags: 0
@@ -3790,7 +3269,7 @@ GameObject:
   - component: {fileID: 8684810249258536782}
   - component: {fileID: 8853716369860558384}
   - component: {fileID: 5977746543635963296}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 4L pt 4 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3898,7 +3377,7 @@ GameObject:
   - component: {fileID: 6036337991988185305}
   - component: {fileID: 3109030643666054824}
   - component: {fileID: 2283893505155311205}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 1R pt 3 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4006,7 +3485,7 @@ GameObject:
   - component: {fileID: 8105826537942203610}
   - component: {fileID: 6006106186500085366}
   - component: {fileID: 6669813394300376278}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 2R pt 3 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4114,7 +3593,7 @@ GameObject:
   - component: {fileID: 3726144016719807161}
   - component: {fileID: 8425521445784097638}
   - component: {fileID: 5417066961172563877}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 2R pt 2 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4220,8 +3699,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9157492295160507004}
-  - component: {fileID: 102217395405791658}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r4 pt2 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4236,7 +3714,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4187706972372940199}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.6093028, w: 0.79293764}
+  m_LocalRotation: {x: 0, y: 0, z: 0.6093023, w: 0.7929381}
   m_LocalPosition: {x: 2.4391904, y: 0.0000000069014097, z: 0}
   m_LocalScale: {x: 1.0000001, y: 1.0000001, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4244,43 +3722,6 @@ Transform:
   - {fileID: 8134172703908562749}
   m_Father: {fileID: 1671441735390870653}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &102217395405791658
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4187706972372940199}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 1.05, y: 0}
-  m_Size: {x: 2.1, y: 0.2}
-  m_Direction: 1
 --- !u!1 &4256320658433803893
 GameObject:
   m_ObjectHideFlags: 0
@@ -4290,8 +3731,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1262494296321640506}
-  - component: {fileID: 3457760693988720035}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l3 pt4 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4306,7 +3746,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4256320658433803893}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.13885123, w: 0.9903133}
+  m_LocalRotation: {x: 0, y: 0, z: 0.13885301, w: 0.99031305}
   m_LocalPosition: {x: 1.0860984, y: -0.00000008524226, z: 0}
   m_LocalScale: {x: 0.7, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4314,43 +3754,6 @@ Transform:
   - {fileID: 4109640117689536782}
   m_Father: {fileID: 752940509849597149}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &3457760693988720035
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4256320658433803893}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.2, y: 0}
-  m_Size: {x: 0.5, y: 1}
-  m_Direction: 0
 --- !u!1 &4397359159708987378
 GameObject:
   m_ObjectHideFlags: 0
@@ -4360,7 +3763,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3230862963093722263}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg 3R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4397,7 +3800,7 @@ GameObject:
   - component: {fileID: 9110039129033299603}
   - component: {fileID: 2660580890505964044}
   - component: {fileID: 3375358633495638348}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Head '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4503,7 +3906,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4109640117689536782}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l3 effector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4518,7 +3921,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4648109211383792129}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0.6727355, w: -0.73988307}
+  m_LocalRotation: {x: 0, y: 0, z: -0.6727389, w: -0.73987997}
   m_LocalPosition: {x: 0.457, y: -0.009, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4534,7 +3937,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5994156311465296893}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg L4 IK Solver_Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4565,8 +3968,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2399890710218574748}
-  - component: {fileID: 5159983790036684454}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l1 pt1 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4581,7 +3983,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4744702835880208751}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.2359313, w: 0.97176975}
+  m_LocalRotation: {x: 0, y: 0, z: 0.23593096, w: 0.97176987}
   m_LocalPosition: {x: 0.8475363, y: -0.4789573, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4589,43 +3991,6 @@ Transform:
   - {fileID: 3204698491393591131}
   m_Father: {fileID: 1796735932416995084}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -43.672}
---- !u!70 &5159983790036684454
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4744702835880208751}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.9, y: 0}
-  m_Size: {x: 1.85, y: 0.2}
-  m_Direction: 1
 --- !u!1 &4794559226346589072
 GameObject:
   m_ObjectHideFlags: 0
@@ -4635,8 +4000,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3204698491393591131}
-  - component: {fileID: 8658684412186734150}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l1 pt2 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4659,43 +4023,6 @@ Transform:
   - {fileID: 3602990434774389934}
   m_Father: {fileID: 2399890710218574748}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &8658684412186734150
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4794559226346589072}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 1, y: 0}
-  m_Size: {x: 2.1, y: 0.2}
-  m_Direction: 1
 --- !u!1 &4801443516212247964
 GameObject:
   m_ObjectHideFlags: 0
@@ -4705,7 +4032,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6838583549023017118}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg 4L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4742,7 +4069,7 @@ GameObject:
   - component: {fileID: 3347578262330597752}
   - component: {fileID: 8863658223714239351}
   - component: {fileID: 6047751472834794952}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 1R pt 1 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4848,9 +4175,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4602841384621670868}
-  - component: {fileID: 8945002110800619469}
+  - component: {fileID: 4253360384396832163}
   - component: {fileID: 5076699777365114807}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg L4 IK Solver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4873,7 +4200,7 @@ Transform:
   - {fileID: 5994156311465296893}
   m_Father: {fileID: 8910507805382992582}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8945002110800619469
+--- !u!114 &4253360384396832163
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4882,12 +4209,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 5226597478830926667}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef93bb9fe9d240e418a7fb8b476f3d34, type: 3}
+  m_Script: {fileID: 11500000, guid: d9a419daec90432458cae4e9ae74d26e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_ConstrainRotation: 0
   m_SolveFromDefaultPose: 1
-  m_Weight: 1
+  m_Weight: 0.5
   m_Chain:
     m_EffectorTransform: {fileID: 1884732402649843420}
     m_TargetTransform: {fileID: 5994156311465296893}
@@ -4899,20 +4226,19 @@ MonoBehaviour:
     - {fileID: 7261066662746368589}
     - {fileID: 1884732402649843420}
     m_DefaultLocalRotations:
-    - {x: 0, y: 0, z: 0.99909514, w: 0.042531557}
-    - {x: 0, y: 0, z: 0.59811914, w: 0.8014072}
-    - {x: 0, y: 0, z: 0.22617185, w: 0.9740875}
-    - {x: 0, y: 0, z: 0.21460739, w: 0.9767004}
-    - {x: 0, y: 0, z: -0.5719924, w: -0.820259}
+    - {x: 0, y: -0, z: 0.99452585, w: 0.10449121}
+    - {x: 0, y: 0, z: 0.63031733, w: 0.7763376}
+    - {x: 0, y: 0, z: 0.2006961, w: 0.9796536}
+    - {x: 0, y: 0, z: 0.24039842, w: 0.97067434}
+    - {x: -0, y: -0, z: -0.6892167, w: -0.72455543}
     m_StoredLocalRotations:
-    - {x: 0, y: 0, z: 0.99909514, w: 0.042531557}
+    - {x: 0, y: 0, z: 0.99909514, w: 0.042531796}
     - {x: 0, y: 0, z: 0.59811914, w: 0.8014072}
-    - {x: 0, y: 0, z: 0.22617185, w: 0.9740875}
-    - {x: 0, y: 0, z: 0.21460739, w: 0.9767004}
-    - {x: -0, y: -0, z: -0.67390984, w: -0.73881364}
-  m_Iterations: 10
+    - {x: 0, y: 0, z: 0.22617295, w: 0.97408724}
+    - {x: 0, y: 0, z: 0.214603, w: 0.9767014}
+    - {x: 0, y: 0, z: -0.67390764, w: -0.73881567}
+  m_Iterations: 2
   m_Tolerance: 0.01
-  m_Velocity: 0.25
 --- !u!114 &5076699777365114807
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4929,10 +4255,7 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   staticModeGroundDetectionRadius: 0.01
   stepMax: -0.2
-  extendFractionMax: 0.925
-  extendFractionMin: 0.35
-  driftWeightsMax: {x: 0.05, y: 0.4}
-  driftWeightsMin: {x: -0.6, y: -0.1}
+  drift: {x: -0.1, y: 0.2}
 --- !u!1 &5247813140874977512
 GameObject:
   m_ObjectHideFlags: 0
@@ -4944,7 +4267,7 @@ GameObject:
   - component: {fileID: 4834390261806063309}
   - component: {fileID: 278049317391698258}
   - component: {fileID: 8314552796560619936}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 3R pt 4 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5050,8 +4373,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8906266846264039690}
-  - component: {fileID: 5615021533101320977}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r3 pt2 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5066,7 +4388,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5402962238274146728}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.7538813, w: 0.65701073}
+  m_LocalRotation: {x: 0, y: 0, z: 0.7538812, w: 0.6570108}
   m_LocalPosition: {x: 1.775366, y: 0.00000011558021, z: 0}
   m_LocalScale: {x: 0.99999976, y: 0.99999976, z: 1}
   m_ConstrainProportionsScale: 0
@@ -5074,43 +4396,6 @@ Transform:
   - {fileID: 3001778642298697474}
   m_Father: {fileID: 6932109180140675545}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &5615021533101320977
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5402962238274146728}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 1.05, y: 0}
-  m_Size: {x: 2.2, y: 0.2}
-  m_Direction: 1
 --- !u!1 &5509401913209774970
 GameObject:
   m_ObjectHideFlags: 0
@@ -5120,8 +4405,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 74713977280612927}
-  - component: {fileID: 980719360105035765}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l2 pt3 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5144,43 +4428,6 @@ Transform:
   - {fileID: 2034791752815395644}
   m_Father: {fileID: 4114279246918961293}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &980719360105035765
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5509401913209774970}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.4, y: 0}
-  m_Size: {x: 1, y: 0.2}
-  m_Direction: 1
 --- !u!1 &5555185981846932118
 GameObject:
   m_ObjectHideFlags: 0
@@ -5190,8 +4437,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4593715000520413280}
-  - component: {fileID: 2874326526977848623}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l3 pt1 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5206,7 +4452,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5555185981846932118}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.9843858, w: 0.17602475}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9843857, w: 0.17602518}
   m_LocalPosition: {x: 2.5405912, y: -0.5548077, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -5214,43 +4460,6 @@ Transform:
   - {fileID: 3580165909359640762}
   m_Father: {fileID: 4257679111386862312}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 156.947}
---- !u!70 &2874326526977848623
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5555185981846932118}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.89, y: 0}
-  m_Size: {x: 2, y: 0.2}
-  m_Direction: 1
 --- !u!1 &5814272727016347195
 GameObject:
   m_ObjectHideFlags: 0
@@ -5260,8 +4469,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5581961485169521177}
-  - component: {fileID: 2450599831643566373}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r2 pt2 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5276,7 +4484,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5814272727016347195}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.70415086, w: 0.7100505}
+  m_LocalRotation: {x: 0, y: 0, z: -0.70415, w: 0.7100513}
   m_LocalPosition: {x: 1.4802186, y: -0.0000003059697, z: 0}
   m_LocalScale: {x: 0.9999999, y: 0.9999999, z: 1}
   m_ConstrainProportionsScale: 0
@@ -5284,43 +4492,6 @@ Transform:
   - {fileID: 1208839048729888145}
   m_Father: {fileID: 6996931359358265962}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &2450599831643566373
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5814272727016347195}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.9, y: 0}
-  m_Size: {x: 2, y: 0.2}
-  m_Direction: 1
 --- !u!1 &5926562736923434425
 GameObject:
   m_ObjectHideFlags: 0
@@ -5330,9 +4501,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4696038751128294864}
-  - component: {fileID: 6632961411644914379}
+  - component: {fileID: 2730730680806837894}
   - component: {fileID: 1298602695105135040}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg R4 IK Solver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5355,7 +4526,7 @@ Transform:
   - {fileID: 7491916336825498184}
   m_Father: {fileID: 8910507805382992582}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6632961411644914379
+--- !u!114 &2730730680806837894
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5364,12 +4535,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 5926562736923434425}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef93bb9fe9d240e418a7fb8b476f3d34, type: 3}
+  m_Script: {fileID: 11500000, guid: d9a419daec90432458cae4e9ae74d26e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_ConstrainRotation: 0
   m_SolveFromDefaultPose: 1
-  m_Weight: 1
+  m_Weight: 0.5
   m_Chain:
     m_EffectorTransform: {fileID: 4199633852037162369}
     m_TargetTransform: {fileID: 7491916336825498184}
@@ -5381,20 +4552,19 @@ MonoBehaviour:
     - {fileID: 7203260424078161818}
     - {fileID: 4199633852037162369}
     m_DefaultLocalRotations:
-    - {x: 0, y: 0, z: 0.99872017, w: 0.05057724}
-    - {x: 0, y: 0, z: 0.6093028, w: 0.79293764}
-    - {x: 0, y: 0, z: 0.22152013, w: 0.97515583}
-    - {x: 0, y: 0, z: 0.22961849, w: 0.9732807}
-    - {x: 0, y: 0, z: -0.5556119, w: -0.8314418}
+    - {x: 0, y: -0, z: 0.99396163, w: 0.10972815}
+    - {x: 0, y: 0, z: 0.6392745, w: 0.7689787}
+    - {x: 0, y: 0, z: 0.1912963, w: 0.98153234}
+    - {x: 0, y: 0, z: 0.25797838, w: 0.9661507}
+    - {x: -0, y: -0, z: -0.67835027, w: -0.73473865}
     m_StoredLocalRotations:
-    - {x: 0, y: 0, z: 0.99872017, w: 0.05057724}
-    - {x: 0, y: 0, z: 0.6093028, w: 0.79293764}
-    - {x: 0, y: 0, z: 0.22152013, w: 0.97515583}
-    - {x: 0, y: 0, z: 0.22961849, w: 0.9732807}
-    - {x: -0, y: -0, z: -0.66155523, w: -0.7498966}
-  m_Iterations: 10
+    - {x: 0, y: 0, z: 0.9987202, w: 0.050576746}
+    - {x: 0, y: 0, z: 0.6093023, w: 0.7929381}
+    - {x: 0, y: 0, z: 0.22151873, w: 0.9751562}
+    - {x: 0, y: 0, z: 0.22962195, w: 0.97327995}
+    - {x: 0, y: 0, z: -0.6615541, w: -0.7498975}
+  m_Iterations: 2
   m_Tolerance: 0.01
-  m_Velocity: 0.25
 --- !u!114 &1298602695105135040
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5411,10 +4581,7 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   staticModeGroundDetectionRadius: 0.01
   stepMax: -0.2
-  extendFractionMax: 0.925
-  extendFractionMin: 0.35
-  driftWeightsMax: {x: 0.05, y: 0.4}
-  driftWeightsMin: {x: -0.6, y: -0.1}
+  drift: {x: -0.1, y: 0.2}
 --- !u!1 &6016693261962413811
 GameObject:
   m_ObjectHideFlags: 0
@@ -5424,7 +4591,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7491916336825498184}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg R4 IK Solver_Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5457,7 +4624,7 @@ GameObject:
   - component: {fileID: 3185268585469352587}
   - component: {fileID: 8177019448601666385}
   - component: {fileID: 7899723539949450057}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 3L pt 2 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5563,8 +4730,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6932109180140675545}
-  - component: {fileID: 3109875151489081539}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r3 pt1 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5579,7 +4745,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6081748104377677409}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.985807, w: 0.16788262}
+  m_LocalRotation: {x: 0, y: 0, z: 0.9858069, w: 0.16788349}
   m_LocalPosition: {x: 2.5516284, y: -0.5374078, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -5587,43 +4753,6 @@ Transform:
   - {fileID: 8906266846264039690}
   m_Father: {fileID: 4257679111386862312}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 172.365}
---- !u!70 &3109875151489081539
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6081748104377677409}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.89, y: 0}
-  m_Size: {x: 2, y: 0.2}
-  m_Direction: 1
 --- !u!1 &6127275030434282118
 GameObject:
   m_ObjectHideFlags: 0
@@ -5635,7 +4764,7 @@ GameObject:
   - component: {fileID: 6689177782578917973}
   - component: {fileID: 3761230426565291247}
   - component: {fileID: 6675206760601950069}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 1R pt 4 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5743,7 +4872,7 @@ GameObject:
   - component: {fileID: 8852325005216646358}
   - component: {fileID: 8099145857239095522}
   - component: {fileID: 5226618195051612669}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 4L pt 3 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5849,8 +4978,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6996931359358265962}
-  - component: {fileID: 2240374955350666254}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r2 pt1 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5865,7 +4993,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6177052866903249966}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.3057071, w: 0.9521256}
+  m_LocalRotation: {x: 0, y: 0, z: 0.30570564, w: 0.9521261}
   m_LocalPosition: {x: 0.2102034, y: -0.55039406, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -5873,43 +5001,6 @@ Transform:
   - {fileID: 5581961485169521177}
   m_Father: {fileID: 1796735932416995084}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -25.962}
---- !u!70 &2240374955350666254
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6177052866903249966}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.75, y: 0}
-  m_Size: {x: 1.6, y: 0.2}
-  m_Direction: 1
 --- !u!1 &6229138575272074973
 GameObject:
   m_ObjectHideFlags: 0
@@ -5921,7 +5012,7 @@ GameObject:
   - component: {fileID: 6624459839212727703}
   - component: {fileID: 9038579673827566997}
   - component: {fileID: 86897615866813519}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 3L pt 3 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6029,7 +5120,7 @@ GameObject:
   - component: {fileID: 881623428575663835}
   - component: {fileID: 4981694405921881807}
   - component: {fileID: 7631819190716871734}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 2R pt 1 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6135,8 +5226,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1208839048729888145}
-  - component: {fileID: 7529569265578119203}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r2 pt3 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6151,7 +5241,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6259604372759008763}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.2000053, w: 0.97979486}
+  m_LocalRotation: {x: 0, y: 0, z: -0.20000091, w: 0.97979575}
   m_LocalPosition: {x: 1.8882043, y: 0.0000006880398, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -6159,43 +5249,6 @@ Transform:
   - {fileID: 3033994015570042515}
   m_Father: {fileID: 5581961485169521177}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &7529569265578119203
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6259604372759008763}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.4, y: 0}
-  m_Size: {x: 1, y: 0.2}
-  m_Direction: 1
 --- !u!1 &6289338611581681098
 GameObject:
   m_ObjectHideFlags: 0
@@ -6207,7 +5260,7 @@ GameObject:
   - component: {fileID: 1759975595024286876}
   - component: {fileID: 925506155173885325}
   - component: {fileID: 3278937761650090701}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 1R pt 2 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6315,7 +5368,7 @@ GameObject:
   - component: {fileID: 8031264882277135401}
   - component: {fileID: 3912796509502753877}
   - component: {fileID: 195897750961035380}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 4R pt 4 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6423,7 +5476,7 @@ GameObject:
   - component: {fileID: 4169003853390715555}
   - component: {fileID: 1347211746199434412}
   - component: {fileID: 7096703787902915344}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 3L pt 1 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6529,7 +5582,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 234118039690805374}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg 3L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6566,7 +5619,7 @@ GameObject:
   - component: {fileID: 7384214199792798743}
   - component: {fileID: 8765152861001796335}
   - component: {fileID: 8299908067690836783}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 1L pt 1 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6672,9 +5725,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7420705949270110681}
-  - component: {fileID: 6052728139547784672}
+  - component: {fileID: 5780194694785847411}
   - component: {fileID: 12206713449588117}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg L2 IK Solver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6697,7 +5750,7 @@ Transform:
   - {fileID: 1137408330521889720}
   m_Father: {fileID: 8910507805382992582}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6052728139547784672
+--- !u!114 &5780194694785847411
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6706,12 +5759,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 6733083759330183230}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef93bb9fe9d240e418a7fb8b476f3d34, type: 3}
+  m_Script: {fileID: 11500000, guid: d9a419daec90432458cae4e9ae74d26e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_ConstrainRotation: 0
   m_SolveFromDefaultPose: 1
-  m_Weight: 1
+  m_Weight: 0.6
   m_Chain:
     m_EffectorTransform: {fileID: 7669166903120010156}
     m_TargetTransform: {fileID: 1137408330521889720}
@@ -6723,20 +5776,19 @@ MonoBehaviour:
     - {fileID: 2034791752815395644}
     - {fileID: 7669166903120010156}
     m_DefaultLocalRotations:
-    - {x: 0, y: 0, z: 0.30514959, w: 0.9523044}
-    - {x: 0, y: 0, z: -0.70052886, w: 0.7136241}
-    - {x: 0, y: 0, z: -0.20030978, w: 0.97973263}
-    - {x: 0, y: 0, z: -0.11847088, w: 0.99295753}
-    - {x: 0, y: 0, z: 0.8094346, w: 0.58721006}
+    - {x: 0, y: 0, z: 0.35011715, w: 0.93670595}
+    - {x: 0, y: -0, z: -0.7217871, w: 0.69211525}
+    - {x: 0, y: 0, z: -0.20001683, w: 0.9797925}
+    - {x: 0, y: 0, z: -0.12782164, w: 0.9917972}
+    - {x: -0, y: -0, z: 0.7213943, w: 0.69252455}
     m_StoredLocalRotations:
-    - {x: 0, y: 0, z: 0.30514959, w: 0.9523044}
-    - {x: 0, y: 0, z: -0.70052886, w: 0.7136241}
+    - {x: 0, y: 0, z: 0.3051481, w: 0.9523049}
+    - {x: 0, y: 0, z: -0.7005278, w: 0.71362513}
     - {x: 0, y: 0, z: -0.20030978, w: 0.97973263}
-    - {x: 0, y: 0, z: -0.11847088, w: 0.99295753}
-    - {x: -0, y: -0, z: 0.7270725, w: 0.68656075}
-  m_Iterations: 10
+    - {x: 0, y: 0, z: -0.11846774, w: 0.99295795}
+    - {x: 0, y: 0, z: 0.72702587, w: 0.68661016}
+  m_Iterations: 2
   m_Tolerance: 0.01
-  m_Velocity: 0.25
 --- !u!114 &12206713449588117
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6753,10 +5805,7 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   staticModeGroundDetectionRadius: 0.01
   stepMax: 0.825
-  extendFractionMax: 0.925
-  extendFractionMin: 0.45
-  driftWeightsMax: {x: 0.125, y: 0.35}
-  driftWeightsMin: {x: -0.85, y: -0.1}
+  drift: {x: 0.3, y: 0.1}
 --- !u!1 &6858911009439342665
 GameObject:
   m_ObjectHideFlags: 0
@@ -6766,7 +5815,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8714597820655926901}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r2 effector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6781,13 +5830,101 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6858911009439342665}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.73185027, w: 0.6814656}
+  m_LocalRotation: {x: 0, y: 0, z: 0.73185056, w: 0.6814652}
   m_LocalPosition: {x: 0.44, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3033994015570042515}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7040435755840891707
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6672012779752912219}
+  - component: {fileID: 4522143551512331849}
+  m_Layer: 0
+  m_Name: Jet Flame
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6672012779752912219
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7040435755840891707}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: 0.21015674, w: 0.97766775}
+  m_LocalPosition: {x: -2.876, y: -2.019, z: 0}
+  m_LocalScale: {x: 4.037958, y: 1.0785812, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 3254518024213778436}
+  m_Father: {fileID: 4257679111386862312}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!212 &4522143551512331849
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7040435755840891707}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 681153e788e0fde4c82c6b2d2cb0ce42, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_Sprite: {fileID: 7709720383098612537, guid: 2782724fdb82c6b42943a44a2db457e7, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 1.92, y: 0.87}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
 --- !u!1 &7402302345158306404
 GameObject:
   m_ObjectHideFlags: 0
@@ -6797,8 +5934,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3580165909359640762}
-  - component: {fileID: 2648314665636354654}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l3 pt2 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6821,43 +5957,6 @@ Transform:
   - {fileID: 752940509849597149}
   m_Father: {fileID: 4593715000520413280}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &2648314665636354654
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7402302345158306404}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 1.05, y: 0}
-  m_Size: {x: 2.2, y: 0.2}
-  m_Direction: 1
 --- !u!1 &7413566729365570708
 GameObject:
   m_ObjectHideFlags: 0
@@ -6867,8 +5966,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2680305816034372725}
-  - component: {fileID: 2490409331382685494}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r1 pt1 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6883,7 +5981,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7413566729365570708}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.23278753, w: 0.9725276}
+  m_LocalRotation: {x: 0, y: 0, z: 0.23278682, w: 0.9725278}
   m_LocalPosition: {x: 0.84697473, y: -0.46754074, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -6891,43 +5989,6 @@ Transform:
   - {fileID: 822636868363825723}
   m_Father: {fileID: 1796735932416995084}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -24.281}
---- !u!70 &2490409331382685494
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7413566729365570708}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.9, y: 0}
-  m_Size: {x: 1.85, y: 0.2}
-  m_Direction: 1
 --- !u!1 &7493680828052448664
 GameObject:
   m_ObjectHideFlags: 0
@@ -6937,8 +5998,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3912250904285809636}
-  - component: {fileID: 4503106861262133734}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r3 pt4 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6953,7 +6013,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7493680828052448664}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.12991226, w: 0.99152553}
+  m_LocalRotation: {x: 0, y: 0, z: 0.12991607, w: 0.99152505}
   m_LocalPosition: {x: 1.1028842, y: -0.00000011999286, z: 0}
   m_LocalScale: {x: 0.7, y: 1.0000001, z: 1}
   m_ConstrainProportionsScale: 0
@@ -6961,43 +6021,6 @@ Transform:
   - {fileID: 4327750774746436712}
   m_Father: {fileID: 3001778642298697474}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &4503106861262133734
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7493680828052448664}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.225, y: 0}
-  m_Size: {x: 0.5, y: 1}
-  m_Direction: 0
 --- !u!1 &7510525530624609443
 GameObject:
   m_ObjectHideFlags: 0
@@ -7007,8 +6030,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2749387138667642994}
-  - component: {fileID: 1994549562452067136}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l2 pt1 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7023,7 +6045,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7510525530624609443}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.30514959, w: 0.9523044}
+  m_LocalRotation: {x: 0, y: 0, z: 0.3051481, w: 0.9523049}
   m_LocalPosition: {x: 0.22732681, y: -0.549551, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -7031,43 +6053,6 @@ Transform:
   - {fileID: 4114279246918961293}
   m_Father: {fileID: 1796735932416995084}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -34.316}
---- !u!70 &1994549562452067136
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7510525530624609443}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.75, y: 0}
-  m_Size: {x: 1.6, y: 0.2}
-  m_Direction: 1
 --- !u!1 &7544975949659689791
 GameObject:
   m_ObjectHideFlags: 0
@@ -7077,7 +6062,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1884732402649843420}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l4 effector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7092,7 +6077,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7544975949659689791}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0.67390984, w: -0.73881364}
+  m_LocalRotation: {x: 0, y: 0, z: -0.67390764, w: -0.73881567}
   m_LocalPosition: {x: 0.733, y: -0.003, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -7108,8 +6093,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7203260424078161818}
-  - component: {fileID: 3604210091382106364}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r4 pt4 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7124,7 +6108,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7855915478660951283}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.22961849, w: 0.9732807}
+  m_LocalRotation: {x: 0, y: 0, z: 0.22962195, w: 0.97327995}
   m_LocalPosition: {x: 1.3934433, y: 0.00000008318875, z: 0}
   m_LocalScale: {x: 0.5, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -7132,43 +6116,6 @@ Transform:
   - {fileID: 4199633852037162369}
   m_Father: {fileID: 8134172703908562749}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &3604210091382106364
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7855915478660951283}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.36, y: 0}
-  m_Size: {x: 0.7, y: 1.4}
-  m_Direction: 0
 --- !u!1 &8233080391227424747
 GameObject:
   m_ObjectHideFlags: 0
@@ -7178,7 +6125,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3778219042312251034}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg 2L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7213,7 +6160,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5212808090601651790}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: blank_spider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7246,8 +6193,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4114279246918961293}
-  - component: {fileID: 2220519864090175294}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l2 pt2 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7262,7 +6208,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8406567198824328484}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.70052886, w: 0.7136241}
+  m_LocalRotation: {x: 0, y: 0, z: -0.7005278, w: 0.71362513}
   m_LocalPosition: {x: 1.4611212, y: -0.000000029713847, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -7270,43 +6216,6 @@ Transform:
   - {fileID: 74713977280612927}
   m_Father: {fileID: 2749387138667642994}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &2220519864090175294
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8406567198824328484}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.9, y: 0}
-  m_Size: {x: 2, y: 0.2}
-  m_Direction: 1
 --- !u!1 &8459196700872151742
 GameObject:
   m_ObjectHideFlags: 0
@@ -7317,7 +6226,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4257679111386862312}
   - component: {fileID: 2647139100762919223}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: abdomen bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7342,6 +6251,8 @@ Transform:
   - {fileID: 1671441735390870653}
   - {fileID: 4593715000520413280}
   - {fileID: 596364321759533591}
+  - {fileID: 4349527747444524243}
+  - {fileID: 6672012779752912219}
   m_Father: {fileID: 5212808090601651790}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -23.922}
 --- !u!70 &2647139100762919223
@@ -7379,7 +6290,7 @@ CapsuleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 1.3, y: 0}
-  m_Size: {x: 2.7, y: 2.25}
+  m_Size: {x: 2.6, y: 2.25}
   m_Direction: 1
 --- !u!1 &8683807235678294465
 GameObject:
@@ -7392,7 +6303,7 @@ GameObject:
   - component: {fileID: 1338361084817694941}
   - component: {fileID: 3532414465633414021}
   - component: {fileID: 3140062776632305362}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: 'Leg 4R pt 1 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7498,7 +6409,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8270222540382114309}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg r1 effector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7513,7 +6424,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8707036530917231661}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.6701921, w: 0.74218774}
+  m_LocalRotation: {x: 0, y: 0, z: 0.67018884, w: 0.74219066}
   m_LocalPosition: {x: 0.57, y: -0.02, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -7529,8 +6440,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 752940509849597149}
-  - component: {fileID: 2229827131006063478}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: leg l3 pt3 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7553,43 +6463,6 @@ Transform:
   - {fileID: 1262494296321640506}
   m_Father: {fileID: 3580165909359640762}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &2229827131006063478
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8772371884197178333}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.55, y: 0}
-  m_Size: {x: 1.25, y: 0.2}
-  m_Direction: 1
 --- !u!1 &8773133144574097762
 GameObject:
   m_ObjectHideFlags: 0
@@ -7599,7 +6472,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6907697402867962351}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg 1L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7634,7 +6507,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8327284446163506453}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg L3 IK Solver_Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7665,7 +6538,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5681179030466294059}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7698,7 +6571,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3581278769126459003}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Leg 2R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7737,8 +6610,8 @@ GameObject:
   - component: {fileID: 3912472630339336116}
   - component: {fileID: 7385854493773830215}
   - component: {fileID: 5843148394334628032}
-  m_Layer: 0
-  m_Name: CCD Spider
+  m_Layer: 3
+  m_Name: Spider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7783,7 +6656,7 @@ Rigidbody2D:
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDamping: 0
-  m_AngularDamping: 5
+  m_AngularDamping: 0.05
   m_GravityScale: 1
   m_Material: {fileID: 6200000, guid: 0fb3a02a58aa5114b8ef3cbdb77daef0, type: 2}
   m_IncludeLayers:
@@ -7809,14 +6682,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Solvers:
-  - {fileID: 3607852728144219763}
-  - {fileID: 5391033307346868730}
-  - {fileID: 6290658098684244730}
-  - {fileID: 6052728139547784672}
-  - {fileID: 2881444453080830353}
-  - {fileID: 492834634260950514}
-  - {fileID: 6632961411644914379}
-  - {fileID: 8945002110800619469}
+  - {fileID: 1490506524318266383}
+  - {fileID: 1125138727679458079}
+  - {fileID: 5780194694785847411}
+  - {fileID: 4687600851182422805}
+  - {fileID: 2937978095686542317}
+  - {fileID: 2730730680806837894}
+  - {fileID: 1451770863002819162}
+  - {fileID: 4253360384396832163}
   m_Weight: 1
   m_AlwaysUpdate: 1
   m_SolverEditorData:
@@ -7851,35 +6724,81 @@ MonoBehaviour:
   abdomenBone: {fileID: 4257679111386862312}
   headBone: {fileID: 1796735932416995084}
   heightReferencePoint: {fileID: 3708315842584664218}
-  groundedExitToleranceFactor: 1.7
-  groundedEntryToleranceFactor: 1
-  predictiveGroundDirectionSpacing: 1.25
-  failedGroundRaycastSmoothingRate: 2
+  grapple: {fileID: 1051379001623071205}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  groundedExitToleranceFactor: 1.25
+  groundedEntryToleranceFactor: 1.05
+  groundDirectionSampleWidth: 0.35
+  backupGroundPtRaycastLengthFactor: 1.1
+  groundPtSlipRate: 0.5
+  groundPtSlipThreshold: 0.25
+  upcomingGroundDirectionMinPos: 0
+  upcomingGroundDirectionMaxPos: 0.4
+  failedGroundRaycastSmoothingRate: 45
+  groundMap:
+    numFwdIntervals: 52
+    intervalWidth: 0.025
+    map: []
   accelFactor: 45
-  accelCap: 0.25
-  decelFactor: 45
-  airborneAccelMultiplier: 0.7
-  steepSlopeGripStrength: 500
-  steepSlopeGripDistancePower: 1.25
-  maxSpeed: 3.25
-  maxSpeedAirborne: 7
-  preferredRideHeight: 0.9
+  accelFactorFreeHanging: 12
+  deadThrusterAccelFactor: 4
+  thrustingAccelFactor: 25
+  accelCap: 4
+  decelFactor: 60
+  gripStrength: 400
+  grapplePullGripReduction: 0.65
+  maxSpeed: 4
+  maxSpeedAirborne: 8
+  preferredRideHeight: 0.92
   heightSpringForce: 400
-  heightSpringDamping: 22
-  balanceSpringForce: 50
+  heightSpringDamping: 28
+  heightSpringBreakThreshold: 0.1
+  grappleSquatReduction: 0.6
+  heightSampleWidth: 0.8
+  headRotationSpeed: 12
+  groundedRotationSpeed: 9
+  airborneRotationSpeed: 4.5
+  balanceSpringForce: 65
+  airborneBalanceSpringForce: 45
   balanceSpringDamping: 0.1
-  jumpForce: 7
+  airborneBalanceSpringDamping: 0.04
+  grappleScurryResistanceMax: 175
+  grappleScurryAngleMin: -0.5235988
+  jumpForce: 10
   jumpForceCrouchBoostRate: 14
-  uphillJumpDirectionRotationRate: 0.8
-  uphillJumpTakeoffRotationFraction: 0.25
-  jumpVerificationTime: 0.25
-  crouchHeightFraction: 0.225
-  crouchTime: 0.3
+  jumpAngleMin: -0.5235988
+  jumpAngleLerpRate: 1
+  jumpVerificationTime: 0.125
+  tapJumpVerificationTime: 0.125
+  crouchHeightFraction: 0.25
+  crouchTime: 0.5
   crouchBoostMinProgress: 0.4
   crouchReleaseSpeedMultiplier: 3
-  airborneLegAnimationTimeScale: 0.075
-  airborneLegDriftRate: 1.8
-  airborneLegDriftMax: 1
+  airborneLegAnimationTimeScale: 0.05
+  airborneStrideMultiplier: 1.5
+  strideMultiplierSmoothingRate: 0.25
+  freeHangEntryThreshold: 30
+  weakFreeHangEntryThreshold: 15
+  freeHangGroundedToleranceMultiplier: 1
+  freeHangLegAngleMin: 1.047198
+  freeHangLegAngleSkew: 0.1308997
+  freeHangHeadAngle: 0.2094395
+  thruster:
+    drainRate: 0.075
+    rechargeRate: 0.05
+    rechargeThreshold: 0.2
+  thrusterFlame:
+    hook: {fileID: 3254518024213778436}
+    widthMin: 0.5
+    widthMax: 5
+    intensityMin: 0
+    intensityMax: 3.5
+    intensityLerpRate: 13
+    disengageLerpRate: 15
+    sr: {fileID: 4522143551512331849}
+  thrustingGravityScale: 0.7
 --- !u!114 &5843148394334628032
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7897,32 +6816,135 @@ MonoBehaviour:
   stepTime: 0.3
   speedCapMin: 0.05
   speedCapMax: 3
-  baseStepHeightMultiplier: 0.5
+  baseStepHeightMultiplier: 0.925
   stepSmoothingRate: 25
-  restSmoothingRate: 25
-  extensionSmoothingRate: 100
-  staticModeGroundDetectionOffsetRate: 0
-  staticModeGroundDectectionOffsetMax: 0
   synchronizedLegs:
   - leg: {fileID: 3287121947862078546}
     timeOffset: 0
-  - leg: {fileID: 289677099412839160}
-    timeOffset: 0.4
   - leg: {fileID: 8139652597745638036}
+    timeOffset: 0.4
+  - leg: {fileID: 289677099412839160}
     timeOffset: 0.25
   - leg: {fileID: 12206713449588117}
     timeOffset: 0.65
   - leg: {fileID: 6337494717204129644}
     timeOffset: 0
-  - leg: {fileID: 636268752888493604}
-    timeOffset: 0.2
   - leg: {fileID: 1298602695105135040}
+    timeOffset: 0.2
+  - leg: {fileID: 636268752888493604}
     timeOffset: 0.4
   - leg: {fileID: 5076699777365114807}
     timeOffset: 0.6
-  bodyGroundSpeed: 0
-  preferredBodyPosGroundHeight: 0
+  bodyGroundSpeedSign: 0
+  absoluteBodyGroundSpeed: 0
+  preferredBodyPosGroundHeight: 0.400751
   timeScale: 1
   stepHeightFraction: 0
-  outwardDrift: 0
-  outwardDriftWeights: {x: 0, y: 0}
+  strideMultiplier: 1
+  driftWeight: 0
+--- !u!1001 &4934841031197647702
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 4257679111386862312}
+    m_Modifications:
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: shooterRb
+      value: 
+      objectReference: {fileID: 2582591312671585704}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: releaseRate
+      value: 4.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: constraintIterations
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: cannonFulcrum.baseAnchor
+      value: 
+      objectReference: {fileID: 3165804772939969779}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: cannonFulcrum.floppiness
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: cannonFulcrum.linearDamping
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: cannonFulcrum.angularDamping
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7337905512642426967, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_Name
+      value: Silk Grapple
+      objectReference: {fileID: 0}
+    - target: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.16
+      objectReference: {fileID: 0}
+    - target: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.97766775
+      objectReference: {fileID: 0}
+    - target: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.21015674
+      objectReference: {fileID: 0}
+    - target: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+--- !u!114 &1051379001623071205 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+  m_PrefabInstance: {fileID: 4934841031197647702}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39cf6fb3f759589459e82fbbe8682d00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &3165804772939969779 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8039806522170824613, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+  m_PrefabInstance: {fileID: 4934841031197647702}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &4349527747444524243 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+  m_PrefabInstance: {fileID: 4934841031197647702}
+  m_PrefabAsset: {fileID: 0}

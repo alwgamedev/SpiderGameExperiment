@@ -40,7 +40,7 @@ public class GrappleCannon : MonoBehaviour
     float shootTimer;
     Vector2 shootDirection;
 
-    int aimInput;
+    public int aimInput;
     //float aimRotation0;//inefficient (should just add aimRotation0 to max & min values) but for now allows us to tweak max and min live
     //float aimRotation;
 
@@ -143,7 +143,7 @@ public class GrappleCannon : MonoBehaviour
     
     private void Update()
     {
-        aimInput = (Input.GetKey(KeyCode.A) ? 1 : 0) + (Input.GetKey(KeyCode.D) ? -1 : 0);
+        //aimInput = (Input.GetKey(KeyCode.A) ? 1 : 0) + (Input.GetKey(KeyCode.D) ? -1 : 0);
 
         if (grapple == null)
         {
