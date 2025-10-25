@@ -4,8 +4,6 @@ using UnityEngine;
 [Serializable]
 public class ThrusterFlame
 {
-    //[SerializeField] float intensityMin;
-    //[SerializeField] Transform anchor;
     [SerializeField] Transform hook;
     [SerializeField] float widthMin;
     [SerializeField] float widthMax;
@@ -16,7 +14,6 @@ public class ThrusterFlame
     [SerializeField] SpriteRenderer sr;
 
     Material material;
-    //float intensityMin;
 
     const string intensityProperty = "_BodyNoiseMax";
 
@@ -25,10 +22,9 @@ public class ThrusterFlame
         material = new Material(sr.material);
         sr.material = material;
         material.SetFloat(intensityProperty, 0);
-        //intensityMin = material.GetFloat("_BodyNoiseMin");
     }
 
-    //pass bodySpeed < 0 when thrusters are off (so lerps toward zero
+    //pass bodySpeed < 0 when thrusters are off (so lerps toward zero)
     public void Update(float bodySpeed, float dt)
     {
         var cur = material.GetFloat(intensityProperty);

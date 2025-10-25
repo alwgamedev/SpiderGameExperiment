@@ -56,7 +56,6 @@ public class LegSynchronizer : MonoBehaviour
             }
         }
 
-        //returns whether stepping just turned to true
         public void Update(float dt)
         {
             timer += dt;
@@ -84,7 +83,6 @@ public class LegSynchronizer : MonoBehaviour
     public float stepHeightFraction;
     public float strideMultiplier = 1;
     public float driftWeight;
-    //public Vector2 outwardDriftWeights;
 
     public void UpdateAllLegs(float dt, GroundMap map)
     {

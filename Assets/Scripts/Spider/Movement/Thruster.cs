@@ -23,7 +23,6 @@ public class Thruster
         Charge = 1;
     }
 
-    //returns whether disengaged due to charge running out
     public ThrustersUpdateResult Update(float dt)
     {
         if (Engaged)

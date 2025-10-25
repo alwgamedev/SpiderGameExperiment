@@ -24,11 +24,10 @@ public struct RopeNode
     float collisionThreshold;
     float collisionBounciness;
     readonly Vector2[] raycastDirections;
-    //int currentCollisionLayerMask;
     Vector2 lastCollisionNormal;
 
     public bool Anchored => anchored;
-    public int CurrentCollisionLayerMask => CurrentCollision ? 1 << CurrentCollision.gameObject.layer : 0;//currentCollisionLayerMask;
+    public int CurrentCollisionLayerMask => CurrentCollision ? 1 << CurrentCollision.gameObject.layer : 0;
     public Collider2D CurrentCollision { get; private set; }
     public float CollisionThreshold => collisionThreshold;
     public Vector2 LastCollisionNormal => lastCollisionNormal;
@@ -64,7 +63,6 @@ public struct RopeNode
         this.collisionThreshold = collisionThreshold;
         collisionSearchRadius = collisionThreshold + collisionSearchRadiusBuffer;
         this.collisionBounciness = collisionBounciness;
-        //currentCollisionLayerMask = 0;
         CurrentCollision = null;
         lastCollisionNormal = Vector2.zero;
 
@@ -142,38 +140,6 @@ public struct RopeNode
     {
         if (anchored) return;
 
-        //var r = Physics2D.Raycast(position, raycastDirections[0], collisionThreshold, collisionMask);
-        //if (r && r.distance == 0)
-        //{
-        //    r = Physics2D.Linecast(lastPosition, position, collisionMask);
-        //}
-        //else
-        //{
-        //    var r0 = r;
-        //    //var d0 = d;
-        //    var min = r && r.distance > 0 ? r.distance : Mathf.Infinity;
-        //    for (int i = 1; i < raycastDirections.Length; i++)
-        //    {
-        //        var s = Physics2D.Raycast(position, raycastDirections[i], collisionThreshold, collisionMask);
-        //        if (s && s.distance < min)
-        //        {
-        //            if (s.distance > 0)
-        //            {
-        //                r = s;
-        //                min = s.distance;
-        //            }
-        //            else if (!r0 || r0.distance > 0)
-        //            {
-        //                r0 = s;
-        //            }
-        //        }
-        //    }
-        //    if (!r)
-        //    {
-        //        r = r0;
-        //    }
-        //}
-
         var l = collisionThreshold;
         var r = Physics2D.Raycast(position, raycastDirections[0], collisionSearchRadius, collisionMask);
         if (!r)
@@ -192,7 +158,6 @@ public struct RopeNode
         else if (r.distance == 0)
         {
             l = collisionSearchRadius;
-            //var c = l - collisionThreshold + Mathf.Epsilon;
             r = Physics2D.Raycast(position + l * raycastDirections[0], -raycastDirections[0], l, collisionMask);
             for (int i = 1; i < raycastDirections.Length; i++)
             {
@@ -202,31 +167,15 @@ public struct RopeNode
                     r = s;
                 }
             }
-            //if (!r || r.distance < c)
-            //{
-            //    int i = 1;
-            //    while ((!r || r.distance < c) && i < raycastDirections.Length)
-            //    {
-            //        var s = Physics2D.Raycast(position + l * raycastDirections[i], -raycastDirections[i], l, collisionMask);
-            //        if (s.distance > r.distance)
-            //        {
-            //            r = s;
-            //        }
-            //        i++;
-            //    }
-            //}
             r.distance = l - r.distance;
-            //2do: what to do if distance is still zero (entire search radius is inside collider)
         }
 
         if (r)
         {
-            //2do: creating variable l is overhead
             HandlePotentialCollision(dt, r, l);
         }
         else
         {
-            //currentCollisionLayerMask = 0;
             CurrentCollision = null;
             lastCollisionNormal = Vector2.zero;//can try to get rid of this
         }
@@ -234,7 +183,6 @@ public struct RopeNode
 
     private void HandlePotentialCollision(float dt, RaycastHit2D r, float collisionThreshold)
     {
-        //var p = r.point;
         var l = r.distance;
         var n = r.normal;
 
@@ -254,7 +202,6 @@ public struct RopeNode
             position += w;
             lastPosition = position - newVelocity * dt;
             StoreCollisionVelocity(r.collider.attachedRigidbody, n);
-            //currentCollisionLayerMask = 1 << r.collider.gameObject.layer;
             CurrentCollision = r.collider;
             return;
         }
@@ -266,13 +213,11 @@ public struct RopeNode
         if (l < collisionThreshold)
         {
             ResolveCollision(dt, l, collisionThreshold, n, r.collider.attachedRigidbody);
-            //currentCollisionLayerMask = 1 << r.collider.gameObject.layer;
             CurrentCollision = r.collider;
         }
         else
         {
             CurrentCollision = null;
-            //currentCollisionLayerMask = 0;
             //but we don't set lastTrueCollisionNormal = 0, bc we still had a successful raycast, which could be useful for an upcoming collision!
         }
     }
@@ -297,7 +242,6 @@ public struct RopeNode
         }
         else
         {
-            //lastPosition = position;
             position += diff * collisionNormal;
             lastPosition = position - newVelocity * dt;
         }

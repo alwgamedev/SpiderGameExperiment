@@ -4,13 +4,12 @@ using UnityEngine;
 public class Rope
 {
     public const int MAX_NUM_COLLISIONS = 4;
-    public const float CONSTRAINTS_TOLERANCE = 0f;//0.005f;
+    public const float CONSTRAINTS_TOLERANCE = 0.005f;
 
     public float width;
     public float nodeSpacing;
     public float constraintIterations;
     public int terminusAnchorMask;
-    //public readonly float length;
     
     public readonly RopeNode[] nodes;
     public readonly int lastIndex;

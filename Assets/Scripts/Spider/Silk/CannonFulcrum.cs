@@ -29,8 +29,6 @@ public class CannonFulcrum
     public Vector2 LeveragePoint => leveragePoint.position;
     public Vector2 FulcrumPosition => fulcrum.position;
 
-    //2do: when you destroy grapple, lerp back to rotation 
-
     public void Initialize()
     {
         leverLength = Vector2.Distance(fulcrum.position, leveragePoint.position);
@@ -67,7 +65,6 @@ public class CannonFulcrum
         //^yes, dividing by leverLength is correct (as checked by computing theta'' from theta = arctan(y/x)) -- we're dealing with accelerations instead of force/torque
         if (freeHanging)
         {
-            //var fPar = Vector2.Dot(force, u);
             shooterRb.AddForceAtPosition(force - fNormal * u - shooterRb.mass * linearDamping * Vector2.Dot(shooterRb.linearVelocity, forceDirection) * forceDirection, baseAnchor.position);
         }
         else

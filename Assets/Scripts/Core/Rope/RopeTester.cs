@@ -28,16 +28,11 @@ public class RopeTester : MonoBehaviour
         //{
         //    DebugDrawRope();
         //}
-        //UpdateRopePhysics();
     }
 
     private void FixedUpdate()
     {
         UpdateRopePhysics();
-        //else if (rope != null)
-        //{
-        //    //rope = null;
-        //}
     }
 
     private void UpdateRopePhysics()

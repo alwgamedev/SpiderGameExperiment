@@ -18,7 +18,6 @@ public struct GroundMap
 
     [SerializeField] GroundMapPt[] map;
 
-    //in future, can cache some of these and make numFwdIntervals and intervalWidth private
     public int CentralIndex => numFwdIntervals;
     public int NumPts => (numFwdIntervals << 1) | 1;
     public float MapHalfWidth => intervalWidth * numFwdIntervals;
@@ -220,13 +219,11 @@ public struct GroundMap
                 {
                     var q = map[i];
                     var s = p.horizontalPosition - q.horizontalPosition;
-                    //normal = q.normal;
                     return new(Vector2.Lerp(q.point, p.point, (x - q.horizontalPosition) / s), q.normal, q.right, 0, 0, q.groundCollider);
                 }
             }
 
             var t = x - RightEndPt.horizontalPosition;
-            //normal = RightEndPt.normal;
             return RightEndPt;
         }
 
@@ -237,13 +234,11 @@ public struct GroundMap
             {
                 var q = map[i];
                 var s = p.horizontalPosition - q.horizontalPosition;
-                //normal = q.normal;
                 return new(Vector2.Lerp(q.point, p.point, (x - q.horizontalPosition) / s), q.normal, q.right, 0, 0, q.groundCollider);
             }
         }
 
         var u = x - LeftEndPt.horizontalPosition;
-        //normal = LeftEndPt.normal;
         return LeftEndPt;
     }
 
@@ -313,7 +308,6 @@ public struct GroundMap
 
     public void UpdateMap(Vector2 origin, Vector2 originDown, Vector2 originRight, float raycastLength, int centralIndex, int raycastLayerMask)
     {
-        //n = 2 * numFwdPts + 1
         int n = NumPts;
         if (map == null || map.Length != n)
         {
