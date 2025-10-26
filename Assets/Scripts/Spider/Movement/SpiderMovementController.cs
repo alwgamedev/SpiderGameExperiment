@@ -375,7 +375,7 @@ public class SpiderMovementController : MonoBehaviour
             if (!Input.GetKey(KeyCode.Space))
             {
                 jumpInputHeld = false;
-                waitingToReleaseJump = true;
+                waitingToReleaseJump = !Input.GetKey(KeyCode.LeftControl);
             }
             else if (grounded && crouchProgress < 1)
             {
