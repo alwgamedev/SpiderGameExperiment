@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class SpiderMovementController : MonoBehaviour
 {
@@ -140,17 +141,21 @@ public class SpiderMovementController : MonoBehaviour
     float GrappleScurryResistance => Vector2.Dot(grapple.LastCarryForce, -OrientedGroundDirection);
     float GrappleScurryResistanceFraction => Mathf.Clamp(GrappleScurryResistance / grappleScurryResistanceMax, 0, 1);
 
+    public float CrouchProgress => crouchProgress;
     public Thruster Thrusters => thruster;
 
     public static SpiderMovementController Player;
 
-    private void OnDrawGizmos()
-    {
-        if (Application.isPlaying)
-        {
-            groundMap.DrawGizmos();
-        }
-    }
+    public event Action JumpChargeBegan;
+    public event Action JumpChargeEnded;
+
+    //private void OnDrawGizmos()
+    //{
+    //    if (Application.isPlaying)
+    //    {
+    //        groundMap.DrawGizmos();
+    //    }
+    //}
 
     private void Awake()
     {
@@ -376,6 +381,7 @@ public class SpiderMovementController : MonoBehaviour
             {
                 jumpInputHeld = false;
                 waitingToReleaseJump = !Input.GetKey(KeyCode.LeftControl);
+                JumpChargeEnded?.Invoke();
             }
             else if (grounded && crouchProgress < 1)
             {
@@ -387,6 +393,10 @@ public class SpiderMovementController : MonoBehaviour
             if (grounded)
             {
                 jumpInputHeld = Input.GetKey(KeyCode.Space);
+                if (jumpInputHeld)
+                {
+                    JumpChargeBegan?.Invoke();
+                }
             }
             if (crouchProgress > 0)
             {
@@ -524,12 +534,13 @@ public class SpiderMovementController : MonoBehaviour
 
     private void RotateAbdomen(float dt)
     {
-        //2do: maybe this could be faster working solely with quaternions
-        //the only overhead that would remove is computing AbdomenBoneRightInBaseLocalCoords, but the equivalent would be reversing two quaternion rotations
-        //(i.e. taking current abdomenBone.rotation relative to transform.rotation and removing base rotation)
-        //and after two quaternion products, we've probably done just as much work as the vector version
-        //we can check if that's really what we'd need to do
         var r = MathTools.CheapRotationalLerpClamped(AbdomenBoneRightInBaseLocalCoords(), AbdomenAngle(), abdomenRotationSpeed * dt, out bool changed);
+        //^and this returns early when already at correct rotation, so hardly creating unnecessary overhead.
+        //We could do this all in terms of quaternions, but it would be slower because we need to do two square roots to write down a quaternion (two half angles)
+        //instead of just the one square root (normalizing) involved in CheapRotationalLerp of unit vector.
+        //We could use first order deformation of quaternion (and fact that (cos(t/2))' = -0.5sin(t/2) = -0.5 * q.z),
+        //but we would still have to normalize the quaternion afterwards, so I think it's best as is.
+
         if (changed)
         {
             var p = abdomenBonePivot.position;
@@ -626,9 +637,15 @@ public class SpiderMovementController : MonoBehaviour
 
     private Vector2 JumpDirection()
     {
-        var u = AbdomenBoneUpInBaseLocalCoords();
+        //return CurrentJumpRotation() * transform.up;
+        var u = AbdomenBoneUpInBaseLocalCoords();//quaternion version would compute a lot of extra trivial products (0 * x)
         return u.x * transform.right + u.y * transform.up;
     }
+
+    //public Quaternion CurrentJumpRotation()
+    //{
+    //    return (FacingRight ? abdomenBoneBaseLocalRotation : abdomenBoneBaseLocalRotationL).InverseOf2DUnitQuaternion() * transform.rotation.InverseOf2DUnitQuaternion() * abdomenBone.rotation;
+    //}
 
     private bool VerifyingJump()
     {

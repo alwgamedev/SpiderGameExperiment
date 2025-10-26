@@ -131,6 +131,16 @@ public static class MathTools
         return new Quaternion(0, 0, Mathf.Sqrt(0.5f * (1 - u.x)), u.y < 0 ? -Mathf.Sqrt(0.5f * (1 + u.x)) : Mathf.Sqrt(0.5f * (1 + u.x)));
     }
 
+    public static Quaternion InverseOfUnitQuaternion(this Quaternion q)
+    {
+        return new(-q.x, -q.y, -q.z, q.w);
+    }
+
+    public static Quaternion InverseOf2DUnitQuaternion(this Quaternion q)
+    {
+        return new(0, 0, -q.z, q.w);
+    }
+
     /// <summary>
     /// as angle from u1 to u2 varies over (-pi,pi], output varies smoothly from -1 to 1 (specifically output is sin(theta/2), where theta is the correct angle; ~5-10x faster than arctan)
     /// </summary>

@@ -7,16 +7,16 @@ public class ThrusterChargeUI : MonoBehaviour
     [SerializeField] Color cooldownColor;
     [SerializeField] Color defaultColor;
 
-    SpiderMovementController spider;
+    SpiderMovementController player;
 
     private void Start()
     {
-        spider = SpiderMovementController.Player;
+        player = SpiderMovementController.Player;
     }
 
     private void Update()
     {
-        fillBar.fillAmount = spider.Thrusters.Charge;
-        fillBar.color = spider.Thrusters.Cooldown ? cooldownColor : defaultColor;
+        fillBar.fillAmount = player.Thrusters.Charge;
+        fillBar.color = player.Thrusters.Cooldown ? cooldownColor : defaultColor;
     }
 }
