@@ -65,9 +65,6 @@ public struct RopeNode
         this.collisionBounciness = collisionBounciness;
         CurrentCollision = null;
         lastCollisionNormal = Vector2.zero;
-
-
-
     }
 
     public void Anchor()

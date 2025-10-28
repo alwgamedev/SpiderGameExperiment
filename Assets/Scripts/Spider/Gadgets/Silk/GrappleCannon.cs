@@ -27,7 +27,7 @@ public class GrappleCannon : MonoBehaviour
     bool poweringUp;
     float shootSpeedPowerUp;
     float shootTimer;
-    Vector2 shootDirection;
+    Vector2 lastShootDirection;
 
     public int aimInput;
 
@@ -44,11 +44,14 @@ public class GrappleCannon : MonoBehaviour
     public int GrappleReleaseInput => grapple == null ? 0 : grappleReleaseInput;
     public Vector2 LastCarryForce { get; private set; }
     public Vector2 LastCarryForceDirection { get; private set; }
-    public bool ShooterMovingTowardsGrapple => Vector2.Dot(shooterRb.linearVelocity, GrappleExtent) > 0;
     public Vector2 GrappleExtent => GrapplePosition - SourcePosition;
     public Vector2 GrapplePosition => grapple.nodes[grapple.lastIndex].position;
-    float ShootSpeed => (1 + shootSpeedPowerUp) * baseShootSpeed;
-    Vector2 SourcePosition => cannonFulcrum.LeveragePoint;
+    public bool PoweringUp => poweringUp;
+    public float PowerUpFraction => shootSpeedPowerUp / shootSpeedPowerUpMax;
+    public float ShootSpeed => (1 + shootSpeedPowerUp) * baseShootSpeed;
+    public Vector2 ShootDirection => cannonFulcrum.LeverDirection;
+    public Vector2 ShootVelocity => ShootSpeed * ShootDirection;
+    public Vector2 SourcePosition => cannonFulcrum.LeveragePoint;
     public Collider2D AnchorCollider => grapple.nodes[grapple.lastIndex].CurrentCollision;
     public int AnchorMask => grapple.terminusAnchorMask;
     public Vector2 FreeHangLeveragePoint => cannonFulcrum.FulcrumPosition;
@@ -352,7 +355,7 @@ public class GrappleCannon : MonoBehaviour
             shootTimer += fixedDt;//shoot timer starts negative so doesn't start growing until grapple has extended out it's initial length, ideally
             if (shootTimer > 0 && GrappleExtent.magnitude > grapple.Length) 
             {
-                var p = (0.5f * shootTimer * Physics2D.gravity + ShootSpeed * shootDirection) * shootTimer + minLength * shootDirection;
+                var p = (0.5f * shootTimer * Physics2D.gravity + ShootSpeed * lastShootDirection) * shootTimer + minLength * lastShootDirection;
                 grapple.Length = Mathf.Clamp(p.magnitude, grapple.Length, maxLength);
             }
             //2do: if grapple length stagnant for certain amount of time (i.e. we have reached max length or the dot > length fails for number of updates), then enable release input)
@@ -375,8 +378,8 @@ public class GrappleCannon : MonoBehaviour
         grapple.nodes[0].Anchor();
         grapple.nodes[grapple.lastIndex].mass = grappleMass;
         var shootSpeed = ShootSpeed;
-        shootDirection = cannonFulcrum.LeverDirection;
-        Vector2 shootVelocity = shootSpeed * shootDirection;
+        lastShootDirection = ShootDirection;
+        Vector2 shootVelocity = shootSpeed * lastShootDirection;
         grapple.nodes[grapple.lastIndex].lastPosition -= fixedDt * shootVelocity;
         var g = Physics2D.gravity.y;
         shootTimer = - minLength / shootSpeed;

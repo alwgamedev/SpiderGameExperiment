@@ -129,13 +129,14 @@ public class SpiderMovementController : MonoBehaviour
 
     bool freeHangInput;
 
-    bool FacingRight => transform.localScale.x > 0;
+    public bool FacingRight => transform.localScale.x > 0;
     Vector2 OrientedRight => FacingRight ? transform.right : -transform.right;
     Vector2 OrientedGroundDirection => FacingRight ? groundDirection : -groundDirection;
     float PreferredBodyPosGroundHeight => transform.position.y - heightReferencePoint.position.y + preferredRideHeight;
     float MaxSpeed => grounded ? maxSpeed : maxSpeedAirborne;
     float GroundVelocity => Vector2.Dot(rb.linearVelocity, OrientedGroundDirection);
     bool StronglyGrounded => grounded && allGroundMapPtsHitGround;
+    bool MiddleGrounded => grounded && (groundMap.Center.hitGround || groundPt.normal.y < 0);
     bool Leaning => grappleScurrying || jumpInputHeld;
     Vector2 GroundPtGroundDirection => groundPt.normal.CWPerp();
     float GrappleScurryResistance => Vector2.Dot(grapple.LastCarryForce, -OrientedGroundDirection);
@@ -143,19 +144,20 @@ public class SpiderMovementController : MonoBehaviour
 
     public float CrouchProgress => crouchProgress;
     public Thruster Thrusters => thruster;
+    public GrappleCannon Grapple => grapple;
 
     public static SpiderMovementController Player;
 
     public event Action JumpChargeBegan;
     public event Action JumpChargeEnded;
 
-    //private void OnDrawGizmos()
-    //{
-    //    if (Application.isPlaying)
-    //    {
-    //        groundMap.DrawGizmos();
-    //    }
-    //}
+    private void OnDrawGizmos()
+    {
+        if (Application.isPlaying)
+        {
+            groundMap.DrawGizmos();
+        }
+    }
 
     private void Awake()
     {
@@ -233,7 +235,7 @@ public class SpiderMovementController : MonoBehaviour
         HandleMoveInput();
         HandleJumpInput();
 
-        if (grounded)//was strongly grdd//note grounded is automatically false while verifying jump
+        if (MiddleGrounded)//was strongly grdd//note grounded is automatically false while verifying jump
         {  
             UpdateHeightSpring();
         }
@@ -262,11 +264,14 @@ public class SpiderMovementController : MonoBehaviour
         if (grapple.FreeHanging)
         {
             var r = OrientedRight;
-            legSynchronizer.driftWeight = r.y < 0 ? (transform.right.x > 0 ? Mathf.Pow(r.y, 4) : 1) : 0;
+            var dX = r.y < 0 ? (transform.right.x > 0 ? -r.y : 1) : 0;
+            //2do: maybe we can do something with y to get legs swinging (or try a completely different system...)
+            legSynchronizer.driftWeight = new(dX, dX);
+            legSynchronizer.stepHeightFraction *= 1 - dX;
         }
-        else if (legSynchronizer.driftWeight != 0)
+        else if (legSynchronizer.driftWeight != Vector2.zero)
         {
-            legSynchronizer.driftWeight = 0;
+            legSynchronizer.driftWeight = Vector2.zero;
         }
     }
 
@@ -595,7 +600,7 @@ public class SpiderMovementController : MonoBehaviour
     private void RotateHead(float dt)
     {
         var g = grounded ? upcomingGroundDirection : (grapple.FreeHanging ? FreeHangingHeadRight() : (Vector2)transform.right);
-        headBone.ApplyCheapRotationLerpClamped(g, headRotationSpeed * dt);//if rotate at constant speed, it starts to flicker when rotation is small
+        headBone.ApplyCheapRotationLerpClamped(g, headRotationSpeed * dt, out _);//if rotate at constant speed, it starts to flicker when rotation is small
     }
 
     private Vector2 FreeHangingHeadRight()

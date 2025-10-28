@@ -15,6 +15,7 @@ public class CannonFulcrum
     [SerializeField] float kinematicRotationMin;
     [SerializeField] float kinematicRotationMax;
     [SerializeField] float kinematicRotationSpeed;
+    [SerializeField] float kinematicRotationCatchUpMultiplier;
 
     float angularAcceleration;
     float angularVelocity;
@@ -41,8 +42,11 @@ public class CannonFulcrum
     {
         angularVelocity += (angularAcceleration - angularDamping * angularVelocity) * dt;
         angularAcceleration = 0;
-        lever.ApplyCheapRotationBySpeed(angularVelocity, dt);
-        RecenterLever();
+        lever.ApplyCheapRotationBySpeed(angularVelocity, dt, out var changed);
+        if (changed)
+        {
+            RecenterLever();
+        }
     }
 
     public void UpdateKinematic(float dt, int rotationInput, Transform shooterTransform)
@@ -53,8 +57,11 @@ public class CannonFulcrum
         }
         var a = kinematicRotation0 + kinematicRotation;
         var g = Mathf.Cos(a) * shooterTransform.right + (shooterTransform.localScale.x > 0 ? Mathf.Sin(a) : -Mathf.Sin(a)) * shooterTransform.transform.up;
-        lever.ApplyCheapRotationBySpeedClamped(g, 2 * kinematicRotationSpeed, dt);
-        RecenterLever();
+        lever.ApplyCheapRotationLerpClamped(g, kinematicRotationCatchUpMultiplier * kinematicRotationSpeed * dt, out var changed);
+        if (changed)
+        {
+            RecenterLever();
+        }
     }
 
     public void ApplyForce(Vector2 force, Vector2 forceDirection, Rigidbody2D shooterRb, bool freeHanging)

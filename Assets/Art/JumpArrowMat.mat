@@ -68,8 +68,8 @@ Material:
     m_Floats:
     - _BlendHeight: 0.8
     - _BlendHeightMax: 0.8
-    - _BlendHeightMin: 0.025
-    - _BlendRate: 1.25
+    - _BlendHeightMin: 0.1
+    - _BlendRate: 1
     - _EnableExternalAlpha: 0
     - _FadeHeight: 0.5
     - _ZWrite: 0

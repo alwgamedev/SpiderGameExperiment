@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 2782724fdb82c6b42943a44a2db457e7
+guid: 5dc3c4e7ccff1d044879104438e048df
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7709720383098612537
-    second: jet_flame_0
+      213: 2888244828111012001
+    second: single_dash_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -40,9 +40,9 @@ TextureImporter:
     filterMode: 1
     aniso: 1
     mipBias: 0
-    wrapU: 1
-    wrapV: 1
-    wrapW: 1
+    wrapU: 0
+    wrapV: 0
+    wrapW: 0
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: jet_flame_0
+      name: single_dash_0
       rect:
         serializedVersion: 2
-        x: 0
+        x: 90
         y: 0
-        width: 192
-        height: 87
+        width: 133
+        height: 73
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 93b6e2037dd6efa60800000000000000
-      internalID: 7709720383098612537
+      spriteID: 1a08aeb5e5b151820800000000000000
+      internalID: 2888244828111012001
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      jet_flame_0: 7709720383098612537
+      single_dash_0: 2888244828111012001
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

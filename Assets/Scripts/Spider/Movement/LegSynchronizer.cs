@@ -82,7 +82,7 @@ public class LegSynchronizer : MonoBehaviour
     public float timeScale = 1;
     public float stepHeightFraction;
     public float strideMultiplier = 1;
-    public float driftWeight;
+    public Vector2 driftWeight;
 
     public void UpdateAllLegs(float dt, GroundMap map)
     {

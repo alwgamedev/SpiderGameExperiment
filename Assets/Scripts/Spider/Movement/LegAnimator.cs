@@ -46,7 +46,7 @@ public class LegAnimator : MonoBehaviour
 
     public void UpdateStep(float dt, GroundMap map, bool bodyFacingRight,
         float baseStepHeightMultiplier, float stepHeightSpeedMultiplier,
-        float smoothingRate, float stepProgress, float stepTime, float restTime, float driftWeight)
+        float smoothingRate, float stepProgress, float stepTime, float restTime, Vector2 driftWeight)
     {
         var drift = driftWeight * this.drift;
         var stepStart = GetStepStart(map, bodyFacingRight, stepProgress, stepTime, restTime, drift);
@@ -70,7 +70,7 @@ public class LegAnimator : MonoBehaviour
     }
 
     public void UpdateRest(float dt, GroundMap map, bool bodyFacingRight,
-        float smoothingRate, float restProgress, float restTime, float driftWeight)
+        float smoothingRate, float restProgress, float restTime, Vector2 driftWeight)
     {
         var newTargetPos = GetStepGoal(map, bodyFacingRight, restProgress, restTime, driftWeight * drift);
         ikTarget.position = Vector2.Lerp(ikTarget.position, newTargetPos, smoothingRate * dt);

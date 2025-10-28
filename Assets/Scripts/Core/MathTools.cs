@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices.WindowsRuntime;
 using Unity.Burst.Intrinsics;
 using UnityEngine;
 
@@ -204,18 +205,18 @@ public static class MathTools
         return Vector2.Lerp(u1, u2, lerpAmount).normalized;
     }
 
-    public static void ApplyCheapRotationalLerp(this Transform t, Vector2 goalRight, float lerpAmount)
+    public static void ApplyCheapRotationalLerp(this Transform t, Vector2 goalRight, float lerpAmount, out bool changed)
     {
-        var v = CheapRotationalLerp(t.right, goalRight, lerpAmount, out bool changed);
+        var v = CheapRotationalLerp(t.right, goalRight, lerpAmount, out changed);
         if (changed)
         {
             t.rotation = QuaternionFrom2DUnitVector(v);
         }
     }
 
-    public static void ApplyCheapRotationLerpClamped(this Transform t, Vector2 goalRight, float lerpAmount)
+    public static void ApplyCheapRotationLerpClamped(this Transform t, Vector2 goalRight, float lerpAmount, out bool changed)
     {
-        var v = CheapRotationalLerpClamped(t.right, goalRight, lerpAmount, out bool changed);
+        var v = CheapRotationalLerpClamped(t.right, goalRight, lerpAmount, out changed);
         if (changed)
         {
             t.rotation = QuaternionFrom2DUnitVector(v);
@@ -272,18 +273,18 @@ public static class MathTools
     }
 
     //in this method you do two square roots instead of a cos and a sin (say of a float angle you're tracking)
-    public static void ApplyCheapRotationBySpeed(this Transform t, float rotationalSpeed, float dt)
+    public static void ApplyCheapRotationBySpeed(this Transform t, float rotationalSpeed, float dt, out bool changed)
     {
-        var v = CheapRotationBySpeed(t.right, t.up, rotationalSpeed, dt, out bool changed);
+        var v = CheapRotationBySpeed(t.right, t.up, rotationalSpeed, dt, out changed);
         if (changed)
         {
             t.rotation = QuaternionFrom2DUnitVector(v);
         }
     }
 
-    public static void ApplyCheapRotationBySpeedClamped(this Transform t, Vector2 goalRight, float rotationalSpeed, float dt)
+    public static void ApplyCheapRotationBySpeedClamped(this Transform t, Vector2 goalRight, float rotationalSpeed, float dt, out bool changed)
     {
-        var v = CheapRotationBySpeedClamped(t.right, goalRight, rotationalSpeed, dt, out bool changed);
+        var v = CheapRotationBySpeedClamped(t.right, goalRight, rotationalSpeed, dt, out changed);
         if (changed)
         {
             t.rotation = QuaternionFrom2DUnitVector(v);
