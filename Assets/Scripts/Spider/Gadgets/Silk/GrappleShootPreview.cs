@@ -8,7 +8,7 @@ public class GrappleShootPreview : MonoBehaviour
     [SerializeField] SpriteRenderer terminus;
     [SerializeField] double arcLengthStep;
     [SerializeField] float velocitySmoothingRate;
-    [SerializeField] float extensionRate;
+    //[SerializeField] float extensionRate;
     [SerializeField] LayerMask terminationMask;
 
     GrappleCannon grapple;
@@ -78,7 +78,7 @@ public class GrappleShootPreview : MonoBehaviour
 
             positions[0] = p;
             bool hitGround = false;
-            double a = Mathf.Pow(grapple.PowerUpFraction, extensionRate) * arcLengthStep;
+            double a = /*Mathf.Pow(grapple.PowerUpFraction, extensionRate) **/ arcLengthStep;
             double t = 0;
             //need double precision to prevent line renderer from quivering
 

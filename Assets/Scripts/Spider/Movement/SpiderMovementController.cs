@@ -192,7 +192,7 @@ public class SpiderMovementController : MonoBehaviour
         headCollider = headBone.GetComponent<Collider2D>();
         abdomenCollider = abdomenBone.GetComponent<Collider2D>();
 
-        //rb.centerOfMass = heightReferencePoint.position - transform.position;
+        rb.centerOfMass = heightReferencePoint.position - transform.position;
 
         legSynchronizer.Initialize(PreferredBodyPosGroundHeight, FacingRight);
         bodyCollisionFilter.NoFilter();
