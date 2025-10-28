@@ -9931,7 +9931,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDamping: 0
+  m_LinearDamping: 0.25
   m_AngularDamping: 0.05
   m_GravityScale: 1
   m_Material: {fileID: 6200000, guid: 0fb3a02a58aa5114b8ef3cbdb77daef0, type: 2}
@@ -10019,7 +10019,7 @@ MonoBehaviour:
     intervalWidth: 0.025
     map: []
   accelFactor: 45
-  accelFactorFreeHanging: 12
+  accelFactorFreeHanging: 15
   deadThrusterAccelFactor: 4
   thrustingAccelFactor: 25
   accelCap: 4
