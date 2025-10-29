@@ -7,6 +7,7 @@ public class LegAnimator : MonoBehaviour
     [SerializeField] float hipRaycastUpwardBuffer = 0.5f;
     [SerializeField] float staticModeGroundDetectionRadius;
     [SerializeField] float stepMax;
+    [SerializeField] float freeHangExtensionFraction;
 
     public Vector2 drift;
     
@@ -14,6 +15,11 @@ public class LegAnimator : MonoBehaviour
     int groundLayer;
     Transform hipBone;
     Transform ikTarget;
+    float ikChainLength;
+
+    Vector2 lastFreeHangPosition;
+
+    float FreeHangLength => freeHangExtensionFraction * ikChainLength;//will cache once we're done playing with freeHangExtensionFraction
 
     private void Awake()
     {
@@ -21,6 +27,12 @@ public class LegAnimator : MonoBehaviour
         var ikChain = GetComponent<Solver2D>().GetChain(0);
         hipBone = ikChain.transforms[0];
         ikTarget = ikChain.target;
+        ikChainLength = 0;
+        var lengths = ikChain.lengths;//because it rebuilds the lengths array every time you ask for it...
+        for (int i = 0; i < lengths.Length; i++)
+        {
+            ikChainLength += lengths[i];
+        }
     }
 
     public void InitializePosition(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, 
@@ -74,6 +86,18 @@ public class LegAnimator : MonoBehaviour
     {
         var newTargetPos = GetStepGoal(map, bodyFacingRight, restProgress, restTime, driftWeight * drift);
         ikTarget.position = Vector2.Lerp(ikTarget.position, newTargetPos, smoothingRate * dt);
+    }
+
+    public void UpdateFreeHang(float dt, GroundMap map, Vector2 freeHangDirection, float smoothingRate)
+    {
+        map.CastToGround(hipBone.position, freeHangDirection, FreeHangLength, out var p);
+        lastFreeHangPosition = Vector2.Lerp(lastFreeHangPosition, p, smoothingRate * dt);
+        ikTarget.position = lastFreeHangPosition;
+    }
+
+    public void OnBeginFreeHang()
+    {
+        lastFreeHangPosition = ikTarget.position;
     }
 
     public bool KeepTargetAboveGround(float dt, Vector2 bodyUp, 

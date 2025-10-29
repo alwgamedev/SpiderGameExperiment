@@ -110,7 +110,8 @@ public class SpiderMovementController : MonoBehaviour
     int orientation = 1;
 
     bool grounded;
-    bool allGroundMapPtsHitGround;
+    //bool allGroundMapPtsHitGround => groundMap.AllPointsHitGround;
+    //bool anyGroundMapPtsHitGround => groundMap.AnyPointsHitGround;
     float groundednessTolerance;
     Vector2 groundDirection = Vector2.right;
     Vector2 upcomingGroundDirection = Vector2.right;
@@ -135,7 +136,7 @@ public class SpiderMovementController : MonoBehaviour
     float PreferredBodyPosGroundHeight => transform.position.y - heightReferencePoint.position.y + preferredRideHeight;
     float MaxSpeed => grounded ? maxSpeed : maxSpeedAirborne;
     float GroundVelocity => Vector2.Dot(rb.linearVelocity, OrientedGroundDirection);
-    bool StronglyGrounded => grounded && allGroundMapPtsHitGround;
+    bool StronglyGrounded => grounded && groundMap.AllPointsHitGround;
     bool MiddleGrounded => grounded && (groundMap.Center.hitGround || groundPt.normal.y < 0);
     bool Leaning => grappleScurrying || jumpInputHeld;
     Vector2 GroundPtGroundDirection => groundPt.normal.CWPerp();
@@ -245,6 +246,7 @@ public class SpiderMovementController : MonoBehaviour
         //but for now it's just easier have them all here.
         //also may want to clearly identify the main states that affect this and just call appropriate methods from switch statement instead of checking the same bools multiple times per frame
         //(for now this is more flexible)
+        
         var v = GroundVelocity;
         legSynchronizer.bodyGroundSpeedSign = (grounded && grapple.GrappleAnchored) || grapple.FreeHanging ? 1 : Mathf.Sign(v);
         legSynchronizer.absoluteBodyGroundSpeed = grounded || thruster.Engaged ? Mathf.Abs(v) : rb.linearVelocity.magnitude;
@@ -261,18 +263,20 @@ public class SpiderMovementController : MonoBehaviour
             legSynchronizer.strideMultiplier = 1;
         }
 
-        if (grapple.FreeHanging)
-        {
-            var r = OrientedRight;
-            var dX = r.y < 0 ? (transform.right.x > 0 ? -r.y : 1) : 0;
-            //2do: maybe we can do something with y to get legs swinging (or try a completely different system...)
-            legSynchronizer.driftWeight = new(dX, dX);
-            legSynchronizer.stepHeightFraction *= 1 - dX;
-        }
-        else if (legSynchronizer.driftWeight != Vector2.zero)
-        {
-            legSynchronizer.driftWeight = Vector2.zero;
-        }
+        legSynchronizer.FreeHanging = grapple.FreeHanging && !groundMap.AnyPointsHitGround;
+
+        //if (grapple.FreeHanging)
+        //{
+        //    var r = OrientedRight;
+        //    var dX = r.y < 0 ? (transform.right.x > 0 ? -r.y : 1) : 0;
+        //    //2do: maybe we can do something with y to get legs swinging (or try a completely different system...)
+        //    legSynchronizer.driftWeight = new(dX, dX);
+        //    legSynchronizer.stepHeightFraction *= 1 - dX;
+        //}
+        //else if (legSynchronizer.driftWeight != Vector2.zero)
+        //{
+        //    legSynchronizer.driftWeight = Vector2.zero;
+        //}
     }
 
     private float AirborneStrideMultiplier()
@@ -788,7 +792,8 @@ public class SpiderMovementController : MonoBehaviour
                 freeHangGroundedToleranceMultiplier * groundednessTolerance,
                 groundMap.CentralIndex, 
                 groundLayer);
-            allGroundMapPtsHitGround = groundMap.AllHitGround();
+            //allGroundMapPtsHitGround = groundMap.AllHitGround();
+            //anyGroundMapPtsHitGround = groundMap.AnyHitGround();
         }
         else
         {
@@ -798,7 +803,8 @@ public class SpiderMovementController : MonoBehaviour
                 groundednessTolerance,
                 groundMap.CentralIndex,
                 groundLayer);
-            allGroundMapPtsHitGround = groundMap.AllHitGround();
+            //allGroundMapPtsHitGround = groundMap.AllHitGround();
+            //anyGroundMapPtsHitGround = groundMap.AnyHitGround();
         }
     }
 

@@ -120,7 +120,26 @@ public static class MathTools
     //when v1, v2 are unit vectors, this equals the sine of the angle from v1 to v2 (being dot(v1, v2.CWPerp()) = cos(theta-90))
     public static float Cross2D(Vector2 v1, Vector2 v2)
     {
-        return v1.x * v2.y - v1.y * v2.x;
+        return - v1.y * v2.x + v1.x * v2.y;
+    }
+
+    /// <summary>
+    /// Try to intersect lines p1 + t*v1 and p2 + t*v2.
+    /// </summary>
+    public static bool TryIntersectLine(Vector2 p1, Vector2 v1, Vector2 p2, Vector2 v2, out Vector2 intersection)
+    {
+        var det = Cross2D(v1, v2);
+        if (det == 0)// parallel lines
+        {
+            intersection = p1;
+            return p2 == p1 || Cross2D(p2 - p1, v1) == 0;
+        }
+
+        float b1 = Cross2D(v1, p1);
+        float b2 = Cross2D(v2, p2);
+        det = 1 / det;
+        intersection = new Vector2(det * (v2.x * b1 - v1.x * b2), det * (v2.y * b1 - v1.y * b2));
+        return true;
     }
 
     public static Quaternion QuaternionFrom2DUnitVector(Vector2 u)
@@ -155,7 +174,7 @@ public static class MathTools
         var sin = Cross2D(u1, u2);
         return sin < 0 ? -Mathf.Sqrt(0.5f * (1 - cos)) : Mathf.Sqrt(0.5f * (1 - cos));
         //also get an acceptable function without square roots, but the angle is much too small around small angles and it gives a pretty bad feel to rotations
-        //(we end up with +/- sin^2(theta/2) ~ theta^2/4)
+        //(we end up with +/- sin^2(theta/2) ~ theta^2/4 for small theta)
     }
 
     public static float AbsolutePseudoAngle(Vector2 u1, Vector2 u2)
@@ -246,7 +265,6 @@ public static class MathTools
         return CheapRotationalLerpClamped(u1, u2, angleInRadians / (Mathf.PI * t), out changed);
     }
 
-    //2do: this sometimes rotates wrong way and settles on -u2 instead of u2
     /// <summary>
     /// u1, u2 unit vectors
     /// </summary>

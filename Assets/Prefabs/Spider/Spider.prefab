@@ -1004,6 +1004,7 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   staticModeGroundDetectionRadius: 0.01
   stepMax: 0.9
+  freeHangExtensionFraction: 1
   drift: {x: 0.4, y: 0.2}
 --- !u!1 &839944467269662652
 GameObject:
@@ -1381,6 +1382,7 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   staticModeGroundDetectionRadius: 0.01
   stepMax: 0.825
+  freeHangExtensionFraction: 1
   drift: {x: 0.25, y: 0.1}
 --- !u!1 &1248638082500357407
 GameObject:
@@ -1889,6 +1891,7 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   staticModeGroundDetectionRadius: 0.01
   stepMax: -0.05
+  freeHangExtensionFraction: 1
   drift: {x: 0, y: 0}
 --- !u!1 &1968367528358965401
 GameObject:
@@ -5050,6 +5053,7 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   staticModeGroundDetectionRadius: 0.01
   stepMax: -0.05
+  freeHangExtensionFraction: 1
   drift: {x: 0, y: 0}
 --- !u!1 &2656875783498011584
 GameObject:
@@ -5545,6 +5549,7 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   staticModeGroundDetectionRadius: 0.01
   stepMax: 0.9
+  freeHangExtensionFraction: 1
   drift: {x: 0.4, y: 0.2}
 --- !u!1 &3319515992144099393
 GameObject:
@@ -6812,6 +6817,7 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   staticModeGroundDetectionRadius: 0.01
   stepMax: -0.2
+  freeHangExtensionFraction: 1
   drift: {x: -0.1, y: 0.2}
 --- !u!1 &5247813140874977512
 GameObject:
@@ -7192,6 +7198,7 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   staticModeGroundDetectionRadius: 0.01
   stepMax: -0.2
+  freeHangExtensionFraction: 1
   drift: {x: -0.1, y: 0.2}
 --- !u!1 &6016693261962413811
 GameObject:
@@ -8416,6 +8423,7 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   staticModeGroundDetectionRadius: 0.01
   stepMax: 0.825
+  freeHangExtensionFraction: 1
   drift: {x: 0.25, y: 0.1}
 --- !u!1 &6858911009439342665
 GameObject:
@@ -9495,6 +9503,7 @@ MonoBehaviour:
   speedCapMax: 3
   baseStepHeightMultiplier: 0.925
   stepSmoothingRate: 25
+  freeHangSmoothingRate: 15
   synchronizedLegs:
   - leg: {fileID: 3287121947862078546}
     timeOffset: 0

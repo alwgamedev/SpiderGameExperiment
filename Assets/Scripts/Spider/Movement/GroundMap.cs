@@ -21,6 +21,8 @@ public struct GroundMap
     public int CentralIndex => numFwdIntervals;
     public int NumPts => (numFwdIntervals << 1) | 1;
     public float MapHalfWidth => intervalWidth * numFwdIntervals;
+    public bool AllPointsHitGround { get; private set; }
+    public bool AnyPointsHitGround { get; private set; }
     public GroundMapPt Center => map[numFwdIntervals];
     public GroundMapPt LeftEndPt => map[0];
     public GroundMapPt RightEndPt => map[^1];
@@ -56,6 +58,19 @@ public struct GroundMap
         }
 
         return true;
+    }
+
+    public bool AnyHitGround()
+    {
+        for (int i = 0; i < map.Length; i++)
+        {
+            if (map[i].hitGround)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public bool AllHitGroundFromCenter(float maxPosition)
@@ -168,6 +183,52 @@ public struct GroundMap
     {
         var x = Vector2.Dot(p - Center.point, Center.normal.CWPerp());
         return PointFromCenterByPosition(x, out normal);
+    }
+
+    public bool CastToGround(Vector2 origin, Vector2 direction, float distance, out Vector2 hitPt)
+    {
+        //idea: casting ray is the diagonal of a box. since ground map points are closely spaced and box is big, we can assume that a cast hit occurs between two points inside the box.
+        //iterate through groundMap and find the first pair of points that are inside the rectangle and on opposite sides of the diagonal.
+        //A) yes, this is much faster than intersecting the groundMap line segments with the casting line; we don't compute any intersections until we the very end
+        //B) if the cast hits the ground in multiple places, this detects the one that is furthest left along the ground map, not the first hit along the casting line
+        //^we could continue iterating and find the real first hit, but this is a waste considering multiple hits will rarely happen for us
+        var endPt = origin + distance * direction;
+        var p0 = new Vector2(Mathf.Min(origin.x, endPt.x), Mathf.Min(origin.y, endPt.y));//lower left corner of box
+        var p1 = new Vector2(Mathf.Max(origin.x, endPt.x), Mathf.Min(origin.y, endPt.y));//upper right corner of box
+
+        bool IsInBox(Vector2 p)
+        {
+            return !(p.x < p0.x) && !(p.y < p0.y) && !(p.x > p1.x) && !(p.y > p1.y);
+        }
+
+        bool OnRightSideOfBox(Vector2 p)
+        {
+            return Vector2.Dot(p - origin, direction) > 0;
+        }
+
+        bool lastInBox = IsInBox(map[0].point);
+        bool lastSide = OnRightSideOfBox(map[0].point);
+        bool tempLastInBox = lastInBox;
+        bool tempLastSide = lastSide;
+
+        for (int i = 1; i < map.Length; i++)
+        {
+            tempLastInBox = IsInBox(map[i].point);
+            tempLastSide = OnRightSideOfBox(map[i].point);
+            if (lastInBox && tempLastInBox && lastSide != tempLastSide)
+            {
+                if (MathTools.TryIntersectLine(map[i].point, map[i + 1].point - map[i].point, origin, direction, out hitPt))
+                {
+                    return true;
+                }
+            }
+
+            lastInBox = tempLastInBox;
+            lastSide = tempLastSide;
+        }
+
+        hitPt = endPt;
+        return false;
     }
 
     public Vector2 PointFromCenterByPosition(float x, out Vector2 normal)
@@ -314,9 +375,21 @@ public struct GroundMap
             map = new GroundMapPt[n];
         }
 
+        AllPointsHitGround = true;
+        AnyPointsHitGround = false;
+
         var r = MathTools.DebugRaycast(origin, originDown, raycastLength, raycastLayerMask, RaycastColor0);
         map[centralIndex] = r ? new GroundMapPt(r.point, r.normal, r.normal.CWPerp(), 0, r.distance, r.collider)
             : new GroundMapPt(origin + raycastLength * originDown, -originDown, originRight, 0, raycastLength, null);
+        
+        if (r)
+        {
+            AnyPointsHitGround = true;
+        }
+        else
+        {
+            AllPointsHitGround = false;
+        }
 
         for (int i = centralIndex; i < n - 1; i++)
         {
@@ -333,6 +406,10 @@ public struct GroundMap
             {
                 var h = lastMapPt.horizontalPosition + Vector2.Distance(lastMapPt.point, r.point);
                 map[i + 1] = new GroundMapPt(r.point, r.normal, r.normal.CWPerp(), h, r.distance, r.collider);
+                if (!AnyPointsHitGround)
+                {
+                    AnyPointsHitGround = true;
+                }
             }
             else
             {
@@ -343,6 +420,10 @@ public struct GroundMap
                 {
                     var h = lastMapPt.horizontalPosition + Vector2.Distance(lastMapPt.point, r.point);
                     map[i + 1] = new GroundMapPt(r.point, r.normal, r.normal.CWPerp(), h, r.distance * Vector2.Dot(lastNormal, r.normal), r.collider);
+                    if (!AnyPointsHitGround)
+                    {
+                        AnyPointsHitGround = true;
+                    }
                 }
                 else
                 {
@@ -352,12 +433,20 @@ public struct GroundMap
                     {
                         var h = lastMapPt.horizontalPosition + Vector2.Distance(lastMapPt.point, r.point);
                         map[i + 1] = new GroundMapPt(r.point, r.normal, r.normal.CWPerp(), h, r.distance, r.collider);
+                        if (!AnyPointsHitGround)
+                        {
+                            AnyPointsHitGround = true;
+                        }
                     }
                     else
                     {
                         var p = o - raycastLength * lastNormal;
                         var h = lastMapPt.horizontalPosition + Vector2.Distance(lastMapPt.point, p);
                         map[i + 1] = new GroundMapPt(p, lastNormal, lastMapPt.right, h, raycastLength, null);
+                        if (AllPointsHitGround)
+                        {
+                            AllPointsHitGround = false;
+                        }
                     }
                 }
             }
@@ -377,6 +466,10 @@ public struct GroundMap
             {
                 var h = lastMapPt.horizontalPosition + Vector2.Distance(lastMapPt.point, r.point);
                 map[i - 1] = new GroundMapPt(r.point, r.normal, r.normal.CWPerp(), h, r.distance, r.collider);
+                if (!AnyPointsHitGround)
+                {
+                    AnyPointsHitGround = true;
+                }
             }
             else
             {
@@ -387,6 +480,10 @@ public struct GroundMap
                 {
                     var h = lastMapPt.horizontalPosition - Vector2.Distance(lastMapPt.point, r.point);
                     map[i - 1] = new GroundMapPt(r.point, r.normal, r.normal.CWPerp(), h, r.distance * Vector2.Dot(lastNormal, r.normal), r.collider);
+                    if (!AnyPointsHitGround)
+                    {
+                        AnyPointsHitGround = true;
+                    }
                 }
                 else
                 {
@@ -396,12 +493,20 @@ public struct GroundMap
                     {
                         var h = lastMapPt.horizontalPosition - Vector2.Distance(lastMapPt.point, r.point);
                         map[i - 1] = new GroundMapPt(r.point, r.normal, r.normal.CWPerp(), h, r.distance, r.collider);
+                        if (!AnyPointsHitGround)
+                        {
+                            AnyPointsHitGround = true;
+                        }
                     }
                     else
                     {
                         var p = o - raycastLength * lastNormal;
                         var h = lastMapPt.horizontalPosition - Vector2.Distance(lastMapPt.point, p);
                         map[i - 1] = new GroundMapPt(p, lastNormal, lastMapPt.right, h, raycastLength, null);
+                        if (AllPointsHitGround)
+                        {
+                            AllPointsHitGround = false;
+                        }
                     }
                 }
             }

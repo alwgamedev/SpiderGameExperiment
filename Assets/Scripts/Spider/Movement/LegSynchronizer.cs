@@ -10,6 +10,7 @@ public class LegSynchronizer : MonoBehaviour
     [SerializeField] float speedCapMax;//at or above this speed, use full stepHeight
     [SerializeField] float baseStepHeightMultiplier;
     [SerializeField] float stepSmoothingRate;
+    [SerializeField] float freeHangSmoothingRate;
     [SerializeField] SynchronizedLeg[] synchronizedLegs;
 
     class LegTimer
@@ -76,6 +77,8 @@ public class LegSynchronizer : MonoBehaviour
 
     LegTimer[] timers;
 
+    bool freeHanging;
+
     public float bodyGroundSpeedSign;
     public float absoluteBodyGroundSpeed;
     public float preferredBodyPosGroundHeight;
@@ -84,8 +87,36 @@ public class LegSynchronizer : MonoBehaviour
     public float strideMultiplier = 1;
     public Vector2 driftWeight;
 
+    public bool FreeHanging
+    {
+        get => freeHanging;
+        set
+        {
+            if (value != freeHanging)
+            {
+                freeHanging = value;
+                if (freeHanging)
+                {
+                    for (int i = 0; i < synchronizedLegs.Length; i++)
+                    {
+                        synchronizedLegs[i].Leg.OnBeginFreeHang();
+                    }
+                }
+            }
+        }
+    }
+
     public void UpdateAllLegs(float dt, GroundMap map)
     {
+        if (freeHanging)
+        {
+            for (int i = 0; i < synchronizedLegs.Length; i++)
+            {
+                synchronizedLegs[i].Leg.UpdateFreeHang(dt, map, Vector2.down, freeHangSmoothingRate);
+            }
+            return;
+        }
+
         var facingRight = bodyRb.transform.localScale.x > 0;
         dt *= timeScale;
 
@@ -106,15 +137,15 @@ public class LegSynchronizer : MonoBehaviour
             {
                 l.UpdateStep(dt, map, facingRight,
                     baseStepHeightMultiplier, stepHeightSpeedMultiplier,
-                    stepSmoothingRate, t.StateProgress, 
-                    strideMultiplier == 1 ? t.StepTime : strideMultiplier * t.StepTime, 
+                    stepSmoothingRate, t.StateProgress,
+                    strideMultiplier == 1 ? t.StepTime : strideMultiplier * t.StepTime,
                     strideMultiplier == 1 ? t.RestTime : strideMultiplier * t.RestTime,
                     driftWeight);
             }
             else
             {
                 l.UpdateRest(dt, map, facingRight,
-                    stepSmoothingRate, t.StateProgress, 
+                    stepSmoothingRate, t.StateProgress,
                     strideMultiplier == 1 ? t.RestTime : strideMultiplier * t.RestTime,
                     driftWeight);
             }
