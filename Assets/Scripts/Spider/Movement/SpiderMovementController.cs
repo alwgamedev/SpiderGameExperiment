@@ -71,8 +71,6 @@ public class SpiderMovementController : MonoBehaviour
     [SerializeField] float strideMultiplierSmoothingRate;
 
     [Header("Free Hang")]
-    [SerializeField] float freeHangEntryThreshold;
-    [SerializeField] float weakFreeHangEntryThreshold;
     [SerializeField] float freeHangGroundedToleranceMultiplier;
     [SerializeField] float freeHangLegAngleMin;
     [SerializeField] float freeHangLegAngleSkew;
@@ -263,7 +261,8 @@ public class SpiderMovementController : MonoBehaviour
             legSynchronizer.strideMultiplier = 1;
         }
 
-        legSynchronizer.FreeHanging = grapple.FreeHanging && !groundMap.AnyPointsHitGround;
+        legSynchronizer.freeHanging = grapple.FreeHanging && !grounded && OrientedRight.y < -MathTools.sin30;
+        //^note: freeHang doesn't cancel until we become StronglyGrounded
 
         //if (grapple.FreeHanging)
         //{

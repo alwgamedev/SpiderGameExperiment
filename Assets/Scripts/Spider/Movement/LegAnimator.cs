@@ -8,6 +8,8 @@ public class LegAnimator : MonoBehaviour
     [SerializeField] float staticModeGroundDetectionRadius;
     [SerializeField] float stepMax;
     [SerializeField] float freeHangExtensionFraction;
+    [SerializeField] float freeHangRotationMin;//angle in degrees wrt frame (body.down, body.OrientedRight)
+    [SerializeField] float freeHangRotationMax;
 
     public Vector2 drift;
     
@@ -17,7 +19,8 @@ public class LegAnimator : MonoBehaviour
     Transform ikTarget;
     float ikChainLength;
 
-    Vector2 lastFreeHangPosition;
+    Vector2 freeHangDirectionMin;
+    Vector2 freeHangDirectionMax;
 
     float FreeHangLength => freeHangExtensionFraction * ikChainLength;//will cache once we're done playing with freeHangExtensionFraction
 
@@ -33,6 +36,9 @@ public class LegAnimator : MonoBehaviour
         {
             ikChainLength += lengths[i];
         }
+
+        freeHangDirectionMin = new(Mathf.Cos(Mathf.Deg2Rad * freeHangRotationMin), Mathf.Sin(Mathf.Deg2Rad * freeHangRotationMin));
+        freeHangDirectionMax = new(Mathf.Cos(Mathf.Deg2Rad * freeHangRotationMax), Mathf.Sin(Mathf.Deg2Rad * freeHangRotationMax));
     }
 
     public void InitializePosition(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, 
@@ -88,17 +94,27 @@ public class LegAnimator : MonoBehaviour
         ikTarget.position = Vector2.Lerp(ikTarget.position, newTargetPos, smoothingRate * dt);
     }
 
-    public void UpdateFreeHang(float dt, GroundMap map, Vector2 freeHangDirection, float smoothingRate)
+    public void UpdateFreeHang(float dt, GroundMap map, Vector2 freeHangDirection, Vector2 perturbation, Vector2 bodyDown, Vector2 bodyOrientedRight, float smoothingRate)
     {
+        var x = Vector2.Dot(freeHangDirection, bodyDown);
+        var y = Vector2.Dot(freeHangDirection, bodyOrientedRight);
+        if ((freeHangDirectionMin.y < 0 && y < 0 && x < freeHangDirectionMin.x) || (!(freeHangDirectionMin.y < 0) && (y < 0 || x > freeHangDirectionMin.x)))
+        {
+            freeHangDirection = freeHangDirectionMin.ApplyTransformation(bodyDown, bodyOrientedRight);
+        }
+        else if ((freeHangDirectionMax.y > 0 && y > 0 && x < freeHangDirectionMax.x) || (!(freeHangDirectionMax.y > 0) && (y > 0 || x > freeHangDirectionMax.x)))
+        {
+            freeHangDirection = freeHangDirectionMax.ApplyTransformation(bodyDown, bodyOrientedRight);
+        }
+
         map.CastToGround(hipBone.position, freeHangDirection, FreeHangLength, out var p);
-        lastFreeHangPosition = Vector2.Lerp(lastFreeHangPosition, p, smoothingRate * dt);
-        ikTarget.position = lastFreeHangPosition;
+        ikTarget.position = Vector2.Lerp(ikTarget.position, p + perturbation, smoothingRate * dt);
     }
 
-    public void OnBeginFreeHang()
-    {
-        lastFreeHangPosition = ikTarget.position;
-    }
+    //public void OnBeginFreeHang()
+    //{
+    //    lastFreeHangPosition = ikTarget.position;
+    //}
 
     public bool KeepTargetAboveGround(float dt, Vector2 bodyUp, 
         Vector2 bodyVelocity, float velocityOffsetRate, float velocityOffsetMax, 

@@ -1004,7 +1004,9 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   staticModeGroundDetectionRadius: 0.01
   stepMax: 0.9
-  freeHangExtensionFraction: 1
+  freeHangExtensionFraction: 0.95
+  freeHangRotationMin: 0
+  freeHangRotationMax: 90
   drift: {x: 0.4, y: 0.2}
 --- !u!1 &839944467269662652
 GameObject:
@@ -1382,7 +1384,9 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   staticModeGroundDetectionRadius: 0.01
   stepMax: 0.825
-  freeHangExtensionFraction: 1
+  freeHangExtensionFraction: 0.95
+  freeHangRotationMin: 0
+  freeHangRotationMax: 80
   drift: {x: 0.25, y: 0.1}
 --- !u!1 &1248638082500357407
 GameObject:
@@ -1891,7 +1895,9 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   staticModeGroundDetectionRadius: 0.01
   stepMax: -0.05
-  freeHangExtensionFraction: 1
+  freeHangExtensionFraction: 0.6
+  freeHangRotationMin: -55
+  freeHangRotationMax: -15
   drift: {x: 0, y: 0}
 --- !u!1 &1968367528358965401
 GameObject:
@@ -5053,7 +5059,9 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   staticModeGroundDetectionRadius: 0.01
   stepMax: -0.05
-  freeHangExtensionFraction: 1
+  freeHangExtensionFraction: 0.6
+  freeHangRotationMin: -55
+  freeHangRotationMax: -15
   drift: {x: 0, y: 0}
 --- !u!1 &2656875783498011584
 GameObject:
@@ -5549,7 +5557,9 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   staticModeGroundDetectionRadius: 0.01
   stepMax: 0.9
-  freeHangExtensionFraction: 1
+  freeHangExtensionFraction: 0.95
+  freeHangRotationMin: 0
+  freeHangRotationMax: 90
   drift: {x: 0.4, y: 0.2}
 --- !u!1 &3319515992144099393
 GameObject:
@@ -6817,7 +6827,9 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   staticModeGroundDetectionRadius: 0.01
   stepMax: -0.2
-  freeHangExtensionFraction: 1
+  freeHangExtensionFraction: 0.5
+  freeHangRotationMin: -60
+  freeHangRotationMax: -20
   drift: {x: -0.1, y: 0.2}
 --- !u!1 &5247813140874977512
 GameObject:
@@ -7198,7 +7210,9 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   staticModeGroundDetectionRadius: 0.01
   stepMax: -0.2
-  freeHangExtensionFraction: 1
+  freeHangExtensionFraction: 0.5
+  freeHangRotationMin: -60
+  freeHangRotationMax: -20
   drift: {x: -0.1, y: 0.2}
 --- !u!1 &6016693261962413811
 GameObject:
@@ -8423,7 +8437,9 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   staticModeGroundDetectionRadius: 0.01
   stepMax: 0.825
-  freeHangExtensionFraction: 1
+  freeHangExtensionFraction: 0.95
+  freeHangRotationMin: 0
+  freeHangRotationMax: 80
   drift: {x: 0.25, y: 0.1}
 --- !u!1 &6858911009439342665
 GameObject:
@@ -9413,7 +9429,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   groundedExitToleranceFactor: 1.25
-  groundedEntryToleranceFactor: 1.05
+  groundedEntryToleranceFactor: 0.95
   groundDirectionSampleWidth: 0.35
   backupGroundPtRaycastLengthFactor: 1.1
   groundPtSlipRate: 0.5
@@ -9437,9 +9453,9 @@ MonoBehaviour:
   maxSpeedAirborne: 8
   preferredRideHeight: 0.92
   heightSpringForce: 400
-  heightSpringDamping: 28
+  heightSpringDamping: 24
   heightSpringBreakThreshold: 0.1
-  grappleSquatReduction: 0.6
+  grappleSquatReduction: 0.25
   heightSampleWidth: 0.8
   abdomenRotationSpeed: 6
   headRotationSpeed: 12
@@ -9464,8 +9480,6 @@ MonoBehaviour:
   airborneLegAnimationTimeScale: 0.05
   airborneStrideMultiplier: 1.5
   strideMultiplierSmoothingRate: 0.25
-  freeHangEntryThreshold: 30
-  weakFreeHangEntryThreshold: 15
   freeHangGroundedToleranceMultiplier: 1
   freeHangLegAngleMin: 1.047198
   freeHangLegAngleSkew: 0.1308997
@@ -9503,7 +9517,11 @@ MonoBehaviour:
   speedCapMax: 3
   baseStepHeightMultiplier: 0.925
   stepSmoothingRate: 25
-  freeHangSmoothingRate: 15
+  freeHangSmoothingRate: 1
+  freeHangPerturbMin: {x: 0, y: -0.05}
+  freeHangPerturbMax: {x: 0.1, y: 0.25}
+  freeHangPerturbationSmoothingRate: 8
+  freeHangingTimeScale: 1
   synchronizedLegs:
   - leg: {fileID: 3287121947862078546}
     timeOffset: 0
@@ -9521,6 +9539,7 @@ MonoBehaviour:
     timeOffset: 0.4
   - leg: {fileID: 5076699777365114807}
     timeOffset: 0.6
+  freeHanging: 0
   bodyGroundSpeedSign: 0
   absoluteBodyGroundSpeed: 0
   preferredBodyPosGroundHeight: 0.400751

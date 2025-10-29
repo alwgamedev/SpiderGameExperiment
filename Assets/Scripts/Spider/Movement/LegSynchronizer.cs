@@ -1,5 +1,6 @@
-using System.Linq;
 using UnityEngine;
+using System.Linq;
+using System;
 
 public class LegSynchronizer : MonoBehaviour
 {
@@ -11,6 +12,11 @@ public class LegSynchronizer : MonoBehaviour
     [SerializeField] float baseStepHeightMultiplier;
     [SerializeField] float stepSmoothingRate;
     [SerializeField] float freeHangSmoothingRate;
+    [SerializeField] Vector2 freeHangPerturbMin;
+    [SerializeField] Vector2 freeHangPerturbMax;
+    [SerializeField] float freeHangPerturbationSmoothingRate;
+    [SerializeField] float freeHangingTimeScale;
+    //[SerializeField] float freeHangPerturbSmoothingRate;
     [SerializeField] SynchronizedLeg[] synchronizedLegs;
 
     class LegTimer
@@ -21,18 +27,22 @@ public class LegSynchronizer : MonoBehaviour
         bool stepping;
         float timer;
         float goalTime;
+        Vector2 freeHangPerturbation;
+        Vector2 goalFreeHangPerturbation;
 
         public bool Stepping => stepping;
         public float Timer => timer;
         public float StepTime => stepTime;
         public float RestTime => restTime;
         public float StateProgress => stepping ? Timer / StepTime : Timer / RestTime;
+        public Vector2 FreeHangPerturbation => freeHangPerturbation;
 
-        public LegTimer(float offset, float stepTime, float restTime)
+        public LegTimer(float offset, float stepTime, float restTime, Vector2 freeHangPerturbation)
         {
             this.stepTime = stepTime;
             this.restTime = restTime;
             timer = offset;
+            this.freeHangPerturbation = freeHangPerturbation;
 
             var cycleTime = stepTime + restTime;
             while (timer < 0)
@@ -73,12 +83,32 @@ public class LegSynchronizer : MonoBehaviour
                 timer += goalTime;
             }
         }
+
+        public void UpdateFreeHanging(float dt, Func<Vector2> getRandomFreeHangPerturbation, float freeHangPerturbationSmoothingRate)
+        {
+            timer += dt;
+            while (timer > goalTime)
+            {
+                timer -= goalTime;
+                stepping = !stepping;
+                goalTime = stepping ? stepTime : restTime;
+                goalFreeHangPerturbation = getRandomFreeHangPerturbation();
+            }
+            while (timer < 0)
+            {
+                stepping = !stepping;
+                goalTime = stepping ? stepTime : restTime;
+                timer += goalTime;
+                goalFreeHangPerturbation = getRandomFreeHangPerturbation();
+            }
+
+            freeHangPerturbation = Vector2.Lerp(FreeHangPerturbation, goalFreeHangPerturbation, freeHangPerturbationSmoothingRate * dt);
+        }
     }
 
     LegTimer[] timers;
 
-    bool freeHanging;
-
+    public bool freeHanging;
     public float bodyGroundSpeedSign;
     public float absoluteBodyGroundSpeed;
     public float preferredBodyPosGroundHeight;
@@ -87,44 +117,34 @@ public class LegSynchronizer : MonoBehaviour
     public float strideMultiplier = 1;
     public Vector2 driftWeight;
 
-    public bool FreeHanging
-    {
-        get => freeHanging;
-        set
-        {
-            if (value != freeHanging)
-            {
-                freeHanging = value;
-                if (freeHanging)
-                {
-                    for (int i = 0; i < synchronizedLegs.Length; i++)
-                    {
-                        synchronizedLegs[i].Leg.OnBeginFreeHang();
-                    }
-                }
-            }
-        }
-    }
-
     public void UpdateAllLegs(float dt, GroundMap map)
     {
+        var facingRight = bodyRb.transform.localScale.x > 0; 
+        var sf = absoluteBodyGroundSpeed < speedCapMin ? 0 : absoluteBodyGroundSpeed / speedCapMax;
+        //dt *= timeScale;
+
+
         if (freeHanging)
         {
+            var d = -bodyRb.transform.up;
+            var r = facingRight ? bodyRb.transform.right : -bodyRb.transform.right;
+            var sDt = freeHangingTimeScale * (sf < 1 ? sf * dt : dt);//Min(sf * dt, dt)
+            var sDt1 = sf < 1 ? dt : sf * dt;//Max(sf * dt, dt)
+
             for (int i = 0; i < synchronizedLegs.Length; i++)
             {
-                synchronizedLegs[i].Leg.UpdateFreeHang(dt, map, Vector2.down, freeHangSmoothingRate);
+                var t = timers[i];
+                t.UpdateFreeHanging(sDt, RandomFreeHangPerturbation, freeHangPerturbationSmoothingRate);
+                synchronizedLegs[i].Leg.UpdateFreeHang(sDt1, map, Vector2.down, t.FreeHangPerturbation.ApplyTransformation(d, r), d, r, freeHangSmoothingRate);
             }
             return;
         }
 
-        var facingRight = bodyRb.transform.localScale.x > 0;
         dt *= timeScale;
-
-        var sf = absoluteBodyGroundSpeed < speedCapMin ? 0 : absoluteBodyGroundSpeed / speedCapMax;
-        var baseStepHeightMultiplier = this.baseStepHeightMultiplier * stepHeightFraction;
-        var stepHeightSpeedMultiplier = Mathf.Min(sf, 1);
         var speedScaledDt = sf * dt;
-        dt = Mathf.Max(speedScaledDt, dt);
+        dt = sf < 1 ? dt : speedScaledDt;
+        var stepHeightSpeedMultiplier = Mathf.Min(sf, 1);
+        var baseStepHeightMultiplier = this.baseStepHeightMultiplier * stepHeightFraction;
 
         for (int i = 0; i < timers.Length; i++)
         {
@@ -152,6 +172,14 @@ public class LegSynchronizer : MonoBehaviour
         }
     }
 
+    //public void CacheFreeHangPositions()
+    //{
+    //    for (int i = 0; i < synchronizedLegs.Length; i++)
+    //    {
+    //        synchronizedLegs[i].Leg.OnBeginFreeHang();
+    //    }
+    //}
+
     public void Initialize(float bodyPosGroundHeight, bool bodyFacingRight)
     {
         InitializeTimers();
@@ -159,10 +187,15 @@ public class LegSynchronizer : MonoBehaviour
         InitializeLegPositions(bodyFacingRight);
     }
 
+    public Vector2 RandomFreeHangPerturbation()
+    {
+        return new Vector2(MathTools.RandomFloat(freeHangPerturbMin.x, freeHangPerturbMax.x), MathTools.RandomFloat(freeHangPerturbMin.y, freeHangPerturbMax.y));
+    }
+
     private void InitializeTimers()
     {
         float randomOffset = MathTools.RandomFloat(0, stepTime + restTime);
-        timers = synchronizedLegs.Select(l => new LegTimer(l.TimeOffset + randomOffset, stepTime, restTime)).ToArray();
+        timers = synchronizedLegs.Select(l => new LegTimer(l.TimeOffset + randomOffset, stepTime, restTime, RandomFreeHangPerturbation())).ToArray();
     }
 
     private void InitializeLegPositions(bool bodyFacingRight)
