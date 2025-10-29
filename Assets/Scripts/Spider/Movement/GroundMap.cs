@@ -6,7 +6,6 @@ public struct GroundMap
 {
     public int numFwdIntervals;
     public float intervalWidth;
-    //public LayerMask raycastLayerMask;
 
     Color RaycastColor0 => Color.clear;//Color.red;
     Color RaycastColor1 => Color.clear;//Color.blue;
@@ -185,51 +184,56 @@ public struct GroundMap
         return PointFromCenterByPosition(x, out normal);
     }
 
-    public bool CastToGround(Vector2 origin, Vector2 direction, float distance, out Vector2 hitPt)
-    {
-        //idea: casting ray is the diagonal of a box. since ground map points are closely spaced and box is big, we can assume that a cast hit occurs between two points inside the box.
-        //iterate through groundMap and find the first pair of points that are inside the rectangle and on opposite sides of the diagonal.
-        //A) yes, this is much faster than intersecting the groundMap line segments with the casting line; we don't compute any intersections until we the very end
-        //B) if the cast hits the ground in multiple places, this detects the one that is furthest left along the ground map, not the first hit along the casting line
-        //^we could continue iterating and find the real first hit, but this is a waste considering multiple hits will rarely happen for us
-        var endPt = origin + distance * direction;
-        var p0 = new Vector2(Mathf.Min(origin.x, endPt.x), Mathf.Min(origin.y, endPt.y));//lower left corner of box
-        var p1 = new Vector2(Mathf.Max(origin.x, endPt.x), Mathf.Min(origin.y, endPt.y));//upper right corner of box
+    //public bool CastToGround(Vector2 origin, Vector2 direction, float distance, out Vector2 hitPt)
+    //{
+    //    //idea: casting ray is the diagonal of a box. since ground map points are closely spaced and box is big, we can assume that a cast hit occurs between two points inside the box.
+    //    //iterate through groundMap and find the first pair of points that are inside the rectangle and on opposite sides of the diagonal.
+    //    //A) yes, this is much faster than intersecting the groundMap line segments with the casting line; we don't compute any intersections until we the very end
+    //    //B) if the cast hits the ground in multiple places, this detects the one that is furthest left along the ground map, not the first hit along the casting line
+    //    //^we could continue iterating and find the real first hit, but this is a waste considering multiple hits will rarely happen for us
+    //    var endPt = origin + distance * direction;
+    //    var p0 = new Vector2(Mathf.Min(origin.x, endPt.x), Mathf.Min(origin.y, endPt.y));//lower left corner of box
+    //    var p1 = new Vector2(Mathf.Max(origin.x, endPt.x), Mathf.Max(origin.y, endPt.y));//upper right corner of box
 
-        bool IsInBox(Vector2 p)
-        {
-            return !(p.x < p0.x) && !(p.y < p0.y) && !(p.x > p1.x) && !(p.y > p1.y);
-        }
+    //    bool IsInBox(Vector2 p)
+    //    {
+    //        return !(p.x < p0.x) && !(p.y < p0.y) && !(p.x > p1.x) && !(p.y > p1.y);
+    //    }
 
-        bool OnRightSideOfBox(Vector2 p)
-        {
-            return Vector2.Dot(p - origin, direction) > 0;
-        }
+    //    //bool OnRightSideOfBox(Vector2 p)
+    //    //{
+    //    //    return Vector2.Dot(p - origin, direction) > 0;
+    //    //}
 
-        bool lastInBox = IsInBox(map[0].point);
-        bool lastSide = OnRightSideOfBox(map[0].point);
-        bool tempLastInBox = lastInBox;
-        bool tempLastSide = lastSide;
+    //    //bool lastInBox = IsInBox(map[0].point);
+    //    //bool lastSide = OnRightSideOfBox(map[0].point);
+    //    //bool tempLastInBox = lastInBox;
+    //    //bool tempLastSide = lastSide;
 
-        for (int i = 1; i < map.Length; i++)
-        {
-            tempLastInBox = IsInBox(map[i].point);
-            tempLastSide = OnRightSideOfBox(map[i].point);
-            if (lastInBox && tempLastInBox && lastSide != tempLastSide)
-            {
-                if (MathTools.TryIntersectLine(map[i].point, map[i + 1].point - map[i].point, origin, direction, out hitPt))
-                {
-                    return true;
-                }
-            }
+    //    for (int i = 1; i < map.Length; i++)
+    //    {
+    //        if (MathTools.TryIntersectLine(map[i - 1].point, map[i].point - map[i - 1].point, origin, direction, out hitPt) && IsInBox(hitPt))
+    //        {
+    //            return true;
+    //        }
+    //        //tempLastInBox = IsInBox(map[i].point);
+    //        //tempLastSide = OnRightSideOfBox(map[i].point);
+    //        //if (lastInBox && tempLastInBox && lastSide != tempLastSide)
+    //        //{
+    //        //    if (MathTools.TryIntersectLine(map[i - 1].point, map[i].point - map[i - 1].point, origin, direction, out hitPt))
+    //        //    { 
+    //        //        Debug.Log("cast actually worked.");
+    //        //        return true;
+    //        //    }
+    //        //}
 
-            lastInBox = tempLastInBox;
-            lastSide = tempLastSide;
-        }
+    //        //lastInBox = tempLastInBox;
+    //        //lastSide = tempLastSide;
+    //    }
 
-        hitPt = endPt;
-        return false;
-    }
+    //    hitPt = endPt;
+    //    return false;
+    //}
 
     public Vector2 PointFromCenterByPosition(float x, out Vector2 normal)
     {

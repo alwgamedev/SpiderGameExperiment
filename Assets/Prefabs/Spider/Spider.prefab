@@ -1004,10 +1004,7 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   staticModeGroundDetectionRadius: 0.01
   stepMax: 0.9
-  freeHangExtensionFraction: 0.95
-  freeHangRotationMin: 0
-  freeHangRotationMax: 90
-  drift: {x: 0.4, y: 0.2}
+  drift: {x: 0.1, y: -0.2}
 --- !u!1 &839944467269662652
 GameObject:
   m_ObjectHideFlags: 0
@@ -1384,10 +1381,7 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   staticModeGroundDetectionRadius: 0.01
   stepMax: 0.825
-  freeHangExtensionFraction: 0.95
-  freeHangRotationMin: 0
-  freeHangRotationMax: 80
-  drift: {x: 0.25, y: 0.1}
+  drift: {x: 0.1, y: -0.1}
 --- !u!1 &1248638082500357407
 GameObject:
   m_ObjectHideFlags: 0
@@ -1895,9 +1889,6 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   staticModeGroundDetectionRadius: 0.01
   stepMax: -0.05
-  freeHangExtensionFraction: 0.6
-  freeHangRotationMin: -55
-  freeHangRotationMax: -15
   drift: {x: 0, y: 0}
 --- !u!1 &1968367528358965401
 GameObject:
@@ -5059,9 +5050,6 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   staticModeGroundDetectionRadius: 0.01
   stepMax: -0.05
-  freeHangExtensionFraction: 0.6
-  freeHangRotationMin: -55
-  freeHangRotationMax: -15
   drift: {x: 0, y: 0}
 --- !u!1 &2656875783498011584
 GameObject:
@@ -5557,10 +5545,7 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   staticModeGroundDetectionRadius: 0.01
   stepMax: 0.9
-  freeHangExtensionFraction: 0.95
-  freeHangRotationMin: 0
-  freeHangRotationMax: 90
-  drift: {x: 0.4, y: 0.2}
+  drift: {x: 0.1, y: -0.2}
 --- !u!1 &3319515992144099393
 GameObject:
   m_ObjectHideFlags: 0
@@ -6827,9 +6812,6 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   staticModeGroundDetectionRadius: 0.01
   stepMax: -0.2
-  freeHangExtensionFraction: 0.5
-  freeHangRotationMin: -60
-  freeHangRotationMax: -20
   drift: {x: -0.1, y: 0.2}
 --- !u!1 &5247813140874977512
 GameObject:
@@ -7210,9 +7192,6 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   staticModeGroundDetectionRadius: 0.01
   stepMax: -0.2
-  freeHangExtensionFraction: 0.5
-  freeHangRotationMin: -60
-  freeHangRotationMax: -20
   drift: {x: -0.1, y: 0.2}
 --- !u!1 &6016693261962413811
 GameObject:
@@ -8437,10 +8416,7 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   staticModeGroundDetectionRadius: 0.01
   stepMax: 0.825
-  freeHangExtensionFraction: 0.95
-  freeHangRotationMin: 0
-  freeHangRotationMax: 80
-  drift: {x: 0.25, y: 0.1}
+  drift: {x: 0.1, y: -0.1}
 --- !u!1 &6858911009439342665
 GameObject:
   m_ObjectHideFlags: 0
@@ -9428,7 +9404,7 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  groundedExitToleranceFactor: 1.25
+  groundedExitToleranceFactor: 1.35
   groundedEntryToleranceFactor: 0.95
   groundDirectionSampleWidth: 0.35
   backupGroundPtRaycastLengthFactor: 1.1
@@ -9517,11 +9493,8 @@ MonoBehaviour:
   speedCapMax: 3
   baseStepHeightMultiplier: 0.925
   stepSmoothingRate: 25
-  freeHangSmoothingRate: 1
-  freeHangPerturbMin: {x: 0, y: -0.05}
-  freeHangPerturbMax: {x: 0.1, y: 0.25}
-  freeHangPerturbationSmoothingRate: 8
-  freeHangingTimeScale: 1
+  freeHangSmoothingRate: 350
+  freeHangStepHeightMultiplier: 0.35
   synchronizedLegs:
   - leg: {fileID: 3287121947862078546}
     timeOffset: 0
@@ -9539,7 +9512,6 @@ MonoBehaviour:
     timeOffset: 0.4
   - leg: {fileID: 5076699777365114807}
     timeOffset: 0.6
-  freeHanging: 0
   bodyGroundSpeedSign: 0
   absoluteBodyGroundSpeed: 0
   preferredBodyPosGroundHeight: 0.400751

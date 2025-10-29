@@ -108,8 +108,6 @@ public class SpiderMovementController : MonoBehaviour
     int orientation = 1;
 
     bool grounded;
-    //bool allGroundMapPtsHitGround => groundMap.AllPointsHitGround;
-    //bool anyGroundMapPtsHitGround => groundMap.AnyPointsHitGround;
     float groundednessTolerance;
     Vector2 groundDirection = Vector2.right;
     Vector2 upcomingGroundDirection = Vector2.right;
@@ -261,21 +259,20 @@ public class SpiderMovementController : MonoBehaviour
             legSynchronizer.strideMultiplier = 1;
         }
 
-        legSynchronizer.freeHanging = grapple.FreeHanging && !grounded && OrientedRight.y < -MathTools.sin30;
+        legSynchronizer.FreeHanging = grapple.FreeHanging && !grounded;
         //^note: freeHang doesn't cancel until we become StronglyGrounded
 
-        //if (grapple.FreeHanging)
-        //{
-        //    var r = OrientedRight;
-        //    var dX = r.y < 0 ? (transform.right.x > 0 ? -r.y : 1) : 0;
-        //    //2do: maybe we can do something with y to get legs swinging (or try a completely different system...)
-        //    legSynchronizer.driftWeight = new(dX, dX);
-        //    legSynchronizer.stepHeightFraction *= 1 - dX;
-        //}
-        //else if (legSynchronizer.driftWeight != Vector2.zero)
-        //{
-        //    legSynchronizer.driftWeight = Vector2.zero;
-        //}
+        if (legSynchronizer.FreeHanging)
+        {
+            var r = OrientedRight;
+            var dX = r.y < 0 ? (transform.right.x > 0 ? -r.y : 1) : 0;
+            legSynchronizer.driftWeight = new(dX, dX);
+            legSynchronizer.stepHeightFraction *= 1 - dX;
+        }
+        else if (legSynchronizer.driftWeight != Vector2.zero)
+        {
+            legSynchronizer.driftWeight = Vector2.zero;
+        }
     }
 
     private float AirborneStrideMultiplier()
@@ -462,12 +459,28 @@ public class SpiderMovementController : MonoBehaviour
         }
         else
         {
-            Vector2 o = grapple.FreeHangLeveragePoint;
-            var s = transform.localScale;
-            transform.localScale = new Vector3(-s.x, s.y, s.z);
-            var n = grapple.FreeHanging ? grapple.LastCarryForceDirection.CWPerp() : Vector2.right;//normal to the hyperplane we're reflecting over
-            transform.up = MathTools.ReflectAcrossHyperplane((Vector2)transform.up, n);
-            transform.position += (Vector3)(o - grapple.FreeHangLeveragePoint);
+            if (legSynchronizer.FreeHanging)
+            {
+                Vector2 o = grapple.FreeHangLeveragePoint;
+                var p = transform.position;
+                var s = transform.localScale;
+                transform.localScale = new Vector3(-s.x, s.y, s.z);
+                var tRight = transform.right;
+                var n = grapple.FreeHanging ? grapple.LastCarryForceDirection.CWPerp() : Vector2.right;//normal to the hyperplane we're reflecting over
+                transform.up = MathTools.ReflectAcrossHyperplane(transform.up, (Vector3)n);
+                var d = (Vector3)(o - grapple.FreeHangLeveragePoint);
+                transform.position += d;
+                legSynchronizer.OnBodyChangedDirectionFreeHanging(p, transform.position, tRight, n);
+            }
+            else
+            {
+                Vector2 o = grapple.FreeHangLeveragePoint;
+                var s = transform.localScale;
+                transform.localScale = new Vector3(-s.x, s.y, s.z);
+                var n = grapple.FreeHanging ? grapple.LastCarryForceDirection.CWPerp() : Vector2.right;//normal to the hyperplane we're reflecting over
+                transform.up = MathTools.ReflectAcrossHyperplane(transform.up, (Vector3)n);
+                transform.position += (Vector3)(o - grapple.FreeHangLeveragePoint);
+            }
         }
 
         orientation = FacingRight ? 1 : -1;
@@ -791,8 +804,6 @@ public class SpiderMovementController : MonoBehaviour
                 freeHangGroundedToleranceMultiplier * groundednessTolerance,
                 groundMap.CentralIndex, 
                 groundLayer);
-            //allGroundMapPtsHitGround = groundMap.AllHitGround();
-            //anyGroundMapPtsHitGround = groundMap.AnyHitGround();
         }
         else
         {
@@ -802,8 +813,6 @@ public class SpiderMovementController : MonoBehaviour
                 groundednessTolerance,
                 groundMap.CentralIndex,
                 groundLayer);
-            //allGroundMapPtsHitGround = groundMap.AllHitGround();
-            //anyGroundMapPtsHitGround = groundMap.AnyHitGround();
         }
     }
 

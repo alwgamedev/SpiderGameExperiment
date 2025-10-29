@@ -120,7 +120,7 @@ public static class MathTools
     //when v1, v2 are unit vectors, this equals the sine of the angle from v1 to v2 (being dot(v1, v2.CWPerp()) = cos(theta-90))
     public static float Cross2D(Vector2 v1, Vector2 v2)
     {
-        return - v1.y * v2.x + v1.x * v2.y;
+        return -v1.y * v2.x + v1.x * v2.y;
     }
 
     /// <summary>
@@ -151,18 +151,18 @@ public static class MathTools
         return new Quaternion(0, 0, Mathf.Sqrt(0.5f * (1 - u.x)), u.y < 0 ? -Mathf.Sqrt(0.5f * (1 + u.x)) : Mathf.Sqrt(0.5f * (1 + u.x)));
     }
 
-    public static Quaternion InverseOfUnitQuaternion(this Quaternion q)
-    {
-        return new(-q.x, -q.y, -q.z, q.w);
-    }
+    //public static Quaternion InverseOfUnitQuaternion(this Quaternion q)
+    //{
+    //    return new(-q.x, -q.y, -q.z, q.w);
+    //}
 
-    public static Quaternion InverseOf2DUnitQuaternion(this Quaternion q)
-    {
-        return new(0, 0, -q.z, q.w);
-    }
+    //public static Quaternion InverseOf2DUnitQuaternion(this Quaternion q)
+    //{
+    //    return new(0, 0, -q.z, q.w);
+    //}
 
     /// <summary>
-    /// as angle from u1 to u2 varies over (-pi,pi], output varies smoothly from -1 to 1 (specifically output is sin(theta/2), where theta is the correct angle; ~5-10x faster than arctan)
+    /// as angle from u1 to u2 varies over (-pi,pi], output varies smoothly from -1 to 1 (specifically output is sin(theta/2), where theta is the correct angle; fast alternative to arctan)
     /// </summary>
     public static float PseudoAngle(Vector2 u1, Vector2 u2)
     {

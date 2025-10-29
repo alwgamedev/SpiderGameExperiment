@@ -12,11 +12,7 @@ public class LegSynchronizer : MonoBehaviour
     [SerializeField] float baseStepHeightMultiplier;
     [SerializeField] float stepSmoothingRate;
     [SerializeField] float freeHangSmoothingRate;
-    [SerializeField] Vector2 freeHangPerturbMin;
-    [SerializeField] Vector2 freeHangPerturbMax;
-    [SerializeField] float freeHangPerturbationSmoothingRate;
-    [SerializeField] float freeHangingTimeScale;
-    //[SerializeField] float freeHangPerturbSmoothingRate;
+    [SerializeField] float freeHangStepHeightMultiplier;
     [SerializeField] SynchronizedLeg[] synchronizedLegs;
 
     class LegTimer
@@ -27,22 +23,18 @@ public class LegSynchronizer : MonoBehaviour
         bool stepping;
         float timer;
         float goalTime;
-        Vector2 freeHangPerturbation;
-        Vector2 goalFreeHangPerturbation;
 
         public bool Stepping => stepping;
         public float Timer => timer;
         public float StepTime => stepTime;
         public float RestTime => restTime;
         public float StateProgress => stepping ? Timer / StepTime : Timer / RestTime;
-        public Vector2 FreeHangPerturbation => freeHangPerturbation;
 
-        public LegTimer(float offset, float stepTime, float restTime, Vector2 freeHangPerturbation)
+        public LegTimer(float offset, float stepTime, float restTime)
         {
             this.stepTime = stepTime;
             this.restTime = restTime;
             timer = offset;
-            this.freeHangPerturbation = freeHangPerturbation;
 
             var cycleTime = stepTime + restTime;
             while (timer < 0)
@@ -83,32 +75,11 @@ public class LegSynchronizer : MonoBehaviour
                 timer += goalTime;
             }
         }
-
-        public void UpdateFreeHanging(float dt, Func<Vector2> getRandomFreeHangPerturbation, float freeHangPerturbationSmoothingRate)
-        {
-            timer += dt;
-            while (timer > goalTime)
-            {
-                timer -= goalTime;
-                stepping = !stepping;
-                goalTime = stepping ? stepTime : restTime;
-                goalFreeHangPerturbation = getRandomFreeHangPerturbation();
-            }
-            while (timer < 0)
-            {
-                stepping = !stepping;
-                goalTime = stepping ? stepTime : restTime;
-                timer += goalTime;
-                goalFreeHangPerturbation = getRandomFreeHangPerturbation();
-            }
-
-            freeHangPerturbation = Vector2.Lerp(FreeHangPerturbation, goalFreeHangPerturbation, freeHangPerturbationSmoothingRate * dt);
-        }
     }
 
     LegTimer[] timers;
+    bool freeHanging;
 
-    public bool freeHanging;
     public float bodyGroundSpeedSign;
     public float absoluteBodyGroundSpeed;
     public float preferredBodyPosGroundHeight;
@@ -117,34 +88,34 @@ public class LegSynchronizer : MonoBehaviour
     public float strideMultiplier = 1;
     public Vector2 driftWeight;
 
+    public bool FreeHanging
+    {
+        get => freeHanging;
+        set
+        {
+            if (value != freeHanging)
+            {
+                freeHanging = value;
+                if (freeHanging)
+                {
+                    CacheFreeHangPositions();
+                }
+            }
+        }
+    }
+
+    float SmoothingRate => FreeHanging ? freeHangSmoothingRate : stepSmoothingRate;
+
     public void UpdateAllLegs(float dt, GroundMap map)
     {
         var facingRight = bodyRb.transform.localScale.x > 0; 
         var sf = absoluteBodyGroundSpeed < speedCapMin ? 0 : absoluteBodyGroundSpeed / speedCapMax;
-        //dt *= timeScale;
-
-
-        if (freeHanging)
-        {
-            var d = -bodyRb.transform.up;
-            var r = facingRight ? bodyRb.transform.right : -bodyRb.transform.right;
-            var sDt = freeHangingTimeScale * (sf < 1 ? sf * dt : dt);//Min(sf * dt, dt)
-            var sDt1 = sf < 1 ? dt : sf * dt;//Max(sf * dt, dt)
-
-            for (int i = 0; i < synchronizedLegs.Length; i++)
-            {
-                var t = timers[i];
-                t.UpdateFreeHanging(sDt, RandomFreeHangPerturbation, freeHangPerturbationSmoothingRate);
-                synchronizedLegs[i].Leg.UpdateFreeHang(sDt1, map, Vector2.down, t.FreeHangPerturbation.ApplyTransformation(d, r), d, r, freeHangSmoothingRate);
-            }
-            return;
-        }
 
         dt *= timeScale;
         var speedScaledDt = sf * dt;
         dt = sf < 1 ? dt : speedScaledDt;
         var stepHeightSpeedMultiplier = Mathf.Min(sf, 1);
-        var baseStepHeightMultiplier = this.baseStepHeightMultiplier * stepHeightFraction;
+        var baseStepHeightMultiplier = (FreeHanging ? freeHangStepHeightMultiplier : this.baseStepHeightMultiplier) * stepHeightFraction;
 
         for (int i = 0; i < timers.Length; i++)
         {
@@ -155,30 +126,22 @@ public class LegSynchronizer : MonoBehaviour
 
             if (t.Stepping)
             {
-                l.UpdateStep(dt, map, facingRight,
+                l.UpdateStep(dt, map, facingRight, FreeHanging,
                     baseStepHeightMultiplier, stepHeightSpeedMultiplier,
-                    stepSmoothingRate, t.StateProgress,
+                    SmoothingRate, t.StateProgress,
                     strideMultiplier == 1 ? t.StepTime : strideMultiplier * t.StepTime,
                     strideMultiplier == 1 ? t.RestTime : strideMultiplier * t.RestTime,
                     driftWeight);
             }
             else
             {
-                l.UpdateRest(dt, map, facingRight,
-                    stepSmoothingRate, t.StateProgress,
+                l.UpdateRest(dt, map, facingRight, FreeHanging,
+                    SmoothingRate, t.StateProgress,
                     strideMultiplier == 1 ? t.RestTime : strideMultiplier * t.RestTime,
                     driftWeight);
             }
         }
     }
-
-    //public void CacheFreeHangPositions()
-    //{
-    //    for (int i = 0; i < synchronizedLegs.Length; i++)
-    //    {
-    //        synchronizedLegs[i].Leg.OnBeginFreeHang();
-    //    }
-    //}
 
     public void Initialize(float bodyPosGroundHeight, bool bodyFacingRight)
     {
@@ -187,15 +150,26 @@ public class LegSynchronizer : MonoBehaviour
         InitializeLegPositions(bodyFacingRight);
     }
 
-    public Vector2 RandomFreeHangPerturbation()
+    private void CacheFreeHangPositions()
     {
-        return new Vector2(MathTools.RandomFloat(freeHangPerturbMin.x, freeHangPerturbMax.x), MathTools.RandomFloat(freeHangPerturbMin.y, freeHangPerturbMax.y));
+        for (int i = 0; i < synchronizedLegs.Length; i++)
+        {
+            synchronizedLegs[i].Leg.CacheFreeHangPosition();
+        }
+    }
+
+    public void OnBodyChangedDirectionFreeHanging(Vector2 position0, Vector2 position1, Vector2 tRight, Vector2 flipNormal)
+    {
+        for (int i = 0; i < synchronizedLegs.Length; i++)
+        {
+            synchronizedLegs[i].Leg.OnBodyChangedDirectionFreeHanging(position0, position1, tRight, flipNormal);
+        }
     }
 
     private void InitializeTimers()
     {
         float randomOffset = MathTools.RandomFloat(0, stepTime + restTime);
-        timers = synchronizedLegs.Select(l => new LegTimer(l.TimeOffset + randomOffset, stepTime, restTime, RandomFreeHangPerturbation())).ToArray();
+        timers = synchronizedLegs.Select(l => new LegTimer(l.TimeOffset + randomOffset, stepTime, restTime/*, RandomFreeHangPerturbation()*/)).ToArray();
     }
 
     private void InitializeLegPositions(bool bodyFacingRight)
