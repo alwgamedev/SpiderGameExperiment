@@ -13,6 +13,7 @@ public class LegSynchronizer : MonoBehaviour
     [SerializeField] float stepSmoothingRate;
     [SerializeField] float freeHangSmoothingRate;
     [SerializeField] float freeHangStepHeightMultiplier;
+    [SerializeField] float driftWeightSmoothingRate;
     [SerializeField] SynchronizedLeg[] synchronizedLegs;
 
     class LegTimer
@@ -79,6 +80,7 @@ public class LegSynchronizer : MonoBehaviour
 
     LegTimer[] timers;
     bool freeHanging;
+    Vector2 driftWeight;
 
     public float bodyGroundSpeedSign;
     public float absoluteBodyGroundSpeed;
@@ -86,7 +88,15 @@ public class LegSynchronizer : MonoBehaviour
     public float timeScale = 1;
     public float stepHeightFraction;
     public float strideMultiplier = 1;
-    public Vector2 driftWeight;
+    
+    public Vector2 DriftWeight
+    {
+        get => driftWeight;
+        set
+        {
+            driftWeight = FreeHanging ? Vector2.Lerp(driftWeight, value, driftWeightSmoothingRate * Time.deltaTime) : value;
+        }
+    }
 
     public bool FreeHanging
     {
@@ -131,14 +141,14 @@ public class LegSynchronizer : MonoBehaviour
                     SmoothingRate, t.StateProgress,
                     strideMultiplier == 1 ? t.StepTime : strideMultiplier * t.StepTime,
                     strideMultiplier == 1 ? t.RestTime : strideMultiplier * t.RestTime,
-                    driftWeight);
+                    DriftWeight);
             }
             else
             {
                 l.UpdateRest(dt, map, facingRight, FreeHanging,
                     SmoothingRate, t.StateProgress,
                     strideMultiplier == 1 ? t.RestTime : strideMultiplier * t.RestTime,
-                    driftWeight);
+                    DriftWeight);
             }
         }
     }
@@ -158,11 +168,11 @@ public class LegSynchronizer : MonoBehaviour
         }
     }
 
-    public void OnBodyChangedDirectionFreeHanging(Vector2 position0, Vector2 position1, Vector2 tRight, Vector2 flipNormal)
+    public void OnBodyChangedDirectionFreeHanging(Vector2 position0, Vector2 position1, Vector2 flipNormal)
     {
         for (int i = 0; i < synchronizedLegs.Length; i++)
         {
-            synchronizedLegs[i].Leg.OnBodyChangedDirectionFreeHanging(position0, position1, tRight, flipNormal);
+            synchronizedLegs[i].Leg.OnBodyChangedDirectionFreeHanging(position0, position1, flipNormal);
         }
     }
 
@@ -177,6 +187,7 @@ public class LegSynchronizer : MonoBehaviour
         Vector2 bodyPos = bodyRb.transform.position;
         Vector2 bodyMovementRight = bodyFacingRight ? bodyRb.transform.right : -bodyRb.transform.right;
         Vector2 bodyUp = bodyRb.transform.up;
+
         for (int i = 0; i < synchronizedLegs.Length; i++)
         {
             var t = timers[i];

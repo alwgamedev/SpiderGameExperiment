@@ -7,6 +7,7 @@ public class LegAnimator : MonoBehaviour
     [SerializeField] float hipRaycastUpwardBuffer = 0.5f;
     [SerializeField] float staticModeGroundDetectionRadius;
     [SerializeField] float stepMax;
+    [SerializeField] float freeHangLagRate;
 
     public Vector2 drift;
     
@@ -70,7 +71,7 @@ public class LegAnimator : MonoBehaviour
 
         if (freeHanging)
         {
-            lastFreeHangPosition = Vector2.Lerp(lastFreeHangPosition, ikTarget.position, 2.5f * smoothingRate * dt);
+            lastFreeHangPosition = Vector2.Lerp(lastFreeHangPosition, ikTarget.position, freeHangLagRate * smoothingRate * dt);
             lastFreeHangPosition = Vector2.Lerp(lastFreeHangPosition, newTargetPos, smoothingRate * dt);
             ikTarget.position = lastFreeHangPosition;
         }
@@ -86,7 +87,7 @@ public class LegAnimator : MonoBehaviour
         var newTargetPos = GetStepGoal(map, bodyFacingRight, restProgress, restTime, driftWeight * drift);
         if (freeHanging)
         {
-            lastFreeHangPosition = Vector2.Lerp(lastFreeHangPosition, ikTarget.position, 2.5f * smoothingRate * dt);
+            lastFreeHangPosition = Vector2.Lerp(lastFreeHangPosition, ikTarget.position, freeHangLagRate * smoothingRate * dt);
             lastFreeHangPosition = Vector2.Lerp(lastFreeHangPosition, newTargetPos, smoothingRate * dt);
             ikTarget.position = lastFreeHangPosition;
         }
@@ -96,10 +97,9 @@ public class LegAnimator : MonoBehaviour
         }
     }
 
-    public void OnBodyChangedDirectionFreeHanging(Vector2 position0, Vector2 position1, Vector2 tRight, Vector2 flipNormal)
+    public void OnBodyChangedDirectionFreeHanging(Vector2 position0, Vector2 position1, Vector2 flipNormal)
     {
         var v = lastFreeHangPosition - position0;
-        v = MathTools.ReflectAcrossHyperplane(v, tRight);
         lastFreeHangPosition = position1 + MathTools.ReflectAcrossHyperplane(v, flipNormal);
     }
 

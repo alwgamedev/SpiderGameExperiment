@@ -75,6 +75,8 @@ public class SpiderMovementController : MonoBehaviour
     [SerializeField] float freeHangLegAngleMin;
     [SerializeField] float freeHangLegAngleSkew;
     [SerializeField] float freeHangHeadAngle;
+    [SerializeField] Vector2 baseFreeHangDriftWeight;
+    [SerializeField] float freeHangStepHeightReductionMax;
 
     [Header("Thrusters")]
     [SerializeField] Thruster thruster;
@@ -266,12 +268,13 @@ public class SpiderMovementController : MonoBehaviour
         {
             var r = OrientedRight;
             var dX = r.y < 0 ? (transform.right.x > 0 ? -r.y : 1) : 0;
-            legSynchronizer.driftWeight = new(dX, dX);
-            legSynchronizer.stepHeightFraction *= 1 - dX;
+            //var dY = r.y < 0 ? r.x * -r.y : 0;
+            legSynchronizer.DriftWeight = new(dX * baseFreeHangDriftWeight.x, dX * baseFreeHangDriftWeight.y);
+            legSynchronizer.stepHeightFraction *= 1 - freeHangStepHeightReductionMax * dX;
         }
-        else if (legSynchronizer.driftWeight != Vector2.zero)
+        else if (legSynchronizer.DriftWeight != Vector2.zero)
         {
-            legSynchronizer.driftWeight = Vector2.zero;
+            legSynchronizer.DriftWeight = Vector2.zero;
         }
     }
 
@@ -465,12 +468,11 @@ public class SpiderMovementController : MonoBehaviour
                 var p = transform.position;
                 var s = transform.localScale;
                 transform.localScale = new Vector3(-s.x, s.y, s.z);
-                var tRight = transform.right;
                 var n = grapple.FreeHanging ? grapple.LastCarryForceDirection.CWPerp() : Vector2.right;//normal to the hyperplane we're reflecting over
                 transform.up = MathTools.ReflectAcrossHyperplane(transform.up, (Vector3)n);
                 var d = (Vector3)(o - grapple.FreeHangLeveragePoint);
                 transform.position += d;
-                legSynchronizer.OnBodyChangedDirectionFreeHanging(p, transform.position, tRight, n);
+                legSynchronizer.OnBodyChangedDirectionFreeHanging(p, transform.position, n);
             }
             else
             {
