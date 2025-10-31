@@ -5,9 +5,9 @@ public class LegAnimator : MonoBehaviour
 {
     [SerializeField] float hipRaycastLength = 2;
     [SerializeField] float hipRaycastUpwardBuffer = 0.5f;
-    [SerializeField] float staticModeGroundDetectionRadius;
+    //[SerializeField] float staticModeGroundDetectionRadius;
     [SerializeField] float stepMax;
-    [SerializeField] float freeHangLagRate;
+    [SerializeField] Vector2 freeHangLagWeights;
 
     public Vector2 drift;
     
@@ -71,9 +71,10 @@ public class LegAnimator : MonoBehaviour
 
         if (freeHanging)
         {
-            lastFreeHangPosition = Vector2.Lerp(lastFreeHangPosition, ikTarget.position, freeHangLagRate * smoothingRate * dt);
-            lastFreeHangPosition = Vector2.Lerp(lastFreeHangPosition, newTargetPos, smoothingRate * dt);
-            ikTarget.position = lastFreeHangPosition;
+            var s = smoothingRate * dt;
+            lastFreeHangPosition = MathTools.Lerp(lastFreeHangPosition, ikTarget.position, s * freeHangLagWeights.x, s * freeHangLagWeights.y);
+            ikTarget.position = Vector2.Lerp(lastFreeHangPosition, newTargetPos, s);
+            lastFreeHangPosition = ikTarget.position;
         }
         else
         {
@@ -87,9 +88,10 @@ public class LegAnimator : MonoBehaviour
         var newTargetPos = GetStepGoal(map, bodyFacingRight, restProgress, restTime, driftWeight * drift);
         if (freeHanging)
         {
-            lastFreeHangPosition = Vector2.Lerp(lastFreeHangPosition, ikTarget.position, freeHangLagRate * smoothingRate * dt);
-            lastFreeHangPosition = Vector2.Lerp(lastFreeHangPosition, newTargetPos, smoothingRate * dt);
-            ikTarget.position = lastFreeHangPosition;
+            var s = smoothingRate * dt;
+            lastFreeHangPosition = MathTools.Lerp(lastFreeHangPosition, ikTarget.position, s * freeHangLagWeights.x, s * freeHangLagWeights.y);
+            ikTarget.position = Vector2.Lerp(lastFreeHangPosition, newTargetPos, s);
+            lastFreeHangPosition = ikTarget.position;
         }
         else
         {
@@ -108,29 +110,29 @@ public class LegAnimator : MonoBehaviour
         lastFreeHangPosition = ikTarget.position;
     }
 
-    public bool KeepTargetAboveGround(float dt, Vector2 bodyUp, 
-        Vector2 bodyVelocity, float velocityOffsetRate, float velocityOffsetMax, 
-        float smoothingRate, out Vector2 groundNormal)
-    {
-        Vector2 ikTargetPos = ikTarget.position;
-        float verticalVelocity = Vector2.Dot(bodyVelocity, bodyUp);
-        Vector2 predictiveTargetPos = verticalVelocity > 0 ?
-            ikTargetPos + Mathf.Clamp(verticalVelocity * velocityOffsetRate, -velocityOffsetMax, velocityOffsetMax) * bodyUp 
-            : ikTargetPos;
-        if (Physics2D.OverlapCircle(predictiveTargetPos, staticModeGroundDetectionRadius, groundLayer))
-        {
-            var g = GroundRaycast(ikTargetPos, bodyUp, 1f, 1.5f);
-            if (g)
-            {
-                ikTarget.position = verticalVelocity > 0 ? Vector2.Lerp(ikTargetPos, g.point, smoothingRate * dt) : g.point;
-                groundNormal = g.normal;
-                return true;
-            }
-        }
+    //public bool KeepTargetAboveGround(float dt, Vector2 bodyUp, 
+    //    Vector2 bodyVelocity, float velocityOffsetRate, float velocityOffsetMax, 
+    //    float smoothingRate, out Vector2 groundNormal)
+    //{
+    //    Vector2 ikTargetPos = ikTarget.position;
+    //    float verticalVelocity = Vector2.Dot(bodyVelocity, bodyUp);
+    //    Vector2 predictiveTargetPos = verticalVelocity > 0 ?
+    //        ikTargetPos + Mathf.Clamp(verticalVelocity * velocityOffsetRate, -velocityOffsetMax, velocityOffsetMax) * bodyUp 
+    //        : ikTargetPos;
+    //    if (Physics2D.OverlapCircle(predictiveTargetPos, staticModeGroundDetectionRadius, groundLayer))
+    //    {
+    //        var g = GroundRaycast(ikTargetPos, bodyUp, 1f, 1.5f);
+    //        if (g)
+    //        {
+    //            ikTarget.position = verticalVelocity > 0 ? Vector2.Lerp(ikTargetPos, g.point, smoothingRate * dt) : g.point;
+    //            groundNormal = g.normal;
+    //            return true;
+    //        }
+    //    }
 
-        groundNormal = bodyUp;
-        return false;
-    }
+    //    groundNormal = bodyUp;
+    //    return false;
+    //}
 
     private Vector2 GetStepStart(GroundMap map, bool bodyFacingRight, float stepProgress, float stepTime, float restTime, Vector2 drift)
     {

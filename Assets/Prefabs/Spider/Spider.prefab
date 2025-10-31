@@ -1002,10 +1002,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
-  staticModeGroundDetectionRadius: 0.01
   stepMax: 0.9
-  freeHangLagRate: 2.25
-  drift: {x: 0.2, y: 0.1}
+  freeHangLagWeights: {x: 0, y: 0}
+  drift: {x: 0.075, y: 0.1}
 --- !u!1 &839944467269662652
 GameObject:
   m_ObjectHideFlags: 0
@@ -1380,10 +1379,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
-  staticModeGroundDetectionRadius: 0.01
   stepMax: 0.825
-  freeHangLagRate: 2.25
-  drift: {x: 0.1, y: 0}
+  freeHangLagWeights: {x: 0, y: 0}
+  drift: {x: 0.025, y: 0.1}
 --- !u!1 &1248638082500357407
 GameObject:
   m_ObjectHideFlags: 0
@@ -1889,10 +1887,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
-  staticModeGroundDetectionRadius: 0.01
   stepMax: -0.05
-  freeHangLagRate: 2.25
-  drift: {x: -0.05, y: 0}
+  freeHangLagWeights: {x: 10, y: 2}
+  drift: {x: -0.1, y: -0.05}
 --- !u!1 &1968367528358965401
 GameObject:
   m_ObjectHideFlags: 0
@@ -5051,10 +5048,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
-  staticModeGroundDetectionRadius: 0.01
   stepMax: -0.05
-  freeHangLagRate: 2.25
-  drift: {x: -0.05, y: 0}
+  freeHangLagWeights: {x: 10, y: 2}
+  drift: {x: -0.1, y: -0.05}
 --- !u!1 &2656875783498011584
 GameObject:
   m_ObjectHideFlags: 0
@@ -5547,10 +5543,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
-  staticModeGroundDetectionRadius: 0.01
   stepMax: 0.9
-  freeHangLagRate: 2.25
-  drift: {x: 0.2, y: 0.1}
+  freeHangLagWeights: {x: 0, y: 0}
+  drift: {x: 0.075, y: 0.1}
 --- !u!1 &3319515992144099393
 GameObject:
   m_ObjectHideFlags: 0
@@ -6815,10 +6810,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
-  staticModeGroundDetectionRadius: 0.01
   stepMax: -0.2
-  freeHangLagRate: 2.25
-  drift: {x: -0.1, y: 0.2}
+  freeHangLagWeights: {x: 10, y: 2}
+  drift: {x: -0.05, y: 0.1}
 --- !u!1 &5247813140874977512
 GameObject:
   m_ObjectHideFlags: 0
@@ -7196,10 +7190,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
-  staticModeGroundDetectionRadius: 0.01
   stepMax: -0.2
-  freeHangLagRate: 2.25
-  drift: {x: -0.1, y: 0.2}
+  freeHangLagWeights: {x: 10, y: 2}
+  drift: {x: -0.05, y: 0.1}
 --- !u!1 &6016693261962413811
 GameObject:
   m_ObjectHideFlags: 0
@@ -8421,10 +8414,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
-  staticModeGroundDetectionRadius: 0.01
   stepMax: 0.825
-  freeHangLagRate: 2.25
-  drift: {x: 0.1, y: 0}
+  freeHangLagWeights: {x: 0, y: 0}
+  drift: {x: 0.025, y: 0.1}
 --- !u!1 &6858911009439342665
 GameObject:
   m_ObjectHideFlags: 0
@@ -9461,15 +9453,16 @@ MonoBehaviour:
   crouchTime: 0.5
   crouchBoostMinProgress: 0.4
   crouchReleaseSpeedMultiplier: 3
-  airborneLegAnimationTimeScale: 0.05
+  airborneLegAnimationTimeScale: 0.04
   airborneStrideMultiplier: 1.5
-  strideMultiplierSmoothingRate: 0.25
+  strideMultiplierSmoothingRate: 1
   freeHangGroundedToleranceMultiplier: 1
   freeHangLegAngleMin: 1.047198
   freeHangLegAngleSkew: 0.1308997
   freeHangHeadAngle: 0.2094395
-  baseFreeHangDriftWeight: {x: 2, y: 1}
-  freeHangStepHeightReductionMax: 0.75
+  baseFreeHangDriftWeight: {x: 3, y: 1}
+  freeHangStepHeightReductionMax: 1
+  freeHangStrideMultiplier: 0.45
   thruster:
     drainRate: 0.075
     rechargeRate: 0.05
@@ -9503,9 +9496,9 @@ MonoBehaviour:
   speedCapMax: 3
   baseStepHeightMultiplier: 0.925
   stepSmoothingRate: 25
-  freeHangSmoothingRate: 250
+  freeHangSmoothingRate: 280
   freeHangStepHeightMultiplier: 0.25
-  driftWeightSmoothingRate: 10
+  driftWeightSmoothingRate: 100
   synchronizedLegs:
   - leg: {fileID: 3287121947862078546}
     timeOffset: 0
@@ -9525,7 +9518,6 @@ MonoBehaviour:
     timeOffset: 0.6
   bodyGroundSpeedSign: 0
   absoluteBodyGroundSpeed: 0
-  preferredBodyPosGroundHeight: 0.400751
   timeScale: 1
   stepHeightFraction: 0
   strideMultiplier: 1
@@ -9567,7 +9559,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: cannonFulcrum.linearDamping
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: cannonFulcrum.angularDamping

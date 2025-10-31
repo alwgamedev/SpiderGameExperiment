@@ -40,6 +40,19 @@ public static class MathTools
         return from == to ? from : from < to ? Mathf.Min(from + rate * dt, to) : Mathf.Max(from - rate * dt, to);
     }
 
+    /// <summary>
+    /// lerp x and y by difft amounts
+    /// </summary>
+    public static Vector2 Lerp(Vector2 v, Vector2 w, float t1, float t2)
+    {
+        return new(t1 > 0 ? t1 < 1 ? v.x + t1 * (w.x - v.x) : w.x : v.x, t2 > 0 ? t2 < 1 ? v.y + t2 * (w.y - v.y) : w.y : v.y);
+    }
+
+    public static Vector2 LerpUnclamped(Vector2 v, Vector2 w, float t1, float t2)
+    {
+        return new Vector2(v.x + t1 * (w.x - v.x), v.y + t2 * (w.y - v.y));
+    }
+
     public static bool OppositeSigns(int x, int y)
     {
         return (x > 0 && y < 0) || (x < 0 && y > 0);

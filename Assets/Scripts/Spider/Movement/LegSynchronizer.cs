@@ -84,7 +84,7 @@ public class LegSynchronizer : MonoBehaviour
 
     public float bodyGroundSpeedSign;
     public float absoluteBodyGroundSpeed;
-    public float preferredBodyPosGroundHeight;
+    //public float preferredBodyPosGroundHeight;
     public float timeScale = 1;
     public float stepHeightFraction;
     public float strideMultiplier = 1;
@@ -156,8 +156,8 @@ public class LegSynchronizer : MonoBehaviour
     public void Initialize(float bodyPosGroundHeight, bool bodyFacingRight)
     {
         InitializeTimers();
-        preferredBodyPosGroundHeight = bodyPosGroundHeight;
-        InitializeLegPositions(bodyFacingRight);
+        //preferredBodyPosGroundHeight = bodyPosGroundHeight;
+        InitializeLegPositions(bodyFacingRight, bodyPosGroundHeight);
     }
 
     private void CacheFreeHangPositions()
@@ -182,7 +182,7 @@ public class LegSynchronizer : MonoBehaviour
         timers = synchronizedLegs.Select(l => new LegTimer(l.TimeOffset + randomOffset, stepTime, restTime/*, RandomFreeHangPerturbation()*/)).ToArray();
     }
 
-    private void InitializeLegPositions(bool bodyFacingRight)
+    private void InitializeLegPositions(bool bodyFacingRight, float preferredBodyPosGroundHeight)
     {
         Vector2 bodyPos = bodyRb.transform.position;
         Vector2 bodyMovementRight = bodyFacingRight ? bodyRb.transform.right : -bodyRb.transform.right;
