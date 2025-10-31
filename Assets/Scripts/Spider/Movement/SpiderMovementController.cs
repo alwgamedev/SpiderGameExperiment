@@ -260,8 +260,7 @@ public class SpiderMovementController : MonoBehaviour
         if (legSynchronizer.FreeHanging)
         {
             var r = OrientedRight;
-            var dX = r.y < 0 ? (transform.right.x > 0 ? -r.y : 1) : 0;
-            //var dY = r.y < 0 ? r.x * -r.y : 0;
+            var dX = r.y < 0 ? /*(transform.right.x > 0 ? -r.y : 1)*/ -r.y : 0;
             legSynchronizer.DriftWeight = new(dX * baseFreeHangDriftWeight.x, dX * baseFreeHangDriftWeight.y);
             legSynchronizer.stepHeightFraction *= 1 - freeHangStepHeightReductionMax * dX;
             legSynchronizer.strideMultiplier = MathTools.LerpAtConstantRate(legSynchronizer.strideMultiplier, Mathf.Lerp(AirborneStrideMultiplier(), freeHangStrideMultiplier, dX),
@@ -412,20 +411,25 @@ public class SpiderMovementController : MonoBehaviour
     {
         if (jumpInputHeld)
         {
-            if (!grounded || !Input.GetKey(KeyCode.Space))
+            if (!MiddleGrounded)
             {
                 jumpInputHeld = false;
-                waitingToReleaseJump = grounded && !Input.GetKey(KeyCode.LeftControl);
                 JumpChargeEnded?.Invoke();
             }
-            else if (grounded && crouchProgress < 1)
+            else if (Input.GetKeyUp(KeyCode.Space))
+            {
+                jumpInputHeld = false;
+                waitingToReleaseJump = !Input.GetKey(KeyCode.LeftControl);
+                JumpChargeEnded?.Invoke();
+            }
+            else if (crouchProgress < 1)
             {
                 UpdateCrouch(Time.deltaTime);
             }
         }
         else if (!waitingToReleaseJump)
         {
-            if (grounded)
+            if (StronglyGrounded)
             {
                 jumpInputHeld = Input.GetKey(KeyCode.Space);
                 if (jumpInputHeld)
