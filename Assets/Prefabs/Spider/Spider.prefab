@@ -9404,14 +9404,14 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  groundedExitToleranceFactor: 1.2
+  groundedExitToleranceFactor: 1.3
   groundedEntryToleranceFactor: 0.95
   groundDirectionSampleWidth: 0.35
   backupGroundPtRaycastLengthFactor: 1.1
   groundPtSlipRate: 0.5
   groundPtSlipThreshold: 0.25
   upcomingGroundDirectionMinPos: 0
-  upcomingGroundDirectionMaxPos: 0.4
+  upcomingGroundDirectionMaxPos: 0.5
   failedGroundDirectionSmoothingRate: 45
   groundMap:
     numFwdIntervals: 52
@@ -9435,9 +9435,7 @@ MonoBehaviour:
   heightSampleWidth: 0.8
   abdomenRotationSpeed: 6
   headRotationSpeed: 12
-  groundedRotationSpeed: 12
-  airborneRotationSpeed: 4.5
-  balanceSpringForce: 65
+  balanceSpringForce: 80
   airborneBalanceSpringForce: 45
   balanceSpringDamping: 0.1
   airborneBalanceSpringDamping: 0.04
@@ -9559,7 +9557,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: cannonFulcrum.linearDamping
-      value: 4
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: cannonFulcrum.angularDamping

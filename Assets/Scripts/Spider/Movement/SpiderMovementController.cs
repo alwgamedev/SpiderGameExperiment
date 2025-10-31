@@ -46,8 +46,6 @@ public class SpiderMovementController : MonoBehaviour
     [Header("Balance & Rotation")]
     [SerializeField] float abdomenRotationSpeed;
     [SerializeField] float headRotationSpeed;
-    [SerializeField] float groundedRotationSpeed;
-    [SerializeField] float airborneRotationSpeed;
     [SerializeField] float balanceSpringForce;
     [SerializeField] float airborneBalanceSpringForce;
     [SerializeField] float balanceSpringDamping;
@@ -414,10 +412,10 @@ public class SpiderMovementController : MonoBehaviour
     {
         if (jumpInputHeld)
         {
-            if (!Input.GetKey(KeyCode.Space))
+            if (!grounded || !Input.GetKey(KeyCode.Space))
             {
                 jumpInputHeld = false;
-                waitingToReleaseJump = !Input.GetKey(KeyCode.LeftControl);
+                waitingToReleaseJump = grounded && !Input.GetKey(KeyCode.LeftControl);
                 JumpChargeEnded?.Invoke();
             }
             else if (grounded && crouchProgress < 1)
@@ -526,7 +524,7 @@ public class SpiderMovementController : MonoBehaviour
         {
             if (grounded || !grapple.GrappleAnchored || (!freeHangInput && thruster.Engaged))
             {
-                Vector2 d = OrientedGroundDirection;
+                Vector2 d = Leaning ? FacingRight ? upcomingGroundDirection : - upcomingGroundDirection : OrientedGroundDirection;
                 var spd = Vector2.Dot(rb.linearVelocity, d);
                 var maxSpd = MaxSpeed;
                 var accFactor = grounded ? accelFactor : (thruster.Engaged ? thrustingAccelFactor : deadThrusterAccelFactor);
@@ -759,7 +757,11 @@ public class SpiderMovementController : MonoBehaviour
 
     private void OnTakeOff()
     {
-        jumpInputHeld = false;
+        if (jumpInputHeld)
+        {
+            jumpInputHeld = false;
+            JumpChargeEnded?.Invoke();
+        }
         RecomputeGroundednessTolerance();
     }
 
