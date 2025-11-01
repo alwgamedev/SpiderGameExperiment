@@ -136,20 +136,20 @@ public class LegAnimator : MonoBehaviour
 
     private Vector2 GetStepStart(GroundMap map, bool bodyFacingRight, float stepProgress, float stepTime, float restTime, Vector2 drift)
     {
-        var c = map.Center;
+        var c = map.CenterByIndex;
         var h = Vector2.Dot((Vector2)hipBone.position - c.point, c.normal.CWPerp());//we could also use body position and body right
         h = bodyFacingRight ? h + StepStartHorizontalOffset(stepProgress, stepTime, restTime)
             : h - StepStartHorizontalOffset(stepProgress, stepTime, restTime);
-        return map.PointFromCenterByPosition(bodyFacingRight ? h + drift.x : h - drift.x, out var n) + drift.y * n;
+        return map.PointFromCenterByPosition(bodyFacingRight ? h + drift.x : h - drift.x, out var n, out _) + drift.y * n;
     }
 
     private Vector2 GetStepGoal(GroundMap map, bool bodyFacingRight, float restProgress, float restTime, Vector2 drift)
     {
-        var c = map.Center;
+        var c = map.CenterByIndex;
         var h = Vector2.Dot((Vector2)hipBone.position - c.point, c.normal.CWPerp());//we could also use body position and body right
         h = bodyFacingRight ? h + StepGoalHorizontalOffset(restProgress, restTime)
             : h - StepGoalHorizontalOffset(restProgress, restTime);
-        return map.PointFromCenterByPosition(bodyFacingRight ? h + drift.x : h - drift.x, out var n) + drift.y * n;
+        return map.PointFromCenterByPosition(bodyFacingRight ? h + drift.x : h - drift.x, out var n, out _) + drift.y * n;
     }
 
     private Vector2 GetStepStart(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, 

@@ -986,7 +986,7 @@ MonoBehaviour:
     - {x: 0, y: 0, z: -0.23273273, w: 0.97254074}
     - {x: 0, y: 0, z: -0.1444648, w: 0.98950994}
     - {x: 0, y: 0, z: 0.68003947, w: 0.7331756}
-  m_Iterations: 25
+  m_Iterations: 10
   m_Tolerance: 0.01
 --- !u!114 &289677099412839160
 MonoBehaviour:
@@ -1003,8 +1003,8 @@ MonoBehaviour:
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
   stepMax: 0.9
-  freeHangLagWeights: {x: 0, y: 0}
-  drift: {x: 0.02, y: 0}
+  freeHangLagWeights: {x: 0, y: 5}
+  drift: {x: 0.02, y: -0.1}
 --- !u!1 &839944467269662652
 GameObject:
   m_ObjectHideFlags: 0
@@ -1363,7 +1363,7 @@ MonoBehaviour:
     - {x: 0, y: 0, z: -0.20000091, w: 0.97979575}
     - {x: 0, y: 0, z: -0.121254586, w: 0.9926215}
     - {x: 0, y: 0, z: 0.73185056, w: 0.6814652}
-  m_Iterations: 25
+  m_Iterations: 10
   m_Tolerance: 0.01
 --- !u!114 &8139652597745638036
 MonoBehaviour:
@@ -1380,8 +1380,8 @@ MonoBehaviour:
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
   stepMax: 0.825
-  freeHangLagWeights: {x: 0, y: 0}
-  drift: {x: 0, y: 0}
+  freeHangLagWeights: {x: 0, y: 5}
+  drift: {x: 0, y: -0.1}
 --- !u!1 &1248638082500357407
 GameObject:
   m_ObjectHideFlags: 0
@@ -1871,7 +1871,7 @@ MonoBehaviour:
     - {x: 0, y: 0, z: 0.2210139, w: 0.9752707}
     - {x: 0, y: 0, z: 0.12991607, w: 0.99152505}
     - {x: 0, y: 0, z: -0.6773413, w: -0.7356689}
-  m_Iterations: 25
+  m_Iterations: 10
   m_Tolerance: 0.01
 --- !u!114 &6337494717204129644
 MonoBehaviour:
@@ -1889,7 +1889,7 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   stepMax: -0.05
   freeHangLagWeights: {x: 10, y: 2}
-  drift: {x: -0.1, y: -0.05}
+  drift: {x: -0.1, y: 0.1}
 --- !u!1 &1968367528358965401
 GameObject:
   m_ObjectHideFlags: 0
@@ -5032,7 +5032,7 @@ MonoBehaviour:
     - {x: 0, y: 0, z: 0.2053676, w: 0.97868496}
     - {x: 0, y: 0, z: 0.13885301, w: 0.99031305}
     - {x: 0, y: 0, z: -0.6727389, w: -0.73987997}
-  m_Iterations: 25
+  m_Iterations: 10
   m_Tolerance: 0.01
 --- !u!114 &636268752888493604
 MonoBehaviour:
@@ -5050,7 +5050,7 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   stepMax: -0.05
   freeHangLagWeights: {x: 10, y: 2}
-  drift: {x: -0.1, y: -0.05}
+  drift: {x: -0.1, y: 0.1}
 --- !u!1 &2656875783498011584
 GameObject:
   m_ObjectHideFlags: 0
@@ -5527,7 +5527,7 @@ MonoBehaviour:
     - {x: 0, y: 0, z: -0.22711138, w: 0.97386885}
     - {x: 0, y: 0, z: -0.13382305, w: 0.99100524}
     - {x: 0, y: 0, z: 0.67018884, w: 0.74219066}
-  m_Iterations: 25
+  m_Iterations: 10
   m_Tolerance: 0.01
 --- !u!114 &3287121947862078546
 MonoBehaviour:
@@ -5544,8 +5544,8 @@ MonoBehaviour:
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
   stepMax: 0.9
-  freeHangLagWeights: {x: 0, y: 0}
-  drift: {x: 0.02, y: 0}
+  freeHangLagWeights: {x: 0, y: 5}
+  drift: {x: 0.02, y: -0.1}
 --- !u!1 &3319515992144099393
 GameObject:
   m_ObjectHideFlags: 0
@@ -6794,7 +6794,7 @@ MonoBehaviour:
     - {x: 0, y: 0, z: 0.22617295, w: 0.97408724}
     - {x: 0, y: 0, z: 0.214603, w: 0.9767014}
     - {x: 0, y: 0, z: -0.67390764, w: -0.73881567}
-  m_Iterations: 25
+  m_Iterations: 10
   m_Tolerance: 0.01
 --- !u!114 &5076699777365114807
 MonoBehaviour:
@@ -6812,7 +6812,7 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   stepMax: -0.2
   freeHangLagWeights: {x: 10, y: 2}
-  drift: {x: -0.05, y: 0.1}
+  drift: {x: 0, y: 0.25}
 --- !u!1 &5247813140874977512
 GameObject:
   m_ObjectHideFlags: 0
@@ -7174,7 +7174,7 @@ MonoBehaviour:
     - {x: 0, y: 0, z: 0.22151873, w: 0.9751562}
     - {x: 0, y: 0, z: 0.22962195, w: 0.97327995}
     - {x: 0, y: 0, z: -0.6615541, w: -0.7498975}
-  m_Iterations: 25
+  m_Iterations: 10
   m_Tolerance: 0.01
 --- !u!114 &1298602695105135040
 MonoBehaviour:
@@ -7192,7 +7192,7 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   stepMax: -0.2
   freeHangLagWeights: {x: 10, y: 2}
-  drift: {x: -0.05, y: 0.1}
+  drift: {x: 0, y: 0.25}
 --- !u!1 &6016693261962413811
 GameObject:
   m_ObjectHideFlags: 0
@@ -8398,7 +8398,7 @@ MonoBehaviour:
     - {x: 0, y: 0, z: -0.20030978, w: 0.97973263}
     - {x: 0, y: 0, z: -0.11846774, w: 0.99295795}
     - {x: 0, y: 0, z: 0.72702587, w: 0.68661016}
-  m_Iterations: 25
+  m_Iterations: 10
   m_Tolerance: 0.01
 --- !u!114 &12206713449588117
 MonoBehaviour:
@@ -8415,8 +8415,8 @@ MonoBehaviour:
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
   stepMax: 0.825
-  freeHangLagWeights: {x: 0, y: 0}
-  drift: {x: 0, y: 0}
+  freeHangLagWeights: {x: 0, y: 5}
+  drift: {x: 0, y: -0.1}
 --- !u!1 &6858911009439342665
 GameObject:
   m_ObjectHideFlags: 0
@@ -9404,16 +9404,18 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  groundedExitToleranceFactor: 1.35
+  groundedExitToleranceFactor: 1.25
   groundedEntryToleranceFactor: 0.95
-  groundDirectionSampleWidth: 0.35
+  groundednessToleranceLerpRate: 2.5
+  groundDirectionSampleWidth: 0.3
   backupGroundPtRaycastLengthFactor: 1.1
   groundPtSlipRate: 0.5
   groundPtSlipThreshold: 0.25
   upcomingGroundDirectionMinPos: 0
-  upcomingGroundDirectionMaxPos: 0.5
+  upcomingGroundDirectionMaxPos: 0.4
   failedGroundDirectionSmoothingRate: 45
   groundMap:
+    smoothingRate: 0.7
     numFwdIntervals: 52
     intervalWidth: 0.025
     map: []
@@ -9428,8 +9430,8 @@ MonoBehaviour:
   maxSpeed: 4
   maxSpeedAirborne: 8
   preferredRideHeight: 0.92
-  heightSpringForce: 475
-  heightSpringDamping: 26
+  heightSpringForce: 400
+  heightSpringDamping: 24
   heightSpringBreakThreshold: 0.1
   grappleSquatReduction: 0.25
   heightSampleWidth: 0.8
@@ -9460,7 +9462,7 @@ MonoBehaviour:
   freeHangHeadAngle: 0.2094395
   baseFreeHangDriftWeight: {x: 3, y: 1}
   freeHangStepHeightReductionMax: 1
-  freeHangStrideMultiplier: 0.45
+  freeHangStrideMultiplier: 0.35
   thruster:
     drainRate: 0.075
     rechargeRate: 0.05
@@ -9496,7 +9498,7 @@ MonoBehaviour:
   stepSmoothingRate: 30
   freeHangSmoothingRate: 280
   freeHangStepHeightMultiplier: 0.25
-  driftWeightSmoothingRate: 100
+  driftWeightSmoothingRate: 7.5
   synchronizedLegs:
   - leg: {fileID: 3287121947862078546}
     timeOffset: 0

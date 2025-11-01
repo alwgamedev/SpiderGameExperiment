@@ -79,6 +79,7 @@ public class LegSynchronizer : MonoBehaviour
     }
 
     LegTimer[] timers;
+    //GroundMap smoothedGroundMap;
     bool freeHanging;
     Vector2 driftWeight;
 
@@ -88,6 +89,8 @@ public class LegSynchronizer : MonoBehaviour
     public float timeScale = 1;
     public float stepHeightFraction;
     public float strideMultiplier = 1;
+
+
     
     public Vector2 DriftWeight
     {
@@ -114,7 +117,7 @@ public class LegSynchronizer : MonoBehaviour
         }
     }
 
-    float SmoothingRate => FreeHanging ? freeHangSmoothingRate : stepSmoothingRate;
+    float GoalSmoothingRate => FreeHanging ? freeHangSmoothingRate : stepSmoothingRate;
 
     public void UpdateAllLegs(float dt, GroundMap map)
     {
@@ -127,6 +130,8 @@ public class LegSynchronizer : MonoBehaviour
         var stepHeightSpeedMultiplier = Mathf.Min(sf, 1);
         var baseStepHeightMultiplier = (FreeHanging ? freeHangStepHeightMultiplier : this.baseStepHeightMultiplier) * stepHeightFraction;
 
+        //smoothedGroundMap.LerpTowards(map, groundMapSmoothingRate * dt);
+
         for (int i = 0; i < timers.Length; i++)
         {
             var t = timers[i];
@@ -138,7 +143,7 @@ public class LegSynchronizer : MonoBehaviour
             {
                 l.UpdateStep(dt, map, facingRight, FreeHanging,
                     baseStepHeightMultiplier, stepHeightSpeedMultiplier,
-                    SmoothingRate, t.StateProgress,
+                    GoalSmoothingRate, t.StateProgress,
                     strideMultiplier == 1 ? t.StepTime : strideMultiplier * t.StepTime,
                     strideMultiplier == 1 ? t.RestTime : strideMultiplier * t.RestTime,
                     DriftWeight);
@@ -146,17 +151,17 @@ public class LegSynchronizer : MonoBehaviour
             else
             {
                 l.UpdateRest(dt, map, facingRight, FreeHanging,
-                    SmoothingRate, t.StateProgress,
+                    GoalSmoothingRate, t.StateProgress,
                     strideMultiplier == 1 ? t.RestTime : strideMultiplier * t.RestTime,
                     DriftWeight);
             }
         }
     }
 
-    public void Initialize(float bodyPosGroundHeight, bool bodyFacingRight)
+    public void Initialize(float bodyPosGroundHeight, bool bodyFacingRight, GroundMap groundMap)
     {
         InitializeTimers();
-        //preferredBodyPosGroundHeight = bodyPosGroundHeight;
+        //smoothedGroundMap = groundMap;
         InitializeLegPositions(bodyFacingRight, bodyPosGroundHeight);
     }
 
