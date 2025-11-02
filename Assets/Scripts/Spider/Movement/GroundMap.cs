@@ -1,13 +1,42 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 [Serializable]
 public struct GroundMap
 {
     [SerializeField] float smoothingRate;
+    [SerializeField] float totalGroundedSmoothingRate;
+    [SerializeField] float middleGroundedSmoothingRate;
+    [SerializeField] int middleGroundedWidth;
 
     public int numFwdIntervals;
     public float intervalWidth;
+    public GroundMapPt[] map;
+
+    public SteadyToggle grounded;
+    public SteadyToggle smoothedGrounded;//I think you WILL want this for legSync.FreeHang
+    public SteadyToggle stronglyGrounded;
+    public SteadyToggle smoothedStronglyGrounded;
+    public SteadyToggle middleGrounded;
+    public SteadyToggle smoothedMiddleGrounded;
+
+    float middleGroundedCountInverse;
+    float totalGroundedCountInverse;
+
+    public int CentralIndex => numFwdIntervals;
+    public int NumPts => (numFwdIntervals << 1) | 1;
+    public float MapHalfWidth => intervalWidth * numFwdIntervals;
+    //public bool AllPointsHitGround => grounded.Brightness == 1f;
+    //public bool AnyPointsHitGround => grounded.On;
+    public float MiddleGroundedFraction { get; private set; }
+    public float SmoothedMiddleGroundedFraction { get; private set; }
+    public float TotalGroundedFraction { get; private set; }
+    public float SmoothedTotalGroundedFraction { get; private set; }
+    public Vector2 LastOrigin { get; private set; }
+    public ref GroundMapPt CenterByIndex => ref map[CentralIndex];//NOTE: you will modify the array element through this property! it's not a copy!!
+    public ref GroundMapPt LeftEndPt => ref map[0];
+    public ref GroundMapPt RightEndPt => ref map[^1];
 
     Color RaycastColor0 => Color.clear;//Color.red;
     Color RaycastColor1 => Color.clear;//Color.blue;
@@ -16,18 +45,6 @@ public struct GroundMap
     Color GizmoColorCenter => Color.red;
     Color GizmoColorRight => Color.green;
     Color GizmoColorLeft => Color.yellow;
-
-    public GroundMapPt[] map;
-
-    public int CentralIndex => numFwdIntervals;
-    public int NumPts => (numFwdIntervals << 1) | 1;
-    public float MapHalfWidth => intervalWidth * numFwdIntervals;
-    public bool AllPointsHitGround { get; private set; }
-    public bool AnyPointsHitGround { get; private set; }
-    public Vector2 LastOrigin { get; private set; }
-    public ref GroundMapPt CenterByIndex => ref map[CentralIndex];//NOTE: you will modify the array element through this property! it's not a copy!!
-    public ref GroundMapPt LeftEndPt => ref map[0];
-    public ref GroundMapPt RightEndPt => ref map[^1];
 
     public bool IsCentralIndex(int i)
     {
@@ -124,27 +141,31 @@ public struct GroundMap
         return false;
     }
 
-    public int IndexOfFirstGroundHitFromCenter()
+    public int IndexOfFirstGroundHitFromCenter(out bool isCentralIndex)
     {
-        if (AnyPointsHitGround)
+        if (grounded.On)
         {
             int i = CentralIndex;
             if (map[i].hitGround)
             {
+                isCentralIndex = true;
                 return i;
             }
 
             i++;
             int j = CentralIndex - 1;
             int n = NumPts;
+            
             while (i < n && j > 0)
             {
                 if (map[i].hitGround)
                 {
+                    isCentralIndex = false;
                     return i;
                 }
                 if (map[j].hitGround)
                 {
+                    isCentralIndex = false;
                     return j;
                 }
 
@@ -153,6 +174,7 @@ public struct GroundMap
             }
         }
 
+        isCentralIndex = true;
         return CentralIndex;
     }
 
@@ -243,32 +265,6 @@ public struct GroundMap
         return LeftEndPt;
     }
 
-    public int IndexOfLastMarkedPointBeforePosition(float x)
-    {
-        if (x > 0)
-        {
-            for (int i = numFwdIntervals + 1; i < map.Length; i++)
-            {
-                if (map[i].horizontalPosition > x)
-                {
-                    return i - 1;
-                }
-            }
-
-            return map.Length - 1;
-        }
-
-        for (int i = numFwdIntervals - 1; i > -1; i--)
-        {
-            if (map[i].horizontalPosition < x)
-            {
-                return i + 1;
-            }
-        }
-
-        return 0;
-    }
-
     public Vector2 AveragePointFromCenter(float minPos, float maxPos)
     {
         maxPos += Mathf.Epsilon;//so we can use < instead of <= (probably pointless)
@@ -311,6 +307,70 @@ public struct GroundMap
     {
         map = new GroundMapPt[NumPts];
         LastOrigin = origin;
+        middleGroundedCountInverse = 1 / (float)(2 * middleGroundedWidth + 1);
+        totalGroundedCountInverse = 1 / (float)NumPts;
+    }
+
+    public void InitializeStats()
+    {
+        int count = 0;
+        for (int i = CentralIndex - middleGroundedWidth; i < CentralIndex + middleGroundedWidth + 1; i++)
+        {
+            if (map[i].hitGround)
+            {
+                count++;
+            }
+        }
+        MiddleGroundedFraction = count * middleGroundedCountInverse;
+        SmoothedMiddleGroundedFraction = MiddleGroundedFraction;
+
+        count = 0;
+        for (int i = 0; i < NumPts; i++)
+        {
+            if (map[i].hitGround)
+            {
+                count++;
+            }
+        }
+        TotalGroundedFraction = count * totalGroundedCountInverse;
+        SmoothedTotalGroundedFraction = TotalGroundedFraction;
+
+        grounded.UpdateState(TotalGroundedFraction);
+        smoothedGrounded.UpdateState(SmoothedTotalGroundedFraction);
+        middleGrounded.UpdateState(MiddleGroundedFraction);
+        smoothedMiddleGrounded.UpdateState(SmoothedMiddleGroundedFraction);
+    }
+
+    public void UpdateStats()
+    {
+        int count = 0;
+        for (int i = CentralIndex - middleGroundedWidth; i < CentralIndex + middleGroundedWidth + 1; i++)
+        {
+            if (map[i].hitGround)
+            {
+                count++;
+            }
+        }
+        MiddleGroundedFraction = count * middleGroundedCountInverse;
+        SmoothedMiddleGroundedFraction = Mathf.Lerp(SmoothedMiddleGroundedFraction, MiddleGroundedFraction, middleGroundedSmoothingRate * Time.deltaTime);
+
+        count = 0;
+        for (int i = 0; i < NumPts; i++)
+        {
+            if (map[i].hitGround)
+            {
+                count++;
+            }
+        }
+        TotalGroundedFraction = count * totalGroundedCountInverse;
+        SmoothedTotalGroundedFraction = Mathf.Lerp(SmoothedTotalGroundedFraction, TotalGroundedFraction, totalGroundedSmoothingRate * Time.deltaTime);
+
+        grounded.UpdateState(TotalGroundedFraction);
+        smoothedGrounded.UpdateState(SmoothedTotalGroundedFraction);
+        stronglyGrounded.UpdateState(TotalGroundedFraction);
+        smoothedStronglyGrounded.UpdateState(SmoothedTotalGroundedFraction);
+        middleGrounded.UpdateState(MiddleGroundedFraction);
+        smoothedMiddleGrounded.UpdateState(SmoothedMiddleGroundedFraction);
     }
 
     public void LerpUpdateMap(Vector2 origin, Vector2 originDown, Vector2 originRight, float raycastLength, int centralIndex, int raycastLayerMask)
@@ -318,18 +378,18 @@ public struct GroundMap
         int n = numFwdIntervals << 1;//last index of map array
         Vector2 dp = origin - LastOrigin;
         LastOrigin = origin;
-        AllPointsHitGround = true;
-        AnyPointsHitGround = false;
+        //AllPointsHitGround = true;
+        //AnyPointsHitGround = false;
 
         var r = MathTools.DebugRaycast(origin, originDown, raycastLength, raycastLayerMask, RaycastColor0);
         if (r)
         {
             map[centralIndex].Set(r.point, r.normal, r.normal.CWPerp(), 0, r.distance, r.collider);
-            AnyPointsHitGround = true;
+            //AnyPointsHitGround = true;
         }
         else
         {
-            AllPointsHitGround = false;
+            //AllPointsHitGround = false;
             map[centralIndex].Set(origin + raycastLength * originDown, -originDown, originRight, 0, raycastLength, null);
         }
 
@@ -353,10 +413,10 @@ public struct GroundMap
                 map[i].Set(r.point, r.normal, r.normal.CWPerp(), lastMapPt.horizontalPosition + Vector2.Distance(lastMapPt.point, r.point),
                     r.distance, r.collider);
                 //just set in the extreme cases instead of trying to lerp
-                if (!AnyPointsHitGround)
-                {
-                    AnyPointsHitGround = true;
-                }
+                //if (!AnyPointsHitGround)
+                //{
+                //    AnyPointsHitGround = true;
+                //}
             }
             else
             {
@@ -379,10 +439,10 @@ public struct GroundMap
                         true, r.distance * Vector2.Dot(lastNormal, r.normal), r.collider, smoothingRate);
                     //map[i + 1].Set(r.point, r.normal, r.normal.CWPerp(), lastMapPt.horizontalPosition + Vector2.Distance(lastMapPt.point, r.point),
                     //    r.distance * Vector2.Dot(lastNormal, r.normal), r.collider);
-                    if (!AnyPointsHitGround)
-                    {
-                        AnyPointsHitGround = true;
-                    }
+                    //if (!AnyPointsHitGround)
+                    //{
+                    //    AnyPointsHitGround = true;
+                    //}
                 }
                 else
                 {
@@ -394,18 +454,18 @@ public struct GroundMap
                         //    true, r.distance, r.collider, smoothingRate);
                         map[i].Set(r.point, r.normal, r.normal.CWPerp(), lastMapPt.horizontalPosition + Vector2.Distance(lastMapPt.point, r.point), r.distance, r.collider);
 
-                        if (!AnyPointsHitGround)
-                        {
-                            AnyPointsHitGround = true;
-                        }
+                        //if (!AnyPointsHitGround)
+                        //{
+                        //    AnyPointsHitGround = true;
+                        //}
                     }
                     else
                     {
 
-                        if (AllPointsHitGround)
-                        {
-                            AllPointsHitGround = false;
-                        }
+                        //if (AllPointsHitGround)
+                        //{
+                        //    AllPointsHitGround = false;
+                        //}
 
                         o -= raycastLength * lastNormal;
                         //map[i + 1].Set(o, lastNormal, lastMapPt.right, lastMapPt.horizontalPosition + Vector2.Distance(lastMapPt.point, o), raycastLength, null);
@@ -432,10 +492,10 @@ public struct GroundMap
                 map[i].Set(r.point, r.normal, r.normal.CWPerp(), lastMapPt.horizontalPosition - Vector2.Distance(lastMapPt.point, r.point), r.distance, r.collider);
                 //map[i - 1].LerpTowards(dp, r.point, r.normal, r.normal.CWPerp(), lastMapPt.point, lastMapPt.horizontalPosition,
                 //    false, r.distance, r.collider, smoothingRate);
-                if (!AnyPointsHitGround)
-                {
-                    AnyPointsHitGround = true;
-                }
+                //if (!AnyPointsHitGround)
+                //{
+                //    AnyPointsHitGround = true;
+                //}
             }
             else
             {
@@ -456,10 +516,10 @@ public struct GroundMap
                     //}
                     map[i].LerpTowards(dp, r.point, r.normal, r.normal.CWPerp(), lastMapPt.point, lastMapPt.horizontalPosition,
                         false, r.distance * Vector2.Dot(lastNormal, r.normal), r.collider, smoothingRate);
-                    if (!AnyPointsHitGround)
-                    {
-                        AnyPointsHitGround = true;
-                    }
+                    //if (!AnyPointsHitGround)
+                    //{
+                    //    AnyPointsHitGround = true;
+                    //}
                 }
                 else
                 {
@@ -471,17 +531,17 @@ public struct GroundMap
                             r.distance, r.collider);
                         //map[i - 1].LerpTowards(dp, r.point, r.normal, r.normal.CWPerp(), lastMapPt.point, lastMapPt.horizontalPosition,
                         //    false, r.distance, r.collider, smoothingRate);
-                        if (!AnyPointsHitGround)
-                        {
-                            AnyPointsHitGround = true;
-                        }
+                        //if (!AnyPointsHitGround)
+                        //{
+                        //    AnyPointsHitGround = true;
+                        //}
                     }
                     else
                     {
-                        if (AllPointsHitGround)
-                        {
-                            AllPointsHitGround = false;
-                        }
+                        //if (AllPointsHitGround)
+                        //{
+                        //    AllPointsHitGround = false;
+                        //}
 
                         o -= raycastLength * lastNormal;
                         //map[i - 1].Set(o, lastNormal, lastMapPt.right, lastMapPt.horizontalPosition - Vector2.Distance(lastMapPt.point, o), raycastLength, null);
@@ -496,18 +556,18 @@ public struct GroundMap
     public void UpdateMap(Vector2 origin, Vector2 originDown, Vector2 originRight, float raycastLength, int centralIndex, int raycastLayerMask)
     {
         int n = numFwdIntervals << 1;//last index of map array
-        AllPointsHitGround = true;
-        AnyPointsHitGround = false;
+        //AllPointsHitGround = true;
+        //AnyPointsHitGround = false;
 
         var r = MathTools.DebugRaycast(origin, originDown, raycastLength, raycastLayerMask, RaycastColor0);
         if (r)
         {
             map[centralIndex].Set(r.point, r.normal, r.normal.CWPerp(), 0, r.distance, r.collider);
-            AnyPointsHitGround = true;
+            //AnyPointsHitGround = true;
         }
         else
         {
-            AllPointsHitGround = false;
+            //AllPointsHitGround = false;
             map[centralIndex].Set(origin + raycastLength * originDown, -originDown, originRight, 0, raycastLength, null);
         }
 
@@ -526,10 +586,10 @@ public struct GroundMap
             {
                 map[i + 1].Set(r.point, r.normal, r.normal.CWPerp(), lastMapPt.horizontalPosition + Vector2.Distance(lastMapPt.point, r.point),
                     r.distance, r.collider);
-                if (!AnyPointsHitGround)
-                {
-                    AnyPointsHitGround = true;
-                }
+                //if (!AnyPointsHitGround)
+                //{
+                //    AnyPointsHitGround = true;
+                //}
             }
             else
             {
@@ -540,10 +600,10 @@ public struct GroundMap
                 {
                     map[i + 1].Set(r.point, r.normal, r.normal.CWPerp(), lastMapPt.horizontalPosition + Vector2.Distance(lastMapPt.point, r.point),
                         r.distance * Vector2.Dot(lastNormal, r.normal), r.collider);
-                    if (!AnyPointsHitGround)
-                    {
-                        AnyPointsHitGround = true;
-                    }
+                    //if (!AnyPointsHitGround)
+                    //{
+                    //    AnyPointsHitGround = true;
+                    //}
                 }
                 else
                 {
@@ -552,18 +612,18 @@ public struct GroundMap
                     if (r)
                     {
                         map[i + 1].Set(r.point, r.normal, r.normal.CWPerp(), lastMapPt.horizontalPosition + Vector2.Distance(lastMapPt.point, r.point), r.distance, r.collider);
-                        if (!AnyPointsHitGround)
-                        {
-                            AnyPointsHitGround = true;
-                        }
+                        //if (!AnyPointsHitGround)
+                        //{
+                        //    AnyPointsHitGround = true;
+                        //}
                     }
                     else
                     {
 
-                        if (AllPointsHitGround)
-                        {
-                            AllPointsHitGround = false;
-                        }
+                        //if (AllPointsHitGround)
+                        //{
+                        //    AllPointsHitGround = false;
+                        //}
 
                         o -= raycastLength * lastNormal;
                         map[i + 1].Set(o, lastNormal, lastMapPt.right, lastMapPt.horizontalPosition + Vector2.Distance(lastMapPt.point, o), raycastLength, null);
@@ -585,10 +645,10 @@ public struct GroundMap
             if (r)
             {
                 map[i - 1].Set(r.point, r.normal, r.normal.CWPerp(), lastMapPt.horizontalPosition - Vector2.Distance(lastMapPt.point, r.point), r.distance, r.collider);
-                if (!AnyPointsHitGround)
-                {
-                    AnyPointsHitGround = true;
-                }
+                //if (!AnyPointsHitGround)
+                //{
+                //    AnyPointsHitGround = true;
+                //}
             }
             else
             {
@@ -599,10 +659,10 @@ public struct GroundMap
                 {
                     map[i - 1].Set(r.point, r.normal, r.normal.CWPerp(), lastMapPt.horizontalPosition - Vector2.Distance(lastMapPt.point, r.point),
                         r.distance * Vector2.Dot(lastNormal, r.normal), r.collider);
-                    if (!AnyPointsHitGround)
-                    {
-                        AnyPointsHitGround = true;
-                    }
+                    //if (!AnyPointsHitGround)
+                    //{
+                    //    AnyPointsHitGround = true;
+                    //}
                 }
                 else
                 {
@@ -612,17 +672,17 @@ public struct GroundMap
                     {
                         map[i - 1].Set(r.point, r.normal, r.normal.CWPerp(), lastMapPt.horizontalPosition - Vector2.Distance(lastMapPt.point, r.point),
                             r.distance, r.collider);
-                        if (!AnyPointsHitGround)
-                        {
-                            AnyPointsHitGround = true;
-                        }
+                        //if (!AnyPointsHitGround)
+                        //{
+                        //    AnyPointsHitGround = true;
+                        //}
                     }
                     else
                     {
-                        if (AllPointsHitGround)
-                        {
-                            AllPointsHitGround = false;
-                        }
+                        //if (AllPointsHitGround)
+                        //{
+                        //    AllPointsHitGround = false;
+                        //}
 
                         o -= raycastLength * lastNormal;
                         map[i - 1].Set(o, lastNormal, lastMapPt.right, lastMapPt.horizontalPosition - Vector2.Distance(lastMapPt.point, o), raycastLength, null);

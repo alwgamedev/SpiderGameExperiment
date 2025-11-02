@@ -19,6 +19,7 @@ public class SpiderMovementController : MonoBehaviour
     [SerializeField] float backupGroundPtRaycastLengthFactor;
     [SerializeField] float groundPtSlipRate;
     [SerializeField] float groundPtSlipThreshold;
+    //[SerializeField] float groundPtSlipGroundednessThreshold;
     [SerializeField] float upcomingGroundDirectionMinPos;
     [SerializeField] float upcomingGroundDirectionMaxPos;
     [SerializeField] float failedGroundDirectionSmoothingRate;
@@ -32,6 +33,7 @@ public class SpiderMovementController : MonoBehaviour
     [SerializeField] float accelCap;
     [SerializeField] float decelFactor;
     [SerializeField] float gripStrength;
+    //[SerializeField] float gripGroundednessThreshold;
     [SerializeField] float grapplePullGripReduction;
     [SerializeField] float maxSpeed;
     [SerializeField] float maxSpeedAirborne;
@@ -135,8 +137,8 @@ public class SpiderMovementController : MonoBehaviour
     float PreferredBodyPosGroundHeight => transform.position.y - heightReferencePoint.position.y + preferredRideHeight;
     float MaxSpeed => grounded ? maxSpeed : maxSpeedAirborne;
     float GroundVelocity => Vector2.Dot(rb.linearVelocity, OrientedGroundDirection);
-    bool StronglyGrounded => grounded && groundMap.AllPointsHitGround;
-    bool MiddleGrounded => grounded && (groundMap.CenterByIndex.hitGround || groundPt.normal.y < 0);
+    //bool StronglyGrounded => grounded && groundMap.grounded.AtMax;
+    //bool MiddleGrounded => grounded && (groundMap.CenterByIndex.hitGround || groundPt.normal.y < 0);
     bool Leaning => grappleScurrying || jumpInputHeld;
     Vector2 GroundPtGroundDirection => groundPt.normal.CWPerp();
     float GrappleScurryResistance => Vector2.Dot(grapple.LastCarryForce, -OrientedGroundDirection);
@@ -156,6 +158,8 @@ public class SpiderMovementController : MonoBehaviour
         if (Application.isPlaying)
         {
             groundMap.DrawGizmos();
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawSphere(groundPt.point, 0.1f);
         }
     }
 
@@ -245,7 +249,7 @@ public class SpiderMovementController : MonoBehaviour
         HandleMoveInput();
         HandleJumpInput();
 
-        if (grounded)//was strongly grdd//note grounded is automatically false while verifying jump
+        if (grounded)
         {
             UpdateHeightSpring();
         }
@@ -257,11 +261,11 @@ public class SpiderMovementController : MonoBehaviour
         //(for now this is more flexible)
 
         //legSynchronizer.FreeHanging = grapple.FreeHanging && !grounded;
-        if (legSynchronizer.FreeHanging && (!grapple.FreeHanging || MiddleGrounded))
+        if (legSynchronizer.FreeHanging && (!grapple.FreeHanging || groundMap.smoothedMiddleGrounded.On))
         {
             legSynchronizer.FreeHanging = false;
         }
-        else if (!legSynchronizer.FreeHanging && grapple.FreeHanging && !grounded)
+        else if (!legSynchronizer.FreeHanging && grapple.FreeHanging && !groundMap.smoothedMiddleGrounded.On)
         {
             legSynchronizer.FreeHanging = true;
         }
@@ -324,7 +328,7 @@ public class SpiderMovementController : MonoBehaviour
         {
             case Thruster.ThrustersUpdateResult.ChargeRanOut:
                 OnThrusterRanOutOfCharge();
-                if (!StronglyGrounded && grapple.GrappleAnchored)
+                if (!groundMap.middleGrounded.On && grapple.GrappleAnchored)
                 {
                     grapple.FreeHanging = true;
                 }
@@ -412,7 +416,7 @@ public class SpiderMovementController : MonoBehaviour
     {
         if (jumpInputHeld)
         {
-            if (!MiddleGrounded)
+            if (!groundMap.middleGrounded.On)
             {
                 jumpInputHeld = false;
                 JumpChargeEnded?.Invoke();
@@ -430,7 +434,7 @@ public class SpiderMovementController : MonoBehaviour
         }
         else if (!waitingToReleaseJump)
         {
-            if (StronglyGrounded)
+            if (groundMap.middleGrounded.On)
             {
                 jumpInputHeld = Input.GetKey(KeyCode.Space);
                 if (jumpInputHeld)
@@ -455,7 +459,7 @@ public class SpiderMovementController : MonoBehaviour
         {
             //hold shift to enter freehang/swing mode (if it's the default state, then repelling and direction change gets annoying)
             grapple.FreeHanging = (moveInput == 0 || freeHangInput || thruster.Cooldown)
-                && !(StronglyGrounded || IsTouchingGroundPtCollider(headCollider) || IsTouchingGroundPtCollider(abdomenCollider));
+                && !(groundMap.smoothedGrounded.AtMax || IsTouchingGroundPtCollider(headCollider) || IsTouchingGroundPtCollider(abdomenCollider));
         }
 
         if (MathTools.OppositeSigns(moveInput, orientation))
@@ -481,7 +485,7 @@ public class SpiderMovementController : MonoBehaviour
 
     private void UpdateGrappleScurrying()
     {
-        grappleScurrying = StronglyGrounded && moveInput != 0 && grapple.GrappleAnchored;
+        grappleScurrying = groundMap.grounded.AtMax && moveInput != 0 && grapple.GrappleAnchored;
     }
 
     private void ChangeDirection()
@@ -546,7 +550,8 @@ public class SpiderMovementController : MonoBehaviour
                 rb.AddForceAtPosition(rb.mass * (accelFactorFreeHanging * FreeHangingMoveDirection()), grapple.FreeHangLeveragePoint);
             }
         }
-        else if (StronglyGrounded)
+        //apply grip and drag
+        else if (grounded && groundMap.stronglyGrounded.On)
         {
             Vector2 d = FacingRight ? GroundPtGroundDirection : -GroundPtGroundDirection;
             var spd = Vector2.Dot(rb.linearVelocity, d);
@@ -561,7 +566,7 @@ public class SpiderMovementController : MonoBehaviour
                     grip += grapplePullGripReduction * c;
                 }
             }
-            var f = rb.mass * (grip - decelFactor * spd) * d;
+            var f = rb.mass * groundMap.stronglyGrounded.Brightness * (grip - decelFactor * spd) * d;
             rb.AddForce(f);//grip to steep slope
         }
     }
@@ -578,7 +583,7 @@ public class SpiderMovementController : MonoBehaviour
     {
         var f = -(grounded ? balanceSpringDamping : airborneBalanceSpringDamping) * rb.angularVelocity;
 
-        if (!legSynchronizer.FreeHanging)
+        if (!grapple.FreeHanging)
         {
             var a = MathTools.PseudoAngle(transform.right, groundDirection);
             f += a * (grounded ? balanceSpringForce : airborneBalanceSpringForce);
@@ -593,7 +598,7 @@ public class SpiderMovementController : MonoBehaviour
         //^and this returns early when already at correct rotation, so hardly creating unnecessary overhead.
         //We could do this all in terms of quaternions, but it would be slower because we need to do two square roots to write down a quaternion (two half angles)
         //instead of just the one square root (normalizing) involved in CheapRotationalLerp of unit vector.
-        //We could use first order deformation of quaternion (and fact that (cos(t/2))' = -0.5sin(t/2) = -0.5 * q.z),
+        //We could use first order deformation of quaternion (and fact that (cos(t/2))' = -0.5 * sin(t/2) = -0.5 * q.z),
         //but we would still have to normalize the quaternion afterwards, so I think it's best as is.
 
         if (changed)
@@ -777,23 +782,22 @@ public class SpiderMovementController : MonoBehaviour
 
     private void UpdateGroundData()
     {
-        LerpUpdateGroundMap();
-        var i = groundMap.IndexOfFirstGroundHitFromCenter();
-        var pt = groundMap.map[i];
-        var isCentralIndex = groundMap.IsCentralIndex(i);
+        UpdateGroundMap();
+        var i = groundMap.IndexOfFirstGroundHitFromCenter(out var isCentralIndex);
+        ref var pt = ref groundMap.map[i];
         var goalGroundDirection = pt.hitGround && isCentralIndex ?
             groundMap.AverageNormalFromCenter(-groundDirectionSampleWidth, groundDirectionSampleWidth).CWPerp()
             : pt.normal.CWPerp();
 
         if (!VerifyingJump())
         {
-            SetGrounded(pt.hitGround);
+            SetGrounded(groundMap.grounded.On);
         }
 
-        if (moveInput != 0 || !StronglyGrounded)
-        //updating when !StronglyGrounded allows groundpt to slip to an accurate position while settling down on landing
+        if (moveInput != 0 || !groundMap.stronglyGrounded.On)
+        //before was || !StronglyGrounded
         {
-            UpdateGroundPoint();
+            UpdateGroundPoint(pt);
         }
         else
         {
@@ -809,14 +813,15 @@ public class SpiderMovementController : MonoBehaviour
             }
         }
 
-        void UpdateGroundPoint()
+        void UpdateGroundPoint(GroundMapPt pt)
         {
             if (pt.hitGround && !isCentralIndex)
             {
                 var r = Physics2D.Raycast(heightReferencePoint.position, -pt.normal, backupGroundPtRaycastLengthFactor * groundednessTolerance, groundLayer);
                 if (r)
                 {
-                    pt.Set(r.point, r.normal, r.normal.CWPerp(), 0, 0, r.collider);
+                    groundPt.Set(r.point, r.normal, r.normal.CWPerp(), 0, 0, r.collider);
+                    return;
                 }
             }
 
@@ -824,12 +829,33 @@ public class SpiderMovementController : MonoBehaviour
         }
 
         groundDirection = grounded ? goalGroundDirection : MathTools.CheapRotationBySpeed(groundDirection, Vector2.right, failedGroundDirectionSmoothingRate, Time.deltaTime, out _);
-            //grounded ? StronglyGrounded ? goalGroundDirection
-            //: MathTools.CheapRotationBySpeed(goalGroundDirection, Vector2.right, failedGroundDirectionSmoothingRate, Time.deltaTime, out _)
-            //: MathTools.CheapRotationBySpeed(groundDirection, Vector2.right, failedGroundDirectionSmoothingRate, Time.deltaTime, out _);
         upcomingGroundDirection = FacingRight ? groundMap.AverageNormalFromCenter(upcomingGroundDirectionMinPos, upcomingGroundDirectionMaxPos)
             : groundMap.AverageNormalFromCenter(-upcomingGroundDirectionMaxPos, -upcomingGroundDirectionMinPos);
         upcomingGroundDirection = upcomingGroundDirection.CWPerp();
+    }
+
+    private void InitializeGroundMap()
+    {
+        if (grapple.FreeHanging)
+        {
+            groundMap.UpdateMap(heightReferencePoint.position,
+                FreeHangGroundMapDown(),
+                FreeHangGroundMapRight(),
+                groundednessTolerance,
+                groundMap.CentralIndex,
+                groundLayer);
+        }
+        else
+        {
+            groundMap.UpdateMap(heightReferencePoint.position,
+                -transform.up,
+                transform.right,
+                groundednessTolerance,
+                groundMap.CentralIndex,
+                groundLayer);
+        }
+
+        groundMap.InitializeStats();
     }
 
     private void UpdateGroundMap()
@@ -852,6 +878,8 @@ public class SpiderMovementController : MonoBehaviour
                 groundMap.CentralIndex,
                 groundLayer);
         }
+
+        groundMap.UpdateStats();
     }
 
     private void LerpUpdateGroundMap()
@@ -874,6 +902,8 @@ public class SpiderMovementController : MonoBehaviour
                 groundMap.CentralIndex,
                 groundLayer);
         }
+
+        groundMap.UpdateStats();
     }
 
     private Vector2 FreeHangGroundMapDown()
@@ -927,7 +957,7 @@ public class SpiderMovementController : MonoBehaviour
         RecomputeGroundednessTolerance();
         groundednessTolerance = goalGroundednessTolerance;
         groundMap.Initialize(heightReferencePoint.position);
-        UpdateGroundMap();
+        InitializeGroundMap();
         InitializeGroundPoint();
     }
 }
