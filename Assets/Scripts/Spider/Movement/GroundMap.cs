@@ -142,7 +142,7 @@ public class GroundMap
         return false;
     }
 
-    public int IndexOfFirstGroundHitFromCenter(out bool isCentralIndex)
+    public int IndexOfFirstGroundHitFromCenter(bool facingRight, out bool isCentralIndex)
     {
         if (grounded.On)
         {
@@ -153,26 +153,58 @@ public class GroundMap
                 return i;
             }
 
-            i++;
-            int j = CentralIndex - 1;
-            int n = NumPts;
-            
-            while (i < n && j > 0)
+            int di = facingRight ? 1 : -1;
+            int n = numFwdIntervals << 1;
+            int max = facingRight ? n : 0;
+
+            //search forward first (not necessary - we could alternate front and behind until we get a hit - but i feel like this way is better for continuity)
+            while (i != max)
             {
+                i += di;
                 if (map[i].hitGround)
                 {
                     isCentralIndex = false;
                     return i;
                 }
-                if (map[j].hitGround)
+            }
+
+            i = CentralIndex;
+            di = -di;
+            max = facingRight ? 0 : n;
+
+            while (i != max)
+            {
+                i += di;
+                if (map[i].hitGround)
                 {
                     isCentralIndex = false;
-                    return j;
+                    return i;
                 }
-
-                i++;
-                j--;
             }
+
+            //i++;
+            //int j = CentralIndex - 1;
+            //int n = NumPts;
+
+            //if (facingRight)
+            //{ }
+            
+            //while (i < n && j > 0)
+            //{
+            //    if (map[i].hitGround)
+            //    {
+            //        isCentralIndex = false;
+            //        return i;
+            //    }
+            //    if (map[j].hitGround)
+            //    {
+            //        isCentralIndex = false;
+            //        return j;
+            //    }
+
+            //    i++;
+            //    j--;
+            //}
         }
 
         isCentralIndex = true;
@@ -267,12 +299,13 @@ public class GroundMap
         pt = LeftEndPt;
     }
 
-    public Vector2 ClosestPoint(Vector2 p, out bool hitGround)
+    public Vector2 ClosestPoint(Vector2 p, out Vector2 normal, out bool hitGround)
     {
         var a1 = MathTools.Cross2D(p - map[0].point, map[0].normal);
         if (a1 == 0)
         {
             hitGround = map[0].hitGround;
+            normal = map[0].normal;
             return map[0].point;
         }
         for (int i = 1; i < NumPts; i++)
@@ -281,12 +314,14 @@ public class GroundMap
             if (a2 == 0)
             {
                 hitGround = map[i].hitGround;
+                normal = map[i].normal;
                 return map[i].point;
             }
             if (MathTools.OppositeSigns(a1, a2))
             {
                 var t = Mathf.Abs(a1 / (a2 - a1));
                 hitGround = t < 0.5f ? map[i - 1].hitGround : map[i].hitGround;
+                normal = MathTools.CheapRotationalLerp(map[i - 1].normal, map[i].normal, t, out _);
                 return Vector2.Lerp(map[i - 1].point, map[i].point, t);
             }
             a1 = a2;
@@ -295,10 +330,12 @@ public class GroundMap
         if (Vector2.Dot(p - RightEndPt.point, RightEndPt.right) > 0)
         {
             hitGround = RightEndPt.hitGround;
+            normal = RightEndPt.normal;
             return RightEndPt.point;
         }
 
         hitGround = LeftEndPt.hitGround;
+        normal = LeftEndPt.normal;
         return LeftEndPt.point;
     }
 

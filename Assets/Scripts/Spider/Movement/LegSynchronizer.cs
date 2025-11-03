@@ -79,18 +79,15 @@ public class LegSynchronizer : MonoBehaviour
     }
 
     LegTimer[] timers;
-    //GroundMap smoothedGroundMap;
     bool freeHanging;
     Vector2 driftWeight;
+    float legCountInverse;
 
     public float bodyGroundSpeedSign;
     public float absoluteBodyGroundSpeed;
-    //public float preferredBodyPosGroundHeight;
     public float timeScale = 1;
     public float stepHeightFraction;
     public float strideMultiplier = 1;
-
-
     
     public Vector2 DriftWeight
     {
@@ -119,6 +116,9 @@ public class LegSynchronizer : MonoBehaviour
 
     float GoalSmoothingRate => FreeHanging ? freeHangSmoothingRate : stepSmoothingRate;
 
+    public float FractionTouchingGround { get; private set; }
+    public bool AnyTouchingGround => FractionTouchingGround > 0;
+
     public void UpdateAllLegs(float dt, GroundMap map)
     {
         var facingRight = bodyRb.transform.localScale.x > 0; 
@@ -130,7 +130,7 @@ public class LegSynchronizer : MonoBehaviour
         var stepHeightSpeedMultiplier = Mathf.Min(sf, 1);
         var baseStepHeightMultiplier = (FreeHanging ? freeHangStepHeightMultiplier : this.baseStepHeightMultiplier) * stepHeightFraction;
 
-        //smoothedGroundMap.LerpTowards(map, groundMapSmoothingRate * dt);
+        int count = 0;
 
         for (int i = 0; i < timers.Length; i++)
         {
@@ -155,13 +155,20 @@ public class LegSynchronizer : MonoBehaviour
                     strideMultiplier == 1 ? t.RestTime : strideMultiplier * t.RestTime,
                     DriftWeight);
             }
+
+            if (l.IsTouchingGround)
+            {
+                count++;
+            }
         }
+
+        FractionTouchingGround = count * legCountInverse;
     }
 
     public void Initialize(float bodyPosGroundHeight, bool bodyFacingRight, GroundMap groundMap)
     {
         InitializeTimers();
-        //smoothedGroundMap = groundMap;
+        legCountInverse = 1 / (float)timers.Length;
         InitializeLegPositions(bodyFacingRight, bodyPosGroundHeight);
     }
 
@@ -193,11 +200,19 @@ public class LegSynchronizer : MonoBehaviour
         Vector2 bodyMovementRight = bodyFacingRight ? bodyRb.transform.right : -bodyRb.transform.right;
         Vector2 bodyUp = bodyRb.transform.up;
 
+        int count = 0;
         for (int i = 0; i < synchronizedLegs.Length; i++)
         {
             var t = timers[i];
-            synchronizedLegs[i].Leg.InitializePosition(preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, 
+            var l = synchronizedLegs[i].Leg;
+            l.InitializePosition(preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, 
                 t.Stepping, t.StateProgress, t.StepTime, t.RestTime);
+            if (l.IsTouchingGround)
+            {
+                count++;
+            }
         }
+
+        FractionTouchingGround = count * legCountInverse;
     }
 }

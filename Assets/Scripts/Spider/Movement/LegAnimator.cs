@@ -125,8 +125,8 @@ public class LegAnimator : MonoBehaviour
     private void UpdateIsTouchingGround(GroundMap groundMap)
     {
         Vector2 q = ikTarget.position;
-        var p = groundMap.ClosestPoint(q, out var hitGround);
-        IsTouchingGround = hitGround && Vector2.SqrMagnitude(p - q) < groundContactRadius2;
+        q -= groundMap.ClosestPoint(q, out var n, out var hitGround);
+        IsTouchingGround = hitGround && (Vector2.SqrMagnitude(q) < groundContactRadius2 || Vector2.Dot(q, n) < 0);
     }
 
     private Vector2 GetStepStart(GroundMap map, bool bodyFacingRight, float stepProgress, float stepTime, float restTime, Vector2 drift)
