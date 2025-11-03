@@ -116,7 +116,7 @@ public class SpiderMovementController : MonoBehaviour
     float goalGroundednessTolerance;
     Vector2 groundDirection = Vector2.right;
     Vector2 upcomingGroundDirection = Vector2.right;
-    GroundMapPt groundPt = new(new(Mathf.Infinity, Mathf.Infinity), Vector2.up, Vector2.right, 0, Mathf.Infinity, null);
+    GroundMapPt groundPt;
 
     float cosFreeHangLegAngleMin;
     float sinFreeHangLegAngleMin;
@@ -797,7 +797,7 @@ public class SpiderMovementController : MonoBehaviour
         if (moveInput != 0 || !groundMap.stronglyGrounded.On)
         //before was || !StronglyGrounded
         {
-            UpdateGroundPoint(pt);
+            UpdateGroundPoint(ref pt);
         }
         else
         {
@@ -808,12 +808,12 @@ public class SpiderMovementController : MonoBehaviour
                 if (MathTools.OppositeSigns(l, v))
                 {
                     l = l < 0 ? Mathf.Min(l - groundPtSlipRate * l * v, 0) : Mathf.Max(l + groundPtSlipRate * l * v, 0);
-                    groundPt = groundMap.PointFromCenterByPositionClamped(l);//project onto ground method really does the same thing
+                    groundMap.SetToPointFromCenterByPositionClamped(l, ref groundPt);//project onto ground method really does the same thing
                 }
             }
         }
 
-        void UpdateGroundPoint(GroundMapPt pt)
+        void UpdateGroundPoint(ref GroundMapPt pt)
         {
             if (pt.hitGround && !isCentralIndex)
             {
@@ -949,14 +949,14 @@ public class SpiderMovementController : MonoBehaviour
 
     private void InitializeGroundPoint()
     {
-        groundPt = groundMap.CenterByIndex;
+        groundPt = groundMap.Center;
     }
 
     private void InitializeGroundData()
     {
         RecomputeGroundednessTolerance();
         groundednessTolerance = goalGroundednessTolerance;
-        groundMap.Initialize(heightReferencePoint.position);
+        groundMap.Initialize();
         InitializeGroundMap();
         InitializeGroundPoint();
     }

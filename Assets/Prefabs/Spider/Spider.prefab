@@ -1003,6 +1003,7 @@ MonoBehaviour:
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
   stepMax: 0.9
+  groundContactRadius: 0.1
   freeHangLagWeights: {x: 0, y: 5}
   drift: {x: 0.02, y: -0.1}
 --- !u!1 &839944467269662652
@@ -1380,6 +1381,7 @@ MonoBehaviour:
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
   stepMax: 0.825
+  groundContactRadius: 0.1
   freeHangLagWeights: {x: 0, y: 5}
   drift: {x: 0, y: -0.1}
 --- !u!1 &1248638082500357407
@@ -1888,6 +1890,7 @@ MonoBehaviour:
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
   stepMax: -0.05
+  groundContactRadius: 0.1
   freeHangLagWeights: {x: 10, y: 2}
   drift: {x: -0.1, y: 0.1}
 --- !u!1 &1968367528358965401
@@ -5049,6 +5052,7 @@ MonoBehaviour:
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
   stepMax: -0.05
+  groundContactRadius: 0.1
   freeHangLagWeights: {x: 10, y: 2}
   drift: {x: -0.1, y: 0.1}
 --- !u!1 &2656875783498011584
@@ -5544,6 +5548,7 @@ MonoBehaviour:
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
   stepMax: 0.9
+  groundContactRadius: 0.1
   freeHangLagWeights: {x: 0, y: 5}
   drift: {x: 0.02, y: -0.1}
 --- !u!1 &3319515992144099393
@@ -6811,6 +6816,7 @@ MonoBehaviour:
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
   stepMax: -0.2
+  groundContactRadius: 0.1
   freeHangLagWeights: {x: 10, y: 2}
   drift: {x: 0, y: 0.25}
 --- !u!1 &5247813140874977512
@@ -7191,6 +7197,7 @@ MonoBehaviour:
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
   stepMax: -0.2
+  groundContactRadius: 0.1
   freeHangLagWeights: {x: 10, y: 2}
   drift: {x: 0, y: 0.25}
 --- !u!1 &6016693261962413811
@@ -8415,6 +8422,7 @@ MonoBehaviour:
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
   stepMax: 0.825
+  groundContactRadius: 0.1
   freeHangLagWeights: {x: 0, y: 5}
   drift: {x: 0, y: -0.1}
 --- !u!1 &6858911009439342665
