@@ -117,6 +117,7 @@ public class SpiderMovementController : MonoBehaviour
     Vector2 groundDirection = Vector2.right;
     Vector2 upcomingGroundDirection = Vector2.right;
     GroundMapPt groundPt;
+    bool bodyCollidersTouchingGround;
 
     float cosFreeHangLegAngleMin;
     float sinFreeHangLegAngleMin;
@@ -202,12 +203,14 @@ public class SpiderMovementController : MonoBehaviour
         InitializeGroundData();
         legSynchronizer.Initialize(PreferredBodyPosGroundHeight, FacingRight, groundMap);
         bodyCollisionFilter.NoFilter();
-        bodyCollisionFilter.layerMask = groundLayer;
+        bodyCollisionFilter.useTriggers = false;
+        bodyCollisionFilter.SetLayerMask(groundLayer);
     }
 
     private void Update()
     {
         CaptureInput();
+        //^contacts are sometimes not accurate when checked during fixed update!
     }
 
     private void LateUpdate()
@@ -222,6 +225,8 @@ public class SpiderMovementController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        bodyCollidersTouchingGround = IsTouchingGroundLayer(headCollider) || IsTouchingGroundLayer(abdomenCollider);
+
         if (VerifyingJump())
         {
             jumpVerificationTimer -= Time.deltaTime;
@@ -275,7 +280,7 @@ public class SpiderMovementController : MonoBehaviour
         {
             case Thruster.ThrustersUpdateResult.ChargeRanOut:
                 OnThrusterRanOutOfCharge();
-                if (!groundMap.middleGrounded.On && grapple.GrappleAnchored)
+                if (!grounded && grapple.GrappleAnchored)
                 {
                     grapple.FreeHanging = true;
                 }
@@ -405,8 +410,7 @@ public class SpiderMovementController : MonoBehaviour
         if (grapple.GrappleAnchored)
         {
             //hold shift to enter freehang/swing mode (if it's the default state, then repelling and direction change gets annoying)
-            grapple.FreeHanging = (moveInput == 0 || freeHangInput || thruster.Cooldown)
-                && !(groundMap.smoothedGrounded.AtMax || IsTouchingGroundPtCollider(headCollider) || IsTouchingGroundPtCollider(abdomenCollider));
+            grapple.FreeHanging = (moveInput == 0 || freeHangInput || thruster.Cooldown) && !grounded;
         }
 
         if (MathTools.OppositeSigns(moveInput, orientation))
@@ -480,7 +484,8 @@ public class SpiderMovementController : MonoBehaviour
         {
             if (grounded || !grapple.GrappleAnchored || (!freeHangInput && thruster.Engaged))
             {
-                Vector2 d = Leaning ? FacingRight ? upcomingGroundDirection : - upcomingGroundDirection : OrientedGroundDirection;
+                //Vector2 d = Leaning ? FacingRight ? upcomingGroundDirection : - upcomingGroundDirection : OrientedGroundDirection;
+                Vector2 d = OrientedGroundDirection;
                 var spd = Vector2.Dot(rb.linearVelocity, d);
                 var maxSpd = MaxSpeed;
                 var accFactor = grounded ? accelFactor : (thruster.Engaged ? thrustingAccelFactor : deadThrusterAccelFactor);
@@ -668,7 +673,9 @@ public class SpiderMovementController : MonoBehaviour
         var p = groundMap.AveragePointFromCenter(-heightSampleWidth, heightSampleWidth);
         //^average point so that body sinks a little as it rounds a sharp peak (keeping leg extension natural)
         //--note you only want to do this when strongly grounded
-        Vector2 down = Leaning ? groundDirection.CWPerp() : -transform.up;
+
+        Vector2 down = -transform.up;
+        //Vector2 down = Leaning ? groundDirection.CWPerp() : -transform.up;
         var v = Vector2.Dot(rb.linearVelocity, down);
         var l = Vector2.Dot(p - (Vector2)heightReferencePoint.position, down) - preferredRideHeight;
         var f = l * heightSpringForce - heightSpringDamping * v;
@@ -729,7 +736,14 @@ public class SpiderMovementController : MonoBehaviour
 
     private void UpdateGroundData()
     {
-        LerpUpdateGroundMap();
+        if (grapple.FreeHanging)
+        {
+            LerpUpdateGroundMap();
+        }
+        else
+        {
+            UpdateGroundMap();
+        }
         var i = groundMap.IndexOfFirstGroundHitFromCenter(FacingRight, out var isCentralIndex);
         ref var pt = ref groundMap.map[i];
         var goalGroundDirection = pt.hitGround && isCentralIndex ?
@@ -741,7 +755,11 @@ public class SpiderMovementController : MonoBehaviour
         if (!VerifyingJump())
         {
             UpdateGroundednessRating();
-            SetGrounded(groundednessRating > 0 || IsTouchingGroundPtCollider(headCollider) || IsTouchingGroundPtCollider(abdomenCollider));
+            SetGrounded(GroundedCondition());
+            if (grapple.FreeHanging && grounded)
+            {
+                grapple.FreeHanging = false;
+            }
         }
 
         if (moveInput != 0 || !grounded)
@@ -790,6 +808,16 @@ public class SpiderMovementController : MonoBehaviour
         upcomingGroundDirection = FacingRight ? groundMap.AverageNormalFromCenter(upcomingGroundDirectionMinPos, upcomingGroundDirectionMaxPos)
             : groundMap.AverageNormalFromCenter(-upcomingGroundDirectionMaxPos, -upcomingGroundDirectionMinPos);
         upcomingGroundDirection = upcomingGroundDirection.CWPerp();
+    }
+
+    private bool GroundedCondition()
+    {
+        //if (grapple.GrappleAnchored)
+        //{
+        //    return (legSynchronizer.AnyFrontLegsTouchingGround && legSynchronizer.AnyHindLegsTouchingGround) || bodyCollidersTouchingGround;
+        //}
+
+        return groundednessRating > 0 || bodyCollidersTouchingGround;
     }
 
     private void UpdateGroundednessRating()
@@ -900,15 +928,12 @@ public class SpiderMovementController : MonoBehaviour
     }
 
     //only used for releasing freeHang state, but we'll put it in this section I guess
-    private bool IsTouchingGroundPtCollider(Collider2D c)
+    private bool IsTouchingGroundLayer(Collider2D c)
     {
-        if (groundPt.groundCollider == null)
-        {
-            return false;
-        }
-
         c.GetContacts(bodyCollisionFilter, bodyCollisionBuffer);
-        return bodyCollisionBuffer[0] == groundPt.groundCollider;
+        var contact = bodyCollisionBuffer[0] && (1 << bodyCollisionBuffer[0].gameObject.layer & groundLayer) != 0;
+        bodyCollisionBuffer[0] = null;
+        return contact;
     }
 
     private void InitializeGroundPoint()
@@ -940,14 +965,16 @@ public class SpiderMovementController : MonoBehaviour
 
     private void UpdateLegSynch()
     {
-        if (legSynchronizer.FreeHanging && (!grapple.FreeHanging || groundMap.smoothedMiddleGrounded.On))
-        {
-            legSynchronizer.FreeHanging = false;
-        }
-        else if (!legSynchronizer.FreeHanging && grapple.FreeHanging && !groundMap.smoothedMiddleGrounded.On)
-        {
-            legSynchronizer.FreeHanging = true;
-        }
+        //if (legSynchronizer.FreeHanging && (!grapple.FreeHanging || groundMap.smoothedMiddleGrounded.On))
+        //{
+        //    legSynchronizer.FreeHanging = false;
+        //}
+        //else if (!legSynchronizer.FreeHanging && grapple.FreeHanging && !groundMap.smoothedMiddleGrounded.On)
+        //{
+        //    legSynchronizer.FreeHanging = true;
+        //}
+
+        legSynchronizer.FreeHanging = grapple.FreeHanging;
 
         var v = GroundVelocity;
         legSynchronizer.bodyGroundSpeedSign = (grounded && grapple.GrappleAnchored) || grapple.FreeHanging ? 1 : Mathf.Sign(v);

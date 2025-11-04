@@ -2327,6 +2327,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2647139100762919223, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4161556469149567743, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
+      propertyPath: decelFactor
+      value: 45
+      objectReference: {fileID: 0}
+    - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
+      propertyPath: balanceSpringForce
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
+      propertyPath: groundMap.smoothingRate
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
+      propertyPath: groundedExitToleranceFactor
+      value: 1.2
+      objectReference: {fileID: 0}
     - target: {fileID: 7385854493773830215, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: groundMap.map.Array.data[0].groundCollider
       value: 
