@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Linq;
 using System;
+using System.Collections;
 
 public class LegSynchronizer : MonoBehaviour
 {
@@ -99,8 +100,7 @@ public class LegSynchronizer : MonoBehaviour
             driftWeight = FreeHanging ? Vector2.Lerp(driftWeight, value, driftWeightSmoothingRate * Time.deltaTime) : value;
         }
     }
-
-    public bool FreeHanging
+    public bool FreeHanging//freeHanging = ikTargets gradually catch up to body as it moves to make legs seem like they're dangling freely
     {
         get => freeHanging;
         set
@@ -115,13 +115,30 @@ public class LegSynchronizer : MonoBehaviour
             }
         }
     }
+    public float FractionTouchingGround { get; private set; }
+    public bool AnyTouchingGround => FractionTouchingGround > 0;
+    public SynchronizedLeg[] SynchronizedLegs => synchronizedLegs;
 
     float GoalSmoothingRate => FreeHanging ? freeHangSmoothingRate : stepSmoothingRate;
 
-    public float FractionTouchingGround { get; private set; }
-    public bool AnyTouchingGround => FractionTouchingGround > 0;
-    public bool AnyFrontLegsTouchingGround { get; private set; }
-    public bool AnyHindLegsTouchingGround { get; private set; }
+    public bool AnyGroundedLegsUnderextended(float threshold)
+    {
+        if (!AnyTouchingGround)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < synchronizedLegs.Length; i++)
+        {
+            var l = synchronizedLegs[i].Leg;
+            if (l.IsTouchingGround && l.LegExtensionFraction < threshold)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     public void UpdateAllLegs(float dt, GroundMap map)
     {
@@ -135,7 +152,6 @@ public class LegSynchronizer : MonoBehaviour
         var baseStepHeightMultiplier = (FreeHanging ? freeHangStepHeightMultiplier : this.baseStepHeightMultiplier) * stepHeightFraction;
 
         int count = 0;
-        AnyFrontLegsTouchingGround = false;
 
         for (int i = 0; i < legCount; i++)
         {
@@ -168,27 +184,6 @@ public class LegSynchronizer : MonoBehaviour
         }
 
         FractionTouchingGround = count * legCountInverse;
-
-        AnyFrontLegsTouchingGround = false;
-        AnyHindLegsTouchingGround = false;
-
-        for (int i = 0; i < halfLegCount; i++)
-        {
-            if (synchronizedLegs[i].Leg.IsTouchingGround)
-            {
-                AnyFrontLegsTouchingGround = true;
-                break;
-            }
-        }
-
-        for (int i = halfLegCount; i < legCount; i++)
-        {
-            if (synchronizedLegs[i].Leg.IsTouchingGround)
-            {
-                AnyHindLegsTouchingGround = true;
-                break;
-            }
-        }
     }
 
     public void Initialize(float bodyPosGroundHeight, bool bodyFacingRight, GroundMap groundMap)

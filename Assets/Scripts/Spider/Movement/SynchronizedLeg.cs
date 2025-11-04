@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [Serializable]
-struct SynchronizedLeg
+public class SynchronizedLeg
 {
     [SerializeField] LegAnimator leg;
     [SerializeField] float timeOffset;

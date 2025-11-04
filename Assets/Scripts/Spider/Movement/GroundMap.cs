@@ -13,12 +13,12 @@ public class GroundMap
     public float intervalWidth;
     public GroundMapPt[] map;
 
-    public SteadyToggle grounded;
-    public SteadyToggle smoothedGrounded;//I think you WILL want this for legSync.FreeHang
-    public SteadyToggle stronglyGrounded;
-    public SteadyToggle smoothedStronglyGrounded;
-    public SteadyToggle middleGrounded;
-    public SteadyToggle smoothedMiddleGrounded;
+    //public SteadyToggle grounded;
+    //public SteadyToggle smoothedGrounded;//I think you WILL want this for legSync.FreeHang
+    //public SteadyToggle stronglyGrounded;
+    //public SteadyToggle smoothedStronglyGrounded;
+    //public SteadyToggle middleGrounded;
+    //public SteadyToggle smoothedMiddleGrounded;
 
     float middleGroundedCountInverse;
     float totalGroundedCountInverse;
@@ -143,7 +143,7 @@ public class GroundMap
 
     public int IndexOfFirstGroundHitFromCenter(bool facingRight, out bool isCentralIndex)
     {
-        if (grounded.On)
+        if (TotalGroundedFraction > 0)
         {
             int i = CentralIndex;
             if (map[i].hitGround)
@@ -407,10 +407,10 @@ public class GroundMap
         TotalGroundedFraction = count * totalGroundedCountInverse;
         SmoothedTotalGroundedFraction = TotalGroundedFraction;
 
-        grounded.UpdateState(TotalGroundedFraction);
-        smoothedGrounded.UpdateState(SmoothedTotalGroundedFraction);
-        middleGrounded.UpdateState(MiddleGroundedFraction);
-        smoothedMiddleGrounded.UpdateState(SmoothedMiddleGroundedFraction);
+        //grounded.UpdateState(TotalGroundedFraction);
+        //smoothedGrounded.UpdateState(SmoothedTotalGroundedFraction);
+        //middleGrounded.UpdateState(MiddleGroundedFraction);
+        //smoothedMiddleGrounded.UpdateState(SmoothedMiddleGroundedFraction);
     }
 
     public void UpdateStats()
@@ -437,12 +437,12 @@ public class GroundMap
         TotalGroundedFraction = count * totalGroundedCountInverse;
         SmoothedTotalGroundedFraction = Mathf.Lerp(SmoothedTotalGroundedFraction, TotalGroundedFraction, totalGroundedSmoothingRate * Time.deltaTime);
 
-        grounded.UpdateState(TotalGroundedFraction);
-        smoothedGrounded.UpdateState(SmoothedTotalGroundedFraction);
-        stronglyGrounded.UpdateState(TotalGroundedFraction);
-        smoothedStronglyGrounded.UpdateState(SmoothedTotalGroundedFraction);
-        middleGrounded.UpdateState(MiddleGroundedFraction);
-        smoothedMiddleGrounded.UpdateState(SmoothedMiddleGroundedFraction);
+        //grounded.UpdateState(TotalGroundedFraction);
+        //smoothedGrounded.UpdateState(SmoothedTotalGroundedFraction);
+        //stronglyGrounded.UpdateState(TotalGroundedFraction);
+        //smoothedStronglyGrounded.UpdateState(SmoothedTotalGroundedFraction);
+        //middleGrounded.UpdateState(MiddleGroundedFraction);
+        //smoothedMiddleGrounded.UpdateState(SmoothedMiddleGroundedFraction);
     }
 
     public void LerpUpdateMap(Vector2 origin, Vector2 originDown, Vector2 originRight, float raycastLength, int centralIndex, int raycastLayerMask)

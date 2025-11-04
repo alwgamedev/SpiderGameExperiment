@@ -9412,11 +9412,11 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  groundedExitToleranceFactor: 1.5
+  groundedExitToleranceFactor: 1.3
   groundedEntryToleranceFactor: 0.95
   groundednessSmoothingRate: 2.5
   groundednessInitialContactValue: 1
-  groundDirectionSampleWidth: 0.2
+  groundDirectionSampleWidth: 0.5
   backupGroundPtRaycastLengthFactor: 1.1
   groundPtSlipRate: 75
   groundPtSlipThreshold: 0.05
@@ -9424,7 +9424,7 @@ MonoBehaviour:
   upcomingGroundDirectionMaxPos: 0.4
   failedGroundDirectionSmoothingRate: 45
   groundMap:
-    smoothingRate: 1
+    smoothingRate: 0.6
     totalGroundedSmoothingRate: 5
     middleGroundedSmoothingRate: 5
     middleGroundedWidth: 13
@@ -10061,36 +10061,12 @@ MonoBehaviour:
       normal: {x: -1, y: 0}
       right: {x: 0, y: 1}
       groundCollider: {fileID: 0}
-    grounded:
-      onThreshold: 0.02
-      offThreshold: 0.0001
-      maxBrightnessThreshold: 1
-    smoothedGrounded:
-      onThreshold: 0.02
-      offThreshold: 0.0001
-      maxBrightnessThreshold: 1
-    stronglyGrounded:
-      onThreshold: 0.6
-      offThreshold: 0.45
-      maxBrightnessThreshold: 0.8
-    smoothedStronglyGrounded:
-      onThreshold: 0.6
-      offThreshold: 0.45
-      maxBrightnessThreshold: 0.8
-    middleGrounded:
-      onThreshold: 0.2
-      offThreshold: 0.05
-      maxBrightnessThreshold: 0.9
-    smoothedMiddleGrounded:
-      onThreshold: 0.2
-      offThreshold: 0.05
-      maxBrightnessThreshold: 0.9
   accelFactor: 45
   accelFactorFreeHanging: 15
   deadThrusterAccelFactor: 4
   thrustingAccelFactor: 25
   accelCap: 4
-  decelFactor: 60
+  decelFactor: 45
   gripStrength: 450
   grapplePullGripReduction: 0.4
   maxSpeed: 4
@@ -10103,9 +10079,9 @@ MonoBehaviour:
   heightSampleWidth: 0.8
   abdomenRotationSpeed: 6
   headRotationSpeed: 12
-  balanceSpringForce: 75
-  airborneBalanceSpringForce: 45
-  balanceSpringDamping: 0.1
+  balanceSpringForce: 100
+  airborneBalanceSpringForce: 60
+  balanceSpringDamping: 0.125
   airborneBalanceSpringDamping: 0.04
   grappleScurryResistanceMax: 175
   grappleScurryAngleMin: -0.5235988
@@ -10119,10 +10095,10 @@ MonoBehaviour:
   crouchTime: 0.5
   crouchBoostMinProgress: 0.4
   crouchReleaseSpeedMultiplier: 3
-  airborneLegAnimationTimeScale: 0.04
+  airborneLegAnimationTimeScale: 0.075
   airborneStrideMultiplier: 1.5
   strideMultiplierSmoothingRate: 1
-  freeHangGroundedToleranceMultiplier: 1
+  freeHangGroundedEntryLegExtensionThreshold: 0.75
   freeHangLegAngleMin: 1.047198
   freeHangLegAngleSkew: 0.1308997
   freeHangHeadAngle: 0.2094395

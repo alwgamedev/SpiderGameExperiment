@@ -14,11 +14,19 @@ public class LegAnimator : MonoBehaviour
     int groundLayer;
     float groundContactRadius2;
     Transform hipBone;
+    Transform ikEffector;
     Transform ikTarget;
+    float ikChainLength;
+    float ikChainLengthInverse;
 
     Vector2 lastFreeHangPosition;
 
+    public Vector2 HipPosition => hipBone.position;
+    public Vector2 FootPosition => ikEffector.position;
     public bool IsTouchingGround { get; private set; }
+    public Vector2 ContactNormal { get; private set; }
+    public Vector2 LegExtensionVector => FootPosition - HipPosition;
+    public float LegExtensionFraction => LegExtensionVector.magnitude * ikChainLengthInverse;
 
     private void Awake()
     {
@@ -26,7 +34,17 @@ public class LegAnimator : MonoBehaviour
         groundContactRadius2 = groundContactRadius * groundContactRadius;
         var ikChain = GetComponent<Solver2D>().GetChain(0);
         hipBone = ikChain.transforms[0];
+        ikEffector = ikChain.effector;
         ikTarget = ikChain.target;
+
+        var lengths = ikChain.lengths;
+        ikChainLength = 0;
+        for (int i = 0; i < lengths.Length; i++)
+        {
+            ikChainLength += lengths[i];
+        }
+
+        ikChainLengthInverse = 1 / ikChainLength;
     }
 
     public void InitializePosition(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, 
@@ -50,6 +68,7 @@ public class LegAnimator : MonoBehaviour
         }
 
         IsTouchingGround = Physics2D.OverlapCircle(ikTarget.position, groundContactRadius, groundLayer);
+        //UpdateExtension();
     }
 
     public void UpdateStep(float dt, GroundMap map, bool bodyFacingRight, bool freeHanging,
@@ -90,6 +109,7 @@ public class LegAnimator : MonoBehaviour
         }
 
         UpdateIsTouchingGround(map);
+        //UpdateExtension();
     }
 
     public void UpdateRest(float dt, GroundMap map, bool bodyFacingRight, bool freeHanging,
@@ -109,6 +129,7 @@ public class LegAnimator : MonoBehaviour
         }
 
         UpdateIsTouchingGround(map);
+        //UpdateExtension();
     }
 
     public void OnBodyChangedDirectionFreeHanging(Vector2 position0, Vector2 position1, Vector2 flipNormal)
@@ -124,10 +145,17 @@ public class LegAnimator : MonoBehaviour
 
     private void UpdateIsTouchingGround(GroundMap groundMap)
     {
-        Vector2 q = ikTarget.position;
+        Vector2 q = ikEffector.position;
         q -= groundMap.ClosestPoint(q, out var n, out var hitGround);
+        ContactNormal = n;
         IsTouchingGround = hitGround && (Vector2.SqrMagnitude(q) < groundContactRadius2 || Vector2.Dot(q, n) < 0);
     }
+
+    //private void UpdateExtension()
+    //{
+    //    LegExtensionVector = new(ikTarget.position.x - hipBone.position.x, ikTarget.position.y - hipBone.position.y);
+    //    LegExtensionFraction = LegExtensionVector.magnitude / ikChainLength;
+    //}
 
     private Vector2 GetStepStart(GroundMap map, bool bodyFacingRight, float stepProgress, float stepTime, float restTime, Vector2 drift)
     {
