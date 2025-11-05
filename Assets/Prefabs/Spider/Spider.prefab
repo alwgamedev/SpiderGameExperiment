@@ -1003,9 +1003,10 @@ MonoBehaviour:
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
   stepMax: 0.9
-  groundContactRadius: 0.085
-  freeHangLagWeights: {x: 0, y: 5}
-  drift: {x: 0.02, y: -0.1}
+  groundContactRadius: 0.1
+  freeHangLagWeights: {x: 0.5, y: 1}
+  drift: {x: 0, y: -0.05}
+  driftWeight: 0
 --- !u!1 &839944467269662652
 GameObject:
   m_ObjectHideFlags: 0
@@ -1381,9 +1382,10 @@ MonoBehaviour:
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
   stepMax: 0.825
-  groundContactRadius: 0.085
-  freeHangLagWeights: {x: 0, y: 5}
-  drift: {x: 0, y: -0.1}
+  groundContactRadius: 0.1
+  freeHangLagWeights: {x: 0.5, y: 1}
+  drift: {x: 0, y: 0}
+  driftWeight: 0
 --- !u!1 &1248638082500357407
 GameObject:
   m_ObjectHideFlags: 0
@@ -1890,9 +1892,10 @@ MonoBehaviour:
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
   stepMax: -0.05
-  groundContactRadius: 0.085
+  groundContactRadius: 0.1
   freeHangLagWeights: {x: 10, y: 2}
-  drift: {x: -0.1, y: 0.1}
+  drift: {x: -0.3, y: 0.1}
+  driftWeight: 0
 --- !u!1 &1968367528358965401
 GameObject:
   m_ObjectHideFlags: 0
@@ -5052,9 +5055,10 @@ MonoBehaviour:
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
   stepMax: -0.05
-  groundContactRadius: 0.085
+  groundContactRadius: 0.1
   freeHangLagWeights: {x: 10, y: 2}
-  drift: {x: -0.1, y: 0.1}
+  drift: {x: -0.3, y: 0.1}
+  driftWeight: 0
 --- !u!1 &2656875783498011584
 GameObject:
   m_ObjectHideFlags: 0
@@ -5548,9 +5552,10 @@ MonoBehaviour:
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
   stepMax: 0.9
-  groundContactRadius: 0.085
-  freeHangLagWeights: {x: 0, y: 5}
-  drift: {x: 0.02, y: -0.1}
+  groundContactRadius: 0.1
+  freeHangLagWeights: {x: 0.5, y: 1}
+  drift: {x: 0, y: -0.05}
+  driftWeight: 0
 --- !u!1 &3319515992144099393
 GameObject:
   m_ObjectHideFlags: 0
@@ -6816,9 +6821,10 @@ MonoBehaviour:
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
   stepMax: -0.2
-  groundContactRadius: 0.085
+  groundContactRadius: 0.1
   freeHangLagWeights: {x: 10, y: 2}
   drift: {x: 0, y: 0.25}
+  driftWeight: 0
 --- !u!1 &5247813140874977512
 GameObject:
   m_ObjectHideFlags: 0
@@ -7197,9 +7203,10 @@ MonoBehaviour:
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
   stepMax: -0.2
-  groundContactRadius: 0.085
+  groundContactRadius: 0.1
   freeHangLagWeights: {x: 10, y: 2}
   drift: {x: 0, y: 0.25}
+  driftWeight: 0
 --- !u!1 &6016693261962413811
 GameObject:
   m_ObjectHideFlags: 0
@@ -8422,9 +8429,10 @@ MonoBehaviour:
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
   stepMax: 0.825
-  groundContactRadius: 0.085
-  freeHangLagWeights: {x: 0, y: 5}
-  drift: {x: 0, y: -0.1}
+  groundContactRadius: 0.1
+  freeHangLagWeights: {x: 0.5, y: 1}
+  drift: {x: 0, y: 0}
+  driftWeight: 0
 --- !u!1 &6858911009439342665
 GameObject:
   m_ObjectHideFlags: 0
@@ -10103,8 +10111,8 @@ MonoBehaviour:
   freeHangLegAngleSkew: 0.1308997
   freeHangHeadAngle: 0.2094395
   baseFreeHangDriftWeight: {x: 3, y: 1}
-  freeHangStepHeightReductionMax: 1
-  freeHangStrideMultiplier: 0.35
+  freeHangStepHeightReductionMax: 0.9
+  freeHangStrideMultiplier: 0.5
   thruster:
     drainRate: 0.075
     rechargeRate: 0.05
@@ -10138,9 +10146,9 @@ MonoBehaviour:
   speedCapMax: 3
   baseStepHeightMultiplier: 0.925
   stepSmoothingRate: 22
-  freeHangSmoothingRate: 280
+  freeHangSmoothingRate: 120
   freeHangStepHeightMultiplier: 0.25
-  driftWeightSmoothingRate: 7.5
+  driftWeightSmoothingRate: 0.1
   synchronizedLegs:
   - leg: {fileID: 3287121947862078546}
     timeOffset: 0
@@ -10190,6 +10198,10 @@ PrefabInstance:
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: releaseRate
       value: 4.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: carrySpringForce
+      value: 170
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: constraintIterations

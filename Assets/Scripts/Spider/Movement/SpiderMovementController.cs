@@ -80,6 +80,7 @@ public class SpiderMovementController : MonoBehaviour
     [SerializeField] Vector2 baseFreeHangDriftWeight;
     [SerializeField] float freeHangStepHeightReductionMax;
     [SerializeField] float freeHangStrideMultiplier;
+    //[SerializeField] float footContactForceScale;
 
     [Header("Thrusters")]
     [SerializeField] Thruster thruster;
@@ -699,6 +700,7 @@ public class SpiderMovementController : MonoBehaviour
                 f -= grappleSquatReduction * dot;//fight grapple a little when it's pulling you into the ground
             }
         }
+
         rb.AddForce(rb.mass * (f - Vector2.Dot(Physics2D.gravity, down)) * down);
         //remove affect of gravity while height spring engaged, otherwise you will settle at a height which is off by -Vector2.Dot(Physics2D.gravity, down) / heightSpringForce
         //(meaning you will be under height when upright, and over height when upside down (which was causing feet to not reach ground while upside down))
@@ -819,14 +821,14 @@ public class SpiderMovementController : MonoBehaviour
 
     private bool GroundedCondition()
     {
-        return (!grapple.FreeHanging || grounded || legSynchronizer.AnyGroundedLegsUnderextended(freeHangGroundedEntryLegExtensionThreshold)) 
+        return (!grapple.FreeHanging || grounded || legSynchronizer.AnyHindLegsTouchingGround || legSynchronizer.AnyGroundedLegsUnderextended(freeHangGroundedEntryLegExtensionThreshold)) 
             && groundednessRating > 0 || IsTouchingGroundLayer(headCollider) || IsTouchingGroundLayer(abdomenCollider);
     }
 
     private void UpdateGroundednessRating()
     {
         groundednessRating = groundednessRating == 0 ? legSynchronizer.FractionTouchingGround > 0 ? Mathf.Max(legSynchronizer.FractionTouchingGround, groundednessInitialContactValue) : 0
-            : grapple.GrappleAnchored ? legSynchronizer.FractionTouchingGround : MathTools.LerpAtConstantRate(groundednessRating, legSynchronizer.FractionTouchingGround, groundednessSmoothingRate, Time.deltaTime);
+            : grapple.GrappleAnchored && grapple.GrappleReleaseInput < 0 ? legSynchronizer.FractionTouchingGround : MathTools.LerpAtConstantRate(groundednessRating, legSynchronizer.FractionTouchingGround, groundednessSmoothingRate, Time.deltaTime);
     }
 
     private void InitializeGroundMap()
@@ -986,24 +988,17 @@ public class SpiderMovementController : MonoBehaviour
         legSynchronizer.stepHeightFraction = 1 - crouchProgress * crouchHeightFraction;
         legSynchronizer.timeScale = grounded || thruster.Engaged ? 1 : airborneLegAnimationTimeScale;
 
-        if (legSynchronizer.FreeHanging && !grounded)
+        if (legSynchronizer.FreeHanging)
         {
             var r = OrientedRight;
-            var dX = grounded ? 0 : r.y < 0 ? -r.y : 0;
-            legSynchronizer.DriftWeight = new(dX * baseFreeHangDriftWeight.x, dX * baseFreeHangDriftWeight.y);
+            var dX = grounded ? 0 : r.y < -MathTools.sin15 ? (-r.y - MathTools.sin15)/(1 - MathTools.sin15)  : 0;
+            legSynchronizer.LerpDriftWeights(dX);
             legSynchronizer.stepHeightFraction *= 1 - freeHangStepHeightReductionMax * dX;
             legSynchronizer.strideMultiplier = MathTools.LerpAtConstantRate(legSynchronizer.strideMultiplier, Mathf.Lerp(AirborneStrideMultiplier(), freeHangStrideMultiplier, dX),
                     strideMultiplierSmoothingRate, Time.deltaTime);
-
-            //legSynchronizer.UpdateAllLegs(Time.deltaTime, groundMap);
         }
         else
         {
-            if (legSynchronizer.DriftWeight != Vector2.zero)
-            {
-                legSynchronizer.DriftWeight = Vector2.zero;
-            }
-
             if (!grounded)
             {
                 legSynchronizer.strideMultiplier = MathTools.LerpAtConstantRate(legSynchronizer.strideMultiplier, AirborneStrideMultiplier(),
