@@ -19,10 +19,10 @@ public struct RopeNode
     bool anchored;
     float drag;
 
-    int collisionMask;
-    float collisionSearchRadius;
-    float collisionThreshold;
-    float collisionBounciness;
+    readonly int collisionMask;
+    readonly float collisionSearchRadius;
+    readonly float collisionThreshold;
+    readonly float collisionBounciness;
     readonly Vector2[] raycastDirections;
     Vector2 lastCollisionNormal;
 
@@ -54,9 +54,11 @@ public struct RopeNode
         var u = r.CCWPerp();
         right = r;
         up = u;
+        //var r = Vector2.right;
+        //var u = Vector2.up;
         var rr = MathTools.cos45 * r;
         var uu = MathTools.cos45 * u;
-        raycastDirections = new Vector2[]{ right, -right, up, -up, rr + uu, -rr - uu, -rr + uu, rr - uu };
+        raycastDirections = new Vector2[] { r, rr + uu, u, -rr + uu, -r, -rr - uu, -u, rr - uu };//{ r, -r, u, -u, rr + uu, -rr - uu, -rr + uu, rr - uu };
 
         this.drag = drag;
         this.collisionMask = collisionMask;
@@ -87,10 +89,11 @@ public struct RopeNode
 
     public void UpdateVerletSimulation(float dt, float dt2)
     {
-        if (anchored) return;
-
-        UpdateLocalCoordinates();
-        UpdateVerletSimulationCore(dt, dt2);
+        if (!anchored)
+        {
+            UpdateLocalCoordinates();
+            UpdateVerletSimulationCore(dt, dt2);
+        }
     }
 
     private void UpdateVerletSimulationCore(float dt, float dt2)
@@ -123,12 +126,12 @@ public struct RopeNode
             var rr = MathTools.cos45 * right;
             var uu = MathTools.cos45 * up;
             raycastDirections[0] = right;
-            raycastDirections[1] = -right;
+            raycastDirections[1] = rr + uu;
             raycastDirections[2] = up;
-            raycastDirections[3] = -up;
-            raycastDirections[4] = rr + uu;
+            raycastDirections[3] = -rr + uu;
+            raycastDirections[4] = -right;
             raycastDirections[5] = -rr - uu;
-            raycastDirections[6] = -rr + uu;
+            raycastDirections[6] = -up;
             raycastDirections[7] = rr - uu;
         }
     }
@@ -141,15 +144,13 @@ public struct RopeNode
         var r = Physics2D.Raycast(position, raycastDirections[0], collisionSearchRadius, collisionMask);
         if (!r)
         {
-            int i = 1;
-            while (!r && i < raycastDirections.Length)
+            for (int i = 1; i < raycastDirections.Length; i++)
             {
                 if (r)
                 {
                     r = Physics2D.Raycast(position, raycastDirections[i], collisionSearchRadius, collisionMask);
                     break;
                 }
-                i++;
             }
         }
         else if (r.distance == 0)
@@ -169,7 +170,7 @@ public struct RopeNode
 
         if (r)
         {
-            HandlePotentialCollision(dt, r, l);
+            HandlePotentialCollision(dt, ref r, l, collisionBounciness);
         }
         else
         {
@@ -178,7 +179,7 @@ public struct RopeNode
         }
     }
 
-    private void HandlePotentialCollision(float dt, RaycastHit2D r, float collisionThreshold)
+    private void HandlePotentialCollision(float dt, ref RaycastHit2D r, float collisionThreshold, float collisionBounciness)
     {
         var l = r.distance;
         var n = r.normal;
@@ -209,7 +210,7 @@ public struct RopeNode
 
         if (l < collisionThreshold)
         {
-            ResolveCollision(dt, l, collisionThreshold, n, r.collider.attachedRigidbody);
+            ResolveCollision(dt, l, collisionThreshold, collisionBounciness, n, r.collider.attachedRigidbody);
             CurrentCollision = r.collider;
         }
         else
@@ -219,7 +220,7 @@ public struct RopeNode
         }
     }
 
-    private void ResolveCollision(float dt, float distanceToContactPoint, float collisionThreshold, Vector2 collisionNormal, Rigidbody2D attachedRb)
+    private void ResolveCollision(float dt, float distanceToContactPoint, float collisionThreshold, float collisionBounciness, Vector2 collisionNormal, Rigidbody2D attachedRb)
     {
         var velocity = (position - lastPosition) / dt;
         var speed = velocity.magnitude;

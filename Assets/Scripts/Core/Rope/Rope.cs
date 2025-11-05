@@ -130,7 +130,7 @@ public class Rope
     {
         if (nodes[lastIndex].Anchored)
         {
-            for (int i = 0; i < nodes.Length; i++)
+            for (int i = 0; i < lastIndex; i++)
             {
                 nodes[i].ResolveCollisions(dt);
             }
@@ -141,7 +141,10 @@ public class Rope
             for (int i = 0; i < nodes.Length; i++)
             {
                 nodes[i].ResolveCollisions(dt);
+                
             }
+            //check if last node made contact and should become anchored
+            //(but we need to record its position before any collision resolution, so that it doesn't bounce and anchor to a weird position)
             if ((nodes[lastIndex].CurrentCollisionLayerMask & terminusAnchorMask) != 0)
             {
                 if (!Physics2D.OverlapCircle(nodes[lastIndex].position, nodes[lastIndex].CollisionThreshold, terminusAnchorMask))
@@ -152,6 +155,37 @@ public class Rope
             }
         }
     }
+
+    //private void ResolveMidpointCollisions(float dt)
+    //{
+    //    if (nodes[lastIndex].Anchored)
+    //    {
+    //        int i = 0;
+    //        while (i < lastIndex)
+    //        {
+    //            nodes[i++].ResolveMidpointCollisions(ref nodes[i], dt);
+    //        }
+    //    }
+    //    else
+    //    {
+    //        var p = nodes[lastIndex].position;
+    //        int i = 0;
+    //        while (i < lastIndex)
+    //        {
+    //            nodes[i++].ResolveMidpointCollisions(ref nodes[i], dt);
+    //        }
+    //        //check if last node (the grapple) has made contact, and if so anchor it
+    //        //but we want to record the last node's position before any collision resolution, or else it can bounce and then get anchored in a weird spot (e.g. midair, slightly above contact point)
+    //        if ((nodes[lastIndex].CurrentCollisionLayerMask & terminusAnchorMask) != 0)
+    //        {
+    //            if (!Physics2D.OverlapCircle(nodes[lastIndex].position, nodes[lastIndex].CollisionThreshold, terminusAnchorMask))
+    //            {
+    //                nodes[lastIndex].position = p;
+    //            }
+    //            nodes[lastIndex].Anchor();
+    //        }
+    //    }
+    //}
 
     //different feel to the rope, but can get by with ONE constraint iteration!
     //(you could also probably blend it a bit with the other method (i.e. move nodes[i-1] a little) to make the feel more like original)

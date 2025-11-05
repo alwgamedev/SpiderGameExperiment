@@ -158,15 +158,15 @@ public class SpiderMovementController : MonoBehaviour
     public event Action JumpChargeBegan;
     public event Action JumpChargeEnded;
 
-    private void OnDrawGizmos()
-    {
-        if (Application.isPlaying)
-        {
-            groundMap.DrawGizmos();
-            Gizmos.color = Color.magenta;
-            Gizmos.DrawSphere(groundPt.point, 0.1f);
-        }
-    }
+    //private void OnDrawGizmos()
+    //{
+    //    if (Application.isPlaying)
+    //    {
+    //        groundMap.DrawGizmos();
+    //        Gizmos.color = Color.magenta;
+    //        Gizmos.DrawSphere(groundPt.point, 0.1f);
+    //    }
+    //}
 
     private void Awake()
     {

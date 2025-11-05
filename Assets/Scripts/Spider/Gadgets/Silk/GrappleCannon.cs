@@ -144,7 +144,7 @@ public class GrappleCannon : MonoBehaviour
     private Vector2 GrappleExtentFromFirstCollision(out int firstCollisionIndex)
     {
         firstCollisionIndex = 1;
-        while (firstCollisionIndex < grapple.nodes.Length && !grapple.nodes[firstCollisionIndex].CurrentCollision)
+        while (firstCollisionIndex < grapple.lastIndex && !grapple.nodes[firstCollisionIndex].CurrentCollision)
         {
             firstCollisionIndex++;
         }
