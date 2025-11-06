@@ -1003,7 +1003,7 @@ MonoBehaviour:
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
   stepMax: 0.9
-  groundContactRadius: 0.1
+  groundContactRadius: 0.085
   freeHangLagWeights: {x: 0.5, y: 1}
   drift: {x: 0, y: -0.05}
   driftWeight: 0
@@ -1382,7 +1382,7 @@ MonoBehaviour:
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
   stepMax: 0.825
-  groundContactRadius: 0.1
+  groundContactRadius: 0.085
   freeHangLagWeights: {x: 0.5, y: 1}
   drift: {x: 0, y: 0}
   driftWeight: 0
@@ -1892,7 +1892,7 @@ MonoBehaviour:
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
   stepMax: -0.05
-  groundContactRadius: 0.1
+  groundContactRadius: 0.085
   freeHangLagWeights: {x: 10, y: 2}
   drift: {x: -0.3, y: 0.1}
   driftWeight: 0
@@ -5055,7 +5055,7 @@ MonoBehaviour:
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
   stepMax: -0.05
-  groundContactRadius: 0.1
+  groundContactRadius: 0.085
   freeHangLagWeights: {x: 10, y: 2}
   drift: {x: -0.3, y: 0.1}
   driftWeight: 0
@@ -5552,7 +5552,7 @@ MonoBehaviour:
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
   stepMax: 0.9
-  groundContactRadius: 0.1
+  groundContactRadius: 0.085
   freeHangLagWeights: {x: 0.5, y: 1}
   drift: {x: 0, y: -0.05}
   driftWeight: 0
@@ -6821,7 +6821,7 @@ MonoBehaviour:
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
   stepMax: -0.2
-  groundContactRadius: 0.1
+  groundContactRadius: 0.085
   freeHangLagWeights: {x: 10, y: 2}
   drift: {x: 0, y: 0.25}
   driftWeight: 0
@@ -7203,7 +7203,7 @@ MonoBehaviour:
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
   stepMax: -0.2
-  groundContactRadius: 0.1
+  groundContactRadius: 0.085
   freeHangLagWeights: {x: 10, y: 2}
   drift: {x: 0, y: 0.25}
   driftWeight: 0
@@ -8429,7 +8429,7 @@ MonoBehaviour:
   hipRaycastLength: 2
   hipRaycastUpwardBuffer: 0.5
   stepMax: 0.825
-  groundContactRadius: 0.1
+  groundContactRadius: 0.085
   freeHangLagWeights: {x: 0.5, y: 1}
   drift: {x: 0, y: 0}
   driftWeight: 0
@@ -9347,7 +9347,7 @@ Rigidbody2D:
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDamping: 0.25
-  m_AngularDamping: 0.1
+  m_AngularDamping: 0.05
   m_GravityScale: 1
   m_Material: {fileID: 6200000, guid: 0fb3a02a58aa5114b8ef3cbdb77daef0, type: 2}
   m_IncludeLayers:
@@ -9420,7 +9420,7 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  groundedExitToleranceFactor: 1.25
+  groundedExitToleranceFactor: 1.35
   groundedEntryToleranceFactor: 0.95
   groundednessSmoothingRate: 2.5
   groundednessInitialContactValue: 1
@@ -10070,13 +10070,13 @@ MonoBehaviour:
       right: {x: 0, y: 1}
       groundCollider: {fileID: 0}
   accelFactor: 45
-  accelFactorFreeHanging: 15
+  accelFactorFreeHanging: 15.5
   deadThrusterAccelFactor: 4
   thrustingAccelFactor: 25
   accelCap: 4
   decelFactor: 50
   gripStrength: 450
-  grapplePullGripReduction: 0.4
+  grapplePullGripReduction: 0.95
   maxSpeed: 4
   maxSpeedAirborne: 8
   preferredRideHeight: 0.92
@@ -10208,8 +10208,12 @@ PrefabInstance:
       value: 125
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: retractMaxTension
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: constraintIterations
-      value: 20
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: shootSpeedPowerUpRate
@@ -10224,8 +10228,12 @@ PrefabInstance:
       value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: tensionCalculationInterval
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: cannonFulcrum.linearDamping
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: cannonFulcrum.angularDamping
@@ -10238,6 +10246,14 @@ PrefabInstance:
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: cannonFulcrum.kinematicRotationCatchUpMultiplier
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 6059036553827033380, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_Parameters.numCapVertices
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6059036553827033380, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_Parameters.numCornerVertices
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7337905512642426967, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: m_Name

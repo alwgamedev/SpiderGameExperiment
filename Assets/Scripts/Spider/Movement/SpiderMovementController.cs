@@ -687,21 +687,22 @@ public class SpiderMovementController : MonoBehaviour
         //Vector2 down = Leaning ? groundDirection.CWPerp() : -transform.up;
         var v = Vector2.Dot(rb.linearVelocity, down);
         var l = Vector2.Dot(p - (Vector2)heightReferencePoint.position, down) - preferredRideHeight;
-        var f = l * heightSpringForce - heightSpringDamping * v;
+        var f = l * heightSpringForce;
         if (grapple.GrappleAnchored)
         {
             var dot = Vector2.Dot(grapple.LastCarryForce, down);
-            if (dot < 0 && l > 0)
+            if (dot < 0 && l > 0 && grapple.GrappleReleaseInput < 0)
             {
-                f += l > heightSpringBreakThreshold ? dot : l / heightSpringBreakThreshold * dot;
+                //f += l > heightSpringBreakThreshold ? dot : l / heightSpringBreakThreshold * dot;
+                return;
             }
             else if (dot > 0 && l < 0)
             {
-                f -= grappleSquatReduction * dot;//fight grapple a little when it's pulling you into the ground
+                f -= grappleSquatReduction * dot;//fight grapple a little when it's pulling you into the ground (i.e. reduce grappleCarryForce in direction of height spring)
             }
         }
 
-        rb.AddForce(rb.mass * (f - Vector2.Dot(Physics2D.gravity, down)) * down);
+        rb.AddForce(rb.mass * (f - heightSpringDamping * v - Vector2.Dot(Physics2D.gravity, down)) * down);
         //remove affect of gravity while height spring engaged, otherwise you will settle at a height which is off by -Vector2.Dot(Physics2D.gravity, down) / heightSpringForce
         //(meaning you will be under height when upright, and over height when upside down (which was causing feet to not reach ground while upside down))
         //(e.g. before ride height on flat ground was always off by +- 32/400 = 0.08)
@@ -821,8 +822,9 @@ public class SpiderMovementController : MonoBehaviour
 
     private bool GroundedCondition()
     {
-        return (!grapple.FreeHanging || grounded || legSynchronizer.AnyHindLegsTouchingGround || legSynchronizer.AnyGroundedLegsUnderextended(freeHangGroundedEntryLegExtensionThreshold)) 
+        return (!grapple.FreeHanging || grounded || legSynchronizer.AnyGroundedLegsUnderextended(freeHangGroundedEntryLegExtensionThreshold)) 
             && groundednessRating > 0 || IsTouchingGroundLayer(headCollider) || IsTouchingGroundLayer(abdomenCollider);
+        //keep the IsTouchingGroundLayer(coll) out of parentheses; these on their own automatically qualify you as grounded!
     }
 
     private void UpdateGroundednessRating()
