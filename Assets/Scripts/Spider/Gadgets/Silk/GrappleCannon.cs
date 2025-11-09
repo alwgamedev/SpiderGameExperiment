@@ -115,7 +115,11 @@ public class GrappleCannon : MonoBehaviour
 
     private void LateUpdate()
     {
-        UpdateLineRenderer();
+        if (grapple != null)
+        {
+            UpdateAnchorPosition();
+            grapple.SetLineRendererPositions(lineRenderer);
+        }
     }
 
     private void FixedUpdate()
@@ -276,21 +280,22 @@ public class GrappleCannon : MonoBehaviour
     
     //RENDERING
 
-    private void UpdateLineRenderer()
-    {
-        if (grapple != null)
-        {
-            if (!lineRenderer.enabled)
-            {
-                EnableLineRenderer();
-            }
-            grapple.SetLineRendererPositions(lineRenderer);
-        }
-        else if (lineRenderer.enabled)
-        {
-            lineRenderer.enabled = false;
-        }
-    }
+    //private void UpdateLineRenderer()
+    //{
+    //    //if (grapple != null)
+    //    //{
+    //    //    if (!lineRenderer.enabled)
+    //    //    {
+    //    //        EnableLineRenderer();
+    //    //    }
+    //    //    grapple.SetLineRendererPositions(lineRenderer);
+    //    //}
+    //    //else if (lineRenderer.enabled)
+    //    //{
+    //    //    lineRenderer.enabled = false;
+    //    //}
+    //    grapple.SetLineRendererPositions(lineRenderer);
+    //}
 
     private void EnableLineRenderer()
     {
@@ -383,6 +388,8 @@ public class GrappleCannon : MonoBehaviour
         grapple.nodes[grapple.lastIndex].lastPosition -= fixedDt * shootVelocity;
         var g = Physics2D.gravity.y;
         shootTimer = - minLength / shootSpeed;
+        EnableLineRenderer();
+        grapple.SetLineRendererPositions(lineRenderer);
     }
 
     private void DestroyGrapple()
@@ -392,5 +399,6 @@ public class GrappleCannon : MonoBehaviour
         shootSpeedPowerUp = 0;
         LastCarryForce = Vector2.zero;
         FreeHanging = false;
+        lineRenderer.enabled = false;
     }
 }

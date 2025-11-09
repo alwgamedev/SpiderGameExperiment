@@ -5,9 +5,9 @@ using UnityEngine;
 public class GroundMap
 {
     [SerializeField] float smoothingRate;
-    [SerializeField] float totalGroundedSmoothingRate;
-    [SerializeField] float middleGroundedSmoothingRate;
-    [SerializeField] int middleGroundedWidth;
+    //[SerializeField] float totalGroundedSmoothingRate;
+    ////[SerializeField] float middleGroundedSmoothingRate;
+    //[SerializeField] int middleGroundedWidth;
 
     public int numFwdIntervals;
     public float intervalWidth;
@@ -20,18 +20,18 @@ public class GroundMap
     //public SteadyToggle middleGrounded;
     //public SteadyToggle smoothedMiddleGrounded;
 
-    float middleGroundedCountInverse;
-    float totalGroundedCountInverse;
+    //float middleGroundedCountInverse;
+    //float totalGroundedCountInverse;
 
     public int CentralIndex => numFwdIntervals;
     public int NumPts => (numFwdIntervals << 1) | 1;
     public float MapHalfWidth => intervalWidth * numFwdIntervals;
     //public bool AllPointsHitGround => grounded.Brightness == 1f;
     //public bool AnyPointsHitGround => grounded.On;
-    public float MiddleGroundedFraction { get; private set; }
-    public float SmoothedMiddleGroundedFraction { get; private set; }
-    public float TotalGroundedFraction { get; private set; }
-    public float SmoothedTotalGroundedFraction { get; private set; }
+    //public float MiddleGroundedFraction { get; private set; }
+    //public float SmoothedMiddleGroundedFraction { get; private set; }
+    //public float TotalGroundedFraction { get; private set; }
+    //public float SmoothedTotalGroundedFraction { get; private set; }
     public Vector2 LastOrigin { get; private set; }
     public Vector2 LastOriginRight { get; private set; }
     public ref GroundMapPt Center => ref map[CentralIndex];//NOTE: you will modify the array element through this property! it's not a copy!!
@@ -143,67 +143,40 @@ public class GroundMap
 
     public int IndexOfFirstGroundHitFromCenter(bool facingRight, out bool isCentralIndex)
     {
-        if (TotalGroundedFraction > 0)
+        int i = CentralIndex;
+        if (map[i].hitGround)
         {
-            int i = CentralIndex;
+            isCentralIndex = true;
+            return i;
+        }
+
+        int di = facingRight ? 1 : -1;
+        int n = numFwdIntervals << 1;
+        int max = facingRight ? n : 0;
+
+        //search forward first (not necessary - we could alternate front and behind until we get a hit - but i feel like this way is better for continuity)
+        while (i != max)
+        {
+            i += di;
             if (map[i].hitGround)
             {
-                isCentralIndex = true;
+                isCentralIndex = false;
                 return i;
             }
+        }
 
-            int di = facingRight ? 1 : -1;
-            int n = numFwdIntervals << 1;
-            int max = facingRight ? n : 0;
+        i = CentralIndex;
+        di = -di;
+        max = facingRight ? 0 : n;
 
-            //search forward first (not necessary - we could alternate front and behind until we get a hit - but i feel like this way is better for continuity)
-            while (i != max)
+        while (i != max)
+        {
+            i += di;
+            if (map[i].hitGround)
             {
-                i += di;
-                if (map[i].hitGround)
-                {
-                    isCentralIndex = false;
-                    return i;
-                }
+                isCentralIndex = false;
+                return i;
             }
-
-            i = CentralIndex;
-            di = -di;
-            max = facingRight ? 0 : n;
-
-            while (i != max)
-            {
-                i += di;
-                if (map[i].hitGround)
-                {
-                    isCentralIndex = false;
-                    return i;
-                }
-            }
-
-            //i++;
-            //int j = CentralIndex - 1;
-            //int n = NumPts;
-
-            //if (facingRight)
-            //{ }
-            
-            //while (i < n && j > 0)
-            //{
-            //    if (map[i].hitGround)
-            //    {
-            //        isCentralIndex = false;
-            //        return i;
-            //    }
-            //    if (map[j].hitGround)
-            //    {
-            //        isCentralIndex = false;
-            //        return j;
-            //    }
-
-            //    i++;
-            //    j--;
-            //}
         }
 
         isCentralIndex = true;
@@ -379,71 +352,71 @@ public class GroundMap
     public void Initialize()
     {
         map = new GroundMapPt[NumPts];
-        middleGroundedCountInverse = 1 / (float)(2 * middleGroundedWidth + 1);
-        totalGroundedCountInverse = 1 / (float)NumPts;
+        //middleGroundedCountInverse = 1 / (float)(2 * middleGroundedWidth + 1);
+        //totalGroundedCountInverse = 1 / (float)NumPts;
     }
 
-    public void InitializeStats()
-    {
-        int count = 0;
-        for (int i = CentralIndex - middleGroundedWidth; i < CentralIndex + middleGroundedWidth + 1; i++)
-        {
-            if (map[i].hitGround)
-            {
-                count++;
-            }
-        }
-        MiddleGroundedFraction = count * middleGroundedCountInverse;
-        SmoothedMiddleGroundedFraction = MiddleGroundedFraction;
+    //public void InitializeStats()
+    //{
+    //    int count = 0;
+    //    for (int i = CentralIndex - middleGroundedWidth; i < CentralIndex + middleGroundedWidth + 1; i++)
+    //    {
+    //        if (map[i].hitGround)
+    //        {
+    //            count++;
+    //        }
+    //    }
+    //    MiddleGroundedFraction = count * middleGroundedCountInverse;
+    //    SmoothedMiddleGroundedFraction = MiddleGroundedFraction;
 
-        count = 0;
-        for (int i = 0; i < NumPts; i++)
-        {
-            if (map[i].hitGround)
-            {
-                count++;
-            }
-        }
-        TotalGroundedFraction = count * totalGroundedCountInverse;
-        SmoothedTotalGroundedFraction = TotalGroundedFraction;
+    //    count = 0;
+    //    for (int i = 0; i < NumPts; i++)
+    //    {
+    //        if (map[i].hitGround)
+    //        {
+    //            count++;
+    //        }
+    //    }
+    //    TotalGroundedFraction = count * totalGroundedCountInverse;
+    //    SmoothedTotalGroundedFraction = TotalGroundedFraction;
 
-        //grounded.UpdateState(TotalGroundedFraction);
-        //smoothedGrounded.UpdateState(SmoothedTotalGroundedFraction);
-        //middleGrounded.UpdateState(MiddleGroundedFraction);
-        //smoothedMiddleGrounded.UpdateState(SmoothedMiddleGroundedFraction);
-    }
+    //    //grounded.UpdateState(TotalGroundedFraction);
+    //    //smoothedGrounded.UpdateState(SmoothedTotalGroundedFraction);
+    //    //middleGrounded.UpdateState(MiddleGroundedFraction);
+    //    //smoothedMiddleGrounded.UpdateState(SmoothedMiddleGroundedFraction);
+    //}
 
-    public void UpdateStats()
-    {
-        int count = 0;
-        for (int i = CentralIndex - middleGroundedWidth; i < CentralIndex + middleGroundedWidth + 1; i++)
-        {
-            if (map[i].hitGround)
-            {
-                count++;
-            }
-        }
-        MiddleGroundedFraction = count * middleGroundedCountInverse;
-        SmoothedMiddleGroundedFraction = Mathf.Lerp(SmoothedMiddleGroundedFraction, MiddleGroundedFraction, middleGroundedSmoothingRate * Time.deltaTime);
+    //public void UpdateStats()
+    //{
+    //    int count = 0;
+    //    for (int i = CentralIndex - middleGroundedWidth; i < CentralIndex + middleGroundedWidth + 1; i++)
+    //    {
+    //        if (map[i].hitGround)
+    //        {
+    //            count++;
+    //        }
+    //    }
+    //    MiddleGroundedFraction = count * middleGroundedCountInverse;
+    //    SmoothedMiddleGroundedFraction = Mathf.Lerp(SmoothedMiddleGroundedFraction, MiddleGroundedFraction, middleGroundedSmoothingRate * Time.deltaTime);
 
-        count = 0;
-        for (int i = 0; i < NumPts; i++)
-        {
-            if (map[i].hitGround)
-            {
-                count++;
-            }
-        }
-        TotalGroundedFraction = count * totalGroundedCountInverse;
-        SmoothedTotalGroundedFraction = Mathf.Lerp(SmoothedTotalGroundedFraction, TotalGroundedFraction, totalGroundedSmoothingRate * Time.deltaTime);
+    //    count = 0;
+    //    for (int i = 0; i < NumPts; i++)
+    //    {
+    //        if (map[i].hitGround)
+    //        {
+    //            count++;
+    //        }
+    //    }
+    //    TotalGroundedFraction = count * totalGroundedCountInverse;
+    //    SmoothedTotalGroundedFraction = Mathf.Lerp(SmoothedTotalGroundedFraction, TotalGroundedFraction, totalGroundedSmoothingRate * Time.deltaTime);
 
-        //grounded.UpdateState(TotalGroundedFraction);
-        //smoothedGrounded.UpdateState(SmoothedTotalGroundedFraction);
-        //stronglyGrounded.UpdateState(TotalGroundedFraction);
-        //smoothedStronglyGrounded.UpdateState(SmoothedTotalGroundedFraction);
-        //middleGrounded.UpdateState(MiddleGroundedFraction);
-        //smoothedMiddleGrounded.UpdateState(SmoothedMiddleGroundedFraction);
-    }
+    //    //grounded.UpdateState(TotalGroundedFraction);
+    //    //smoothedGrounded.UpdateState(SmoothedTotalGroundedFraction);
+    //    //stronglyGrounded.UpdateState(TotalGroundedFraction);
+    //    //smoothedStronglyGrounded.UpdateState(SmoothedTotalGroundedFraction);
+    //    //middleGrounded.UpdateState(MiddleGroundedFraction);
+    //    //smoothedMiddleGrounded.UpdateState(SmoothedMiddleGroundedFraction);
+    //}
 
     public void LerpUpdateMap(Vector2 origin, Vector2 originDown, Vector2 originRight, float raycastLength, int centralIndex, int raycastLayerMask)
     {

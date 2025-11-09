@@ -854,7 +854,7 @@ public class SpiderMovementController : MonoBehaviour
                 groundLayer);
         }
 
-        groundMap.InitializeStats();
+        //groundMap.InitializeStats();
     }
 
     private void UpdateGroundMap()
@@ -878,7 +878,7 @@ public class SpiderMovementController : MonoBehaviour
                 groundLayer);
         }
 
-        groundMap.UpdateStats();
+        //groundMap.UpdateStats();
     }
 
     private void LerpUpdateGroundMap()
@@ -902,7 +902,7 @@ public class SpiderMovementController : MonoBehaviour
                 groundLayer);
         }
 
-        groundMap.UpdateStats();
+        //groundMap.UpdateStats();
     }
 
     private Vector2 FreeHangGroundMapDown()
