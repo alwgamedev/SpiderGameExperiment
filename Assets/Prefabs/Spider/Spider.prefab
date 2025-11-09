@@ -9433,9 +9433,6 @@ MonoBehaviour:
   failedGroundDirectionSmoothingRate: 45
   groundMap:
     smoothingRate: 0.6
-    totalGroundedSmoothingRate: 5
-    middleGroundedSmoothingRate: 5
-    middleGroundedWidth: 13
     numFwdIntervals: 52
     intervalWidth: 0.025
     map:
@@ -10184,6 +10181,10 @@ PrefabInstance:
       value: 0.0005
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: width
+      value: 0.175
+      objectReference: {fileID: 0}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: numNodes
       value: 150
       objectReference: {fileID: 0}
@@ -10229,7 +10230,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: tensionCalculationInterval
-      value: 0.25
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: cannonFulcrum.linearDamping
@@ -10249,7 +10250,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6059036553827033380, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: m_Parameters.numCapVertices
-      value: 0
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 6059036553827033380, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: m_Parameters.numCornerVertices
