@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using Mono.Cecil.Cil;
+using System.Linq;
 using UnityEngine;
 
 public class Rope
@@ -43,6 +44,15 @@ public class Rope
         lastIndex = numNodes - 1;
     }
 
+    public void DrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        for (int i = 0; i < nodes.Length; i++)
+        {
+            Gizmos.DrawSphere(nodes[i].position, 0.5f * width);
+        }
+    }
+
     public void FixedUpate(float dt, float dt2)
     {
         UpdateRopePhysics(dt, dt2);
@@ -59,6 +69,75 @@ public class Rope
         {
             SpacingConstraintIteration();
             ResolveCollisions(dt);
+        }
+    }
+
+    public void SpacingConstraintIteration()
+    {
+        for (int i = 1; i < nodes.Length; i++)
+        {
+
+            var d = nodes[i].position - nodes[i - 1].position;
+            var l = d.magnitude;
+
+            //if (!(l > MathTools.o51))
+            //{
+            //    return;
+            //}
+
+            var error = l - nodeSpacing;
+
+            if (error > CONSTRAINTS_TOLERANCE /*|| error < -CONSTRAINTS_TOLERANCE*/)
+            {
+                if (nodes[i - 1].CurrentCollision && nodes[i].CurrentCollision)
+                {
+                    //NOTE: neither node is anchored when this happens (because we clear CurrentCollision when set anchored)
+                    if (Vector2.Dot(nodes[i - 1].LastCollisionNormal, nodes[i].LastCollisionNormal) < MathTools.cos15)
+                    {
+                        var v0 = nodes[i - 1].LastCollisionNormal.CCWPerp();
+                        var v1 = nodes[i].LastCollisionNormal.CCWPerp();
+                        if (MathTools.TryIntersectLine(nodes[i - 1].position, v0, nodes[i].position, v1, out var p))
+                        {
+                            //p = 0.25f * p + 0.75f * (nodes[i - 1].position + nodes[i].position);//round the corner a little
+                            var d0 = p - nodes[i - 1].position;
+                            var d1 = p - nodes[i].position;
+                            var l0 = Vector2.Dot(d0, v0);
+                            var l1 = Vector2.Dot(d1, v1);
+                            nodes[i - 1].position += error * Mathf.Sign(l0) * v0;//error * d0.normalized;
+                            nodes[i].position += error * Mathf.Sign(l1) * v1;//error * d1.normalized;
+                            //2do: should move less along tangent directions based on dot products
+                            //even better: move nodes along circular arc connecting them (with radius determined by change in angle btwn collision normals)
+                            //and compute error along this circular arc too
+                            return;
+                        }
+                    }
+                }
+
+                var c = (error / l) * d;
+                if (nodes[i - 1].Anchored)
+                {
+                    nodes[i].position -= c;
+                }
+                else if (nodes[i].Anchored)
+                {
+                    nodes[i - 1].position += c;
+                }
+                else
+                {
+                    if (i == lastIndex)//because only the last index gets weighted for us
+                    {
+                        var m1 = 1 / (nodes[i - 1].mass + nodes[i].mass);
+                        nodes[i - 1].position += nodes[i].mass * m1 * c;
+                        nodes[i].position -= nodes[i - 1].mass * m1 * c;
+                    }
+                    else
+                    {
+                        c *= 0.5f;
+                        nodes[i - 1].position += c;
+                        nodes[i].position -= c;
+                    }
+                }
+            }
         }
     }
 
@@ -89,43 +168,6 @@ public class Rope
         }
     }
 
-    public void SpacingConstraintIteration()
-    {
-        for (int i = 1; i < nodes.Length; i++)
-        {
-            if (nodes[i - 1].Anchored && nodes[i].Anchored) continue;
-
-            var d = nodes[i].position - nodes[i - 1].position;
-            var l = d.magnitude;
-
-            //if (!(l > MathTools.o51))
-            //{
-            //    return;
-            //}
-
-            var error = l - nodeSpacing;
-
-            if (error > CONSTRAINTS_TOLERANCE /*|| error < -CONSTRAINTS_TOLERANCE*/)
-            {
-                var c = (error / l) * d;
-                if (nodes[i - 1].Anchored)
-                {
-                    nodes[i].position -= c;
-                }
-                else if (nodes[i].Anchored)
-                {
-                    nodes[i - 1].position += c;
-                }
-                else
-                {
-                    var m1 = 1 / (nodes[i - 1].mass + nodes[i].mass);
-                    nodes[i - 1].position += nodes[i].mass * m1 * c;
-                    nodes[i].position -= nodes[i - 1].mass * m1 * c;
-                }
-            }
-        }
-    }
-
     private void ResolveCollisions(float dt)
     {
         if (nodes[lastIndex].Anchored)
@@ -152,63 +194,6 @@ public class Rope
                     nodes[lastIndex].position = p;
                 }
                 nodes[lastIndex].Anchor();
-            }
-        }
-    }
-
-    //private void ResolveMidpointCollisions(float dt)
-    //{
-    //    if (nodes[lastIndex].Anchored)
-    //    {
-    //        int i = 0;
-    //        while (i < lastIndex)
-    //        {
-    //            nodes[i++].ResolveMidpointCollisions(ref nodes[i], dt);
-    //        }
-    //    }
-    //    else
-    //    {
-    //        var p = nodes[lastIndex].position;
-    //        int i = 0;
-    //        while (i < lastIndex)
-    //        {
-    //            nodes[i++].ResolveMidpointCollisions(ref nodes[i], dt);
-    //        }
-    //        //check if last node (the grapple) has made contact, and if so anchor it
-    //        //but we want to record the last node's position before any collision resolution, or else it can bounce and then get anchored in a weird spot (e.g. midair, slightly above contact point)
-    //        if ((nodes[lastIndex].CurrentCollisionLayerMask & terminusAnchorMask) != 0)
-    //        {
-    //            if (!Physics2D.OverlapCircle(nodes[lastIndex].position, nodes[lastIndex].CollisionThreshold, terminusAnchorMask))
-    //            {
-    //                nodes[lastIndex].position = p;
-    //            }
-    //            nodes[lastIndex].Anchor();
-    //        }
-    //    }
-    //}
-
-    //different feel to the rope, but can get by with ONE constraint iteration!
-    //(you could also probably blend it a bit with the other method (i.e. move nodes[i-1] a little) to make the feel more like original)
-    //however for spider silk, i like the stretchy feel we get with the original constraints method
-    //although that method takes many more constraints iteration (with this semihard boner method, you don't even need to iterate)
-    private void SemiHardConstraints()
-    {
-        for (int i = 1; i < nodes.Length; i++)
-        {
-            if (nodes[i - 1].Anchored && nodes[i].Anchored) continue;
-
-            var d = nodes[i].position - nodes[i - 1].position;
-            var l = d.magnitude;
-            if (l > MathTools.o51)
-            {
-                var u = d / l;
-                var error = l - nodeSpacing;
-                var c = error * u;
-                if (!nodes[i].Anchored)
-                {
-                    nodes[i].position -= c;
-                    nodes[i].lastPosition -= 0.99f * c;
-                }
             }
         }
     }

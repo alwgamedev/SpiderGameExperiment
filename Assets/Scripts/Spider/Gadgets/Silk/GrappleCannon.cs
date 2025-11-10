@@ -71,6 +71,14 @@ public class GrappleCannon : MonoBehaviour
         }
     }
 
+    private void OnDrawGizmos()
+    {
+        if (grapple != null)
+        {
+            grapple.DrawGizmos();
+        }
+    }
+
     private void Awake()
     {
         lineRenderer = GetComponent<LineRenderer>();

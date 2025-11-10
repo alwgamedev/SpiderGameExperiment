@@ -49,7 +49,7 @@ public struct RopeNode
         var r = velocity.normalized;
         if (r == Vector2.zero)
         {
-            right = Vector2.right;
+            r = Vector2.right;
         }
         var u = r.CCWPerp();
         right = r;
@@ -73,6 +73,7 @@ public struct RopeNode
     {
         anchored = true;
         lastPosition = position;
+        CurrentCollision = null;
     }
 
     public void DeAnchor(float dt, Vector2 initialVelocity)
@@ -91,8 +92,9 @@ public struct RopeNode
     {
         if (!anchored)
         {
-            UpdateLocalCoordinates();
+            //UpdateLocalCoordinates();
             UpdateVerletSimulationCore(dt, dt2);
+            UpdateLocalCoordinates(); //doesn't it make more sense to do after?
         }
     }
 
@@ -140,6 +142,7 @@ public struct RopeNode
     {
         if (anchored) return;
 
+        //var origin = position;
         var l = collisionThreshold;
         var r = Physics2D.Raycast(position, raycastDirections[0], collisionSearchRadius, collisionMask);
         if (!r)
@@ -162,6 +165,7 @@ public struct RopeNode
                 var s = Physics2D.Raycast(position + l * raycastDirections[i], -raycastDirections[i], l, collisionMask);
                 if (s && s.distance > r.distance)
                 {
+                    //origin = position + l * raycastDirections[i];
                     r = s;
                 }
             }
@@ -170,6 +174,7 @@ public struct RopeNode
 
         if (r)
         {
+            //Debug.DrawLine(origin, r.point, Color.green);
             HandlePotentialCollision(dt, ref r, l, collisionBounciness);
         }
         else
