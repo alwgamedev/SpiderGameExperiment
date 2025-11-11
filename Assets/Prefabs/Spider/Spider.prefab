@@ -1004,8 +1004,8 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   stepMax: 0.9
   groundContactRadius: 0.085
-  freeHangLagWeights: {x: 0.5, y: 1}
-  drift: {x: 0, y: -0.05}
+  freeHangLagWeights: {x: 0.4, y: 0.85}
+  drift: {x: 0, y: 0}
   driftWeight: 0
 --- !u!1 &839944467269662652
 GameObject:
@@ -1383,7 +1383,7 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   stepMax: 0.825
   groundContactRadius: 0.085
-  freeHangLagWeights: {x: 0.5, y: 1}
+  freeHangLagWeights: {x: 0.4, y: 0.8}
   drift: {x: 0, y: 0}
   driftWeight: 0
 --- !u!1 &1248638082500357407
@@ -5553,8 +5553,8 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   stepMax: 0.9
   groundContactRadius: 0.085
-  freeHangLagWeights: {x: 0.5, y: 1}
-  drift: {x: 0, y: -0.05}
+  freeHangLagWeights: {x: 0.4, y: 0.85}
+  drift: {x: 0, y: 0}
   driftWeight: 0
 --- !u!1 &3319515992144099393
 GameObject:
@@ -8430,7 +8430,7 @@ MonoBehaviour:
   hipRaycastUpwardBuffer: 0.5
   stepMax: 0.825
   groundContactRadius: 0.085
-  freeHangLagWeights: {x: 0.5, y: 1}
+  freeHangLagWeights: {x: 0.4, y: 0.8}
   drift: {x: 0, y: 0}
   driftWeight: 0
 --- !u!1 &6858911009439342665
@@ -10190,15 +10190,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: width
-      value: 0.15
+      value: 0.175
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: numNodes
-      value: 150
+      value: 161
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: maxLength
-      value: 12
+      value: 13.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: minLength
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: shooterRb
@@ -10206,7 +10210,7 @@ PrefabInstance:
       objectReference: {fileID: 2582591312671585704}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: bounciness
-      value: 0.6
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: grappleMass
@@ -10218,7 +10222,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: maxNodeSpacing
-      value: 0.075
+      value: 0.08
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: minNodeSpacing
@@ -10230,19 +10234,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: retractMaxTension
-      value: 0.25
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: tunnelEscapeRadius
-      value: 0.6
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: constraintIterations
-      value: 30
+      value: 24
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: collisionSearchRadius
-      value: 0.3
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: shootSpeedPowerUpRate
@@ -10254,7 +10258,7 @@ PrefabInstance:
       objectReference: {fileID: 3165804772939969779}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: cannonFulcrum.floppiness
-      value: 0.25
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: tensionCalculationInterval
@@ -10266,7 +10270,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: cannonFulcrum.angularDamping
-      value: 1.5
+      value: 1.75
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: cannonFulcrum.kinematicRotationSpeed
@@ -10274,7 +10278,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: constraintIterationsPerCollisionCheck
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: cannonFulcrum.kinematicRotationCatchUpMultiplier
