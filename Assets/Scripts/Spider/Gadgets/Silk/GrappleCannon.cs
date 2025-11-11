@@ -21,6 +21,7 @@ public class GrappleCannon : MonoBehaviour
     [SerializeField] float tensionCalculationInterval;
     [SerializeField] float retractMaxTension;
     [SerializeField] int constraintIterations;
+    [SerializeField] int constraintIterationsPerCollisionCheck;
     [SerializeField] float carrySpringForce;
     [SerializeField] CannonFulcrum cannonFulcrum;
 
@@ -39,6 +40,7 @@ public class GrappleCannon : MonoBehaviour
     float fixedDt2;
 
     bool freeHanging;
+    //public bool grounded;
 
     public Rope Grapple => grapple;
     public bool GrappleAnchored => grapple != null && grapple.nodes[grapple.lastIndex].Anchored;
@@ -254,6 +256,13 @@ public class GrappleCannon : MonoBehaviour
                 d = (j - i) * grapple.nodeSpacing;
             }
             //length += d;
+
+            //total += (grapple.nodes[j].position - grapple.nodes[i].position).magnitude - d;
+            //if (total < 0 && i > 0)
+            //{
+            //    return 0;
+            //}
+            //length += d;
             var err = (grapple.nodes[j].position - grapple.nodes[i].position).magnitude - d;
             if (err > 0)
             {
@@ -345,7 +354,7 @@ public class GrappleCannon : MonoBehaviour
     private void UpdateCarrySpring()
     {
         LastCarryForceDirection = GrappleExtentFromFirstCollision(out int firstCollisionIndex).normalized;
-        var t = NormalizedStrictTension(firstCollisionIndex);
+        var t = NormalizedStrictTension(firstCollisionIndex);//NormalizedStrictTension(firstCollisionIndex);
         if (t > 0)
         {
             LastCarryForce = /*shooterRb.mass **/ carrySpringForce * t * LastCarryForceDirection;
@@ -395,7 +404,7 @@ public class GrappleCannon : MonoBehaviour
         var nodeSpacing = minLength / (numNodes - 1);
         grapple = new Rope(SourcePosition, width, nodeSpacing, numNodes,
                     drag, collisionMask, collisionSearchRadius, tunnelEscapeRadius, bounciness, grappleAnchorMask, 
-                    constraintIterations);
+                    constraintIterations, constraintIterationsPerCollisionCheck);
         grapple.nodes[0].Anchor();
         grapple.nodes[grapple.lastIndex].mass = grappleMass;
         var shootSpeed = ShootSpeed;

@@ -5,11 +5,12 @@ using UnityEngine;
 public class Rope
 {
     public const int MAX_NUM_COLLISIONS = 4;
-    public const float CONSTRAINTS_TOLERANCE = 0.005f;
+    public const float CONSTRAINTS_TOLERANCE = 0.0001f;//0.005f;
 
     public float width;
     public float nodeSpacing;
     public float constraintIterations;
+    public int constraintIterationsPerCollisionCheck;
     public int terminusAnchorMask;
     
     public readonly RopeNode[] nodes;
@@ -29,11 +30,12 @@ public class Rope
 
     public Rope(Vector2 position, float width, float nodeSpacing, int numNodes,
         float nodeDrag, int collisionMask, float collisionSearchRadius, float tunnelingEscapeRadius, float collisionBounciness, int terminusAnchorMask,
-        int constraintIterations)
+        int constraintIterations, int constraintIterationsPerCollisionCheck)
     {
         this.width = width;
         this.nodeSpacing = nodeSpacing;
         this.constraintIterations = constraintIterations;
+        this.constraintIterationsPerCollisionCheck = constraintIterationsPerCollisionCheck;
         this.terminusAnchorMask = terminusAnchorMask;
         var a = Physics2D.gravity;
         var collisionThreshold = 0.5f * width;
@@ -64,10 +66,14 @@ public class Rope
         UpdateVerletSimulation(dt, dt2);
         ResolveCollisions(dt);
 
-        for (int i = 0; i < constraintIterations; i++)
+        int i = 0;
+        while (i < constraintIterations)
         {
             SpacingConstraintIteration();
-            ResolveCollisions(dt);
+            if (++i % constraintIterationsPerCollisionCheck == 0 || i == lastIndex)
+            {
+                ResolveCollisions(dt);
+            }
         }
     }
 

@@ -52,7 +52,7 @@ public class RopeTester : MonoBehaviour
                 lineRenderer.endWidth = silkWidth;
                 rope = new Rope(mousePos, silkWidth, silkNodeSpacing, silkNumNodes, silkDrag,
                     silkCollisionMask, silkCollisionRadiusBuffer, 1, silkBounciness, terminusAnchorMask,
-                    silkConstraintIterations);
+                    silkConstraintIterations, 1);
                 rope.nodes[0].Anchor();
             }
             else

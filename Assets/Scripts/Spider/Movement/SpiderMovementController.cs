@@ -112,6 +112,7 @@ public class SpiderMovementController : MonoBehaviour
     Quaternion abdomenBoneBaseLocalRotationL;
 
     int orientation = 1;
+    bool needChangeDirection;
 
     bool grounded;
     float groundednessRating;
@@ -238,12 +239,11 @@ public class SpiderMovementController : MonoBehaviour
         UpdateThruster();
         UpdateGrappleScurrying();
 
-        //if (goalGroundednessTolerance != goalGroundednessTolerance)
-        //{
-        //    goalGroundednessTolerance = Mathf.Lerp(goalGroundednessTolerance, 
-        //        grapple.FreeHanging ? freeHangGroundedToleranceMultiplier * goalGroundednessTolerance : goalGroundednessTolerance,
-        //        groundednessToleranceLerpRate * Time.deltaTime);
-        //}
+        if (needChangeDirection)
+        {
+            ChangeDirection();
+            needChangeDirection = false;
+        }
 
         if (jumpInputHeld)
         {
@@ -424,7 +424,8 @@ public class SpiderMovementController : MonoBehaviour
 
         if (MathTools.OppositeSigns(moveInput, orientation))
         {
-            ChangeDirection();
+            needChangeDirection = true;
+            //ChangeDirection();
         }
 
         if (thrusterCooldownWarningSent && moveInput == 0)
@@ -451,34 +452,44 @@ public class SpiderMovementController : MonoBehaviour
     private void ChangeDirection()
     {
         //2do: can we interpolate between these by free hang strength in a reasonable way (or is there no need to do that)
-        if (grounded || !grapple.GrappleAnchored)
+        //if (grounded || !grapple.GrappleAnchored)
+        if (!legSynchronizer.FreeHanging)
         {
             var s = transform.localScale;
             transform.localScale = new Vector3(-s.x, s.y, s.z);
         }
         else
         {
-            if (legSynchronizer.FreeHanging)
-            {
-                Vector2 o = grapple.FreeHangLeveragePoint;
-                var p = transform.position;
-                var s = transform.localScale;
-                transform.localScale = new Vector3(-s.x, s.y, s.z);
-                var n = grapple.FreeHanging ? grapple.LastCarryForceDirection.CWPerp() : Vector2.right;//normal to the hyperplane we're reflecting over
-                transform.up = MathTools.ReflectAcrossHyperplane(transform.up, (Vector3)n);
-                var d = (Vector3)(o - grapple.FreeHangLeveragePoint);
-                transform.position += d;
-                legSynchronizer.OnBodyChangedDirectionFreeHanging(p, transform.position, n);
-            }
-            else
-            {
-                Vector2 o = grapple.FreeHangLeveragePoint;
-                var s = transform.localScale;
-                transform.localScale = new Vector3(-s.x, s.y, s.z);
-                var n = grapple.FreeHanging ? grapple.LastCarryForceDirection.CWPerp() : Vector2.right;//normal to the hyperplane we're reflecting over
-                transform.up = MathTools.ReflectAcrossHyperplane(transform.up, (Vector3)n);
-                transform.position += (Vector3)(o - grapple.FreeHangLeveragePoint);
-            }
+            Vector2 o = grapple.FreeHangLeveragePoint;
+            var p = transform.position;
+            var s = transform.localScale;
+            transform.localScale = new Vector3(-s.x, s.y, s.z);
+            var n = grapple.FreeHanging ? grapple.LastCarryForceDirection.CWPerp() : Vector2.right;//normal to the hyperplane we're reflecting over
+            transform.up = MathTools.ReflectAcrossHyperplane(transform.up, (Vector3)n);
+            var d = (Vector3)(o - grapple.FreeHangLeveragePoint);
+            transform.position += d;
+            legSynchronizer.OnBodyChangedDirectionFreeHanging(p, transform.position, n);
+            //if (legSynchronizer.FreeHanging)
+            //{
+            //    Vector2 o = grapple.FreeHangLeveragePoint;
+            //    var p = transform.position;
+            //    var s = transform.localScale;
+            //    transform.localScale = new Vector3(-s.x, s.y, s.z);
+            //    var n = grapple.FreeHanging ? grapple.LastCarryForceDirection.CWPerp() : Vector2.right;//normal to the hyperplane we're reflecting over
+            //    transform.up = MathTools.ReflectAcrossHyperplane(transform.up, (Vector3)n);
+            //    var d = (Vector3)(o - grapple.FreeHangLeveragePoint);
+            //    transform.position += d;
+            //    legSynchronizer.OnBodyChangedDirectionFreeHanging(p, transform.position, n);
+            //}
+            //else
+            //{
+            //    Vector2 o = grapple.FreeHangLeveragePoint;
+            //    var s = transform.localScale;
+            //    transform.localScale = new Vector3(-s.x, s.y, s.z);
+            //    var n = grapple.FreeHanging ? grapple.LastCarryForceDirection.CWPerp() : Vector2.right;//normal to the hyperplane we're reflecting over
+            //    transform.up = MathTools.ReflectAcrossHyperplane(transform.up, (Vector3)n);
+            //    transform.position += (Vector3)(o - grapple.FreeHangLeveragePoint);
+            //}
         }
 
         orientation = FacingRight ? 1 : -1;
@@ -521,10 +532,13 @@ public class SpiderMovementController : MonoBehaviour
             if (grapple.GrappleAnchored)
             {
                 //so grip doesn't fight against carry force
-                var c = Vector2.Dot(grapple.LastCarryForce, d);
-                if (MathTools.OppositeSigns(grip, c))
+                if (grapple.GrappleReleaseInput < 0)
                 {
-                    grip += grapplePullGripReduction * c;
+                    var c = Vector2.Dot(grapple.LastCarryForce, d);
+                    if (MathTools.OppositeSigns(grip, c))
+                    {
+                        grip += grapplePullGripReduction * c;
+                    }
                 }
             }
             var f = rb.mass * (grip - decelFactor * spd) * d;
@@ -715,6 +729,7 @@ public class SpiderMovementController : MonoBehaviour
     {
         if (grounded == val) return;
         grounded = val;
+        //grapple.grounded = grounded;
         if (grounded)
         {
             OnLanding();

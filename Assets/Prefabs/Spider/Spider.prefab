@@ -9426,8 +9426,8 @@ MonoBehaviour:
   groundednessInitialContactValue: 1
   groundDirectionSampleWidth: 0.5
   backupGroundPtRaycastLengthFactor: 1.1
-  groundPtSlipRate: 75
-  groundPtSlipThreshold: 0.125
+  groundPtSlipRate: 85
+  groundPtSlipThreshold: 0.2
   upcomingGroundDirectionMinPos: 0
   upcomingGroundDirectionMaxPos: 0.4
   failedGroundDirectionSmoothingRate: 45
@@ -10066,11 +10066,11 @@ MonoBehaviour:
       normal: {x: -1, y: 0}
       right: {x: 0, y: 1}
       groundCollider: {fileID: 0}
-  accelFactor: 45
+  accelFactor: 35
   accelFactorFreeHanging: 15.5
   deadThrusterAccelFactor: 4
   thrustingAccelFactor: 25
-  accelCap: 4
+  accelCap: 3
   decelFactor: 50
   gripStrength: 450
   grapplePullGripReduction: 0.95
@@ -10080,7 +10080,7 @@ MonoBehaviour:
   heightSpringForce: 600
   heightSpringDamping: 24
   heightSpringBreakThreshold: 0.1
-  grappleSquatReduction: 0.25
+  grappleSquatReduction: 0.4
   heightSampleWidth: 0.8
   abdomenRotationSpeed: 6
   headRotationSpeed: 12
@@ -10176,17 +10176,29 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4257679111386862312}
     m_Modifications:
+    - target: {fileID: 4214415506349439368, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.6485
+      objectReference: {fileID: 0}
+    - target: {fileID: 4214415506349439368, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.234
+      objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: drag
-      value: 0.0005
+      value: 0.001
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: width
-      value: 0.175
+      value: 0.15
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: numNodes
       value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: maxLength
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: shooterRb
@@ -10194,7 +10206,7 @@ PrefabInstance:
       objectReference: {fileID: 2582591312671585704}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: bounciness
-      value: 0.7
+      value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: grappleMass
@@ -10206,15 +10218,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: carrySpringForce
-      value: 125
+      value: 250
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: retractMaxTension
-      value: 0.4
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: tunnelEscapeRadius
+      value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: constraintIterations
-      value: 25
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: collisionSearchRadius
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: shootSpeedPowerUpRate
@@ -10230,7 +10250,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: tensionCalculationInterval
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: cannonFulcrum.linearDamping
@@ -10245,6 +10265,10 @@ PrefabInstance:
       value: 2.094395
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: constraintIterationsPerCollisionCheck
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: cannonFulcrum.kinematicRotationCatchUpMultiplier
       value: 10
       objectReference: {fileID: 0}
@@ -10256,17 +10280,21 @@ PrefabInstance:
       propertyPath: m_Parameters.numCornerVertices
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6228509614536934493, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.1
+      objectReference: {fileID: 0}
     - target: {fileID: 7337905512642426967, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: m_Name
       value: Silk Grapple
       objectReference: {fileID: 0}
     - target: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.16
+      value: -0.19
       objectReference: {fileID: 0}
     - target: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.4
+      value: 0.12
       objectReference: {fileID: 0}
     - target: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: m_LocalPosition.z
@@ -10299,6 +10327,10 @@ PrefabInstance:
     - target: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9089405136288967909, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

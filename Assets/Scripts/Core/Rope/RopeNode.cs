@@ -31,8 +31,8 @@ public struct RopeNode
 
     static readonly Vector2[] raycastDirections = new Vector2[]
     {
-        new(0,-1), new(0, 1), new(1, 0), new(-1, 0),
-        new (MathTools.cos45, -MathTools.cos45), new(-MathTools.cos45, MathTools.cos45),
+        new(0,-1),  new(0, 1), new(1, 0), new(-1, 0),
+        new(-MathTools.cos45, MathTools.cos45),
         new(-MathTools.cos45, -MathTools.cos45), new(MathTools.cos45, -MathTools.cos45)
     };
     //{
@@ -176,7 +176,7 @@ public struct RopeNode
         var r = Physics2D.Raycast(position, raycastDirections[0], collisionSearchRadius, collisionMask);
         if (!r)
         {
-            for (int i = 1; i < raycastDirections.Length; i++)
+            for (int i = 0; i < raycastDirections.Length; i++)
             {
                 r = Physics2D.Raycast(position, raycastDirections[i], collisionSearchRadius, collisionMask);
                 if (r)
@@ -205,11 +205,11 @@ public struct RopeNode
         {
             HandlePotentialCollision(dt, ref r, l, collisionBounciness);
         }
-        else
-        {
-            //CurrentCollision = null;
-            lastCollisionNormal = Vector2.zero;
-        }
+        //else
+        //{
+        //    //CurrentCollision = null;
+        //    lastCollisionNormal = Vector2.zero;
+        //}
     }
 
     private void HandlePotentialCollision(float dt, ref RaycastHit2D r, float collisionThreshold, float collisionBounciness)
