@@ -3,13 +3,14 @@
 public class GrappleCannon : MonoBehaviour
 {
     [SerializeField] Rigidbody2D shooterRb;
+    [SerializeField] int numNodes;
+    [SerializeField] float width;
     [SerializeField] float drag;
     [SerializeField] float bounciness;
     [SerializeField] LayerMask grappleAnchorMask;
     [SerializeField] LayerMask collisionMask;
-    [SerializeField] float width;
-    [SerializeField] int numNodes;
-    [SerializeField] float collisionSearchRadiusBuffer;
+    [SerializeField] float collisionSearchRadius;
+    [SerializeField] float tunnelEscapeRadius;
     [SerializeField] float minLength;
     [SerializeField] float maxLength;
     [SerializeField] float baseShootSpeed;
@@ -71,13 +72,13 @@ public class GrappleCannon : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmos()
-    {
-        if (grapple != null)
-        {
-            grapple.DrawGizmos();
-        }
-    }
+    //private void OnDrawGizmos()
+    //{
+    //    if (Application.isPlaying && grapple != null)
+    //    {
+    //        grapple.DrawGizmos();
+    //    }
+    //}
 
     private void Awake()
     {
@@ -91,7 +92,7 @@ public class GrappleCannon : MonoBehaviour
         lineRenderer.enabled = false;
         cannonFulcrum.Initialize();
     }
-    
+
     private void Update()
     {
         if (grapple == null)
@@ -115,7 +116,7 @@ public class GrappleCannon : MonoBehaviour
             }
             else if (GrappleAnchored)
             {
-                grappleReleaseInput = (Input.GetKey(KeyCode.W) && grapple.Length < maxLength ? 1 : 0) 
+                grappleReleaseInput = (Input.GetKey(KeyCode.W) && grapple.Length < maxLength ? 1 : 0)
                     + (Input.GetKey(KeyCode.S) && grapple.Length > minLength ? -1 : 0);
             }
         }
@@ -252,12 +253,18 @@ public class GrappleCannon : MonoBehaviour
                 j = lastIndex;
                 d = (j - i) * grapple.nodeSpacing;
             }
-            length += d;
-            total += (grapple.nodes[j].position - grapple.nodes[i].position).magnitude - d;
-            if (total < 0)
+            //length += d;
+            var err = (grapple.nodes[j].position - grapple.nodes[i].position).magnitude - d;
+            if (err > 0)
             {
-                return total;
+                total += err;
+                length += d;
             }
+            else
+            {
+                return 0;
+            }
+
             i = j;
         }
 
@@ -283,9 +290,9 @@ public class GrappleCannon : MonoBehaviour
     public float NormalizedTension(int lastIndex) => Tension(lastIndex, out var length) / length;
 
     public float NormalizedStrictTension() => StrictTension() / grapple.Length;
-    public float NormalizedStrictTension(int lastIndex) => StrictTension(lastIndex, out var length) / length;
+    public float NormalizedStrictTension(int lastIndex) => StrictTension(lastIndex, out var length) / (length == 0 ? 1 : length);
 
-    
+
     //RENDERING
 
     //private void UpdateLineRenderer()
@@ -317,7 +324,7 @@ public class GrappleCannon : MonoBehaviour
     }
 
     //fIXED UPDATE FUNCTIONS
-    
+
     private void UpdateCannonFulcrum()
     {
         if (GrappleAnchored)
@@ -337,11 +344,11 @@ public class GrappleCannon : MonoBehaviour
 
     private void UpdateCarrySpring()
     {
-        LastCarryForceDirection = GrappleExtentFromFirstCollision(out int lastIndex).normalized;
-        var t = NormalizedStrictTension(lastIndex);
+        LastCarryForceDirection = GrappleExtentFromFirstCollision(out int firstCollisionIndex).normalized;
+        var t = NormalizedStrictTension(firstCollisionIndex);
         if (t > 0)
         {
-            LastCarryForce = shooterRb.mass * carrySpringForce * t * LastCarryForceDirection;
+            LastCarryForce = /*shooterRb.mass **/ carrySpringForce * t * LastCarryForceDirection;
             cannonFulcrum.ApplyForce(LastCarryForce, LastCarryForceDirection, shooterRb, FreeHanging);
         }
         else
@@ -366,7 +373,7 @@ public class GrappleCannon : MonoBehaviour
         else if (grapple.Length < maxLength)
         {
             shootTimer += fixedDt;//shoot timer starts negative so doesn't start growing until grapple has extended out it's initial length, ideally
-            if (shootTimer > 0 && GrappleExtent.magnitude > grapple.Length) 
+            if (shootTimer > 0 && GrappleExtent.magnitude > grapple.Length)
             {
                 var p = (0.5f * shootTimer * Physics2D.gravity + ShootSpeed * lastShootDirection) * shootTimer + minLength * lastShootDirection;
                 grapple.Length = Mathf.Clamp(p.magnitude, grapple.Length, maxLength);
@@ -387,7 +394,8 @@ public class GrappleCannon : MonoBehaviour
     {
         var nodeSpacing = minLength / (numNodes - 1);
         grapple = new Rope(SourcePosition, width, nodeSpacing, numNodes,
-                    drag, collisionMask, collisionSearchRadiusBuffer, bounciness, grappleAnchorMask, constraintIterations);
+                    drag, collisionMask, collisionSearchRadius, tunnelEscapeRadius, bounciness, grappleAnchorMask, 
+                    constraintIterations);
         grapple.nodes[0].Anchor();
         grapple.nodes[grapple.lastIndex].mass = grappleMass;
         var shootSpeed = ShootSpeed;
@@ -395,7 +403,7 @@ public class GrappleCannon : MonoBehaviour
         Vector2 shootVelocity = shootSpeed * lastShootDirection;
         grapple.nodes[grapple.lastIndex].lastPosition -= fixedDt * shootVelocity;
         var g = Physics2D.gravity.y;
-        shootTimer = - minLength / shootSpeed;
+        shootTimer = -minLength / shootSpeed;
         EnableLineRenderer();
         grapple.SetLineRendererPositions(lineRenderer);
     }

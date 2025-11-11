@@ -1,8 +1,11 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using UnityEngine;
 
 public struct RopeNode
 {
+    const int NUM_STORED_VELOCITY_RBS = 4;
+
     public Vector2 position;
     public Vector2 lastPosition;
     public Vector2 acceleration;
@@ -13,18 +16,31 @@ public struct RopeNode
     readonly Rigidbody2D[] storedVelocityRbs;
     int storedVelocityPointer;
 
-    Vector2 right;
-    Vector2 up;
+    //Vector2 right;
+    //Vector2 up;
 
     bool anchored;
     float drag;
 
     readonly int collisionMask;
     readonly float collisionSearchRadius;
+    readonly float tunnelEscapeRadius;
     readonly float collisionThreshold;
     readonly float collisionBounciness;
-    readonly Vector2[] raycastDirections;
     Vector2 lastCollisionNormal;
+
+    static readonly Vector2[] raycastDirections = new Vector2[]
+    {
+        new(0,-1), new(0, 1), new(1, 0), new(-1, 0),
+        new (MathTools.cos45, -MathTools.cos45), new(-MathTools.cos45, MathTools.cos45),
+        new(-MathTools.cos45, -MathTools.cos45), new(MathTools.cos45, -MathTools.cos45)
+    };
+    //{
+    //    new(1, 0), new(MathTools.cos22pt5, MathTools.sin22pt5), new(MathTools.cos45, MathTools.cos45), new(MathTools.sin22pt5, MathTools.cos22pt5),
+    //    new(0, 1), new(-MathTools.sin22pt5, MathTools.cos22pt5), new(-MathTools.cos45, MathTools.cos45), new(-MathTools.cos22pt5, MathTools.sin22pt5),
+    //    new(-1, 0), new(-MathTools.cos22pt5, -MathTools.sin22pt5), new(-MathTools.cos45, -MathTools.cos45), new(-MathTools.sin22pt5, -MathTools.cos22pt5),
+    //    new(0, -1), new(MathTools.sin22pt5, -MathTools.cos22pt5), new(MathTools.cos45, -MathTools.cos45), new(MathTools.cos22pt5, -MathTools.sin22pt5)
+    //};
 
     public bool Anchored => anchored;
     public int CurrentCollisionLayerMask => CurrentCollision ? 1 << CurrentCollision.gameObject.layer : 0;
@@ -33,7 +49,7 @@ public struct RopeNode
     public Vector2 LastCollisionNormal => lastCollisionNormal;
 
     public RopeNode(Vector2 position, Vector2 velocity, Vector2 acceleration, float mass, float drag,
-        int collisionMask, float collisionThreshold, float collisionSearchRadiusBuffer, float collisionBounciness,
+        int collisionMask, float collisionThreshold, float collisionSearchRadius, float tunnelEscapeRadius, float collisionBounciness,
         bool anchored)
     {
         this.anchored = anchored;
@@ -43,27 +59,28 @@ public struct RopeNode
         this.mass = mass;
 
         storedVelocity = Vector2.zero;
-        storedVelocityRbs = new Rigidbody2D[Rope.MAX_NUM_COLLISIONS];
+        storedVelocityRbs = new Rigidbody2D[NUM_STORED_VELOCITY_RBS];
         storedVelocityPointer = 0;
 
-        var r = velocity.normalized;
-        if (r == Vector2.zero)
-        {
-            r = Vector2.right;
-        }
-        var u = r.CCWPerp();
-        right = r;
-        up = u;
-        //var r = Vector2.right;
-        //var u = Vector2.up;
-        var rr = MathTools.cos45 * r;
-        var uu = MathTools.cos45 * u;
-        raycastDirections = new Vector2[] { r, rr + uu, u, -rr + uu, -r, -rr - uu, -u, rr - uu };//{ r, -r, u, -u, rr + uu, -rr - uu, -rr + uu, rr - uu };
+        //circleCastBuffer = new RaycastHit2D[] { new(), new() };
+
+        //var r = velocity.normalized;
+        //if (r == Vector2.zero)
+        //{
+        //    r = Vector2.right;
+        //}
+        //var u = r.CCWPerp();
+        //right = r;
+        //up = u;
+        //var ru = MathTools.cos45 * r;
+        //var ur = MathTools.sin45 * u;
+        //raycastDirections = new Vector2[] { r, -r, u, -u, ru + ur, -ru - ur, -ru + ur, ru - ur };
 
         this.drag = drag;
         this.collisionMask = collisionMask;
         this.collisionThreshold = collisionThreshold;
-        collisionSearchRadius = collisionThreshold + collisionSearchRadiusBuffer;
+        this.collisionSearchRadius = collisionSearchRadius;
+        this.tunnelEscapeRadius = tunnelEscapeRadius;
         this.collisionBounciness = collisionBounciness;
         CurrentCollision = null;
         lastCollisionNormal = Vector2.zero;
@@ -94,9 +111,34 @@ public struct RopeNode
         {
             //UpdateLocalCoordinates();
             UpdateVerletSimulationCore(dt, dt2);
-            UpdateLocalCoordinates(); //doesn't it make more sense to do after?
+            //UpdateLocalCoordinates(); //doesn't it make more sense to do after?
         }
     }
+
+
+
+    //public void UpdateLocalCoordinates()
+    //{
+    //    if (!anchored)
+    //    {
+    //        var r = (position - lastPosition).normalized;
+    //        if (r != Vector2.zero)
+    //        {
+    //            right = r;
+    //            up = r.CCWPerp();
+    //            var ru = MathTools.cos45 * right;
+    //            var ur = MathTools.cos45 * up;
+    //            raycastDirections[0] = right;
+    //            raycastDirections[1] = ru + ur;
+    //            raycastDirections[2] = up;
+    //            raycastDirections[3] = -ru + ur;
+    //            raycastDirections[4] = -right;
+    //            raycastDirections[5] = -ru - ur;
+    //            raycastDirections[6] = -up;
+    //            raycastDirections[7] = ru - ur;
+    //        }
+    //    }
+    //}
 
     private void UpdateVerletSimulationCore(float dt, float dt2)
     {
@@ -118,55 +160,42 @@ public struct RopeNode
         lastPosition = p;
     }
 
-    private void UpdateLocalCoordinates()
-    {
-        var r = (position - lastPosition).normalized;
-        if (r != Vector2.zero)
-        {
-            right = r;
-            up = r.CCWPerp();
-            var rr = MathTools.cos45 * right;
-            var uu = MathTools.cos45 * up;
-            raycastDirections[0] = right;
-            raycastDirections[1] = rr + uu;
-            raycastDirections[2] = up;
-            raycastDirections[3] = -rr + uu;
-            raycastDirections[4] = -right;
-            raycastDirections[5] = -rr - uu;
-            raycastDirections[6] = -up;
-            raycastDirections[7] = rr - uu;
-        }
-    }
-
     public void ResolveCollisions(float dt)
     {
         if (anchored) return;
 
-        //var origin = position;
+        var circleCast = Physics2D.CircleCast(position, collisionSearchRadius, Vector2.zero, 0f, collisionMask);
+        if (!circleCast)
+        {
+            CurrentCollision = null;
+            lastCollisionNormal = Vector2.zero;
+            return;
+        }
+
         var l = collisionThreshold;
         var r = Physics2D.Raycast(position, raycastDirections[0], collisionSearchRadius, collisionMask);
         if (!r)
         {
             for (int i = 1; i < raycastDirections.Length; i++)
             {
+                r = Physics2D.Raycast(position, raycastDirections[i], collisionSearchRadius, collisionMask);
                 if (r)
                 {
-                    r = Physics2D.Raycast(position, raycastDirections[i], collisionSearchRadius, collisionMask);
                     break;
                 }
             }
         }
-        else if (r.distance == 0)
+
+        if (r.distance == 0)
         {
-            l = collisionSearchRadius;
+            l = tunnelEscapeRadius;
             r = Physics2D.Raycast(position + l * raycastDirections[0], -raycastDirections[0], l, collisionMask);
             for (int i = 1; i < raycastDirections.Length; i++)
             {
-                var s = Physics2D.Raycast(position + l * raycastDirections[i], -raycastDirections[i], l, collisionMask);
-                if (s && s.distance > r.distance)
+                r = Physics2D.Raycast(position + l * raycastDirections[i], -raycastDirections[i], l, collisionMask);
+                if (r && r.distance > 0)
                 {
-                    //origin = position + l * raycastDirections[i];
-                    r = s;
+                    break;
                 }
             }
             r.distance = l - r.distance;
@@ -174,13 +203,12 @@ public struct RopeNode
 
         if (r)
         {
-            //Debug.DrawLine(origin, r.point, Color.green);
             HandlePotentialCollision(dt, ref r, l, collisionBounciness);
         }
         else
         {
-            CurrentCollision = null;
-            lastCollisionNormal = Vector2.zero;//can try to get rid of this
+            //CurrentCollision = null;
+            lastCollisionNormal = Vector2.zero;
         }
     }
 
@@ -189,20 +217,21 @@ public struct RopeNode
         var l = r.distance;
         var n = r.normal;
 
-        if (l <= MathTools.o51)
+        if (!(l > MathTools.o31))
         {
             if (lastCollisionNormal == Vector2.zero)
             {
+                //Debug.Log("using the shitty case");
                 lastCollisionNormal = (r.point - (Vector2)r.collider.bounds.center).normalized;
             }
             n = lastCollisionNormal;
-            var w = this.collisionThreshold * n;
+            //var w = this.collisionThreshold * n;
             var velocity = (position - lastPosition) / dt;
             var tang = n.CWPerp();
             var a = Vector2.Dot(velocity, tang);
             var b = Vector2.Dot(velocity, n);
             var newVelocity = collisionBounciness * Mathf.Sign(b) * (velocity - 2 * a * tang);
-            position += w;
+            position += this.collisionThreshold * n;
             lastPosition = position - newVelocity * dt;
             StoreCollisionVelocity(r.collider.attachedRigidbody, n);
             CurrentCollision = r.collider;
@@ -228,26 +257,29 @@ public struct RopeNode
     private void ResolveCollision(float dt, float distanceToContactPoint, float collisionThreshold, float collisionBounciness, Vector2 collisionNormal, Rigidbody2D attachedRb)
     {
         var velocity = (position - lastPosition) / dt;
-        var speed = velocity.magnitude;
+        //var speed = velocity.magnitude;
         var diff = Mathf.Min(collisionThreshold - distanceToContactPoint, this.collisionThreshold);
         var tang = collisionNormal.CWPerp();
         var a = Vector2.Dot(velocity, tang);
         var b = Vector2.Dot(velocity, collisionNormal);
         var newVelocity = collisionBounciness * Mathf.Sign(b) * (velocity - 2 * a * tang);
 
-        if (speed > MathTools.o51)
-        {
-            var timeSinceCollision = diff / speed;
-            position += diff * collisionNormal + newVelocity * timeSinceCollision;
-            lastPosition = position - newVelocity * dt;
+        position += diff * collisionNormal;
+        lastPosition = position - newVelocity * dt;
 
-            StoreCollisionVelocity(attachedRb, collisionNormal);
-        }
-        else
-        {
-            position += diff * collisionNormal;
-            lastPosition = position - newVelocity * dt;
-        }
+        //if (speed > MathTools.o31)
+        //{
+        //    var timeSinceCollision = diff / speed;
+        //    position += diff * collisionNormal + newVelocity * timeSinceCollision;
+        //    lastPosition = position - newVelocity * dt;
+
+        //    StoreCollisionVelocity(attachedRb, collisionNormal);
+        //}
+        //else
+        //{
+        //    position += diff * collisionNormal;
+        //    lastPosition = position - newVelocity * dt;
+        //}
     }
 
     private void StoreCollisionVelocity(Rigidbody2D attachedRb, Vector2 collisionNormal)
