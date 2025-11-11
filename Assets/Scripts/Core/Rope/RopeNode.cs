@@ -2,6 +2,7 @@
 using System.Linq;
 using UnityEngine;
 
+[Serializable]
 public struct RopeNode
 {
     const int NUM_STORED_VELOCITY_RBS = 4;
@@ -11,6 +12,7 @@ public struct RopeNode
     public Vector2 acceleration;
 
     public float mass;
+    float drag;
 
     Vector2 storedVelocity;
     readonly Rigidbody2D[] storedVelocityRbs;
@@ -20,7 +22,6 @@ public struct RopeNode
     //Vector2 up;
 
     bool anchored;
-    float drag;
 
     readonly int collisionMask;
     readonly float collisionSearchRadius;
@@ -91,6 +92,7 @@ public struct RopeNode
         anchored = true;
         lastPosition = position;
         CurrentCollision = null;
+        lastCollisionNormal = Vector2.zero;
     }
 
     public void DeAnchor(float dt, Vector2 initialVelocity)
