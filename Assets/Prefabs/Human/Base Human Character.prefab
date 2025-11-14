@@ -1,0 +1,1244 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8060932246314317455
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5055768600264933279}
+  - component: {fileID: 6430050870112332145}
+  - component: {fileID: 4892215863634106517}
+  m_Layer: 0
+  m_Name: Base Human Character
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5055768600264933279
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8060932246314317455}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -24.09, y: -2.17, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 8164705108405414965}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &6430050870112332145
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8060932246314317455}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 0154007d0f9c2fd498b0ca419fd3bd4d, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4892215863634106517
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8060932246314317455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 145cc1d0f009aa64786ee38bfcf527c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skinColor: {r: 0.94716984, g: 0.9267643, b: 0.8774724, a: 1}
+  eyeWhiteColor: {r: 1, g: 1, b: 1, a: 1}
+  irisColor: {r: 0.5314988, g: 0.6301887, b: 0.5751501, a: 1}
+  hairColor: {r: 0.381132, g: 0.34725577, b: 0.3214453, a: 1}
+  lipColor: {r: 1, g: 1, b: 1, a: 1}
+  shirtColor: {r: 0.590808, g: 0.6377357, b: 0.60839367, a: 1}
+  tieColor: {r: 0.32238513, g: 0.42395562, b: 0.4867924, a: 1}
+  pantsColor: {r: 0.64380926, g: 0.73129815, b: 0.7433963, a: 1}
+  pantsButtonColor: {r: 1, g: 1, b: 1, a: 1}
+  beltColor: {r: 0.5018867, g: 0.40743008, b: 0.33238158, a: 1}
+  beltBuckleColor: {r: 0.690566, g: 0.6086485, b: 0.47297254, a: 1}
+  shoeColor: {r: 0.4113207, g: 0.34839377, b: 0.303446, a: 1}
+  skinRenderers:
+  - {fileID: 7578884434333986150}
+  - {fileID: 1968102390782315246}
+  - {fileID: 1100327155397170248}
+  - {fileID: 2305991305462542598}
+  - {fileID: 8566352104924827444}
+  - {fileID: 7773962510847388809}
+  - {fileID: 6981500243008410341}
+  - {fileID: 777734152065335791}
+  - {fileID: 7450745689028725487}
+  - {fileID: 5033116970111214196}
+  - {fileID: 227565510860616290}
+  - {fileID: 6018937635986148868}
+  eyeWhiteRenderers:
+  - {fileID: 6731848919668861943}
+  - {fileID: 7510243320513525537}
+  irisRenderers:
+  - {fileID: 6456269440608495456}
+  - {fileID: 2838035976110190523}
+  hairRenderers:
+  - {fileID: 8064001198318533095}
+  - {fileID: 7355229699293337599}
+  - {fileID: 7190164808832801926}
+  lipRenderers:
+  - {fileID: 6908974207892511550}
+  - {fileID: 8636624031910334813}
+  shirtRenderers:
+  - {fileID: 8461502426488717275}
+  - {fileID: 6653932823469588713}
+  - {fileID: 5578323853237894841}
+  - {fileID: 4426424744421924858}
+  - {fileID: 3360347257155964592}
+  tieRenderers:
+  - {fileID: 419545430431861680}
+  pantsRenderers:
+  - {fileID: 3935743663593631095}
+  - {fileID: 4948388910454650601}
+  - {fileID: 2627962156585505030}
+  - {fileID: 4363813490771162078}
+  - {fileID: 6838020532644593312}
+  - {fileID: 1631829547610895928}
+  - {fileID: 2078434915793760143}
+  pantsButtonRenderers:
+  - {fileID: 8774864002115603088}
+  beltRenderers:
+  - {fileID: 3450015772851734920}
+  - {fileID: 5883011622333528853}
+  beltBuckleRenderers:
+  - {fileID: 814332082068268443}
+  shoeRenderers:
+  - {fileID: 4437364455360729196}
+  - {fileID: 7633715412745706611}
+--- !u!1001 &7377188671474603499
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 5055768600264933279}
+    m_Modifications:
+    - target: {fileID: -9191270198637772268, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.3214453
+      objectReference: {fileID: 0}
+    - target: {fileID: -9191270198637772268, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.34725577
+      objectReference: {fileID: 0}
+    - target: {fileID: -9191270198637772268, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.381132
+      objectReference: {fileID: 0}
+    - target: {fileID: -9110760611539710243, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Upper Eyelid R Bone 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8754347342337521906, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8754347342337521906, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.8774724
+      objectReference: {fileID: 0}
+    - target: {fileID: -8754347342337521906, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.9267643
+      objectReference: {fileID: 0}
+    - target: {fileID: -8754347342337521906, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.94716984
+      objectReference: {fileID: 0}
+    - target: {fileID: -8653719598885068355, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Sprites
+      objectReference: {fileID: 0}
+    - target: {fileID: -8536541895803917300, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.3214453
+      objectReference: {fileID: 0}
+    - target: {fileID: -8536541895803917300, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.34725577
+      objectReference: {fileID: 0}
+    - target: {fileID: -8536541895803917300, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.381132
+      objectReference: {fileID: 0}
+    - target: {fileID: -8491674880726710961, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Foot R Bone
+      objectReference: {fileID: 0}
+    - target: {fileID: -8102194941424922934, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Lower Eyelid R Bone 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -8034208597901485345, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8034208597901485345, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.8774724
+      objectReference: {fileID: 0}
+    - target: {fileID: -8034208597901485345, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.9267643
+      objectReference: {fileID: 0}
+    - target: {fileID: -8034208597901485345, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.94716984
+      objectReference: {fileID: 0}
+    - target: {fileID: -7863339059165070985, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Hand L Bone
+      objectReference: {fileID: 0}
+    - target: {fileID: -7861921816803447066, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Lower Eyelid R Bone 8
+      objectReference: {fileID: 0}
+    - target: {fileID: -7850827884214048208, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.60839367
+      objectReference: {fileID: 0}
+    - target: {fileID: -7850827884214048208, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.6377357
+      objectReference: {fileID: 0}
+    - target: {fileID: -7850827884214048208, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.590808
+      objectReference: {fileID: 0}
+    - target: {fileID: -7552582706839291426, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7552582706839291426, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7552582706839291426, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7552582706839291426, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7552582706839291426, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7552582706839291426, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7552582706839291426, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7552582706839291426, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7552582706839291426, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7552582706839291426, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7471053867468979098, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Lower Eyelid L Bone 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7098705254286632627, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Upper Eyelid L Bone 11
+      objectReference: {fileID: 0}
+    - target: {fileID: -7000953157349300876, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Bicep L Bone
+      objectReference: {fileID: 0}
+    - target: {fileID: -6976838981555452880, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Upper Eyelid R Bone 9
+      objectReference: {fileID: 0}
+    - target: {fileID: -6649508547082078305, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.8774724
+      objectReference: {fileID: 0}
+    - target: {fileID: -6649508547082078305, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.9267643
+      objectReference: {fileID: 0}
+    - target: {fileID: -6649508547082078305, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.94716984
+      objectReference: {fileID: 0}
+    - target: {fileID: -6180203269767982568, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Upper Eyelid L Bone 8
+      objectReference: {fileID: 0}
+    - target: {fileID: -6121757487070532782, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.60839367
+      objectReference: {fileID: 0}
+    - target: {fileID: -6121757487070532782, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.6377357
+      objectReference: {fileID: 0}
+    - target: {fileID: -6121757487070532782, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.590808
+      objectReference: {fileID: 0}
+    - target: {fileID: -6112200416892429274, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Lower Eyelid R Bone 11
+      objectReference: {fileID: 0}
+    - target: {fileID: -5661170391542758162, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Upper Eyelid R Bone 7
+      objectReference: {fileID: 0}
+    - target: {fileID: -5339433105270203409, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.8774724
+      objectReference: {fileID: 0}
+    - target: {fileID: -5339433105270203409, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.9267643
+      objectReference: {fileID: 0}
+    - target: {fileID: -5339433105270203409, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.94716984
+      objectReference: {fileID: 0}
+    - target: {fileID: -5280192675311742296, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Upper Eyelid L Bone 7
+      objectReference: {fileID: 0}
+    - target: {fileID: -5139837630983686176, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Thigh R Bone
+      objectReference: {fileID: 0}
+    - target: {fileID: -4987971480342391242, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Lower Eyelid R Bone 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -4870400490372210143, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Lower Eyelid L Bone 7
+      objectReference: {fileID: 0}
+    - target: {fileID: -4654913136417203985, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Lower Lip Bone 4
+      objectReference: {fileID: 0}
+    - target: {fileID: -4613853311371939189, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.5751501
+      objectReference: {fileID: 0}
+    - target: {fileID: -4613853311371939189, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.6301887
+      objectReference: {fileID: 0}
+    - target: {fileID: -4613853311371939189, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.5314988
+      objectReference: {fileID: 0}
+    - target: {fileID: -4460411176404826899, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.7433963
+      objectReference: {fileID: 0}
+    - target: {fileID: -4460411176404826899, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.73129815
+      objectReference: {fileID: 0}
+    - target: {fileID: -4460411176404826899, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.64380926
+      objectReference: {fileID: 0}
+    - target: {fileID: -4417685272076243411, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Eyebrow R Bone 4
+      objectReference: {fileID: 0}
+    - target: {fileID: -4232188694288412638, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Upper Eyelid L Bone 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -4151882499209009939, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -4151882499209009939, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.8774724
+      objectReference: {fileID: 0}
+    - target: {fileID: -4151882499209009939, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.9267643
+      objectReference: {fileID: 0}
+    - target: {fileID: -4151882499209009939, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.94716984
+      objectReference: {fileID: 0}
+    - target: {fileID: -4082568162607258480, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Calf L Bone
+      objectReference: {fileID: 0}
+    - target: {fileID: -3982783667129035883, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Upper Eyelid L Bone 9
+      objectReference: {fileID: 0}
+    - target: {fileID: -3980249665592698021, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -3980249665592698021, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.60839367
+      objectReference: {fileID: 0}
+    - target: {fileID: -3980249665592698021, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.6377357
+      objectReference: {fileID: 0}
+    - target: {fileID: -3980249665592698021, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.590808
+      objectReference: {fileID: 0}
+    - target: {fileID: -3951658238497738529, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Lower Lip Bone 5
+      objectReference: {fileID: 0}
+    - target: {fileID: -3431526756889919636, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Lower Eyelid R Bone 9
+      objectReference: {fileID: 0}
+    - target: {fileID: -3351800466171429997, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Lower Lip Bone 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -3263344706565303754, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Forearm R Bone
+      objectReference: {fileID: 0}
+    - target: {fileID: -3204876637150957202, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Lower Eyelid L Bone 10
+      objectReference: {fileID: 0}
+    - target: {fileID: -3145382201746366490, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Calf R Bone
+      objectReference: {fileID: 0}
+    - target: {fileID: -3082303220068253434, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Lower Lip Bone 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -2671079617447631307, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.7433963
+      objectReference: {fileID: 0}
+    - target: {fileID: -2671079617447631307, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.73129815
+      objectReference: {fileID: 0}
+    - target: {fileID: -2671079617447631307, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.64380926
+      objectReference: {fileID: 0}
+    - target: {fileID: -2662511555030873583, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.60839367
+      objectReference: {fileID: 0}
+    - target: {fileID: -2662511555030873583, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.6377357
+      objectReference: {fileID: 0}
+    - target: {fileID: -2662511555030873583, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.590808
+      objectReference: {fileID: 0}
+    - target: {fileID: -2617038104230857060, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Upper Eyelid R Bone 13
+      objectReference: {fileID: 0}
+    - target: {fileID: -2596987688296970873, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.303446
+      objectReference: {fileID: 0}
+    - target: {fileID: -2596987688296970873, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.34839377
+      objectReference: {fileID: 0}
+    - target: {fileID: -2596987688296970873, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.4113207
+      objectReference: {fileID: 0}
+    - target: {fileID: -2449677159009603349, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Upper Lip Bone 5
+      objectReference: {fileID: 0}
+    - target: {fileID: -2444235510057586315, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Upper Eyelid R Bone 6
+      objectReference: {fileID: 0}
+    - target: {fileID: -2187457123898248026, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Upper Lip Bone 4
+      objectReference: {fileID: 0}
+    - target: {fileID: -2086394184460930234, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Foot L Bone
+      objectReference: {fileID: 0}
+    - target: {fileID: -1889582444772301776, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Lower Eyelid L Bone 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1575135034038264166, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Eyebrow R Bone 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -1463390743279454317, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Eyebrow L Bone 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1349876964059121680, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Upper Eyelid L Bone 12
+      objectReference: {fileID: 0}
+    - target: {fileID: -1342277597757243403, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Upper Eyelid L Bone 5
+      objectReference: {fileID: 0}
+    - target: {fileID: -1289879333189570110, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Upper Eyelid R Bone 10
+      objectReference: {fileID: 0}
+    - target: {fileID: -1251318048036372890, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Thigh L Bone
+      objectReference: {fileID: 0}
+    - target: {fileID: -1177253447041025624, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Lower Eyelid R Bone 12
+      objectReference: {fileID: 0}
+    - target: {fileID: -1097639909565209645, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.7433963
+      objectReference: {fileID: 0}
+    - target: {fileID: -1097639909565209645, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.73129815
+      objectReference: {fileID: 0}
+    - target: {fileID: -1097639909565209645, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.64380926
+      objectReference: {fileID: 0}
+    - target: {fileID: -1024815538560704356, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Head Bone
+      objectReference: {fileID: 0}
+    - target: {fileID: -988483885061747735, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Lower Eyelid R Bone 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -928342988417168767, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Lower Eyelid L Bone 8
+      objectReference: {fileID: 0}
+    - target: {fileID: -528285752507945029, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Lower Eyelid L Bone 4
+      objectReference: {fileID: 0}
+    - target: {fileID: -418158847409016567, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Upper Eyelid R Bone 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -202362156658008315, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -202362156658008315, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.8774724
+      objectReference: {fileID: 0}
+    - target: {fileID: -202362156658008315, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.9267643
+      objectReference: {fileID: 0}
+    - target: {fileID: -202362156658008315, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.94716984
+      objectReference: {fileID: 0}
+    - target: {fileID: -107334594353236340, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Lower Eyelid R Bone 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 74124369983643396, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.8774724
+      objectReference: {fileID: 0}
+    - target: {fileID: 74124369983643396, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.9267643
+      objectReference: {fileID: 0}
+    - target: {fileID: 74124369983643396, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.94716984
+      objectReference: {fileID: 0}
+    - target: {fileID: 160844955056968164, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Lower Eyelid R Bone 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 202630479343108982, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Upper Eyelid R Bone 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 327279222377233685, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Lower Eyelid R Bone 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 386791141387813222, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Pelvis Bone
+      objectReference: {fileID: 0}
+    - target: {fileID: 408018658317158765, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.3214453
+      objectReference: {fileID: 0}
+    - target: {fileID: 408018658317158765, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.34725577
+      objectReference: {fileID: 0}
+    - target: {fileID: 408018658317158765, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.381132
+      objectReference: {fileID: 0}
+    - target: {fileID: 727249065900977718, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Upper Eyelid R Bone 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 817445037603764360, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Lower Eyelid L Bone 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 973801944777013602, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 973801944777013602, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.8774724
+      objectReference: {fileID: 0}
+    - target: {fileID: 973801944777013602, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.9267643
+      objectReference: {fileID: 0}
+    - target: {fileID: 973801944777013602, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.94716984
+      objectReference: {fileID: 0}
+    - target: {fileID: 1102415711695894669, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1102415711695894669, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.8774724
+      objectReference: {fileID: 0}
+    - target: {fileID: 1102415711695894669, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.9267643
+      objectReference: {fileID: 0}
+    - target: {fileID: 1102415711695894669, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.94716984
+      objectReference: {fileID: 0}
+    - target: {fileID: 1121798435228764568, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.303446
+      objectReference: {fileID: 0}
+    - target: {fileID: 1121798435228764568, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.34839377
+      objectReference: {fileID: 0}
+    - target: {fileID: 1121798435228764568, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.4113207
+      objectReference: {fileID: 0}
+    - target: {fileID: 1277467373822641334, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1277467373822641334, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1277467373822641334, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1362481508326365815, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Lower Eyelid R Bone 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1459119641201781150, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Bicep R Bone
+      objectReference: {fileID: 0}
+    - target: {fileID: 1513300212712959790, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Upper Eyelid L Bone 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1796108534904231104, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Upper Lip Bone 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1875869399951598289, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Lower Lip Bone 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2276026081805261755, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Lower Eyelid L Bone 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 2428427081671879773, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Forearm L Bone
+      objectReference: {fileID: 0}
+    - target: {fileID: 2507730376544625410, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.7433963
+      objectReference: {fileID: 0}
+    - target: {fileID: 2507730376544625410, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.73129815
+      objectReference: {fileID: 0}
+    - target: {fileID: 2507730376544625410, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.64380926
+      objectReference: {fileID: 0}
+    - target: {fileID: 2737687149805927628, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Lower Eyelid L Bone 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 2816826543370413710, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Lower Eyelid L Bone 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3112028958553094713, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Eyebrow L Bone 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3242196087500717451, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Lower Lip Bone 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3297364353584691495, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Torso Bone
+      objectReference: {fileID: 0}
+    - target: {fileID: 3338264329089163432, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Eyebrow R Bone 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3540681010170994455, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Eyebrow L Bone 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4003766667293436148, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Eyebrow R Bone 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4018809437713641214, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.33238158
+      objectReference: {fileID: 0}
+    - target: {fileID: 4018809437713641214, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.40743008
+      objectReference: {fileID: 0}
+    - target: {fileID: 4018809437713641214, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.5018867
+      objectReference: {fileID: 0}
+    - target: {fileID: 4054586871142258881, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Lower Eyelid R Bone 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4072535489509075787, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.7433963
+      objectReference: {fileID: 0}
+    - target: {fileID: 4072535489509075787, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.73129815
+      objectReference: {fileID: 0}
+    - target: {fileID: 4072535489509075787, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.64380926
+      objectReference: {fileID: 0}
+    - target: {fileID: 4143471556456304341, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4143471556456304341, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4143471556456304341, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4157741701538757237, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Neck Bone
+      objectReference: {fileID: 0}
+    - target: {fileID: 4194696940693230850, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.60839367
+      objectReference: {fileID: 0}
+    - target: {fileID: 4194696940693230850, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.6377357
+      objectReference: {fileID: 0}
+    - target: {fileID: 4194696940693230850, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.590808
+      objectReference: {fileID: 0}
+    - target: {fileID: 4377976287522277937, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Upper Lip Bone 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4684782297618332240, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.5751501
+      objectReference: {fileID: 0}
+    - target: {fileID: 4684782297618332240, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.6301887
+      objectReference: {fileID: 0}
+    - target: {fileID: 4684782297618332240, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.5314988
+      objectReference: {fileID: 0}
+    - target: {fileID: 4706934036135149004, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Lower Eyelid R Bone 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4764023198038698308, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Eyebrow R Bone 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4783726068597424533, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Lower Eyelid L Bone 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5189428501626550357, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Eyebrow L Bone 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5209886829971946073, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Upper Eyelid L Bone 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5296762111674096739, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.33238158
+      objectReference: {fileID: 0}
+    - target: {fileID: 5296762111674096739, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.40743008
+      objectReference: {fileID: 0}
+    - target: {fileID: 5296762111674096739, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.5018867
+      objectReference: {fileID: 0}
+    - target: {fileID: 5297655686496333918, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Upper Eyelid R Bone 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5519780823866737448, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Upper Eyelid R Bone 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5836550771339540636, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.7433963
+      objectReference: {fileID: 0}
+    - target: {fileID: 5836550771339540636, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.73129815
+      objectReference: {fileID: 0}
+    - target: {fileID: 5836550771339540636, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.64380926
+      objectReference: {fileID: 0}
+    - target: {fileID: 6129835309363687650, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Upper Lip Bone 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6338396128307748210, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Upper Eyelid R Bone 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 6417096619343832435, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Hand R Bone
+      objectReference: {fileID: 0}
+    - target: {fileID: 7184240149302091355, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.4867924
+      objectReference: {fileID: 0}
+    - target: {fileID: 7184240149302091355, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.42395562
+      objectReference: {fileID: 0}
+    - target: {fileID: 7184240149302091355, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.32238513
+      objectReference: {fileID: 0}
+    - target: {fileID: 7218661299816389216, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Upper Lip Bone 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7298491814539798409, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.8774724
+      objectReference: {fileID: 0}
+    - target: {fileID: 7298491814539798409, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.9267643
+      objectReference: {fileID: 0}
+    - target: {fileID: 7298491814539798409, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.94716984
+      objectReference: {fileID: 0}
+    - target: {fileID: 7576232929432273315, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7576232929432273315, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.8774724
+      objectReference: {fileID: 0}
+    - target: {fileID: 7576232929432273315, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.9267643
+      objectReference: {fileID: 0}
+    - target: {fileID: 7576232929432273315, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.94716984
+      objectReference: {fileID: 0}
+    - target: {fileID: 7806456634691023778, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Lower Eyelid L Bone 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7830100681490748420, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7830100681490748420, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.8774724
+      objectReference: {fileID: 0}
+    - target: {fileID: 7830100681490748420, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.9267643
+      objectReference: {fileID: 0}
+    - target: {fileID: 7830100681490748420, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.94716984
+      objectReference: {fileID: 0}
+    - target: {fileID: 7866694210351902832, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.47297254
+      objectReference: {fileID: 0}
+    - target: {fileID: 7866694210351902832, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.6086485
+      objectReference: {fileID: 0}
+    - target: {fileID: 7866694210351902832, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.690566
+      objectReference: {fileID: 0}
+    - target: {fileID: 8212075966574483077, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Lower Eyelid L Bone 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 8491900597926584434, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Upper Eyelid R Bone 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8568046361728032838, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Upper Eyelid L Bone 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8711155077712939199, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Eyebrow L Bone 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8843134018751855204, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.7433963
+      objectReference: {fileID: 0}
+    - target: {fileID: 8843134018751855204, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.73129815
+      objectReference: {fileID: 0}
+    - target: {fileID: 8843134018751855204, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.64380926
+      objectReference: {fileID: 0}
+    - target: {fileID: 8919958243126810647, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Upper Eyelid L Bone 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8939501908375152522, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Lower Eyelid R Bone 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 9087729993992085111, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Upper Eyelid L Bone 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 9133444905737217043, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Upper Eyelid L Bone 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 9212232599730469548, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Upper Eyelid R Bone 4
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 4843985084834002234, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+--- !u!212 &227565510860616290 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 7298491814539798409, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &419545430431861680 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 7184240149302091355, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &777734152065335791 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 7830100681490748420, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &814332082068268443 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 7866694210351902832, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &1100327155397170248 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 7576232929432273315, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &1631829547610895928 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: -1097639909565209645, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &1968102390782315246 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: -202362156658008315, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &2078434915793760143 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 8843134018751855204, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &2305991305462542598 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: -4151882499209009939, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &2627962156585505030 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: -4460411176404826899, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &2838035976110190523 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 4684782297618332240, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &3360347257155964592 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: -3980249665592698021, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &3450015772851734920 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 5296762111674096739, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &3935743663593631095 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 5836550771339540636, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &4363813490771162078 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: -2671079617447631307, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &4426424744421924858 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: -2662511555030873583, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &4437364455360729196 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: -2596987688296970873, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &4948388910454650601 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 2507730376544625410, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &5033116970111214196 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: -6649508547082078305, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &5578323853237894841 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: -6121757487070532782, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &5883011622333528853 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 4018809437713641214, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &6018937635986148868 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: -5339433105270203409, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &6456269440608495456 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: -4613853311371939189, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &6653932823469588713 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 4194696940693230850, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &6731848919668861943 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 4255161600542129692, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &6838020532644593312 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 4072535489509075787, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &6908974207892511550 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 4143471556456304341, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &6981500243008410341 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: -8754347342337521906, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &7190164808832801926 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 408018658317158765, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &7355229699293337599 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: -9191270198637772268, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &7450745689028725487 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 74124369983643396, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &7510243320513525537 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: -8189597456435846454, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &7578884434333986150 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 1102415711695894669, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &7633715412745706611 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 1121798435228764568, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &7773962510847388809 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 973801944777013602, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &8064001198318533095 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: -8536541895803917300, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8164705108405414965 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -7552582706839291426, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &8461502426488717275 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: -7850827884214048208, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &8566352104924827444 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: -8034208597901485345, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &8636624031910334813 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 1277467373822641334, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &8774864002115603088 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: -6942406220540993669, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}

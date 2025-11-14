@@ -1,9 +1,9 @@
-﻿using UnityEditor;
+using UnityEditor;
 using UnityEngine;
 
 [CanEditMultipleObjects]
-[CustomEditor(typeof(ChildColor))]
-public class ChildColorEditor : Editor
+[CustomEditor(typeof(HumanColorSelector))]
+public class HumanColorSelectorEditor : Editor
 {
     public override void OnInspectorGUI()
     {
@@ -13,14 +13,15 @@ public class ChildColorEditor : Editor
         {
             foreach (var t in targets)
             {
-                ((ChildColor)t).UpdateColor();
+                ((HumanColorSelector)t).UpdateColors();
             }
         }
-        if (GUILayout.Button("Auto Determine Shift & Mult"))
+
+        if (GUILayout.Button("Set All Color Fields to White"))
         {
             foreach (var t in targets)
             {
-                ((ChildColor)t).AutoDetermineShiftAndMult();
+                ((HumanColorSelector)t).SetAllColorFieldsToWhite();
             }
         }
     }
