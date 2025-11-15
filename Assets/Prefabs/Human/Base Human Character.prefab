@@ -94,6 +94,7 @@ MonoBehaviour:
   - {fileID: 5033116970111214196}
   - {fileID: 227565510860616290}
   - {fileID: 6018937635986148868}
+  - {fileID: 1959858365256126586}
   eyeWhiteRenderers:
   - {fileID: 6731848919668861943}
   - {fileID: 7510243320513525537}
@@ -178,7 +179,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8653719598885068355, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
       propertyPath: m_Name
-      value: Sprites
+      value: Model
       objectReference: {fileID: 0}
     - target: {fileID: -8536541895803917300, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
       propertyPath: m_Color.b
@@ -312,6 +313,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Lower Eyelid L Bone 1
       objectReference: {fileID: 0}
+    - target: {fileID: -7221802474916703543, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Mouth Base Vertical L 1
+      objectReference: {fileID: 0}
     - target: {fileID: -7098705254286632627, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
       propertyPath: m_Name
       value: Upper Eyelid L Bone 11
@@ -440,6 +445,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Lower Eyelid L Bone 7
       objectReference: {fileID: 0}
+    - target: {fileID: -4736750124573965631, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Mouth Base Vertical R 1
+      objectReference: {fileID: 0}
     - target: {fileID: -4708260112949372249, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
       propertyPath: m_Name
       value: Lip Corner Shadow R Bone 0
@@ -459,6 +468,14 @@ PrefabInstance:
     - target: {fileID: -4613853311371939189, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
       propertyPath: m_Color.r
       value: 0.5314988
+      objectReference: {fileID: 0}
+    - target: {fileID: -4521501190277886475, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Mouth Base Vertical R 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -4480181045527519514, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Mouth Base Horizontal Top R
       objectReference: {fileID: 0}
     - target: {fileID: -4460411176404826899, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
       propertyPath: m_Color.b
@@ -716,6 +733,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Head Bone
       objectReference: {fileID: 0}
+    - target: {fileID: -1016853344945792776, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Mouth Base Vertical L 0
+      objectReference: {fileID: 0}
     - target: {fileID: -988483885061747735, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
       propertyPath: m_Name
       value: Lower Eyelid R Bone 0
@@ -932,6 +953,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Upper Lip L Bone 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1700722290146242727, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Mouth Base Horizontal Bottom R
+      objectReference: {fileID: 0}
     - target: {fileID: 1775242742857407507, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
       propertyPath: m_Name
       value: Eyelid Top R Lower Chain 5
@@ -1104,6 +1129,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Eyelid Top R Upper Chain 5
       objectReference: {fileID: 0}
+    - target: {fileID: 4321436511521255509, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Mouth Base Horizontal Top L
+      objectReference: {fileID: 0}
     - target: {fileID: 4377976287522277937, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
       propertyPath: m_Name
       value: Upper Lip Bone 2
@@ -1255,6 +1284,10 @@ PrefabInstance:
     - target: {fileID: 6129835309363687650, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
       propertyPath: m_Name
       value: Upper Lip Bone 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6213309047672723485, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Mouth Base Horizontal Bottom L
       objectReference: {fileID: 0}
     - target: {fileID: 6338396128307748210, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
       propertyPath: m_Name
@@ -1424,6 +1457,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Lower Eyelid R Bone 7
       objectReference: {fileID: 0}
+    - target: {fileID: 9030802256566207889, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.b
+      value: 0.8774724
+      objectReference: {fileID: 0}
+    - target: {fileID: 9030802256566207889, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.g
+      value: 0.9267643
+      objectReference: {fileID: 0}
+    - target: {fileID: 9030802256566207889, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Color.r
+      value: 0.94716984
+      objectReference: {fileID: 0}
     - target: {fileID: 9041336116723130689, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
       propertyPath: m_Name
       value: Upper Lip L Bone 3
@@ -1477,6 +1522,11 @@ SpriteRenderer:
 --- !u!212 &1631829547610895928 stripped
 SpriteRenderer:
   m_CorrespondingSourceObject: {fileID: -1097639909565209645, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+  m_PrefabInstance: {fileID: 7377188671474603499}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &1959858365256126586 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 9030802256566207889, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
   m_PrefabInstance: {fileID: 7377188671474603499}
   m_PrefabAsset: {fileID: 0}
 --- !u!212 &1968102390782315246 stripped

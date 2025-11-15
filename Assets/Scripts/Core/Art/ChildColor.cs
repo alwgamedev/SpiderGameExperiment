@@ -141,20 +141,20 @@ public class ChildColor : MonoBehaviour
             if (r is SpriteRenderer s)
             {
                 s.color = color;
-//#if UNITY_EDITOR
-//                EditorUtility.SetDirty(s);
-//                PrefabUtility.RecordPrefabInstancePropertyModifications(s);
-//#endif
+#if UNITY_EDITOR
+                EditorUtility.SetDirty(s);
+                PrefabUtility.RecordPrefabInstancePropertyModifications(s);
+#endif
                 return true;
             }
             else if (r is SpriteShapeRenderer t)
             {
                 t.color = color;
-//#if UNITY_EDITOR
-//                EditorUtility.SetDirty(t);
-//                PrefabUtility.RecordPrefabInstancePropertyModifications(t);
-//                return true;
-//#endif
+#if UNITY_EDITOR
+                EditorUtility.SetDirty(t);
+                PrefabUtility.RecordPrefabInstancePropertyModifications(t);
+                return true;
+#endif
             }
         }
 

@@ -46,6 +46,10 @@ public class HumanColorSelector : MonoBehaviour
         SetColor(beltBuckleRenderers, beltBuckleColor);
         SetColor(shoeRenderers, shoeColor);
 
+#if UNITY_EDITOR
+        PrefabUtility.RecordPrefabInstancePropertyModifications(this);
+#endif
+
         void SetColor(SpriteRenderer[] renderers, Color color)
         {
             foreach (var r in renderers)
