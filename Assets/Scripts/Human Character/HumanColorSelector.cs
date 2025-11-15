@@ -8,6 +8,7 @@ public class HumanColorSelector : MonoBehaviour
     [SerializeField] Color irisColor;
     [SerializeField] Color hairColor;
     [SerializeField] Color lipColor;
+    [SerializeField] Color lipCornerShadowColor;
     [SerializeField] Color shirtColor;
     [SerializeField] Color tieColor;
     [SerializeField] Color pantsColor;
@@ -20,6 +21,7 @@ public class HumanColorSelector : MonoBehaviour
     [SerializeField] SpriteRenderer[] irisRenderers;
     [SerializeField] SpriteRenderer[] hairRenderers;
     [SerializeField] SpriteRenderer[] lipRenderers;
+    [SerializeField] SpriteRenderer[] lipCornerShadowRenderers;
     [SerializeField] SpriteRenderer[] shirtRenderers;
     [SerializeField] SpriteRenderer[] tieRenderers;
     [SerializeField] SpriteRenderer[] pantsRenderers;
@@ -30,88 +32,28 @@ public class HumanColorSelector : MonoBehaviour
 
     public void UpdateColors()
     {
-        foreach (var r in skinRenderers)
+        SetColor(skinRenderers, skinColor);
+        SetColor(eyeWhiteRenderers, eyeWhiteColor);
+        SetColor(irisRenderers, irisColor);
+        SetColor(hairRenderers, hairColor);
+        SetColor(lipRenderers, lipColor);
+        SetColor(lipCornerShadowRenderers, skinColor * lipCornerShadowColor);
+        SetColor(shirtRenderers, shirtColor);
+        SetColor(tieRenderers, tieColor);
+        SetColor(pantsRenderers, pantsColor);
+        SetColor(pantsButtonRenderers, pantsButtonColor);
+        SetColor(beltRenderers, beltColor);
+        SetColor(beltBuckleRenderers, beltBuckleColor);
+        SetColor(shoeRenderers, shoeColor);
+
+        void SetColor(SpriteRenderer[] renderers, Color color)
         {
-            if (r)
+            foreach (var r in renderers)
             {
-                r.color = skinColor;
-            }
-        }
-        foreach (var r in eyeWhiteRenderers)
-        {
-            if (r)
-            {
-                r.color = eyeWhiteColor;
-            }
-        }
-        foreach (var r in irisRenderers)
-        {
-            if (r)
-            {
-                r.color = irisColor;
-            }
-        }
-        foreach (var r in hairRenderers)
-        {
-            if (r)
-            {
-                r.color = hairColor;
-            }
-        }
-        foreach (var r in lipRenderers)
-        {
-            if (r)
-            {
-                r.color = lipColor;
-            }
-        }
-        foreach (var r in shirtRenderers)
-        {
-            if (r)
-            {
-                r.color = shirtColor;
-            }
-        }
-        foreach (var r in tieRenderers)
-        {
-            if (r)
-            {
-                r.color = tieColor;
-            }
-        }
-        foreach (var r in pantsRenderers)
-        {
-            if (r)
-            {
-                r.color = pantsColor;
-            }
-        }
-        foreach (var r in pantsButtonRenderers)
-        {
-            if (r)
-            {
-                r.color = pantsButtonColor;
-            }
-        }
-        foreach (var r in beltRenderers)
-        {
-            if (r)
-            {
-                r.color = beltColor;
-            }
-        }
-        foreach (var r in beltBuckleRenderers)
-        {
-            if (r)
-            {
-                r.color = beltBuckleColor;
-            }
-        }
-        foreach (var r in shoeRenderers)
-        {
-            if (r)
-            {
-                r.color = shoeColor;
+                if (r)
+                {
+                    r.color = color;
+                }
             }
         }
     }
@@ -119,7 +61,7 @@ public class HumanColorSelector : MonoBehaviour
     public void SetAllColorFieldsToWhite()
     {
 #if UNITY_EDITOR
-        Undo.RecordObject(this, $"Set all {typeof(HumanColorSelector).Name} color fields to white");
+        Undo.RecordObject(this, $"Set all color selector fields to white");
 #endif
         skinColor = Color.white;
         eyeWhiteColor = Color.white;
