@@ -339,6 +339,94 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 13909569767045562, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.2127839
+      objectReference: {fileID: 0}
+    - target: {fileID: 13909569767045562, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.0000004491713
+      objectReference: {fileID: 0}
+    - target: {fileID: 13909569767045562, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.09785572
+      objectReference: {fileID: 0}
+    - target: {fileID: 128467362648530399, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_Name
+      value: Mouth Top L Bone 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 952463820042230030, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.3514117
+      objectReference: {fileID: 0}
+    - target: {fileID: 952463820042230030, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.443029
+      objectReference: {fileID: 0}
+    - target: {fileID: 952463820042230030, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 952463820042230030, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 952463820042230030, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.8965074
+      objectReference: {fileID: 0}
+    - target: {fileID: 952463820042230030, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 127.405
+      objectReference: {fileID: 0}
+    - target: {fileID: 1549155414444097284, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.1406505
+      objectReference: {fileID: 0}
+    - target: {fileID: 1549155414444097284, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.1222043
+      objectReference: {fileID: 0}
+    - target: {fileID: 1905377138155313163, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.1260457
+      objectReference: {fileID: 0}
+    - target: {fileID: 1905377138155313163, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.9702837
+      objectReference: {fileID: 0}
+    - target: {fileID: 2106007169580073293, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.3439569
+      objectReference: {fileID: 0}
+    - target: {fileID: 2106007169580073293, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.6091368
+      objectReference: {fileID: 0}
+    - target: {fileID: 2908464752960834458, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_Name
+      value: Mouth Bottom L Bone 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3151037660689827938, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_Name
+      value: Mouth Top R Bone 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3834254805400833091, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_Name
+      value: Mouth Top R Bone 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3883373214309278307, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7718542
+      objectReference: {fileID: 0}
+    - target: {fileID: 3883373214309278307, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.6357996
+      objectReference: {fileID: 0}
+    - target: {fileID: 5022312833135241110, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_Name
+      value: Mouth Top L Bone 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5055768600264933279, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
       propertyPath: m_LocalPosition.x
       value: -24.09
@@ -379,9 +467,61 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6243348007419341216, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.7187794
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243348007419341216, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.3661871
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243348007419341216, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.42054123
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243348007419341216, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243348007419341216, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243348007419341216, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.9072735
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243348007419341216, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -130.262
+      objectReference: {fileID: 0}
+    - target: {fileID: 6635635592424905117, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_Name
+      value: Mouth Bottom L Bone 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6978776971800403857, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.1181794
+      objectReference: {fileID: 0}
+    - target: {fileID: 6978776971800403857, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.9601803
+      objectReference: {fileID: 0}
+    - target: {fileID: 6978776971800403857, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.2793812
+      objectReference: {fileID: 0}
+    - target: {fileID: 7199496423268537064, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_Name
+      value: Mouth Bottom R Bone 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8060932246314317455, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
       propertyPath: m_Name
       value: Base Human Character
+      objectReference: {fileID: 0}
+    - target: {fileID: 8689291507062473046, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: m_Name
+      value: Mouth Bottom R Bone 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
