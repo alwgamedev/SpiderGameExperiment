@@ -72,10 +72,10 @@ public class Rope
         renderPositionsNeedUpdate = true;
     }
 
-    public void SetLength(float length, float dtForRescaling, RopeNode[] rescaleBuffer)
+    public void SetLength(float length, RopeNode[] rescaleBuffer)
     {
         nodeSpacing = length / (lastIndex - anchorPointer);
-        Rescale(dtForRescaling, rescaleBuffer);
+        Rescale(rescaleBuffer);
     }
 
     public void SetAnchorPosition(Vector2 position)
@@ -223,7 +223,7 @@ public class Rope
         }
     }
 
-    private void Rescale(float deltaTime, RopeNode[] rescaleBuffer)
+    private void Rescale(RopeNode[] rescaleBuffer)
     {
         if (nodeSpacing < minNodeSpacing || nodeSpacing > maxNodeSpacing)
         {
@@ -233,13 +233,13 @@ public class Rope
 
             if (anchorPointer != newAnchorPointer)
             {
-                Reparametrize(newAnchorPointer, deltaTime, rescaleBuffer);
+                Reparametrize(newAnchorPointer, rescaleBuffer);
                 renderPositionsNeedUpdate = true;
             }
         }
     }
 
-    private void Reparametrize(int newAnchorPointer, float deltaTime, RopeNode[] rescaleBuffer)
+    private void Reparametrize(int newAnchorPointer, RopeNode[] rescaleBuffer)
     {
         float newNodeSpacing = Length / (lastIndex - newAnchorPointer);
         int i = anchorPointer;//start index of current segment we're copying from

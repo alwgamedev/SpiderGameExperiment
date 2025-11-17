@@ -5,7 +5,7 @@ using UnityEngine;
 [Serializable]
 public struct RopeNode
 {
-    const int NUM_STORED_VELOCITY_RBS = 4;
+    //const int NUM_STORED_VELOCITY_RBS = 4;
 
     public Vector2 position;
     public Vector2 lastPosition;
@@ -14,9 +14,9 @@ public struct RopeNode
     public float mass;
     float drag;
 
-    Vector2 storedVelocity;
-    readonly Rigidbody2D[] storedVelocityRbs;
-    int storedVelocityPointer;
+    //Vector2 storedVelocity;
+    //readonly Rigidbody2D[] storedVelocityRbs;
+    //int storedVelocityPointer;
 
     //Vector2 right;
     //Vector2 up;
@@ -59,9 +59,9 @@ public struct RopeNode
         this.acceleration = acceleration;
         this.mass = mass;
 
-        storedVelocity = Vector2.zero;
-        storedVelocityRbs = new Rigidbody2D[NUM_STORED_VELOCITY_RBS];
-        storedVelocityPointer = 0;
+        //storedVelocity = Vector2.zero;
+        //storedVelocityRbs = new Rigidbody2D[NUM_STORED_VELOCITY_RBS];
+        //storedVelocityPointer = 0;
 
         //circleCastBuffer = new RaycastHit2D[] { new(), new() };
 
@@ -118,7 +118,6 @@ public struct RopeNode
     }
 
 
-
     //public void UpdateLocalCoordinates()
     //{
     //    if (!anchored)
@@ -146,19 +145,19 @@ public struct RopeNode
     {
         var p = position;
         position += NextPositionStep(dt, dt2);
-        if (storedVelocity != Vector2.zero)
-        {
-            position += dt * storedVelocity;
-            storedVelocity = Vector2.zero;
-        }
-        if (storedVelocityPointer != 0)
-        {
-            for (int i = 0; i < storedVelocityRbs.Length; i++)
-            {
-                storedVelocityRbs[i] = null;
-            }
-            storedVelocityPointer = 0;
-        }
+        //if (storedVelocity != Vector2.zero)
+        //{
+        //    position += dt * storedVelocity;
+        //    storedVelocity = Vector2.zero;
+        //}
+        //if (storedVelocityPointer != 0)
+        //{
+        //    for (int i = 0; i < storedVelocityRbs.Length; i++)
+        //    {
+        //        storedVelocityRbs[i] = null;
+        //    }
+        //    storedVelocityPointer = 0;
+        //}
         lastPosition = p;
     }
 
@@ -235,7 +234,7 @@ public struct RopeNode
             var newVelocity = collisionBounciness * Mathf.Sign(b) * (velocity - 2 * a * tang);
             position += this.collisionThreshold * n;
             lastPosition = position - newVelocity * dt;
-            StoreCollisionVelocity(r.collider.attachedRigidbody, n);
+            //StoreCollisionVelocity(r.collider.attachedRigidbody, n);
             CurrentCollision = r.collider;
             return;
         }
@@ -284,20 +283,20 @@ public struct RopeNode
         //}
     }
 
-    private void StoreCollisionVelocity(Rigidbody2D attachedRb, Vector2 collisionNormal)
-    {
-        if (attachedRb)
-        {
-            if (storedVelocityPointer < storedVelocityRbs.Length && Vector2.Dot(attachedRb.linearVelocity, collisionNormal) > 0
-                && !storedVelocityRbs.Contains(attachedRb))
-            {
-                storedVelocity += attachedRb.linearVelocity
-                    + collisionBounciness * Vector2.Dot(attachedRb.linearVelocity, collisionNormal) * collisionNormal;
-                storedVelocityRbs[storedVelocityPointer] = attachedRb;
-                storedVelocityPointer++;
-            }
-        }
-    }
+    //private void StoreCollisionVelocity(Rigidbody2D attachedRb, Vector2 collisionNormal)
+    //{
+    //    if (attachedRb)
+    //    {
+    //        if (storedVelocityPointer < storedVelocityRbs.Length && Vector2.Dot(attachedRb.linearVelocity, collisionNormal) > 0
+    //            && !storedVelocityRbs.Contains(attachedRb))
+    //        {
+    //            storedVelocity += attachedRb.linearVelocity
+    //                + collisionBounciness * Vector2.Dot(attachedRb.linearVelocity, collisionNormal) * collisionNormal;
+    //            storedVelocityRbs[storedVelocityPointer] = attachedRb;
+    //            storedVelocityPointer++;
+    //        }
+    //    }
+    //}
 
     public Vector2 NextPositionStep(float dt, float dt2)
     {

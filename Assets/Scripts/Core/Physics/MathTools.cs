@@ -108,7 +108,7 @@ public static class MathTools
     }
 
     /// <param name="p">point to be reflected</param>
-    /// <param name="planeNormal">a unity normal to plane reflect over</param>
+    /// <param name="planeNormal">a unit normal to plane being reflected over</param>
     public static Vector3 ReflectAcrossHyperplane(this Vector3 p, Vector3 planeNormal)
     {
         return p - 2 * Vector3.Dot(p, planeNormal) * planeNormal;
@@ -179,7 +179,7 @@ public static class MathTools
     public static float PseudoAngle(Vector2 u1, Vector2 u2)
     {
         var cos = Vector2.Dot(u1, u2);
-        if (cos >= 1)//also covers the case cos > 1 that can occur from rounding errors
+        if (cos >= 1)//cos > 1 can occur from rounding errors
         {
             return 0;
         }
@@ -245,7 +245,7 @@ public static class MathTools
         }
     }
 
-    public static void ApplyCheapRotationLerpClamped(this Transform t, Vector2 goalRight, float lerpAmount, out bool changed)
+    public static void ApplyCheapRotationalLerpClamped(this Transform t, Vector2 goalRight, float lerpAmount, out bool changed)
     {
         var v = CheapRotationalLerpClamped(t.right, goalRight, lerpAmount, out changed);
         if (changed)

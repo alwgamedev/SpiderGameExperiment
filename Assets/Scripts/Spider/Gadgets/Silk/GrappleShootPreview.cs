@@ -38,19 +38,13 @@ public class GrappleShootPreview : MonoBehaviour
                 lineRenderer.enabled = true;
                 lastShootDirection = grapple.ShootDirection;
             }
-            UpdateShootPreview();
+            SetLineRendererPositions();
             playerFacingRight = Player.transform.lossyScale.x > 0;
         }
         else if (lineRenderer.enabled)
         {
             lineRenderer.enabled = false;
         }
-    }
-
-    private void UpdateShootPreview()
-    {
-        SetLineRendererPositions();
-        //+update shader properties & end pt marker
     }
 
     //first we'll just renderer the parabola 
@@ -78,7 +72,7 @@ public class GrappleShootPreview : MonoBehaviour
 
             positions[0] = p;
             bool hitGround = false;
-            double a = /*Mathf.Pow(grapple.PowerUpFraction, extensionRate) **/ arcLengthStep;
+            double a = arcLengthStep;
             double t = 0;
             //need double precision to prevent line renderer from quivering
 

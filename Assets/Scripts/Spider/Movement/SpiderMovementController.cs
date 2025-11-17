@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class SpiderMovementController : MonoBehaviour
 {
+    //2do:add more fields
     [Header("Body")]
     [SerializeField] Transform abdomenBone;
     [SerializeField] Transform abdomenBonePivot;
@@ -630,7 +631,7 @@ public class SpiderMovementController : MonoBehaviour
     private void RotateHead(float dt)
     {
         var g = grounded ? upcomingGroundDirection : (grapple.FreeHanging ? FreeHangingHeadRight() : (Vector2)transform.right);
-        headBone.ApplyCheapRotationLerpClamped(g, headRotationSpeed * dt, out _);//if rotate at constant speed, it starts to flicker when rotation is small
+        headBone.ApplyCheapRotationalLerpClamped(g, headRotationSpeed * dt, out _);//if rotate at constant speed, it starts to flicker when rotation is small
     }
 
     private Vector2 FreeHangingHeadRight()

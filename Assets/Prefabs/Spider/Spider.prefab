@@ -8253,7 +8253,7 @@ MonoBehaviour:
   crouchHeightFraction: 0.21
   crouchTime: 0.5
   crouchBoostMinProgress: 0.4
-  crouchReleaseSpeedMultiplier: 3
+  crouchReleaseSpeedMultiplier: 1.75
   airborneLegAnimationTimeScale: 0.075
   airborneStrideMultiplier: 1.5
   strideMultiplierSmoothingRate: 1

@@ -57,7 +57,7 @@ public class CannonFulcrum
         }
         var a = kinematicRotation0 + kinematicRotation;
         var g = Mathf.Cos(a) * shooterTransform.right + (shooterTransform.localScale.x > 0 ? Mathf.Sin(a) : -Mathf.Sin(a)) * shooterTransform.transform.up;
-        lever.ApplyCheapRotationLerpClamped(g, kinematicRotationCatchUpMultiplier * kinematicRotationSpeed * dt, out var changed);
+        lever.ApplyCheapRotationalLerpClamped(g, kinematicRotationCatchUpMultiplier * kinematicRotationSpeed * dt, out var changed);
         if (changed)
         {
             RecenterLever();

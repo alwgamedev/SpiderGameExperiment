@@ -598,7 +598,6 @@ public class GroundMap
         }
     }
 
-    //return whether map filled without backtracking
     public void UpdateMap(Vector2 origin, Vector2 originDown, Vector2 originRight, float raycastLength, int centralIndex, int raycastLayerMask)
     {
         int n = numFwdIntervals << 1;//last index of map array

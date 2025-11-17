@@ -390,7 +390,7 @@ public class GrappleCannon : MonoBehaviour
             if (shootTimer > 0 && GrappleExtent.magnitude > grapple.Length)
             {
                 var p = (0.5f * shootTimer * Physics2D.gravity + ShootSpeed * lastShootDirection) * shootTimer + minLength * lastShootDirection;
-                grapple.SetLength(Mathf.Clamp(p.magnitude, grapple.Length, maxLength), fixedDt, rescaleBuffer);
+                grapple.SetLength(Mathf.Clamp(p.magnitude, grapple.Length, maxLength), rescaleBuffer);
             }
             //2do: if grapple length stagnant for certain amount of time (i.e. we have reached max length or the dot > length fails for number of updates), then enable release input)
         }
@@ -398,7 +398,7 @@ public class GrappleCannon : MonoBehaviour
 
     private void AddGrappleLength(float l)
     {
-        grapple.SetLength(Mathf.Clamp(grapple.Length + l, minLength, maxLength), fixedDt, rescaleBuffer);
+        grapple.SetLength(Mathf.Clamp(grapple.Length + l, minLength, maxLength), rescaleBuffer);
     }
 
 

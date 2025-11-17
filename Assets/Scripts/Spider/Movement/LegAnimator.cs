@@ -98,7 +98,7 @@ public class LegAnimator : MonoBehaviour
         var stepRight = stepGoal - stepStart;
         var stepUp = bodyFacingRight ? 0.5f * stepRight.CCWPerp() : 0.5f * stepRight.CWPerp();
 
-        //to-do: parabola instead of trig fcts
+        //parabola instead of trig fcts
         var newTargetPos = stepStart + stepProgress * stepRight + 4 * stepProgress * (1 - stepProgress) * baseStepHeightMultiplier * stepUp;
             //stepCenter - stepRadius * Mathf.Cos(t) * stepRight + stepRadius * baseStepHeightMultiplier * Mathf.Sin(t) * stepUp;
 
