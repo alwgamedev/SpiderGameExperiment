@@ -218,7 +218,7 @@ public struct RopeNode
         var l = r.distance;
         var n = r.normal;
 
-        if (!(l > MathTools.o31))
+        if (!(l > MathTools.o41))
         {
             if (lastCollisionNormal == Vector2.zero)
             {

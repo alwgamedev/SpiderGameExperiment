@@ -14,7 +14,7 @@ public class Rope
     public float constraintIterations;
     public int constraintIterationsPerCollisionCheck;
     public int terminusAnchorMask;
-    
+
     public readonly RopeNode[] nodes;
     //public readonly RopeNode[] rescaleBuffer;
     public readonly int lastIndex;
@@ -50,10 +50,10 @@ public class Rope
         this.terminusAnchorMask = terminusAnchorMask;
         var a = Physics2D.gravity;
         var collisionThreshold = 0.5f * width;
-        nodes = Enumerable.Range(0, numNodes).Select(i => new RopeNode(position, Vector2.zero, a, 1, nodeDrag, 
+        nodes = Enumerable.Range(0, numNodes).Select(i => new RopeNode(position, Vector2.zero, a, 1, nodeDrag,
             collisionMask, collisionThreshold, collisionSearchRadius, tunnelingEscapeRadius, collisionBounciness, !(i > anchorPointer))).ToArray();
         //rescaleBuffer = new RopeNode[numNodes];
-        renderPositions = nodes.Select(x=> (Vector3)x.position).ToArray();
+        renderPositions = nodes.Select(x => (Vector3)x.position).ToArray();
     }
 
     public void DrawGizmos()
@@ -214,11 +214,20 @@ public class Rope
             //(but we need to record its position before any collision resolution, so that it doesn't bounce and anchor to a weird position)
             if ((nodes[lastIndex].CurrentCollisionLayerMask & terminusAnchorMask) != 0)
             {
-                if (!Physics2D.OverlapCircle(nodes[lastIndex].position, nodes[lastIndex].CollisionThreshold, terminusAnchorMask))
+                //if (!Physics2D.OverlapCircle(nodes[lastIndex].position, nodes[lastIndex].CollisionThreshold, terminusAnchorMask))
+                //{
+                //    nodes[lastIndex].position = p;
+                //}
+                var r = Physics2D.CircleCast(nodes[lastIndex].position, nodes[lastIndex].CollisionThreshold, Vector2.zero, 0, terminusAnchorMask);
+                if (!r)
                 {
-                    nodes[lastIndex].position = p;
+                    r = Physics2D.CircleCast(p, nodes[lastIndex].CollisionThreshold, Vector2.zero, 0, terminusAnchorMask);
                 }
-                nodes[lastIndex].Anchor();
+                if (r)
+                {
+                    nodes[lastIndex].position = r.point + nodes[lastIndex].CollisionThreshold * r.normal;
+                    nodes[lastIndex].Anchor();
+                }
             }
         }
     }

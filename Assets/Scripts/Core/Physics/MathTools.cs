@@ -5,7 +5,7 @@ public static class MathTools
     static System.Random rng;
 
     public const float o41 = 10E-05f;
-    public const float o31 = 10E-4f;
+    //public const float o31 = 10E-4f;
 
     public const float cos15 = 0.9659258f;
     public const float sin15 = 0.2588190f;
