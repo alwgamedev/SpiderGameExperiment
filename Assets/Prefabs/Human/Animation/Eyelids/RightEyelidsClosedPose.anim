@@ -30,7 +30,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0
+      Chain Bone 0
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -47,7 +47,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -64,7 +64,8 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -81,8 +82,8 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -99,8 +100,9 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -117,9 +119,9 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -136,9 +138,9 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5/Eyelid Bottom R Upper Chain 6
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5/Eyelid Bottom R Upper Chain Bone 6
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -155,9 +157,10 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5/Eyelid Bottom R Upper Chain 6/Eyelid Bottom R Upper Chain 7
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5/Eyelid Bottom R Upper Chain Bone 6/Eyelid
+      Bottom R Upper Chain Bone 7
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -174,10 +177,10 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5/Eyelid Bottom R Upper Chain 6/Eyelid Bottom R Upper Chain 7/Eyelid
-      Bottom R Upper Chain 8
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5/Eyelid Bottom R Upper Chain Bone 6/Eyelid
+      Bottom R Upper Chain Bone 7/Eyelid Bottom R Upper Chain Bone 8
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -194,10 +197,11 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5/Eyelid Bottom R Upper Chain 6/Eyelid Bottom R Upper Chain 7/Eyelid
-      Bottom R Upper Chain 8/Eyelid Bottom R Upper Chain 9
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5/Eyelid Bottom R Upper Chain Bone 6/Eyelid
+      Bottom R Upper Chain Bone 7/Eyelid Bottom R Upper Chain Bone 8/Eyelid Bottom
+      R Upper Chain Bone 9
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -214,7 +218,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0
+      Bone 0
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -231,7 +235,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1
+      Bone 0/Eyelid Top R Lower Chain Bone 1
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -248,7 +252,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -265,8 +269,8 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2/Eyelid Top R Lower
-      Chain 3
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2/Eyelid
+      Top R Lower Chain Bone 3
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -283,8 +287,8 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2/Eyelid Top R Lower
-      Chain 3/Eyelid Top R Lower Chain 4
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2/Eyelid
+      Top R Lower Chain Bone 3/Eyelid Top R Lower Chain Bone 4
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -301,9 +305,9 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2/Eyelid Top R Lower
-      Chain 3/Eyelid Top R Lower Chain 4/Eyelid Top R Lower Chain 5/Eyelid Top R
-      Lower Chain 6
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2/Eyelid
+      Top R Lower Chain Bone 3/Eyelid Top R Lower Chain Bone 4/Eyelid Top R Lower
+      Chain Bone 5/Eyelid Top R Lower Chain Bone 6
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -320,9 +324,10 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2/Eyelid Top R Lower
-      Chain 3/Eyelid Top R Lower Chain 4/Eyelid Top R Lower Chain 5/Eyelid Top R
-      Lower Chain 6/Eyelid Top R Lower Chain 7
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2/Eyelid
+      Top R Lower Chain Bone 3/Eyelid Top R Lower Chain Bone 4/Eyelid Top R Lower
+      Chain Bone 5/Eyelid Top R Lower Chain Bone 6/Eyelid Top R Lower Chain Bone
+      7
   m_PositionCurves:
   - curve:
       serializedVersion: 2
@@ -340,7 +345,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0
+      Chain Bone 0
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -357,7 +362,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0
+      Bone 0
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -374,7 +379,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -391,8 +396,8 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2/Eyelid Top R Lower
-      Chain 3
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2/Eyelid
+      Top R Lower Chain Bone 3
   m_ScaleCurves: []
   m_FloatCurves: []
   m_PPtrCurves: []
@@ -404,7 +409,7 @@ AnimationClip:
   m_ClipBindingConstant:
     genericBindings:
     - serializedVersion: 2
-      path: 1272660867
+      path: 1352947504
       attribute: 1
       script: {fileID: 0}
       typeID: 4
@@ -413,7 +418,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 894038536
+      path: 2088224682
       attribute: 1
       script: {fileID: 0}
       typeID: 4
@@ -422,7 +427,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 3415417764
+      path: 2821957130
       attribute: 1
       script: {fileID: 0}
       typeID: 4
@@ -431,7 +436,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 1435151532
+      path: 3219359809
       attribute: 1
       script: {fileID: 0}
       typeID: 4
@@ -440,7 +445,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 1272660867
+      path: 1352947504
       attribute: 4
       script: {fileID: 0}
       typeID: 4
@@ -449,7 +454,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 3691038356
+      path: 516938095
       attribute: 4
       script: {fileID: 0}
       typeID: 4
@@ -458,7 +463,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 3908341288
+      path: 1726094909
       attribute: 4
       script: {fileID: 0}
       typeID: 4
@@ -467,7 +472,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 834053632
+      path: 972824835
       attribute: 4
       script: {fileID: 0}
       typeID: 4
@@ -476,7 +481,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 2931535061
+      path: 797876816
       attribute: 4
       script: {fileID: 0}
       typeID: 4
@@ -485,7 +490,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 4294584555
+      path: 3127811863
       attribute: 4
       script: {fileID: 0}
       typeID: 4
@@ -494,7 +499,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 40818501
+      path: 1434583834
       attribute: 4
       script: {fileID: 0}
       typeID: 4
@@ -503,7 +508,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 1467363959
+      path: 2578398048
       attribute: 4
       script: {fileID: 0}
       typeID: 4
@@ -512,7 +517,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 2995519563
+      path: 3325911504
       attribute: 4
       script: {fileID: 0}
       typeID: 4
@@ -521,7 +526,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 276410702
+      path: 2298623167
       attribute: 4
       script: {fileID: 0}
       typeID: 4
@@ -530,7 +535,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 894038536
+      path: 2088224682
       attribute: 4
       script: {fileID: 0}
       typeID: 4
@@ -539,7 +544,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 2606628093
+      path: 617634113
       attribute: 4
       script: {fileID: 0}
       typeID: 4
@@ -548,7 +553,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 3415417764
+      path: 2821957130
       attribute: 4
       script: {fileID: 0}
       typeID: 4
@@ -557,7 +562,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 1435151532
+      path: 3219359809
       attribute: 4
       script: {fileID: 0}
       typeID: 4
@@ -566,7 +571,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 1463202166
+      path: 84545731
       attribute: 4
       script: {fileID: 0}
       typeID: 4
@@ -575,7 +580,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 2958565539
+      path: 424686094
       attribute: 4
       script: {fileID: 0}
       typeID: 4
@@ -584,7 +589,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 1358340609
+      path: 1629525811
       attribute: 4
       script: {fileID: 0}
       typeID: 4
@@ -632,7 +637,7 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0
+      Chain Bone 0
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -654,7 +659,7 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0
+      Chain Bone 0
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -676,7 +681,7 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0
+      Chain Bone 0
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -698,10 +703,10 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0
+      Chain Bone 0
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -720,10 +725,10 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0
+      Chain Bone 0
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -742,10 +747,10 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0
+      Chain Bone 0
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -764,10 +769,10 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -786,10 +791,10 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -808,10 +813,10 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -830,10 +835,11 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -852,10 +858,11 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -874,10 +881,11 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -896,11 +904,11 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -919,11 +927,11 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -942,11 +950,11 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -965,11 +973,12 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -988,11 +997,12 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1011,11 +1021,12 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1034,12 +1045,12 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1058,12 +1069,12 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1082,12 +1093,12 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1106,12 +1117,12 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5/Eyelid Bottom R Upper Chain 6
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5/Eyelid Bottom R Upper Chain Bone 6
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1130,12 +1141,12 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5/Eyelid Bottom R Upper Chain 6
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5/Eyelid Bottom R Upper Chain Bone 6
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1154,12 +1165,12 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5/Eyelid Bottom R Upper Chain 6
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5/Eyelid Bottom R Upper Chain Bone 6
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1178,12 +1189,13 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5/Eyelid Bottom R Upper Chain 6/Eyelid Bottom R Upper Chain 7
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5/Eyelid Bottom R Upper Chain Bone 6/Eyelid
+      Bottom R Upper Chain Bone 7
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1202,12 +1214,13 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5/Eyelid Bottom R Upper Chain 6/Eyelid Bottom R Upper Chain 7
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5/Eyelid Bottom R Upper Chain Bone 6/Eyelid
+      Bottom R Upper Chain Bone 7
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1226,12 +1239,13 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5/Eyelid Bottom R Upper Chain 6/Eyelid Bottom R Upper Chain 7
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5/Eyelid Bottom R Upper Chain Bone 6/Eyelid
+      Bottom R Upper Chain Bone 7
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1250,13 +1264,13 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5/Eyelid Bottom R Upper Chain 6/Eyelid Bottom R Upper Chain 7/Eyelid
-      Bottom R Upper Chain 8
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5/Eyelid Bottom R Upper Chain Bone 6/Eyelid
+      Bottom R Upper Chain Bone 7/Eyelid Bottom R Upper Chain Bone 8
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1275,13 +1289,13 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5/Eyelid Bottom R Upper Chain 6/Eyelid Bottom R Upper Chain 7/Eyelid
-      Bottom R Upper Chain 8
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5/Eyelid Bottom R Upper Chain Bone 6/Eyelid
+      Bottom R Upper Chain Bone 7/Eyelid Bottom R Upper Chain Bone 8
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1300,13 +1314,13 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5/Eyelid Bottom R Upper Chain 6/Eyelid Bottom R Upper Chain 7/Eyelid
-      Bottom R Upper Chain 8
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5/Eyelid Bottom R Upper Chain Bone 6/Eyelid
+      Bottom R Upper Chain Bone 7/Eyelid Bottom R Upper Chain Bone 8
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1325,13 +1339,14 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5/Eyelid Bottom R Upper Chain 6/Eyelid Bottom R Upper Chain 7/Eyelid
-      Bottom R Upper Chain 8/Eyelid Bottom R Upper Chain 9
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5/Eyelid Bottom R Upper Chain Bone 6/Eyelid
+      Bottom R Upper Chain Bone 7/Eyelid Bottom R Upper Chain Bone 8/Eyelid Bottom
+      R Upper Chain Bone 9
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1350,13 +1365,14 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5/Eyelid Bottom R Upper Chain 6/Eyelid Bottom R Upper Chain 7/Eyelid
-      Bottom R Upper Chain 8/Eyelid Bottom R Upper Chain 9
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5/Eyelid Bottom R Upper Chain Bone 6/Eyelid
+      Bottom R Upper Chain Bone 7/Eyelid Bottom R Upper Chain Bone 8/Eyelid Bottom
+      R Upper Chain Bone 9
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1375,13 +1391,14 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5/Eyelid Bottom R Upper Chain 6/Eyelid Bottom R Upper Chain 7/Eyelid
-      Bottom R Upper Chain 8/Eyelid Bottom R Upper Chain 9
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5/Eyelid Bottom R Upper Chain Bone 6/Eyelid
+      Bottom R Upper Chain Bone 7/Eyelid Bottom R Upper Chain Bone 8/Eyelid Bottom
+      R Upper Chain Bone 9
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1400,7 +1417,7 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0
+      Bone 0
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -1422,7 +1439,7 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0
+      Bone 0
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -1444,7 +1461,7 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0
+      Bone 0
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -1466,10 +1483,10 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0
+      Bone 0
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1488,10 +1505,10 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0
+      Bone 0
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1510,10 +1527,10 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0
+      Bone 0
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1532,10 +1549,10 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1
+      Bone 0/Eyelid Top R Lower Chain Bone 1
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1554,10 +1571,10 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1
+      Bone 0/Eyelid Top R Lower Chain Bone 1
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1576,10 +1593,10 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1
+      Bone 0/Eyelid Top R Lower Chain Bone 1
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1598,7 +1615,7 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -1620,7 +1637,7 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -1642,7 +1659,7 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -1664,10 +1681,10 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1686,10 +1703,10 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1708,10 +1725,10 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1730,8 +1747,8 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2/Eyelid Top R Lower
-      Chain 3
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2/Eyelid
+      Top R Lower Chain Bone 3
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -1753,8 +1770,8 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2/Eyelid Top R Lower
-      Chain 3
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2/Eyelid
+      Top R Lower Chain Bone 3
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -1776,8 +1793,8 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2/Eyelid Top R Lower
-      Chain 3
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2/Eyelid
+      Top R Lower Chain Bone 3
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -1799,11 +1816,11 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2/Eyelid Top R Lower
-      Chain 3
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2/Eyelid
+      Top R Lower Chain Bone 3
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1822,11 +1839,11 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2/Eyelid Top R Lower
-      Chain 3
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2/Eyelid
+      Top R Lower Chain Bone 3
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1845,11 +1862,11 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2/Eyelid Top R Lower
-      Chain 3
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2/Eyelid
+      Top R Lower Chain Bone 3
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1868,11 +1885,11 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2/Eyelid Top R Lower
-      Chain 3/Eyelid Top R Lower Chain 4
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2/Eyelid
+      Top R Lower Chain Bone 3/Eyelid Top R Lower Chain Bone 4
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1891,11 +1908,11 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2/Eyelid Top R Lower
-      Chain 3/Eyelid Top R Lower Chain 4
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2/Eyelid
+      Top R Lower Chain Bone 3/Eyelid Top R Lower Chain Bone 4
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1914,11 +1931,11 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2/Eyelid Top R Lower
-      Chain 3/Eyelid Top R Lower Chain 4
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2/Eyelid
+      Top R Lower Chain Bone 3/Eyelid Top R Lower Chain Bone 4
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1937,12 +1954,12 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2/Eyelid Top R Lower
-      Chain 3/Eyelid Top R Lower Chain 4/Eyelid Top R Lower Chain 5/Eyelid Top R
-      Lower Chain 6
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2/Eyelid
+      Top R Lower Chain Bone 3/Eyelid Top R Lower Chain Bone 4/Eyelid Top R Lower
+      Chain Bone 5/Eyelid Top R Lower Chain Bone 6
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1961,12 +1978,12 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2/Eyelid Top R Lower
-      Chain 3/Eyelid Top R Lower Chain 4/Eyelid Top R Lower Chain 5/Eyelid Top R
-      Lower Chain 6
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2/Eyelid
+      Top R Lower Chain Bone 3/Eyelid Top R Lower Chain Bone 4/Eyelid Top R Lower
+      Chain Bone 5/Eyelid Top R Lower Chain Bone 6
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1985,12 +2002,12 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2/Eyelid Top R Lower
-      Chain 3/Eyelid Top R Lower Chain 4/Eyelid Top R Lower Chain 5/Eyelid Top R
-      Lower Chain 6
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2/Eyelid
+      Top R Lower Chain Bone 3/Eyelid Top R Lower Chain Bone 4/Eyelid Top R Lower
+      Chain Bone 5/Eyelid Top R Lower Chain Bone 6
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -2009,12 +2026,13 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2/Eyelid Top R Lower
-      Chain 3/Eyelid Top R Lower Chain 4/Eyelid Top R Lower Chain 5/Eyelid Top R
-      Lower Chain 6/Eyelid Top R Lower Chain 7
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2/Eyelid
+      Top R Lower Chain Bone 3/Eyelid Top R Lower Chain Bone 4/Eyelid Top R Lower
+      Chain Bone 5/Eyelid Top R Lower Chain Bone 6/Eyelid Top R Lower Chain Bone
+      7
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -2033,12 +2051,13 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2/Eyelid Top R Lower
-      Chain 3/Eyelid Top R Lower Chain 4/Eyelid Top R Lower Chain 5/Eyelid Top R
-      Lower Chain 6/Eyelid Top R Lower Chain 7
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2/Eyelid
+      Top R Lower Chain Bone 3/Eyelid Top R Lower Chain Bone 4/Eyelid Top R Lower
+      Chain Bone 5/Eyelid Top R Lower Chain Bone 6/Eyelid Top R Lower Chain Bone
+      7
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -2057,12 +2076,13 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2/Eyelid Top R Lower
-      Chain 3/Eyelid Top R Lower Chain 4/Eyelid Top R Lower Chain 5/Eyelid Top R
-      Lower Chain 6/Eyelid Top R Lower Chain 7
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2/Eyelid
+      Top R Lower Chain Bone 3/Eyelid Top R Lower Chain Bone 4/Eyelid Top R Lower
+      Chain Bone 5/Eyelid Top R Lower Chain Bone 6/Eyelid Top R Lower Chain Bone
+      7
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   m_EulerEditorCurves:
   - serializedVersion: 2
     curve:
@@ -2071,441 +2091,11 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.z
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.z
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.z
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.z
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.z
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5/Eyelid Bottom R Upper Chain 6
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5/Eyelid Bottom R Upper Chain 6
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.z
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5/Eyelid Bottom R Upper Chain 6
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5/Eyelid Bottom R Upper Chain 6/Eyelid Bottom R Upper Chain 7
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5/Eyelid Bottom R Upper Chain 6/Eyelid Bottom R Upper Chain 7
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.z
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5/Eyelid Bottom R Upper Chain 6/Eyelid Bottom R Upper Chain 7
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5/Eyelid Bottom R Upper Chain 6/Eyelid Bottom R Upper Chain 7/Eyelid
-      Bottom R Upper Chain 8
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5/Eyelid Bottom R Upper Chain 6/Eyelid Bottom R Upper Chain 7/Eyelid
-      Bottom R Upper Chain 8
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.z
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5/Eyelid Bottom R Upper Chain 6/Eyelid Bottom R Upper Chain 7/Eyelid
-      Bottom R Upper Chain 8
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5/Eyelid Bottom R Upper Chain 6/Eyelid Bottom R Upper Chain 7/Eyelid
-      Bottom R Upper Chain 8/Eyelid Bottom R Upper Chain 9
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5/Eyelid Bottom R Upper Chain 6/Eyelid Bottom R Upper Chain 7/Eyelid
-      Bottom R Upper Chain 8/Eyelid Bottom R Upper Chain 9
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.z
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
-      Chain 0/Eyelid Bottom R Upper Chain 1/Eyelid Bottom R Upper Chain 2/Eyelid
-      Bottom R Upper Chain 3/Eyelid Bottom R Upper Chain 4/Eyelid Bottom R Upper
-      Chain 5/Eyelid Bottom R Upper Chain 6/Eyelid Bottom R Upper Chain 7/Eyelid
-      Bottom R Upper Chain 8/Eyelid Bottom R Upper Chain 9
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2/Eyelid
+      Top R Lower Chain Bone 3/Eyelid Top R Lower Chain Bone 4/Eyelid Top R Lower
+      Chain Bone 5/Eyelid Top R Lower Chain Bone 6
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -2518,20 +2108,9 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.z
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2/Eyelid
+      Top R Lower Chain Bone 3/Eyelid Top R Lower Chain Bone 4/Eyelid Top R Lower
+      Chain Bone 5/Eyelid Top R Lower Chain Bone 6
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -2544,7 +2123,22 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2/Eyelid
+      Top R Lower Chain Bone 3/Eyelid Top R Lower Chain Bone 4/Eyelid Top R Lower
+      Chain Bone 5/Eyelid Top R Lower Chain Bone 6
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.z
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
+      Chain Bone 0
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -2556,8 +2150,426 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
+      Chain Bone 0
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.x
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
+      Chain Bone 0
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.z
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.x
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.z
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.x
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.z
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.x
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.z
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.x
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.z
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.x
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.z
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5/Eyelid Bottom R Upper Chain Bone 6
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5/Eyelid Bottom R Upper Chain Bone 6
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.x
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5/Eyelid Bottom R Upper Chain Bone 6
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.z
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5/Eyelid Bottom R Upper Chain Bone 6/Eyelid
+      Bottom R Upper Chain Bone 7
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5/Eyelid Bottom R Upper Chain Bone 6/Eyelid
+      Bottom R Upper Chain Bone 7
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.x
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5/Eyelid Bottom R Upper Chain Bone 6/Eyelid
+      Bottom R Upper Chain Bone 7
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.z
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5/Eyelid Bottom R Upper Chain Bone 6/Eyelid
+      Bottom R Upper Chain Bone 7/Eyelid Bottom R Upper Chain Bone 8
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5/Eyelid Bottom R Upper Chain Bone 6/Eyelid
+      Bottom R Upper Chain Bone 7/Eyelid Bottom R Upper Chain Bone 8
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.x
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5/Eyelid Bottom R Upper Chain Bone 6/Eyelid
+      Bottom R Upper Chain Bone 7/Eyelid Bottom R Upper Chain Bone 8
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.z
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5/Eyelid Bottom R Upper Chain Bone 6/Eyelid
+      Bottom R Upper Chain Bone 7/Eyelid Bottom R Upper Chain Bone 8/Eyelid Bottom
+      R Upper Chain Bone 9
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5/Eyelid Bottom R Upper Chain Bone 6/Eyelid
+      Bottom R Upper Chain Bone 7/Eyelid Bottom R Upper Chain Bone 8/Eyelid Bottom
+      R Upper Chain Bone 9
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.x
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Bottom R Upper
+      Chain Bone 0/Eyelid Bottom R Upper Chain Bone 1/Eyelid Bottom R Upper Chain
+      Bone 2/Eyelid Bottom R Upper Chain Bone 3/Eyelid Bottom R Upper Chain Bone
+      4/Eyelid Bottom R Upper Chain Bone 5/Eyelid Bottom R Upper Chain Bone 6/Eyelid
+      Bottom R Upper Chain Bone 7/Eyelid Bottom R Upper Chain Bone 8/Eyelid Bottom
+      R Upper Chain Bone 9
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -2570,7 +2582,20 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1
+      Bone 0
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
+      Bone 0
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -2583,20 +2608,7 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2
+      Bone 0
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -2609,7 +2621,20 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2
+      Bone 0/Eyelid Top R Lower Chain Bone 1
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
+      Bone 0/Eyelid Top R Lower Chain Bone 1
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -2622,22 +2647,7 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2/Eyelid Top R Lower
-      Chain 3
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2/Eyelid Top R Lower
-      Chain 3
+      Bone 0/Eyelid Top R Lower Chain Bone 1
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -2650,8 +2660,20 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2/Eyelid Top R Lower
-      Chain 3
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -2664,22 +2686,7 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2/Eyelid Top R Lower
-      Chain 3/Eyelid Top R Lower Chain 4
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2/Eyelid Top R Lower
-      Chain 3/Eyelid Top R Lower Chain 4
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -2692,8 +2699,22 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2/Eyelid Top R Lower
-      Chain 3/Eyelid Top R Lower Chain 4
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2/Eyelid
+      Top R Lower Chain Bone 3
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2/Eyelid
+      Top R Lower Chain Bone 3
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -2706,24 +2727,8 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2/Eyelid Top R Lower
-      Chain 3/Eyelid Top R Lower Chain 4/Eyelid Top R Lower Chain 5/Eyelid Top R
-      Lower Chain 6
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2/Eyelid Top R Lower
-      Chain 3/Eyelid Top R Lower Chain 4/Eyelid Top R Lower Chain 5/Eyelid Top R
-      Lower Chain 6
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2/Eyelid
+      Top R Lower Chain Bone 3
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -2736,9 +2741,22 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2/Eyelid Top R Lower
-      Chain 3/Eyelid Top R Lower Chain 4/Eyelid Top R Lower Chain 5/Eyelid Top R
-      Lower Chain 6
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2/Eyelid
+      Top R Lower Chain Bone 3/Eyelid Top R Lower Chain Bone 4
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2/Eyelid
+      Top R Lower Chain Bone 3/Eyelid Top R Lower Chain Bone 4
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -2751,9 +2769,24 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2/Eyelid Top R Lower
-      Chain 3/Eyelid Top R Lower Chain 4/Eyelid Top R Lower Chain 5/Eyelid Top R
-      Lower Chain 6/Eyelid Top R Lower Chain 7
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2/Eyelid
+      Top R Lower Chain Bone 3/Eyelid Top R Lower Chain Bone 4
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.x
+    path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2/Eyelid
+      Top R Lower Chain Bone 3/Eyelid Top R Lower Chain Bone 4/Eyelid Top R Lower
+      Chain Bone 5/Eyelid Top R Lower Chain Bone 6/Eyelid Top R Lower Chain Bone
+      7
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -2766,9 +2799,10 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2/Eyelid Top R Lower
-      Chain 3/Eyelid Top R Lower Chain 4/Eyelid Top R Lower Chain 5/Eyelid Top R
-      Lower Chain 6/Eyelid Top R Lower Chain 7
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2/Eyelid
+      Top R Lower Chain Bone 3/Eyelid Top R Lower Chain Bone 4/Eyelid Top R Lower
+      Chain Bone 5/Eyelid Top R Lower Chain Bone 6/Eyelid Top R Lower Chain Bone
+      7
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -2781,9 +2815,10 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
     path: Model/Pelvis Bone/Torso Bone/Neck Bone/Head Bone/Eyelid Top R Lower Chain
-      0/Eyelid Top R Lower Chain 1/Eyelid Top R Lower Chain 2/Eyelid Top R Lower
-      Chain 3/Eyelid Top R Lower Chain 4/Eyelid Top R Lower Chain 5/Eyelid Top R
-      Lower Chain 6/Eyelid Top R Lower Chain 7
+      Bone 0/Eyelid Top R Lower Chain Bone 1/Eyelid Top R Lower Chain Bone 2/Eyelid
+      Top R Lower Chain Bone 3/Eyelid Top R Lower Chain Bone 4/Eyelid Top R Lower
+      Chain Bone 5/Eyelid Top R Lower Chain Bone 6/Eyelid Top R Lower Chain Bone
+      7
     classID: 4
     script: {fileID: 0}
     flags: 0

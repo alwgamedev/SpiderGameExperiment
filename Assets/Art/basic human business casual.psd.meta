@@ -114,47 +114,47 @@ ScriptedImporter:
       height: 47
     spriteID: 0cd60b14376a8bf4fa82512744b6c720
     spriteBone:
-    - name: bone_34
+    - name: Eyebrow R Bone 0
       guid: a78da38405b2e6d4693aabf52a3d3ac2
-      position: {x: 88.967285, y: 4.713135, z: 0}
-      rotation: {x: 0, y: 0, z: 0.76147634, w: 0.6481927}
-      length: 15.365399
+      position: {x: 88.96704, y: 4.713379, z: 0}
+      rotation: {x: 0, y: 0, z: 0.76147795, w: 0.6481908}
+      length: 15.365661
       parentId: -1
       color:
         serializedVersion: 2
         rgba: 4286578943
-    - name: bone_35
+    - name: Eyebrow R Bone 1
       guid: 83e3def716b28154f8009a68e2638ec0
-      position: {x: 15.365344, y: -0.0000046200657, z: 0}
-      rotation: {x: 0, y: 0, z: 0.29829678, w: 0.9544732}
-      length: 16.407177
+      position: {x: 15.3658495, y: 0.00006922743, z: 0}
+      rotation: {x: 0, y: 0, z: 0.29830468, w: 0.95447075}
+      length: 16.407518
       parentId: 0
       color:
         serializedVersion: 2
         rgba: 4278223103
-    - name: bone_36
+    - name: Eyebrow R Bone 2
       guid: 0bdee7c3b6e70da4ca0c366e02a4d720
-      position: {x: 16.407183, y: -0.000049721108, z: 0}
-      rotation: {x: 0, y: 0, z: 0.3253224, w: 0.94560325}
-      length: 26.813549
+      position: {x: 16.407225, y: -0.00031281204, z: 0}
+      rotation: {x: 0, y: 0, z: 0.32531682, w: 0.94560504}
+      length: 26.813643
       parentId: 1
       color:
         serializedVersion: 2
         rgba: 4278255488
-    - name: bone_37
+    - name: Eyebrow R Bone 3
       guid: c49ac3e5d692c944793736d0406cea69
-      position: {x: 26.813677, y: 0.000024280404, z: 0}
-      rotation: {x: 0, y: 0, z: 0.1968454, w: 0.9804346}
-      length: 23.04735
+      position: {x: 26.813747, y: -0.00009084531, z: 0}
+      rotation: {x: 0, y: 0, z: 0.1968412, w: 0.9804354}
+      length: 23.047232
       parentId: 2
       color:
         serializedVersion: 2
         rgba: 4294967040
-    - name: bone_38
+    - name: Eyebrow R Bone 4
       guid: b6836bd1c9b44b549ba809f2475ff796
-      position: {x: 23.047424, y: -0.00001379391, z: 0}
-      rotation: {x: 0, y: 0, z: 0.18990211, w: 0.981803}
-      length: 25.51893
+      position: {x: 23.047192, y: 0.000028123111, z: 0}
+      rotation: {x: 0, y: 0, z: 0.18990189, w: 0.98180306}
+      length: 25.518934
       parentId: 3
       color:
         serializedVersion: 2
@@ -771,47 +771,47 @@ ScriptedImporter:
       height: 47
     spriteID: a9772ad1dc1077e42b6eecafd63db516
     spriteBone:
-    - name: bone_29
+    - name: Eyebrow L Bone 0
       guid: cad116664802e124d86e1be78d6d8834
-      position: {x: 10.158813, y: 4.9362793, z: 0}
-      rotation: {x: 0, y: 0, z: 0.6421358, w: 0.7665909}
-      length: 16.53963
+      position: {x: 10.158691, y: 4.9365234, z: 0}
+      rotation: {x: 0, y: 0, z: 0.64213383, w: 0.76659256}
+      length: 16.539148
       parentId: -1
       color:
         serializedVersion: 2
         rgba: 4278190335
-    - name: bone_30
+    - name: Eyebrow L Bone 1
       guid: 19a771fff179bb84db695f010523105e
-      position: {x: 16.53963, y: 0.00011074706, z: 0}
-      rotation: {x: 0, y: 0, z: -0.38531652, w: 0.92278445}
-      length: 20.04766
+      position: {x: 16.539133, y: 0.00011251669, z: 0}
+      rotation: {x: 0, y: 0, z: -0.38531405, w: 0.9227856}
+      length: 20.047215
       parentId: 0
       color:
         serializedVersion: 2
         rgba: 4278255615
-    - name: bone_31
+    - name: Eyebrow L Bone 2
       guid: d24aa713e83fdc84db3ece975cd13b81
-      position: {x: 20.047796, y: -0.000038698898, z: 0}
-      rotation: {x: 0, y: 0, z: -0.26101393, w: 0.9653351}
-      length: 23.711695
+      position: {x: 20.047037, y: 0.000012334669, z: 0}
+      rotation: {x: 0, y: 0, z: -0.26101938, w: 0.9653336}
+      length: 23.711916
       parentId: 1
       color:
         serializedVersion: 2
         rgba: 4286643968
-    - name: bone_32
+    - name: Eyebrow L Bone 3
       guid: 4f1faef1a58eec240a1f985df4b5fe61
-      position: {x: 23.711859, y: -0.00008823405, z: 0}
-      rotation: {x: 0, y: 0, z: -0.16581541, w: 0.9861568}
-      length: 20.992737
+      position: {x: 23.71217, y: 0.00040767016, z: 0}
+      rotation: {x: 0, y: 0, z: -0.16580974, w: 0.98615783}
+      length: 20.992792
       parentId: 2
       color:
         serializedVersion: 2
         rgba: 4294934528
-    - name: bone_33
+    - name: Eyebrow L Bone 4
       guid: be2473573ecf72546af32455e3110eb6
-      position: {x: 20.99267, y: -0.00021540448, z: 0}
-      rotation: {x: 0, y: 0, z: -0.1964417, w: 0.98051554}
-      length: 22.753391
+      position: {x: 20.99288, y: -0.0000726906, z: 0}
+      rotation: {x: 0, y: 0, z: -0.19644219, w: 0.9805154}
+      length: 22.753386
       parentId: 3
       color:
         serializedVersion: 2
@@ -1394,74 +1394,74 @@ ScriptedImporter:
       height: 14
     spriteID: 7c3049afb352ad847a81d35e1e28bcee
     spriteBone:
-    - name: bone_103
+    - name: Upper Lip R Bone 1
       guid: 1bbc9b8917e684c49a465519e2e0f1d3
-      position: {x: 11.253405, y: -0.0002220389, z: 0}
-      rotation: {x: 0, y: 0, z: -0.065173924, w: 0.99787396}
-      length: 11.722244
+      position: {x: 11.253423, y: -0.000094265946, z: 0}
+      rotation: {x: 0, y: 0, z: -0.06514306, w: 0.997876}
+      length: 11.722132
       parentId: 1
       color:
         serializedVersion: 2
         rgba: 4286578943
-    - name: bone_102
+    - name: Upper Lip R Bone 0
       guid: d172814dff508604b83f4a92ea4e5a74
-      position: {x: 103.23718, y: 3.6831055, z: 0}
-      rotation: {x: 0, y: 0, z: 0.9990995, w: 0.042430274}
-      length: 11.253409
+      position: {x: 103.23694, y: 3.6833496, z: 0}
+      rotation: {x: 0, y: 0, z: 0.9990991, w: 0.0424406}
+      length: 11.2534275
       parentId: -1
       color:
         serializedVersion: 2
         rgba: 4294901888
-    - name: bone_104
+    - name: Upper Lip R Bone 2
       guid: ad2fe93a791e9364b9e2f2c7d7e02757
-      position: {x: 11.722274, y: 0.000036663536, z: 0}
-      rotation: {x: 0, y: 0, z: 0.10434493, w: 0.9945412}
-      length: 19.086067
+      position: {x: 11.722063, y: 0.00011982044, z: 0}
+      rotation: {x: 0, y: 0, z: 0.10433747, w: 0.99454194}
+      length: 19.08618
       parentId: 0
       color:
         serializedVersion: 2
         rgba: 4278223103
-    - name: bone_18
+    - name: Upper Lip L Bone 2
       guid: 356cbfda5c2d32f4bb152523003aaf8a
-      position: {x: 13.252703, y: -0.000051182455, z: 0}
-      rotation: {x: 0, y: 0, z: -0.06572303, w: 0.99783796}
-      length: 20.196474
+      position: {x: 13.253275, y: -0.00008163465, z: 0}
+      rotation: {x: 0, y: 0, z: -0.065728076, w: 0.99783754}
+      length: 20.196342
       parentId: 4
       color:
         serializedVersion: 2
         rgba: 4278190335
-    - name: bone_93
+    - name: Upper Lip L Bone 1
       guid: abd3bca144d1b8c45a3f9cf6cc5d48a8
-      position: {x: 9.701345, y: 0.00008376775, z: 0}
-      rotation: {x: 0, y: 0, z: 0.0038409084, w: 0.9999926}
-      length: 13.253052
+      position: {x: 9.70147, y: -0.00001901009, z: 0}
+      rotation: {x: 0, y: 0, z: 0.0038409578, w: 0.99999267}
+      length: 13.253174
       parentId: 5
       color:
         serializedVersion: 2
         rgba: 4294934528
-    - name: bone_17
+    - name: Upper Lip L Bone 0
       guid: b21f5bf47039ccf408984173cb27e5c8
-      position: {x: 8.899902, y: 2.6503906, z: 0}
-      rotation: {x: 0, y: 0, z: 0.07970288, w: 0.99681866}
-      length: 9.7011385
+      position: {x: 8.899658, y: 2.6506348, z: 0}
+      rotation: {x: 0, y: 0, z: 0.079702206, w: 0.9968188}
+      length: 9.701256
       parentId: -1
       color:
         serializedVersion: 2
         rgba: 4294902015
-    - name: bone_105
+    - name: Upper Lip R Bone 3
       guid: 828e1f25c245f01449c13fa30d4ee87c
-      position: {x: 19.086151, y: 0.000000042701117, z: 0}
-      rotation: {x: 0, y: 0, z: 0.22778603, w: 0.97371125}
-      length: 5.1751113
+      position: {x: 19.086153, y: 0.000005028728, z: 0}
+      rotation: {x: 0, y: 0, z: 0.22777376, w: 0.9737141}
+      length: 5.1751103
       parentId: 2
       color:
         serializedVersion: 2
         rgba: 4278255360
-    - name: bone_19
+    - name: Upper Lip L Bone 3
       guid: 6662d48ffc4d7244d893d775605e969e
-      position: {x: 20.196695, y: -0.0000947012, z: 0}
-      rotation: {x: 0, y: 0, z: -0.23768319, w: 0.97134274}
-      length: 5.3709583
+      position: {x: 20.195919, y: 0.000017981114, z: 0}
+      rotation: {x: 0, y: 0, z: -0.23767707, w: 0.9713443}
+      length: 5.370958
       parentId: 3
       color:
         serializedVersion: 2
@@ -3090,74 +3090,74 @@ ScriptedImporter:
       height: 20
     spriteID: d57e5f0a3e44c6842b67ef1263c42b80
     spriteBone:
-    - name: bone_108
+    - name: Lower Lip R Bone 2
       guid: 04a5bec819970db4dbec5a98d98c9877
-      position: {x: 8.234283, y: 0.0000062579493, z: 0}
-      rotation: {x: 0, y: 0, z: -0.12099707, w: 0.99265295}
-      length: 17.771923
+      position: {x: 8.234492, y: -0.000045142817, z: 0}
+      rotation: {x: 0, y: 0, z: -0.12099725, w: 0.9926529}
+      length: 17.771929
       parentId: 1
       color:
         serializedVersion: 2
         rgba: 4294902015
-    - name: bone_107
+    - name: Lower Lip R Bone 1
       guid: d6fee13058826f24192afc185dfe61c2
-      position: {x: 7.2700653, y: 0.000103980594, z: 0}
-      rotation: {x: 0, y: 0, z: -0.09472721, w: 0.9955033}
-      length: 8.234298
+      position: {x: 7.270339, y: 0.000011182401, z: 0}
+      rotation: {x: 0, y: 0, z: -0.09472302, w: 0.9955037}
+      length: 8.234299
       parentId: 2
       color:
         serializedVersion: 2
         rgba: 4294901760
-    - name: bone_106
+    - name: Lower Lip R Bone 0
       guid: 9fe703244306df1479aeb8380b4bac70
-      position: {x: 85.505005, y: 14.447998, z: 0}
-      rotation: {x: 0, y: 0, z: 0.9669616, w: -0.25492218}
-      length: 7.270232
+      position: {x: 85.50476, y: 14.448242, z: 0}
+      rotation: {x: 0, y: 0, z: 0.96696264, w: -0.25491846}
+      length: 7.2703404
       parentId: -1
       color:
         serializedVersion: 2
         rgba: 4294967040
-    - name: bone_94
+    - name: Lower Lip L Bone 1
       guid: db01235b66b866d4e9cad05af5c44231
-      position: {x: 7.7077823, y: -0.00011160478, z: 0}
-      rotation: {x: 0, y: 0, z: 0, w: 1}
-      length: 9.3448305
+      position: {x: 7.7077312, y: 0.00001610677, z: 0}
+      rotation: {x: 0, y: 0, z: -0.000000044279847, w: 1}
+      length: 9.344895
       parentId: 4
       color:
         serializedVersion: 2
         rgba: 4294901888
-    - name: bone_23
+    - name: Lower Lip L Bone 0
       guid: c1ce22d286000ec48a3649fd2ac196e2
-      position: {x: 10.708862, y: 13.782715, z: 0}
-      rotation: {x: 0, y: 0, z: -0.1373437, w: 0.99052346}
-      length: 7.707781
+      position: {x: 10.708618, y: 13.782959, z: 0}
+      rotation: {x: 0, y: 0, z: -0.13734396, w: 0.99052346}
+      length: 7.7077804
       parentId: -1
       color:
         serializedVersion: 2
         rgba: 4286578943
-    - name: bone_24
+    - name: Lower Lip L Bone 2
       guid: b0d1aea42cd4b504ea65adf38872e9f8
-      position: {x: 9.344831, y: 0.00017430948, z: 0}
-      rotation: {x: 0, y: 0, z: 0.07434529, w: 0.99723256}
-      length: 15.458689
+      position: {x: 9.344897, y: -0.00014451388, z: 0}
+      rotation: {x: 0, y: 0, z: 0.07435295, w: 0.99723196}
+      length: 15.458658
       parentId: 3
       color:
         serializedVersion: 2
         rgba: 4278223103
-    - name: bone_25
+    - name: Lower Lip L Bone 3
       guid: bfe592eef823dc5458b822dd2fa0bfda
-      position: {x: 15.458743, y: 0.000024668632, z: 0}
-      rotation: {x: 0, y: 0, z: 0.1305638, w: 0.9914399}
+      position: {x: 15.458711, y: 0.00005895339, z: 0}
+      rotation: {x: 0, y: 0, z: 0.13055614, w: 0.9914409}
       length: 6.1609116
       parentId: 5
       color:
         serializedVersion: 2
         rgba: 4278255360
-    - name: bone_109
+    - name: Lower Lip R Bone 3
       guid: 7adab3a441feeef48aa7adf33cd7a3b5
-      position: {x: 17.772043, y: -0.00001715201, z: 0}
-      rotation: {x: 0, y: 0, z: -0.17564295, w: 0.984454}
-      length: 5.141088
+      position: {x: 17.771729, y: -0.00022289183, z: 0}
+      rotation: {x: 0, y: 0, z: -0.17564361, w: 0.9844538}
+      length: 5.141089
       parentId: 0
       color:
         serializedVersion: 2
@@ -4718,146 +4718,146 @@ ScriptedImporter:
       height: 44
     spriteID: b0ac5ae8fbdaa554bafdc9c0f1f71bce
     spriteBone:
-    - name: bone_25
+    - name: Lower Lip L Bone 3
       guid: bfe592eef823dc5458b822dd2fa0bfda
-      position: {x: 15.458684, y: 0.00000056302633, z: 0}
-      rotation: {x: 0, y: 0, z: 0.13056383, w: 0.99143994}
+      position: {x: 15.458655, y: 0.00020887809, z: 0}
+      rotation: {x: 0, y: 0, z: 0.13055614, w: 0.9914409}
       length: 6.1609116
       parentId: 12
       color:
         serializedVersion: 2
         rgba: 4278255360
-    - name: bone_108
+    - name: Lower Lip R Bone 2
       guid: 04a5bec819970db4dbec5a98d98c9877
-      position: {x: 8.234286, y: -0.000013332898, z: 0}
-      rotation: {x: 0, y: 0, z: -0.12099707, w: 0.99265295}
-      length: 17.771923
+      position: {x: 8.234409, y: 0.00011089263, z: 0}
+      rotation: {x: 0, y: 0, z: -0.12099726, w: 0.9926529}
+      length: 17.771929
       parentId: 2
       color:
         serializedVersion: 2
         rgba: 4294902015
-    - name: bone_107
+    - name: Lower Lip R Bone 1
       guid: d6fee13058826f24192afc185dfe61c2
-      position: {x: 7.27009, y: 0.000029192988, z: 0}
-      rotation: {x: 0, y: 0, z: -0.09472721, w: 0.9955033}
-      length: 8.234298
+      position: {x: 7.2702885, y: -0.00020793857, z: 0}
+      rotation: {x: 0, y: 0, z: -0.09472302, w: 0.9955037}
+      length: 8.234299
       parentId: 3
       color:
         serializedVersion: 2
         rgba: 4294901760
-    - name: bone_106
+    - name: Lower Lip R Bone 0
       guid: 9fe703244306df1479aeb8380b4bac70
-      position: {x: 101.505005, y: 6.447998, z: 0}
-      rotation: {x: 0, y: 0, z: 0.9669616, w: -0.25492218}
-      length: 7.270232
+      position: {x: 101.50476, y: 6.448242, z: 0}
+      rotation: {x: 0, y: 0, z: 0.96696264, w: -0.25491846}
+      length: 7.2703404
       parentId: -1
       color:
         serializedVersion: 2
         rgba: 4294967040
-    - name: bone_102
+    - name: Upper Lip R Bone 0
       guid: d172814dff508604b83f4a92ea4e5a74
-      position: {x: 111.23718, y: 8.683105, z: 0}
-      rotation: {x: 0, y: 0, z: 0.9990995, w: 0.042430274}
-      length: 11.253409
+      position: {x: 111.23694, y: 8.68335, z: 0}
+      rotation: {x: 0, y: 0, z: 0.9990991, w: 0.0424406}
+      length: 11.2534275
       parentId: -1
       color:
         serializedVersion: 2
         rgba: 4294901888
-    - name: bone_103
+    - name: Upper Lip R Bone 1
       guid: 1bbc9b8917e684c49a465519e2e0f1d3
-      position: {x: 11.25343, y: -0.0002799597, z: 0}
-      rotation: {x: 0, y: 0, z: -0.065173924, w: 0.99787396}
-      length: 11.722241
+      position: {x: 11.25343, y: -0.000013319217, z: 0}
+      rotation: {x: 0, y: 0, z: -0.065143056, w: 0.9978759}
+      length: 11.722132
       parentId: 4
       color:
         serializedVersion: 2
         rgba: 4286578943
-    - name: bone_104
+    - name: Upper Lip R Bone 2
       guid: ad2fe93a791e9364b9e2f2c7d7e02757
-      position: {x: 11.722172, y: 0.00011233163, z: 0}
-      rotation: {x: 0, y: 0, z: 0.10434493, w: 0.9945412}
-      length: 19.086067
+      position: {x: 11.722148, y: -0.000067961824, z: 0}
+      rotation: {x: 0, y: 0, z: 0.10433747, w: 0.994542}
+      length: 19.08618
       parentId: 5
       color:
         serializedVersion: 2
         rgba: 4278223103
-    - name: bone_18
+    - name: Upper Lip L Bone 2
       guid: 356cbfda5c2d32f4bb152523003aaf8a
-      position: {x: 13.253022, y: 0.000007609305, z: 0}
-      rotation: {x: 0, y: 0, z: -0.06572303, w: 0.99783796}
-      length: 20.196474
+      position: {x: 13.253194, y: -0.000093340226, z: 0}
+      rotation: {x: 0, y: 0, z: -0.065728076, w: 0.99783754}
+      length: 20.196342
       parentId: 8
       color:
         serializedVersion: 2
         rgba: 4278190335
-    - name: bone_93
+    - name: Upper Lip L Bone 1
       guid: abd3bca144d1b8c45a3f9cf6cc5d48a8
-      position: {x: 9.701138, y: -0.000011608639, z: 0}
-      rotation: {x: 0, y: 0, z: 0.0038409084, w: 0.9999926}
-      length: 13.253052
+      position: {x: 9.701295, y: 0.000019384794, z: 0}
+      rotation: {x: 0, y: 0, z: 0.0038409578, w: 0.99999267}
+      length: 13.253174
       parentId: 9
       color:
         serializedVersion: 2
         rgba: 4294934528
-    - name: bone_17
+    - name: Upper Lip L Bone 0
       guid: b21f5bf47039ccf408984173cb27e5c8
-      position: {x: 16.899902, y: 7.6503906, z: 0}
-      rotation: {x: 0, y: 0, z: 0.07970288, w: 0.99681866}
-      length: 9.7011385
+      position: {x: 16.899658, y: 7.650635, z: 0}
+      rotation: {x: 0, y: 0, z: 0.079702206, w: 0.9968188}
+      length: 9.701256
       parentId: -1
       color:
         serializedVersion: 2
         rgba: 4294902015
-    - name: bone_23
+    - name: Lower Lip L Bone 0
       guid: c1ce22d286000ec48a3649fd2ac196e2
-      position: {x: 26.708862, y: 5.782715, z: 0}
-      rotation: {x: 0, y: 0, z: -0.1373437, w: 0.99052346}
-      length: 7.707781
+      position: {x: 26.708618, y: 5.782959, z: 0}
+      rotation: {x: 0, y: 0, z: -0.13734396, w: 0.99052346}
+      length: 7.7077804
       parentId: -1
       color:
         serializedVersion: 2
         rgba: 4286578943
-    - name: bone_94
+    - name: Lower Lip L Bone 1
       guid: db01235b66b866d4e9cad05af5c44231
-      position: {x: 7.7077336, y: 0.000016626745, z: 0}
-      rotation: {x: 0, y: 0, z: 0.0000000016126955, w: 1}
-      length: 9.3448305
+      position: {x: 7.707837, y: -0.000016675785, z: 0}
+      rotation: {x: 0, y: 0, z: -0.000000050853455, w: 1}
+      length: 9.344895
       parentId: 10
       color:
         serializedVersion: 2
         rgba: 4294901888
-    - name: bone_24
+    - name: Lower Lip L Bone 2
       guid: b0d1aea42cd4b504ea65adf38872e9f8
-      position: {x: 9.34483, y: 0.00012173818, z: 0}
-      rotation: {x: 0, y: 0, z: 0.07434529, w: 0.99723256}
-      length: 15.458689
+      position: {x: 9.344829, y: -0.00013879183, z: 0}
+      rotation: {x: 0, y: 0, z: 0.07435296, w: 0.99723196}
+      length: 15.458658
       parentId: 11
       color:
         serializedVersion: 2
         rgba: 4278223103
-    - name: bone_105
+    - name: Upper Lip R Bone 3
       guid: 828e1f25c245f01449c13fa30d4ee87c
-      position: {x: 19.086111, y: -0.00014363942, z: 0}
-      rotation: {x: 0, y: 0, z: 0.22778603, w: 0.97371125}
-      length: 5.1751113
+      position: {x: 19.086178, y: 0.00008718616, z: 0}
+      rotation: {x: 0, y: 0, z: 0.22777376, w: 0.9737141}
+      length: 5.175111
       parentId: 6
       color:
         serializedVersion: 2
         rgba: 4278255360
-    - name: bone_109
+    - name: Lower Lip R Bone 3
       guid: 7adab3a441feeef48aa7adf33cd7a3b5
-      position: {x: 17.772066, y: 0.000016733231, z: 0}
-      rotation: {x: 0, y: 0, z: -0.17564295, w: 0.984454}
-      length: 5.141088
+      position: {x: 17.77191, y: -0.00003157335, z: 0}
+      rotation: {x: 0, y: 0, z: -0.17564361, w: 0.9844538}
+      length: 5.141089
       parentId: 1
       color:
         serializedVersion: 2
         rgba: 4278190335
-    - name: bone_19
+    - name: Upper Lip L Bone 3
       guid: 6662d48ffc4d7244d893d775605e969e
-      position: {x: 20.196505, y: -0.0000035060948, z: 0}
-      rotation: {x: 0, y: 0, z: -0.23768319, w: 0.97134274}
-      length: 5.3709583
+      position: {x: 20.196278, y: -0.00005436775, z: 0}
+      rotation: {x: 0, y: 0, z: -0.23767707, w: 0.9713443}
+      length: 5.370958
       parentId: 7
       color:
         serializedVersion: 2
@@ -5396,20 +5396,20 @@ ScriptedImporter:
       height: 28
     spriteID: 2b80f07f78f30ae4d8b70e1fb1edb759
     spriteBone:
-    - name: bone_99
+    - name: Lip Corner Shadow R Bone 0
       guid: 0bf32bac915df0a438ef0fd5ebf89e8a
-      position: {x: 22.615723, y: 8.896484, z: 0}
-      rotation: {x: 0, y: 0, z: -0.99913514, w: 0.04158191}
-      length: 11.100519
+      position: {x: 22.615479, y: 8.8967285, z: 0}
+      rotation: {x: 0, y: 0, z: -0.9991351, w: 0.04158187}
+      length: 11.100522
       parentId: -1
       color:
         serializedVersion: 2
         rgba: 4294901760
-    - name: bone_101
+    - name: Lip Corner Shadow R Bone 1
       guid: 7bcce983bd0f75046a0540e71255575a
-      position: {x: 0.11504988, y: -8.965658, z: 0}
-      rotation: {x: 0, y: 0, z: 0.009409715, w: 0.9999557}
-      length: 11.326082
+      position: {x: 0.11504591, y: -8.96568, z: 0}
+      rotation: {x: 0, y: 0, z: 0.009409673, w: 0.9999558}
+      length: 11.326085
       parentId: 0
       color:
         serializedVersion: 2
@@ -5751,19 +5751,19 @@ ScriptedImporter:
       height: 28
     spriteID: 53196b7f920436f45b68ba5298b36b7f
     spriteBone:
-    - name: bone_98
+    - name: Lip Corner Shadow L Bone 0
       guid: bf98daf71244c3645b747ca43c8b6a64
-      position: {x: 14.511108, y: 6.8398438, z: 0}
+      position: {x: 14.510864, y: 6.840088, z: 0}
       rotation: {x: 0, y: 0, z: 0.035431676, w: 0.9993721}
-      length: 13.999876
+      length: 13.999875
       parentId: -1
       color:
         serializedVersion: 2
         rgba: 4294967040
-    - name: bone_100
+    - name: Lip Corner Shadow L Bone 1
       guid: 6bd7073ed955c9c448ed8f3ddc92be61
-      position: {x: -0.04625409, y: 9.137567, z: 0}
-      rotation: {x: 0, y: 0, z: 0.0043978845, w: 0.99999034}
+      position: {x: -0.046236187, y: 9.137523, z: 0}
+      rotation: {x: 0, y: 0, z: 0.004397889, w: 0.99999034}
       length: 13.9112
       parentId: 0
       color:
@@ -6095,11 +6095,11 @@ ScriptedImporter:
       height: 112
     spriteID: 0e804241472d0c14ebc5e0e8e1db4d59
     spriteBone:
-    - name: bone_4
+    - name: Head Bone
       guid: 1d4a1eae30c07854997fecf50a0fd025
-      position: {x: 59.93628, y: -95.7522, z: 0}
-      rotation: {x: 0, y: 0, z: 0.70748997, w: 0.70672345}
-      length: 419.94766
+      position: {x: 59.936035, y: -95.75195, z: 0}
+      rotation: {x: 0, y: 0, z: 0.70748997, w: 0.7067235}
+      length: 419.9477
       parentId: -1
       color:
         serializedVersion: 2
@@ -6833,164 +6833,164 @@ ScriptedImporter:
       height: 39
     spriteID: 107d4440db740344c8b8125dc068246d
     spriteBone:
-    - name: bone_165
+    - name: Eyelid Top R Lower Chain Bone 0
       guid: bc77a9175a6f8a14882107e5dc933982
-      position: {x: 11.414673, y: 5.2802734, z: 0}
-      rotation: {x: 0, y: 0, z: 0.40815634, w: 0.912912}
-      length: 7.1477485
+      position: {x: 11.414429, y: 5.2805176, z: 0}
+      rotation: {x: 0, y: 0, z: 0.40814155, w: 0.9129186}
+      length: 7.147304
       parentId: -1
       color:
         serializedVersion: 2
         rgba: 4286643968
-    - name: bone_166
+    - name: Eyelid Top R Lower Chain Bone 1
       guid: 4f373a89627f438409b0599125ea26d2
-      position: {x: 7.147833, y: -0.000037822116, z: 0}
-      rotation: {x: 0, y: 0, z: -0.08685213, w: 0.9962212}
-      length: 5.5897684
+      position: {x: 7.1472406, y: -0.000054804972, z: 0}
+      rotation: {x: 0, y: 0, z: -0.08684251, w: 0.9962221}
+      length: 5.5898643
       parentId: 0
       color:
         serializedVersion: 2
         rgba: 4294934528
-    - name: bone_167
+    - name: Eyelid Top R Lower Chain Bone 2
       guid: d7343896044828b42ad876065ba7edf9
-      position: {x: 5.5896473, y: 0.0000014692923, z: 0}
-      rotation: {x: 0, y: 0, z: -0.09851058, w: 0.995136}
-      length: 7.021575
+      position: {x: 5.5900683, y: -0.000010944845, z: 0}
+      rotation: {x: 0, y: 0, z: -0.09849213, w: 0.9951378}
+      length: 7.021249
       parentId: 1
       color:
         serializedVersion: 2
         rgba: 4294901888
-    - name: bone_168
+    - name: Eyelid Top R Lower Chain Bone 3
       guid: c0cd3cd81abb40f478d6c25fe628097a
-      position: {x: 7.021614, y: 0.00004056967, z: 0}
-      rotation: {x: 0, y: 0, z: -0.158953, w: 0.9872862}
-      length: 6.238092
+      position: {x: 7.021451, y: -0.0000147887185, z: 0}
+      rotation: {x: 0, y: 0, z: -0.15893963, w: 0.9872883}
+      length: 6.237646
       parentId: 2
       color:
         serializedVersion: 2
         rgba: 4286578943
-    - name: bone_169
+    - name: Eyelid Top R Lower Chain Bone 4
       guid: 3c6b770f225dee44e90c841a491e8e00
-      position: {x: 6.238038, y: -0.00012419584, z: 0}
-      rotation: {x: 0, y: 0, z: -0.07510073, w: 0.99717593}
-      length: 6.7286377
+      position: {x: 6.2373505, y: 0.00017924246, z: 0}
+      rotation: {x: 0, y: 0, z: -0.07512595, w: 0.997174}
+      length: 6.7286386
       parentId: 3
       color:
         serializedVersion: 2
         rgba: 4278223103
-    - name: bone_170
+    - name: Eyelid Top R Lower Chain Bone 5
       guid: ecf4d24fcac5bdd4d826da05b74c62d2
-      position: {x: 6.7286057, y: 0.00007341373, z: 0}
-      rotation: {x: 0, y: 0, z: -0.08683943, w: 0.9962223}
+      position: {x: 6.7286005, y: -0.000013497562, z: 0}
+      rotation: {x: 0, y: 0, z: -0.08683925, w: 0.9962223}
       length: 7.021302
       parentId: 4
       color:
         serializedVersion: 2
         rgba: 4278255488
-    - name: bone_171
+    - name: Eyelid Top R Lower Chain Bone 6
       guid: 890fe1d7effb343458fc8c4fe374d9a6
-      position: {x: 7.0213537, y: 0.00003069283, z: 0}
-      rotation: {x: 0, y: 0, z: -0.18983205, w: 0.9818166}
-      length: 7.26096
+      position: {x: 7.021192, y: 0.00026932778, z: 0}
+      rotation: {x: 0, y: 0, z: -0.18981825, w: 0.98181933}
+      length: 7.260833
       parentId: 5
       color:
         serializedVersion: 2
         rgba: 4294967040
-    - name: bone_172
+    - name: Eyelid Top R Lower Chain Bone 7
       guid: b987b4d8a39e31e43a36dadaf3767c47
-      position: {x: 7.2610965, y: -0.000044633314, z: 0}
-      rotation: {x: 0, y: 0, z: -0.123728834, w: 0.9923161}
-      length: 7.1379004
+      position: {x: 7.2608824, y: 0.00014756525, z: 0}
+      rotation: {x: 0, y: 0, z: -0.123736925, w: 0.9923151}
+      length: 7.1379857
       parentId: 6
       color:
         serializedVersion: 2
         rgba: 4294901760
-    - name: bone_173
+    - name: Eyelid Top R Lower Chain Bone 8
       guid: 34b9223bb5659a14993fa36bd501a3b1
-      position: {x: 7.137857, y: 0.00009960914, z: 0}
-      rotation: {x: 0, y: 0, z: 0.08021737, w: 0.9967774}
-      length: 5.606886
+      position: {x: 7.1382675, y: -0.0000342853, z: 0}
+      rotation: {x: 0, y: 0, z: 0.080204934, w: 0.99677837}
+      length: 5.606787
       parentId: 7
       color:
         serializedVersion: 2
         rgba: 4294902015
-    - name: bone_174
+    - name: Eyelid Top R Lower Chain Bone 9
       guid: 58ce53e9815304148905a319c54ded48
-      position: {x: 5.60672, y: 0.000044872453, z: 0}
-      rotation: {x: 0, y: 0, z: 0.13106792, w: 0.9913734}
+      position: {x: 5.6067824, y: 0.0001071009, z: 0}
+      rotation: {x: 0, y: 0, z: 0.13107386, w: 0.9913726}
       length: 6.0390425
       parentId: 8
       color:
         serializedVersion: 2
         rgba: 4278190335
-    - name: bone_182
+    - name: Eyelid Top R Upper Chain Bone 7
       guid: ffbbaa3c150ee5643a0778666b4f20f3
-      position: {x: 10.966897, y: 0.000063972766, z: 0}
-      rotation: {x: 0, y: 0, z: -0.055126783, w: 0.99847937}
+      position: {x: 10.966616, y: -0.00015941868, z: 0}
+      rotation: {x: 0, y: 0, z: -0.05514168, w: 0.99847853}
       length: 9.099793
       parentId: 11
       color:
         serializedVersion: 2
         rgba: 4286643968
-    - name: bone_181
+    - name: Eyelid Top R Upper Chain Bone 6
       guid: a707325557fe3c247adca298ee2de8df
-      position: {x: 13.770696, y: 0.00031814567, z: 0}
-      rotation: {x: 0, y: 0, z: -0.23766589, w: 0.97134703}
-      length: 10.966579
+      position: {x: 13.771, y: 0.00017808596, z: 0}
+      rotation: {x: 0, y: 0, z: -0.23765351, w: 0.9713501}
+      length: 10.966717
       parentId: 12
       color:
         serializedVersion: 2
         rgba: 4278255488
-    - name: bone_180
+    - name: Eyelid Top R Upper Chain Bone 5
       guid: 95a8e27200e55cf4a86b758594bd84cb
-      position: {x: 14.085407, y: 0.00015120568, z: 0}
-      rotation: {x: 0, y: 0, z: -0.23479448, w: 0.97204506}
-      length: 13.771279
+      position: {x: 14.084944, y: -0.00007334193, z: 0}
+      rotation: {x: 0, y: 0, z: -0.23480834, w: 0.9720417}
+      length: 13.771369
       parentId: 13
       color:
         serializedVersion: 2
         rgba: 4278223103
-    - name: bone_179
+    - name: Eyelid Top R Upper Chain Bone 4
       guid: 77e1913501fc9f349b8c1a8ea9220672
-      position: {x: 16.43789, y: 0.0003050523, z: 0}
-      rotation: {x: 0, y: 0, z: -0.11011628, w: 0.9939187}
-      length: 14.08519
+      position: {x: 16.43784, y: -0.000047988793, z: 0}
+      rotation: {x: 0, y: 0, z: -0.11009935, w: 0.99392056}
+      length: 14.085079
       parentId: 14
       color:
         serializedVersion: 2
         rgba: 4286578943
-    - name: bone_178
+    - name: Eyelid Top R Upper Chain Bone 3
       guid: f786a96362baf6242b94b09d2b80fb62
-      position: {x: 16.661203, y: 0.00014041945, z: 0}
-      rotation: {x: 0, y: 0, z: -0.2807749, w: 0.95977366}
-      length: 16.43772
+      position: {x: 16.661423, y: 0.000035045876, z: 0}
+      rotation: {x: 0, y: 0, z: -0.2807848, w: 0.95977074}
+      length: 16.437721
       parentId: 15
       color:
         serializedVersion: 2
         rgba: 4294901888
-    - name: bone_177
+    - name: Eyelid Top R Upper Chain Bone 2
       guid: 03e00c285528c214b9688c8752ec5525
-      position: {x: 15.752595, y: 0.000054723634, z: 0}
-      rotation: {x: 0, y: 0, z: -0.23080878, w: 0.9729992}
-      length: 16.661144
+      position: {x: 15.752455, y: -0.000006146078, z: 0}
+      rotation: {x: 0, y: 0, z: -0.23079096, w: 0.9730034}
+      length: 16.661066
       parentId: 16
       color:
         serializedVersion: 2
         rgba: 4294934528
-    - name: bone_176
+    - name: Eyelid Top R Upper Chain Bone 1
       guid: 031e5a95164345b4a967fe53f9859a1a
-      position: {x: 13.645198, y: -0.000016760545, z: 0}
-      rotation: {x: 0, y: 0, z: -0.29278883, w: 0.9561771}
-      length: 15.752808
+      position: {x: 13.645261, y: -0.000040710675, z: 0}
+      rotation: {x: 0, y: 0, z: -0.29279652, w: 0.9561748}
+      length: 15.752391
       parentId: 17
       color:
         serializedVersion: 2
         rgba: 4278255360
-    - name: bone_175
+    - name: Eyelid Top R Upper Chain Bone 0
       guid: 00187d767145a324fb3d2b4fff300041
-      position: {x: 3.2669678, y: 2.130127, z: 0}
-      rotation: {x: 0, y: 0, z: 0.72402835, w: 0.68977016}
-      length: 13.645167
+      position: {x: 3.2667236, y: 2.130371, z: 0}
+      rotation: {x: 0, y: 0, z: 0.72402835, w: 0.6897703}
+      length: 13.6451645
       parentId: -1
       color:
         serializedVersion: 2
@@ -8553,173 +8553,173 @@ ScriptedImporter:
       height: 40
     spriteID: bdddba95e9d73d045b0b49d1e94c75d6
     spriteBone:
-    - name: bone_159
+    - name: Eyelid Bottom R Lower Chain Bone 3
       guid: 265a82b5b3564f544918fb708a8d43e5
-      position: {x: 8.499234, y: 0.00008366095, z: 0}
-      rotation: {x: 0, y: 0, z: -0.28419316, w: 0.958767}
-      length: 10.023642
+      position: {x: 8.49908, y: 0.00011432252, z: 0}
+      rotation: {x: 0, y: 0, z: -0.2842001, w: 0.958765}
+      length: 10.023955
       parentId: 1
       color:
         serializedVersion: 2
         rgba: 4278255360
-    - name: bone_158
+    - name: Eyelid Bottom R Lower Chain Bone 2
       guid: 802c3bae579d6b0418f3c6534d1beb4f
-      position: {x: 11.2708435, y: -0.000011881915, z: 0}
-      rotation: {x: 0, y: 0, z: -0.22242185, w: 0.9749505}
-      length: 8.498948
+      position: {x: 11.27041, y: 0.00000972304, z: 0}
+      rotation: {x: 0, y: 0, z: -0.22240558, w: 0.9749543}
+      length: 8.499073
       parentId: 2
       color:
         serializedVersion: 2
         rgba: 4278223103
-    - name: bone_157
+    - name: Eyelid Bottom R Lower Chain Bone 1
       guid: 135c75b2e1b4f264fb731881dc00656b
-      position: {x: 9.939978, y: 0.00000975241, z: 0}
-      rotation: {x: 0, y: 0, z: -0.04468709, w: 0.9990011}
-      length: 11.270848
+      position: {x: 9.939999, y: 0.000009179796, z: 0}
+      rotation: {x: 0, y: 0, z: -0.04468941, w: 0.9990009}
+      length: 11.270606
       parentId: 3
       color:
         serializedVersion: 2
         rgba: 4286578943
-    - name: bone_156
+    - name: Eyelid Bottom R Lower Chain Bone 0
       guid: 91a350bdc028b9e4e99c5495c3d2aca3
-      position: {x: 62.419556, y: 33.39331, z: 0}
-      rotation: {x: 0, y: 0, z: 0.7392323, w: -0.67345065}
+      position: {x: 62.41931, y: 33.393555, z: 0}
+      rotation: {x: 0, y: 0, z: 0.7392323, w: -0.6734506}
       length: 9.939984
       parentId: -1
       color:
         serializedVersion: 2
         rgba: 4294901888
-    - name: bone_146
+    - name: Eyelid Bottom R Upper Chain Bone 0
       guid: 0b85ea8eb96b47f45abde8b43f15e82b
-      position: {x: 57.339233, y: 34.911133, z: 0}
-      rotation: {x: 0, y: 0, z: 0.88319576, w: -0.46900454}
-      length: 5.654649
+      position: {x: 57.33899, y: 34.911377, z: 0}
+      rotation: {x: 0, y: 0, z: 0.88318574, w: -0.4690235}
+      length: 5.654781
       parentId: -1
       color:
         serializedVersion: 2
         rgba: 4286578943
-    - name: bone_147
+    - name: Eyelid Bottom R Upper Chain Bone 1
       guid: caa3525b1e6af3c468fff92097dff183
-      position: {x: 5.654655, y: 0.000024403533, z: 0}
-      rotation: {x: 0, y: 0, z: -0.037564352, w: 0.9992943}
-      length: 6.0588303
+      position: {x: 5.654376, y: 0.000036733145, z: 0}
+      rotation: {x: 0, y: 0, z: -0.03757389, w: 0.99929386}
+      length: 6.0584087
       parentId: 4
       color:
         serializedVersion: 2
         rgba: 4278255615
-    - name: bone_148
+    - name: Eyelid Bottom R Upper Chain Bone 2
       guid: 37b9aa38beec821459a2c175e103bb90
-      position: {x: 6.058943, y: -0.000063158164, z: 0}
-      rotation: {x: 0, y: 0, z: -0.14563449, w: 0.9893385}
-      length: 6.11309
+      position: {x: 6.0586305, y: -0.00013685826, z: 0}
+      rotation: {x: 0, y: 0, z: -0.14566284, w: 0.98933434}
+      length: 6.113387
       parentId: 5
       color:
         serializedVersion: 2
         rgba: 4278255360
-    - name: bone_149
+    - name: Eyelid Bottom R Upper Chain Bone 3
       guid: a4ca6324cd1d0cc46a394e82fb4680fd
-      position: {x: 6.112944, y: 0.00001467784, z: 0}
-      rotation: {x: 0, y: 0, z: -0.13406765, w: 0.99097216}
-      length: 5.738521
+      position: {x: 6.11348, y: -0.00013979264, z: 0}
+      rotation: {x: 0, y: 0, z: -0.1340705, w: 0.9909718}
+      length: 5.7384386
       parentId: 6
       color:
         serializedVersion: 2
         rgba: 4294967040
-    - name: bone_150
+    - name: Eyelid Bottom R Upper Chain Bone 4
       guid: c111fbb25d2f952409a06b94dbef737f
-      position: {x: 5.738581, y: 0.00016731194, z: 0}
-      rotation: {x: 0, y: 0, z: -0.09676592, w: 0.9953072}
-      length: 6.802322
+      position: {x: 5.7384963, y: 0.00019787865, z: 0}
+      rotation: {x: 0, y: 0, z: -0.09674491, w: 0.99530923}
+      length: 6.802197
       parentId: 7
       color:
         serializedVersion: 2
         rgba: 4294901760
-    - name: bone_151
+    - name: Eyelid Bottom R Upper Chain Bone 5
       guid: 9a7eb0eca6fd2c447b8c538cd697aff2
-      position: {x: 6.802286, y: -0.00011121543, z: 0}
-      rotation: {x: 0, y: 0, z: -0.12054932, w: 0.9927073}
-      length: 6.2308435
+      position: {x: 6.8021584, y: -0.00015353359, z: 0}
+      rotation: {x: 0, y: 0, z: -0.1205708, w: 0.99270475}
+      length: 6.230741
       parentId: 8
       color:
         serializedVersion: 2
         rgba: 4294902015
-    - name: bone_152
+    - name: Eyelid Bottom R Upper Chain Bone 6
       guid: 9e9e69e510847ce4ead3bd3d25fde29c
-      position: {x: 6.230843, y: 0.00013642985, z: 0}
-      rotation: {x: 0, y: 0, z: -0.07333672, w: 0.99730724}
-      length: 6.048787
+      position: {x: 6.2307477, y: 0.000011831056, z: 0}
+      rotation: {x: 0, y: 0, z: -0.07331596, w: 0.99730885}
+      length: 6.0487843
       parentId: 9
       color:
         serializedVersion: 2
         rgba: 4278190335
-    - name: bone_153
+    - name: Eyelid Bottom R Upper Chain Bone 7
       guid: 332345a9693de6743b164d9d8e33186c
-      position: {x: 6.0487704, y: 0.00013431507, z: 0}
-      rotation: {x: 0, y: 0, z: -0.13851064, w: 0.990361}
-      length: 6.767545
+      position: {x: 6.0487328, y: 0.000116829804, z: 0}
+      rotation: {x: 0, y: 0, z: -0.13849077, w: 0.9903637}
+      length: 6.7675276
       parentId: 10
       color:
         serializedVersion: 2
         rgba: 4278255488
-    - name: bone_154
+    - name: Eyelid Bottom R Upper Chain Bone 8
       guid: 0cd4abe1db9e5f44d99ae3fa378e5744
-      position: {x: 6.767639, y: -0.00013890874, z: 0}
-      rotation: {x: 0, y: 0, z: -0.2225097, w: 0.9749305}
-      length: 6.6436205
+      position: {x: 6.7676606, y: -0.00013490993, z: 0}
+      rotation: {x: 0, y: 0, z: -0.22254431, w: 0.97492266}
+      length: 6.64348
       parentId: 11
       color:
         serializedVersion: 2
         rgba: 4286643968
-    - name: bone_155
+    - name: Eyelid Bottom R Upper Chain Bone 9
       guid: 7a509a4e8b5529c4699582a16ad5be49
-      position: {x: 6.6434464, y: -0.00010924481, z: 0}
-      rotation: {x: 0, y: 0, z: 0.25910372, w: -0.9658495}
-      length: 6.815881
+      position: {x: 6.64361, y: 0.00017853222, z: 0}
+      rotation: {x: 0, y: 0, z: 0.2590893, w: -0.96585333}
+      length: 6.815878
       parentId: 12
       color:
         serializedVersion: 2
         rgba: 4294934528
-    - name: bone_164
+    - name: Eyelid Bottom R Lower Chain Bone 8
       guid: 1904ad31d8604384eba0b563c7f02d05
-      position: {x: 13.731793, y: 0.000024051478, z: 0}
-      rotation: {x: 0, y: 0, z: 0.103393115, w: -0.99464065}
-      length: 9.3171625
+      position: {x: 13.732476, y: 0.00019868981, z: 0}
+      rotation: {x: 0, y: 0, z: 0.10340754, w: -0.99463904}
+      length: 9.31716
       parentId: 15
       color:
         serializedVersion: 2
         rgba: 4278255615
-    - name: bone_163
+    - name: Eyelid Bottom R Lower Chain Bone 7
       guid: a6ef54ada460ade47b1d4bdcdaf5b4dc
-      position: {x: 12.602309, y: -0.000009062813, z: 0}
-      rotation: {x: 0, y: 0, z: -0.10569893, w: 0.99439824}
-      length: 13.732076
+      position: {x: 12.601932, y: -0.00047782934, z: 0}
+      rotation: {x: 0, y: 0, z: -0.10569465, w: 0.9943987}
+      length: 13.732601
       parentId: 16
       color:
         serializedVersion: 2
         rgba: 4278190335
-    - name: bone_162
+    - name: Eyelid Bottom R Lower Chain Bone 6
       guid: b326f9b8a8fcfd341bbe2232b7f52122
-      position: {x: 12.0859165, y: -0.00003404427, z: 0}
-      rotation: {x: 0, y: 0, z: -0.30900866, w: 0.9510593}
-      length: 12.602228
+      position: {x: 12.085945, y: 0.00024962507, z: 0}
+      rotation: {x: 0, y: 0, z: -0.30900916, w: 0.9510591}
+      length: 12.602134
       parentId: 17
       color:
         serializedVersion: 2
         rgba: 4294902015
-    - name: bone_161
+    - name: Eyelid Bottom R Lower Chain Bone 5
       guid: 1afe7ffb775d2a54d9894535a1811feb
-      position: {x: 13.534992, y: -0.000028939081, z: 0}
-      rotation: {x: 0, y: 0, z: -0.07378794, w: 0.997274}
-      length: 12.085922
+      position: {x: 13.534756, y: -0.0001575973, z: 0}
+      rotation: {x: 0, y: 0, z: -0.07377692, w: 0.9972748}
+      length: 12.085996
       parentId: 18
       color:
         serializedVersion: 2
         rgba: 4294901760
-    - name: bone_160
+    - name: Eyelid Bottom R Lower Chain Bone 4
       guid: 3c2abdec22cfab648993c2c9f9caea05
-      position: {x: 10.023459, y: -0.00020019228, z: 0}
-      rotation: {x: 0, y: 0, z: -0.19982438, w: 0.9798317}
-      length: 13.53505
+      position: {x: 10.024367, y: 0.00026361394, z: 0}
+      rotation: {x: 0, y: 0, z: -0.19983172, w: 0.9798302}
+      length: 13.534802
       parentId: 0
       color:
         serializedVersion: 2
@@ -9269,11 +9269,11 @@ ScriptedImporter:
       height: 12
     spriteID: 8ab466fca69476240b527c927632db28
     spriteBone:
-    - name: bone_4
+    - name: Head Bone
       guid: 1d4a1eae30c07854997fecf50a0fd025
-      position: {x: -55.06372, y: -198.7522, z: 0}
-      rotation: {x: 0, y: 0, z: 0.70748997, w: 0.70672345}
-      length: 419.94766
+      position: {x: -55.063965, y: -198.75195, z: 0}
+      rotation: {x: 0, y: 0, z: 0.70748997, w: 0.7067235}
+      length: 419.9477
       parentId: -1
       color:
         serializedVersion: 2
@@ -9441,11 +9441,11 @@ ScriptedImporter:
       height: 25
     spriteID: cebfd37692d921c4daa66ccc4aacd598
     spriteBone:
-    - name: bone_4
+    - name: Head Bone
       guid: 1d4a1eae30c07854997fecf50a0fd025
-      position: {x: -49.06372, y: -192.7522, z: 0}
-      rotation: {x: 0, y: 0, z: 0.70748997, w: 0.70672345}
-      length: 419.94766
+      position: {x: -49.063965, y: -192.75195, z: 0}
+      rotation: {x: 0, y: 0, z: 0.70748997, w: 0.7067235}
+      length: 419.9477
       parentId: -1
       color:
         serializedVersion: 2
@@ -9701,11 +9701,11 @@ ScriptedImporter:
       height: 45
     spriteID: 44449d7bace605d488aff2d05d260e61
     spriteBone:
-    - name: bone_4
+    - name: Head Bone
       guid: 1d4a1eae30c07854997fecf50a0fd025
-      position: {x: -33.06372, y: -182.7522, z: 0}
-      rotation: {x: 0, y: 0, z: 0.70748997, w: 0.70672345}
-      length: 419.94766
+      position: {x: -33.063965, y: -182.75195, z: 0}
+      rotation: {x: 0, y: 0, z: 0.70748997, w: 0.7067235}
+      length: 419.9477
       parentId: -1
       color:
         serializedVersion: 2
@@ -10028,11 +10028,11 @@ ScriptedImporter:
       height: 23
     spriteID: 88ad7a5b8ba864e41adc470f79eaae51
     spriteBone:
-    - name: bone_4
+    - name: Head Bone
       guid: 1d4a1eae30c07854997fecf50a0fd025
-      position: {x: -31.06372, y: -193.7522, z: 0}
-      rotation: {x: 0, y: 0, z: 0.70748997, w: 0.70672345}
-      length: 419.94766
+      position: {x: -31.063965, y: -193.75195, z: 0}
+      rotation: {x: 0, y: 0, z: 0.70748997, w: 0.7067235}
+      length: 419.9477
       parentId: -1
       color:
         serializedVersion: 2
@@ -10497,137 +10497,137 @@ ScriptedImporter:
       height: 39
     spriteID: 32edf0b3ca25c2a4f834bfd80a837425
     spriteBone:
-    - name: bone_135
+    - name: Eyelid Top L Lower Chain Bone 7
       guid: fa610768ecd8f2d4c979b970adb5d0bf
-      position: {x: 6.3911133, y: -0.00009673403, z: 0}
-      rotation: {x: 0, y: 0, z: -0.07880936, w: 0.99688977}
-      length: 5.738331
+      position: {x: 6.3911085, y: -0.00017052214, z: 0}
+      rotation: {x: 0, y: 0, z: -0.07881695, w: 0.9968892}
+      length: 5.7383313
       parentId: 1
       color:
         serializedVersion: 2
         rgba: 4278190335
-    - name: bone_134
+    - name: Eyelid Top L Lower Chain Bone 6
       guid: 7554e87e026e829499414e055adcc179
-      position: {x: 7.073664, y: 0.00000517023, z: 0}
-      rotation: {x: 0, y: 0, z: -0.18586801, w: 0.9825747}
-      length: 6.391182
+      position: {x: 7.073698, y: 0.00031402704, z: 0}
+      rotation: {x: 0, y: 0, z: -0.18585947, w: 0.9825763}
+      length: 6.390926
       parentId: 12
       color:
         serializedVersion: 2
         rgba: 4294902015
-    - name: bone_141
+    - name: Eyelid Top L Upper Chain Bone 5
       guid: dc1be0b2fca594b4ca63ef9bd19c94d8
-      position: {x: 13.202086, y: 0.00018341547, z: 0}
-      rotation: {x: 0, y: 0, z: -0.187667, w: 0.9822327}
-      length: 7.3754134
+      position: {x: 13.202198, y: 0.00006446944, z: 0}
+      rotation: {x: 0, y: 0, z: -0.18766011, w: 0.98223406}
+      length: 7.375507
       parentId: 3
       color:
         serializedVersion: 2
         rgba: 4278223103
-    - name: bone_140
+    - name: Eyelid Top L Upper Chain Bone 4
       guid: dbc71e3185a7a1f469c152e1f034c8ca
-      position: {x: 12.577599, y: -0.000082624836, z: 0}
-      rotation: {x: 0, y: 0, z: -0.19615361, w: 0.98057324}
-      length: 13.202229
+      position: {x: 12.577661, y: 0.00021699334, z: 0}
+      rotation: {x: 0, y: 0, z: -0.19615532, w: 0.9805729}
+      length: 13.202115
       parentId: 4
       color:
         serializedVersion: 2
         rgba: 4286578943
-    - name: bone_139
+    - name: Eyelid Top L Upper Chain Bone 3
       guid: 4e73b30eda9858b49a8a334a6efe8ed5
-      position: {x: 12.709642, y: 0.00019326576, z: 0}
-      rotation: {x: 0, y: 0, z: -0.18299288, w: 0.98311424}
-      length: 12.577632
+      position: {x: 12.709862, y: 0.00012239302, z: 0}
+      rotation: {x: 0, y: 0, z: -0.18299522, w: 0.9831138}
+      length: 12.577571
       parentId: 5
       color:
         serializedVersion: 2
         rgba: 4294901888
-    - name: bone_138
+    - name: Eyelid Top L Upper Chain Bone 2
       guid: bf01575bd2e191d409971467ac2b08e3
-      position: {x: 9.390448, y: 0.00014674147, z: 0}
-      rotation: {x: 0, y: 0, z: -0.071106546, w: 0.99746877}
-      length: 12.709463
+      position: {x: 9.390286, y: -0.0000616175, z: 0}
+      rotation: {x: 0, y: 0, z: -0.07110386, w: 0.9974689}
+      length: 12.709899
       parentId: 6
       color:
         serializedVersion: 2
         rgba: 4294934528
-    - name: bone_137
+    - name: Eyelid Top L Upper Chain Bone 1
       guid: e87b4d53205a279488daa03f52dcb6bd
-      position: {x: 8.662962, y: -0.000033830307, z: 0}
-      rotation: {x: 0, y: 0, z: -0.25489113, w: 0.9669698}
-      length: 9.390208
+      position: {x: 8.662603, y: -0.000106933825, z: 0}
+      rotation: {x: 0, y: 0, z: -0.25489086, w: 0.9669699}
+      length: 9.390207
       parentId: 7
       color:
         serializedVersion: 2
         rgba: 4286643968
-    - name: bone_136
+    - name: Eyelid Top L Upper Chain Bone 0
       guid: 65e8236a4ef4a84498cae74ba0bcf6d8
-      position: {x: 4.6000366, y: 13.394043, z: 0}
-      rotation: {x: 0, y: 0, z: 0.5178363, w: 0.8554798}
-      length: 8.6628895
+      position: {x: 4.5997925, y: 13.394287, z: 0}
+      rotation: {x: 0, y: 0, z: 0.51783586, w: 0.85547996}
+      length: 8.662617
       parentId: -1
       color:
         serializedVersion: 2
         rgba: 4278255615
-    - name: bone_129
+    - name: Eyelid Top L Lower Chain Bone 1
       guid: e19374e578c1f7846875ce5198215530
-      position: {x: 7.072058, y: -0.00012720305, z: 0}
-      rotation: {x: 0, y: 0, z: -0.121249706, w: 0.9926221}
-      length: 7.7630386
+      position: {x: 7.0714755, y: -0.000033733693, z: 0}
+      rotation: {x: 0, y: 0, z: -0.12126468, w: 0.9926202}
+      length: 7.7629404
       parentId: 14
       color:
         serializedVersion: 2
         rgba: 4286578943
-    - name: bone_130
+    - name: Eyelid Top L Lower Chain Bone 2
       guid: 76f5a4ece628f5847942cdd17b6c43ee
-      position: {x: 7.7627378, y: -0.000033904173, z: 0}
-      rotation: {x: 0, y: 0, z: -0.10683848, w: 0.9942764}
-      length: 7.9679604
+      position: {x: 7.7629614, y: 0.00012785966, z: 0}
+      rotation: {x: 0, y: 0, z: -0.10684166, w: 0.9942761}
+      length: 7.9679046
       parentId: 8
       color:
         serializedVersion: 2
         rgba: 4278223103
-    - name: bone_131
+    - name: Eyelid Top L Lower Chain Bone 3
       guid: fc5efd7a5266a0d42aec5caa1ba65018
-      position: {x: 7.968064, y: 0.000058152225, z: 0}
-      rotation: {x: 0, y: 0, z: -0.1632643, w: 0.98658234}
-      length: 9.066056
+      position: {x: 7.9678073, y: -0.000049101927, z: 0}
+      rotation: {x: 0, y: 0, z: -0.16326633, w: 0.98658204}
+      length: 9.066177
       parentId: 9
       color:
         serializedVersion: 2
         rgba: 4278255360
-    - name: bone_132
+    - name: Eyelid Top L Lower Chain Bone 4
       guid: 269e37176df928d47869c4b2cdf3be0c
-      position: {x: 9.066101, y: 0.0001137915, z: 0}
-      rotation: {x: 0, y: 0, z: -0.0794956, w: 0.99683523}
-      length: 10.7939625
+      position: {x: 9.066192, y: 0.00005246852, z: 0}
+      rotation: {x: 0, y: 0, z: -0.0794836, w: 0.9968362}
+      length: 10.794064
       parentId: 10
       color:
         serializedVersion: 2
         rgba: 4294967040
-    - name: bone_133
+    - name: Eyelid Top L Lower Chain Bone 5
       guid: 9afdbf6a7eb95bc4ca8499805f2d723c
-      position: {x: 10.794012, y: -0.00020926796, z: 0}
-      rotation: {x: 0, y: 0, z: -0.15718195, w: 0.9875697}
-      length: 7.073807
+      position: {x: 10.794044, y: -0.000022678265, z: 0}
+      rotation: {x: 0, y: 0, z: -0.15719482, w: 0.9875676}
+      length: 7.0737514
       parentId: 11
       color:
         serializedVersion: 2
         rgba: 4294901760
-    - name: bone_142
+    - name: Eyelid Top L Upper Chain Bone 6
       guid: de567365ffcf87c46af298aaa38a4164
-      position: {x: 7.375896, y: -0.00035628112, z: 0}
-      rotation: {x: 0, y: 0, z: -0.23671421, w: 0.9715793}
+      position: {x: 7.375618, y: -0.00040091376, z: 0}
+      rotation: {x: 0, y: 0, z: -0.23671968, w: 0.971578}
       length: 9.976624
       parentId: 2
       color:
         serializedVersion: 2
         rgba: 4278255488
-    - name: bone_128
+    - name: Eyelid Top L Lower Chain Bone 0
       guid: b1ab0cc7da4efab46bb9d0efd80b401d
-      position: {x: 9.621094, y: 8.086426, z: 0}
-      rotation: {x: 0, y: 0, z: 0.418885, w: 0.90803933}
-      length: 7.071695
+      position: {x: 9.620911, y: 8.08667, z: 0}
+      rotation: {x: 0, y: 0, z: 0.4189031, w: 0.9080309}
+      length: 7.071457
       parentId: -1
       color:
         serializedVersion: 2
@@ -12118,191 +12118,191 @@ ScriptedImporter:
       height: 40
     spriteID: b96b4e1180c83d04d974861b70973f43
     spriteBone:
-    - name: bone_120
+    - name: Eyelid Bottom L Lower Chain Bone 4
       guid: ccfc7b82a6c9ca24ea7097e43fc3c3ba
-      position: {x: 13.369583, y: -0.00011439858, z: 0}
-      rotation: {x: 0, y: 0, z: 0.12236799, w: 0.99248487}
-      length: 10.246981
+      position: {x: 13.369608, y: -0.00005818796, z: 0}
+      rotation: {x: 0, y: 0, z: 0.12235873, w: 0.992486}
+      length: 10.246982
       parentId: 20
       color:
         serializedVersion: 2
         rgba: 4278255360
-    - name: bone_121
+    - name: Eyelid Bottom L Lower Chain Bone 5
       guid: 1843ec7fbc5bee145936474f076a633c
-      position: {x: 10.246931, y: -0.000027851704, z: 0}
-      rotation: {x: 0, y: 0, z: 0.15213971, w: 0.988359}
-      length: 9.874501
+      position: {x: 10.247009, y: 0.00011909379, z: 0}
+      rotation: {x: 0, y: 0, z: 0.15214556, w: 0.9883581}
+      length: 9.874289
       parentId: 0
       color:
         serializedVersion: 2
         rgba: 4294967040
-    - name: bone_122
+    - name: Eyelid Bottom L Lower Chain Bone 6
       guid: 696bb738027d1d74eb5ea88eb4e106d2
-      position: {x: 9.874572, y: 0.00006595149, z: 0}
-      rotation: {x: 0, y: 0, z: 0.30777127, w: 0.9514604}
-      length: 8.541362
+      position: {x: 9.874378, y: 0.000020984451, z: 0}
+      rotation: {x: 0, y: 0, z: 0.3077774, w: 0.9514584}
+      length: 8.541805
       parentId: 1
       color:
         serializedVersion: 2
         rgba: 4294901760
-    - name: bone_123
+    - name: Eyelid Bottom L Lower Chain Bone 7
       guid: 4e760117d24a24f44ab83ce9495fc0fc
-      position: {x: 8.54113, y: 0.00010152044, z: 0}
-      rotation: {x: 0, y: 0, z: -0.06522057, w: 0.9978709}
-      length: 7.8242517
+      position: {x: 8.541524, y: 0.000042834625, z: 0}
+      rotation: {x: 0, y: 0, z: -0.06522216, w: 0.99787074}
+      length: 7.824729
       parentId: 2
       color:
         serializedVersion: 2
         rgba: 4294902015
-    - name: bone_145
+    - name: Eyelid Bottom L Lower Chain Bone 8
       guid: 5f10b1b8215448041b774bb37f251d28
-      position: {x: 7.824251, y: 0.00016995873, z: 0}
-      rotation: {x: 0, y: 0, z: 0.10954032, w: 0.9939824}
-      length: 10.44632
+      position: {x: 7.8247924, y: -0.000157691, z: 0}
+      rotation: {x: 0, y: 0, z: 0.10952943, w: 0.9939836}
+      length: 10.446319
       parentId: 3
       color:
         serializedVersion: 2
         rgba: 4294902015
-    - name: bone_144
+    - name: Eyelid Bottom L Upper Chain Bone 11
       guid: 01ddfe66f56cb3449be674050779770a
-      position: {x: 6.77487, y: 0.00005150497, z: 0}
-      rotation: {x: 0, y: 0, z: -0.33549318, w: 0.9420427}
-      length: 4.8256464
+      position: {x: 6.7745824, y: 0.000074871015, z: 0}
+      rotation: {x: 0, y: 0, z: -0.33549368, w: 0.94204247}
+      length: 4.825648
       parentId: 6
       color:
         serializedVersion: 2
         rgba: 4294901760
-    - name: bone_143
+    - name: Eyelid Bottom L Upper Chain Bone 10
       guid: 7650e1c27dd4a6d4fb41903c0c0d7405
-      position: {x: 3.5384223, y: -0.00005219594, z: 0}
-      rotation: {x: 0, y: 0, z: 0.2795712, w: 0.960125}
-      length: 6.7750015
+      position: {x: 3.538888, y: 0.000016307262, z: 0}
+      rotation: {x: 0, y: 0, z: 0.2795507, w: 0.96013093}
+      length: 6.7750025
       parentId: 7
       color:
         serializedVersion: 2
         rgba: 4294967040
-    - name: bone_127
+    - name: Eyelid Bottom L Upper Chain Bone 9
       guid: e4ccc7bcc8191774abd01c09b74b9bbf
-      position: {x: 3.9395244, y: -0.00010656633, z: 0}
-      rotation: {x: 0, y: 0, z: 0.0011053851, w: 0.99999946}
-      length: 3.5384195
+      position: {x: 3.9387486, y: 0.000164989, z: 0}
+      rotation: {x: 0, y: 0, z: 0.001158112, w: 0.9999994}
+      length: 3.5388587
       parentId: 9
       color:
         serializedVersion: 2
         rgba: 4294934528
-    - name: bone_114
+    - name: Eyelid Bottom L Upper Chain Bone 7
       guid: 5d60f6bc66105c64a9cfb391bb6cd3a9
-      position: {x: 3.9841816, y: -0.0001502938, z: 0}
-      rotation: {x: 0, y: 0, z: 0.027128192, w: 0.99963194}
-      length: 4.3116746
+      position: {x: 3.9846063, y: 0.00007269462, z: 0}
+      rotation: {x: 0, y: 0, z: 0.027146477, w: 0.9996315}
+      length: 4.311676
       parentId: 10
       color:
         serializedVersion: 2
         rgba: 4278255488
-    - name: bone_115
+    - name: Eyelid Bottom L Upper Chain Bone 8
       guid: 2b3b6f625df28b841b89908b9018a3be
-      position: {x: 4.3115554, y: 0.000069146496, z: 0}
-      rotation: {x: 0, y: 0, z: 0.17219129, w: 0.9850635}
-      length: 3.939295
+      position: {x: 4.3116226, y: -0.000074419426, z: 0}
+      rotation: {x: 0, y: 0, z: 0.17216082, w: 0.98506886}
+      length: 3.9388554
       parentId: 8
       color:
         serializedVersion: 2
         rgba: 4286643968
-    - name: bone_113
+    - name: Eyelid Bottom L Upper Chain Bone 6
       guid: ddde3e6e967f3534a83e92672163024d
-      position: {x: 6.736811, y: 0.000000047200956, z: 0}
-      rotation: {x: 0, y: 0, z: 0.14296861, w: 0.9897272}
-      length: 3.9840486
+      position: {x: 6.7369127, y: 0.00009683684, z: 0}
+      rotation: {x: 0, y: 0, z: 0.14296803, w: 0.9897273}
+      length: 3.9843845
       parentId: 11
       color:
         serializedVersion: 2
         rgba: 4278223103
-    - name: bone_126
+    - name: Eyelid Bottom L Upper Chain Bone 5
       guid: d652db2100f95cf409e906f903f999c8
-      position: {x: 6.6834507, y: -0.00006332947, z: 0}
-      rotation: {x: 0, y: 0, z: 0.120590866, w: 0.9927023}
-      length: 6.7368655
+      position: {x: 6.6834803, y: -0.000087387176, z: 0}
+      rotation: {x: 0, y: 0, z: 0.12060964, w: 0.9927}
+      length: 6.736837
       parentId: 12
       color:
         serializedVersion: 2
         rgba: 4286643968
-    - name: bone_112
+    - name: Eyelid Bottom L Upper Chain Bone 4
       guid: acc6d44f778654e4497143da2ae08ca7
-      position: {x: 4.864375, y: -0.000016216047, z: 0}
-      rotation: {x: 0, y: 0, z: 0.10588176, w: 0.9943788}
-      length: 6.6834764
+      position: {x: 4.8639665, y: 0.00024792005, z: 0}
+      rotation: {x: 0, y: 0, z: 0.10577234, w: 0.99439037}
+      length: 6.683473
       parentId: 13
       color:
         serializedVersion: 2
         rgba: 4294902015
-    - name: bone_125
+    - name: Eyelid Bottom L Upper Chain Bone 3
       guid: c7b346c2382ea0a49882bd7c49177a6e
-      position: {x: 5.20422, y: -0.00006245032, z: 0}
-      rotation: {x: 0, y: 0, z: 0.035521492, w: 0.9993689}
-      length: 4.864313
+      position: {x: 5.2044115, y: -0.00033011613, z: 0}
+      rotation: {x: 0, y: 0, z: 0.035609316, w: 0.9993658}
+      length: 4.864136
       parentId: 14
       color:
         serializedVersion: 2
         rgba: 4278255488
-    - name: bone_111
+    - name: Eyelid Bottom L Upper Chain Bone 2
       guid: 687fe076dfea16c469236355cf77f799
-      position: {x: 5.806227, y: -0.00011861299, z: 0}
-      rotation: {x: 0, y: 0, z: 0.14164817, w: 0.9899171}
-      length: 5.2040205
+      position: {x: 5.806462, y: -0.00018446188, z: 0}
+      rotation: {x: 0, y: 0, z: 0.14166266, w: 0.989915}
+      length: 5.204284
       parentId: 15
       color:
         serializedVersion: 2
         rgba: 4294901760
-    - name: bone_124
+    - name: Eyelid Bottom L Upper Chain Bone 1
       guid: 0ccd33605b8711f40a03c72e1c12d5ac
-      position: {x: 8.730869, y: 0.00006221525, z: 0}
-      rotation: {x: 0, y: 0, z: 0.077843145, w: 0.9969657}
-      length: 5.806228
+      position: {x: 8.730555, y: 0.00016695789, z: 0}
+      rotation: {x: 0, y: 0, z: 0.07784733, w: 0.9969653}
+      length: 5.8065844
       parentId: 16
       color:
         serializedVersion: 2
         rgba: 4278190335
-    - name: bone_110
+    - name: Eyelid Bottom L Upper Chain Bone 0
       guid: 6afd130d912570c4fa0110aac5c95354
-      position: {x: 9.716736, y: 32.977783, z: 0}
-      rotation: {x: 0, y: 0, z: -0.40702057, w: 0.91341895}
-      length: 8.730888
+      position: {x: 9.716492, y: 32.978027, z: 0}
+      rotation: {x: 0, y: 0, z: -0.4070513, w: 0.9134053}
+      length: 8.730359
       parentId: -1
       color:
         serializedVersion: 2
         rgba: 4294967040
-    - name: bone_116
+    - name: Eyelid Bottom L Lower Chain Bone 0
       guid: 6a618aa2b9868c14aab01092ab7e8462
-      position: {x: 4.05011, y: 28.962402, z: 0}
-      rotation: {x: 0, y: 0, z: -0.67262304, w: 0.7399854}
-      length: 15.758272
+      position: {x: 4.0498657, y: 28.962646, z: 0}
+      rotation: {x: 0, y: 0, z: -0.67262566, w: 0.739983}
+      length: 15.75826
       parentId: -1
       color:
         serializedVersion: 2
         rgba: 4294934528
-    - name: bone_117
+    - name: Eyelid Bottom L Lower Chain Bone 1
       guid: 8f61cf14e01984543b8a4e0b07a7b27b
-      position: {x: 15.758338, y: 0.000023224437, z: 0}
-      rotation: {x: 0, y: 0, z: 0.30265966, w: 0.9530987}
-      length: 12.0639105
+      position: {x: 15.758193, y: 0.000015995192, z: 0}
+      rotation: {x: 0, y: 0, z: 0.30265388, w: 0.9531005}
+      length: 12.063712
       parentId: 17
       color:
         serializedVersion: 2
         rgba: 4294901888
-    - name: bone_118
+    - name: Eyelid Bottom L Lower Chain Bone 2
       guid: 5442a6b33b882b44f959813fb0689371
-      position: {x: 12.06373, y: -0.00001195693, z: 0}
-      rotation: {x: 0, y: 0, z: 0.31289384, w: 0.9497881}
-      length: 8.410352
+      position: {x: 12.063724, y: -0.0001999359, z: 0}
+      rotation: {x: 0, y: 0, z: 0.31291574, w: 0.94978094}
+      length: 8.41024
       parentId: 18
       color:
         serializedVersion: 2
         rgba: 4286578943
-    - name: bone_119
+    - name: Eyelid Bottom L Lower Chain Bone 3
       guid: e239aa07c9a34554cbd4a77147ce07fe
-      position: {x: 8.410324, y: -0.000055878743, z: 0}
-      rotation: {x: 0, y: 0, z: 0.08592395, w: 0.9963018}
-      length: 13.36938
+      position: {x: 8.410228, y: 0.00025392222, z: 0}
+      rotation: {x: 0, y: 0, z: 0.085919954, w: 0.9963021}
+      length: 13.369555
       parentId: 19
       color:
         serializedVersion: 2
@@ -12911,11 +12911,11 @@ ScriptedImporter:
       height: 12
     spriteID: bdda1680c2389c04db5bd8279239c689
     spriteBone:
-    - name: bone_4
+    - name: Head Bone
       guid: 1d4a1eae30c07854997fecf50a0fd025
-      position: {x: 72.93628, y: -198.7522, z: 0}
-      rotation: {x: 0, y: 0, z: 0.70748997, w: 0.70672345}
-      length: 419.94766
+      position: {x: 72.936035, y: -198.75195, z: 0}
+      rotation: {x: 0, y: 0, z: 0.70748997, w: 0.7067235}
+      length: 419.9477
       parentId: -1
       color:
         serializedVersion: 2
@@ -13114,11 +13114,11 @@ ScriptedImporter:
       height: 25
     spriteID: 88ec727f785a0b04992a1c8a15222ef8
     spriteBone:
-    - name: bone_4
+    - name: Head Bone
       guid: 1d4a1eae30c07854997fecf50a0fd025
-      position: {x: 79.93628, y: -192.7522, z: 0}
-      rotation: {x: 0, y: 0, z: 0.70748997, w: 0.70672345}
-      length: 419.94766
+      position: {x: 79.936035, y: -192.75195, z: 0}
+      rotation: {x: 0, y: 0, z: 0.70748997, w: 0.7067235}
+      length: 419.9477
       parentId: -1
       color:
         serializedVersion: 2
@@ -13374,11 +13374,11 @@ ScriptedImporter:
       height: 45
     spriteID: 5b07607a68083ca4ca48bd01381d9509
     spriteBone:
-    - name: bone_4
+    - name: Head Bone
       guid: 1d4a1eae30c07854997fecf50a0fd025
-      position: {x: 97.93628, y: -182.7522, z: 0}
-      rotation: {x: 0, y: 0, z: 0.70748997, w: 0.70672345}
-      length: 419.94766
+      position: {x: 97.936035, y: -182.75195, z: 0}
+      rotation: {x: 0, y: 0, z: 0.70748997, w: 0.7067235}
+      length: 419.9477
       parentId: -1
       color:
         serializedVersion: 2
@@ -13731,11 +13731,11 @@ ScriptedImporter:
       height: 23
     spriteID: 11010e31732c67344be524eb7da90d71
     spriteBone:
-    - name: bone_4
+    - name: Head Bone
       guid: 1d4a1eae30c07854997fecf50a0fd025
-      position: {x: 96.93628, y: -193.7522, z: 0}
-      rotation: {x: 0, y: 0, z: 0.70748997, w: 0.70672345}
-      length: 419.94766
+      position: {x: 96.936035, y: -193.75195, z: 0}
+      rotation: {x: 0, y: 0, z: 0.70748997, w: 0.7067235}
+      length: 419.9477
       parentId: -1
       color:
         serializedVersion: 2
@@ -14074,11 +14074,11 @@ ScriptedImporter:
       height: 289
     spriteID: 7787d9bc020713d448d80fbe5f2d6079
     spriteBone:
-    - name: bone_4
+    - name: Head Bone
       guid: 1d4a1eae30c07854997fecf50a0fd025
-      position: {x: 189.93628, y: -165.7522, z: 0}
-      rotation: {x: 0, y: 0, z: 0.70748997, w: 0.70672345}
-      length: 419.94766
+      position: {x: 189.93604, y: -165.75195, z: 0}
+      rotation: {x: 0, y: 0, z: 0.70748997, w: 0.7067235}
+      length: 419.9477
       parentId: -1
       color:
         serializedVersion: 2
@@ -14949,73 +14949,73 @@ ScriptedImporter:
       height: 63
     spriteID: dcb112a45677af74ca9ed929a6526f97
     spriteBone:
-    - name: bone_185
+    - name: Mouth Base R Vertical Bone 0
       guid: 5ab7ba468bcb5be4182856482c959a8b
-      position: {x: 143.00183, y: 20.577637, z: 0}
-      rotation: {x: 0, y: 0, z: 0.5150949, w: 0.85713315}
-      length: 18.996859
+      position: {x: 143.00159, y: 20.57788, z: 0}
+      rotation: {x: 0, y: 0, z: 0.51509225, w: 0.8571347}
+      length: 18.996641
       parentId: -1
       color:
         serializedVersion: 2
         rgba: 4278190335
-    - name: bone_186
+    - name: Mouth Base R Vertical Bone 1
       guid: da176222c75e2f046a13aed06138de5d
-      position: {x: 18.996962, y: -0.00003151236, z: 0}
-      rotation: {x: 0, y: 0, z: 0.3694075, w: 0.92926747}
-      length: 20.531027
+      position: {x: 18.996777, y: -0.000013652207, z: 0}
+      rotation: {x: 0, y: 0, z: 0.36941037, w: 0.92926633}
+      length: 20.531025
       parentId: 0
       color:
         serializedVersion: 2
         rgba: 4278255615
-    - name: bone_189
+    - name: Mouth Base Upper R Horizontal Bone
       guid: ee042971291daf54aa291fe3f4e7c20a
-      position: {x: 98.42078, y: 45.81494, z: 0}
+      position: {x: 98.42053, y: 45.815186, z: 0}
       rotation: {x: 0, y: 0, z: 0.109418824, w: 0.9939958}
       length: 27.095078
       parentId: -1
       color:
         serializedVersion: 2
         rgba: 4294901888
-    - name: bone_190
+    - name: Mouth Base Upper L Horizontal Bone
       guid: 730a2d7e2ec4e3c4db0135f2f3551e9c
-      position: {x: 86.02881, y: 45.21045, z: 0}
-      rotation: {x: 0, y: 0, z: 0.9928631, w: 0.11926002}
-      length: 24.88739
+      position: {x: 86.028564, y: 45.210693, z: 0}
+      rotation: {x: 0, y: 0, z: 0.99286306, w: 0.11926002}
+      length: 24.887394
       parentId: -1
       color:
         serializedVersion: 2
         rgba: 4286578943
-    - name: bone_184
+    - name: Mouth Base L Vertical Bone 1
       guid: 9649f0db60aa02b499beba6c4892317c
-      position: {x: 22.28465, y: -0.00006616648, z: 0}
-      rotation: {x: 0, y: 0, z: -0.31011525, w: 0.950699}
-      length: 19.57356
+      position: {x: 22.28472, y: -0.000014844234, z: 0}
+      rotation: {x: 0, y: 0, z: -0.31012002, w: 0.9506974}
+      length: 19.573565
       parentId: 5
       color:
         serializedVersion: 2
         rgba: 4294902015
-    - name: bone_183
+    - name: Mouth Base L Vertical Bone 0
       guid: 3f2c47fabbd3a2843833c21f420fc814
-      position: {x: 38.72766, y: 17.706299, z: 0}
-      rotation: {x: 0, y: 0, z: 0.832629, w: 0.5538311}
-      length: 22.28464
+      position: {x: 38.727417, y: 17.706543, z: 0}
+      rotation: {x: 0, y: 0, z: 0.8326318, w: 0.553827}
+      length: 22.284727
       parentId: -1
       color:
         serializedVersion: 2
         rgba: 4294901760
-    - name: bone_188
+    - name: Mouth Base Lower L Horizontal Bone
       guid: 3632a3056df3cce4b85162dfdca36e98
-      position: {x: 86.6333, y: 29.493896, z: 0}
-      rotation: {x: 0, y: 0, z: 0.99849886, w: 0.054773036}
-      length: 31.77512
+      position: {x: 86.63306, y: 29.49414, z: 0}
+      rotation: {x: 0, y: 0, z: 0.99849886, w: 0.054772954}
+      length: 31.775118
       parentId: -1
       color:
         serializedVersion: 2
         rgba: 4294967040
-    - name: bone_187
+    - name: Mouth Base Lower R Horizontal Bone
       guid: 5a7e13b9f38859249881069bc1ad32a1
-      position: {x: 96.6073, y: 29.34253, z: 0}
-      rotation: {x: 0, y: 0, z: 0.040377166, w: 0.99918455}
+      position: {x: 96.607056, y: 29.342773, z: 0}
+      rotation: {x: 0, y: 0, z: 0.040377125, w: 0.9991845}
       length: 31.839417
       parentId: -1
       color:
@@ -16149,11 +16149,11 @@ ScriptedImporter:
       height: 403
     spriteID: b8c2f5fc40f7e95439432e998d61d935
     spriteBone:
-    - name: bone_4
+    - name: Head Bone
       guid: 1d4a1eae30c07854997fecf50a0fd025
-      position: {x: 150.93628, y: 9.247803, z: 0}
-      rotation: {x: 0, y: 0, z: 0.70748997, w: 0.70672345}
-      length: 419.94766
+      position: {x: 150.93604, y: 9.248047, z: 0}
+      rotation: {x: 0, y: 0, z: 0.70748997, w: 0.7067235}
+      length: 419.9477
       parentId: -1
       color:
         serializedVersion: 2
@@ -16866,11 +16866,11 @@ ScriptedImporter:
       height: 120
     spriteID: df0679f70eb2da8469bb40427c2919f5
     spriteBone:
-    - name: bone_4
+    - name: Head Bone
       guid: 1d4a1eae30c07854997fecf50a0fd025
-      position: {x: -127.06372, y: -125.7522, z: 0}
-      rotation: {x: 0, y: 0, z: 0.70748997, w: 0.70672345}
-      length: 419.94766
+      position: {x: -127.063965, y: -125.75195, z: 0}
+      rotation: {x: 0, y: 0, z: 0.70748997, w: 0.7067235}
+      length: 419.9477
       parentId: -1
       color:
         serializedVersion: 2
@@ -17578,11 +17578,11 @@ ScriptedImporter:
       height: 120
     spriteID: 9b409aead00dfc241bd70c6fdd4734fa
     spriteBone:
-    - name: bone_4
+    - name: Head Bone
       guid: 1d4a1eae30c07854997fecf50a0fd025
-      position: {x: 167.93628, y: -125.7522, z: 0}
-      rotation: {x: 0, y: 0, z: 0.70748997, w: 0.70672345}
-      length: 419.94766
+      position: {x: 167.93604, y: -125.75195, z: 0}
+      rotation: {x: 0, y: 0, z: 0.70748997, w: 0.7067235}
+      length: 419.9477
       parentId: -1
       color:
         serializedVersion: 2
@@ -18160,11 +18160,11 @@ ScriptedImporter:
       height: 186
     spriteID: 76da4173262e3944087bcae93738918d
     spriteBone:
-    - name: bone_7
+    - name: Hand R Bone
       guid: 177025c6e0c5c874eb6f809dcd8420ee
-      position: {x: 60.630615, y: 188.02039, z: 0}
-      rotation: {x: 0, y: 0, z: 0.70951355, w: -0.70469195}
-      length: 189.37393
+      position: {x: 60.628418, y: 188.01257, z: 0}
+      rotation: {x: 0, y: 0, z: 0.7095236, w: -0.70468175}
+      length: 189.3739
       parentId: -1
       color:
         serializedVersion: 2
@@ -18757,11 +18757,11 @@ ScriptedImporter:
       height: 349
     spriteID: b58cc7a7946d7424ab2b729abd3ff5bc
     spriteBone:
-    - name: bone_6
+    - name: Forearm R Bone
       guid: ddd9b998d2d432d42806e73cb7b3384b
-      position: {x: 76.505005, y: 330.71875, z: 0}
-      rotation: {x: 0, y: 0, z: -0.7115312, w: 0.7026545}
-      length: 308.72263
+      position: {x: 76.5116, y: 330.71082, z: 0}
+      rotation: {x: 0, y: 0, z: -0.7115412, w: 0.70264447}
+      length: 308.72247
       parentId: -1
       color:
         serializedVersion: 2
@@ -19347,20 +19347,20 @@ ScriptedImporter:
       height: 340
     spriteID: 567800059b1415b4093bcfa44183e2bf
     spriteBone:
-    - name: bone_5
+    - name: Shoulder R Bone
       guid: ed59cf58a76aee24097e41a60c4ae072
-      position: {x: 36.185425, y: 375.15698, z: 0}
-      rotation: {x: 0, y: 0, z: -0.40204823, w: 0.9156185}
-      length: 66.89645
+      position: {x: 36.20215, y: 375.15015, z: 0}
+      rotation: {x: 0, y: 0, z: -0.4020601, w: 0.91561335}
+      length: 66.89666
       parentId: -1
       color:
         serializedVersion: 2
         rgba: 4294901760
-    - name: bone_192
+    - name: Bicep R Bone
       guid: d27eeff508d0d314489f248ca1f33b20
-      position: {x: 66.89689, y: 0.00023864544, z: 0}
-      rotation: {x: 0, y: 0, z: -0.3660958, w: 0.9305772}
-      length: 308.192
+      position: {x: 66.89662, y: 0.00001685557, z: 0}
+      rotation: {x: 0, y: 0, z: -0.3660969, w: 0.9305768}
+      length: 308.19205
       parentId: 0
       color:
         serializedVersion: 2
@@ -19894,11 +19894,11 @@ ScriptedImporter:
       height: 186
     spriteID: 2c074355bcea8454a935eba43536c7d2
     spriteBone:
-    - name: bone_10
+    - name: Hand L Bone
       guid: 6af1031017277f84ba434e87cd8656c0
-      position: {x: 44.87628, y: 191.9076, z: 0}
-      rotation: {x: 0, y: 0, z: -0.7094973, w: 0.70470816}
-      length: 190.67065
+      position: {x: 44.87378, y: 191.91553, z: 0}
+      rotation: {x: 0, y: 0, z: -0.70950735, w: 0.70469815}
+      length: 190.67061
       parentId: -1
       color:
         serializedVersion: 2
@@ -20491,11 +20491,11 @@ ScriptedImporter:
       height: 349
     spriteID: 79c87adbe7bfe8b49973d1b68a766802
     spriteBone:
-    - name: bone_9
+    - name: Forearm L Bone
       guid: 5f734dfffc41790489b3ffb1a339bbaa
-      position: {x: 58.395325, y: 332.01172, z: 0}
-      rotation: {x: 0, y: 0, z: 0.69958293, w: -0.71455157}
-      length: 306.1727
+      position: {x: 58.40155, y: 332.0199, z: 0}
+      rotation: {x: 0, y: 0, z: 0.69959307, w: -0.71454155}
+      length: 306.1728
       parentId: -1
       color:
         serializedVersion: 2
@@ -21092,20 +21092,20 @@ ScriptedImporter:
       height: 340
     spriteID: 1f9d08e415be4e84ba488dd306365e18
     spriteBone:
-    - name: bone_8
+    - name: Shoulder L Bone
       guid: fe0e6b9f245df1f4e847b7bf9c2128b0
-      position: {x: 147.33942, y: 370.4713, z: 0}
-      rotation: {x: 0, y: 0, z: 0.9638756, w: -0.26635286}
-      length: 103.63788
+      position: {x: 147.35596, y: 370.47717, z: 0}
+      rotation: {x: 0, y: 0, z: 0.9638796, w: -0.26633862}
+      length: 103.63793
       parentId: -1
       color:
         serializedVersion: 2
         rgba: 4278255488
-    - name: bone_191
+    - name: Bicep L Bone
       guid: d14fa6f0b2a4a094e856eedf34f0540f
-      position: {x: 103.637825, y: -0.00002649059, z: 0}
-      rotation: {x: 0, y: 0, z: 0.5019308, w: 0.86490786}
-      length: 298.3056
+      position: {x: 103.63805, y: 0.00015794979, z: 0}
+      rotation: {x: 0, y: 0, z: 0.5019312, w: 0.86490756}
+      length: 298.30545
       parentId: 0
       color:
         serializedVersion: 2
@@ -21659,7 +21659,7 @@ ScriptedImporter:
       height: 73
     spriteID: 932855f388f7d61418563fe1e1e683e4
     spriteBone:
-    - name: bone_1
+    - name: Pelvis Bone
       guid: 41a553317d13c114990cc9c8e6b75151
       position: {x: 185.04553, y: -173.50098, z: 0}
       rotation: {x: 0, y: 0, z: 0.7093409, w: 0.7048657}
@@ -22521,7 +22521,7 @@ ScriptedImporter:
       height: 37
     spriteID: 7f560d2544ec13a40b1dd82adba5949b
     spriteBone:
-    - name: bone_1
+    - name: Pelvis Bone
       guid: 41a553317d13c114990cc9c8e6b75151
       position: {x: 25.045532, y: -170.50098, z: 0}
       rotation: {x: 0, y: 0, z: 0.7093409, w: 0.7048657}
@@ -23198,7 +23198,7 @@ ScriptedImporter:
       height: 82
     spriteID: a69e1e63020da1340bb7507a053642df
     spriteBone:
-    - name: bone_1
+    - name: Pelvis Bone
       guid: 41a553317d13c114990cc9c8e6b75151
       position: {x: 215.04553, y: -173.50098, z: 0}
       rotation: {x: 0, y: 0, z: 0.7093409, w: 0.7048657}
@@ -23919,7 +23919,7 @@ ScriptedImporter:
       height: 82
     spriteID: b3d0a1f12fa1c7640bcf0e3c70acd4c1
     spriteBone:
-    - name: bone_1
+    - name: Pelvis Bone
       guid: 41a553317d13c114990cc9c8e6b75151
       position: {x: 48.045532, y: -173.50098, z: 0}
       rotation: {x: 0, y: 0, z: 0.7093409, w: 0.7048657}
@@ -25014,7 +25014,7 @@ ScriptedImporter:
       height: 27
     spriteID: 126ea404605fba141b2e1e7a50fd27dc
     spriteBone:
-    - name: bone_1
+    - name: Pelvis Bone
       guid: 41a553317d13c114990cc9c8e6b75151
       position: {x: 17.045532, y: -174.50098, z: 0}
       rotation: {x: 0, y: 0, z: 0.7093409, w: 0.7048657}
@@ -25275,7 +25275,7 @@ ScriptedImporter:
       height: 94
     spriteID: c43517ad9cb81b94298d6ec218404c1d
     spriteBone:
-    - name: bone_1
+    - name: Pelvis Bone
       guid: 41a553317d13c114990cc9c8e6b75151
       position: {x: 214.04553, y: -167.50098, z: 0}
       rotation: {x: 0, y: 0, z: 0.7093409, w: 0.7048657}
@@ -26386,7 +26386,7 @@ ScriptedImporter:
       height: 270
     spriteID: 75f4102f4c0410a44849e747e3ca3170
     spriteBone:
-    - name: bone_1
+    - name: Pelvis Bone
       guid: 41a553317d13c114990cc9c8e6b75151
       position: {x: 215.04553, y: 14.499023, z: 0}
       rotation: {x: 0, y: 0, z: 0.7093409, w: 0.7048657}
@@ -26984,20 +26984,20 @@ ScriptedImporter:
       height: 720
     spriteID: c2b985d5c267807418a5337992fb4b1b
     spriteBone:
-    - name: bone_12
+    - name: Calf R Bone
       guid: 9fd7fdcf8ff943b42935744f119d936b
-      position: {x: 576.2114, y: 0.00008121913, z: 0}
+      position: {x: 576.212, y: 0.000091253445, z: 0}
       rotation: {x: 0, y: 0, z: 0.002257456, w: 0.9999975}
-      length: 487.15842
+      length: 487.15823
       parentId: 1
       color:
         serializedVersion: 2
         rgba: 4286578943
-    - name: bone_11
+    - name: Thigh R Bone
       guid: 0bf0d017c729f14459c2bd028e4dbcf0
       position: {x: 157.08105, y: 604.4061, z: 0}
       rotation: {x: 0, y: 0, z: 0.7135359, w: -0.7006187}
-      length: 576.21124
+      length: 576.2118
       parentId: -1
       color:
         serializedVersion: 2
@@ -27665,11 +27665,11 @@ ScriptedImporter:
       height: 208
     spriteID: bcc1e1c9dcef6ea46b38b3a9dd1465f5
     spriteBone:
-    - name: bone_13
+    - name: Foot R Bone
       guid: 1e65e45a867e23c4e846c4e7c64e720d
-      position: {x: 79.85681, y: 179.17853, z: 0}
-      rotation: {x: 0, y: 0, z: 0.44953072, w: -0.8932649}
-      length: 184.70245
+      position: {x: 79.85693, y: 179.17816, z: 0}
+      rotation: {x: 0, y: 0, z: 0.44953075, w: -0.89326495}
+      length: 184.70244
       parentId: -1
       color:
         serializedVersion: 2
@@ -28141,20 +28141,20 @@ ScriptedImporter:
       height: 594
     spriteID: 57defcd3ff573ea49a921add5a83f2f0
     spriteBone:
-    - name: bone_12
+    - name: Calf R Bone
       guid: 9fd7fdcf8ff943b42935744f119d936b
-      position: {x: 576.2113, y: 0.00006315972, z: 0}
+      position: {x: 576.21185, y: 0.00007319404, z: 0}
       rotation: {x: 0, y: 0, z: 0.002257456, w: 0.9999975}
-      length: 487.15842
+      length: 487.15823
       parentId: 1
       color:
         serializedVersion: 2
         rgba: 4286578943
-    - name: bone_11
+    - name: Thigh R Bone
       guid: 0bf0d017c729f14459c2bd028e4dbcf0
       position: {x: 134.08105, y: 1107.4061, z: 0}
       rotation: {x: 0, y: 0, z: 0.7135359, w: -0.7006187}
-      length: 576.21124
+      length: 576.2118
       parentId: -1
       color:
         serializedVersion: 2
@@ -28784,7 +28784,7 @@ ScriptedImporter:
       height: 720
     spriteID: bafeffa060b8d4f44b21f7e374373574
     spriteBone:
-    - name: bone_15
+    - name: Calf L Bone
       guid: d7354883ef60f4840b8a8800d7f6051c
       position: {x: 576.2091, y: 0.00007492445, z: 0}
       rotation: {x: 0, y: 0, z: -0.010106053, w: 0.999949}
@@ -28793,7 +28793,7 @@ ScriptedImporter:
       color:
         serializedVersion: 2
         rgba: 4294967040
-    - name: bone_14
+    - name: Thigh L Bone
       guid: cfece94c543eb2c49ad3cb24d9c9cf97
       position: {x: 108.626465, y: 613.9758, z: 0}
       rotation: {x: 0, y: 0, z: -0.70061827, w: 0.7135364}
@@ -29486,11 +29486,11 @@ ScriptedImporter:
       height: 208
     spriteID: cae7527e37ef5604cbec176728f64c45
     spriteBone:
-    - name: bone_16
+    - name: Foot L Bone
       guid: 0cf7893fdb37bb94c99602f4c9b9e77d
       position: {x: 136.1958, y: 183.00903, z: 0}
-      rotation: {x: 0, y: 0, z: -0.89285815, w: 0.45033807}
-      length: 191.59575
+      rotation: {x: 0, y: 0, z: -0.8928582, w: 0.4503381}
+      length: 191.5957
       parentId: -1
       color:
         serializedVersion: 2
@@ -29962,7 +29962,7 @@ ScriptedImporter:
       height: 594
     spriteID: 331ffb81861cdef4e972732fa9b1a9d4
     spriteBone:
-    - name: bone_15
+    - name: Calf L Bone
       guid: d7354883ef60f4840b8a8800d7f6051c
       position: {x: 576.2091, y: 0.0001287104, z: 0}
       rotation: {x: 0, y: 0, z: -0.010106053, w: 0.999949}
@@ -29971,7 +29971,7 @@ ScriptedImporter:
       color:
         serializedVersion: 2
         rgba: 4294967040
-    - name: bone_14
+    - name: Thigh L Bone
       guid: cfece94c543eb2c49ad3cb24d9c9cf97
       position: {x: 90.626465, y: 1116.9758, z: 0}
       rotation: {x: 0, y: 0, z: -0.70061827, w: 0.7135364}
@@ -30604,11 +30604,11 @@ ScriptedImporter:
       height: 470
     spriteID: ac9db8c2601f7e24096922413cbbc61e
     spriteBone:
-    - name: bone_2
+    - name: Torso Bone
       guid: 25a44be2583a4344fb1c3588864c8da5
       position: {x: 37.748535, y: -121.566895, z: 0}
-      rotation: {x: 0, y: 0, z: 0.707869, w: 0.70634377}
-      length: 603.8044
+      rotation: {x: 0, y: 0, z: 0.707859, w: 0.7063539}
+      length: 603.8049
       parentId: -1
       color:
         serializedVersion: 2
@@ -31264,38 +31264,38 @@ ScriptedImporter:
       height: 751
     spriteID: 518edaad1599acc4fb498ae8550c23af
     spriteBone:
-    - name: bone_2
+    - name: Torso Bone
       guid: 25a44be2583a4344fb1c3588864c8da5
       position: {x: 331.74854, y: 69.433105, z: 0}
-      rotation: {x: 0, y: 0, z: 0.707869, w: 0.70634377}
-      length: 603.8044
+      rotation: {x: 0, y: 0, z: 0.707859, w: 0.7063539}
+      length: 603.8049
       parentId: -1
       color:
         serializedVersion: 2
         rgba: 4278255615
-    - name: bone_5
+    - name: Shoulder R Bone
       guid: ed59cf58a76aee24097e41a60c4ae072
-      position: {x: 585.206, y: -240.6997, z: 0}
-      rotation: {x: 0, y: 0, z: -0.93212223, w: 0.36214393}
-      length: 66.89643
+      position: {x: 585.20593, y: -240.69986, z: 0}
+      rotation: {x: 0, y: 0, z: -0.93212175, w: 0.3621452}
+      length: 66.89664
       parentId: 0
       color:
         serializedVersion: 2
         rgba: 4294901760
-    - name: bone_8
+    - name: Shoulder L Bone
       guid: fe0e6b9f245df1f4e847b7bf9c2128b0
-      position: {x: 581.4734, y: 201.15535, z: 0}
-      rotation: {x: 0, y: 0, z: 0.86937046, w: 0.49416095}
-      length: 103.637856
+      position: {x: 581.4735, y: 201.15517, z: 0}
+      rotation: {x: 0, y: 0, z: 0.86937016, w: 0.49416143}
+      length: 103.63794
       parentId: 0
       color:
         serializedVersion: 2
         rgba: 4278255488
-    - name: bone_3
+    - name: Neck Bone
       guid: ee144d41be0de94438f4e997c9b30f97
-      position: {x: 603.80457, y: -0.0047826506, z: 0}
-      rotation: {x: 0, y: 0, z: -0.003686453, w: 0.9999932}
-      length: 93.012505
+      position: {x: 603.80493, y: 0.01225437, z: 0}
+      rotation: {x: 0, y: 0, z: -0.0036743148, w: 0.9999933}
+      length: 93.01261
       parentId: 0
       color:
         serializedVersion: 2
@@ -31504,8 +31504,8 @@ ScriptedImporter:
         boneIndex3: 0
     - position: {x: 432.926, y: 751}
       boneWeight:
-        weight0: 0.56
-        weight1: 0.44
+        weight0: 1
+        weight1: 0
         weight2: 0
         weight3: 0
         boneIndex0: 3
@@ -31514,8 +31514,8 @@ ScriptedImporter:
         boneIndex3: 0
     - position: {x: 409.74402, y: 748.339}
       boneWeight:
-        weight0: 0.56
-        weight1: 0.44
+        weight0: 1
+        weight1: 0
         weight2: 0
         weight3: 0
         boneIndex0: 3
@@ -31524,8 +31524,8 @@ ScriptedImporter:
         boneIndex3: 0
     - position: {x: 372.051, y: 708.25}
       boneWeight:
-        weight0: 0.56
-        weight1: 0.44
+        weight0: 1
+        weight1: 0
         weight2: 0
         weight3: 0
         boneIndex0: 3
@@ -31534,11 +31534,11 @@ ScriptedImporter:
         boneIndex3: 0
     - position: {x: 322.156, y: 685.338}
       boneWeight:
-        weight0: 1
-        weight1: 0
+        weight0: 0.93
+        weight1: 0.06999999
         weight2: 0
         weight3: 0
-        boneIndex0: 0
+        boneIndex0: 3
         boneIndex1: 0
         boneIndex2: 0
         boneIndex3: 0
@@ -32013,7 +32013,7 @@ ScriptedImporter:
         boneIndex2: 0
         boneIndex3: 0
     spritePhysicsOutline: []
-    indices: 0000000003000000010000002b0000002d0000002c0000002a000000410000002d0000002a0000002d0000002b00000029000000410000002a0000002800000041000000290000002700000041000000280000002d000000410000002e0000002600000046000000410000002500000046000000260000002400000045000000460000002400000046000000250000002300000045000000240000002200000045000000230000001e00000021000000200000002600000041000000270000002f0000004100000030000000390000003c0000003a0000003000000041000000430000004200000045000000440000004100000046000000430000003e000000400000003f0000003d000000400000003e0000003a0000003c0000003b00000039000000400000003d000000420000004600000045000000390000003d0000003c0000003400000036000000350000003300000037000000360000003300000036000000340000003200000038000000370000003200000037000000330000003100000038000000320000001e000000200000001f0000002e000000410000002f0000001d00000022000000210000000c00000011000000100000000b00000042000000440000000b000000440000000c0000000a000000420000000b00000009000000420000000a0000000800000043000000420000000800000042000000090000000c000000100000000d0000000600000043000000080000000500000043000000060000000300000043000000050000000300000005000000040000000100000003000000020000000000000030000000430000000000000043000000030000000600000008000000070000000c00000044000000110000001600000044000000170000000d0000000f0000000e0000001c000000220000001d0000001b000000450000001c00000018000000450000001b000000180000001b0000001a000000180000001a000000190000001700000044000000450000001c00000045000000220000001700000045000000180000001300000044000000160000001300000016000000150000001300000015000000140000001200000044000000130000001100000044000000120000000d000000100000000f0000001d000000210000001e000000420000004300000046000000
+    indices: 0000000003000000010000002b0000002d0000002c0000002a000000410000002d0000002a0000002d0000002b00000029000000410000002a0000002800000041000000290000002700000041000000280000002d000000410000002e0000002600000046000000410000002500000046000000260000002400000045000000460000002400000046000000250000002300000045000000240000002200000045000000230000001e00000021000000200000002600000041000000270000001e000000200000001f0000002e000000410000002f0000003000000041000000430000004200000045000000440000004100000046000000430000003e000000400000003f0000003d000000400000003e0000003a0000003c0000003b00000039000000400000003d0000002f0000004100000030000000390000003d0000003c000000340000003600000035000000330000003700000036000000330000003600000034000000320000003800000037000000320000003700000033000000310000003800000032000000390000003c0000003a0000004200000046000000450000001d00000022000000210000001c00000045000000220000000b00000042000000440000000b000000440000000c0000000a000000420000000b00000009000000420000000a0000000800000043000000420000000800000042000000090000000c000000100000000d0000000600000043000000080000000500000043000000060000000300000043000000050000000300000005000000040000000100000003000000020000000000000030000000430000000000000043000000030000000600000008000000070000001d000000210000001e0000000c00000011000000100000000d0000000f0000000e0000001c000000220000001d0000001b000000450000001c00000018000000450000001b000000180000001b0000001a000000180000001a000000190000001700000044000000450000000c00000044000000110000001700000045000000180000001300000044000000160000001300000016000000150000001300000015000000140000001200000044000000130000001100000044000000120000000d000000100000000f000000160000004400000017000000420000004300000046000000
     edges:
     - {x: 0, y: 1}
     - {x: 0, y: 48}
@@ -32097,11 +32097,11 @@ ScriptedImporter:
       height: 114
     spriteID: 0199677161701d44e9603db1e78399d8
     spriteBone:
-    - name: bone_3
+    - name: Neck Bone
       guid: ee144d41be0de94438f4e997c9b30f97
-      position: {x: 96.45093, y: 2.2363281, z: 0}
-      rotation: {x: 0, y: 0, z: 0.7052603, w: 0.7089485}
-      length: 93.012505
+      position: {x: 96.45093, y: 2.2366943, z: 0}
+      rotation: {x: 0, y: 0, z: 0.7052588, w: 0.70895}
+      length: 93.01263
       parentId: -1
       color:
         serializedVersion: 2
@@ -32625,7 +32625,7 @@ ScriptedImporter:
     boneReadOnly: 0
   characterData:
     bones:
-    - name: bone_1
+    - name: Pelvis Bone
       guid: 41a553317d13c114990cc9c8e6b75151
       position: {x: 1084.0455, y: 1209.499, z: 0}
       rotation: {x: 0, y: 0, z: 0.7093409, w: 0.7048657}
@@ -32634,115 +32634,115 @@ ScriptedImporter:
       color:
         serializedVersion: 2
         rgba: 4278190335
-    - name: bone_2
+    - name: Torso Bone
       guid: 25a44be2583a4344fb1c3588864c8da5
       position: {x: 204.93819, y: 0.000006327079, z: 0}
-      rotation: {x: 0, y: 0, z: -0.0020859388, w: 0.99999785}
-      length: 603.80444
+      rotation: {x: 0, y: 0, z: -0.0021001769, w: 0.9999978}
+      length: 603.80493
       parentId: 0
       color:
         serializedVersion: 2
         rgba: 4278255615
-    - name: bone_3
+    - name: Neck Bone
       guid: ee144d41be0de94438f4e997c9b30f97
-      position: {x: 603.8045, y: -0.0048804274, z: 0}
-      rotation: {x: 0, y: 0, z: -0.0036864425, w: 0.9999932}
-      length: 93.01249
+      position: {x: 603.8049, y: 0.012299076, z: 0}
+      rotation: {x: 0, y: 0, z: -0.003674296, w: 0.99999326}
+      length: 93.01262
       parentId: 1
       color:
         serializedVersion: 2
         rgba: 4278255360
-    - name: bone_4
+    - name: Head Bone
       guid: 1d4a1eae30c07854997fecf50a0fd025
-      position: {x: 93.012634, y: -0.0002284614, z: 0}
-      rotation: {x: 0, y: 0, z: 0.0031499616, w: 0.99999505}
+      position: {x: 93.01264, y: 0.0004277794, z: 0}
+      rotation: {x: 0, y: 0, z: 0.003152011, w: 0.99999505}
       length: 419.9477
       parentId: 2
       color:
         serializedVersion: 2
         rgba: 4294967040
-    - name: bone_5
+    - name: Shoulder R Bone
       guid: ed59cf58a76aee24097e41a60c4ae072
       position: {x: 585.206, y: -240.69978, z: 0}
-      rotation: {x: 0, y: 0, z: -0.93212223, w: 0.36214393}
-      length: 66.89642
+      rotation: {x: 0, y: -0, z: -0.9321217, w: 0.3621452}
+      length: 66.89666
       parentId: 1
       color:
         serializedVersion: 2
         rgba: 4294901760
-    - name: bone_6
+    - name: Forearm R Bone
       guid: ddd9b998d2d432d42806e73cb7b3384b
-      position: {x: 308.19196, y: 0.00008156122, z: 0}
+      position: {x: 308.19202, y: 0.000040741426, z: 0}
       rotation: {x: 0, y: 0, z: -0.0031121944, w: 0.9999952}
-      length: 308.72253
+      length: 308.7225
       parentId: 128
       color:
         serializedVersion: 2
         rgba: 4294902015
-    - name: bone_7
+    - name: Hand R Bone
       guid: 177025c6e0c5c874eb6f809dcd8420ee
-      position: {x: 308.72253, y: 0.0011323903, z: 0}
-      rotation: {x: 0, y: 0, z: -0.002867431, w: -0.99999595}
+      position: {x: 308.72263, y: 0.0010315593, z: 0}
+      rotation: {x: 0, y: 0, z: -0.0028672207, w: -0.99999595}
       length: 189.3739
       parentId: 5
       color:
         serializedVersion: 2
         rgba: 4278223103
-    - name: bone_8
+    - name: Shoulder L Bone
       guid: fe0e6b9f245df1f4e847b7bf9c2128b0
       position: {x: 581.47345, y: 201.15529, z: 0}
-      rotation: {x: 0, y: 0, z: 0.86937046, w: 0.49416098}
-      length: 103.63784
+      rotation: {x: 0, y: -0, z: 0.86937016, w: 0.49416143}
+      length: 103.63795
       parentId: 1
       color:
         serializedVersion: 2
         rgba: 4278255488
-    - name: bone_9
+    - name: Forearm L Bone
       guid: 5f734dfffc41790489b3ffb1a339bbaa
-      position: {x: 298.30545, y: -0.00002621848, z: 0}
+      position: {x: 298.3055, y: -0.00006965708, z: 0}
       rotation: {x: 0, y: 0, z: 0.0005459151, w: 0.9999999}
-      length: 306.17267
+      length: 306.1728
       parentId: 127
       color:
         serializedVersion: 2
         rgba: 4286643968
-    - name: bone_10
+    - name: Hand L Bone
       guid: 6af1031017277f84ba434e87cd8656c0
-      position: {x: 306.17267, y: -0.00004749475, z: 0}
-      rotation: {x: 0, y: 0, z: 0.013970566, w: -0.9999024}
+      position: {x: 306.17276, y: -0.0000071176137, z: 0}
+      rotation: {x: 0, y: 0, z: 0.0139705455, w: -0.9999025}
       length: 190.6706
       parentId: 8
       color:
         serializedVersion: 2
         rgba: 4294934528
-    - name: bone_11
+    - name: Thigh R Bone
       guid: 0bf0d017c729f14459c2bd028e4dbcf0
       position: {x: 110.94266, y: -152.74066, z: 0}
       rotation: {x: 0, y: -0, z: 0.99992436, w: 0.012298111}
-      length: 576.2112
+      length: 576.21173
       parentId: 0
       color:
         serializedVersion: 2
         rgba: 4294901888
-    - name: bone_12
+    - name: Calf R Bone
       guid: 9fd7fdcf8ff943b42935744f119d936b
-      position: {x: 576.21136, y: 0.00005297147, z: 0}
+      position: {x: 576.2119, y: 0.00006300575, z: 0}
       rotation: {x: 0, y: 0, z: 0.0022574759, w: 0.99999744}
-      length: 487.15836
+      length: 487.15817
       parentId: 10
       color:
         serializedVersion: 2
         rgba: 4286578943
-    - name: bone_13
+    - name: Foot R Bone
       guid: 1e65e45a867e23c4e846c4e7c64e720d
-      position: {x: 487.15833, y: 0.00091068237, z: 0}
-      rotation: {x: 0, y: 0, z: 0.3202892, w: 0.9473198}
+      position: {x: 487.15814, y: 0.0010377774, z: 0}
+      rotation: {x: 0, y: 0, z: 0.32028922, w: 0.94731987}
       length: 184.70241
       parentId: 11
       color:
         serializedVersion: 2
         rgba: 4278255615
-    - name: bone_14
+    - name: Thigh L Bone
       guid: cfece94c543eb2c49ad3cb24d9c9cf97
       position: {x: 122.42005, y: 148.64723, z: 0}
       rotation: {x: 0, y: -0, z: -0.9999822, w: 0.0059701605}
@@ -32751,7 +32751,7 @@ ScriptedImporter:
       color:
         serializedVersion: 2
         rgba: 4278255360
-    - name: bone_15
+    - name: Calf L Bone
       guid: d7354883ef60f4840b8a8800d7f6051c
       position: {x: 576.2091, y: -0.000012942878, z: 0}
       rotation: {x: 0, y: 0, z: -0.010106065, w: 0.9999489}
@@ -32760,178 +32760,178 @@ ScriptedImporter:
       color:
         serializedVersion: 2
         rgba: 4294967040
-    - name: bone_16
+    - name: Foot L Bone
       guid: 0cf7893fdb37bb94c99602f4c9b9e77d
       position: {x: 492.85468, y: 0.0006347344, z: 0}
-      rotation: {x: 0, y: 0, z: -0.31198597, w: 0.9500867}
+      rotation: {x: 0, y: 0, z: -0.31198597, w: 0.9500868}
       length: 191.59575
       parentId: 14
       color:
         serializedVersion: 2
         rgba: 4294901760
-    - name: bone_17
+    - name: Upper Lip L Bone 0
       guid: b21f5bf47039ccf408984173cb27e5c8
       position: {x: 64.454704, y: 47.96651, z: 0}
-      rotation: {x: 0, y: 0, z: -0.6489113, w: 0.76086414}
-      length: 9.701136
+      rotation: {x: 0, y: 0, z: -0.6489118, w: 0.76086366}
+      length: 9.701255
       parentId: 3
       color:
         serializedVersion: 2
         rgba: 4294902015
-    - name: bone_18
+    - name: Upper Lip L Bone 2
       guid: 356cbfda5c2d32f4bb152523003aaf8a
-      position: {x: 13.253103, y: -0.000024322138, z: 0}
-      rotation: {x: 0, y: 0, z: -0.06572305, w: 0.9978379}
-      length: 20.19647
+      position: {x: 13.253221, y: -0.000035475503, z: 0}
+      rotation: {x: 0, y: 0, z: -0.06572804, w: 0.9978376}
+      length: 20.196339
       parentId: 32
       color:
         serializedVersion: 2
         rgba: 4278190335
-    - name: bone_19
+    - name: Upper Lip L Bone 3
       guid: 6662d48ffc4d7244d893d775605e969e
-      position: {x: 20.196453, y: -0.000052957173, z: 0}
-      rotation: {x: 0, y: 0, z: -0.23768313, w: 0.9713428}
+      position: {x: 20.19628, y: -0.00003876433, z: 0}
+      rotation: {x: 0, y: 0, z: -0.23767707, w: 0.97134423}
       length: 5.3709574
       parentId: 17
       color:
         serializedVersion: 2
         rgba: 4278255488
-    - name: bone_23
+    - name: Lower Lip L Bone 0
       guid: c1ce22d286000ec48a3649fd2ac196e2
       position: {x: 62.576397, y: 38.15958, z: 0}
-      rotation: {x: 0, y: 0, z: -0.7978494, w: 0.6028569}
-      length: 7.707779
+      rotation: {x: 0, y: -0, z: -0.7978495, w: 0.6028567}
+      length: 7.70778
       parentId: 3
       color:
         serializedVersion: 2
         rgba: 4286578943
-    - name: bone_24
+    - name: Lower Lip L Bone 2
       guid: b0d1aea42cd4b504ea65adf38872e9f8
-      position: {x: 9.344842, y: 0.000051052226, z: 0}
-      rotation: {x: 0, y: 0, z: 0.074345335, w: 0.99723256}
-      length: 15.458685
+      position: {x: 9.344839, y: -0.00006612206, z: 0}
+      rotation: {x: 0, y: 0, z: 0.07435295, w: 0.997232}
+      length: 15.458656
       parentId: 33
       color:
         serializedVersion: 2
         rgba: 4278223103
-    - name: bone_25
+    - name: Lower Lip L Bone 3
       guid: bfe592eef823dc5458b822dd2fa0bfda
-      position: {x: 15.458661, y: -0.000020669011, z: 0}
-      rotation: {x: 0, y: 0, z: 0.13056368, w: 0.99143994}
+      position: {x: 15.458609, y: -0.0000337745, z: 0}
+      rotation: {x: 0, y: 0, z: 0.1305561, w: 0.99144095}
       length: 6.1609106
       parentId: 20
       color:
         serializedVersion: 2
         rgba: 4278255360
-    - name: bone_29
+    - name: Eyebrow L Bone 0
       guid: cad116664802e124d86e1be78d6d8834
       position: {x: 212.80634, y: 108.54679, z: 0}
-      rotation: {x: 0, y: 0, z: -0.08854297, w: 0.99607235}
-      length: 16.539629
+      rotation: {x: 0, y: 0, z: -0.0885455, w: 0.9960722}
+      length: 16.539148
       parentId: 3
       color:
         serializedVersion: 2
         rgba: 4278190335
-    - name: bone_30
+    - name: Eyebrow L Bone 1
       guid: 19a771fff179bb84db695f010523105e
-      position: {x: 16.539547, y: 0.000005343438, z: 0}
-      rotation: {x: 0, y: 0, z: -0.38531655, w: 0.9227845}
-      length: 20.047657
+      position: {x: 16.539165, y: -0.000022965942, z: 0}
+      rotation: {x: 0, y: 0, z: -0.38531402, w: 0.9227855}
+      length: 20.047216
       parentId: 22
       color:
         serializedVersion: 2
         rgba: 4278255615
-    - name: bone_31
+    - name: Eyebrow L Bone 2
       guid: d24aa713e83fdc84db3ece975cd13b81
-      position: {x: 20.04767, y: -0.000010892276, z: 0}
-      rotation: {x: 0, y: 0, z: -0.26101395, w: 0.9653351}
-      length: 23.711689
+      position: {x: 20.047146, y: -0.000046605877, z: 0}
+      rotation: {x: 0, y: 0, z: -0.26101932, w: 0.9653336}
+      length: 23.711914
       parentId: 23
       color:
         serializedVersion: 2
         rgba: 4286643968
-    - name: bone_32
+    - name: Eyebrow L Bone 3
       guid: 4f1faef1a58eec240a1f985df4b5fe61
-      position: {x: 23.711754, y: -0.00007850928, z: 0}
-      rotation: {x: 0, y: 0, z: -0.16581535, w: 0.9861568}
-      length: 20.992733
+      position: {x: 23.71188, y: 0.00013287604, z: 0}
+      rotation: {x: 0, y: 0, z: -0.16580962, w: 0.9861578}
+      length: 20.992792
       parentId: 24
       color:
         serializedVersion: 2
         rgba: 4294934528
-    - name: bone_33
+    - name: Eyebrow L Bone 4
       guid: be2473573ecf72546af32455e3110eb6
-      position: {x: 20.992826, y: -0.00015932776, z: 0}
-      rotation: {x: 0, y: 0, z: -0.19644177, w: 0.98051554}
+      position: {x: 20.992815, y: -0.000068894944, z: 0}
+      rotation: {x: 0, y: 0, z: -0.19644234, w: 0.9805154}
       length: 22.753386
       parentId: 25
       color:
         serializedVersion: 2
         rgba: 4294901888
-    - name: bone_34
+    - name: Eyebrow R Bone 0
       guid: a78da38405b2e6d4693aabf52a3d3ac2
       position: {x: 212.35031, y: -106.261284, z: 0}
-      rotation: {x: 0, y: 0, z: 0.07956338, w: 0.9968298}
-      length: 15.365397
+      rotation: {x: 0, y: 0, z: 0.07956589, w: 0.9968296}
+      length: 15.365658
       parentId: 3
       color:
         serializedVersion: 2
         rgba: 4286578943
-    - name: bone_35
+    - name: Eyebrow R Bone 1
       guid: 83e3def716b28154f8009a68e2638ec0
-      position: {x: 15.365381, y: 0.00002680394, z: 0}
-      rotation: {x: 0, y: 0, z: 0.29829672, w: 0.9544732}
-      length: 16.407175
+      position: {x: 15.365809, y: 0.0000625238, z: 0}
+      rotation: {x: 0, y: 0, z: 0.29830468, w: 0.95447075}
+      length: 16.407516
       parentId: 27
       color:
         serializedVersion: 2
         rgba: 4278223103
-    - name: bone_36
+    - name: Eyebrow R Bone 2
       guid: 0bdee7c3b6e70da4ca0c366e02a4d720
-      position: {x: 16.407112, y: 0.000036968682, z: 0}
-      rotation: {x: 0, y: 0, z: 0.32532245, w: 0.94560313}
-      length: 26.81355
+      position: {x: 16.407187, y: -0.00026503656, z: 0}
+      rotation: {x: 0, y: 0, z: 0.3253168, w: 0.9456051}
+      length: 26.813637
       parentId: 28
       color:
         serializedVersion: 2
         rgba: 4278255488
-    - name: bone_37
+    - name: Eyebrow R Bone 3
       guid: c49ac3e5d692c944793736d0406cea69
-      position: {x: 26.813627, y: -0.0000042566353, z: 0}
-      rotation: {x: 0, y: 0, z: 0.19684535, w: 0.9804346}
-      length: 23.047348
+      position: {x: 26.813654, y: 0.00005199224, z: 0}
+      rotation: {x: 0, y: 0, z: 0.19684127, w: 0.9804354}
+      length: 23.04723
       parentId: 29
       color:
         serializedVersion: 2
         rgba: 4294967040
-    - name: bone_38
+    - name: Eyebrow R Bone 4
       guid: b6836bd1c9b44b549ba809f2475ff796
-      position: {x: 23.047348, y: -0.000064008214, z: 0}
-      rotation: {x: 0, y: 0, z: 0.18990211, w: 0.98180306}
+      position: {x: 23.047232, y: 0.000061440136, z: 0}
+      rotation: {x: 0, y: 0, z: 0.18990183, w: 0.9818031}
       length: 25.51893
       parentId: 30
       color:
         serializedVersion: 2
         rgba: 4294901760
-    - name: bone_93
+    - name: Upper Lip L Bone 1
       guid: abd3bca144d1b8c45a3f9cf6cc5d48a8
-      position: {x: 9.7012005, y: 0.00006460796, z: 0}
-      rotation: {x: 0, y: 0, z: 0.0038408688, w: 0.99999267}
-      length: 13.25305
+      position: {x: 9.701237, y: 0.000019766292, z: 0}
+      rotation: {x: 0, y: 0, z: 0.0038409424, w: 0.9999926}
+      length: 13.253171
       parentId: 16
       color:
         serializedVersion: 2
         rgba: 4294934528
-    - name: bone_94
+    - name: Lower Lip L Bone 1
       guid: db01235b66b866d4e9cad05af5c44231
-      position: {x: 7.707779, y: -0.000058032827, z: 0}
-      rotation: {x: 0, y: 0, z: 0.000000023154458, w: 1}
-      length: 9.344828
+      position: {x: 7.707708, y: 0.00006124949, z: 0}
+      rotation: {x: 0, y: 0, z: -0.000000048621157, w: 1}
+      length: 9.344894
       parentId: 19
       color:
         serializedVersion: 2
         rgba: 4294901888
-    - name: bone_98
+    - name: Lip Corner Shadow L Bone 0
       guid: bf98daf71244c3645b747ca43c8b6a64
       position: {x: 58.651093, y: 54.3616, z: 0}
       rotation: {x: 0, y: 0, z: -0.68200535, w: 0.73134726}
@@ -32940,7 +32940,7 @@ ScriptedImporter:
       color:
         serializedVersion: 2
         rgba: 4294967040
-    - name: bone_99
+    - name: Lip Corner Shadow R Bone 0
       guid: 0bf32bac915df0a438ef0fd5ebf89e8a
       position: {x: 60.594868, y: -49.74517, z: 0}
       rotation: {x: 0, y: 0, z: -0.735531, w: -0.6774911}
@@ -32949,7 +32949,7 @@ ScriptedImporter:
       color:
         serializedVersion: 2
         rgba: 4294901760
-    - name: bone_100
+    - name: Lip Corner Shadow L Bone 1
       guid: 6bd7073ed955c9c448ed8f3ddc92be61
       position: {x: -0.046205677, y: 9.137537, z: 0}
       rotation: {x: 0, y: 0, z: 0.004397921, w: 0.99999034}
@@ -32958,7 +32958,7 @@ ScriptedImporter:
       color:
         serializedVersion: 2
         rgba: 4294902015
-    - name: bone_101
+    - name: Lip Corner Shadow R Bone 1
       guid: 7bcce983bd0f75046a0540e71255575a
       position: {x: 0.115101494, y: -8.96564, z: 0}
       rotation: {x: 0, y: 0, z: 0.009409714, w: 0.9999557}
@@ -32967,772 +32967,772 @@ ScriptedImporter:
       color:
         serializedVersion: 2
         rgba: 4278190335
-    - name: bone_102
+    - name: Upper Lip R Bone 0
       guid: d172814dff508604b83f4a92ea4e5a74
       position: {x: 65.38515, y: -46.371822, z: 0}
-      rotation: {x: 0, y: 0, z: 0.676068, w: 0.7368393}
-      length: 11.253409
+      rotation: {x: 0, y: 0, z: 0.6760604, w: 0.73684627}
+      length: 11.253429
       parentId: 3
       color:
         serializedVersion: 2
         rgba: 4294901888
-    - name: bone_103
+    - name: Upper Lip R Bone 1
       guid: 1bbc9b8917e684c49a465519e2e0f1d3
-      position: {x: 11.253428, y: -0.00018900131, z: 0}
-      rotation: {x: 0, y: 0, z: -0.065173894, w: 0.99787396}
-      length: 11.722241
+      position: {x: 11.2534275, y: 0.000047579517, z: 0}
+      rotation: {x: 0, y: 0, z: -0.06514302, w: 0.9978759}
+      length: 11.722135
       parentId: 38
       color:
         serializedVersion: 2
         rgba: 4286578943
-    - name: bone_104
+    - name: Upper Lip R Bone 2
       guid: ad2fe93a791e9364b9e2f2c7d7e02757
-      position: {x: 11.722238, y: -0.000027299766, z: 0}
-      rotation: {x: 0, y: 0, z: 0.10434492, w: 0.99454117}
-      length: 19.086067
+      position: {x: 11.72215, y: -0.00003250309, z: 0}
+      rotation: {x: 0, y: 0, z: 0.10433748, w: 0.99454194}
+      length: 19.086184
       parentId: 39
       color:
         serializedVersion: 2
         rgba: 4278223103
-    - name: bone_105
+    - name: Upper Lip R Bone 3
       guid: 828e1f25c245f01449c13fa30d4ee87c
-      position: {x: 19.086025, y: 0.00007370325, z: 0}
-      rotation: {x: 0, y: 0, z: 0.22778597, w: 0.9737113}
+      position: {x: 19.086178, y: -0.00007512896, z: 0}
+      rotation: {x: 0, y: 0, z: 0.22777371, w: 0.9737141}
       length: 5.175112
       parentId: 40
       color:
         serializedVersion: 2
         rgba: 4278255360
-    - name: bone_106
+    - name: Lower Lip R Bone 0
       guid: 9fe703244306df1479aeb8380b4bac70
       position: {x: 63.16059, y: -36.63723, z: 0}
-      rotation: {x: 0, y: 0, z: 0.86372924, w: 0.5039561}
-      length: 7.2702336
+      rotation: {x: 0, y: -0, z: 0.8637274, w: 0.5039594}
+      length: 7.2703414
       parentId: 3
       color:
         serializedVersion: 2
         rgba: 4294967040
-    - name: bone_107
+    - name: Lower Lip R Bone 1
       guid: d6fee13058826f24192afc185dfe61c2
-      position: {x: 7.270212, y: -0.000056667275, z: 0}
-      rotation: {x: 0, y: 0, z: -0.094727196, w: 0.9955033}
+      position: {x: 7.2703156, y: -0.00002426959, z: 0}
+      rotation: {x: 0, y: 0, z: -0.094723105, w: 0.99550366}
       length: 8.234301
       parentId: 42
       color:
         serializedVersion: 2
         rgba: 4294901760
-    - name: bone_108
+    - name: Lower Lip R Bone 2
       guid: 04a5bec819970db4dbec5a98d98c9877
-      position: {x: 8.234259, y: -0.00007333518, z: 0}
-      rotation: {x: 0, y: 0, z: -0.12099712, w: 0.9926529}
-      length: 17.771929
+      position: {x: 8.234375, y: -0.000017694772, z: 0}
+      rotation: {x: 0, y: 0, z: -0.120997235, w: 0.99265283}
+      length: 17.77193
       parentId: 43
       color:
         serializedVersion: 2
         rgba: 4294902015
-    - name: bone_109
+    - name: Lower Lip R Bone 3
       guid: 7adab3a441feeef48aa7adf33cd7a3b5
-      position: {x: 17.771961, y: -0.00010155284, z: 0}
-      rotation: {x: 0, y: 0, z: -0.17564298, w: 0.9844539}
+      position: {x: 17.771965, y: -0.00017774152, z: 0}
+      rotation: {x: 0, y: 0, z: -0.17564352, w: 0.9844539}
       length: 5.1410894
       parentId: 44
       color:
         serializedVersion: 2
         rgba: 4278190335
-    - name: bone_110
+    - name: Eyelid Bottom L Upper Chain Bone 0
       guid: 6afd130d912570c4fa0110aac5c95354
       position: {x: 204.8299, y: 91.99751, z: 0}
-      rotation: {x: 0, y: 0, z: -0.93388575, w: 0.35757166}
-      length: 8.730886
+      rotation: {x: 0, y: -0, z: -0.9338978, w: 0.35754028}
+      length: 8.730356
       parentId: 3
       color:
         serializedVersion: 2
         rgba: 4294967040
-    - name: bone_111
+    - name: Eyelid Bottom L Upper Chain Bone 2
       guid: 687fe076dfea16c469236355cf77f799
-      position: {x: 5.8063684, y: -0.00010620587, z: 0}
-      rotation: {x: 0, y: 0, z: 0.14164819, w: 0.9899171}
-      length: 5.2040186
+      position: {x: 5.806448, y: -0.000025231013, z: 0}
+      rotation: {x: 0, y: 0, z: 0.14166269, w: 0.989915}
+      length: 5.2042823
       parentId: 60
       color:
         serializedVersion: 2
         rgba: 4294901760
-    - name: bone_112
+    - name: Eyelid Bottom L Upper Chain Bone 4
       guid: acc6d44f778654e4497143da2ae08ca7
-      position: {x: 4.8642774, y: 0.00006549785, z: 0}
-      rotation: {x: 0, y: 0, z: 0.10588176, w: 0.99437875}
-      length: 6.6834745
+      position: {x: 4.8640437, y: 0.00016005414, z: 0}
+      rotation: {x: 0, y: 0, z: 0.10577235, w: 0.99439037}
+      length: 6.6834702
       parentId: 61
       color:
         serializedVersion: 2
         rgba: 4294902015
-    - name: bone_113
+    - name: Eyelid Bottom L Upper Chain Bone 6
       guid: ddde3e6e967f3534a83e92672163024d
-      position: {x: 6.7368417, y: -0.00010855716, z: 0}
-      rotation: {x: 0, y: 0, z: 0.14296868, w: 0.9897272}
-      length: 3.9840477
+      position: {x: 6.7368994, y: 0.00008937514, z: 0}
+      rotation: {x: 0, y: 0, z: 0.14296818, w: 0.9897273}
+      length: 3.984383
       parentId: 62
       color:
         serializedVersion: 2
         rgba: 4278223103
-    - name: bone_114
+    - name: Eyelid Bottom L Upper Chain Bone 7
       guid: 5d60f6bc66105c64a9cfb391bb6cd3a9
-      position: {x: 3.9841127, y: -0.00001359453, z: 0}
-      rotation: {x: 0, y: 0, z: 0.027128194, w: 0.999632}
-      length: 4.3116736
+      position: {x: 3.984467, y: -0.0000149480475, z: 0}
+      rotation: {x: 0, y: 0, z: 0.02714631, w: 0.99963146}
+      length: 4.311674
       parentId: 49
       color:
         serializedVersion: 2
         rgba: 4278255488
-    - name: bone_115
+    - name: Eyelid Bottom L Upper Chain Bone 8
       guid: 2b3b6f625df28b841b89908b9018a3be
-      position: {x: 4.311591, y: -0.000024479097, z: 0}
-      rotation: {x: 0, y: 0, z: 0.17219125, w: 0.98506355}
-      length: 3.9392936
+      position: {x: 4.311675, y: 0.000023663117, z: 0}
+      rotation: {x: 0, y: 0, z: 0.17216079, w: 0.98506886}
+      length: 3.938854
       parentId: 50
       color:
         serializedVersion: 2
         rgba: 4286643968
-    - name: bone_116
+    - name: Eyelid Bottom L Lower Chain Bone 0
       guid: 6a618aa2b9868c14aab01092ab7e8462
       position: {x: 200.82066, y: 97.66849, z: 0}
-      rotation: {x: 0, y: 0, z: -0.99889064, w: 0.047090985}
-      length: 15.758269
+      rotation: {x: 0, y: -0, z: -0.99889076, w: 0.047087494}
+      length: 15.758261
       parentId: 3
       color:
         serializedVersion: 2
         rgba: 4294934528
-    - name: bone_117
+    - name: Eyelid Bottom L Lower Chain Bone 1
       guid: 8f61cf14e01984543b8a4e0b07a7b27b
-      position: {x: 15.758364, y: -0.000009529744, z: 0}
-      rotation: {x: 0, y: 0, z: 0.30265963, w: 0.9530987}
-      length: 12.06391
+      position: {x: 15.758344, y: -0.000019812807, z: 0}
+      rotation: {x: 0, y: 0, z: 0.30265388, w: 0.95310056}
+      length: 12.063712
       parentId: 52
       color:
         serializedVersion: 2
         rgba: 4294901888
-    - name: bone_118
+    - name: Eyelid Bottom L Lower Chain Bone 2
       guid: 5442a6b33b882b44f959813fb0689371
-      position: {x: 12.063802, y: -0.00012385752, z: 0}
-      rotation: {x: 0, y: 0, z: 0.31289384, w: 0.9497881}
-      length: 8.410352
+      position: {x: 12.063582, y: -0.00006286829, z: 0}
+      rotation: {x: 0, y: 0, z: 0.31291574, w: 0.9497809}
+      length: 8.41024
       parentId: 53
       color:
         serializedVersion: 2
         rgba: 4286578943
-    - name: bone_119
+    - name: Eyelid Bottom L Lower Chain Bone 3
       guid: e239aa07c9a34554cbd4a77147ce07fe
-      position: {x: 8.410408, y: -0.000069951115, z: 0}
-      rotation: {x: 0, y: 0, z: 0.08592398, w: 0.9963017}
-      length: 13.369381
+      position: {x: 8.410234, y: 0.00012974668, z: 0}
+      rotation: {x: 0, y: 0, z: 0.08591999, w: 0.99630207}
+      length: 13.369555
       parentId: 54
       color:
         serializedVersion: 2
         rgba: 4278255615
-    - name: bone_120
+    - name: Eyelid Bottom L Lower Chain Bone 4
       guid: ccfc7b82a6c9ca24ea7097e43fc3c3ba
-      position: {x: 13.369424, y: 0.000032987275, z: 0}
-      rotation: {x: 0, y: 0, z: 0.12236806, w: 0.9924848}
-      length: 10.246981
+      position: {x: 13.369599, y: -0.00009363132, z: 0}
+      rotation: {x: 0, y: 0, z: 0.12235855, w: 0.992486}
+      length: 10.246983
       parentId: 55
       color:
         serializedVersion: 2
         rgba: 4278255360
-    - name: bone_121
+    - name: Eyelid Bottom L Lower Chain Bone 5
       guid: 1843ec7fbc5bee145936474f076a633c
-      position: {x: 10.2469635, y: -0.000060374587, z: 0}
-      rotation: {x: 0, y: 0, z: 0.1521397, w: 0.98835903}
-      length: 9.874501
+      position: {x: 10.246969, y: 0.00008784437, z: 0}
+      rotation: {x: 0, y: 0, z: 0.15214556, w: 0.98835814}
+      length: 9.8742895
       parentId: 56
       color:
         serializedVersion: 2
         rgba: 4294967040
-    - name: bone_122
+    - name: Eyelid Bottom L Lower Chain Bone 6
       guid: 696bb738027d1d74eb5ea88eb4e106d2
-      position: {x: 9.874521, y: 0.000011246768, z: 0}
-      rotation: {x: 0, y: 0, z: 0.30777127, w: 0.95146036}
-      length: 8.541363
+      position: {x: 9.874193, y: -0.00007226029, z: 0}
+      rotation: {x: 0, y: 0, z: 0.30777746, w: 0.9514584}
+      length: 8.541806
       parentId: 57
       color:
         serializedVersion: 2
         rgba: 4294901760
-    - name: bone_123
+    - name: Eyelid Bottom L Lower Chain Bone 7
       guid: 4e760117d24a24f44ab83ce9495fc0fc
-      position: {x: 8.541232, y: 0.00001483682, z: 0}
-      rotation: {x: 0, y: 0, z: -0.06522052, w: 0.99787086}
-      length: 7.8242517
+      position: {x: 8.541587, y: 0.00005224131, z: 0}
+      rotation: {x: 0, y: 0, z: -0.06522212, w: 0.9978708}
+      length: 7.8247304
       parentId: 58
       color:
         serializedVersion: 2
         rgba: 4294902015
-    - name: bone_124
+    - name: Eyelid Bottom L Upper Chain Bone 1
       guid: 0ccd33605b8711f40a03c72e1c12d5ac
-      position: {x: 8.730905, y: -0.00015037273, z: 0}
-      rotation: {x: 0, y: 0, z: 0.077843115, w: 0.9969657}
-      length: 5.806227
+      position: {x: 8.730319, y: 0.000025000041, z: 0}
+      rotation: {x: 0, y: 0, z: 0.077847295, w: 0.9969653}
+      length: 5.8065825
       parentId: 46
       color:
         serializedVersion: 2
         rgba: 4278190335
-    - name: bone_125
+    - name: Eyelid Bottom L Upper Chain Bone 3
       guid: c7b346c2382ea0a49882bd7c49177a6e
-      position: {x: 5.2040076, y: 0.000027291157, z: 0}
-      rotation: {x: 0, y: 0, z: 0.03552146, w: 0.9993689}
-      length: 4.8643117
+      position: {x: 5.2043395, y: -0.0001379611, z: 0}
+      rotation: {x: 0, y: 0, z: 0.035609327, w: 0.99936587}
+      length: 4.8641343
       parentId: 47
       color:
         serializedVersion: 2
         rgba: 4278255488
-    - name: bone_126
+    - name: Eyelid Bottom L Upper Chain Bone 5
       guid: d652db2100f95cf409e906f903f999c8
-      position: {x: 6.6834717, y: -0.000083953324, z: 0}
-      rotation: {x: 0, y: 0, z: 0.120590895, w: 0.99270236}
-      length: 6.736864
+      position: {x: 6.683481, y: 0.000047378628, z: 0}
+      rotation: {x: 0, y: 0, z: 0.12060966, w: 0.99270004}
+      length: 6.7368345
       parentId: 48
       color:
         serializedVersion: 2
         rgba: 4286643968
-    - name: bone_127
+    - name: Eyelid Bottom L Upper Chain Bone 9
       guid: e4ccc7bcc8191774abd01c09b74b9bbf
-      position: {x: 3.9393642, y: -0.000064851076, z: 0}
-      rotation: {x: 0, y: 0, z: 0.0011053936, w: 0.9999994}
-      length: 3.5384185
+      position: {x: 3.9387352, y: 0.00012659065, z: 0}
+      rotation: {x: 0, y: 0, z: 0.0011580609, w: 0.99999934}
+      length: 3.5388572
       parentId: 51
       color:
         serializedVersion: 2
         rgba: 4294934528
-    - name: bone_128
+    - name: Eyelid Top L Lower Chain Bone 0
       guid: b1ab0cc7da4efab46bb9d0efd80b401d
       position: {x: 201.94298, y: 96.09628, z: 0}
-      rotation: {x: 0, y: 0, z: -0.34639287, w: 0.9380896}
-      length: 7.0716934
+      rotation: {x: 0, y: 0, z: -0.3463741, w: 0.9380965}
+      length: 7.071456
       parentId: 3
       color:
         serializedVersion: 2
         rgba: 4294901888
-    - name: bone_129
+    - name: Eyelid Top L Lower Chain Bone 1
       guid: e19374e578c1f7846875ce5198215530
-      position: {x: 7.0717783, y: 0.00003340288, z: 0}
-      rotation: {x: 0, y: 0, z: -0.1212497, w: 0.9926221}
-      length: 7.763038
+      position: {x: 7.071607, y: -0.00005564053, z: 0}
+      rotation: {x: 0, y: 0, z: -0.121264674, w: 0.9926202}
+      length: 7.7629395
       parentId: 64
       color:
         serializedVersion: 2
         rgba: 4286578943
-    - name: bone_130
+    - name: Eyelid Top L Lower Chain Bone 2
       guid: 76f5a4ece628f5847942cdd17b6c43ee
-      position: {x: 7.763038, y: -0.000007646639, z: 0}
-      rotation: {x: 0, y: 0, z: -0.106838524, w: 0.9942764}
-      length: 7.9679585
+      position: {x: 7.762775, y: -0.000015498896, z: 0}
+      rotation: {x: 0, y: 0, z: -0.10684159, w: 0.99427605}
+      length: 7.9679036
       parentId: 65
       color:
         serializedVersion: 2
         rgba: 4278223103
-    - name: bone_131
+    - name: Eyelid Top L Lower Chain Bone 3
       guid: fc5efd7a5266a0d42aec5caa1ba65018
-      position: {x: 7.96796, y: 0.000012184235, z: 0}
-      rotation: {x: 0, y: 0, z: -0.16326429, w: 0.9865824}
-      length: 9.066055
+      position: {x: 7.967856, y: 0.00003866953, z: 0}
+      rotation: {x: 0, y: 0, z: -0.16326639, w: 0.98658204}
+      length: 9.066176
       parentId: 66
       color:
         serializedVersion: 2
         rgba: 4278255360
-    - name: bone_132
+    - name: Eyelid Top L Lower Chain Bone 4
       guid: 269e37176df928d47869c4b2cdf3be0c
-      position: {x: 9.066084, y: 0.000039617476, z: 0}
-      rotation: {x: 0, y: 0, z: -0.07949562, w: 0.99683523}
-      length: 10.793961
+      position: {x: 9.066166, y: 0.000053446438, z: 0}
+      rotation: {x: 0, y: 0, z: -0.07948362, w: 0.9968362}
+      length: 10.794062
       parentId: 67
       color:
         serializedVersion: 2
         rgba: 4294967040
-    - name: bone_133
+    - name: Eyelid Top L Lower Chain Bone 5
       guid: 9afdbf6a7eb95bc4ca8499805f2d723c
-      position: {x: 10.794035, y: -0.00009697825, z: 0}
-      rotation: {x: 0, y: 0, z: -0.15718193, w: 0.9875697}
-      length: 7.0738063
+      position: {x: 10.794095, y: -0.00009842671, z: 0}
+      rotation: {x: 0, y: 0, z: -0.15719491, w: 0.9875676}
+      length: 7.0737505
       parentId: 68
       color:
         serializedVersion: 2
         rgba: 4294901760
-    - name: bone_134
+    - name: Eyelid Top L Lower Chain Bone 6
       guid: 7554e87e026e829499414e055adcc179
-      position: {x: 7.0738235, y: -0.000051146435, z: 0}
-      rotation: {x: 0, y: 0, z: -0.18586802, w: 0.98257476}
-      length: 6.3911815
+      position: {x: 7.0737977, y: -0.000035218472, z: 0}
+      rotation: {x: 0, y: 0, z: -0.18585935, w: 0.9825764}
+      length: 6.390925
       parentId: 69
       color:
         serializedVersion: 2
         rgba: 4294902015
-    - name: bone_135
+    - name: Eyelid Top L Lower Chain Bone 7
       guid: fa610768ecd8f2d4c979b970adb5d0bf
-      position: {x: 6.3910184, y: -0.000018609608, z: 0}
-      rotation: {x: 0, y: 0, z: -0.078809164, w: 0.9968897}
+      position: {x: 6.3909383, y: 0.000057422847, z: 0}
+      rotation: {x: 0, y: 0, z: -0.07881694, w: 0.9968892}
       length: 5.73833
       parentId: 70
       color:
         serializedVersion: 2
         rgba: 4278190335
-    - name: bone_136
+    - name: Eyelid Top L Upper Chain Bone 0
       guid: 65e8236a4ef4a84498cae74ba0bcf6d8
       position: {x: 207.25604, y: 101.11159, z: 0}
-      rotation: {x: 0, y: 0, z: -0.23927633, w: 0.97095156}
-      length: 8.662889
+      rotation: {x: 0, y: 0, z: -0.2392767, w: 0.97095144}
+      length: 8.662616
       parentId: 3
       color:
         serializedVersion: 2
         rgba: 4278255615
-    - name: bone_137
+    - name: Eyelid Top L Upper Chain Bone 1
       guid: e87b4d53205a279488daa03f52dcb6bd
-      position: {x: 8.662909, y: -0.000010162192, z: 0}
-      rotation: {x: 0, y: 0, z: -0.25489113, w: 0.9669698}
+      position: {x: 8.662568, y: -0.000013772922, z: 0}
+      rotation: {x: 0, y: 0, z: -0.25489083, w: 0.96696985}
       length: 9.390206
       parentId: 72
       color:
         serializedVersion: 2
         rgba: 4286643968
-    - name: bone_138
+    - name: Eyelid Top L Upper Chain Bone 2
       guid: bf01575bd2e191d409971467ac2b08e3
-      position: {x: 9.390299, y: -0.00008545449, z: 0}
-      rotation: {x: 0, y: 0, z: -0.07110657, w: 0.9974687}
-      length: 12.709461
+      position: {x: 9.390309, y: 0.00005232822, z: 0}
+      rotation: {x: 0, y: 0, z: -0.07110383, w: 0.99746895}
+      length: 12.709898
       parentId: 73
       color:
         serializedVersion: 2
         rgba: 4294934528
-    - name: bone_139
+    - name: Eyelid Top L Upper Chain Bone 3
       guid: 4e73b30eda9858b49a8a334a6efe8ed5
-      position: {x: 12.709583, y: 0.00008362726, z: 0}
-      rotation: {x: 0, y: 0, z: -0.18299273, w: 0.9831143}
-      length: 12.57763
+      position: {x: 12.709865, y: 0.00006423796, z: 0}
+      rotation: {x: 0, y: 0, z: -0.18299517, w: 0.9831138}
+      length: 12.57757
       parentId: 74
       color:
         serializedVersion: 2
         rgba: 4294901888
-    - name: bone_140
+    - name: Eyelid Top L Upper Chain Bone 4
       guid: dbc71e3185a7a1f469c152e1f034c8ca
-      position: {x: 12.57763, y: 0.00010889902, z: 0}
-      rotation: {x: 0, y: 0, z: -0.19615366, w: 0.9805732}
-      length: 13.202228
+      position: {x: 12.577642, y: 0.00014182468, z: 0}
+      rotation: {x: 0, y: 0, z: -0.19615534, w: 0.9805729}
+      length: 13.202115
       parentId: 75
       color:
         serializedVersion: 2
         rgba: 4286578943
-    - name: bone_141
+    - name: Eyelid Top L Upper Chain Bone 5
       guid: dc1be0b2fca594b4ca63ef9bd19c94d8
-      position: {x: 13.202237, y: -0.000032029, z: 0}
-      rotation: {x: 0, y: 0, z: -0.18766701, w: 0.98223275}
-      length: 7.375413
+      position: {x: 13.202149, y: 0.000006697941, z: 0}
+      rotation: {x: 0, y: 0, z: -0.18766022, w: 0.982234}
+      length: 7.3755064
       parentId: 76
       color:
         serializedVersion: 2
         rgba: 4278223103
-    - name: bone_142
+    - name: Eyelid Top L Upper Chain Bone 6
       guid: de567365ffcf87c46af298aaa38a4164
-      position: {x: 7.375439, y: 0.000093959105, z: 0}
-      rotation: {x: 0, y: 0, z: -0.23671426, w: 0.9715794}
+      position: {x: 7.3756394, y: -0.000104486404, z: 0}
+      rotation: {x: 0, y: 0, z: -0.23671968, w: 0.971578}
       length: 9.976624
       parentId: 77
       color:
         serializedVersion: 2
         rgba: 4278255488
-    - name: bone_143
+    - name: Eyelid Bottom L Upper Chain Bone 10
       guid: 7650e1c27dd4a6d4fb41903c0c0d7405
-      position: {x: 3.5382855, y: -0.00009922329, z: 0}
-      rotation: {x: 0, y: 0, z: 0.27957124, w: 0.96012497}
-      length: 6.7750006
+      position: {x: 3.5389137, y: -0.00011625528, z: 0}
+      rotation: {x: 0, y: 0, z: 0.27955073, w: 0.96013093}
+      length: 6.774999
       parentId: 63
       color:
         serializedVersion: 2
         rgba: 4294967040
-    - name: bone_144
+    - name: Eyelid Bottom L Upper Chain Bone 11
       guid: 01ddfe66f56cb3449be674050779770a
-      position: {x: 6.7749753, y: -0.000053041957, z: 0}
-      rotation: {x: 0, y: 0, z: -0.3354933, w: 0.9420426}
+      position: {x: 6.774835, y: 0.00003354135, z: 0}
+      rotation: {x: 0, y: 0, z: -0.3354935, w: 0.9420425}
       length: 4.8256454
       parentId: 79
       color:
         serializedVersion: 2
         rgba: 4294901760
-    - name: bone_145
+    - name: Eyelid Bottom L Lower Chain Bone 8
       guid: 5f10b1b8215448041b774bb37f251d28
-      position: {x: 7.824185, y: 0.000077252174, z: 0}
-      rotation: {x: 0, y: 0, z: 0.10954029, w: 0.99398243}
+      position: {x: 7.8248386, y: -0.000026063455, z: 0}
+      rotation: {x: 0, y: 0, z: 0.10952935, w: 0.9939836}
       length: 10.44632
       parentId: 59
       color:
         serializedVersion: 2
         rgba: 4294902015
-    - name: bone_146
+    - name: Eyelid Bottom R Upper Chain Bone 0
       guid: 0b85ea8eb96b47f45abde8b43f15e82b
       position: {x: 206.5696, y: -86.62695, z: 0}
-      rotation: {x: 0, y: 0, z: 0.95599115, w: 0.29339564}
-      length: 5.654647
+      rotation: {x: 0, y: -0, z: 0.95599747, w: 0.29337507}
+      length: 5.6547804
       parentId: 3
       color:
         serializedVersion: 2
         rgba: 4286578943
-    - name: bone_147
+    - name: Eyelid Bottom R Upper Chain Bone 1
       guid: caa3525b1e6af3c468fff92097dff183
-      position: {x: 5.6545935, y: 0.000019952611, z: 0}
-      rotation: {x: 0, y: 0, z: -0.03756435, w: 0.9992942}
-      length: 6.058828
+      position: {x: 5.654544, y: -0.0000078977755, z: 0}
+      rotation: {x: 0, y: 0, z: -0.03757387, w: 0.99929386}
+      length: 6.0584087
       parentId: 82
       color:
         serializedVersion: 2
         rgba: 4278255615
-    - name: bone_148
+    - name: Eyelid Bottom R Upper Chain Bone 2
       guid: 37b9aa38beec821459a2c175e103bb90
-      position: {x: 6.0587525, y: -0.00002103638, z: 0}
-      rotation: {x: 0, y: 0, z: -0.14563444, w: 0.9893385}
-      length: 6.113088
+      position: {x: 6.0584874, y: -0.000029395444, z: 0}
+      rotation: {x: 0, y: 0, z: -0.1456629, w: 0.9893343}
+      length: 6.1133876
       parentId: 83
       color:
         serializedVersion: 2
         rgba: 4278255360
-    - name: bone_149
+    - name: Eyelid Bottom R Upper Chain Bone 3
       guid: a4ca6324cd1d0cc46a394e82fb4680fd
-      position: {x: 6.1130247, y: -0.000031017153, z: 0}
-      rotation: {x: 0, y: 0, z: -0.13406768, w: 0.9909722}
-      length: 5.7385197
+      position: {x: 6.113516, y: 0.000008412637, z: 0}
+      rotation: {x: 0, y: 0, z: -0.13407044, w: 0.9909718}
+      length: 5.7384386
       parentId: 84
       color:
         serializedVersion: 2
         rgba: 4294967040
-    - name: bone_150
+    - name: Eyelid Bottom R Upper Chain Bone 4
       guid: c111fbb25d2f952409a06b94dbef737f
-      position: {x: 5.7385044, y: -0.000065020235, z: 0}
-      rotation: {x: 0, y: 0, z: -0.096765965, w: 0.9953072}
-      length: 6.8023186
+      position: {x: 5.7384796, y: 0.000013219491, z: 0}
+      rotation: {x: 0, y: 0, z: -0.09674487, w: 0.99530923}
+      length: 6.8021975
       parentId: 85
       color:
         serializedVersion: 2
         rgba: 4294901760
-    - name: bone_151
+    - name: Eyelid Bottom R Upper Chain Bone 5
       guid: 9a7eb0eca6fd2c447b8c538cd697aff2
-      position: {x: 6.8022914, y: -0.000093074224, z: 0}
-      rotation: {x: 0, y: 0, z: -0.12054925, w: 0.9927074}
-      length: 6.23084
+      position: {x: 6.802159, y: 0.00012402558, z: 0}
+      rotation: {x: 0, y: 0, z: -0.12057087, w: 0.99270475}
+      length: 6.2307405
       parentId: 86
       color:
         serializedVersion: 2
         rgba: 4294902015
-    - name: bone_152
+    - name: Eyelid Bottom R Upper Chain Bone 6
       guid: 9e9e69e510847ce4ead3bd3d25fde29c
-      position: {x: 6.2308183, y: 0.000052228497, z: 0}
-      rotation: {x: 0, y: 0, z: -0.07333673, w: 0.99730724}
-      length: 6.0487847
+      position: {x: 6.230755, y: 0.000120586774, z: 0}
+      rotation: {x: 0, y: 0, z: -0.07331601, w: 0.9973088}
+      length: 6.048784
       parentId: 87
       color:
         serializedVersion: 2
         rgba: 4278190335
-    - name: bone_153
+    - name: Eyelid Bottom R Upper Chain Bone 7
       guid: 332345a9693de6743b164d9d8e33186c
-      position: {x: 6.048754, y: -0.00006217402, z: 0}
-      rotation: {x: 0, y: 0, z: -0.1385106, w: 0.990361}
-      length: 6.767543
+      position: {x: 6.048737, y: 0.00008848523, z: 0}
+      rotation: {x: 0, y: 0, z: -0.1384908, w: 0.9903637}
+      length: 6.767527
       parentId: 88
       color:
         serializedVersion: 2
         rgba: 4278255488
-    - name: bone_154
+    - name: Eyelid Bottom R Upper Chain Bone 8
       guid: 0cd4abe1db9e5f44d99ae3fa378e5744
-      position: {x: 6.7675266, y: -0.000026267939, z: 0}
-      rotation: {x: 0, y: 0, z: -0.22250974, w: 0.97493047}
-      length: 6.6436186
+      position: {x: 6.76753, y: 0.000011199576, z: 0}
+      rotation: {x: 0, y: 0, z: -0.22254421, w: 0.9749226}
+      length: 6.643479
       parentId: 89
       color:
         serializedVersion: 2
         rgba: 4286643968
-    - name: bone_155
+    - name: Eyelid Bottom R Upper Chain Bone 9
       guid: 7a509a4e8b5529c4699582a16ad5be49
-      position: {x: 6.6436143, y: -0.00008247348, z: 0}
-      rotation: {x: 0, y: 0, z: 0.25910375, w: -0.9658495}
+      position: {x: 6.6435885, y: 0.00010587595, z: 0}
+      rotation: {x: 0, y: 0, z: 0.25908938, w: -0.9658534}
       length: 6.8158784
       parentId: 90
       color:
         serializedVersion: 2
         rgba: 4294934528
-    - name: bone_156
+    - name: Eyelid Bottom R Lower Chain Bone 0
       guid: 91a350bdc028b9e4e99c5495c3d2aca3
       position: {x: 205.04626, y: -91.70563, z: 0}
-      rotation: {x: 0, y: 0, z: 0.9988923, w: 0.047056068}
-      length: 9.939983
+      rotation: {x: 0, y: -0, z: 0.99889225, w: 0.04705606}
+      length: 9.939984
       parentId: 3
       color:
         serializedVersion: 2
         rgba: 4294901888
-    - name: bone_157
+    - name: Eyelid Bottom R Lower Chain Bone 1
       guid: 135c75b2e1b4f264fb731881dc00656b
-      position: {x: 9.9400015, y: 0.000041553998, z: 0}
-      rotation: {x: 0, y: 0, z: -0.044687077, w: 0.999001}
-      length: 11.270844
+      position: {x: 9.939952, y: 0.000024437923, z: 0}
+      rotation: {x: 0, y: 0, z: -0.04468941, w: 0.99900097}
+      length: 11.270606
       parentId: 92
       color:
         serializedVersion: 2
         rgba: 4286578943
-    - name: bone_158
+    - name: Eyelid Bottom R Lower Chain Bone 2
       guid: 802c3bae579d6b0418f3c6534d1beb4f
-      position: {x: 11.27082, y: 0.000027840764, z: 0}
-      rotation: {x: 0, y: 0, z: -0.22242184, w: 0.97495055}
-      length: 8.498946
+      position: {x: 11.270567, y: 0.000026681606, z: 0}
+      rotation: {x: 0, y: 0, z: -0.22240561, w: 0.97495425}
+      length: 8.499073
       parentId: 93
       color:
         serializedVersion: 2
         rgba: 4278223103
-    - name: bone_159
+    - name: Eyelid Bottom R Lower Chain Bone 3
       guid: 265a82b5b3564f544918fb708a8d43e5
-      position: {x: 8.498952, y: 0.0000059991507, z: 0}
-      rotation: {x: 0, y: 0, z: -0.28419313, w: 0.95876706}
-      length: 10.02364
+      position: {x: 8.499286, y: -0.000014116871, z: 0}
+      rotation: {x: 0, y: 0, z: -0.28420004, w: 0.95876503}
+      length: 10.023956
       parentId: 94
       color:
         serializedVersion: 2
         rgba: 4278255360
-    - name: bone_160
+    - name: Eyelid Bottom R Lower Chain Bone 4
       guid: 3c2abdec22cfab648993c2c9f9caea05
-      position: {x: 10.023668, y: -0.000042492466, z: 0}
-      rotation: {x: 0, y: 0, z: -0.19982451, w: 0.9798317}
-      length: 13.535046
+      position: {x: 10.023987, y: -0.00000089309106, z: 0}
+      rotation: {x: 0, y: 0, z: -0.19983177, w: 0.97983027}
+      length: 13.5348015
       parentId: 95
       color:
         serializedVersion: 2
         rgba: 4294967040
-    - name: bone_161
+    - name: Eyelid Bottom R Lower Chain Bone 5
       guid: 1afe7ffb775d2a54d9894535a1811feb
-      position: {x: 13.534987, y: 0.000031876913, z: 0}
-      rotation: {x: 0, y: 0, z: -0.073787846, w: 0.997274}
-      length: 12.085918
+      position: {x: 13.5347595, y: -0.0000036269248, z: 0}
+      rotation: {x: 0, y: 0, z: -0.07377694, w: 0.99727476}
+      length: 12.085995
       parentId: 96
       color:
         serializedVersion: 2
         rgba: 4294901760
-    - name: bone_162
+    - name: Eyelid Bottom R Lower Chain Bone 6
       guid: b326f9b8a8fcfd341bbe2232b7f52122
-      position: {x: 12.085868, y: -0.0000228982, z: 0}
-      rotation: {x: 0, y: 0, z: -0.30900863, w: 0.9510592}
-      length: 12.602225
+      position: {x: 12.086, y: -0.00008251855, z: 0}
+      rotation: {x: 0, y: 0, z: -0.3090091, w: 0.9510591}
+      length: 12.602135
       parentId: 97
       color:
         serializedVersion: 2
         rgba: 4294902015
-    - name: bone_163
+    - name: Eyelid Bottom R Lower Chain Bone 7
       guid: a6ef54ada460ade47b1d4bdcdaf5b4dc
-      position: {x: 12.602178, y: -0.000010754447, z: 0}
-      rotation: {x: 0, y: 0, z: -0.105698936, w: 0.9943982}
-      length: 13.732074
+      position: {x: 12.601939, y: -0.0002542423, z: 0}
+      rotation: {x: 0, y: 0, z: -0.105694704, w: 0.99439865}
+      length: 13.732601
       parentId: 98
       color:
         serializedVersion: 2
         rgba: 4278190335
-    - name: bone_164
+    - name: Eyelid Bottom R Lower Chain Bone 8
       guid: 1904ad31d8604384eba0b563c7f02d05
-      position: {x: 13.732067, y: -0.000030371884, z: 0}
-      rotation: {x: 0, y: 0, z: 0.10339318, w: -0.99464065}
+      position: {x: 13.732764, y: 0.00006258165, z: 0}
+      rotation: {x: 0, y: 0, z: 0.1034075, w: -0.99463916}
       length: 9.317161
       parentId: 99
       color:
         serializedVersion: 2
         rgba: 4278255615
-    - name: bone_165
+    - name: Eyelid Top R Lower Chain Bone 0
       guid: bc77a9175a6f8a14882107e5dc933982
       position: {x: 198.9907, y: -38.694157, z: 0}
-      rotation: {x: 0, y: 0, z: -0.35742244, w: 0.93394285}
-      length: 7.147748
+      rotation: {x: 0, y: 0, z: -0.35743752, w: 0.9339371}
+      length: 7.1473026
       parentId: 3
       color:
         serializedVersion: 2
         rgba: 4286643968
-    - name: bone_166
+    - name: Eyelid Top R Lower Chain Bone 1
       guid: 4f373a89627f438409b0599125ea26d2
-      position: {x: 7.1476927, y: -0.00007460972, z: 0}
-      rotation: {x: 0, y: 0, z: -0.08685216, w: 0.99622124}
-      length: 5.589768
+      position: {x: 7.1474433, y: -0.00007867483, z: 0}
+      rotation: {x: 0, y: 0, z: -0.086842544, w: 0.9962221}
+      length: 5.5898633
       parentId: 101
       color:
         serializedVersion: 2
         rgba: 4294934528
-    - name: bone_167
+    - name: Eyelid Top R Lower Chain Bone 2
       guid: d7343896044828b42ad876065ba7edf9
-      position: {x: 5.589844, y: 0.00007365626, z: 0}
-      rotation: {x: 0, y: 0, z: -0.09851052, w: 0.995136}
-      length: 7.021574
+      position: {x: 5.589805, y: 0.00001081184, z: 0}
+      rotation: {x: 0, y: 0, z: -0.09849206, w: 0.9951379}
+      length: 7.021247
       parentId: 102
       color:
         serializedVersion: 2
         rgba: 4294901888
-    - name: bone_168
+    - name: Eyelid Top R Lower Chain Bone 3
       guid: c0cd3cd81abb40f478d6c25fe628097a
-      position: {x: 7.021577, y: -0.000041935837, z: 0}
-      rotation: {x: 0, y: 0, z: -0.15895298, w: 0.98728615}
-      length: 6.238091
+      position: {x: 7.021264, y: -0.0000129196815, z: 0}
+      rotation: {x: 0, y: 0, z: -0.15893967, w: 0.9872883}
+      length: 6.2376447
       parentId: 103
       color:
         serializedVersion: 2
         rgba: 4286578943
-    - name: bone_169
+    - name: Eyelid Top R Lower Chain Bone 4
       guid: 3c6b770f225dee44e90c841a491e8e00
-      position: {x: 6.2380843, y: -0.000097045646, z: 0}
-      rotation: {x: 0, y: 0, z: -0.075100735, w: 0.997176}
+      position: {x: 6.2375274, y: 0.00016407519, z: 0}
+      rotation: {x: 0, y: 0, z: -0.07512594, w: 0.9971741}
       length: 6.7286367
       parentId: 104
       color:
         serializedVersion: 2
         rgba: 4278223103
-    - name: bone_170
+    - name: Eyelid Top R Lower Chain Bone 5
       guid: ecf4d24fcac5bdd4d826da05b74c62d2
-      position: {x: 6.7286797, y: 0.00006260449, z: 0}
-      rotation: {x: 0, y: 0, z: -0.08683946, w: 0.9962223}
-      length: 7.0213013
+      position: {x: 6.7286158, y: -0.00002921058, z: 0}
+      rotation: {x: 0, y: 0, z: -0.0868393, w: 0.9962224}
+      length: 7.021301
       parentId: 105
       color:
         serializedVersion: 2
         rgba: 4278255488
-    - name: bone_171
+    - name: Eyelid Top R Lower Chain Bone 6
       guid: 890fe1d7effb343458fc8c4fe374d9a6
-      position: {x: 7.021298, y: 0.000083264444, z: 0}
-      rotation: {x: 0, y: 0, z: -0.18983202, w: 0.9818166}
-      length: 7.260959
+      position: {x: 7.021307, y: 0.00017286732, z: 0}
+      rotation: {x: 0, y: 0, z: -0.18981813, w: 0.9818193}
+      length: 7.2608314
       parentId: 106
       color:
         serializedVersion: 2
         rgba: 4294967040
-    - name: bone_172
+    - name: Eyelid Top R Lower Chain Bone 7
       guid: b987b4d8a39e31e43a36dadaf3767c47
-      position: {x: 7.260911, y: -0.000031087635, z: 0}
-      rotation: {x: 0, y: 0, z: -0.12372884, w: 0.99231607}
-      length: 7.1378994
+      position: {x: 7.2607794, y: 0.000022812295, z: 0}
+      rotation: {x: 0, y: 0, z: -0.123737045, w: 0.99231505}
+      length: 7.1379843
       parentId: 107
       color:
         serializedVersion: 2
         rgba: 4294901760
-    - name: bone_173
+    - name: Eyelid Top R Lower Chain Bone 8
       guid: 34b9223bb5659a14993fa36bd501a3b1
-      position: {x: 7.1380506, y: 0.00008215766, z: 0}
-      rotation: {x: 0, y: 0, z: 0.08021739, w: 0.9967774}
-      length: 5.606885
+      position: {x: 7.1380906, y: 0.00001016086, z: 0}
+      rotation: {x: 0, y: 0, z: 0.08020495, w: 0.9967784}
+      length: 5.6067863
       parentId: 108
       color:
         serializedVersion: 2
         rgba: 4294902015
-    - name: bone_174
+    - name: Eyelid Top R Lower Chain Bone 9
       guid: 58ce53e9815304148905a319c54ded48
-      position: {x: 5.6069345, y: -0.000069151254, z: 0}
-      rotation: {x: 0, y: 0, z: 0.13106784, w: 0.9913735}
+      position: {x: 5.606814, y: -0.000035086676, z: 0}
+      rotation: {x: 0, y: 0, z: 0.13107382, w: 0.99137264}
       length: 6.0390415
       parentId: 109
       color:
         serializedVersion: 2
         rgba: 4278190335
-    - name: bone_175
+    - name: Eyelid Top R Upper Chain Bone 0
       guid: 00187d767145a324fb3d2b4fff300041
       position: {x: 195.8494, y: -30.543041, z: 0}
-      rotation: {x: 0, y: 0, z: 0.023682343, w: 0.9997196}
-      length: 13.6451645
+      rotation: {x: 0, y: 0, z: 0.02368227, w: 0.99971956}
+      length: 13.645164
       parentId: 3
       color:
         serializedVersion: 2
         rgba: 4278255615
-    - name: bone_176
+    - name: Eyelid Top R Upper Chain Bone 1
       guid: 031e5a95164345b4a967fe53f9859a1a
-      position: {x: 13.645166, y: 0.0000062294066, z: 0}
-      rotation: {x: 0, y: 0, z: -0.29278883, w: 0.9561771}
-      length: 15.752808
+      position: {x: 13.645099, y: 0.0000068090385, z: 0}
+      rotation: {x: 0, y: 0, z: -0.29279646, w: 0.9561748}
+      length: 15.752392
       parentId: 111
       color:
         serializedVersion: 2
         rgba: 4278255360
-    - name: bone_177
+    - name: Eyelid Top R Upper Chain Bone 2
       guid: 03e00c285528c214b9688c8752ec5525
-      position: {x: 15.75272, y: -0.0000126661325, z: 0}
-      rotation: {x: 0, y: 0, z: -0.23080872, w: 0.97299916}
-      length: 16.661144
+      position: {x: 15.752741, y: -0.00005546367, z: 0}
+      rotation: {x: 0, y: 0, z: -0.23079103, w: 0.9730034}
+      length: 16.661066
       parentId: 112
       color:
         serializedVersion: 2
         rgba: 4294934528
-    - name: bone_178
+    - name: Eyelid Top R Upper Chain Bone 3
       guid: f786a96362baf6242b94b09d2b80fb62
-      position: {x: 16.661047, y: -0.000072758456, z: 0}
-      rotation: {x: 0, y: 0, z: -0.28077495, w: 0.95977366}
+      position: {x: 16.661102, y: -0.00004624488, z: 0}
+      rotation: {x: 0, y: 0, z: -0.28078467, w: 0.9597708}
       length: 16.43772
       parentId: 113
       color:
         serializedVersion: 2
         rgba: 4294901888
-    - name: bone_179
+    - name: Eyelid Top R Upper Chain Bone 4
       guid: 77e1913501fc9f349b8c1a8ea9220672
-      position: {x: 16.437712, y: 0.00021561577, z: 0}
-      rotation: {x: 0, y: 0, z: -0.11011623, w: 0.9939187}
-      length: 14.08519
+      position: {x: 16.437695, y: 0.000114829774, z: 0}
+      rotation: {x: 0, y: 0, z: -0.11009944, w: 0.99392056}
+      length: 14.08508
       parentId: 114
       color:
         serializedVersion: 2
         rgba: 4286578943
-    - name: bone_180
+    - name: Eyelid Top R Upper Chain Bone 5
       guid: 95a8e27200e55cf4a86b758594bd84cb
-      position: {x: 14.085111, y: 0.00020062072, z: 0}
-      rotation: {x: 0, y: 0, z: -0.23479459, w: 0.972045}
-      length: 13.77128
+      position: {x: 14.085093, y: 0.000020775478, z: 0}
+      rotation: {x: 0, y: 0, z: -0.23480822, w: 0.9720417}
+      length: 13.77137
       parentId: 115
       color:
         serializedVersion: 2
         rgba: 4278223103
-    - name: bone_181
+    - name: Eyelid Top R Upper Chain Bone 6
       guid: a707325557fe3c247adca298ee2de8df
-      position: {x: 13.771297, y: 0.000085142674, z: 0}
-      rotation: {x: 0, y: 0, z: -0.23766574, w: 0.97134703}
-      length: 10.9665785
+      position: {x: 13.771195, y: 0.000111712376, z: 0}
+      rotation: {x: 0, y: 0, z: -0.2376535, w: 0.97135}
+      length: 10.966717
       parentId: 116
       color:
         serializedVersion: 2
         rgba: 4278255488
-    - name: bone_182
+    - name: Eyelid Top R Upper Chain Bone 7
       guid: ffbbaa3c150ee5643a0778666b4f20f3
-      position: {x: 10.966694, y: 0.000075274584, z: 0}
-      rotation: {x: 0, y: 0, z: -0.05512676, w: 0.9984794}
+      position: {x: 10.966824, y: 0.000005819282, z: 0}
+      rotation: {x: 0, y: 0, z: -0.055141643, w: 0.9984786}
       length: 9.099794
       parentId: 117
       color:
         serializedVersion: 2
         rgba: 4286643968
-    - name: bone_183
+    - name: Mouth Base L Vertical Bone 0
       guid: 3f2c47fabbd3a2843833c21f420fc814
       position: {x: 35.516243, y: 53.170128, z: 0}
-      rotation: {x: 0, y: 0, z: 0.19660854, w: 0.9804821}
-      length: 22.284636
+      rotation: {x: 0, y: 0, z: 0.19661343, w: 0.9804811}
+      length: 22.284729
       parentId: 3
       color:
         serializedVersion: 2
         rgba: 4294901760
-    - name: bone_184
+    - name: Mouth Base L Vertical Bone 1
       guid: 9649f0db60aa02b499beba6c4892317c
-      position: {x: 22.284649, y: -0.0000042453685, z: 0}
-      rotation: {x: 0, y: 0, z: -0.31011525, w: 0.950699}
+      position: {x: 22.28481, y: -0.000088306144, z: 0}
+      rotation: {x: 0, y: 0, z: -0.31012005, w: 0.9506974}
       length: 19.573563
       parentId: 119
       color:
         serializedVersion: 2
         rgba: 4294902015
-    - name: bone_185
+    - name: Mouth Base R Vertical Bone 0
       guid: 5ab7ba468bcb5be4182856482c959a8b
       position: {x: 38.274532, y: -51.107082, z: 0}
-      rotation: {x: 0, y: 0, z: -0.24238348, w: 0.9701806}
-      length: 18.996857
+      rotation: {x: 0, y: 0, z: -0.2423864, w: 0.9701798}
+      length: 18.99664
       parentId: 3
       color:
         serializedVersion: 2
         rgba: 4278190335
-    - name: bone_186
+    - name: Mouth Base R Vertical Bone 1
       guid: da176222c75e2f046a13aed06138de5d
-      position: {x: 18.996788, y: -0.000036280377, z: 0}
-      rotation: {x: 0, y: 0, z: 0.36940753, w: 0.9292675}
+      position: {x: 18.99662, y: -0.0000071144314, z: 0}
+      rotation: {x: 0, y: 0, z: 0.3694104, w: 0.9292664}
       length: 20.531021
       parentId: 121
       color:
         serializedVersion: 2
         rgba: 4278255615
-    - name: bone_187
+    - name: Mouth Base Lower R Horizontal Bone
       guid: 5a7e13b9f38859249881069bc1ad32a1
       position: {x: 47.089718, y: -4.7220864, z: 0}
       rotation: {x: 0, y: 0, z: -0.6783775, w: 0.73471355}
@@ -33741,7 +33741,7 @@ ScriptedImporter:
       color:
         serializedVersion: 2
         rgba: 4278255360
-    - name: bone_188
+    - name: Mouth Base Lower L Horizontal Bone
       guid: 3632a3056df3cce4b85162dfdca36e98
       position: {x: 47.251896, y: 5.2517414, z: 0}
       rotation: {x: 0, y: 0, z: 0.66691124, w: 0.7451372}
@@ -33750,7 +33750,7 @@ ScriptedImporter:
       color:
         serializedVersion: 2
         rgba: 4294967040
-    - name: bone_189
+    - name: Mouth Base Upper R Horizontal Bone
       guid: ee042971291daf54aa291fe3f4e7c20a
       position: {x: 63.56015, y: -6.5534196, z: 0}
       rotation: {x: 0, y: 0, z: -0.62591314, w: 0.77989286}
@@ -33759,7 +33759,7 @@ ScriptedImporter:
       color:
         serializedVersion: 2
         rgba: 4294901888
-    - name: bone_190
+    - name: Mouth Base Upper L Horizontal Bone
       guid: 730a2d7e2ec4e3c4db0135f2f3551e9c
       position: {x: 62.969093, y: 5.8391943, z: 0}
       rotation: {x: 0, y: 0, z: 0.6173044, w: 0.7867245}
@@ -33768,20 +33768,20 @@ ScriptedImporter:
       color:
         serializedVersion: 2
         rgba: 4286578943
-    - name: bone_191
+    - name: Bicep L Bone
       guid: d14fa6f0b2a4a094e856eedf34f0540f
-      position: {x: 103.63781, y: 0.0000030954398, z: 0}
-      rotation: {x: 0, y: 0, z: 0.5019308, w: 0.86490786}
-      length: 298.30554
+      position: {x: 103.63804, y: 0.000071617134, z: 0}
+      rotation: {x: 0, y: 0, z: 0.5019312, w: 0.86490756}
+      length: 298.3055
       parentId: 7
       color:
         serializedVersion: 2
         rgba: 4286578943
-    - name: bone_192
+    - name: Bicep R Bone
       guid: d27eeff508d0d314489f248ca1f33b20
-      position: {x: 66.896706, y: 0.00015430748, z: 0}
-      rotation: {x: 0, y: 0, z: -0.36609578, w: 0.9305772}
-      length: 308.1919
+      position: {x: 66.8967, y: 0.000025420944, z: 0}
+      rotation: {x: 0, y: 0, z: -0.36609694, w: 0.93057674}
+      length: 308.19205
       parentId: 4
       color:
         serializedVersion: 2
@@ -34212,7 +34212,7 @@ ScriptedImporter:
       order: 0
     dimension: {x: 0, y: 0}
     characterGroups: []
-    pivot: {x: 0.5, y: 0}
+    pivot: {x: 0.5, y: 0.5}
     boneReadOnly: 0
   platformSettings:
   - name: DefaultTexturePlatform
@@ -34253,7 +34253,7 @@ ScriptedImporter:
     androidETC2FallbackOverride: 0
   mosaicLayers: 1
   characterMode: 1
-  documentPivot: {x: 0.5, y: 0}
+  documentPivot: {x: 0.5, y: 0.5}
   documentAlignment: 7
   importHiddenLayers: 0
   layerMappingOption: 1

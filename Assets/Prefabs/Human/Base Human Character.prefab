@@ -265,6 +265,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Eyelid Top R Upper Chain 4
       objectReference: {fileID: 0}
+    - target: {fileID: -7733894104293041617, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Forearm L Bone
+      objectReference: {fileID: 0}
     - target: {fileID: -7552582706839291426, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -327,7 +331,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7000953157349300876, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
       propertyPath: m_Name
-      value: Bicep L Bone
+      value: Shoulder L Bone
       objectReference: {fileID: 0}
     - target: {fileID: -6976838981555452880, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
       propertyPath: m_Name
@@ -420,6 +424,10 @@ PrefabInstance:
     - target: {fileID: -5339433105270203409, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
       propertyPath: m_Color.r
       value: 0.94716984
+      objectReference: {fileID: 0}
+    - target: {fileID: -5309770056137205031, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Hand L Bone
       objectReference: {fileID: 0}
     - target: {fileID: -5280192675311742296, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
       propertyPath: m_Name
@@ -544,6 +552,10 @@ PrefabInstance:
     - target: {fileID: -3951658238497738529, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
       propertyPath: m_Name
       value: Lower Lip Bone 5
+      objectReference: {fileID: 0}
+    - target: {fileID: -3763189260999029827, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Bicep R bone
       objectReference: {fileID: 0}
     - target: {fileID: -3431526756889919636, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
       propertyPath: m_Name
@@ -765,6 +777,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Eyelid Bottom R Upper Chain 9
       objectReference: {fileID: 0}
+    - target: {fileID: -315764226293413179, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Bicep L Bone
+      objectReference: {fileID: 0}
     - target: {fileID: -202362156658008315, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
       propertyPath: m_Color.a
       value: 1
@@ -935,7 +951,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1459119641201781150, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
       propertyPath: m_Name
-      value: Bicep R Bone
+      value: Shoulder R Bone
       objectReference: {fileID: 0}
     - target: {fileID: 1513300212712959790, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
       propertyPath: m_Name
@@ -1032,6 +1048,10 @@ PrefabInstance:
     - target: {fileID: 2879212479199544532, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
       propertyPath: m_Name
       value: Eyelid Top R Upper Chain 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3021502024914057351, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Forearm R Bone
       objectReference: {fileID: 0}
     - target: {fileID: 3112028958553094713, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
       propertyPath: m_Name
@@ -1200,6 +1220,10 @@ PrefabInstance:
     - target: {fileID: 4959808511338596535, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
       propertyPath: m_Name
       value: Eyelid Top R Lower Chain 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5112158940833276620, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_Name
+      value: Hand R Bone
       objectReference: {fileID: 0}
     - target: {fileID: 5179828394283451115, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
       propertyPath: m_Name
