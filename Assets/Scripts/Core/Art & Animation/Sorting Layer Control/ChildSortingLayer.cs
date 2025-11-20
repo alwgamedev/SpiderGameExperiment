@@ -49,6 +49,7 @@ public class ChildSortingLayer : SortingLayerDataSource
         if (slds != null)
         {
             SetSortingData(slds.SortingLayerID, slds.SortingOrder);
+            Debug.Log($"{name} updated sorting data");
         }
 
         InvokeDataUpdatedEvent();
@@ -56,13 +57,13 @@ public class ChildSortingLayer : SortingLayerDataSource
 
     public void UpdateParentSubscription()
     {
-        if (parent != null)
+        if (parent)
         {
             parent.DataUpdated -= UpdateSortingData;
             parent.Destroyed -= UnhookCurrentSLDS;
         }
 
-        if (IsOurChild(slds))
+        if (IsOurChild(slds) || !slds)
         {
             slds = null;
         }
@@ -88,7 +89,7 @@ public class ChildSortingLayer : SortingLayerDataSource
 
     private void UnhookCurrentSLDS()
     {
-        if (parent != null)
+        if (parent)
         {
             parent.DataUpdated -= UpdateSortingData;
             parent.Destroyed -= UnhookCurrentSLDS;
@@ -96,8 +97,8 @@ public class ChildSortingLayer : SortingLayerDataSource
         }
     }
 
-    //could theoretically stack overflow if one of our descendants has a circular parent-child relationship and the loop never gets to us,
-    //but it's impossible to ever create a circular relationship now because we check IsOurChild before we set Parent
+    //could get caught in a loop before makes it to us,
+    //but it's impossible to ever create a loop now, since we check IsOurChild before setting parent
     private bool IsOurChild(SortingLayerDataSource s)
     {
         while (s != null)

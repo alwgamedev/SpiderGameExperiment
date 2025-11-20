@@ -383,10 +383,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Base Human Character
       objectReference: {fileID: 0}
-    - target: {fileID: 8262059761817456201, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

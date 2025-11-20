@@ -15,6 +15,7 @@ public abstract class SortingLayerDataSource : MonoBehaviour
 
     public void InvokeDataUpdatedEvent()
     {
+        Debug.Log($"{GetType().Name} {name} is broadcasting update to children");
         DataUpdated?.Invoke();
     }
 
@@ -26,5 +27,7 @@ public abstract class SortingLayerDataSource : MonoBehaviour
     protected virtual void OnDestroy()
     {
         InvokeDestroyedEvent();
+        DataUpdated = null;
+        Destroyed = null;
     }
 }
