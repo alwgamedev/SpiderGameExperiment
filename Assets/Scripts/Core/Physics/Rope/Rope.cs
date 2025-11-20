@@ -210,14 +210,10 @@ public class Rope
                 nodes[i].ResolveCollisions(dt);
 
             }
+
             //check if last node made contact and should become anchored
-            //(but we need to record its position before any collision resolution, so that it doesn't bounce and anchor to a weird position)
             if ((nodes[lastIndex].CurrentCollisionLayerMask & terminusAnchorMask) != 0)
             {
-                //if (!Physics2D.OverlapCircle(nodes[lastIndex].position, nodes[lastIndex].CollisionThreshold, terminusAnchorMask))
-                //{
-                //    nodes[lastIndex].position = p;
-                //}
                 var r = Physics2D.CircleCast(nodes[lastIndex].position, nodes[lastIndex].CollisionThreshold, Vector2.zero, 0, terminusAnchorMask);
                 if (!r)
                 {
@@ -225,6 +221,7 @@ public class Rope
                 }
                 if (r)
                 {
+                    //anchor just outside collider, so that nodes near lastIndex don't get caught in perpetual collision
                     nodes[lastIndex].position = r.point + nodes[lastIndex].CollisionThreshold * r.normal;
                     nodes[lastIndex].Anchor();
                 }
