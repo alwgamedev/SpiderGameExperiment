@@ -7,20 +7,18 @@ public static class CopyPathMenuItem
     {
         var go = Selection.activeGameObject;
 
-        if (go == null)
+        if (go != null)
         {
-            return;
+            var path = go.name;
+
+            while (go.transform.parent != null)
+            {
+                go = go.transform.parent.gameObject;
+                path = $"{go.name}/{path}";
+            }
+
+            EditorGUIUtility.systemCopyBuffer = path;
         }
-
-        var path = go.name;
-
-        while (go.transform.parent != null)
-        {
-            go = go.transform.parent.gameObject;
-            path = $"{go.name}/{path}";
-        }
-
-        EditorGUIUtility.systemCopyBuffer = path;
     }
 
     [MenuItem("GameObject/Copy Path", true)]

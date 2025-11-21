@@ -335,8 +335,40 @@ MonoBehaviour:
       m_SpriteOverride: {fileID: -5392322686316922377, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
     m_FromMain: 0
     m_EntryOverrideCount: 2
+  - m_Name: Forearm R Clip On
+    m_Hash: 405258348
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Dress Shirt
+      m_Hash: 501950261
+      m_Sprite: {fileID: 2232656630770259031, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 2232656630770259031, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: -5392322686316922377, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -5392322686316922377, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 2
   - m_Name: Bicep R
     m_Hash: 930714426
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Dress Shirt
+      m_Hash: 501950261
+      m_Sprite: {fileID: 4312851910258794699, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 4312851910258794699, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: -3363309455487328581, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -3363309455487328581, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 2
+  - m_Name: Bicep R Clip On
+    m_Hash: 271450751
     m_CategoryList: []
     m_OverrideEntries:
     - m_Name: Dress Shirt
@@ -378,8 +410,40 @@ MonoBehaviour:
       m_SpriteOverride: {fileID: 904197852682383930, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
     m_FromMain: 0
     m_EntryOverrideCount: 2
+  - m_Name: Forearm L Clip On
+    m_Hash: 1009080719
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Dress Shirt
+      m_Hash: 501950261
+      m_Sprite: {fileID: 5441971821073035811, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 5441971821073035811, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: 904197852682383930, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 904197852682383930, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 2
   - m_Name: Bicep L
     m_Hash: 225881689
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Dress Shirt
+      m_Hash: 501950261
+      m_Sprite: {fileID: -3418004606751340272, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -3418004606751340272, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: 3374445480345687262, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 3374445480345687262, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 2
+  - m_Name: Bicep L Clip On
+    m_Hash: 875338652
     m_CategoryList: []
     m_OverrideEntries:
     - m_Name: Dress Shirt
@@ -517,6 +581,22 @@ MonoBehaviour:
       m_SpriteOverride: {fileID: -8106390031811100945, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
     m_FromMain: 0
     m_EntryOverrideCount: 2
+  - m_Name: Thigh R Clip On
+    m_Hash: 703100291
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Pants
+      m_Hash: 1035850478
+      m_Sprite: {fileID: 5651484592592937725, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 5651484592592937725, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: -8106390031811100945, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -8106390031811100945, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 2
   - m_Name: Foot R
     m_Hash: 335387629
     m_CategoryList: []
@@ -559,8 +639,40 @@ MonoBehaviour:
       m_SpriteOverride: {fileID: -2365355209768802933, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
     m_FromMain: 0
     m_EntryOverrideCount: 2
-  - m_Name: ThighL
-    m_Hash: 375873270
+  - m_Name: Calf R Clip On
+    m_Hash: 283021730
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Pants
+      m_Hash: 1035850478
+      m_Sprite: {fileID: 5395647945089146974, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 5395647945089146974, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: -2365355209768802933, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -2365355209768802933, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 2
+  - m_Name: Thigh L
+    m_Hash: 816379626
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Pants
+      m_Hash: 1035850478
+      m_Sprite: {fileID: 2444181087385153609, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 2444181087385153609, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: 5818280383522673896, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 5818280383522673896, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 2
+  - m_Name: Thigh L Clip On
+    m_Hash: 233499744
     m_CategoryList: []
     m_OverrideEntries:
     - m_Name: Pants
@@ -617,6 +729,22 @@ MonoBehaviour:
       m_SpriteOverride: {fileID: -7398361337045757351, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
     m_FromMain: 0
     m_EntryOverrideCount: 2
+  - m_Name: Calf L Clip On
+    m_Hash: 886835265
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Pants
+      m_Hash: 1035850478
+      m_Sprite: {fileID: -7855933076978888605, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -7855933076978888605, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: -7398361337045757351, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -7398361337045757351, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 2
   - m_Name: Tie
     m_Hash: 487791175
     m_CategoryList: []
@@ -637,6 +765,11 @@ MonoBehaviour:
       m_Sprite: {fileID: -8372792098227779810, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: -8372792098227779810, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+    - m_Name: Dress Shirt Back
+      m_Hash: 505873003
+      m_Sprite: {fileID: 2492028464983551732, guid: 25440c0c6fad6dc428013931b07ef1ba, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 2492028464983551732, guid: 25440c0c6fad6dc428013931b07ef1ba, type: 3}
     - m_Name: Naked
       m_Hash: 883728177
       m_Sprite: {fileID: 4176899726911158039, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
@@ -647,11 +780,32 @@ MonoBehaviour:
       m_Sprite: {fileID: -7016086427025619393, guid: 50b9d95916b2fc7498121bc872a5f4c5, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: -7016086427025619393, guid: 50b9d95916b2fc7498121bc872a5f4c5, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 4
+  - m_Name: Torso Clip On
+    m_Hash: 225664390
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Dress Shirt
+      m_Hash: 501950261
+      m_Sprite: {fileID: -8372792098227779810, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -8372792098227779810, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
     - m_Name: Dress Shirt Back
       m_Hash: 505873003
       m_Sprite: {fileID: 2492028464983551732, guid: 25440c0c6fad6dc428013931b07ef1ba, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: 2492028464983551732, guid: 25440c0c6fad6dc428013931b07ef1ba, type: 3}
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: 4176899726911158039, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 4176899726911158039, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
+    - m_Name: Naked Back
+      m_Hash: 49464944
+      m_Sprite: {fileID: -7016086427025619393, guid: 50b9d95916b2fc7498121bc872a5f4c5, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -7016086427025619393, guid: 50b9d95916b2fc7498121bc872a5f4c5, type: 3}
     m_FromMain: 0
     m_EntryOverrideCount: 4
   - m_Name: Neck
@@ -671,5 +825,5 @@ MonoBehaviour:
     m_FromMain: 0
     m_EntryOverrideCount: 2
   m_PrimaryLibraryGUID: 
-  m_ModificationHash: 638989322561795547
+  m_ModificationHash: 638992568363604613
   m_Version: 1

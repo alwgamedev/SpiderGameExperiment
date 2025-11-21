@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 
-[ExecuteAlways]
 public class ChildSortingLayer : SortingLayerDataSource
 {
     public int orderDelta;

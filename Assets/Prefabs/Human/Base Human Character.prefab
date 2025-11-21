@@ -123,10 +123,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed8b1ae4e4e52b34ea557c1c11e076fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_CategoryHash: 1.8689996e-25
+  m_CategoryHash: 1.4478269e-30
   m_labelHash: 0.09268747
   m_SpriteKey: 0
-  m_SpriteHash: 1034758244
+  m_SpriteHash: 853589945
 --- !u!114 &1436844998646333005
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -264,10 +264,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed8b1ae4e4e52b34ea557c1c11e076fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_CategoryHash: 0.0000000022035243
+  m_CategoryHash: 8.7787943e-29
   m_labelHash: 0.09268747
   m_SpriteKey: 0
-  m_SpriteHash: 44823390
+  m_SpriteHash: 620781613
 --- !u!114 &5737351497101335734
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -544,10 +544,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed8b1ae4e4e52b34ea557c1c11e076fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_CategoryHash: 7.218321e-27
+  m_CategoryHash: 2.1681392e-24
   m_labelHash: 6.224452e-21
   m_SpriteKey: 0
-  m_SpriteHash: 294426478
+  m_SpriteHash: 732718069
 --- !u!114 &5037690888271865938
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -685,10 +685,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed8b1ae4e4e52b34ea557c1c11e076fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_CategoryHash: 0.000014875835
+  m_CategoryHash: 3.4317372e-29
   m_labelHash: 6.224452e-21
   m_SpriteKey: 0
-  m_SpriteHash: 91675898
+  m_SpriteHash: 384123858
 --- !u!114 &3749804509044354494
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -826,10 +826,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed8b1ae4e4e52b34ea557c1c11e076fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_CategoryHash: 7.6014466e-31
+  m_CategoryHash: 0.00000016075359
   m_labelHash: 6.224452e-21
   m_SpriteKey: 0
-  m_SpriteHash: 194475664
+  m_SpriteHash: 248405390
 --- !u!114 &743647005200730164
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -967,10 +967,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed8b1ae4e4e52b34ea557c1c11e076fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_CategoryHash: 1.6158076e-32
+  m_CategoryHash: 1.0323255e-13
   m_labelHash: 0.09268747
   m_SpriteKey: 0
-  m_SpriteHash: 477859970
+  m_SpriteHash: 468793475
 --- !u!114 &4541344716874798738
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1110,10 +1110,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed8b1ae4e4e52b34ea557c1c11e076fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_CategoryHash: 1.1003433e-15
+  m_CategoryHash: 7.499273e-31
   m_labelHash: 6.224452e-21
   m_SpriteKey: 0
-  m_SpriteHash: 781148458
+  m_SpriteHash: 220534051
 --- !u!114 &4275243581790900619
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1251,10 +1251,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed8b1ae4e4e52b34ea557c1c11e076fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_CategoryHash: 2.9335578e-32
+  m_CategoryHash: 0.000000409842
   m_labelHash: 0.09268747
   m_SpriteKey: 0
-  m_SpriteHash: 894047437
+  m_SpriteHash: 202499863
 --- !u!114 &8958093927889383378
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1280,6 +1280,7 @@ GameObject:
   - component: {fileID: 5055768600264933279}
   - component: {fileID: 6430050870112332145}
   - component: {fileID: 4892215863634106517}
+  - component: {fileID: 306623534658904924}
   m_Layer: 0
   m_Name: Base Human Character
   m_TagString: Untagged
@@ -1417,6 +1418,21 @@ MonoBehaviour:
   shoeRenderers:
   - {fileID: 4437364455360729196}
   - {fileID: 7633715412745706611}
+--- !u!114 &306623534658904924
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8060932246314317455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a91554f8baf52de41a862aaa15281dbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wardrobe: {fileID: 11400000, guid: 6b79dec7abe3bdd4594562a1de1e8b33, type: 2}
+  selectedOutfit: Business Casual
+  slots: []
 --- !u!1 &8576493916821263965
 GameObject:
   m_ObjectHideFlags: 0
@@ -1539,10 +1555,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed8b1ae4e4e52b34ea557c1c11e076fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_CategoryHash: 2.9505617e-11
+  m_CategoryHash: 0.010092153
   m_labelHash: 6.224452e-21
   m_SpriteKey: 0
-  m_SpriteHash: 527252740
+  m_SpriteHash: 864517545
 --- !u!114 &996651280900155267
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2248,7 +2264,7 @@ PrefabInstance:
     - target: {fileID: -1097639909565209645, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 5818280383522673896, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
+      objectReference: {fileID: 2444181087385153609, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
     - target: {fileID: -1097639909565209645, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
       propertyPath: m_Color.b
       value: 0.8774724
@@ -3901,10 +3917,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed8b1ae4e4e52b34ea557c1c11e076fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_CategoryHash: 1.8689996e-25
-  m_labelHash: 0.00000032153324
+  m_CategoryHash: 0.0000000012293786
+  m_labelHash: 0.09268747
   m_SpriteKey: 0
-  m_SpriteHash: 884762043
+  m_SpriteHash: 731543313
 --- !u!114 &3711443685348416995
 MonoBehaviour:
   m_ObjectHideFlags: 0

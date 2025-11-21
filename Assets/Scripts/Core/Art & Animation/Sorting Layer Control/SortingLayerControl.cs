@@ -1,7 +1,6 @@
 ﻿using System;
 using UnityEngine;
 
-[ExecuteAlways]
 public class SortingLayerControl : SortingLayerDataSource
 {
     [SerializeField] SerializableSortingLayer sortingLayer;
