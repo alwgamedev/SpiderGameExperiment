@@ -565,6 +565,27 @@ MonoBehaviour:
       m_SpriteOverride: {fileID: 68935989939217550, guid: 25440c0c6fad6dc428013931b07ef1ba, type: 3}
     m_FromMain: 0
     m_EntryOverrideCount: 3
+  - m_Name: Pelvis Clip On
+    m_Hash: 325557442
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: 4777831771980180189, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 4777831771980180189, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
+    - m_Name: Pants
+      m_Hash: 1035850478
+      m_Sprite: {fileID: 5516304441862883485, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 5516304441862883485, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+    - m_Name: Pants Back
+      m_Hash: 739236886
+      m_Sprite: {fileID: 68935989939217550, guid: 25440c0c6fad6dc428013931b07ef1ba, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 68935989939217550, guid: 25440c0c6fad6dc428013931b07ef1ba, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 3
   - m_Name: Thigh R
     m_Hash: 178768777
     m_CategoryList: []
@@ -825,5 +846,5 @@ MonoBehaviour:
     m_FromMain: 0
     m_EntryOverrideCount: 2
   m_PrimaryLibraryGUID: 
-  m_ModificationHash: 638992568363604613
+  m_ModificationHash: 638992793653952214
   m_Version: 1

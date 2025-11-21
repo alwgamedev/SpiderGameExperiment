@@ -31,20 +31,22 @@ public class OutfitSlot : MonoBehaviour
         }
     }
 
+    public SpriteLibraryAsset MainSpriteLibrary => SpriteResolver.spriteLibrary.spriteLibraryAsset;
+
     public void EquipOutfit(Outfit outfit)
     {
         var cat = SpriteResolver.GetCategory();
-        if (outfit.library == spriteResolver.spriteLibrary && outfit.dictionary.TryGetValue(cat, out var label))
+        if (outfit.library == MainSpriteLibrary && outfit.TryGetCategoryLabel(cat, out var label) && label != "None")
         {
-            if (!spriteRenderer.enabled)
+            if (!SpriteRenderer.enabled)
             {
-                spriteRenderer.enabled = true;
+                SpriteRenderer.enabled = true;
             }
-            spriteResolver.SetCategoryAndLabel(cat, label);
+            SpriteResolver.SetCategoryAndLabel(cat, label);
         }
         else
         {
-            spriteRenderer.enabled = false;
+            SpriteRenderer.enabled = false;
         }
     }
 }

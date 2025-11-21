@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 
-[ExecuteAlways]
 public class OutfitManager : MonoBehaviour
 {
     public Wardrobe wardrobe;
     public string selectedOutfit;
+    public TwoSidedOutfit.OutfitFace face;
 
     [SerializeField] OutfitSlot[] slots;
 
@@ -15,9 +15,9 @@ public class OutfitManager : MonoBehaviour
 
     public void ApplyOutfit(string name)
     {
-        if (wardrobe != null && wardrobe.outfitByName.TryGetValue(name, out var outfit))
+        if (wardrobe != null && wardrobe.TryGetOutfitByName(name, out var outfit))
         {
-            ApplyOutfit(outfit);
+            ApplyOutfit(outfit?.GetOutfit(face));
         }
         else
         {
@@ -27,9 +27,12 @@ public class OutfitManager : MonoBehaviour
 
     public void ApplyOutfit(Outfit outfit)
     {
-        for (int i = 0; i < slots.Length; i++)
+        if (outfit != null)
         {
-            slots[i].EquipOutfit(outfit);
+            for (int i = 0; i < slots.Length; i++)
+            {
+                slots[i].EquipOutfit(outfit);
+            }
         }
     }
 }

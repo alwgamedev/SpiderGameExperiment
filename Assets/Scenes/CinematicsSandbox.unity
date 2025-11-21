@@ -339,6 +339,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 306623534658904924, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
+      propertyPath: selectedOutfit
+      value: Business Casual
+      objectReference: {fileID: 0}
     - target: {fileID: 5055768600264933279, guid: bd106543966f56a40ac062c62ec4806d, type: 3}
       propertyPath: m_LocalPosition.x
       value: -23.73

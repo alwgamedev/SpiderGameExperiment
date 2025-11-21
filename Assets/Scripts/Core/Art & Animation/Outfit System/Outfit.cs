@@ -1,52 +1,79 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.U2D.Animation;
 
-[Serializable]
-public class Outfit : ISerializationCallbackReceiver
+[CreateAssetMenu(fileName = "New Outfit", menuName = "Scriptable Objects/Outfit")]
+public class Outfit : ScriptableObject
 {
-    public string name;
     public SpriteLibraryAsset library;
     public List<OutfitPiece> outfitPieces = new();
-    public Dictionary<string, string> dictionary = new();
+    
+    Dictionary<string, string> outfitPiecesDictionary = new();
 
-    //translate non-serialized data to serialized fields
-    public void OnBeforeSerialize()
+    private void OnValidate()
     {
-        outfitPieces.Clear();
+        //ensures list contains exactly one entry for each category in library (we could just do list = list.Distinct(by category), but then some categories can be missing)
+        RebuildDictionary();
+        RebuildList();
+    }
+
+    public bool TryGetCategoryLabel(string category, out string label)
+    {
+        if (outfitPiecesDictionary.Count == 0)
+        {
+            RebuildDictionary();
+        }
+        return outfitPiecesDictionary.TryGetValue(category, out label);
+    }
+
+    //mainly a time-saver when creating new outfit (activated via button in inspector)
+    public void SetAllToDefaults()
+    {
         if (library != null)
-        { 
-            foreach (var x in dictionary)
+        {
+            for (int i = 0; i < outfitPieces.Count; i++)
             {
-                outfitPieces.Add(new(library, x.Key, x.Value));
+                var p = outfitPieces[i];
+                p.label = library.GetCategoryLabelNames(p.category).FirstOrDefault();
+                outfitPieces[i] = p;
             }
         }
     }
 
-    //used serialized field to update non-serialized data
-    public void OnAfterDeserialize()
+    public void RebuildList()
     {
-        dictionary.Clear();
+        outfitPieces.Clear();
+        foreach (var x in outfitPiecesDictionary)
+        {
+            outfitPieces.Add(new(library, x.Key, x.Value));
+        }
+    }
+
+    public void RebuildDictionary()
+    {
+        outfitPiecesDictionary.Clear();
         if (library != null)
         {
             foreach (var c in library.GetCategoryNames())
             {
-                dictionary[c] = null;
+                outfitPiecesDictionary[c] = null;
             }
 
             foreach (var p in outfitPieces)
             {
-                if (dictionary.ContainsKey(p.category))
+                if (outfitPiecesDictionary.ContainsKey(p.category))
                 {
-                    dictionary[p.category] = p.label;
+                    outfitPiecesDictionary[p.category] = p.label;
                 }
             }
         }
     }
 }
 
-//will have custom property drawer that gives a drop down of available labels in category (also with option for "None" -- which will mean hide that sprite renderer)
+//will have custom property drawer that
+//gives a drop down of available labels in category (also with option for "None" -- which will mean hide that sprite renderer)
 [Serializable]
 public struct OutfitPiece
 {

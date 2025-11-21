@@ -3,8 +3,6 @@ using UnityEditor;
 using UnityEngine.U2D.Animation;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
-using System;
 
 [CustomPropertyDrawer(typeof(OutfitPiece))]
 public class OutfitPiecePropertyDrawer : PropertyDrawer
@@ -23,9 +21,12 @@ public class OutfitPiecePropertyDrawer : PropertyDrawer
         IEnumerable<string> Labels()
         {
             yield return "None";
-            foreach (var l in lib.GetCategoryLabelNames(cat))
+            if (lib != null)
             {
-                yield return l;
+                foreach (var l in lib.GetCategoryLabelNames(cat))
+                {
+                    yield return l;
+                }
             }
         }
         var labels = Labels().ToArray();// :'(
