@@ -18,9 +18,6 @@ public struct RopeNode
     //readonly Rigidbody2D[] storedVelocityRbs;
     //int storedVelocityPointer;
 
-    //Vector2 right;
-    //Vector2 up;
-
     bool anchored;
 
     readonly int collisionMask;
@@ -63,20 +60,6 @@ public struct RopeNode
         //storedVelocityRbs = new Rigidbody2D[NUM_STORED_VELOCITY_RBS];
         //storedVelocityPointer = 0;
 
-        //circleCastBuffer = new RaycastHit2D[] { new(), new() };
-
-        //var r = velocity.normalized;
-        //if (r == Vector2.zero)
-        //{
-        //    r = Vector2.right;
-        //}
-        //var u = r.CCWPerp();
-        //right = r;
-        //up = u;
-        //var ru = MathTools.cos45 * r;
-        //var ur = MathTools.sin45 * u;
-        //raycastDirections = new Vector2[] { r, -r, u, -u, ru + ur, -ru - ur, -ru + ur, ru - ur };
-
         this.drag = drag;
         this.collisionMask = collisionMask;
         this.collisionThreshold = collisionThreshold;
@@ -111,35 +94,9 @@ public struct RopeNode
     {
         if (!anchored)
         {
-            //UpdateLocalCoordinates();
             UpdateVerletSimulationCore(dt, dt2);
-            //UpdateLocalCoordinates(); //doesn't it make more sense to do after?
         }
     }
-
-
-    //public void UpdateLocalCoordinates()
-    //{
-    //    if (!anchored)
-    //    {
-    //        var r = (position - lastPosition).normalized;
-    //        if (r != Vector2.zero)
-    //        {
-    //            right = r;
-    //            up = r.CCWPerp();
-    //            var ru = MathTools.cos45 * right;
-    //            var ur = MathTools.cos45 * up;
-    //            raycastDirections[0] = right;
-    //            raycastDirections[1] = ru + ur;
-    //            raycastDirections[2] = up;
-    //            raycastDirections[3] = -ru + ur;
-    //            raycastDirections[4] = -right;
-    //            raycastDirections[5] = -ru - ur;
-    //            raycastDirections[6] = -up;
-    //            raycastDirections[7] = ru - ur;
-    //        }
-    //    }
-    //}
 
     private void UpdateVerletSimulationCore(float dt, float dt2)
     {
@@ -226,7 +183,6 @@ public struct RopeNode
                 lastCollisionNormal = (r.point - (Vector2)r.collider.bounds.center).normalized;
             }
             n = lastCollisionNormal;
-            //var w = this.collisionThreshold * n;
             var velocity = (position - lastPosition) / dt;
             var tang = n.CWPerp();
             var a = Vector2.Dot(velocity, tang);
@@ -251,14 +207,13 @@ public struct RopeNode
         else
         {
             CurrentCollision = null;
-            //but we don't set lastTrueCollisionNormal = 0, bc we still had a successful raycast, which could be useful for an upcoming collision!
+            //but we don't set lastCollisionNormal = 0, bc we still had a successful raycast, which could be useful for an upcoming collision!
         }
     }
 
     private void ResolveCollision(float dt, float distanceToContactPoint, float collisionThreshold, float collisionBounciness, Vector2 collisionNormal, Rigidbody2D attachedRb)
     {
         var velocity = (position - lastPosition) / dt;
-        //var speed = velocity.magnitude;
         var diff = Mathf.Min(collisionThreshold - distanceToContactPoint, this.collisionThreshold);
         var tang = collisionNormal.CWPerp();
         var a = Vector2.Dot(velocity, tang);
@@ -267,20 +222,6 @@ public struct RopeNode
 
         position += diff * collisionNormal;
         lastPosition = position - newVelocity * dt;
-
-        //if (speed > MathTools.o31)
-        //{
-        //    var timeSinceCollision = diff / speed;
-        //    position += diff * collisionNormal + newVelocity * timeSinceCollision;
-        //    lastPosition = position - newVelocity * dt;
-
-        //    StoreCollisionVelocity(attachedRb, collisionNormal);
-        //}
-        //else
-        //{
-        //    position += diff * collisionNormal;
-        //    lastPosition = position - newVelocity * dt;
-        //}
     }
 
     //private void StoreCollisionVelocity(Rigidbody2D attachedRb, Vector2 collisionNormal)

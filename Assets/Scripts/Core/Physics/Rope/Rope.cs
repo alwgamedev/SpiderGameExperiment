@@ -16,7 +16,6 @@ public class Rope
     public int terminusAnchorMask;
 
     public readonly RopeNode[] nodes;
-    //public readonly RopeNode[] rescaleBuffer;
     public readonly int lastIndex;
 
     int anchorPointer;
@@ -26,14 +25,6 @@ public class Rope
 
     public int AnchorPointer => anchorPointer;
     public float Length => nodeSpacing * (lastIndex - anchorPointer);
-    //{
-    //    get => nodeSpacing * (lastIndex - anchorPointer);
-    //    set
-    //    {
-    //        nodeSpacing = value / (lastIndex - anchorPointer);
-    //        Rescale();
-    //    }
-    //}
 
     public Rope(Vector2 position, float width, float length, int numNodes, float minNodeSpacing, float maxNodeSpacing,
         float nodeDrag, int collisionMask, float collisionSearchRadius, float tunnelingEscapeRadius, float collisionBounciness, int terminusAnchorMask,
@@ -41,7 +32,7 @@ public class Rope
     {
         lastIndex = numNodes - 1;
         this.width = width;
-        nodeSpacing = 0.5f * (minNodeSpacing + maxNodeSpacing);
+        nodeSpacing = Mathf.Clamp(length / lastIndex, minNodeSpacing, maxNodeSpacing);//0.5f * (minNodeSpacing + maxNodeSpacing);
         anchorPointer = lastIndex - Mathf.Clamp((int)(length / nodeSpacing), 1, lastIndex);
         this.minNodeSpacing = minNodeSpacing;
         this.maxNodeSpacing = maxNodeSpacing;
@@ -52,7 +43,6 @@ public class Rope
         var collisionThreshold = 0.5f * width;
         nodes = Enumerable.Range(0, numNodes).Select(i => new RopeNode(position, Vector2.zero, a, 1, nodeDrag,
             collisionMask, collisionThreshold, collisionSearchRadius, tunnelingEscapeRadius, collisionBounciness, !(i > anchorPointer))).ToArray();
-        //rescaleBuffer = new RopeNode[numNodes];
         renderPositions = nodes.Select(x => (Vector3)x.position).ToArray();
     }
 
@@ -184,17 +174,8 @@ public class Rope
         }
     }
 
-    //private void UpdateLocalCoordinates()
-    //{
-    //    for (int i = 0; i < nodes.Length; i++)
-    //    {
-    //        nodes[i].UpdateLocalCoordinates();
-    //    }
-    //}
-
     private void ResolveCollisions(float dt)
     {
-        //UpdateLocalCoordinates();
         if (nodes[lastIndex].Anchored)
         {
             for (int i = anchorPointer + 1; i < lastIndex; i++)

@@ -174,12 +174,12 @@ public static class MathTools
     //}
 
     /// <summary>
-    /// as angle from u1 to u2 varies over (-pi,pi], output varies smoothly from -1 to 1 (specifically output is sin(theta/2), where theta is the correct angle; fast alternative to arctan)
+    /// fast alternative to arctan; as angle from u1 to u2 varies over (-pi,pi], output varies smoothly from -1 to 1 (specifically output is sin(theta/2), where theta is the correct angle)
     /// </summary>
     public static float PseudoAngle(Vector2 u1, Vector2 u2)
     {
         var cos = Vector2.Dot(u1, u2);
-        if (cos >= 1)//cos > 1 can occur from rounding errors
+        if (!(cos < 1))//cos > 1 can occur from rounding errors
         {
             return 0;
         }
@@ -192,9 +192,9 @@ public static class MathTools
     public static float AbsolutePseudoAngle(Vector2 u1, Vector2 u2)
     {
         var cos = Vector2.Dot(u1, u2);
-        if (cos > 1)//just in case of rounding errors
+        if (!(cos < 1))
         {
-            cos = 1;
+            return 0;
         }
         return Mathf.Sqrt(0.5f * (1 - cos));
     }
@@ -302,7 +302,6 @@ public static class MathTools
         return CheapRotationalLerpClamped(u1, u2, rotationalSpeed * dt / (Mathf.PI * c), out changed);
     }
 
-    //in this method you do two square roots instead of a cos and a sin (say of a float angle you're tracking)
     public static void ApplyCheapRotationBySpeed(this Transform t, float rotationalSpeed, float dt, out bool changed)
     {
         var v = CheapRotationBySpeed(t.right, t.up, rotationalSpeed, dt, out changed);

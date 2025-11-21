@@ -9,6 +9,14 @@ public class ChildColorEditor : Editor
     {
         DrawDefaultInspector();
 
+        if (GUILayout.Button("Hook Up Control"))
+        {
+            foreach (var t in targets)
+            {
+                ((ChildColor)t).HookupControl();
+            }
+        }
+
         if (GUILayout.Button("Update Color"))
         {
             foreach (var t in targets)

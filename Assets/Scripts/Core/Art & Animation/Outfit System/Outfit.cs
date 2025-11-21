@@ -28,13 +28,14 @@ public class Outfit : ScriptableObject
         return outfitPiecesDictionary.TryGetValue(category, out label);
     }
 
-    //mainly a time-saver when creating new outfit (activated via button in inspector)
+    //mainly a time-saver when creating new outfit (invoked via button in inspector)
     public void SetAllToDefaults()
     {
         if (library != null)
         {
             for (int i = 0; i < outfitPieces.Count; i++)
             {
+                //BOO LISTS!
                 var p = outfitPieces[i];
                 p.label = library.GetCategoryLabelNames(p.category).FirstOrDefault();
                 outfitPieces[i] = p;
@@ -72,8 +73,9 @@ public class Outfit : ScriptableObject
     }
 }
 
-//will have custom property drawer that
-//gives a drop down of available labels in category (also with option for "None" -- which will mean hide that sprite renderer)
+//has a custom property drawer that
+//gives a drop down of available labels in category
+//(also with option for "None" for the label -- which will mean hide that sprite renderer)
 [Serializable]
 public struct OutfitPiece
 {

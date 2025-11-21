@@ -1,63 +1,45 @@
 using System;
 using UnityEngine;
-using UnityEngine.U2D;
 
 public class ColorControl : MonoBehaviour
 {
-    Renderer _renderer;
+    //Renderer _renderer;
 
-    Renderer Renderer
-    {
-        get
-        {
-            if (_renderer == null)
-            {
-                _renderer = GetComponent<Renderer>();
-            }
+    //Renderer Renderer
+    //{
+    //    get
+    //    {
+    //        if (_renderer == null)
+    //        {
+    //            _renderer = GetComponent<Renderer>();
+    //        }
 
-            return _renderer;
-        }
-    }
+    //        return _renderer;
+    //    }
+    //}
 
-    public event Action<Color> ColorChanged;
-    public event Action<Color> AutoDetermineChildData;
+    [SerializeField] Color color;
+
+    public Color Color => color;
+
+    public event Action ColorChanged;
+    public event Action AutoDetermineChildData;
     public event Action<ColorControl> Destroyed;
+
+    public void SetColorAndUpdateChildren(Color c)
+    {
+        color = c;
+        UpdateChildColors();
+    }
 
     public void UpdateChildColors()
     {
-        if (TryGetRendererColor(out Color color))
-        {
-            ColorChanged?.Invoke(color);
-        }
+        ColorChanged?.Invoke();
     }
 
-    public void RequestChildrenAutoDetermineData()
+    public void AutoDetermineChildShiftAndMult()
     {
-        if (TryGetRendererColor(out Color color))
-        {
-            AutoDetermineChildData?.Invoke(color);
-        }
-    }
-
-    public bool TryGetRendererColor(out Color color)
-    {
-        var r = Renderer;
-        if (r != null)
-        {
-            if (r is SpriteRenderer s)
-            {
-                color = s.color;
-                return true;
-            }
-            else if (r is SpriteShapeRenderer t)
-            {
-                color = t.color;
-                return true;
-            }
-        }
-
-        color = Color.white;
-        return false;
+        AutoDetermineChildData?.Invoke();
     }
 
     private void OnDestroy()

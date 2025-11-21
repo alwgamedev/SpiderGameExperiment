@@ -12,9 +12,9 @@ public class ColorControlEditor : Editor
         {
             ((ColorControl)target).UpdateChildColors();
         }
-        if (GUILayout.Button("Have Children Determine Shift & Multiplier"))
+        if (GUILayout.Button("Auto Determine Child Shift & Multiplier"))
         {
-            ((ColorControl)target).RequestChildrenAutoDetermineData();
+            ((ColorControl)target).AutoDetermineChildShiftAndMult();
         }
     }
 }

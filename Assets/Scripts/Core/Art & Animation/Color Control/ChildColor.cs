@@ -27,7 +27,20 @@ public class ChildColor : MonoBehaviour
     {
         if (_colorControl != colorControl)
         {
-            HookUpControl(colorControl);
+            HookupControl();
+        }
+    }
+
+    public void HookupControl()
+    {
+        UnhookControl();
+
+        if (colorControl)
+        {
+            _colorControl = colorControl;
+            colorControl.ColorChanged += UpdateColor;
+            colorControl.AutoDetermineChildData += AutoDetermineShiftAndMult;
+            colorControl.Destroyed += OnControlDestroyed;
         }
     }
 
@@ -36,12 +49,48 @@ public class ChildColor : MonoBehaviour
     //(so you can just have it figure out what shift and multiplier need to be)
     public void AutoDetermineShiftAndMult()
     {
-        if (_colorControl && _colorControl.TryGetRendererColor(out Color controlColor))
+        if (_colorControl)
         {
-            AutoDetermineShiftAndMult(controlColor);
+            AutoDetermineShiftAndMult(_colorControl.Color);
         }
     }
-    public void AutoDetermineShiftAndMult(Color controlColor)
+
+    public void UpdateColor()
+    {
+        Debug.Log($"{GetType().Name} {name} updating color");
+        if (_colorControl)
+        {
+            var color = (_colorControl.Color + colorShift) * colorMultiplier;
+            SetRendererColor(color);
+        }
+        else
+        {
+            Debug.Log("no private _colorControl!");
+        }
+    }
+
+    private bool TryGetRendererColor(out Color color)
+    {
+        var r = Renderer;
+        if (r != null)
+        {
+            if (r is SpriteRenderer s)
+            {
+                color = s.color;
+                return true;
+            }
+            else if (r is SpriteShapeRenderer t)
+            {
+                color = t.color;
+                return true;
+            }
+        }
+
+        color = Color.white;
+        return false;
+    }
+
+    private void AutoDetermineShiftAndMult(Color controlColor)
     {
         if (TryGetRendererColor(out Color childColor))
         {
@@ -90,50 +139,7 @@ public class ChildColor : MonoBehaviour
         }
     }
 
-    public void UpdateColor()
-    {
-        if (_colorControl && _colorControl.TryGetRendererColor(out Color c))
-        {
-            OnControlColorChanged(c);
-        }
-        else
-        {
-            Debug.LogWarning($"{GetType().Name} on {gameObject.name} could get control color " +
-                $"while trying to update color.");
-        }
-    }
-
-    private void OnControlColorChanged(Color color)
-    {
-        color = (color + colorShift) * colorMultiplier;
-        if (!TrySetRendererColor(color))
-        {
-            Debug.LogWarning($"{GetType().Name} on {gameObject.name} was unable to set renderer color.");
-        }
-    }
-
-    private bool TryGetRendererColor(out Color color)
-    {
-        var r = Renderer;
-        if (r != null)
-        {
-            if (r is SpriteRenderer s)
-            {
-                color = s.color;
-                return true;
-            }
-            else if (r is SpriteShapeRenderer t)
-            {
-                color = t.color;
-                return true;
-            }
-        }
-
-        color = Color.white;
-        return false;
-    }
-
-    private bool TrySetRendererColor(Color color)
+    private void SetRendererColor(Color color)
     {
         var r = Renderer;
         if (r != null)
@@ -145,7 +151,6 @@ public class ChildColor : MonoBehaviour
                 EditorUtility.SetDirty(s);
                 PrefabUtility.RecordPrefabInstancePropertyModifications(s);
 #endif
-                return true;
             }
             else if (r is SpriteShapeRenderer t)
             {
@@ -153,24 +158,8 @@ public class ChildColor : MonoBehaviour
 #if UNITY_EDITOR
                 EditorUtility.SetDirty(t);
                 PrefabUtility.RecordPrefabInstancePropertyModifications(t);
-                return true;
 #endif
             }
-        }
-
-        return false;
-    }
-
-    private void HookUpControl(ColorControl c)
-    {
-        UnhookControl();
-
-        if (c)
-        {
-            _colorControl = c;
-            c.ColorChanged += OnControlColorChanged;
-            c.AutoDetermineChildData += AutoDetermineShiftAndMult;
-            c.Destroyed += OnControlDestroyed;
         }
     }
 
@@ -186,7 +175,7 @@ public class ChildColor : MonoBehaviour
     {
         if (_colorControl)
         {
-            _colorControl.ColorChanged -= OnControlColorChanged;
+            _colorControl.ColorChanged -= UpdateColor;
             _colorControl.AutoDetermineChildData -= AutoDetermineShiftAndMult;
             _colorControl.Destroyed -= OnControlDestroyed;
         }
