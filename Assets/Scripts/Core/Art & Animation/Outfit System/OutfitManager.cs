@@ -4,7 +4,7 @@ public class OutfitManager : MonoBehaviour
 {
     public Wardrobe wardrobe;
     public string selectedOutfit;
-    public TwoSidedOutfit.OutfitFace face;
+    public Outfit3D.OutfitFace face;
 
     [SerializeField] OutfitSlot[] slots;
 

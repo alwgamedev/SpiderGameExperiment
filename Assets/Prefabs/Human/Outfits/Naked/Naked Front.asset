@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cc4102056e2af2142a69a2f07deb5841, type: 3}
-  m_Name: Business Casual Front
+  m_Name: Naked Front
   m_EditorClassIdentifier: 
   library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
   outfitPieces:
@@ -93,95 +93,107 @@ MonoBehaviour:
     category: Hand R
     label: Default
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
-    category: Forearm R
+    category: Hand R Clip On
     label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Forearm R
+    label: Naked
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
     category: Forearm R Clip On
-    label: Dress Shirt
-  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
-    category: Bicep R
     label: None
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Bicep R
+    label: Naked
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
     category: Bicep R Clip On
-    label: Dress Shirt
+    label: None
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
     category: Hand L
     label: Default
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
-    category: Forearm L
+    category: Hand L Clip On
     label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Forearm L
+    label: Naked
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
     category: Forearm L Clip On
-    label: Dress Shirt
+    label: None
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
     category: Bicep L
-    label: None
+    label: Naked
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
     category: Bicep L Clip On
-    label: Dress Shirt
+    label: None
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
     category: Belt Loops
-    label: Default
+    label: None
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
     category: Belt Buckle
-    label: Default
+    label: None
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
     category: Belt L
-    label: Default
+    label: None
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
     category: Belt R
-    label: Default
+    label: None
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
     category: Pants Button
-    label: Default
+    label: None
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
     category: Belt Loop Under
-    label: Default
+    label: None
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
     category: Pelvis
-    label: None
+    label: Naked
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
     category: Pelvis Clip On
-    label: Pants
+    label: None
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
     category: Thigh R
-    label: None
+    label: Naked
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
     category: Thigh R Clip On
-    label: Pants
+    label: None
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
     category: Foot R
-    label: Simple Shoe
+    label: Naked
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Foot R Clip On
+    label: None
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
     category: Calf R
-    label: None
+    label: Naked
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
     category: Calf R Clip On
-    label: Pants
+    label: None
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
     category: Thigh L
-    label: None
+    label: Naked
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
     category: Thigh L Clip On
-    label: Pants
+    label: None
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
     category: Foot L
-    label: Simple Shoe
+    label: Naked
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Foot L Clip On
+    label: None
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
     category: Calf L
-    label: None
+    label: Naked
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
     category: Calf L Clip On
-    label: Pants
-  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
-    category: Tie
-    label: Tie
-  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
-    category: Torso
     label: None
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Tie
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Torso
+    label: Naked
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
     category: Torso Clip On
-    label: Dress Shirt
+    label: None
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
     category: Neck
     label: Default

@@ -3,21 +3,6 @@ using UnityEngine;
 
 public class ColorControl : MonoBehaviour
 {
-    //Renderer _renderer;
-
-    //Renderer Renderer
-    //{
-    //    get
-    //    {
-    //        if (_renderer == null)
-    //        {
-    //            _renderer = GetComponent<Renderer>();
-    //        }
-
-    //        return _renderer;
-    //    }
-    //}
-
     [SerializeField] Color color;
 
     public Color Color => color;

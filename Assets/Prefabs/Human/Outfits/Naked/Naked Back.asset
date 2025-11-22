@@ -1,0 +1,199 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc4102056e2af2142a69a2f07deb5841, type: 3}
+  m_Name: Naked Back
+  m_EditorClassIdentifier: 
+  library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+  outfitPieces:
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Eyebrow R
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Eyebrow L
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Upper Lip
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Lower Lip
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Mouth
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Lip Corner Shadow R
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Lip Corner Shadow L
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Nose
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Eyelid Top R
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Eyelid Bottom R
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Pupil R
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Iris R
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Eye White R
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Eye Red R
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Eyelid Top L
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Eyelid Bottom L
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Pupil L
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Iris L
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Eye White L
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Eye Red L
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Hair
+    label: Mid Length Back
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Mouth Base
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Head Base
+    label: Default Back
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Ear R
+    label: Default Back
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Ear L
+    label: Default Back
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Hand R
+    label: Default
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Hand R Clip On
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Forearm R
+    label: Naked
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Forearm R Clip On
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Bicep R
+    label: Naked
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Bicep R Clip On
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Hand L
+    label: Default
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Hand L Clip On
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Forearm L
+    label: Naked
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Forearm L Clip On
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Bicep L
+    label: Naked
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Bicep L Clip On
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Belt Loops
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Belt Buckle
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Belt L
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Belt R
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Pants Button
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Belt Loop Under
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Pelvis
+    label: Naked
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Pelvis Clip On
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Thigh R
+    label: Naked
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Thigh R Clip On
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Foot R
+    label: Naked Back
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Foot R Clip On
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Calf R
+    label: Naked
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Calf R Clip On
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Thigh L
+    label: Naked
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Thigh L Clip On
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Foot L
+    label: Naked Back
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Foot L Clip On
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Calf L
+    label: Naked
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Calf L Clip On
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Tie
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Torso
+    label: Naked Back
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Torso Clip On
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Neck
+    label: Default Back

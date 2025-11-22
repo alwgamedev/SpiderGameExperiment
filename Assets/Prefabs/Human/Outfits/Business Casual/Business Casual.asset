@@ -9,9 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3f8e46698c1935845b6c97a82997d913, type: 3}
+  m_Script: {fileID: 11500000, guid: ccd94d4cd8567fd48b77de0c82e2cc0d, type: 3}
   m_Name: Business Casual
   m_EditorClassIdentifier: 
   front: {fileID: 11400000, guid: 1f795a7a6fe897c479a890c7a92d5be5, type: 2}
   back: {fileID: 11400000, guid: 6a204b1b9f0fc2c4ca03322bfd85d106, type: 2}
-  side: {fileID: 0}
+  right: {fileID: 0}
+  left: {fileID: 0}

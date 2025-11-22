@@ -5,10 +5,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Wardrobe", menuName = "Scriptable Objects/Wardrobe")]
 public class Wardrobe : ScriptableObject//, ISerializationCallbackReceiver
 {
-    [SerializeField] List<TwoSidedOutfit> outfits;
+    [SerializeField] List<Outfit3D> outfits;
     
     string[] outfitNames;
-    Dictionary<string, TwoSidedOutfit> outfitByName = new();
+    Dictionary<string, Outfit3D> outfitByName = new();
 
     public string[] OutfitNames => outfitNames;
 
@@ -17,7 +17,7 @@ public class Wardrobe : ScriptableObject//, ISerializationCallbackReceiver
         RebuildDictionary();
     }
 
-    public bool TryGetOutfitByName(string name, out TwoSidedOutfit o)
+    public bool TryGetOutfitByName(string name, out Outfit3D o)
     {
         if (outfitByName.Count == 0)
         {

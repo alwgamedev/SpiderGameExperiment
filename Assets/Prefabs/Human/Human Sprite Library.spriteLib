@@ -319,6 +319,17 @@ MonoBehaviour:
       m_SpriteOverride: {fileID: 6647886234621280154, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
     m_FromMain: 0
     m_EntryOverrideCount: 1
+  - m_Name: Hand R Clip On
+    m_Hash: 733056273
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Default
+      m_Hash: 753088835
+      m_Sprite: {fileID: 6647886234621280154, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 6647886234621280154, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
   - m_Name: Forearm R
     m_Hash: 336525628
     m_CategoryList: []
@@ -385,6 +396,17 @@ MonoBehaviour:
     m_EntryOverrideCount: 2
   - m_Name: Hand L
     m_Hash: 139640202
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Default
+      m_Hash: 753088835
+      m_Sprite: {fileID: 2128965167555087670, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 2128965167555087670, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Hand L Clip On
+    m_Hash: 263394546
     m_CategoryList: []
     m_OverrideEntries:
     - m_Name: Default
@@ -644,6 +666,32 @@ MonoBehaviour:
       m_SpriteOverride: {fileID: -5068707429688475681, guid: 50b9d95916b2fc7498121bc872a5f4c5, type: 3}
     m_FromMain: 0
     m_EntryOverrideCount: 4
+  - m_Name: Foot R Clip On
+    m_Hash: 798973061
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Simple Shoe
+      m_Hash: 863673607
+      m_Sprite: {fileID: -9160503973355532483, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -9160503973355532483, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+    - m_Name: Simple Shoe Back
+      m_Hash: 995886291
+      m_Sprite: {fileID: 7080831119363701837, guid: 25440c0c6fad6dc428013931b07ef1ba, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 7080831119363701837, guid: 25440c0c6fad6dc428013931b07ef1ba, type: 3}
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: 8178055951047372064, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 8178055951047372064, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
+    - m_Name: Naked Back
+      m_Hash: 49464944
+      m_Sprite: {fileID: -5068707429688475681, guid: 50b9d95916b2fc7498121bc872a5f4c5, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -5068707429688475681, guid: 50b9d95916b2fc7498121bc872a5f4c5, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 4
   - m_Name: Calf R
     m_Hash: 823618767
     m_CategoryList: []
@@ -710,6 +758,32 @@ MonoBehaviour:
     m_EntryOverrideCount: 2
   - m_Name: Foot L
     m_Hash: 703768206
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Simple Shoe
+      m_Hash: 863673607
+      m_Sprite: {fileID: -3717971429925462185, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -3717971429925462185, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+    - m_Name: Simple Shoe Back
+      m_Hash: 995886291
+      m_Sprite: {fileID: 510693990406043727, guid: 25440c0c6fad6dc428013931b07ef1ba, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 510693990406043727, guid: 25440c0c6fad6dc428013931b07ef1ba, type: 3}
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: 9132794977432191051, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 9132794977432191051, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
+    - m_Name: Naked Back
+      m_Hash: 49464944
+      m_Sprite: {fileID: 8075846726968182692, guid: 50b9d95916b2fc7498121bc872a5f4c5, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 8075846726968182692, guid: 50b9d95916b2fc7498121bc872a5f4c5, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 4
+  - m_Name: Foot L Clip On
+    m_Hash: 194889062
     m_CategoryList: []
     m_OverrideEntries:
     - m_Name: Simple Shoe
@@ -846,5 +920,5 @@ MonoBehaviour:
     m_FromMain: 0
     m_EntryOverrideCount: 2
   m_PrimaryLibraryGUID: 
-  m_ModificationHash: 638992793653952214
+  m_ModificationHash: 638993609617384573
   m_Version: 1

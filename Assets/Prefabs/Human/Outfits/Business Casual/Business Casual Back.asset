@@ -93,6 +93,9 @@ MonoBehaviour:
     category: Hand R
     label: Default
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Hand R Clip On
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
     category: Forearm R
     label: None
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
@@ -107,6 +110,9 @@ MonoBehaviour:
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
     category: Hand L
     label: Default
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Hand L Clip On
+    label: None
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
     category: Forearm L
     label: None
@@ -151,6 +157,9 @@ MonoBehaviour:
     label: Pants
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
     category: Foot R
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Foot R Clip On
     label: Simple Shoe Back
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
     category: Calf R
@@ -166,6 +175,9 @@ MonoBehaviour:
     label: Pants
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
     category: Foot L
+    label: None
+  - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+    category: Foot L Clip On
     label: Simple Shoe Back
   - library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
     category: Calf L
