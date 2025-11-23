@@ -4,10 +4,9 @@ using UnityEngine;
 
 [CreateAssetMenu(fileName = "New SpriteGroupSlice", menuName = "Scriptable Objects/Sprite Group Slice")]
 public class SpriteGroupSliceSO : ScriptableObject
-{    
-    public SpriteGrouping groupingAsset;
-    public string group;
-    public SpriteGroupSelection[] sprites;
+{
+    public SpriteGroup group;
+    public SpriteGroupLabel[] sprites;
 
     Dictionary<string, string> categoryLabels = new();
 
@@ -62,23 +61,26 @@ public class SpriteGroupSliceSO : ScriptableObject
     //will be called in OnValidate of SO version
     public void Refresh()
     {
-        if (groupingAsset)
+        if (group.groupingAsset)
         {
-            groupingAsset.Refresh();
+            group.groupingAsset.Refresh();
         }
         RebuildDictionary();
-        RebuildArray();
+        if (group.groupingAsset)
+        {
+            RebuildArray();
+        }
     }
 
     private void RebuildDictionary()
     {
         categoryLabels.Clear();
 
-        if (groupingAsset != null)
+        if (group.groupingAsset != null)
         {
-            foreach (var c in groupingAsset.grouping)
+            foreach (var c in group.groupingAsset.grouping)
             {
-                if (c.group == group)
+                if (c.group == group.groupName)
                 {
                     categoryLabels[c.category] = "None";
                 }
@@ -104,7 +106,7 @@ public class SpriteGroupSliceSO : ScriptableObject
         int i = 0;
         foreach (var entry in categoryLabels)
         {
-            sprites[i].groupingAsset = groupingAsset;
+            sprites[i].groupingAsset = group.groupingAsset;
             sprites[i].category = entry.Key;
             sprites[i].label = entry.Value;
             i++;
@@ -112,8 +114,16 @@ public class SpriteGroupSliceSO : ScriptableObject
     }
 }
 
+//custom property drawer with group drop down
 [Serializable]
-public struct SpriteGroupSelection
+public struct SpriteGroup
+{
+    public SpriteGrouping groupingAsset;
+    public string groupName;
+}
+
+[Serializable]
+public struct SpriteGroupLabel
 {
     public SpriteGrouping groupingAsset;
     public string category;

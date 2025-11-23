@@ -43,7 +43,7 @@ MonoBehaviour:
     category: Hand R
     group: Body
   - availableGroups: {fileID: 6407339182004339066}
-    category: Foot L
+    category: Calf L
     group: Body
   - availableGroups: {fileID: 6407339182004339066}
     category: Pelvis
@@ -52,13 +52,13 @@ MonoBehaviour:
     category: Forearm R
     group: Body
   - availableGroups: {fileID: 6407339182004339066}
-    category: Calf L
+    category: Torso
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Thigh L
     group: Body
   - availableGroups: {fileID: 6407339182004339066}
     category: Calf R
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Hand L
     group: Body
   - availableGroups: {fileID: 6407339182004339066}
     category: Foot R
@@ -70,7 +70,7 @@ MonoBehaviour:
     category: Thigh R
     group: Body
   - availableGroups: {fileID: 6407339182004339066}
-    category: Thigh L
+    category: Foot L
     group: Body
   - availableGroups: {fileID: 6407339182004339066}
     category: Bicep R
@@ -82,7 +82,7 @@ MonoBehaviour:
     category: Iris L
     group: Body
   - availableGroups: {fileID: 6407339182004339066}
-    category: Torso
+    category: Neck
     group: Body
   - availableGroups: {fileID: 6407339182004339066}
     category: Upper Lip
@@ -133,7 +133,7 @@ MonoBehaviour:
     category: Eyelid Bottom R
     group: Body
   - availableGroups: {fileID: 6407339182004339066}
-    category: Neck
+    category: Hand L
     group: Body
   - availableGroups: {fileID: 6407339182004339066}
     category: Eyebrow R
@@ -141,6 +141,12 @@ MonoBehaviour:
   - availableGroups: {fileID: 6407339182004339066}
     category: Eyebrow L
     group: Eyebrows
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Facial Hair
+    group: Facial Hair
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Glasses
+    group: Glasses
   - availableGroups: {fileID: 6407339182004339066}
     category: Hand R Clip On
     group: Gloves
@@ -151,19 +157,16 @@ MonoBehaviour:
     category: Hair
     group: Hair
   - availableGroups: {fileID: 6407339182004339066}
-    category: Pants Button
-    group: Pants
+    category: Hat
+    group: Hat
   - availableGroups: {fileID: 6407339182004339066}
     category: Calf L Clip On
-    group: Pants
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Thigh L Clip On
     group: Pants
   - availableGroups: {fileID: 6407339182004339066}
     category: Belt Loops
     group: Pants
   - availableGroups: {fileID: 6407339182004339066}
-    category: Calf R Clip On
+    category: Thigh L Clip On
     group: Pants
   - availableGroups: {fileID: 6407339182004339066}
     category: Thigh R Clip On
@@ -175,19 +178,25 @@ MonoBehaviour:
     category: Belt Loop Under
     group: Pants
   - availableGroups: {fileID: 6407339182004339066}
+    category: Calf R Clip On
+    group: Pants
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Pants Button
+    group: Pants
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Bicep R Clip On
+    group: Shirt
+  - availableGroups: {fileID: 6407339182004339066}
     category: Forearm R Clip On
     group: Shirt
   - availableGroups: {fileID: 6407339182004339066}
     category: Forearm L Clip On
     group: Shirt
   - availableGroups: {fileID: 6407339182004339066}
-    category: Bicep L Clip On
-    group: Shirt
-  - availableGroups: {fileID: 6407339182004339066}
     category: Torso Clip On
     group: Shirt
   - availableGroups: {fileID: 6407339182004339066}
-    category: Bicep R Clip On
+    category: Bicep L Clip On
     group: Shirt
   - availableGroups: {fileID: 6407339182004339066}
     category: Foot R Clip On
@@ -218,7 +227,6 @@ MonoBehaviour:
   - Hat
   - Glasses
   - Shirt
-  - Jacket
   - Gloves
   - Tie
   - Pants

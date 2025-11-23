@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6dc58c4a866f4f14984fdb14089db61f, type: 3}
   m_Name: Hands & Head Only Body Front
   m_EditorClassIdentifier: 
-  groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
-  group: Body
+  group:
+    groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    groupName: Body
   sprites:
   - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
     category: Bicep L
@@ -34,7 +35,7 @@ MonoBehaviour:
     category: Hand R
     label: Default
   - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
-    category: Foot L
+    category: Calf L
     label: None
   - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
     category: Pelvis
@@ -43,14 +44,14 @@ MonoBehaviour:
     category: Forearm R
     label: None
   - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
-    category: Calf L
+    category: Torso
+    label: None
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Thigh L
     label: None
   - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
     category: Calf R
     label: None
-  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
-    category: Hand L
-    label: Default
   - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
     category: Foot R
     label: None
@@ -61,7 +62,7 @@ MonoBehaviour:
     category: Thigh R
     label: None
   - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
-    category: Thigh L
+    category: Foot L
     label: None
   - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
     category: Bicep R
@@ -73,8 +74,8 @@ MonoBehaviour:
     category: Iris L
     label: Default
   - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
-    category: Torso
-    label: None
+    category: Neck
+    label: Default
   - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
     category: Upper Lip
     label: Default
@@ -124,5 +125,5 @@ MonoBehaviour:
     category: Eyelid Bottom R
     label: Default
   - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
-    category: Neck
+    category: Hand L
     label: Default

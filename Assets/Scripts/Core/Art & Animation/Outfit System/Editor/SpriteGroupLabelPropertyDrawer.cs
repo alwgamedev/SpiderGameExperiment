@@ -2,10 +2,9 @@
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.U2D.Animation;
 
-[CustomPropertyDrawer(typeof(SpriteGroupSelection))]
-public class SpriteGroupSelectionPropertyDrawer : PropertyDrawer
+[CustomPropertyDrawer(typeof(SpriteGroupLabel))]
+public class SpriteGroupLabelPropertyDrawer : PropertyDrawer
 {
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {

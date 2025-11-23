@@ -45,13 +45,16 @@ public class SpriteGrouping : ScriptableObject
     public void Refresh()
     {
         RebuildDictionary();
-        RebuildArray();
+        if (library)
+        {
+            RebuildArray();
+        }
     }
 
     private void RebuildDictionary()
     {
         groupContainingCategory.Clear();
-        if (library != null)
+        if (library)
         {
             foreach (var c in library.GetCategoryNames())
             {

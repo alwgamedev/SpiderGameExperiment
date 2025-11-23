@@ -919,6 +919,24 @@ MonoBehaviour:
       m_SpriteOverride: {fileID: -4361928382166140138, guid: 50b9d95916b2fc7498121bc872a5f4c5, type: 3}
     m_FromMain: 0
     m_EntryOverrideCount: 2
+  - m_Name: Hat
+    m_Hash: 709290665
+    m_CategoryList: []
+    m_OverrideEntries: []
+    m_FromMain: 0
+    m_EntryOverrideCount: 0
+  - m_Name: Glasses
+    m_Hash: 958358346
+    m_CategoryList: []
+    m_OverrideEntries: []
+    m_FromMain: 0
+    m_EntryOverrideCount: 0
+  - m_Name: Facial Hair
+    m_Hash: 262323632
+    m_CategoryList: []
+    m_OverrideEntries: []
+    m_FromMain: 0
+    m_EntryOverrideCount: 0
   m_PrimaryLibraryGUID: 
-  m_ModificationHash: 638993609617384573
+  m_ModificationHash: 638994536710912558
   m_Version: 1

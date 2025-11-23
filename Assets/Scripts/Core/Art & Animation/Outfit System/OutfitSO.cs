@@ -34,7 +34,10 @@ public class Outfit
             }
         }
         RebuildDictionary();
-        RebuildArray();
+        if (grouping)
+        {
+            RebuildArray();
+        }
     }
 
     public bool TryGetCategoryLabel(string group, string category, out string label)
@@ -75,7 +78,7 @@ public class Outfit
     private void RebuildDictionary()
     {
         componentsDictionary.Clear();
-        if (grouping != null)//won't have this issue in unity/SO classes
+        if (grouping)//won't have this issue in unity/SO classes
         {
             foreach (var g in grouping.groupNames.names)
             {

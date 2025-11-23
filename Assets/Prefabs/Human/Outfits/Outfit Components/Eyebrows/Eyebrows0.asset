@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6dc58c4a866f4f14984fdb14089db61f, type: 3}
   m_Name: Eyebrows0
   m_EditorClassIdentifier: 
-  groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
-  group: Eyebrows
+  group:
+    groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    groupName: Eyebrows
   sprites:
   - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
     category: Eyebrow R

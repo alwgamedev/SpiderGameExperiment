@@ -2832,8 +2832,6 @@ MonoBehaviour:
         slice: {fileID: 0}
       - group: Shirt
         slice: {fileID: 0}
-      - group: Jacket
-        slice: {fileID: 0}
       - group: Gloves
         slice: {fileID: 0}
       - group: Tie
@@ -2847,8 +2845,34 @@ MonoBehaviour:
       - group: Shoes
         slice: {fileID: 0}
     back:
-      grouping: {fileID: 0}
-      components: []
+      grouping: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+      components:
+      - group: Body
+        slice: {fileID: 11400000, guid: 32767ffb208b704439c8277da427a2a7, type: 2}
+      - group: Hair
+        slice: {fileID: 0}
+      - group: Eyebrows
+        slice: {fileID: 0}
+      - group: Facial Hair
+        slice: {fileID: 0}
+      - group: Hat
+        slice: {fileID: 0}
+      - group: Glasses
+        slice: {fileID: 0}
+      - group: Shirt
+        slice: {fileID: 0}
+      - group: Gloves
+        slice: {fileID: 0}
+      - group: Tie
+        slice: {fileID: 0}
+      - group: Pants
+        slice: {fileID: 0}
+      - group: Belt
+        slice: {fileID: 0}
+      - group: Belt Buckle
+        slice: {fileID: 0}
+      - group: Shoes
+        slice: {fileID: 0}
     right:
       grouping: {fileID: 0}
       components: []
