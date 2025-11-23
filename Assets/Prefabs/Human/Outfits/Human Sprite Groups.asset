@@ -1,0 +1,227 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65d460f566706e64db93cb8bc1a19f37, type: 3}
+  m_Name: Human Sprite Groups
+  m_EditorClassIdentifier: 
+  library: {fileID: 7108339969198208228, guid: ec0eac65f406bf3419b506fa56cc9974, type: 3}
+  groupNames: {fileID: 6407339182004339066}
+  grouping:
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Belt L
+    group: Belt
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Belt R
+    group: Belt
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Belt Buckle
+    group: Belt Buckle
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Bicep L
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Mouth Base
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Head Base
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Ear R
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Ear L
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Hand R
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Foot L
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Pelvis
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Forearm R
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Calf L
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Calf R
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Hand L
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Foot R
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Forearm L
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Thigh R
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Thigh L
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Bicep R
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Eye Red L
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Iris L
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Torso
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Upper Lip
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Lower Lip
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Mouth
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Lip Corner Shadow R
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Lip Corner Shadow L
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Nose
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Eye White L
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Eyelid Top R
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Pupil R
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Iris R
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Eye White R
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Eye Red R
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Eyelid Top L
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Eyelid Bottom L
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Pupil L
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Eyelid Bottom R
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Neck
+    group: Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Eyebrow R
+    group: Eyebrows
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Eyebrow L
+    group: Eyebrows
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Hand R Clip On
+    group: Gloves
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Hand L Clip On
+    group: Gloves
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Hair
+    group: Hair
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Pants Button
+    group: Pants
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Calf L Clip On
+    group: Pants
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Thigh L Clip On
+    group: Pants
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Belt Loops
+    group: Pants
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Calf R Clip On
+    group: Pants
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Thigh R Clip On
+    group: Pants
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Pelvis Clip On
+    group: Pants
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Belt Loop Under
+    group: Pants
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Forearm R Clip On
+    group: Shirt
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Forearm L Clip On
+    group: Shirt
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Bicep L Clip On
+    group: Shirt
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Torso Clip On
+    group: Shirt
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Bicep R Clip On
+    group: Shirt
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Foot R Clip On
+    group: Shoes
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Foot L Clip On
+    group: Shoes
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Tie
+    group: Tie
+--- !u!114 &6407339182004339066
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0689efb89147c014c8f9e438ce057234, type: 3}
+  m_Name: Group Names
+  m_EditorClassIdentifier: 
+  names:
+  - Body
+  - Hair
+  - Eyebrows
+  - Facial Hair
+  - Hat
+  - Glasses
+  - Shirt
+  - Jacket
+  - Gloves
+  - Tie
+  - Pants
+  - Belt
+  - Belt Buckle
+  - Shoes

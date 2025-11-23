@@ -1,0 +1,128 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6dc58c4a866f4f14984fdb14089db61f, type: 3}
+  m_Name: Naked Body Front
+  m_EditorClassIdentifier: 
+  groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+  group: Body
+  sprites:
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Bicep L
+    label: Naked
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Mouth Base
+    label: Default
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Head Base
+    label: Default
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Ear R
+    label: Default
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Ear L
+    label: Default
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Hand R
+    label: Default
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Foot L
+    label: Naked
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Pelvis
+    label: Naked
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Forearm R
+    label: Naked
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Calf L
+    label: Naked
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Calf R
+    label: Naked
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Hand L
+    label: Default
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Foot R
+    label: Naked
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Forearm L
+    label: Naked
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Thigh R
+    label: Naked
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Thigh L
+    label: Naked
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Bicep R
+    label: Naked
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Eye Red L
+    label: Default
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Iris L
+    label: Default
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Torso
+    label: Naked
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Upper Lip
+    label: Default
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Lower Lip
+    label: Default
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Mouth
+    label: Default
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Lip Corner Shadow R
+    label: Default
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Lip Corner Shadow L
+    label: Default
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Nose
+    label: Default
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Eye White L
+    label: Default
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Eyelid Top R
+    label: Default
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Pupil R
+    label: Default
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Iris R
+    label: Default
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Eye White R
+    label: Default
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Eye Red R
+    label: Default
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Eyelid Top L
+    label: Default
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Eyelid Bottom L
+    label: Default
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Pupil L
+    label: Default
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Eyelid Bottom R
+    label: Default
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Neck
+    label: Default

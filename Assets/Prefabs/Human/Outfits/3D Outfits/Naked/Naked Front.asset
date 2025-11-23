@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3123547f035a82478bb75af508ffef3, type: 3}
+  m_Name: Naked Front
+  m_EditorClassIdentifier: 
+  outfit:
+    grouping: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    components:
+    - group: Body
+      slice: {fileID: 11400000, guid: 0cb84476a2b3c6b4bba87b23d3ae573e, type: 2}
+    - group: Hair
+      slice: {fileID: 11400000, guid: 08e95f5088c869a4383c48a5a15f59da, type: 2}
+    - group: Eyebrows
+      slice: {fileID: 11400000, guid: c277532a9178b9d4ea9242badc32b2ad, type: 2}
+    - group: Facial Hair
+      slice: {fileID: 0}
+    - group: Hat
+      slice: {fileID: 0}
+    - group: Glasses
+      slice: {fileID: 0}
+    - group: Shirt
+      slice: {fileID: 0}
+    - group: Jacket
+      slice: {fileID: 0}
+    - group: Gloves
+      slice: {fileID: 0}
+    - group: Tie
+      slice: {fileID: 0}
+    - group: Pants
+      slice: {fileID: 0}
+    - group: Belt
+      slice: {fileID: 0}
+    - group: Belt Buckle
+      slice: {fileID: 0}
+    - group: Shoes
+      slice: {fileID: 0}

@@ -1,16 +1,22 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(Outfit))]
+[CanEditMultipleObjects]
+[CustomEditor(typeof(OutfitSO))]
 public class OutfitEditor : Editor
 {
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
 
-        if (GUILayout.Button("Set All Categories to Default"))
+        //if (GUILayout.Button("Set All Categories to Default"))
+        //{
+        //    ((Outfit)target).SetAllToDefaults();
+        //}
+
+        if (GUILayout.Button("Refresh Categories"))
         {
-            ((Outfit)target).SetAllToDefaults();
+            ((OutfitSO)target).outfit.Refresh();
         }
     }
 }

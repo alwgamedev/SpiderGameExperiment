@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using UnityEditor;
+using UnityEngine;
 using UnityEngine.U2D.Animation;
 
 //bc you can't find the renderer from the resolver??
@@ -35,8 +36,12 @@ public class OutfitSlot : MonoBehaviour
 
     public void EquipOutfit(Outfit outfit)
     {
+#if UNITY_EDITOR
+        Undo.RecordObject(SpriteRenderer, "Modified Sprite Renderer");
+        Undo.RecordObject(SpriteResolver, "Modified Sprite Resolver");
+#endif
         var cat = SpriteResolver.GetCategory();
-        if (outfit.library == MainSpriteLibrary && outfit.TryGetCategoryLabel(cat, out var label) && label != "None")
+        if (outfit.TryGetCategoryLabel(cat, out var label) && label != "None")
         {
             if (!SpriteRenderer.enabled)
             {

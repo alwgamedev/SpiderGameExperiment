@@ -2813,8 +2813,48 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a91554f8baf52de41a862aaa15281dbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wardrobe: {fileID: 11400000, guid: 9ae99de44490a1f47b6a5ef9c65d0210, type: 2}
-  selectedOutfit: Business Casual
+  outfit: {fileID: 0}
+  customOutfit:
+    front:
+      grouping: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+      components:
+      - group: Body
+        slice: {fileID: 11400000, guid: 97dad38c87b7b0a48b2c5f4ab5c9f774, type: 2}
+      - group: Hair
+        slice: {fileID: 0}
+      - group: Eyebrows
+        slice: {fileID: 0}
+      - group: Facial Hair
+        slice: {fileID: 0}
+      - group: Hat
+        slice: {fileID: 0}
+      - group: Glasses
+        slice: {fileID: 0}
+      - group: Shirt
+        slice: {fileID: 0}
+      - group: Jacket
+        slice: {fileID: 0}
+      - group: Gloves
+        slice: {fileID: 0}
+      - group: Tie
+        slice: {fileID: 0}
+      - group: Pants
+        slice: {fileID: 0}
+      - group: Belt
+        slice: {fileID: 0}
+      - group: Belt Buckle
+        slice: {fileID: 0}
+      - group: Shoes
+        slice: {fileID: 0}
+    back:
+      grouping: {fileID: 0}
+      components: []
+    right:
+      grouping: {fileID: 0}
+      components: []
+    left:
+      grouping: {fileID: 0}
+      components: []
   face: 0
   slots:
   - {fileID: 8551575697904408789}

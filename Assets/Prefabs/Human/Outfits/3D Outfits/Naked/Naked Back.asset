@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3123547f035a82478bb75af508ffef3, type: 3}
+  m_Name: Naked Back
+  m_EditorClassIdentifier: 
+  outfit:
+    grouping: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    components:
+    - group: Body
+      slice: {fileID: 11400000, guid: 9875dcba52e85ed41b2bb00aa1a37371, type: 2}
+    - group: Hair
+      slice: {fileID: 11400000, guid: 3033fc2719e9106428f89991c9ce256f, type: 2}
+    - group: Eyebrows
+      slice: {fileID: 0}
+    - group: Facial Hair
+      slice: {fileID: 0}
+    - group: Hat
+      slice: {fileID: 0}
+    - group: Glasses
+      slice: {fileID: 0}
+    - group: Shirt
+      slice: {fileID: 0}
+    - group: Jacket
+      slice: {fileID: 0}
+    - group: Gloves
+      slice: {fileID: 0}
+    - group: Tie
+      slice: {fileID: 0}
+    - group: Pants
+      slice: {fileID: 0}
+    - group: Belt
+      slice: {fileID: 0}
+    - group: Belt Buckle
+      slice: {fileID: 0}
+    - group: Shoes
+      slice: {fileID: 0}

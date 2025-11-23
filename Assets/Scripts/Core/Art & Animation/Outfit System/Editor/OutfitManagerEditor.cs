@@ -17,32 +17,44 @@ public class OutfitManagerEditor : Editor
 
     public override void OnInspectorGUI()
     {
-        serializedObject.Update();
-        EditorGUILayout.PropertyField(wardrobe);
-        EditorGUILayout.PropertyField(slots);
-        EditorGUILayout.PropertyField(face);
-        serializedObject.ApplyModifiedProperties();
+        DrawDefaultInspector();
 
-        var oM = (OutfitManager)target;
-        var w = oM.wardrobe;
-        if (w != null && w.OutfitNames.Length != 0) 
+        if (GUILayout.Button("Apply Selected Outfit"))
         {
-            int selectedIndex = 0;
-            for (int i = 0; i < w.OutfitNames.Length; i++)
-            {
-                if (w.OutfitNames[i] == oM.selectedOutfit)
-                {
-                    selectedIndex = i;
-                    break;
-                }
-            }
-
-            oM.selectedOutfit = w.OutfitNames[EditorGUILayout.Popup("Selected Outfit: ", selectedIndex, w.OutfitNames)];
-
-            if (GUILayout.Button("Apply Selected Outfit"))
-            {
-                oM.ApplySelectedOutfit();
-            }
+            ((OutfitManager)target).ApplySelectedOutfit();
         }
+
+        if (GUILayout.Button("Apply Custom Outfit"))
+        {
+            ((OutfitManager)target).ApplyCustomOutfit();
+        }
+
+        //serializedObject.Update();
+        //EditorGUILayout.PropertyField(wardrobe);
+        //EditorGUILayout.PropertyField(slots);
+        //EditorGUILayout.PropertyField(face);
+        //serializedObject.ApplyModifiedProperties();
+
+        //var oM = (OutfitManager)target;
+        //var w = oM.wardrobe;
+        //if (w != null && w.OutfitNames.Length != 0) 
+        //{
+        //    int selectedIndex = 0;
+        //    for (int i = 0; i < w.OutfitNames.Length; i++)
+        //    {
+        //        if (w.OutfitNames[i] == oM.selectedOutfit)
+        //        {
+        //            selectedIndex = i;
+        //            break;
+        //        }
+        //    }
+
+        //    oM.selectedOutfit = w.OutfitNames[EditorGUILayout.Popup("Selected Outfit: ", selectedIndex, w.OutfitNames)];
+
+        //    if (GUILayout.Button("Apply Selected Outfit"))
+        //    {
+        //        oM.ApplySelectedOutfit();
+        //    }
+        //}
     }
 }
