@@ -2813,13 +2813,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a91554f8baf52de41a862aaa15281dbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fbModel: {fileID: 5054020868757663416}
+  lrModel: {fileID: 0}
   outfit: {fileID: 0}
   customOutfit:
     front:
       grouping: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
       components:
       - group: Body
-        slice: {fileID: 11400000, guid: 97dad38c87b7b0a48b2c5f4ab5c9f774, type: 2}
+        slice: {fileID: 11400000, guid: 0cb84476a2b3c6b4bba87b23d3ae573e, type: 2}
       - group: Hair
         slice: {fileID: 0}
       - group: Eyebrows
@@ -2831,6 +2833,8 @@ MonoBehaviour:
       - group: Glasses
         slice: {fileID: 0}
       - group: Shirt
+        slice: {fileID: 0}
+      - group: Jacket
         slice: {fileID: 0}
       - group: Gloves
         slice: {fileID: 0}
@@ -2848,7 +2852,7 @@ MonoBehaviour:
       grouping: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
       components:
       - group: Body
-        slice: {fileID: 11400000, guid: 32767ffb208b704439c8277da427a2a7, type: 2}
+        slice: {fileID: 11400000, guid: 9875dcba52e85ed41b2bb00aa1a37371, type: 2}
       - group: Hair
         slice: {fileID: 0}
       - group: Eyebrows
@@ -2860,6 +2864,8 @@ MonoBehaviour:
       - group: Glasses
         slice: {fileID: 0}
       - group: Shirt
+        slice: {fileID: 0}
+      - group: Jacket
         slice: {fileID: 0}
       - group: Gloves
         slice: {fileID: 0}
@@ -2880,68 +2886,6 @@ MonoBehaviour:
       grouping: {fileID: 0}
       components: []
   face: 0
-  slots:
-  - {fileID: 8551575697904408789}
-  - {fileID: 3063623418834562858}
-  - {fileID: 1865739573369102744}
-  - {fileID: 5289506969487058536}
-  - {fileID: 7775098027756916659}
-  - {fileID: 5764503553879197441}
-  - {fileID: 1574334740817513220}
-  - {fileID: 3871651655374720339}
-  - {fileID: 3523134515153680671}
-  - {fileID: 3786369290805600856}
-  - {fileID: 259754648172985300}
-  - {fileID: 463133136483531541}
-  - {fileID: 1599937902425871298}
-  - {fileID: 5606438965994623158}
-  - {fileID: 4178806205923149796}
-  - {fileID: 2078502557146345757}
-  - {fileID: 9121217664135359346}
-  - {fileID: 8885861587580747878}
-  - {fileID: 959297710346953484}
-  - {fileID: 2873284236450584935}
-  - {fileID: 2441243089653335444}
-  - {fileID: 4110595549032326264}
-  - {fileID: 5970144204707176431}
-  - {fileID: 335397644759042793}
-  - {fileID: 121854722866781959}
-  - {fileID: 3936462913401126614}
-  - {fileID: 2022939922751215916}
-  - {fileID: 6819055485217791905}
-  - {fileID: 218987956894858651}
-  - {fileID: 4257442448758755661}
-  - {fileID: 8842075708681405802}
-  - {fileID: 7917227130481145327}
-  - {fileID: 8000178856810158088}
-  - {fileID: 7954749392171581790}
-  - {fileID: 417173877685043893}
-  - {fileID: 4450438092164835722}
-  - {fileID: 6885529694884092264}
-  - {fileID: 7318707024573507074}
-  - {fileID: 1439262366012891505}
-  - {fileID: 9195652756561346737}
-  - {fileID: 8774497972317352906}
-  - {fileID: 3601160902742675844}
-  - {fileID: 3471541497972556661}
-  - {fileID: 1085269064854837922}
-  - {fileID: 3690174996854254243}
-  - {fileID: 4956376398415902114}
-  - {fileID: 762635376304393366}
-  - {fileID: 665806739358144403}
-  - {fileID: 8734505693688817511}
-  - {fileID: 996127928160020866}
-  - {fileID: 5643132760681223502}
-  - {fileID: 9089977779805715998}
-  - {fileID: 604875815110110078}
-  - {fileID: 1297438402251887242}
-  - {fileID: 7229427466212533115}
-  - {fileID: 7168990005568855655}
-  - {fileID: 4698102720700314086}
-  - {fileID: 6927878220410821644}
-  - {fileID: 8013863202597668446}
-  - {fileID: 6570217454645861987}
-  - {fileID: 3594518282790596929}
 --- !u!1 &8576493916821263965
 GameObject:
   m_ObjectHideFlags: 0
@@ -3368,6 +3312,14 @@ PrefabInstance:
     - target: {fileID: -7733894104293041617, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
       propertyPath: m_Name
       value: Forearm L Bone
+      objectReference: {fileID: 0}
+    - target: {fileID: -7552582706839291426, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -7552582706839291426, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: -7552582706839291426, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4928,6 +4880,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8653719598885068355, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8930327722164201483}
+    - targetCorrespondingSourceObject: {fileID: -8653719598885068355, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5054020868757663416}
     - targetCorrespondingSourceObject: {fileID: -4605146622368890141, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2139800123620646929}
@@ -7921,6 +7876,80 @@ MonoBehaviour:
   - name: Shoes
     color: {r: 0.3137255, g: 0.24342711, b: 0.20784314, a: 1}
     head: {fileID: 1764090747660202738}
+--- !u!114 &5054020868757663416
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7027521823530628182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1e41f4c32a2ca3489d3d6b66d50831a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slots:
+  - {fileID: 8551575697904408789}
+  - {fileID: 3063623418834562858}
+  - {fileID: 1865739573369102744}
+  - {fileID: 5289506969487058536}
+  - {fileID: 7775098027756916659}
+  - {fileID: 5764503553879197441}
+  - {fileID: 1574334740817513220}
+  - {fileID: 3871651655374720339}
+  - {fileID: 3523134515153680671}
+  - {fileID: 3786369290805600856}
+  - {fileID: 259754648172985300}
+  - {fileID: 463133136483531541}
+  - {fileID: 1599937902425871298}
+  - {fileID: 5606438965994623158}
+  - {fileID: 4178806205923149796}
+  - {fileID: 2078502557146345757}
+  - {fileID: 9121217664135359346}
+  - {fileID: 8885861587580747878}
+  - {fileID: 959297710346953484}
+  - {fileID: 2873284236450584935}
+  - {fileID: 2441243089653335444}
+  - {fileID: 4110595549032326264}
+  - {fileID: 5970144204707176431}
+  - {fileID: 335397644759042793}
+  - {fileID: 121854722866781959}
+  - {fileID: 3936462913401126614}
+  - {fileID: 2022939922751215916}
+  - {fileID: 6819055485217791905}
+  - {fileID: 218987956894858651}
+  - {fileID: 4257442448758755661}
+  - {fileID: 8842075708681405802}
+  - {fileID: 7917227130481145327}
+  - {fileID: 8000178856810158088}
+  - {fileID: 7954749392171581790}
+  - {fileID: 417173877685043893}
+  - {fileID: 4450438092164835722}
+  - {fileID: 6885529694884092264}
+  - {fileID: 7318707024573507074}
+  - {fileID: 1439262366012891505}
+  - {fileID: 9195652756561346737}
+  - {fileID: 8774497972317352906}
+  - {fileID: 3601160902742675844}
+  - {fileID: 3471541497972556661}
+  - {fileID: 1085269064854837922}
+  - {fileID: 3690174996854254243}
+  - {fileID: 4956376398415902114}
+  - {fileID: 762635376304393366}
+  - {fileID: 665806739358144403}
+  - {fileID: 8734505693688817511}
+  - {fileID: 996127928160020866}
+  - {fileID: 5643132760681223502}
+  - {fileID: 9089977779805715998}
+  - {fileID: 604875815110110078}
+  - {fileID: 1297438402251887242}
+  - {fileID: 7229427466212533115}
+  - {fileID: 7168990005568855655}
+  - {fileID: 4698102720700314086}
+  - {fileID: 6927878220410821644}
+  - {fileID: 8013863202597668446}
+  - {fileID: 6570217454645861987}
+  - {fileID: 3594518282790596929}
 --- !u!1 &7358916674325274754 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 18319767943050601, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}

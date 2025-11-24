@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6dc58c4a866f4f14984fdb14089db61f, type: 3}
   m_Name: Naked Body Back
   m_EditorClassIdentifier: 
-  groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
-  group: Body
+  group:
+    groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    groupName: Body
   sprites:
   - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
     category: Bicep L
@@ -34,8 +35,8 @@ MonoBehaviour:
     category: Hand R
     label: Default
   - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
-    category: Foot L
-    label: Naked Back
+    category: Calf L
+    label: Naked
   - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
     category: Pelvis
     label: Naked
@@ -43,14 +44,14 @@ MonoBehaviour:
     category: Forearm R
     label: Naked
   - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
-    category: Calf L
+    category: Torso
+    label: Naked Back
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Thigh L
     label: Naked
   - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
     category: Calf R
     label: Naked
-  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
-    category: Hand L
-    label: Default
   - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
     category: Foot R
     label: Naked Back
@@ -61,8 +62,8 @@ MonoBehaviour:
     category: Thigh R
     label: Naked
   - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
-    category: Thigh L
-    label: Naked
+    category: Foot L
+    label: Naked Back
   - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
     category: Bicep R
     label: Naked
@@ -73,8 +74,8 @@ MonoBehaviour:
     category: Iris L
     label: None
   - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
-    category: Torso
-    label: Naked Back
+    category: Neck
+    label: Default Back
   - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
     category: Upper Lip
     label: None
@@ -124,5 +125,5 @@ MonoBehaviour:
     category: Eyelid Bottom R
     label: None
   - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
-    category: Neck
-    label: Default Back
+    category: Hand L
+    label: Default

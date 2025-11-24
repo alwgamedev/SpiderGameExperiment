@@ -1,17 +1,19 @@
-﻿using UnityEditor;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class OutfitManager : MonoBehaviour
 {
+    [SerializeField] OutfittableModel fbModel;
+    [SerializeField] OutfittableModel lrModel;
     [SerializeField] Outfit3DSO outfit;
     [SerializeField] Outfit3D customOutfit;
     [SerializeField] Outfit3D.OutfitFace face;
-    [SerializeField] OutfitSlot[] slots;
 
     IOutfit3D currentOutfit;
 
     //2do: option to save custom outfit to an SO (**EDITOR ONLY**)
     //+ option to (deep) copy outfit from SO to customOutfit for editing
+
+    OutfittableModel CurrentModel => face == Outfit3D.OutfitFace.front || face == Outfit3D.OutfitFace.back ? fbModel : lrModel;
 
     private void OnValidate()
     {
@@ -43,18 +45,11 @@ public class OutfitManager : MonoBehaviour
         }
     }
 
-    public void ApplyOutfit(Outfit outfit)
+    private void ApplyOutfit(Outfit outfit)
     {
-        if (outfit != null)
+        if (CurrentModel)
         {
-#if UNITY_EDITOR
-            Undo.IncrementCurrentGroup();
-            Undo.SetCurrentGroupName("Apply Outfit");
-#endif
-            for (int i = 0; i < slots.Length; i++)
-            {
-                slots[i].EquipOutfit(outfit);
-            }
+            CurrentModel.ApplyOutfit(outfit);
         }
     }
 }
