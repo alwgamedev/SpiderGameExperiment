@@ -91,7 +91,7 @@ public class SpriteGrouping : ScriptableObject
             i++;
         }
 
-        Array.Sort(grouping, (x, y) => x.group.CompareTo(y.group));
+        Array.Sort(grouping, (x, y) => (x.group + x.category).CompareTo(y.group + y.category));
     }
 }
 

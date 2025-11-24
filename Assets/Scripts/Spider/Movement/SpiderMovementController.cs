@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class SpiderMovementController : MonoBehaviour
 {
-    //2do:add more fields
     [Header("Body")]
     [SerializeField] Transform abdomenBone;
     [SerializeField] Transform abdomenBonePivot;
@@ -252,7 +251,7 @@ public class SpiderMovementController : MonoBehaviour
     }
 
 
-    //THRUSTER
+    //THRUSTER -- may move gadget management to a component class
 
     //do before you handle any move input
     private void UpdateThruster()
@@ -428,7 +427,7 @@ public class SpiderMovementController : MonoBehaviour
 
     private void ChangeDirection()
     {
-        //2do: can we interpolate between these by free hang strength in a reasonable way (or is there no need to do that)
+        //2do: can we interpolate between these by free hang strength in a reasonable way (or is there no need to do that?)
         if (!legSynchronizer.FreeHanging)
         {
             var s = transform.localScale;
@@ -646,7 +645,6 @@ public class SpiderMovementController : MonoBehaviour
         //--note you only want to do this when strongly grounded
 
         Vector2 down = -transform.up;
-        //Vector2 down = Leaning ? groundDirection.CWPerp() : -transform.up;
         var v = Vector2.Dot(rb.linearVelocity, down);
         var l = Vector2.Dot(p - (Vector2)heightReferencePoint.position, down) - preferredRideHeight;
         var f = l * heightSpringForce;
@@ -740,7 +738,7 @@ public class SpiderMovementController : MonoBehaviour
                 if (MathTools.OppositeSigns(l, v))
                 {
 
-                    //and our velocity is moving us towards the new point, ...
+                    //... and our velocity is moving us towards the new point,
                     //then let groundPt slip towards new pt
 
                     var t = groundPtSlipRate * Mathf.Abs(l) * Time.deltaTime;
@@ -805,8 +803,6 @@ public class SpiderMovementController : MonoBehaviour
                 groundMap.CentralIndex,
                 groundLayer);
         }
-
-        //groundMap.InitializeStats();
     }
 
     private void UpdateGroundMap()
@@ -829,8 +825,6 @@ public class SpiderMovementController : MonoBehaviour
                 groundMap.CentralIndex,
                 groundLayer);
         }
-
-        //groundMap.UpdateStats();
     }
 
     private void LerpUpdateGroundMap()
@@ -853,8 +847,6 @@ public class SpiderMovementController : MonoBehaviour
                 groundMap.CentralIndex,
                 groundLayer);
         }
-
-        //groundMap.UpdateStats();
     }
 
     private Vector2 FreeHangGroundMapDown()
@@ -903,7 +895,6 @@ public class SpiderMovementController : MonoBehaviour
     private void InitializeGroundData()
     {
         RecomputeGroundMapRaycastLength();
-        //goalGroundednessTolerance = goalGroundednessTolerance;
         groundMap.Initialize();
         InitializeGroundMap();
         UpdateGroundednessRating();
@@ -924,21 +915,11 @@ public class SpiderMovementController : MonoBehaviour
 
     private void UpdateLegSynch()
     {
-        //if (legSynchronizer.FreeHanging && (!grapple.FreeHanging || groundMap.smoothedMiddleGrounded.On))
-        //{
-        //    legSynchronizer.FreeHanging = false;
-        //}
-        //else if (!legSynchronizer.FreeHanging && grapple.FreeHanging && !groundMap.smoothedMiddleGrounded.On)
-        //{
-        //    legSynchronizer.FreeHanging = true;
-        //}
-
         legSynchronizer.FreeHanging = grapple.FreeHanging;
 
         var v = GroundVelocity;
         legSynchronizer.bodyGroundSpeedSign = (grounded && grapple.GrappleAnchored) || grapple.FreeHanging ? 1 : Mathf.Sign(v);
         legSynchronizer.absoluteBodyGroundSpeed = grounded || thruster.Engaged ? Mathf.Abs(v) : rb.linearVelocity.magnitude;
-        //legSynchronizer.preferredBodyPosGroundHeight = PreferredBodyPosGroundHeight;
         legSynchronizer.stepHeightFraction = 1 - crouchProgress * crouchHeightFraction;
         legSynchronizer.timeScale = grounded || thruster.Engaged ? 1 : airborneLegAnimationTimeScale;
 

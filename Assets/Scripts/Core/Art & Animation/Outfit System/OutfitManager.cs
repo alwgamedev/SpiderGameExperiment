@@ -6,7 +6,7 @@ public class OutfitManager : MonoBehaviour
     [SerializeField] OutfittableModel lrModel;
     [SerializeField] Outfit3DSO outfit;
     [SerializeField] Outfit3D customOutfit;
-    [SerializeField] Outfit3D.OutfitFace face;
+    [SerializeField] MathTools.OrientationXZ face;
 
     IOutfit3D currentOutfit;
 
@@ -18,10 +18,10 @@ public class OutfitManager : MonoBehaviour
         customOutfit?.Refresh();
     }
 
-    public void SetFace(Outfit3D.OutfitFace face)
+    public void SetFace(MathTools.OrientationXZ face)
     {
         this.face = face;
-        bool fb = face == Outfit3D.OutfitFace.front || face == Outfit3D.OutfitFace.back;
+        bool fb = face == MathTools.OrientationXZ.front || face == MathTools.OrientationXZ.back;
         fbModel.gameObject.SetActive(fb);
         lrModel.gameObject.SetActive(!fb);
         ApplyOutfit(currentOutfit, face);
@@ -37,7 +37,7 @@ public class OutfitManager : MonoBehaviour
         ApplyOutfit(customOutfit, face);
     }
 
-    public void ApplyOutfit(IOutfit3D outfit, Outfit3D.OutfitFace face)
+    public void ApplyOutfit(IOutfit3D outfit, MathTools.OrientationXZ face)
     {
         if (outfit != null)
         {
@@ -46,8 +46,8 @@ public class OutfitManager : MonoBehaviour
         }
     }
 
-    private OutfittableModel Model(Outfit3D.OutfitFace face)
+    private OutfittableModel Model(MathTools.OrientationXZ face)
     {
-        return face == Outfit3D.OutfitFace.front || face == Outfit3D.OutfitFace.back ? fbModel : lrModel;
+        return face == MathTools.OrientationXZ.front || face == MathTools.OrientationXZ.back ? fbModel : lrModel;
     }
 }

@@ -1,13 +1,20 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
+[ExecuteAlways]
 public class ColorControl : MonoBehaviour
 {
     [SerializeField] Color color;
     [SerializeField] List<ChildColor> children = new();
 
     public Color Color => color;
+
+    private void OnValidate()
+    {
+        children.Sort(MiscTools.MbPathComparer);
+    }
 
     public void SetColorAndUpdateChildren(Color c, bool incrementUndoGroup = true)
     {
@@ -56,7 +63,7 @@ public class ColorControl : MonoBehaviour
         if (c && !children.Contains(c))
         {
             children.Add(c);
-            children.Sort((x,y) => x.name.CompareTo(y.name));// <- to avoid fake prefab overrides caused by lists being in different order
+            children.Sort(MiscTools.MbPathComparer);// <- to avoid fake prefab overrides caused by lists being in different order
         }
     }
 

@@ -1,0 +1,191 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65d460f566706e64db93cb8bc1a19f37, type: 3}
+  m_Name: Human Side Sprite Groups
+  m_EditorClassIdentifier: 
+  library: {fileID: 7108339969198208228, guid: fab4ad34f8bc86c4a83f9b5803bcfb4f, type: 3}
+  groupNames: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+  grouping:
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Belt Buckle
+    group: Belt Buckle
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Belt
+    group: Belt
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Facial Hair
+    group: Facial Hair
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Glasses
+    group: Glasses
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Hand L Clip On
+    group: Gloves
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Hand R Clip On
+    group: Gloves
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Hair
+    group: Hair
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Ear
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Eye Red
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Eye White
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Eyebrow
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Eyelid Bottom
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Eyelid Top
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Head Base
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Iris
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Lip Corner Shadow
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Lower Lip
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Mouth
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Mouth Base
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Neck
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Nose
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Pupil
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Upper Lip
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Bicep L 2nd Clip On
+    group: Jacket
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Bicep R 2nd Clip On
+    group: Jacket
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Forearm L 2nd Clip On
+    group: Jacket
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Forearm R 2nd Clip On
+    group: Jacket
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Torso 2nd Clip On
+    group: Jacket
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Calf L
+    group: Lower Body
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Calf R
+    group: Lower Body
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Foot L
+    group: Lower Body
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Foot R
+    group: Lower Body
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Pelvis
+    group: Lower Body
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Thigh L
+    group: Lower Body
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Thigh R
+    group: Lower Body
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Belt Loops
+    group: Pants
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Belt Loops Under
+    group: Pants
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Calf L Clip On
+    group: Pants
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Calf R Clip On
+    group: Pants
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Pants Button
+    group: Pants
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Pelvis Clip On
+    group: Pants
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Thigh L Clip On
+    group: Pants
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Thigh R Clip On
+    group: Pants
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Bicep L Clip On
+    group: Shirt
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Bicep R Clip On
+    group: Shirt
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Forearm L Clip On
+    group: Shirt
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Forearm R Clip On
+    group: Shirt
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Torso Clip On
+    group: Shirt
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Foot L Clip On
+    group: Shoes
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Foot R Clip On
+    group: Shoes
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Tie
+    group: Tie
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Bicep L
+    group: Upper Body
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Bicep R
+    group: Upper Body
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Forearm L
+    group: Upper Body
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Forearm R
+    group: Upper Body
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Hand L
+    group: Upper Body
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Hand R
+    group: Upper Body
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Torso
+    group: Upper Body

@@ -21,6 +21,11 @@ public static class MathTools
     public const float sin60 = cos30;
     public const float tan60 = 1.7320508f;//sqrt(3)
 
+    public enum OrientationXZ
+    {
+        front, back, right, left
+    }
+
     public static System.Random RNG
     {
         get

@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.U2D;
 
+[ExecuteAlways]
 public class ChildColor : MonoBehaviour
 {
     [SerializeField] ColorControl colorControl;
@@ -181,6 +182,7 @@ public class ChildColor : MonoBehaviour
         if (subscription)
         {
             subscription.RemoveChild(this);
+            subscription = null;
         }
     }
 

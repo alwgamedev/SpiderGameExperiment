@@ -217,8 +217,8 @@ MonoBehaviour:
       m_SpriteOverride: {fileID: -1235273373923148852, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
     m_FromMain: 0
     m_EntryOverrideCount: 1
-  - m_Name: Hand L Clip
-    m_Hash: 597256885
+  - m_Name: Hand L Clip On
+    m_Hash: 263394546
     m_CategoryList: []
     m_OverrideEntries:
     - m_Name: Default
@@ -395,6 +395,12 @@ MonoBehaviour:
     m_EntryOverrideCount: 1
   - m_Name: Belt Loops
     m_Hash: 738244746
+    m_CategoryList: []
+    m_OverrideEntries: []
+    m_FromMain: 0
+    m_EntryOverrideCount: 0
+  - m_Name: Belt Loops Under
+    m_Hash: 1002788991
     m_CategoryList: []
     m_OverrideEntries: []
     m_FromMain: 0
@@ -601,5 +607,5 @@ MonoBehaviour:
     m_FromMain: 0
     m_EntryOverrideCount: 0
   m_PrimaryLibraryGUID: 
-  m_ModificationHash: 638995329690334936
+  m_ModificationHash: 638995926646251419
   m_Version: 1

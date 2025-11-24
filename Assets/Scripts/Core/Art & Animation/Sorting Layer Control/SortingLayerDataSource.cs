@@ -2,6 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
+[ExecuteAlways]
 public abstract class SortingLayerDataSource : MonoBehaviour
 {
     [SerializeField] List<SortingLayerDataSource> children = new();
@@ -13,12 +14,17 @@ public abstract class SortingLayerDataSource : MonoBehaviour
     public abstract int? SortingLayerID { get; }
     public abstract int? SortingOrder { get; }
 
+    private void OnValidate()
+    {
+        children.Sort(MiscTools.MbPathComparer);
+    }
+
     public void AddChild(SortingLayerDataSource c)
     {
         if (c && !children.Contains(c))
         {
             children.Add(c);
-            children.Sort((x,y) => x.name.CompareTo(y.name));// <- to avoid fake prefab overrides caused by lists being in different orders
+            children.Sort(MiscTools.MbPathComparer);// <- to avoid fake prefab overrides caused by lists being in different orders
         }
     }
 

@@ -1,6 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
+[ExecuteAlways]//needed for OnDestroy to get called when component is removed
 public class ChildSortingLayer : SortingLayerDataSource
 {
     public int orderDelta;
