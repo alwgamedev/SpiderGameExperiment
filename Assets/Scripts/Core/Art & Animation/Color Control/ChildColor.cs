@@ -1,4 +1,5 @@
 ﻿using UnityEditor;
+using UnityEditor.Events;
 using UnityEngine;
 using UnityEngine.U2D;
 
@@ -9,7 +10,9 @@ public class ChildColor : MonoBehaviour
     [SerializeField] Color colorMultiplier = Color.white;
 
     Renderer _renderer;
-    ColorControl _colorControl;
+    internal ColorControl subscription;
+    //internal gets auto-serialized like public but is not accessible by editor assembly so stays hidden from inspector unless in debug mode
+    //([HideInInspector] seems to also hide in debug mode)
 
     Renderer Renderer
     {
@@ -25,7 +28,7 @@ public class ChildColor : MonoBehaviour
 
     private void OnValidate()
     {
-        if (_colorControl != colorControl)
+        if (!subscription || subscription != colorControl)
         {
             HookupControl();
         }
@@ -37,10 +40,17 @@ public class ChildColor : MonoBehaviour
 
         if (colorControl)
         {
-            _colorControl = colorControl;
-            colorControl.ColorChanged += UpdateColor;
-            colorControl.AutoDetermineChildData += AutoDetermineShiftAndMult;
-            colorControl.Destroyed += OnControlDestroyed;
+            subscription = colorControl;
+            UnityEventTools.AddPersistentListener(colorControl.ColorChanged, UpdateColor);
+            colorControl.ColorChanged.SetPersistentListenerState(colorControl.ColorChanged.GetPersistentEventCount() - 1, 
+                UnityEngine.Events.UnityEventCallState.EditorAndRuntime);
+            UnityEventTools.AddPersistentListener(colorControl.AutoDetermineChildData, AutoDetermineShiftAndMult);
+            colorControl.AutoDetermineChildData.SetPersistentListenerState(colorControl.AutoDetermineChildData.GetPersistentEventCount() - 1, 
+                UnityEngine.Events.UnityEventCallState.EditorAndRuntime);
+            UnityEventTools.AddPersistentListener(colorControl.Destroyed, OnControlDestroyed);
+            colorControl.Destroyed.SetPersistentListenerState(colorControl.Destroyed.GetPersistentEventCount() - 1, 
+                UnityEngine.Events.UnityEventCallState.EditorAndRuntime);
+
         }
     }
 
@@ -49,18 +59,18 @@ public class ChildColor : MonoBehaviour
     //(so you can just have it figure out what shift and multiplier need to be)
     public void AutoDetermineShiftAndMult()
     {
-        if (_colorControl)
+        if (colorControl)
         {
-            AutoDetermineShiftAndMult(_colorControl.Color);
+            AutoDetermineShiftAndMult(colorControl.Color);
         }
     }
 
     public void UpdateColor()
     {
         Debug.Log($"{GetType().Name} {name} updating color");
-        if (_colorControl)
+        if (colorControl)
         {
-            var color = (_colorControl.Color + colorShift) * colorMultiplier;
+            var color = (colorControl.Color + colorShift) * colorMultiplier;
             SetRendererColor(color);
         }
         else
@@ -129,9 +139,11 @@ public class ChildColor : MonoBehaviour
                 shift.a = childColor.a;
             }
 
+#if UNITY_EDITOR
+            Undo.RecordObject(this, "Set Child Color Shift & Multiplier");
+#endif
             colorShift = shift;
             colorMultiplier = mult;
-
 #if UNITY_EDITOR
             EditorUtility.SetDirty(this);
             PrefabUtility.RecordPrefabInstancePropertyModifications(this);
@@ -146,6 +158,9 @@ public class ChildColor : MonoBehaviour
         {
             if (r is SpriteRenderer s)
             {
+#if UNITY_EDITOR
+                Undo.RecordObject(s, "Set Renderer Color");
+#endif
                 s.color = color;
 #if UNITY_EDITOR
                 EditorUtility.SetDirty(s);
@@ -154,6 +169,9 @@ public class ChildColor : MonoBehaviour
             }
             else if (r is SpriteShapeRenderer t)
             {
+#if UNITY_EDITOR
+                Undo.RecordObject(t, "Set Renderer Color");
+#endif
                 t.color = color;
 #if UNITY_EDITOR
                 EditorUtility.SetDirty(t);
@@ -165,7 +183,7 @@ public class ChildColor : MonoBehaviour
 
     private void OnControlDestroyed(ColorControl c)
     {
-        if (!_colorControl || _colorControl == c)
+        if (!subscription || colorControl == c)
         {
             UnhookControl();
         }
@@ -173,14 +191,12 @@ public class ChildColor : MonoBehaviour
 
     private void UnhookControl()
     {
-        if (_colorControl)
+        if (subscription)
         {
-            _colorControl.ColorChanged -= UpdateColor;
-            _colorControl.AutoDetermineChildData -= AutoDetermineShiftAndMult;
-            _colorControl.Destroyed -= OnControlDestroyed;
+            UnityEventTools.RemovePersistentListener(subscription.ColorChanged, UpdateColor);
+            UnityEventTools.RemovePersistentListener(subscription.AutoDetermineChildData, AutoDetermineShiftAndMult);
+            UnityEventTools.RemovePersistentListener<ColorControl>(subscription.Destroyed, OnControlDestroyed);
         }
-
-        _colorControl = null;
     }
 
     private void OnDestroy()

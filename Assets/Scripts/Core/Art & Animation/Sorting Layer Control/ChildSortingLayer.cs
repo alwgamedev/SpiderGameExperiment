@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using UnityEditor.Events;
+using UnityEngine;
 
 public class ChildSortingLayer : SortingLayerDataSource
 {
@@ -58,11 +59,13 @@ public class ChildSortingLayer : SortingLayerDataSource
     {
         if (parent)
         {
-            parent.DataUpdated -= UpdateSortingData;
-            parent.Destroyed -= UnhookCurrentSLDS;
+            //parent.DataUpdated -= UpdateSortingData;
+            //parent.Destroyed -= UnhookCurrentSLDS;
+            UnityEventTools.RemovePersistentListener(parent.DataUpdated, UpdateSortingData);
+            UnityEventTools.RemovePersistentListener(parent.Destroyed, UnhookCurrentSLDS);
         }
 
-        if (IsOurChild(slds) || !slds)
+        if (!slds || IsOurChild(slds))
         {
             slds = null;
         }
@@ -70,8 +73,12 @@ public class ChildSortingLayer : SortingLayerDataSource
 
         if (parent != null)
         {
-            parent.DataUpdated += UpdateSortingData;
-            parent.Destroyed += UnhookCurrentSLDS;
+            //parent.DataUpdated += UpdateSortingData;
+            //parent.Destroyed += UnhookCurrentSLDS;
+            UnityEventTools.AddPersistentListener(parent.DataUpdated, UpdateSortingData);
+            parent.DataUpdated.SetPersistentListenerState(parent.DataUpdated.GetPersistentEventCount() - 1, UnityEngine.Events.UnityEventCallState.EditorAndRuntime);
+            UnityEventTools.AddPersistentListener(parent.Destroyed, UnhookCurrentSLDS);
+            parent.Destroyed.SetPersistentListenerState(parent.Destroyed.GetPersistentEventCount() - 1, UnityEngine.Events.UnityEventCallState.EditorAndRuntime);
         }
     }
 
@@ -90,8 +97,8 @@ public class ChildSortingLayer : SortingLayerDataSource
     {
         if (parent)
         {
-            parent.DataUpdated -= UpdateSortingData;
-            parent.Destroyed -= UnhookCurrentSLDS;
+            UnityEventTools.RemovePersistentListener(parent.DataUpdated, UpdateSortingData);
+            UnityEventTools.RemovePersistentListener(parent.Destroyed, UnhookCurrentSLDS);
             parent = null;
         }
     }
@@ -100,7 +107,7 @@ public class ChildSortingLayer : SortingLayerDataSource
     //but it's impossible to ever create a loop now, since we check IsOurChild before setting parent
     private bool IsOurChild(SortingLayerDataSource s)
     {
-        while (s != null)
+        while (s)
         {
             if (s == this) return true;
             s = s.Parent;

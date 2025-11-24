@@ -1,0 +1,605 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &1
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5e6fedc2472449cead18ef23b5cb30d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Library:
+  - m_Name: Eyebrow
+    m_Hash: 486420949
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Default
+      m_Hash: 753088835
+      m_Sprite: {fileID: -1931635127873613462, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -1931635127873613462, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Upper Lip
+    m_Hash: 945227298
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Default
+      m_Hash: 753088835
+      m_Sprite: {fileID: -8369577869219168320, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -8369577869219168320, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Lower Lip
+    m_Hash: 403238657
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Default
+      m_Hash: 753088835
+      m_Sprite: {fileID: 4539292851078280302, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 4539292851078280302, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Mouth
+    m_Hash: 520385427
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Default
+      m_Hash: 753088835
+      m_Sprite: {fileID: -8519187676041393827, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -8519187676041393827, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Lip Corner Shadow
+    m_Hash: 695615994
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Default
+      m_Hash: 753088835
+      m_Sprite: {fileID: -636515434419126071, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -636515434419126071, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Nose
+    m_Hash: 550421485
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Default
+      m_Hash: 753088835
+      m_Sprite: {fileID: -6567920973241259728, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -6567920973241259728, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Eyelid Top
+    m_Hash: 699070795
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Default
+      m_Hash: 753088835
+      m_Sprite: {fileID: 3595935146135499965, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 3595935146135499965, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Eyelid Bottom
+    m_Hash: 679507912
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Default
+      m_Hash: 753088835
+      m_Sprite: {fileID: -8697844062119079911, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -8697844062119079911, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Pupil
+    m_Hash: 102432181
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Default
+      m_Hash: 753088835
+      m_Sprite: {fileID: 5931690565110649116, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 5931690565110649116, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Iris
+    m_Hash: 756974845
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Default
+      m_Hash: 753088835
+      m_Sprite: {fileID: 2947380103947591954, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 2947380103947591954, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Eye White
+    m_Hash: 438152084
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Default
+      m_Hash: 753088835
+      m_Sprite: {fileID: -1072524115457580992, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -1072524115457580992, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Eye Red
+    m_Hash: 738152151
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Default
+      m_Hash: 753088835
+      m_Sprite: {fileID: -3725059811963748026, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -3725059811963748026, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Hair
+    m_Hash: 1019596327
+    m_CategoryList: []
+    m_OverrideEntries: []
+    m_FromMain: 0
+    m_EntryOverrideCount: 0
+  - m_Name: Mouth Base
+    m_Hash: 321383855
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Default
+      m_Hash: 753088835
+      m_Sprite: {fileID: -4454484878224253688, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -4454484878224253688, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Head Base
+    m_Hash: 636465204
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Default
+      m_Hash: 753088835
+      m_Sprite: {fileID: 6314994564833067071, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 6314994564833067071, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Ear
+    m_Hash: 201186511
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Default
+      m_Hash: 753088835
+      m_Sprite: {fileID: 4660703111060981165, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 4660703111060981165, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Hand R
+    m_Hash: 844988649
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Default
+      m_Hash: 753088835
+      m_Sprite: {fileID: 4343134776747339563, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 4343134776747339563, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Hand R Clip On
+    m_Hash: 733056273
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Default
+      m_Hash: 753088835
+      m_Sprite: {fileID: 4343134776747339563, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 4343134776747339563, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Hand L
+    m_Hash: 139640202
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Default
+      m_Hash: 753088835
+      m_Sprite: {fileID: -1235273373923148852, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -1235273373923148852, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Hand L Clip
+    m_Hash: 597256885
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Default
+      m_Hash: 753088835
+      m_Sprite: {fileID: -1235273373923148852, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -1235273373923148852, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Bicep R
+    m_Hash: 930714426
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: 416851650138245883, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 416851650138245883, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Bicep R Clip On
+    m_Hash: 271450751
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: 416851650138245883, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 416851650138245883, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Bicep R 2nd Clip On
+    m_Hash: 846949462
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: 416851650138245883, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 416851650138245883, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Bicep L
+    m_Hash: 225881689
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: 4415013965928896665, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 4415013965928896665, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Bicep L Clip On
+    m_Hash: 875338652
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: 4415013965928896665, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 4415013965928896665, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Bicep L 2nd Clip On
+    m_Hash: 1016776252
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: 4415013965928896665, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 4415013965928896665, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Forearm R
+    m_Hash: 336525628
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: -5696753806804904631, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -5696753806804904631, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Forearm R Clip On
+    m_Hash: 405258348
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: -5696753806804904631, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -5696753806804904631, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Forearm R 2nd Clip On
+    m_Hash: 645998530
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: -5696753806804904631, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -5696753806804904631, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Forearm L
+    m_Hash: 771867743
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: 8760783868794075043, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 8760783868794075043, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Forearm L Clip On
+    m_Hash: 1009080719
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: 8760783868794075043, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 8760783868794075043, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Forearm L 2nd Clip On
+    m_Hash: 677416360
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: 8760783868794075043, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 8760783868794075043, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Torso
+    m_Hash: 647926657
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: 331972917657613137, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 331972917657613137, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Torso Clip On
+    m_Hash: 225664390
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: 331972917657613137, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 331972917657613137, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Torso 2nd Clip On
+    m_Hash: 428003718
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: 331972917657613137, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 331972917657613137, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Belt Loops
+    m_Hash: 738244746
+    m_CategoryList: []
+    m_OverrideEntries: []
+    m_FromMain: 0
+    m_EntryOverrideCount: 0
+  - m_Name: Belt Buckle
+    m_Hash: 633209656
+    m_CategoryList: []
+    m_OverrideEntries: []
+    m_FromMain: 0
+    m_EntryOverrideCount: 0
+  - m_Name: Belt
+    m_Hash: 6674415
+    m_CategoryList: []
+    m_OverrideEntries: []
+    m_FromMain: 0
+    m_EntryOverrideCount: 0
+  - m_Name: Pants Button
+    m_Hash: 362796230
+    m_CategoryList: []
+    m_OverrideEntries: []
+    m_FromMain: 0
+    m_EntryOverrideCount: 0
+  - m_Name: Pelvis
+    m_Hash: 807533912
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: 8246909452601469996, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 8246909452601469996, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Pelvis Clip On
+    m_Hash: 325557442
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: 8246909452601469996, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 8246909452601469996, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Thigh R
+    m_Hash: 178768777
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: -4655282542072174733, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -4655282542072174733, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Thigh R Clip On
+    m_Hash: 703100291
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: -4655282542072174733, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -4655282542072174733, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Thigh L
+    m_Hash: 816379626
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: 3906871334911622560, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 3906871334911622560, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Thigh L Clip On
+    m_Hash: 233499744
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: 3906871334911622560, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 3906871334911622560, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Calf R
+    m_Hash: 823618767
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: -8086321126738941271, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -8086321126738941271, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Calf R Clip On
+    m_Hash: 283021730
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: -8086321126738941271, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -8086321126738941271, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Calf L
+    m_Hash: 186143148
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: -8636521979544973643, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -8636521979544973643, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Calf L Clip On
+    m_Hash: 886835265
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: -8636521979544973643, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -8636521979544973643, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Foot R
+    m_Hash: 335387629
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: -7292650332816709951, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -7292650332816709951, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Foot R Clip On
+    m_Hash: 798973061
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: -7292650332816709951, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -7292650332816709951, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Foot L
+    m_Hash: 703768206
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: -5067177748636285830, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -5067177748636285830, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Foot L Clip On
+    m_Hash: 194889062
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Naked
+      m_Hash: 883728177
+      m_Sprite: {fileID: -5067177748636285830, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -5067177748636285830, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Neck
+    m_Hash: 2324845
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Default
+      m_Hash: 753088835
+      m_Sprite: {fileID: -3961656185535527294, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -3961656185535527294, guid: 66bcdd3ac677a2540bcff01135782662, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Glasses
+    m_Hash: 958358346
+    m_CategoryList: []
+    m_OverrideEntries: []
+    m_FromMain: 0
+    m_EntryOverrideCount: 0
+  - m_Name: Tie
+    m_Hash: 487791175
+    m_CategoryList: []
+    m_OverrideEntries: []
+    m_FromMain: 0
+    m_EntryOverrideCount: 0
+  - m_Name: Facial Hair
+    m_Hash: 262323632
+    m_CategoryList: []
+    m_OverrideEntries: []
+    m_FromMain: 0
+    m_EntryOverrideCount: 0
+  m_PrimaryLibraryGUID: 
+  m_ModificationHash: 638995329690334936
+  m_Version: 1

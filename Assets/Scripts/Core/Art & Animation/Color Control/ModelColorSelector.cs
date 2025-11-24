@@ -12,21 +12,35 @@ public class ModelColorSelector : MonoBehaviour
     {
         public string name;
         public Color color;
-        public ColorControl head;
+        public ColorControl[] heads;
 
         public void AutoDetermineChildShiftAndMult()
         {
-            if (head)
+#if UNITY_EDITOR
+            Undo.IncrementCurrentGroup();
+            Undo.SetCurrentGroupName("Auto Determine Model Child Colors' Shift & Multiplier");
+#endif
+            foreach (var head in heads)
             {
-                head.AutoDetermineChildShiftAndMult();
+                if (head)
+                {
+                    head.AutoDetermineChildShiftAndMult(false);
+                }
             }
         }
 
         public void UpdateColors()
         {
-            if (head)
+#if UNITY_EDITOR
+            Undo.IncrementCurrentGroup();
+            Undo.SetCurrentGroupName("Update Model Colors");
+#endif
+            foreach (var head in heads)
             {
-                head.SetColorAndUpdateChildren(color);
+                if (head)
+                {
+                    head.SetColorAndUpdateChildren(color, false);
+                }
             }
         }
     }

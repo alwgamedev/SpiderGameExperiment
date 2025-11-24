@@ -3,11 +3,11 @@ using UnityEngine;
 
 [CanEditMultipleObjects]
 [CustomEditor(typeof(SortingLayerControl))]
-public class SortingLayerControlEditor : Editor
+public class SortingLayerControlEditor : SortingLayerDataSourceEditor
 {
     public override void OnInspectorGUI()
     {
-        DrawDefaultInspector();
+        base.OnInspectorGUI();
 
         if (GUILayout.Button("Update Children"))
         {

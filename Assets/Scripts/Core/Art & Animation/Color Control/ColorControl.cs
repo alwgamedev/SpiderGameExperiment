@@ -1,5 +1,6 @@
-using System;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class ColorControl : MonoBehaviour
 {
@@ -7,31 +8,43 @@ public class ColorControl : MonoBehaviour
 
     public Color Color => color;
 
-    public event Action ColorChanged;
-    public event Action AutoDetermineChildData;
-    public event Action<ColorControl> Destroyed;
+    //we never lose listeners (even after editing this script)!
+    public UnityEvent ColorChanged;
+    public UnityEvent AutoDetermineChildData;
+    public UnityEvent<ColorControl> Destroyed;
 
-    public void SetColorAndUpdateChildren(Color c)
+    public void SetColorAndUpdateChildren(Color c, bool incrementUndoGroup = true)
     {
         color = c;
-        UpdateChildColors();
+        UpdateChildColors(incrementUndoGroup);
     }
 
-    public void UpdateChildColors()
+    public void UpdateChildColors(bool incrementUndoGroup = true)
     {
-        ColorChanged?.Invoke();
+#if UNITY_EDITOR
+        if (incrementUndoGroup)
+        {
+            Undo.IncrementCurrentGroup();
+            Undo.SetCurrentGroupName("Update Child Colors");
+        }
+#endif
+        ColorChanged.Invoke();
     }
 
-    public void AutoDetermineChildShiftAndMult()
+    public void AutoDetermineChildShiftAndMult(bool incrementUndoGroup = true)
     {
-        AutoDetermineChildData?.Invoke();
+#if UNITY_EDITOR
+        if (incrementUndoGroup)
+        {
+            Undo.IncrementCurrentGroup();
+            Undo.SetCurrentGroupName("Set Child Color Shift & Multiplier");
+        }
+#endif
+        AutoDetermineChildData.Invoke();
     }
 
     private void OnDestroy()
     {
-        Destroyed?.Invoke(this);
-        //Destroyed = null;
-        //ColorChanged = null;
-        //AutoDetermineChildData = null;
+        Destroyed.Invoke(this);
     }
 }

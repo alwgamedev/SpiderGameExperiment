@@ -16,125 +16,14 @@ MonoBehaviour:
   groupNames: {fileID: 6407339182004339066}
   grouping:
   - availableGroups: {fileID: 6407339182004339066}
-    category: Belt L
+    category: Belt R
     group: Belt
   - availableGroups: {fileID: 6407339182004339066}
-    category: Belt R
+    category: Belt L
     group: Belt
   - availableGroups: {fileID: 6407339182004339066}
     category: Belt Buckle
     group: Belt Buckle
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Bicep L
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Mouth Base
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Head Base
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Ear R
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Ear L
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Hand R
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Calf L
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Pelvis
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Forearm R
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Torso
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Thigh L
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Calf R
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Foot R
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Forearm L
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Thigh R
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Foot L
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Bicep R
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Eye Red L
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Iris L
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Neck
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Upper Lip
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Lower Lip
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Mouth
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Lip Corner Shadow R
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Lip Corner Shadow L
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Nose
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Eye White L
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Eyelid Top R
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Pupil R
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Iris R
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Eye White R
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Eye Red R
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Eyelid Top L
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Eyelid Bottom L
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Pupil L
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Eyelid Bottom R
-    group: Body
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Hand L
-    group: Body
   - availableGroups: {fileID: 6407339182004339066}
     category: Eyebrow R
     group: Eyebrows
@@ -148,10 +37,10 @@ MonoBehaviour:
     category: Glasses
     group: Glasses
   - availableGroups: {fileID: 6407339182004339066}
-    category: Hand R Clip On
+    category: Hand L Clip On
     group: Gloves
   - availableGroups: {fileID: 6407339182004339066}
-    category: Hand L Clip On
+    category: Hand R Clip On
     group: Gloves
   - availableGroups: {fileID: 6407339182004339066}
     category: Hair
@@ -160,53 +49,179 @@ MonoBehaviour:
     category: Hat
     group: Hat
   - availableGroups: {fileID: 6407339182004339066}
-    category: Calf L Clip On
-    group: Pants
+    category: Neck
+    group: Head
   - availableGroups: {fileID: 6407339182004339066}
-    category: Belt Loops
-    group: Pants
+    category: Upper Lip
+    group: Head
   - availableGroups: {fileID: 6407339182004339066}
-    category: Thigh L Clip On
+    category: Lower Lip
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Mouth
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Lip Corner Shadow R
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Ear L
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Ear R
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Head Base
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Mouth Base
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Lip Corner Shadow L
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Eye White L
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Nose
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Eyelid Top R
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Eye Red L
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Pupil R
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Iris R
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Eye White R
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Eye Red R
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Eyelid Bottom R
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Iris L
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Pupil L
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Eyelid Bottom L
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Eyelid Top L
+    group: Head
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Thigh R
+    group: Lower Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Thigh L
+    group: Lower Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Calf R
+    group: Lower Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Foot R
+    group: Lower Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Pelvis
+    group: Lower Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Calf L
+    group: Lower Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Foot L
+    group: Lower Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Calf R Clip On
     group: Pants
   - availableGroups: {fileID: 6407339182004339066}
     category: Thigh R Clip On
     group: Pants
   - availableGroups: {fileID: 6407339182004339066}
-    category: Pelvis Clip On
-    group: Pants
-  - availableGroups: {fileID: 6407339182004339066}
     category: Belt Loop Under
-    group: Pants
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Calf R Clip On
     group: Pants
   - availableGroups: {fileID: 6407339182004339066}
     category: Pants Button
     group: Pants
   - availableGroups: {fileID: 6407339182004339066}
-    category: Bicep R Clip On
-    group: Shirt
+    category: Pelvis Clip On
+    group: Pants
   - availableGroups: {fileID: 6407339182004339066}
-    category: Forearm R Clip On
-    group: Shirt
+    category: Thigh L Clip On
+    group: Pants
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Belt Loops
+    group: Pants
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Calf L Clip On
+    group: Pants
   - availableGroups: {fileID: 6407339182004339066}
     category: Forearm L Clip On
-    group: Shirt
-  - availableGroups: {fileID: 6407339182004339066}
-    category: Torso Clip On
     group: Shirt
   - availableGroups: {fileID: 6407339182004339066}
     category: Bicep L Clip On
     group: Shirt
   - availableGroups: {fileID: 6407339182004339066}
-    category: Foot R Clip On
-    group: Shoes
+    category: Forearm R Clip On
+    group: Shirt
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Bicep R Clip On
+    group: Shirt
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Torso Clip On
+    group: Shirt
   - availableGroups: {fileID: 6407339182004339066}
     category: Foot L Clip On
     group: Shoes
   - availableGroups: {fileID: 6407339182004339066}
+    category: Foot R Clip On
+    group: Shoes
+  - availableGroups: {fileID: 6407339182004339066}
     category: Tie
     group: Tie
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Torso 2nd Clip On
+    group: Unassigned
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Forearm L 2nd Clip On
+    group: Unassigned
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Bicep L 2nd Clip On
+    group: Unassigned
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Bicep R 2nd Clip On
+    group: Unassigned
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Forearm R 2nd Clip On
+    group: Unassigned
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Hand R
+    group: Upper Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Bicep L
+    group: Upper Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Torso
+    group: Upper Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Forearm R
+    group: Upper Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Forearm L
+    group: Upper Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Hand L
+    group: Upper Body
+  - availableGroups: {fileID: 6407339182004339066}
+    category: Bicep R
+    group: Upper Body
 --- !u!114 &6407339182004339066
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -220,7 +235,9 @@ MonoBehaviour:
   m_Name: Group Names
   m_EditorClassIdentifier: 
   names:
-  - Body
+  - Head
+  - Upper Body
+  - Lower Body
   - Hair
   - Eyebrows
   - Facial Hair

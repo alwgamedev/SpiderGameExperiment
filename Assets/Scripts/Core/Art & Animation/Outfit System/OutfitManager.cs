@@ -13,8 +13,6 @@ public class OutfitManager : MonoBehaviour
     //2do: option to save custom outfit to an SO (**EDITOR ONLY**)
     //+ option to (deep) copy outfit from SO to customOutfit for editing
 
-    OutfittableModel CurrentModel => face == Outfit3D.OutfitFace.front || face == Outfit3D.OutfitFace.back ? fbModel : lrModel;
-
     private void OnValidate()
     {
         customOutfit?.Refresh();
@@ -23,6 +21,9 @@ public class OutfitManager : MonoBehaviour
     public void SetFace(Outfit3D.OutfitFace face)
     {
         this.face = face;
+        bool fb = face == Outfit3D.OutfitFace.front || face == Outfit3D.OutfitFace.back;
+        fbModel.gameObject.SetActive(fb);
+        lrModel.gameObject.SetActive(!fb);
         ApplyOutfit(currentOutfit, face);
     }
 
@@ -41,15 +42,12 @@ public class OutfitManager : MonoBehaviour
         if (outfit != null)
         {
             currentOutfit = outfit;
-            ApplyOutfit(outfit.GetOutfit(face));
+            Model(face).ApplyOutfit(outfit.GetOutfit(face));
         }
     }
 
-    private void ApplyOutfit(Outfit outfit)
+    private OutfittableModel Model(Outfit3D.OutfitFace face)
     {
-        if (CurrentModel)
-        {
-            CurrentModel.ApplyOutfit(outfit);
-        }
+        return face == Outfit3D.OutfitFace.front || face == Outfit3D.OutfitFace.back ? fbModel : lrModel;
     }
 }
