@@ -1,4 +1,4 @@
-﻿using UnityEditor.Events;
+﻿using UnityEditor;
 using UnityEngine;
 
 public class ChildSortingLayer : SortingLayerDataSource
@@ -43,26 +43,33 @@ public class ChildSortingLayer : SortingLayerDataSource
         UpdateParentSubscription();
     }
 
-
-    public void UpdateSortingData()
+    public override void OnParentDataUpdated(bool incrementUndoGroup = true)
     {
-        if (slds != null)
+        if (slds)
         {
+#if UNITY_EDITOR
+            if (incrementUndoGroup)
+            {
+                Undo.IncrementCurrentGroup();
+                Undo.SetCurrentGroupName("Update Child Sorting Data");
+            }
+#endif
             SetSortingData(slds.SortingLayerID, slds.SortingOrder);
             Debug.Log($"{name} updated sorting data");
+            DataUpdated(false);
         }
+    }
 
-        InvokeDataUpdatedEvent();
+    public override void OnParentDestroyed()
+    {
+        parent = null;
     }
 
     public void UpdateParentSubscription()
     {
         if (parent)
         {
-            //parent.DataUpdated -= UpdateSortingData;
-            //parent.Destroyed -= UnhookCurrentSLDS;
-            UnityEventTools.RemovePersistentListener(parent.DataUpdated, UpdateSortingData);
-            UnityEventTools.RemovePersistentListener(parent.Destroyed, UnhookCurrentSLDS);
+            parent.RemoveChild(this);
         }
 
         if (!slds || IsOurChild(slds))
@@ -73,12 +80,7 @@ public class ChildSortingLayer : SortingLayerDataSource
 
         if (parent != null)
         {
-            //parent.DataUpdated += UpdateSortingData;
-            //parent.Destroyed += UnhookCurrentSLDS;
-            UnityEventTools.AddPersistentListener(parent.DataUpdated, UpdateSortingData);
-            parent.DataUpdated.SetPersistentListenerState(parent.DataUpdated.GetPersistentEventCount() - 1, UnityEngine.Events.UnityEventCallState.EditorAndRuntime);
-            UnityEventTools.AddPersistentListener(parent.Destroyed, UnhookCurrentSLDS);
-            parent.Destroyed.SetPersistentListenerState(parent.Destroyed.GetPersistentEventCount() - 1, UnityEngine.Events.UnityEventCallState.EditorAndRuntime);
+            parent.AddChild(this);
         }
     }
 
@@ -88,18 +90,9 @@ public class ChildSortingLayer : SortingLayerDataSource
 
         if (TryGetComponent(out Renderer renderer))
         {
+            Undo.RecordObject(renderer, "Set Renderer Sorting Data");
             renderer.sortingLayerID = layerID.Value;
             renderer.sortingOrder = layerOrder.Value + orderDelta;
-        }
-    }
-
-    private void UnhookCurrentSLDS()
-    {
-        if (parent)
-        {
-            UnityEventTools.RemovePersistentListener(parent.DataUpdated, UpdateSortingData);
-            UnityEventTools.RemovePersistentListener(parent.Destroyed, UnhookCurrentSLDS);
-            parent = null;
         }
     }
 
@@ -114,11 +107,5 @@ public class ChildSortingLayer : SortingLayerDataSource
         }
 
         return false;
-    }
-
-    protected override void OnDestroy()
-    {
-        UnhookCurrentSLDS();
-        base.OnDestroy();
     }
 }

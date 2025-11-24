@@ -3,7 +3,7 @@ using UnityEngine;
 
 [CanEditMultipleObjects]
 [CustomEditor(typeof(SortingLayerControl))]
-public class SortingLayerControlEditor : SortingLayerDataSourceEditor
+public class SortingLayerControlEditor : Editor
 {
     public override void OnInspectorGUI()
     {
@@ -13,7 +13,7 @@ public class SortingLayerControlEditor : SortingLayerDataSourceEditor
         {
             foreach (var t in targets)
             {
-                ((SortingLayerControl)t).InvokeDataUpdatedEvent();
+                ((SortingLayerControl)t).DataUpdated();
             }
         }
     }

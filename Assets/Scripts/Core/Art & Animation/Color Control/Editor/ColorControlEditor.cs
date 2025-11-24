@@ -1,6 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
+[CanEditMultipleObjects]
 [CustomEditor(typeof(ColorControl))]
 public class ColorControlEditor : Editor
 {
@@ -10,11 +11,17 @@ public class ColorControlEditor : Editor
 
         if (GUILayout.Button("Set Child Colors"))
         {
-            ((ColorControl)target).UpdateChildColors();
+            foreach (var t in targets)
+            {
+                ((ColorControl)t).UpdateChildColors();
+            }
         }
         if (GUILayout.Button("Auto Determine Child Shift & Multiplier"))
         {
-            ((ColorControl)target).AutoDetermineChildShiftAndMult();
+            foreach (var t in targets)
+            {
+                ((ColorControl)t).AutoDetermineChildShiftAndMult();
+            }
         }
     }
 }

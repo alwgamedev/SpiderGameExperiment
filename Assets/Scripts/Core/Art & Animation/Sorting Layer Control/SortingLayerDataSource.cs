@@ -1,46 +1,72 @@
-﻿using System;
-using UnityEditor.Events;
+﻿using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
-using UnityEngine.Events;
 
 public abstract class SortingLayerDataSource : MonoBehaviour
 {
-    public abstract int? SortingLayerID { get; }
-    public abstract int? SortingOrder { get; }
+    [SerializeField] List<SortingLayerDataSource> children = new();
 
     protected SortingLayerDataSource parent;
 
     public SortingLayerDataSource Parent => parent;
 
-    public UnityEvent DataUpdated;
-    public UnityEvent Destroyed;
+    public abstract int? SortingLayerID { get; }
+    public abstract int? SortingOrder { get; }
 
-    public void InvokeDataUpdatedEvent()
+    public void AddChild(SortingLayerDataSource c)
     {
+        if (c && !children.Contains(c))
+        {
+            children.Add(c);
+            children.Sort((x,y) => x.name.CompareTo(y.name));// <- to avoid fake prefab overrides caused by lists being in different orders
+        }
+    }
+
+    public void RemoveChild(SortingLayerDataSource c)
+    {
+        children.RemoveAll(x => x == c);
+    }
+
+    public abstract void OnParentDataUpdated(bool incrementUndoGroup = true);
+
+    public abstract void OnParentDestroyed();
+
+    public void DataUpdated(bool incrementUndoGroup = true)
+    {
+#if UNITY_EDITOR
+        if (incrementUndoGroup)
+        {
+            Undo.IncrementCurrentGroup();
+            Undo.SetCurrentGroupName("Update Child Sorting Data");
+        }
+#endif
         Debug.Log($"{GetType().Name} {name} is broadcasting update to children");
-        DataUpdated.Invoke();
-    }
-
-    public void RemoveAllListeners()
-    {
-        for (int i = DataUpdated.GetPersistentEventCount() - 1; i > -1; i--)
+        foreach (var c in children)
         {
-            UnityEventTools.RemovePersistentListener(DataUpdated, i);
-        }
-
-        for (int i = Destroyed.GetPersistentEventCount() - 1; i > -1; i--)
-        {
-            UnityEventTools.RemovePersistentListener(Destroyed, i);
+            if (c)
+            {
+                c.OnParentDataUpdated(false);
+            }
         }
     }
 
-    protected void InvokeDestroyedEvent()
+    protected void DestroyedEvent()
     {
-        Destroyed.Invoke();
+        foreach (var c in children)
+        {
+            if (c)
+            {
+                c.OnParentDestroyed();
+            }
+        }
     }
 
     protected virtual void OnDestroy()
     {
-        InvokeDestroyedEvent();
+        if (parent)
+        {
+            parent.RemoveChild(this);
+        }
+        DestroyedEvent();
     }
 }

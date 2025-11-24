@@ -17,4 +17,8 @@ public class SortingLayerControl : SortingLayerDataSource
     }
 
     public override int? SortingOrder => sortingOrder;
+
+    public override void OnParentDataUpdated(bool incrementUndoGroup) { }
+
+    public override void OnParentDestroyed() { }
 }

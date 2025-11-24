@@ -16,10 +16,6 @@ public class ModelColorSelector : MonoBehaviour
 
         public void AutoDetermineChildShiftAndMult()
         {
-#if UNITY_EDITOR
-            Undo.IncrementCurrentGroup();
-            Undo.SetCurrentGroupName("Auto Determine Model Child Colors' Shift & Multiplier");
-#endif
             foreach (var head in heads)
             {
                 if (head)
@@ -31,10 +27,6 @@ public class ModelColorSelector : MonoBehaviour
 
         public void UpdateColors()
         {
-#if UNITY_EDITOR
-            Undo.IncrementCurrentGroup();
-            Undo.SetCurrentGroupName("Update Model Colors");
-#endif
             foreach (var head in heads)
             {
                 if (head)
@@ -47,6 +39,10 @@ public class ModelColorSelector : MonoBehaviour
 
     public void AutoDeterminateChildShiftAndMult()
     {
+#if UNITY_EDITOR
+        Undo.IncrementCurrentGroup();
+        Undo.SetCurrentGroupName("Set Model Child Colors' Shift & Multiplier");
+#endif
         foreach (var c in categories)
         {
             c.AutoDetermineChildShiftAndMult();
@@ -55,6 +51,10 @@ public class ModelColorSelector : MonoBehaviour
 
     public void UpdateColors()
     {
+#if UNITY_EDITOR
+            Undo.IncrementCurrentGroup();
+            Undo.SetCurrentGroupName("Update Model Colors");
+#endif
         foreach (var c in categories)
         {
             c.UpdateColors();

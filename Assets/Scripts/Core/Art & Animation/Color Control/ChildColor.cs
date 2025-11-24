@@ -1,5 +1,4 @@
 ﻿using UnityEditor;
-using UnityEditor.Events;
 using UnityEngine;
 using UnityEngine.U2D;
 
@@ -11,8 +10,8 @@ public class ChildColor : MonoBehaviour
 
     Renderer _renderer;
     internal ColorControl subscription;
-    //internal gets auto-serialized like public but is not accessible by editor assembly so stays hidden from inspector unless in debug mode
-    //([HideInInspector] seems to also hide in debug mode)
+    //treated as public for purposes of serialization, but not accessible by Editor assembly, so doesn't show up in inspector unless in debug mode
+    //HideInInspector sadly also hides in debug mode)
 
     Renderer Renderer
     {
@@ -41,16 +40,7 @@ public class ChildColor : MonoBehaviour
         if (colorControl)
         {
             subscription = colorControl;
-            UnityEventTools.AddPersistentListener(colorControl.ColorChanged, UpdateColor);
-            colorControl.ColorChanged.SetPersistentListenerState(colorControl.ColorChanged.GetPersistentEventCount() - 1, 
-                UnityEngine.Events.UnityEventCallState.EditorAndRuntime);
-            UnityEventTools.AddPersistentListener(colorControl.AutoDetermineChildData, AutoDetermineShiftAndMult);
-            colorControl.AutoDetermineChildData.SetPersistentListenerState(colorControl.AutoDetermineChildData.GetPersistentEventCount() - 1, 
-                UnityEngine.Events.UnityEventCallState.EditorAndRuntime);
-            UnityEventTools.AddPersistentListener(colorControl.Destroyed, OnControlDestroyed);
-            colorControl.Destroyed.SetPersistentListenerState(colorControl.Destroyed.GetPersistentEventCount() - 1, 
-                UnityEngine.Events.UnityEventCallState.EditorAndRuntime);
-
+            subscription.AddChild(this);
         }
     }
 
@@ -79,6 +69,11 @@ public class ChildColor : MonoBehaviour
         }
     }
 
+    public void OnControlDestroyed(ColorControl c)
+    {
+        subscription = null;
+    }
+
     private bool TryGetRendererColor(out Color color)
     {
         var r = Renderer;
@@ -100,7 +95,7 @@ public class ChildColor : MonoBehaviour
         return false;
     }
 
-    private void AutoDetermineShiftAndMult(Color controlColor)
+    public void AutoDetermineShiftAndMult(Color controlColor)
     {
         if (TryGetRendererColor(out Color childColor))
         {
@@ -181,21 +176,11 @@ public class ChildColor : MonoBehaviour
         }
     }
 
-    private void OnControlDestroyed(ColorControl c)
-    {
-        if (!subscription || colorControl == c)
-        {
-            UnhookControl();
-        }
-    }
-
     private void UnhookControl()
     {
         if (subscription)
         {
-            UnityEventTools.RemovePersistentListener(subscription.ColorChanged, UpdateColor);
-            UnityEventTools.RemovePersistentListener(subscription.AutoDetermineChildData, AutoDetermineShiftAndMult);
-            UnityEventTools.RemovePersistentListener<ColorControl>(subscription.Destroyed, OnControlDestroyed);
+            subscription.RemoveChild(this);
         }
     }
 

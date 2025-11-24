@@ -141,60 +141,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8958093927889383378}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 8958093927889383378}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8958093927889383378}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 8958093927889383378}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 8958093927889383378}
   orderDelta: -1
   slds: {fileID: 4295357038821300327}
 --- !u!114 &604875815110110078
@@ -221,7 +169,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 2697550806242364468}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &176079518301246154
@@ -365,60 +313,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5073647063017610930}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5073647063017610930}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5073647063017610930}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5073647063017610930}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 5073647063017610930}
   orderDelta: -1
   slds: {fileID: 4541344716874798738}
 --- !u!114 &5643132760681223502
@@ -445,7 +341,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 2697550806242364468}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1124370713751314581
@@ -492,16 +388,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15972f7a6d7c5df4eb3be7318644e110, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: {r: 0.94716984, g: 0.900133, b: 0.8631755, a: 1}
-  ColorChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  AutoDetermineChildData:
-    m_PersistentCalls:
-      m_Calls: []
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls: []
+  color: {r: 0.9490196, g: 0.9019608, b: 0.8627451, a: 1}
+  children:
+  - {fileID: 338248235653091193}
+  - {fileID: 432009395334227616}
+  - {fileID: 1083610237337081651}
+  - {fileID: 1650396635326321387}
+  - {fileID: 1967467157073774260}
+  - {fileID: 2788987769626221370}
+  - {fileID: 2874543517145330015}
+  - {fileID: 3041433214278854699}
+  - {fileID: 3161754370625202656}
+  - {fileID: 3425691997990723211}
+  - {fileID: 3821832173646802527}
+  - {fileID: 4250935556444008016}
+  - {fileID: 4305365539572246148}
+  - {fileID: 4467921610585806902}
+  - {fileID: 4493044549949321547}
+  - {fileID: 4541515196308006699}
+  - {fileID: 4920671204853267726}
+  - {fileID: 5186587952065515135}
+  - {fileID: 5970482531845599354}
+  - {fileID: 6127207629319621403}
+  - {fileID: 6296400818875338225}
+  - {fileID: 6350089323702539552}
+  - {fileID: 6422797915915372033}
+  - {fileID: 7378513085024839364}
+  - {fileID: 8009098232438388356}
+  - {fileID: 8604367898176637516}
+  - {fileID: 9182241879470481103}
 --- !u!1 &1602713208783235178
 GameObject:
   m_ObjectHideFlags: 0
@@ -642,204 +557,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1436844998646333005}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5184905692858625088}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 8634099891819106395}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 4541344716874798738}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5184905692858625088}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 4541344716874798738}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 1436844998646333005}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 8634099891819106395}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1436844998646333005}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5184905692858625088}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 8634099891819106395}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 4541344716874798738}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5184905692858625088}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 4541344716874798738}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 1436844998646333005}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 8634099891819106395}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 5184905692858625088}
+  - {fileID: 4541344716874798738}
+  - {fileID: 1436844998646333005}
+  - {fileID: 8634099891819106395}
   orderDelta: 1
   slds: {fileID: 4275243581790900619}
 --- !u!114 &3690174996854254243
@@ -866,7 +588,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 2697550806242364468}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &2024048600221219964
@@ -1009,12 +731,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls: []
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls: []
+  children: []
   orderDelta: 1
   slds: {fileID: 3749804509044354494}
 --- !u!114 &218987956894858651
@@ -1041,7 +758,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 3403272769025489087}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &2089580691636723066
@@ -1089,15 +806,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   color: {r: 0.4037736, g: 0.2991877, b: 0.24302599, a: 1}
-  ColorChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  AutoDetermineChildData:
-    m_PersistentCalls:
-      m_Calls: []
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls: []
+  children:
+  - {fileID: 178619958306519845}
+  - {fileID: 7346143202636158468}
 --- !u!1 &2274695353659052775
 GameObject:
   m_ObjectHideFlags: 0
@@ -1143,15 +854,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   color: {r: 0.6679245, g: 0.44359055, b: 0.2104592, a: 1}
-  ColorChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  AutoDetermineChildData:
-    m_PersistentCalls:
-      m_Calls: []
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls: []
+  children:
+  - {fileID: 5309381047466470816}
 --- !u!1 &2341648667799342192
 GameObject:
   m_ObjectHideFlags: 0
@@ -1292,60 +996,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 404244716370448671}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 404244716370448671}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 404244716370448671}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 404244716370448671}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 404244716370448671}
   orderDelta: 1
   slds: {fileID: 3134615458695368298}
 --- !u!114 &2328064316898936673
@@ -1372,7 +1024,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7735380306788476564}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &2683862227251086623
@@ -1516,60 +1168,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5037690888271865938}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5037690888271865938}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5037690888271865938}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5037690888271865938}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 5037690888271865938}
   orderDelta: 10
   slds: {fileID: 4275243581790900619}
 --- !u!114 &8842075708681405802
@@ -1596,7 +1196,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 3403272769025489087}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &2724575905904062203
@@ -1644,15 +1244,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   color: {r: 0.3137255, g: 0.24342711, b: 0.20784314, a: 1}
-  ColorChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  AutoDetermineChildData:
-    m_PersistentCalls:
-      m_Calls: []
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls: []
+  children:
+  - {fileID: 2241543034595537601}
+  - {fileID: 2858920076469275936}
 --- !u!1 &2835372773194031622
 GameObject:
   m_ObjectHideFlags: 0
@@ -1794,60 +1388,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2172251585431291330}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 2172251585431291330}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2172251585431291330}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 2172251585431291330}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 2172251585431291330}
   orderDelta: 1
   slds: {fileID: 8634099891819106395}
 --- !u!114 &3654977572300918911
@@ -1874,7 +1416,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7735380306788476564}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &4257363763115419591
@@ -1922,15 +1464,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   color: {r: 1, g: 1, b: 1, a: 1}
-  ColorChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  AutoDetermineChildData:
-    m_PersistentCalls:
-      m_Calls: []
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls: []
+  children:
+  - {fileID: 144925312584606564}
+  - {fileID: 1985510662955757928}
+  - {fileID: 2275990755953229185}
+  - {fileID: 6973510211761367516}
+  - {fileID: 7677547595909115674}
 --- !u!1 &4310527789177213942
 GameObject:
   m_ObjectHideFlags: 0
@@ -1976,15 +1515,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   color: {r: 0.85660374, g: 0.85489416, b: 0.65780705, a: 1}
-  ColorChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  AutoDetermineChildData:
-    m_PersistentCalls:
-      m_Calls: []
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls: []
+  children:
+  - {fileID: 534214852493300448}
+  - {fileID: 1921920672059676620}
+  - {fileID: 3796403332452296251}
+  - {fileID: 5988514271263301681}
+  - {fileID: 8565918900474803898}
 --- !u!1 &4584815748201966560
 GameObject:
   m_ObjectHideFlags: 0
@@ -2125,12 +1661,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls: []
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls: []
+  children: []
   orderDelta: 1
   slds: {fileID: 1055657783223741463}
 --- !u!114 &2022939922751215916
@@ -2157,7 +1688,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7669942791713603522}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &4727023856051638361
@@ -2301,60 +1832,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 996651280900155267}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 996651280900155267}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 996651280900155267}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 996651280900155267}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 996651280900155267}
   orderDelta: 10
   slds: {fileID: 4275243581790900619}
 --- !u!114 &6885529694884092264
@@ -2381,7 +1860,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 3403272769025489087}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &4755404362763365822
@@ -2525,60 +2004,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5737351497101335734}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5737351497101335734}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5737351497101335734}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5737351497101335734}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 5737351497101335734}
   orderDelta: -1
   slds: {fileID: 4295357038821300327}
 --- !u!114 &762635376304393366
@@ -2605,7 +2032,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 2697550806242364468}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &4838769760432677040
@@ -2653,15 +2080,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   color: {r: 0.5924529, g: 0.37527576, b: 0.28504807, a: 1}
-  ColorChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  AutoDetermineChildData:
-    m_PersistentCalls:
-      m_Calls: []
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls: []
+  children:
+  - {fileID: 8016874195526703245}
 --- !u!1 &4886091917857897620
 GameObject:
   m_ObjectHideFlags: 0
@@ -2805,204 +2225,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 4295357038821300327}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 7380323060721242123}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 743647005200730164}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 3749804509044354494}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 3749804509044354494}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 743647005200730164}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 4295357038821300327}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 7380323060721242123}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 4295357038821300327}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 7380323060721242123}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 743647005200730164}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 3749804509044354494}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 3749804509044354494}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 743647005200730164}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 4295357038821300327}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 7380323060721242123}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 743647005200730164}
+  - {fileID: 3749804509044354494}
+  - {fileID: 4295357038821300327}
+  - {fileID: 7380323060721242123}
   orderDelta: 1
   slds: {fileID: 8936495350104868272}
 --- !u!114 &6570217454645861987
@@ -3029,7 +2256,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 3403272769025489087}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &4977580784856361839
@@ -3077,15 +2304,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   color: {r: 1, g: 1, b: 1, a: 1}
-  ColorChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  AutoDetermineChildData:
-    m_PersistentCalls:
-      m_Calls: []
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls: []
+  children:
+  - {fileID: 5647541394839215628}
+  - {fileID: 7809840626474817561}
 --- !u!1 &5028629797091523076
 GameObject:
   m_ObjectHideFlags: 0
@@ -3226,12 +2447,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls: []
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls: []
+  children: []
   orderDelta: 1
   slds: {fileID: 404244716370448671}
 --- !u!114 &8000178856810158088
@@ -3258,7 +2474,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7669942791713603522}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &5748090800524854830
@@ -3306,15 +2522,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   color: {r: 0.7433963, g: 0.009818403, b: 0.076805614, a: 1}
-  ColorChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  AutoDetermineChildData:
-    m_PersistentCalls:
-      m_Calls: []
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls: []
+  children:
+  - {fileID: 856486136989534328}
+  - {fileID: 4166608033561573142}
 --- !u!1 &5750459428050285344
 GameObject:
   m_ObjectHideFlags: 0
@@ -3455,12 +2665,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls: []
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls: []
+  children: []
   orderDelta: -1
   slds: {fileID: 8958093927889383378}
 --- !u!114 &7229427466212533115
@@ -3487,7 +2692,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 1764090747660202738}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &6041303890481300811
@@ -3630,12 +2835,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls: []
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls: []
+  children: []
   orderDelta: -1
   slds: {fileID: 5737351497101335734}
 --- !u!114 &8734505693688817511
@@ -3662,7 +2862,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 1764090747660202738}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &6175114298708992495
@@ -3806,60 +3006,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5530375560778710324}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5530375560778710324}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5530375560778710324}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5530375560778710324}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 5530375560778710324}
   orderDelta: 1
   slds: {fileID: 8634099891819106395}
 --- !u!114 &6114640187355303977
@@ -3886,7 +3034,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7735380306788476564}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &6434693087554497531
@@ -4032,108 +3180,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 4131435160911591212}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 3134615458695368298}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 4131435160911591212}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 3134615458695368298}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 4131435160911591212}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 3134615458695368298}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 4131435160911591212}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 3134615458695368298}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 3134615458695368298}
+  - {fileID: 4131435160911591212}
   orderDelta: 10
   slds: {fileID: 4295357038821300327}
 --- !u!114 &1928583935383598250
@@ -4160,7 +3209,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7735380306788476564}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &6442512562215578880
@@ -4208,15 +3257,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   color: {r: 0.5471698, g: 0.4515288, b: 0.13937338, a: 1}
-  ColorChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  AutoDetermineChildData:
-    m_PersistentCalls:
-      m_Calls: []
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls: []
+  children:
+  - {fileID: 3231208271601998373}
 --- !u!1 &7357969060269086244
 GameObject:
   m_ObjectHideFlags: 0
@@ -4403,60 +3445,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2846740668823684767}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 2846740668823684767}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2846740668823684767}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 2846740668823684767}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 2846740668823684767}
   orderDelta: -1
   slds: {fileID: 1436844998646333005}
 --- !u!114 &4698102720700314086
@@ -4483,7 +3473,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 2697550806242364468}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &7702840146066319024
@@ -4531,15 +3521,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   color: {r: 0.5442292, g: 0.645283, b: 0.5574102, a: 1}
-  ColorChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  AutoDetermineChildData:
-    m_PersistentCalls:
-      m_Calls: []
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls: []
+  children:
+  - {fileID: 621255789118704172}
+  - {fileID: 1984397923673304153}
 --- !u!1 &7721095382407071625
 GameObject:
   m_ObjectHideFlags: 0
@@ -4585,159 +3569,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   color: {r: 0.96981126, g: 0.9057671, b: 0.9057671, a: 1}
-  ColorChanged:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 233692223856608352}
-        m_TargetAssemblyTypeName: ChildColor, Assembly-CSharp
-        m_MethodName: UpdateColor
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5135988916434495477}
-        m_TargetAssemblyTypeName: ChildColor, Assembly-CSharp
-        m_MethodName: UpdateColor
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 233692223856608352}
-        m_TargetAssemblyTypeName: ChildColor, Assembly-CSharp
-        m_MethodName: UpdateColor
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5135988916434495477}
-        m_TargetAssemblyTypeName: ChildColor, Assembly-CSharp
-        m_MethodName: UpdateColor
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  AutoDetermineChildData:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 233692223856608352}
-        m_TargetAssemblyTypeName: ChildColor, Assembly-CSharp
-        m_MethodName: AutoDetermineShiftAndMult
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5135988916434495477}
-        m_TargetAssemblyTypeName: ChildColor, Assembly-CSharp
-        m_MethodName: AutoDetermineShiftAndMult
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 233692223856608352}
-        m_TargetAssemblyTypeName: ChildColor, Assembly-CSharp
-        m_MethodName: AutoDetermineShiftAndMult
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5135988916434495477}
-        m_TargetAssemblyTypeName: ChildColor, Assembly-CSharp
-        m_MethodName: AutoDetermineShiftAndMult
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 233692223856608352}
-        m_TargetAssemblyTypeName: ChildColor, Assembly-CSharp
-        m_MethodName: OnControlDestroyed
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5135988916434495477}
-        m_TargetAssemblyTypeName: ChildColor, Assembly-CSharp
-        m_MethodName: OnControlDestroyed
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 233692223856608352}
-        m_TargetAssemblyTypeName: ChildColor, Assembly-CSharp
-        m_MethodName: OnControlDestroyed
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5135988916434495477}
-        m_TargetAssemblyTypeName: ChildColor, Assembly-CSharp
-        m_MethodName: OnControlDestroyed
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 233692223856608352}
+  - {fileID: 5135988916434495477}
 --- !u!1 &8060932246314317455
 GameObject:
   m_ObjectHideFlags: 0
@@ -5093,12 +3927,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls: []
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls: []
+  children: []
   orderDelta: 1
   slds: {fileID: 743647005200730164}
 --- !u!114 &417173877685043893
@@ -5125,7 +3954,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 3403272769025489087}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &8643396335086967915
@@ -5173,231 +4002,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   color: {r: 0.3584906, g: 0.3039161, b: 0.29152724, a: 1}
-  ColorChanged:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7266439874597531406}
-        m_TargetAssemblyTypeName: ChildColor, Assembly-CSharp
-        m_MethodName: UpdateColor
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5899258743611545913}
-        m_TargetAssemblyTypeName: ChildColor, Assembly-CSharp
-        m_MethodName: UpdateColor
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 7029230375640064267}
-        m_TargetAssemblyTypeName: ChildColor, Assembly-CSharp
-        m_MethodName: UpdateColor
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 7266439874597531406}
-        m_TargetAssemblyTypeName: ChildColor, Assembly-CSharp
-        m_MethodName: UpdateColor
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5899258743611545913}
-        m_TargetAssemblyTypeName: ChildColor, Assembly-CSharp
-        m_MethodName: UpdateColor
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 7029230375640064267}
-        m_TargetAssemblyTypeName: ChildColor, Assembly-CSharp
-        m_MethodName: UpdateColor
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  AutoDetermineChildData:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7266439874597531406}
-        m_TargetAssemblyTypeName: ChildColor, Assembly-CSharp
-        m_MethodName: AutoDetermineShiftAndMult
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5899258743611545913}
-        m_TargetAssemblyTypeName: ChildColor, Assembly-CSharp
-        m_MethodName: AutoDetermineShiftAndMult
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 7029230375640064267}
-        m_TargetAssemblyTypeName: ChildColor, Assembly-CSharp
-        m_MethodName: AutoDetermineShiftAndMult
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 7266439874597531406}
-        m_TargetAssemblyTypeName: ChildColor, Assembly-CSharp
-        m_MethodName: AutoDetermineShiftAndMult
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5899258743611545913}
-        m_TargetAssemblyTypeName: ChildColor, Assembly-CSharp
-        m_MethodName: AutoDetermineShiftAndMult
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 7029230375640064267}
-        m_TargetAssemblyTypeName: ChildColor, Assembly-CSharp
-        m_MethodName: AutoDetermineShiftAndMult
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7266439874597531406}
-        m_TargetAssemblyTypeName: ChildColor, Assembly-CSharp
-        m_MethodName: OnControlDestroyed
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5899258743611545913}
-        m_TargetAssemblyTypeName: ChildColor, Assembly-CSharp
-        m_MethodName: OnControlDestroyed
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 7029230375640064267}
-        m_TargetAssemblyTypeName: ChildColor, Assembly-CSharp
-        m_MethodName: OnControlDestroyed
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 7266439874597531406}
-        m_TargetAssemblyTypeName: ChildColor, Assembly-CSharp
-        m_MethodName: OnControlDestroyed
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5899258743611545913}
-        m_TargetAssemblyTypeName: ChildColor, Assembly-CSharp
-        m_MethodName: OnControlDestroyed
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 7029230375640064267}
-        m_TargetAssemblyTypeName: ChildColor, Assembly-CSharp
-        m_MethodName: OnControlDestroyed
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 5899258743611545913}
+  - {fileID: 7029230375640064267}
+  - {fileID: 7266439874597531406}
 --- !u!1 &8746720806804745845
 GameObject:
   m_ObjectHideFlags: 0
@@ -5443,15 +4051,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   color: {r: 0.36096117, g: 0.4580079, b: 0.4943396, a: 1}
-  ColorChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  AutoDetermineChildData:
-    m_PersistentCalls:
-      m_Calls: []
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls: []
+  children:
+  - {fileID: 199891853329862909}
+  - {fileID: 4804677354945700232}
+  - {fileID: 5831245884073508360}
+  - {fileID: 6796347381256664480}
+  - {fileID: 7362611744305242318}
+  - {fileID: 7751865179238632050}
+  - {fileID: 9090365676995515673}
 --- !u!1 &8908588377711731856
 GameObject:
   m_ObjectHideFlags: 0
@@ -5592,60 +4199,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1055657783223741463}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 1055657783223741463}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1055657783223741463}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 1055657783223741463}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 1055657783223741463}
   orderDelta: 1
   slds: {fileID: 4131435160911591212}
 --- !u!114 &8641750727535172721
@@ -5672,7 +4227,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7735380306788476564}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1001 &7377188671474603499
@@ -8031,60 +6586,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6612288133514078340}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 6612288133514078340}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6612288133514078340}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 6612288133514078340}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 6612288133514078340}
   orderDelta: -1
   slds: {fileID: 5245858666743273413}
 --- !u!114 &996127928160020866
@@ -8111,7 +6614,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7172225473289675453}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!4 &517240948249838198 stripped
@@ -8152,12 +6655,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls: []
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls: []
+  children: []
   orderDelta: -1
   slds: {fileID: 81553962349337017}
 --- !u!114 &121854722866781959
@@ -8184,7 +6682,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7172225473289675453}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &728601903436400471 stripped
@@ -8220,60 +6718,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2535133341511548432}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 2535133341511548432}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2535133341511548432}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 2535133341511548432}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 2535133341511548432}
   orderDelta: 1
   slds: {fileID: 81553962349337017}
 --- !u!114 &5606438965994623158
@@ -8336,108 +6782,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5438052304064737866}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 4667696378977155022}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5438052304064737866}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 4667696378977155022}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5438052304064737866}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 4667696378977155022}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5438052304064737866}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 4667696378977155022}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 4667696378977155022}
+  - {fileID: 5438052304064737866}
   orderDelta: 1
   slds: {fileID: 81553962349337017}
 --- !u!114 &4110595549032326264
@@ -8464,7 +6811,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7172225473289675453}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &816622055277304440 stripped
@@ -8500,60 +6847,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6826803562570137541}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 6826803562570137541}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6826803562570137541}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 6826803562570137541}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 6826803562570137541}
   orderDelta: 1
   slds: {fileID: 6479472801183317413}
 --- !u!114 &3523134515153680671
@@ -8580,7 +6875,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7172225473289675453}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &860765370323672516 stripped
@@ -8616,12 +6911,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls: []
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls: []
+  children: []
   orderDelta: 1
   slds: {fileID: 8275880186212179611}
 --- !u!114 &3063623418834562858
@@ -8689,60 +6979,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7543494113466407267}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 7543494113466407267}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7543494113466407267}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 7543494113466407267}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 7543494113466407267}
   orderDelta: 1
   slds: {fileID: 2535133341511548432}
 --- !u!114 &463133136483531541
@@ -8769,7 +7007,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 352941693209150355}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1049792016354657194 stripped
@@ -8805,12 +7043,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls: []
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls: []
+  children: []
   orderDelta: 1
   slds: {fileID: 4275243581790900619}
 --- !u!114 &6927878220410821644
@@ -8837,7 +7070,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 4181450576015417525}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1087278482582179407 stripped
@@ -8873,12 +7106,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls: []
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls: []
+  children: []
   orderDelta: 1
   slds: {fileID: 1837141277945611556}
 --- !u!114 &6819055485217791905
@@ -8905,7 +7133,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7172225473289675453}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!4 &1323895699293002553 stripped
@@ -8946,12 +7174,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls: []
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls: []
+  children: []
   orderDelta: 1
   slds: {fileID: 1815326620103219342}
 --- !u!114 &1865739573369102744
@@ -9014,60 +7237,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2917566888645831412}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 2917566888645831412}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2917566888645831412}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 2917566888645831412}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 2917566888645831412}
   orderDelta: -1
   slds: {fileID: 8936495350104868272}
 --- !u!114 &9089977779805715998
@@ -9094,7 +7265,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7172225473289675453}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &2057477552432140191 stripped
@@ -9130,60 +7301,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 3732310597996023793}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 3732310597996023793}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 3732310597996023793}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 3732310597996023793}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 3732310597996023793}
   orderDelta: 1
   slds: {fileID: 6350175052405114701}
 --- !u!114 &5764503553879197441
@@ -9210,7 +7329,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7172225473289675453}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &2137807630150796302 stripped
@@ -9246,60 +7365,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6529171063049183667}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 6529171063049183667}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6529171063049183667}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 6529171063049183667}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 6529171063049183667}
   orderDelta: 1
   slds: {fileID: 7642619046218837647}
 --- !u!114 &8885861587580747878
@@ -9326,7 +7393,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 352941693209150355}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &2601114119947982369 stripped
@@ -9362,12 +7429,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls: []
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls: []
+  children: []
   orderDelta: 1
   slds: {fileID: 6826803562570137541}
 --- !u!114 &2441243089653335444
@@ -9430,60 +7492,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7621639559190232365}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 7621639559190232365}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7621639559190232365}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 7621639559190232365}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 7621639559190232365}
   orderDelta: 1
   slds: {fileID: 5547967712538962027}
 --- !u!114 &8551575697904408789
@@ -9546,12 +7556,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls: []
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls: []
+  children: []
   orderDelta: -1
   slds: {fileID: 2917566888645831412}
 --- !u!114 &1297438402251887242
@@ -9578,7 +7583,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7172225473289675453}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &3141092384457338140 stripped
@@ -9614,12 +7619,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls: []
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls: []
+  children: []
   orderDelta: -1
   slds: {fileID: 2985144472927715692}
 --- !u!114 &665806739358144403
@@ -9646,7 +7646,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7172225473289675453}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!4 &3362395505025458586 stripped
@@ -9687,60 +7687,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2985144472927715692}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 2985144472927715692}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2985144472927715692}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 2985144472927715692}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 2985144472927715692}
   orderDelta: -1
   slds: {fileID: 8936495350104868272}
 --- !u!114 &4956376398415902114
@@ -9767,7 +7715,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7172225473289675453}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!4 &3485408579981628163 stripped
@@ -9808,60 +7756,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8808549575892619535}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 8808549575892619535}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8808549575892619535}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 8808549575892619535}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 8808549575892619535}
   orderDelta: 1
   slds: {fileID: 7575045722322130365}
 --- !u!114 &4450438092164835722
@@ -9888,7 +7784,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7172225473289675453}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &3684656755263543740 stripped
@@ -9924,60 +7820,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8275880186212179611}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 8275880186212179611}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8275880186212179611}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 8275880186212179611}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 8275880186212179611}
   orderDelta: 1
   slds: {fileID: 6529171063049183667}
 --- !u!114 &2078502557146345757
@@ -10004,7 +7848,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7172225473289675453}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &3975871551371733812 stripped
@@ -10040,156 +7884,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 3711443685348416995}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 4275243581790900619}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5245858666743273413}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5245858666743273413}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 3711443685348416995}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 4275243581790900619}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 3711443685348416995}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 4275243581790900619}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5245858666743273413}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5245858666743273413}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 3711443685348416995}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 4275243581790900619}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 5245858666743273413}
+  - {fileID: 3711443685348416995}
+  - {fileID: 4275243581790900619}
   orderDelta: 1
   slds: {fileID: 7575045722322130365}
 --- !u!114 &1085269064854837922
@@ -10216,7 +7914,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7172225473289675453}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!4 &4008946991298881804 stripped
@@ -10257,108 +7955,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3df5e66d9b9490d4ab900ac0c33835fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 771413564323590744}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 81553962349337017}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 81553962349337017}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 771413564323590744}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 771413564323590744}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 81553962349337017}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 81553962349337017}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 771413564323590744}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 81553962349337017}
+  - {fileID: 771413564323590744}
   sortingLayer:
     layerNumber: 1
   sortingOrder: 0
@@ -10374,60 +7973,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7575045722322130365}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 7575045722322130365}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7575045722322130365}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 7575045722322130365}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 7575045722322130365}
   orderDelta: 0
   slds: {fileID: 8853095598728267473}
 --- !u!114 &3594518282790596929
@@ -10454,7 +8001,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7172225473289675453}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &4069239003821039761 stripped
@@ -10490,60 +8037,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5766958126304293411}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5766958126304293411}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5766958126304293411}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5766958126304293411}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 5766958126304293411}
   orderDelta: 1
   slds: {fileID: 7575045722322130365}
 --- !u!114 &4257442448758755661
@@ -10570,7 +8065,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7172225473289675453}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &4094130641881668440 stripped
@@ -10606,60 +8101,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8015070739118830052}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 8015070739118830052}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8015070739118830052}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 8015070739118830052}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 8015070739118830052}
   orderDelta: 1
   slds: {fileID: 2744815118649511673}
 --- !u!114 &9195652756561346737
@@ -10686,7 +8129,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 8747034117759535412}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &4325759132172375171 stripped
@@ -10722,60 +8165,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5547967712538962027}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5547967712538962027}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5547967712538962027}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5547967712538962027}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 5547967712538962027}
   orderDelta: 1
   slds: {fileID: 7543494113466407267}
 --- !u!114 &3786369290805600856
@@ -10802,7 +8193,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7172225473289675453}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &4483439968487096761 stripped
@@ -10838,60 +8229,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2279071007654543783}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 2279071007654543783}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2279071007654543783}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 2279071007654543783}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 2279071007654543783}
   orderDelta: 1
   slds: {fileID: 2172251585431291330}
 --- !u!114 &7917227130481145327
@@ -10918,7 +8257,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7172225473289675453}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!4 &4555650098616977672 stripped
@@ -10959,12 +8298,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls: []
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls: []
+  children: []
   orderDelta: 1
   slds: {fileID: 81553962349337017}
 --- !u!114 &3871651655374720339
@@ -10991,7 +8325,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7172225473289675453}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &4915049766129018753 stripped
@@ -11027,12 +8361,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls: []
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls: []
+  children: []
   orderDelta: 1
   slds: {fileID: 3657713371687818896}
 --- !u!114 &7954749392171581790
@@ -11059,7 +8388,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7172225473289675453}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &4968308060173513616 stripped
@@ -11095,60 +8424,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 3062428113538863033}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 3062428113538863033}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 3062428113538863033}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 3062428113538863033}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 3062428113538863033}
   orderDelta: 1
   slds: {fileID: 3732310597996023793}
 --- !u!114 &5289506969487058536
@@ -11216,300 +8493,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6350175052405114701}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5905809592248458772}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 7606110844018228484}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 4175804709273502356}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 2727520321129892372}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 6030824955471597557}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 4175804709273502356}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 6030824955471597557}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 7606110844018228484}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 6350175052405114701}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5905809592248458772}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 2727520321129892372}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6350175052405114701}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5905809592248458772}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 7606110844018228484}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 4175804709273502356}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 2727520321129892372}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 6030824955471597557}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 4175804709273502356}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 6030824955471597557}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 7606110844018228484}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 6350175052405114701}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5905809592248458772}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 2727520321129892372}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 2727520321129892372}
+  - {fileID: 5905809592248458772}
+  - {fileID: 7606110844018228484}
+  - {fileID: 6030824955471597557}
+  - {fileID: 6350175052405114701}
+  - {fileID: 4175804709273502356}
   orderDelta: 1
   slds: {fileID: 8853095598728267473}
 --- !u!114 &5970144204707176431
@@ -11536,7 +8526,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7172225473289675453}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &5568489114278077027 stripped
@@ -11572,60 +8562,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8922994859318920176}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 8922994859318920176}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8922994859318920176}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 8922994859318920176}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 8922994859318920176}
   orderDelta: 1
   slds: {fileID: 4864901388403677514}
 --- !u!114 &1439262366012891505
@@ -11652,7 +8590,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 3532492241801777495}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &5678570164150627863 stripped
@@ -11688,60 +8626,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2744815118649511673}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 2744815118649511673}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2744815118649511673}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 2744815118649511673}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 2744815118649511673}
   orderDelta: 1
   slds: {fileID: 5184905692858625088}
 --- !u!114 &3601160902742675844
@@ -11768,7 +8654,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 8090851049846159565}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &6182434220922969736 stripped
@@ -11804,60 +8690,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7147552229930360162}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 7147552229930360162}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7147552229930360162}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 7147552229930360162}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 7147552229930360162}
   orderDelta: -1
   slds: {fileID: 3711443685348416995}
 --- !u!114 &7168990005568855655
@@ -11884,7 +8718,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7172225473289675453}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &6472867214975958995 stripped
@@ -11920,60 +8754,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 3480229516201624084}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 3480229516201624084}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 3480229516201624084}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 3480229516201624084}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 3480229516201624084}
   orderDelta: 1
   slds: {fileID: 7606110844018228484}
 --- !u!114 &959297710346953484
@@ -12000,7 +8782,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7421044141273034992}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &6853700213759920538 stripped
@@ -12036,12 +8818,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls: []
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls: []
+  children: []
   orderDelta: 1
   slds: {fileID: 8015070739118830052}
 --- !u!114 &7318707024573507074
@@ -12068,7 +8845,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 2697550806242364468}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &6929379090178370102 stripped
@@ -12104,60 +8881,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 4864901388403677514}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 4864901388403677514}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 4864901388403677514}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 4864901388403677514}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 4864901388403677514}
   orderDelta: 1
   slds: {fileID: 1600279825794194624}
 --- !u!114 &8774497972317352906
@@ -12184,7 +8909,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 8747034117759535412}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &6995234201145681696 stripped
@@ -12220,60 +8945,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6479472801183317413}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 6479472801183317413}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6479472801183317413}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 6479472801183317413}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 6479472801183317413}
   orderDelta: 1
   slds: {fileID: 5959633699554753440}
 --- !u!114 &259754648172985300
@@ -12434,60 +9107,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 4897237745566697453}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 4897237745566697453}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 4897237745566697453}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 4897237745566697453}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 4897237745566697453}
   orderDelta: 1
   slds: {fileID: 5530375560778710324}
 --- !u!114 &3936462913401126614
@@ -12514,7 +9135,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7172225473289675453}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &7393629693297914925 stripped
@@ -12550,60 +9171,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1633626485453277273}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 1633626485453277273}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1633626485453277273}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 1633626485453277273}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 1633626485453277273}
   orderDelta: 1
   slds: {fileID: 6046134262259814204}
 --- !u!114 &4178806205923149796
@@ -12630,7 +9199,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7172225473289675453}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!4 &7412078333477463980 stripped
@@ -12671,60 +9240,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6046134262259814204}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 6046134262259814204}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6046134262259814204}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 6046134262259814204}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 6046134262259814204}
   orderDelta: 1
   slds: {fileID: 3480229516201624084}
 --- !u!114 &9121217664135359346
@@ -12792,156 +9309,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8936495350104868272}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 1837141277945611556}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 3657713371687818896}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 1837141277945611556}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 3657713371687818896}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 8936495350104868272}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8936495350104868272}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 1837141277945611556}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 3657713371687818896}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 1837141277945611556}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 3657713371687818896}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 8936495350104868272}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 3657713371687818896}
+  - {fileID: 1837141277945611556}
+  - {fileID: 8936495350104868272}
   orderDelta: 1
   slds: {fileID: 771413564323590744}
 --- !u!114 &8013863202597668446
@@ -12968,7 +9339,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7172225473289675453}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!4 &7654031532522967859 stripped
@@ -13014,12 +9385,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls: []
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls: []
+  children: []
   orderDelta: -1
   slds: {fileID: 81553962349337017}
 --- !u!114 &335397644759042793
@@ -13046,7 +9412,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7172225473289675453}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!4 &7781974317043837570 stripped
@@ -13087,12 +9453,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls: []
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls: []
+  children: []
   orderDelta: 1
   slds: {fileID: 6350175052405114701}
 --- !u!114 &1574334740817513220
@@ -13119,7 +9480,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7172225473289675453}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!4 &7826577032531169983 stripped
@@ -13160,60 +9521,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7642619046218837647}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 7642619046218837647}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7642619046218837647}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 7642619046218837647}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 7642619046218837647}
   orderDelta: 1
   slds: {fileID: 81553962349337017}
 --- !u!114 &2873284236450584935
@@ -13291,60 +9600,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5959633699554753440}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5959633699554753440}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5959633699554753440}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 5959633699554753440}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 5959633699554753440}
   orderDelta: 1
   slds: {fileID: 6030824955471597557}
 --- !u!114 &1599937902425871298
@@ -13371,7 +9628,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7421044141273034992}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &9136176059030490699 stripped
@@ -13407,60 +9664,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1815326620103219342}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 1815326620103219342}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1815326620103219342}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 1815326620103219342}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 1815326620103219342}
   orderDelta: 1
   slds: {fileID: 5438052304064737866}
 --- !u!114 &7775098027756916659
@@ -13487,7 +9692,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 7172225473289675453}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &9208497071888057951 stripped
@@ -13523,60 +9728,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08bc77e0cc446c448c2e4d630c76fb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DataUpdated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1600279825794194624}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 1600279825794194624}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UpdateSortingData
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-  Destroyed:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1600279825794194624}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 1600279825794194624}
-        m_TargetAssemblyTypeName: ChildSortingLayer, Assembly-CSharp
-        m_MethodName: UnhookCurrentSLDS
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  children:
+  - {fileID: 1600279825794194624}
   orderDelta: 1
   slds: {fileID: 4295357038821300327}
 --- !u!114 &3471541497972556661
@@ -13603,6 +9756,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colorControl: {fileID: 0}
+  colorControl: {fileID: 2697550806242364468}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
