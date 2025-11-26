@@ -4317,6 +4317,7 @@ GameObject:
   - component: {fileID: 306623534658904924}
   - component: {fileID: 7114156848873493538}
   - component: {fileID: 986261776917239404}
+  - component: {fileID: 5834644199792057927}
   m_Layer: 0
   m_Name: Base Human Character
   m_TagString: Untagged
@@ -4577,8 +4578,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0b317198e238aa44840742d2b4895fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 3
+  moveSpeed: 2
+  rotationSpeed: 9
+  navMeshSampleDistance: 3
+  groundRaycastHorizontalBuffer: 0.375
+  groundRaycastHeightBuffer: 0.1
   navMeshAnchor: {fileID: 2026339938840846345}
+--- !u!114 &5834644199792057927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8060932246314317455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af11d8f11a3f8e04b82e72666b428fab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 0}
+  sideAC: {fileID: 22100000, guid: cc32375658dd4654fa2c36958b812552, type: 2}
+  moveSpeedDampTime: 0.05
 --- !u!1 &8169445605000533247
 GameObject:
   m_ObjectHideFlags: 0
