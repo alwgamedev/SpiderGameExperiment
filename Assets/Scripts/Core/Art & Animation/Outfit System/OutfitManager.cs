@@ -3,7 +3,8 @@
 public class OutfitManager : MonoBehaviour
 {
     [SerializeField] OutfittableModel fbModel;
-    [SerializeField] OutfittableModel lrModel;
+    [SerializeField] OutfittableModel sideModel;
+    [SerializeField] SortingLayerControl sideModelSLC;
     [SerializeField] Outfit3DSO outfit;
     [SerializeField] Outfit3D customOutfit;
     [SerializeField] MathTools.OrientationXZ face;
@@ -18,13 +19,42 @@ public class OutfitManager : MonoBehaviour
         customOutfit?.Refresh();
     }
 
+    public void SetCurrentOutfit(bool customOutfit)
+    {
+        currentOutfit = customOutfit ? this.customOutfit : outfit;
+        sideModel.ApplyOutfit(currentOutfit.Side);
+        if (face == MathTools.OrientationXZ.front || face == MathTools.OrientationXZ.back)
+        {
+            fbModel.ApplyOutfit(currentOutfit.GetOutfit(face));
+        }
+        else
+        {
+            fbModel.ApplyOutfit(currentOutfit.Front);
+        }
+    }
+
     public void SetFace(MathTools.OrientationXZ face)
     {
         this.face = face;
         bool fb = face == MathTools.OrientationXZ.front || face == MathTools.OrientationXZ.back;
         fbModel.gameObject.SetActive(fb);
-        lrModel.gameObject.SetActive(!fb);
-        ApplyOutfit(currentOutfit, face);
+        sideModel.gameObject.SetActive(!fb);
+        sideModelSLC.DataUpdated(face == MathTools.OrientationXZ.left);
+        var s = transform.localScale;
+        if (face == MathTools.OrientationXZ.left)
+        {
+            s.x = -Mathf.Abs(s.x);
+            transform.localScale = s;
+        }
+        else if (s.x < 0)
+        {
+            s.x = Mathf.Abs(s.x);
+            transform.localScale = s;
+        }
+        if (fb)
+        {
+            ApplyOutfit(currentOutfit, face);
+        }
     }
 
     public void ApplySelectedOutfit()
@@ -48,6 +78,6 @@ public class OutfitManager : MonoBehaviour
 
     private OutfittableModel Model(MathTools.OrientationXZ face)
     {
-        return face == MathTools.OrientationXZ.front || face == MathTools.OrientationXZ.back ? fbModel : lrModel;
+        return face == MathTools.OrientationXZ.front || face == MathTools.OrientationXZ.back ? fbModel : sideModel;
     }
 }

@@ -4,6 +4,8 @@ using UnityEngine;
 [ExecuteAlways]//needed for OnDestroy to get called when component is removed
 public class ChildSortingLayer : SortingLayerDataSource
 {
+    [SerializeField] bool useInvertDelta;
+
     public int orderDelta;
     public SortingLayerDataSource slds;
 
@@ -44,7 +46,7 @@ public class ChildSortingLayer : SortingLayerDataSource
         UpdateParentSubscription();
     }
 
-    public override void OnParentDataUpdated(bool incrementUndoGroup = true)
+    public override void OnParentDataUpdated(bool invertDelta = false, bool incrementUndoGroup = true)
     {
         if (slds)
         {
@@ -55,9 +57,9 @@ public class ChildSortingLayer : SortingLayerDataSource
                 Undo.SetCurrentGroupName("Update Child Sorting Data");
             }
 #endif
-            SetSortingData(slds.SortingLayerID, slds.SortingOrder);
+            SetSortingData(slds.SortingLayerID, slds.SortingOrder, invertDelta);
             Debug.Log($"{name} updated sorting data");
-            DataUpdated(false);
+            DataUpdated(invertDelta, false);
         }
     }
 
@@ -85,7 +87,7 @@ public class ChildSortingLayer : SortingLayerDataSource
         }
     }
 
-    private void SetSortingData(int? layerID, int? layerOrder)
+    private void SetSortingData(int? layerID, int? layerOrder, bool invertDelta)
     {
         if (!gameObject || !layerID.HasValue || !layerOrder.HasValue) return;
 
@@ -93,7 +95,7 @@ public class ChildSortingLayer : SortingLayerDataSource
         {
             Undo.RecordObject(renderer, "Set Renderer Sorting Data");
             renderer.sortingLayerID = layerID.Value;
-            renderer.sortingOrder = layerOrder.Value + orderDelta;
+            renderer.sortingOrder = layerOrder.Value + (invertDelta && useInvertDelta ? -orderDelta : orderDelta);
         }
     }
 

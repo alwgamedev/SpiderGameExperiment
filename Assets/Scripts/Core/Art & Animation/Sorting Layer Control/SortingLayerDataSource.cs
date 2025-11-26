@@ -33,11 +33,11 @@ public abstract class SortingLayerDataSource : MonoBehaviour
         children.RemoveAll(x => x == c);
     }
 
-    public abstract void OnParentDataUpdated(bool incrementUndoGroup = true);
+    public abstract void OnParentDataUpdated(bool invertDelta = false, bool incrementUndoGroup = true);
 
     public abstract void OnParentDestroyed();
 
-    public void DataUpdated(bool incrementUndoGroup = true)
+    public void DataUpdated(bool invertDelta = false, bool incrementUndoGroup = true)
     {
 #if UNITY_EDITOR
         if (incrementUndoGroup)
@@ -46,12 +46,12 @@ public abstract class SortingLayerDataSource : MonoBehaviour
             Undo.SetCurrentGroupName("Update Child Sorting Data");
         }
 #endif
-        Debug.Log($"{GetType().Name} {name} is broadcasting update to children");
+        Debug.Log($"{GetType().Name} {name} is broadcasting update to children.");
         foreach (var c in children)
         {
             if (c)
             {
-                c.OnParentDataUpdated(false);
+                c.OnParentDataUpdated(invertDelta, false);
             }
         }
     }

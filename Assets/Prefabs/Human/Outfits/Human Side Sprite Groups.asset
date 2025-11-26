@@ -22,6 +22,9 @@ MonoBehaviour:
     category: Belt
     group: Belt
   - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Eyebrow
+    group: Eyebrows
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
     category: Facial Hair
     group: Facial Hair
   - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
@@ -44,9 +47,6 @@ MonoBehaviour:
     group: Head
   - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
     category: Eye White
-    group: Head
-  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
-    category: Eyebrow
     group: Head
   - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
     category: Eyelid Bottom
