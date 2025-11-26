@@ -1,8 +1,10 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class TestMover : MonoBehaviour
 {
     [SerializeField] float moveSpeed;
+    [SerializeField] Transform navMeshAnchor;
 
     OutfitManager outfitManager;
     Vector3 moveInput;
@@ -16,12 +18,11 @@ public class TestMover : MonoBehaviour
         outfitManager.SetFace(moveDirection);
     }
 
-    // Update is called once per frame
     private void Update()
     {
         CaptureInput();
         UpdateOrientation();
-        transform.position += Time.deltaTime * moveSpeed * moveInput;
+        HandleMoveInput();
     }
 
     private void CaptureInput()
@@ -58,5 +59,18 @@ public class TestMover : MonoBehaviour
         }
 
         return moveDirection;
+    }
+
+    private void HandleMoveInput()
+    {
+        var p = navMeshAnchor.position + Time.deltaTime * moveSpeed * moveInput;
+        if (NavMesh.SamplePosition(p, out var h, 5f, NavMesh.AllAreas))
+        {
+            transform.position = h.position + transform.position - navMeshAnchor.position;
+        }
+        else
+        {
+            Debug.Log("navmesh sample failed");
+        }
     }
 }
