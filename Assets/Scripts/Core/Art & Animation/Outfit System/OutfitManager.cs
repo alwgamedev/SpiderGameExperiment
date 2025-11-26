@@ -29,7 +29,7 @@ public class OutfitManager : MonoBehaviour
         }
         else
         {
-            fbModel.ApplyOutfit(currentOutfit.Front);
+            fbModel.ApplyOutfit(currentOutfit.Side);
         }
     }
 
