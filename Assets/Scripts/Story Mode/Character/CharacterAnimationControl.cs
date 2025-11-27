@@ -4,6 +4,7 @@ public class CharacterAnimationControl : AnimationControl
 {
     [SerializeField] AnimatorOverrideController sideAC;
     [SerializeField] float moveSpeedDampTime;
+    [SerializeField] float moveSpeedMultiplier;//easier to set it here than set it in multiple blend trees
 
     //2do: swapping AC "smoothly" (maintaining parameter values and animation state like we did in rpg)
 
@@ -21,7 +22,7 @@ public class CharacterAnimationControl : AnimationControl
 
     public void UpdateMoveSpeed(float moveSpeed, float dt)
     {
-        SetFloat("moveSpeed", moveSpeed, moveSpeedDampTime, dt);
+        SetFloat("moveSpeed", moveSpeed * moveSpeedMultiplier, moveSpeedDampTime, dt);
     }
 
     private RuntimeAnimatorController GetAC(MathTools.OrientationXZ o)

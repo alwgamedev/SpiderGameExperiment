@@ -4599,6 +4599,7 @@ MonoBehaviour:
   animator: {fileID: 0}
   sideAC: {fileID: 22100000, guid: cc32375658dd4654fa2c36958b812552, type: 2}
   moveSpeedDampTime: 0.05
+  moveSpeedMultiplier: 0.675
 --- !u!1 &8169445605000533247
 GameObject:
   m_ObjectHideFlags: 0
