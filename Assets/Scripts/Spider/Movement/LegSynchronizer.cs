@@ -1,7 +1,5 @@
 using UnityEngine;
 using System.Linq;
-using System;
-using System.Collections;
 
 public class LegSynchronizer : MonoBehaviour
 {

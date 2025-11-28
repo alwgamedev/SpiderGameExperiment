@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.U2D.IK;
 
 public class LegAnimator : MonoBehaviour
@@ -23,6 +24,8 @@ public class LegAnimator : MonoBehaviour
     Vector2 lastFreeHangPosition;
 
     public float driftWeight;
+
+    public UnityEvent HitGround;
 
     public Vector2 HipPosition => hipBone.position;
     public Vector2 FootPosition => ikEffector.position;
@@ -157,10 +160,17 @@ public class LegAnimator : MonoBehaviour
 
     private void UpdateIsTouchingGround(GroundMap groundMap)
     {
+        var wasTouchingGround = IsTouchingGround;
+
         Vector2 q = ikEffector.position;
         q -= groundMap.ClosestPoint(q, out var n, out var hitGround);
         ContactNormal = n;
         IsTouchingGround = hitGround && (Vector2.SqrMagnitude(q) < groundContactRadius2 || Vector2.Dot(q, n) < 0);
+
+        if (!wasTouchingGround && IsTouchingGround)
+        {
+            HitGround.Invoke();
+        }
     }
 
     //private void UpdateExtension()

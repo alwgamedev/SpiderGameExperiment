@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class SpiderMovementController : MonoBehaviour
 {
@@ -148,8 +149,11 @@ public class SpiderMovementController : MonoBehaviour
 
     public static SpiderMovementController Player;
 
-    public event Action JumpChargeBegan;
-    public event Action JumpChargeEnded;
+    public UnityEvent JumpChargeBegan;
+    public UnityEvent JumpChargeEnded;
+    public UnityEvent Jumped;
+    public UnityEvent ThrustersEngaged;
+    public UnityEvent ThrustersDisengaged;
 
     //private void OnDrawGizmos()
     //{
@@ -326,6 +330,7 @@ public class SpiderMovementController : MonoBehaviour
     private void OnThrusterEngaged()
     {
         rb.gravityScale = thrustingGravityScale;
+        ThrustersEngaged.Invoke();
     }
 
     private void OnThrusterEngageFailed()
@@ -341,6 +346,7 @@ public class SpiderMovementController : MonoBehaviour
     {
         //Debug.Log("disengaging thrusters.");
         rb.gravityScale = 1;
+        ThrustersDisengaged.Invoke();
     }
 
     //INPUT
@@ -353,13 +359,13 @@ public class SpiderMovementController : MonoBehaviour
             if (!grounded)
             {
                 jumpInputHeld = false;
-                JumpChargeEnded?.Invoke();
+                JumpChargeEnded.Invoke();
             }
             else if (Input.GetKeyUp(KeyCode.Space))
             {
                 jumpInputHeld = false;
                 waitingToReleaseJump = !Input.GetKey(KeyCode.LeftControl);
-                JumpChargeEnded?.Invoke();
+                JumpChargeEnded.Invoke();
             }
             else if (crouchProgress < 1)
             {
@@ -373,7 +379,7 @@ public class SpiderMovementController : MonoBehaviour
                 jumpInputHeld = Input.GetKey(KeyCode.Space);
                 if (jumpInputHeld)
                 {
-                    JumpChargeBegan?.Invoke();
+                    JumpChargeBegan.Invoke();
                 }
             }
             if (crouchProgress > 0)
@@ -428,7 +434,7 @@ public class SpiderMovementController : MonoBehaviour
     private void ChangeDirection()
     {
         //2do: can we interpolate between these by free hang strength in a reasonable way (or is there no need to do that?)
-        if (!legSynchronizer.FreeHanging)
+        if (!grapple.FreeHanging/*!legSynchronizer.FreeHanging*/)
         {
             var s = transform.localScale;
             transform.localScale = new Vector3(-s.x, s.y, s.z);
@@ -612,6 +618,7 @@ public class SpiderMovementController : MonoBehaviour
             SetGrounded(false);
             var jumpDir = JumpDirection();
             rb.AddForce(rb.mass * JumpForce() * jumpDir, ForceMode2D.Impulse);
+            Jumped.Invoke();
         }
     }
 
@@ -694,7 +701,7 @@ public class SpiderMovementController : MonoBehaviour
         if (jumpInputHeld)
         {
             jumpInputHeld = false;
-            JumpChargeEnded?.Invoke();
+            JumpChargeEnded.Invoke();
         }
         RecomputeGroundMapRaycastLength();
     }
@@ -915,7 +922,7 @@ public class SpiderMovementController : MonoBehaviour
 
     private void UpdateLegSynch()
     {
-        legSynchronizer.FreeHanging = grapple.FreeHanging;
+        legSynchronizer.FreeHanging = !grounded;// && !thruster.Engaged;//grapple.FreeHanging;
 
         var v = GroundVelocity;
         legSynchronizer.bodyGroundSpeedSign = (grounded && grapple.GrappleAnchored) || grapple.FreeHanging ? 1 : Mathf.Sign(v);

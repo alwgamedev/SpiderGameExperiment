@@ -14,7 +14,6 @@ public class JumpPreviewArrow : MonoBehaviour
 
     Transform arrowHeadAnchor;
     Material neckMaterial;
-    SpiderMovementController player;
 
     bool chargingJump;
     bool hasReachedMax;
@@ -22,18 +21,20 @@ public class JumpPreviewArrow : MonoBehaviour
     const string Color0Property = "_Color0";
     const string Color1Property = "_Color1";
 
-    private void OnEnable()
-    {
-        if (player == null)
-        {
-            player = SpiderMovementController.Player;
-        }
-        if (player != null)
-        {
-            player.JumpChargeBegan += OnBeginJumpCharge;
-            player.JumpChargeEnded += HideArrow;
-        }
-    }
+    //SpiderMovementController Player => SpiderMovementController.Player;
+
+    //private void OnEnable()
+    //{
+    //    if (player == null)
+    //    {
+    //        player = SpiderMovementController.Player;
+    //    }
+    //    if (player != null)
+    //    {
+    //        player.JumpChargeBegan.AddListener(OnBeginJumpCharge);
+    //        player.JumpChargeEnded.AddListener(HideArrow);
+    //    }
+    //}
 
     //private void OnDrawGizmos()
     //{
@@ -51,12 +52,12 @@ public class JumpPreviewArrow : MonoBehaviour
 
     private void Start()
     {
-        if (player == null)//if our OnEnable was before player's, then we need to try this again (but we still need to (re)subscribe OnEnable)
-        {
-            player = SpiderMovementController.Player;
-            player.JumpChargeBegan += OnBeginJumpCharge;
-            player.JumpChargeEnded += HideArrow;
-        }
+        //if (player == null)//if our OnEnable was before player's, then we need to try this again
+        //{
+        //    player = SpiderMovementController.Player;
+        //    player.JumpChargeBegan.AddListener(OnBeginJumpCharge);
+        //    player.JumpChargeEnded.AddListener(HideArrow);
+        //}
 
         arrowHeadAnchor = new GameObject("Arrow Head Anchor").transform;
         arrowHeadAnchor.position = new(arrowNeck.bounds.center.x, arrowNeck.bounds.max.y, 0);//need to make sure it's right on the edge of bounding box, otherwise scales poorly
@@ -76,7 +77,7 @@ public class JumpPreviewArrow : MonoBehaviour
         }
     }
 
-    private void OnBeginJumpCharge()
+    public void OnBeginJumpCharge()
     {
         //we could just disable the sprite renderer components, but then transforms still getting updated
         arrowNeckAnchor.gameObject.SetActive(true);
@@ -86,7 +87,7 @@ public class JumpPreviewArrow : MonoBehaviour
         chargingJump = true;
     }
 
-    private void HideArrow()
+    public void HideArrow()
     {
         arrowNeckAnchor.gameObject.SetActive(false);//and arrowHeadAnchor is a child of arrowNeck so gets set inactive automatically
         arrowNeck.gameObject.SetActive(false);
@@ -98,7 +99,7 @@ public class JumpPreviewArrow : MonoBehaviour
     {
         if (!hasReachedMax)
         {
-            var t = player.CrouchProgress;
+            var t = SpiderMovementController.Player.CrouchProgress;
             SetStretch(Mathf.Lerp(stretchMin, stretchMax, t));
             SetColor(t);
             if (t >= 1)
@@ -136,9 +137,9 @@ public class JumpPreviewArrow : MonoBehaviour
         hasReachedMax = false;
     }
 
-    private void OnDisable()
-    {
-        player.JumpChargeBegan -= OnBeginJumpCharge;
-        player.JumpChargeEnded -= HideArrow;
-    }
+    //private void OnDisable()
+    //{
+    //    player.JumpChargeBegan.RemoveListener(OnBeginJumpCharge);
+    //    player.JumpChargeEnded.AddListener(HideArrow);
+    //}
 }
