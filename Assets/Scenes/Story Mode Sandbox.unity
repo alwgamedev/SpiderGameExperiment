@@ -670,6 +670,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4135405913886855172, guid: 26286d760ceeb574393ee7580b8d0587, type: 3}
+      propertyPath: field of view
+      value: 89.8
+      objectReference: {fileID: 0}
     - target: {fileID: 4354170936662549079, guid: 26286d760ceeb574393ee7580b8d0587, type: 3}
       propertyPath: Target.TrackingTarget
       value: 
