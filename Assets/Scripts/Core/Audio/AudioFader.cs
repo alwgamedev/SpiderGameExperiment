@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class AudioFader : MonoBehaviour
@@ -7,7 +6,8 @@ public class AudioFader : MonoBehaviour
     [SerializeField] float fadeTime;
     [SerializeField] float maxVol;
 
-    bool shouldBePlaying;//state we're "lerping towards" (i.e. when false we're fading out or stopped)
+    bool fadeActive;
+    bool fadingOn;//state we're "lerping towards" (i.e. when false we're fading out or stopped)
 
     private void Awake()
     {
@@ -19,7 +19,7 @@ public class AudioFader : MonoBehaviour
 
     private void Update()
     {
-        if (audioSource.isPlaying)
+        if (fadeActive && audioSource.isPlaying)
         {
             UpdateFade();
         }
@@ -27,7 +27,8 @@ public class AudioFader : MonoBehaviour
 
     public void FadePlay()
     {
-        shouldBePlaying = true;
+        fadeActive = true;
+        fadingOn = true;
         if (!audioSource.isPlaying)
         {
             audioSource.volume = 0f;
@@ -37,12 +38,12 @@ public class AudioFader : MonoBehaviour
 
     public void FadeStop()
     {
-        shouldBePlaying = false;
+        fadingOn = false;
     }
 
     private void UpdateFade()
     {
-        if (shouldBePlaying)
+        if (fadingOn)
         {
             if (audioSource.volume < maxVol)
             {
@@ -58,6 +59,7 @@ public class AudioFader : MonoBehaviour
             if (!(audioSource.volume > 0))
             {
                 audioSource.Stop();
+                fadeActive = false;
             }
         }
     }

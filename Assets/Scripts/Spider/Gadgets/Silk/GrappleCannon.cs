@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class GrappleCannon : MonoBehaviour
 {
@@ -78,13 +79,8 @@ public class GrappleCannon : MonoBehaviour
         }
     }
 
-    //private void OnDrawGizmos()
-    //{
-    //    if (Application.isPlaying && grapple != null)
-    //    {
-    //        grapple.DrawGizmos();
-    //    }
-    //}
+    public UnityEvent GrappleShot;
+    public UnityEvent GrappleBecameAnchored;
 
     private void Awake()
     {
@@ -424,6 +420,8 @@ public class GrappleCannon : MonoBehaviour
         shootTimer = -minLength / shootSpeed;
         EnableLineRenderer();
         grapple.SetLineRendererPositions(lineRenderer);
+        grapple.TerminusAnchored = GrappleBecameAnchored;
+        GrappleShot.Invoke();
     }
 
     private void DestroyGrapple()

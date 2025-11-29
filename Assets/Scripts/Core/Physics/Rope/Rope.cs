@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Rope
 {
@@ -25,6 +26,8 @@ public class Rope
 
     public int AnchorPointer => anchorPointer;
     public float Length => nodeSpacing * (lastIndex - anchorPointer);
+
+    public UnityEvent TerminusAnchored;
 
     public Rope(Vector2 position, float width, float length, int numNodes, float minNodeSpacing, float maxNodeSpacing,
         float nodeDrag, int collisionMask, float collisionSearchRadius, float tunnelingEscapeRadius, float collisionBounciness, int terminusAnchorMask,
@@ -205,6 +208,7 @@ public class Rope
                     //anchor just outside collider, so that nodes near lastIndex don't get caught in perpetual collision
                     nodes[lastIndex].position = r.point + nodes[lastIndex].CollisionThreshold * r.normal;
                     nodes[lastIndex].Anchor();
+                    TerminusAnchored.Invoke();
                 }
             }
         }
