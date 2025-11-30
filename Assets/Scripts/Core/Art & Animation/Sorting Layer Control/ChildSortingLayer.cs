@@ -97,6 +97,10 @@ public class ChildSortingLayer : SortingLayerDataSource
             renderer.sortingLayerID = layerID.Value;
             renderer.sortingOrder = layerOrder.Value + (invertDelta && useInvertDelta ? -orderDelta : orderDelta);
         }
+        else
+        {
+            Debug.Log($"Unable to set sorting data. No renderer found.");
+        }
     }
 
     //could get caught in a loop before makes it to us,

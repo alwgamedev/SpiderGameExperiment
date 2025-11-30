@@ -79,7 +79,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 9
   m_Sprite: {fileID: 1709604080109948113, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.46776015, g: 0.46776015, b: 0.46776015, a: 1}
+  m_Color: {r: 0.25456968, g: 0.25456968, b: 0.25456968, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -235,7 +235,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 4
   m_Sprite: {fileID: -1853397327509967204, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.46776015, g: 0.46776015, b: 0.46776015, a: 1}
+  m_Color: {r: 0.25456968, g: 0.25456968, b: 0.25456968, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -328,8 +328,8 @@ MonoBehaviour:
   m_LightType: 3
   m_BlendStyleIndex: 0
   m_FalloffIntensity: 0.498
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 0.5
+  m_Color: {r: 0.6472694, g: 0.70138234, b: 0.97735846, a: 1}
+  m_Intensity: 2.32
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
   m_ApplyToSortingLayers: c32964b5
@@ -443,7 +443,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 11
   m_Sprite: {fileID: 1155594932705205012, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.42599586, g: 0.42599586, b: 0.42599586, a: 1}
+  m_Color: {r: 0.23184025, g: 0.23184025, b: 0.23184025, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -568,7 +568,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 23
   m_Sprite: {fileID: -4466628975468409916, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.46007547, g: 0.46007547, b: 0.46007547, a: 1}
+  m_Color: {r: 0.25038743, g: 0.25038743, b: 0.25038743, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -724,7 +724,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 40
   m_Sprite: {fileID: -8905071624140656026, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.42599586, g: 0.42599586, b: 0.42599586, a: 1}
+  m_Color: {r: 0.23184025, g: 0.23184025, b: 0.23184025, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -879,7 +879,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 41
   m_Sprite: {fileID: -7132523006955262848, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.46776015, g: 0.46776015, b: 0.46776015, a: 1}
+  m_Color: {r: 0.25456968, g: 0.25456968, b: 0.25456968, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -1003,7 +1003,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 8
   m_Sprite: {fileID: 4569974990027774031, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.42599586, g: 0.42599586, b: 0.42599586, a: 1}
+  m_Color: {r: 0.23184025, g: 0.23184025, b: 0.23184025, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -1213,7 +1213,7 @@ MonoBehaviour:
         m_MethodName: PlayOneShot
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 8300000, guid: 5eefa9f4f90d0c24ba3d9feedb848459, type: 3}
+          m_ObjectArgument: {fileID: 8300000, guid: 4c536f0b7e4af3146a640be0935a4925, type: 3}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
@@ -1230,16 +1230,16 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 5eefa9f4f90d0c24ba3d9feedb848459, type: 3}
-  m_Resource: {fileID: 8300000, guid: 5eefa9f4f90d0c24ba3d9feedb848459, type: 3}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 0.1
-  m_Pitch: 0.25
+  m_Pitch: 0.5
   Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 128
+  Priority: 0
   DopplerLevel: 1
   MinDistance: 1
   MaxDistance: 500
@@ -1396,7 +1396,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 36
   m_Sprite: {fileID: 5384825312540897223, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.46776015, g: 0.46776015, b: 0.46776015, a: 1}
+  m_Color: {r: 0.25456968, g: 0.25456968, b: 0.25456968, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -1520,7 +1520,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 42
   m_Sprite: {fileID: 1332045852589052105, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.42599586, g: 0.42599586, b: 0.42599586, a: 1}
+  m_Color: {r: 0.23184025, g: 0.23184025, b: 0.23184025, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -1649,7 +1649,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15972f7a6d7c5df4eb3be7318644e110, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: {r: 0.47843137, g: 0.47843137, b: 0.47843137, a: 1}
+  color: {r: 0.2603773, g: 0.2603773, b: 0.2603773, a: 1}
   children:
   - {fileID: 7925938531255702961}
   - {fileID: 4465063695570207678}
@@ -1786,7 +1786,7 @@ MonoBehaviour:
         m_MethodName: PlayOneShot
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 8300000, guid: 5eefa9f4f90d0c24ba3d9feedb848459, type: 3}
+          m_ObjectArgument: {fileID: 8300000, guid: 4c536f0b7e4af3146a640be0935a4925, type: 3}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
@@ -1803,16 +1803,16 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 5eefa9f4f90d0c24ba3d9feedb848459, type: 3}
-  m_Resource: {fileID: 8300000, guid: 5eefa9f4f90d0c24ba3d9feedb848459, type: 3}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 0.1
-  m_Pitch: 0.25
+  m_Pitch: 0.5
   Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 128
+  Priority: 16
   DopplerLevel: 1
   MinDistance: 1
   MaxDistance: 500
@@ -2001,7 +2001,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 7
   m_Sprite: {fileID: 3800291138820893857, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.46776015, g: 0.46776015, b: 0.46776015, a: 1}
+  m_Color: {r: 0.25456968, g: 0.25456968, b: 0.25456968, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -2125,7 +2125,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 19
   m_Sprite: {fileID: -6151290355295405140, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.46776015, g: 0.46776015, b: 0.46776015, a: 1}
+  m_Color: {r: 0.25456968, g: 0.25456968, b: 0.25456968, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -2280,7 +2280,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 3
   m_Sprite: {fileID: 4821962143991848336, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.42599586, g: 0.42599586, b: 0.42599586, a: 1}
+  m_Color: {r: 0.23184025, g: 0.23184025, b: 0.23184025, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -2457,7 +2457,7 @@ MonoBehaviour:
         m_MethodName: PlayOneShot
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 8300000, guid: 5eefa9f4f90d0c24ba3d9feedb848459, type: 3}
+          m_ObjectArgument: {fileID: 8300000, guid: 4c536f0b7e4af3146a640be0935a4925, type: 3}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
@@ -2474,16 +2474,16 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 5eefa9f4f90d0c24ba3d9feedb848459, type: 3}
-  m_Resource: {fileID: 8300000, guid: 5eefa9f4f90d0c24ba3d9feedb848459, type: 3}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 0.1
-  m_Pitch: 0.25
+  m_Pitch: 0.5
   Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 128
+  Priority: 32
   DopplerLevel: 1
   MinDistance: 1
   MaxDistance: 500
@@ -2671,7 +2671,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 33
   m_Sprite: {fileID: 8881494478667722190, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.46776015, g: 0.46776015, b: 0.46776015, a: 1}
+  m_Color: {r: 0.25456968, g: 0.25456968, b: 0.25456968, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -2890,7 +2890,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 2
   m_Sprite: {fileID: 6805741007203052143, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.46776015, g: 0.46776015, b: 0.46776015, a: 1}
+  m_Color: {r: 0.25456968, g: 0.25456968, b: 0.25456968, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -3078,7 +3078,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 12
   m_Sprite: {fileID: -6970240312588893902, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.46776015, g: 0.46776015, b: 0.46776015, a: 1}
+  m_Color: {r: 0.25456968, g: 0.25456968, b: 0.25456968, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -3224,7 +3224,7 @@ MonoBehaviour:
         m_MethodName: PlayOneShot
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 8300000, guid: 5eefa9f4f90d0c24ba3d9feedb848459, type: 3}
+          m_ObjectArgument: {fileID: 8300000, guid: 4c536f0b7e4af3146a640be0935a4925, type: 3}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
@@ -3241,16 +3241,16 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 5eefa9f4f90d0c24ba3d9feedb848459, type: 3}
-  m_Resource: {fileID: 8300000, guid: 5eefa9f4f90d0c24ba3d9feedb848459, type: 3}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 0.1
-  m_Pitch: 0.25
+  m_Pitch: 0.5
   Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 128
+  Priority: 32
   DopplerLevel: 1
   MinDistance: 1
   MaxDistance: 500
@@ -3704,7 +3704,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 37
   m_Sprite: {fileID: 4536196528321283346, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.42599586, g: 0.42599586, b: 0.42599586, a: 1}
+  m_Color: {r: 0.23184025, g: 0.23184025, b: 0.23184025, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -3850,7 +3850,7 @@ MonoBehaviour:
         m_MethodName: PlayOneShot
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 8300000, guid: 5eefa9f4f90d0c24ba3d9feedb848459, type: 3}
+          m_ObjectArgument: {fileID: 8300000, guid: 4c536f0b7e4af3146a640be0935a4925, type: 3}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
@@ -3867,16 +3867,16 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 5eefa9f4f90d0c24ba3d9feedb848459, type: 3}
-  m_Resource: {fileID: 8300000, guid: 5eefa9f4f90d0c24ba3d9feedb848459, type: 3}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 0.1
-  m_Pitch: 0.25
+  m_Pitch: 0.5
   Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 128
+  Priority: 0
   DopplerLevel: 1
   MinDistance: 1
   MaxDistance: 500
@@ -4127,7 +4127,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 6
   m_Sprite: {fileID: -8597102231247780686, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.42599586, g: 0.42599586, b: 0.42599586, a: 1}
+  m_Color: {r: 0.23184025, g: 0.23184025, b: 0.23184025, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -4318,7 +4318,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 14
   m_Sprite: {fileID: 1622523877108282790, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.46776015, g: 0.46776015, b: 0.46776015, a: 1}
+  m_Color: {r: 0.25456968, g: 0.25456968, b: 0.25456968, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -4442,7 +4442,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 27
   m_Sprite: {fileID: 7277544393109873513, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.42599586, g: 0.42599586, b: 0.42599586, a: 1}
+  m_Color: {r: 0.23184025, g: 0.23184025, b: 0.23184025, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -4566,7 +4566,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 32
   m_Sprite: {fileID: -1868491956009996491, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.42599586, g: 0.42599586, b: 0.42599586, a: 1}
+  m_Color: {r: 0.23184025, g: 0.23184025, b: 0.23184025, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -4690,7 +4690,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 31
   m_Sprite: {fileID: 8795963089183074680, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.46776015, g: 0.46776015, b: 0.46776015, a: 1}
+  m_Color: {r: 0.25456968, g: 0.25456968, b: 0.25456968, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -4914,7 +4914,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 22
   m_Sprite: {fileID: 4155364287473611995, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.4792453, g: 0.4792453, b: 0.4792453, a: 1}
+  m_Color: {r: 0.26082024, g: 0.26082024, b: 0.26082024, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -5069,8 +5069,8 @@ MonoBehaviour:
   m_LightType: 3
   m_BlendStyleIndex: 0
   m_FalloffIntensity: 0.809
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 0.8
+  m_Color: {r: 0.6472694, g: 0.70138234, b: 0.97735846, a: 1}
+  m_Intensity: 5.3
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
   m_ApplyToSortingLayers: c32964b5
@@ -5283,7 +5283,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 25
   m_Sprite: {fileID: -4965269147118281367, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.42599586, g: 0.42599586, b: 0.42599586, a: 1}
+  m_Color: {r: 0.23184025, g: 0.23184025, b: 0.23184025, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -5429,7 +5429,7 @@ MonoBehaviour:
         m_MethodName: PlayOneShot
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 8300000, guid: 5eefa9f4f90d0c24ba3d9feedb848459, type: 3}
+          m_ObjectArgument: {fileID: 8300000, guid: 4c536f0b7e4af3146a640be0935a4925, type: 3}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
@@ -5446,16 +5446,16 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 5eefa9f4f90d0c24ba3d9feedb848459, type: 3}
-  m_Resource: {fileID: 8300000, guid: 5eefa9f4f90d0c24ba3d9feedb848459, type: 3}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 0.1
-  m_Pitch: 0.25
+  m_Pitch: 0.5
   Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 128
+  Priority: 48
   DopplerLevel: 1
   MinDistance: 1
   MaxDistance: 500
@@ -5612,7 +5612,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 43
   m_Sprite: {fileID: -4548777354951961826, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.46776015, g: 0.46776015, b: 0.46776015, a: 1}
+  m_Color: {r: 0.25456968, g: 0.25456968, b: 0.25456968, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -5940,7 +5940,7 @@ MonoBehaviour:
         m_MethodName: PlayOneShot
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 8300000, guid: 5eefa9f4f90d0c24ba3d9feedb848459, type: 3}
+          m_ObjectArgument: {fileID: 8300000, guid: 4c536f0b7e4af3146a640be0935a4925, type: 3}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
@@ -5957,16 +5957,16 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 5eefa9f4f90d0c24ba3d9feedb848459, type: 3}
-  m_Resource: {fileID: 8300000, guid: 5eefa9f4f90d0c24ba3d9feedb848459, type: 3}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 0.1
-  m_Pitch: 0.25
+  m_Pitch: 0.5
   Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 128
+  Priority: 48
   DopplerLevel: 1
   MinDistance: 1
   MaxDistance: 500
@@ -6154,7 +6154,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 17
   m_Sprite: {fileID: -4515474835508462503, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.46776015, g: 0.46776015, b: 0.46776015, a: 1}
+  m_Color: {r: 0.25456968, g: 0.25456968, b: 0.25456968, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -6310,7 +6310,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 28
   m_Sprite: {fileID: 8795212113427064114, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.46776015, g: 0.46776015, b: 0.46776015, a: 1}
+  m_Color: {r: 0.25456968, g: 0.25456968, b: 0.25456968, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -6434,7 +6434,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 13
   m_Sprite: {fileID: 4278032281179113007, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.42599586, g: 0.42599586, b: 0.42599586, a: 1}
+  m_Color: {r: 0.23184025, g: 0.23184025, b: 0.23184025, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -6590,7 +6590,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 18
   m_Sprite: {fileID: 7225806164170199723, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.42599586, g: 0.42599586, b: 0.42599586, a: 1}
+  m_Color: {r: 0.23184025, g: 0.23184025, b: 0.23184025, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -6714,7 +6714,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 30
   m_Sprite: {fileID: 1093023862290312836, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.42599586, g: 0.42599586, b: 0.42599586, a: 1}
+  m_Color: {r: 0.23184025, g: 0.23184025, b: 0.23184025, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -6870,7 +6870,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 26
   m_Sprite: {fileID: -1361093489515629887, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.46819353, g: 0.46819353, b: 0.46819353, a: 1}
+  m_Color: {r: 0.25480554, g: 0.25480554, b: 0.25480554, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -6994,7 +6994,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 38
   m_Sprite: {fileID: 7560876389645338745, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.46776015, g: 0.46776015, b: 0.46776015, a: 1}
+  m_Color: {r: 0.25456968, g: 0.25456968, b: 0.25456968, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -7118,7 +7118,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 16
   m_Sprite: {fileID: 7607091484708353425, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.42599586, g: 0.42599586, b: 0.42599586, a: 1}
+  m_Color: {r: 0.23184025, g: 0.23184025, b: 0.23184025, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -7277,7 +7277,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 1
   m_Sprite: {fileID: -746081454059727854, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.42599586, g: 0.42599586, b: 0.42599586, a: 1}
+  m_Color: {r: 0.23184025, g: 0.23184025, b: 0.23184025, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -7423,7 +7423,7 @@ MonoBehaviour:
         m_MethodName: PlayOneShot
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 8300000, guid: 5eefa9f4f90d0c24ba3d9feedb848459, type: 3}
+          m_ObjectArgument: {fileID: 8300000, guid: 4c536f0b7e4af3146a640be0935a4925, type: 3}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
@@ -7440,16 +7440,16 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 5eefa9f4f90d0c24ba3d9feedb848459, type: 3}
-  m_Resource: {fileID: 8300000, guid: 5eefa9f4f90d0c24ba3d9feedb848459, type: 3}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 0.1
-  m_Pitch: 0.25
+  m_Pitch: 0.5
   Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 128
+  Priority: 16
   DopplerLevel: 1
   MinDistance: 1
   MaxDistance: 500
@@ -7758,7 +7758,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioSource: {fileID: 0}
-  fadeTime: 0.4
+  fadeTime: 0.5
   maxVol: 0.5
 --- !u!1 &7402302345158306404
 GameObject:
@@ -8239,7 +8239,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 35
   m_Sprite: {fileID: -6409594807898131177, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.42599586, g: 0.42599586, b: 0.42599586, a: 1}
+  m_Color: {r: 0.23184025, g: 0.23184025, b: 0.23184025, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -9575,15 +9575,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1094623380466591251, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: m_Color.b
-      value: 0.5849056
+      value: 0.4490565
       objectReference: {fileID: 0}
     - target: {fileID: 1094623380466591251, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: m_Color.g
-      value: 0.5849056
+      value: 0.4490565
       objectReference: {fileID: 0}
     - target: {fileID: 1094623380466591251, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: m_Color.r
-      value: 0.5849056
+      value: 0.4490565
       objectReference: {fileID: 0}
     - target: {fileID: 1094623380466591251, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: m_SortingLayer
@@ -9770,7 +9770,7 @@ AudioSource:
   m_Resource: {fileID: 8300000, guid: b947dba97daa66b43a7bd8420a7e91e7, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 0.35
-  m_Pitch: 0.5
+  m_Pitch: 1.3
   Loop: 0
   Mute: 0
   Spatialize: 0
