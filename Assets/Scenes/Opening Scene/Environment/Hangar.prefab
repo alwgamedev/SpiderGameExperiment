@@ -203,7 +203,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 20}
-  m_LocalScale: {x: 14, y: 30, z: 1}
+  m_LocalScale: {x: 14, y: 10, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6420969036217286389}
@@ -289,7 +289,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 168277837321548698, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_Intensity
-      value: 0.38978064
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 338017178160273003, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: goalIntensity
@@ -485,7 +485,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5521350566278421895, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_Intensity
-      value: 0.33738363
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 6081798366171348015, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_SortingOrder
@@ -549,7 +549,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7501938738632730477, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_Intensity
-      value: 0.3902008
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 8094358146318739758, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_PreviousTrimEdge
@@ -601,7 +601,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9000319825856840945, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_Intensity
-      value: 0.3384696
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 9000319825856840945, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_ShadowIntensity
@@ -650,7 +650,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 168277837321548698, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_Intensity
-      value: 0.18714944
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 338017178160273003, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: goalIntensity
@@ -798,7 +798,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5521350566278421895, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_Intensity
-      value: 0.17416254
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 6081798366171348015, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_SortingOrder
@@ -862,7 +862,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7501938738632730477, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_Intensity
-      value: 0.18724625
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 8094358146318739758, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_PreviousTrimEdge
@@ -894,7 +894,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9000319825856840945, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_Intensity
-      value: 0.17445147
+      value: 45
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7317760826018567506, guid: 33025bebc1436af438790888853f8682, type: 3}
@@ -939,7 +939,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 168277837321548698, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_Intensity
-      value: 0.07026314
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 338017178160273003, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: goalIntensity
@@ -1087,7 +1087,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5521350566278421895, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_Intensity
-      value: 0.06834965
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 6081798366171348015, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_SortingOrder
@@ -1151,7 +1151,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7501938738632730477, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_Intensity
-      value: 0.07027678
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 8094358146318739758, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_PreviousTrimEdge
@@ -1187,7 +1187,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9000319825856840945, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_Intensity
-      value: 0.06839412
+      value: 45
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7317760826018567506, guid: 33025bebc1436af438790888853f8682, type: 3}
@@ -1232,7 +1232,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 168277837321548698, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_Intensity
-      value: 2.9127047
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 338017178160273003, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: goalIntensity
@@ -1320,7 +1320,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5521350566278421895, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_Intensity
-      value: 1.34814
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 6189599818151123729, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: goalIntensity
@@ -1328,7 +1328,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7501938738632730477, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_Intensity
-      value: 2.9363327
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 8791791913649594624, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: goalIntensity
@@ -1336,7 +1336,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9000319825856840945, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_Intensity
-      value: 1.3656484
+      value: 45
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1369,7 +1369,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 168277837321548698, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_Intensity
-      value: 0.1083164
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 338017178160273003, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: goalIntensity
@@ -1517,7 +1517,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5521350566278421895, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_Intensity
-      value: 0.10383513
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 6081798366171348015, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_SortingOrder
@@ -1581,7 +1581,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7501938738632730477, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_Intensity
-      value: 0.108348824
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 8094358146318739758, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_PreviousTrimEdge
@@ -1617,7 +1617,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9000319825856840945, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_Intensity
-      value: 0.10393777
+      value: 45
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7317760826018567506, guid: 33025bebc1436af438790888853f8682, type: 3}
@@ -1666,7 +1666,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 168277837321548698, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_Intensity
-      value: 1.1124967
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 338017178160273003, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: goalIntensity
@@ -1818,7 +1818,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5521350566278421895, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_Intensity
-      value: 0.77082086
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 5722124860253263010, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_IsActive
@@ -1886,7 +1886,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7501938738632730477, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_Intensity
-      value: 1.1159265
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 8094358146318739758, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_PreviousTrimEdge
@@ -1942,7 +1942,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9000319825856840945, guid: 33025bebc1436af438790888853f8682, type: 3}
       propertyPath: m_Intensity
-      value: 0.776513
+      value: 45
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7317760826018567506, guid: 33025bebc1436af438790888853f8682, type: 3}
