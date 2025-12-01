@@ -933,8 +933,13 @@ MonoBehaviour:
       m_Sprite: {fileID: -1689195168851544943, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: -1689195168851544943, guid: b22eef9ecb6f4d34aba9e2538bb7e518, type: 3}
+    - m_Name: Bow Tie
+      m_Hash: 1053316629
+      m_Sprite: {fileID: -8208541119328005281, guid: db0ba0935fab1234295dea70e1d65829, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -8208541119328005281, guid: db0ba0935fab1234295dea70e1d65829, type: 3}
     m_FromMain: 0
-    m_EntryOverrideCount: 1
+    m_EntryOverrideCount: 2
   - m_Name: Torso
     m_Hash: 647926657
     m_CategoryList: []
@@ -1013,9 +1018,9 @@ MonoBehaviour:
       m_SpriteOverride: {fileID: -7016086427025619393, guid: 50b9d95916b2fc7498121bc872a5f4c5, type: 3}
     - m_Name: Buttoned Blazer
       m_Hash: 631668360
-      m_Sprite: {fileID: -4624544536328802899, guid: db0ba0935fab1234295dea70e1d65829, type: 3}
+      m_Sprite: {fileID: 6401149741775883659, guid: db0ba0935fab1234295dea70e1d65829, type: 3}
       m_FromMain: 0
-      m_SpriteOverride: {fileID: -4624544536328802899, guid: db0ba0935fab1234295dea70e1d65829, type: 3}
+      m_SpriteOverride: {fileID: 6401149741775883659, guid: db0ba0935fab1234295dea70e1d65829, type: 3}
     - m_Name: Unbottoned Blazer
       m_Hash: 547372946
       m_Sprite: {fileID: -7942603193728049680, guid: db0ba0935fab1234295dea70e1d65829, type: 3}
@@ -1084,5 +1089,5 @@ MonoBehaviour:
     m_FromMain: 0
     m_EntryOverrideCount: 1
   m_PrimaryLibraryGUID: 
-  m_ModificationHash: 639001296941579965
+  m_ModificationHash: 639001893946966740
   m_Version: 1

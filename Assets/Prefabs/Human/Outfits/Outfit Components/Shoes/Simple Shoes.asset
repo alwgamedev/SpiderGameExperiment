@@ -10,12 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6dc58c4a866f4f14984fdb14089db61f, type: 3}
-  m_Name: Medium Length Mid Part Hair
+  m_Name: Simple Shoes
   m_EditorClassIdentifier: 
   group:
     groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
-    groupName: Hair
+    groupName: Shoes
   sprites:
   - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
-    category: Hair
-    label: Mid Length Mid Part
+    category: Foot L Clip On
+    label: Simple Shoe
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Foot R Clip On
+    label: Simple Shoe

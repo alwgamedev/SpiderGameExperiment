@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6dc58c4a866f4f14984fdb14089db61f, type: 3}
+  m_Name: Pants
+  m_EditorClassIdentifier: 
+  group:
+    groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    groupName: Pants
+  sprites:
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Belt Loop Under
+    label: Default
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Belt Loops
+    label: Default
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Calf L Clip On
+    label: Pants
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Calf R Clip On
+    label: Pants
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Pants Button
+    label: Default
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Pelvis Clip On
+    label: Pants
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Thigh L Clip On
+    label: Pants
+  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Thigh R Clip On
+    label: Pants
