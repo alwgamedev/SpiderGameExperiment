@@ -376,8 +376,13 @@ MonoBehaviour:
       m_Sprite: {fileID: -5392322686316922377, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: -5392322686316922377, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
+    - m_Name: Blazer
+      m_Hash: 334324378
+      m_Sprite: {fileID: 2621657794145364794, guid: db0ba0935fab1234295dea70e1d65829, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 2621657794145364794, guid: db0ba0935fab1234295dea70e1d65829, type: 3}
     m_FromMain: 0
-    m_EntryOverrideCount: 2
+    m_EntryOverrideCount: 3
   - m_Name: Bicep R
     m_Hash: 930714426
     m_CategoryList: []
@@ -424,8 +429,13 @@ MonoBehaviour:
       m_Sprite: {fileID: -3363309455487328581, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: -3363309455487328581, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
+    - m_Name: Blazer
+      m_Hash: 334324378
+      m_Sprite: {fileID: -5483254815193423755, guid: db0ba0935fab1234295dea70e1d65829, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -5483254815193423755, guid: db0ba0935fab1234295dea70e1d65829, type: 3}
     m_FromMain: 0
-    m_EntryOverrideCount: 2
+    m_EntryOverrideCount: 3
   - m_Name: Hand L
     m_Hash: 139640202
     m_CategoryList: []
@@ -494,8 +504,13 @@ MonoBehaviour:
       m_Sprite: {fileID: 904197852682383930, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: 904197852682383930, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
+    - m_Name: Blazer
+      m_Hash: 334324378
+      m_Sprite: {fileID: 402096658983041463, guid: db0ba0935fab1234295dea70e1d65829, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 402096658983041463, guid: db0ba0935fab1234295dea70e1d65829, type: 3}
     m_FromMain: 0
-    m_EntryOverrideCount: 2
+    m_EntryOverrideCount: 3
   - m_Name: Bicep L
     m_Hash: 225881689
     m_CategoryList: []
@@ -542,8 +557,13 @@ MonoBehaviour:
       m_Sprite: {fileID: 3374445480345687262, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: 3374445480345687262, guid: ece9d2f3210249849b5ee73914fdee86, type: 3}
+    - m_Name: Blazer
+      m_Hash: 334324378
+      m_Sprite: {fileID: -2440953510209644048, guid: db0ba0935fab1234295dea70e1d65829, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -2440953510209644048, guid: db0ba0935fab1234295dea70e1d65829, type: 3}
     m_FromMain: 0
-    m_EntryOverrideCount: 2
+    m_EntryOverrideCount: 3
   - m_Name: Belt Loops
     m_Hash: 738244746
     m_CategoryList: []
@@ -991,8 +1011,18 @@ MonoBehaviour:
       m_Sprite: {fileID: -7016086427025619393, guid: 50b9d95916b2fc7498121bc872a5f4c5, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: -7016086427025619393, guid: 50b9d95916b2fc7498121bc872a5f4c5, type: 3}
+    - m_Name: Buttoned Blazer
+      m_Hash: 631668360
+      m_Sprite: {fileID: -4624544536328802899, guid: db0ba0935fab1234295dea70e1d65829, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -4624544536328802899, guid: db0ba0935fab1234295dea70e1d65829, type: 3}
+    - m_Name: Unbottoned Blazer
+      m_Hash: 547372946
+      m_Sprite: {fileID: -7942603193728049680, guid: db0ba0935fab1234295dea70e1d65829, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -7942603193728049680, guid: db0ba0935fab1234295dea70e1d65829, type: 3}
     m_FromMain: 0
-    m_EntryOverrideCount: 4
+    m_EntryOverrideCount: 6
   - m_Name: Neck
     m_Hash: 2324845
     m_CategoryList: []
@@ -1015,18 +1045,44 @@ MonoBehaviour:
     m_OverrideEntries: []
     m_FromMain: 0
     m_EntryOverrideCount: 0
-  - m_Name: Glasses
-    m_Hash: 958358346
-    m_CategoryList: []
-    m_OverrideEntries: []
-    m_FromMain: 0
-    m_EntryOverrideCount: 0
   - m_Name: Facial Hair
     m_Hash: 262323632
     m_CategoryList: []
-    m_OverrideEntries: []
+    m_OverrideEntries:
+    - m_Name: Light Five Oclock Shadow
+      m_Hash: 702218231
+      m_Sprite: {fileID: 5228433349182423032, guid: db0ba0935fab1234295dea70e1d65829, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 5228433349182423032, guid: db0ba0935fab1234295dea70e1d65829, type: 3}
+    - m_Name: Heavy Five Oclock Shadow
+      m_Hash: 481476972
+      m_Sprite: {fileID: 2034439042121832306, guid: db0ba0935fab1234295dea70e1d65829, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 2034439042121832306, guid: db0ba0935fab1234295dea70e1d65829, type: 3}
     m_FromMain: 0
-    m_EntryOverrideCount: 0
+    m_EntryOverrideCount: 2
+  - m_Name: Glasses Frames
+    m_Hash: 458828790
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Top Only Wireframe Glasses
+      m_Hash: 908689519
+      m_Sprite: {fileID: 1918410202147475220, guid: db0ba0935fab1234295dea70e1d65829, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 1918410202147475220, guid: db0ba0935fab1234295dea70e1d65829, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: Glasses Lenses
+    m_Hash: 651812142
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: Top Only Wireframe Lenses
+      m_Hash: 390045704
+      m_Sprite: {fileID: -3793824967780096456, guid: db0ba0935fab1234295dea70e1d65829, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -3793824967780096456, guid: db0ba0935fab1234295dea70e1d65829, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
   m_PrimaryLibraryGUID: 
-  m_ModificationHash: 638995312117860642
+  m_ModificationHash: 639001296941579965
   m_Version: 1
