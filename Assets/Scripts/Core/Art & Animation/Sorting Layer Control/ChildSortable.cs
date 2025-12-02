@@ -8,7 +8,7 @@ public class ChildSortable : SortingDataSource
 {
     [SerializeField] Renderer _renderer;
     [SerializeField] int orderDelta;
-    [SerializeField] SortingDataSource slds;
+    [SerializeField] SortingDataSource sds;
 
     public override int? SortingLayerID
     {
@@ -18,9 +18,9 @@ public class ChildSortable : SortingDataSource
             {
                 return _renderer.sortingLayerID;
             }
-            if (slds != null)
+            if (sds != null)
             {
-                return slds.SortingLayerID;
+                return sds.SortingLayerID;
             }
             return null;
         }
@@ -34,9 +34,9 @@ public class ChildSortable : SortingDataSource
             {
                 return _renderer.sortingOrder;
             }
-            if (slds != null && slds.SortingOrder.HasValue)
+            if (sds != null && sds.SortingOrder.HasValue)
             {
-                return slds.SortingOrder.Value + orderDelta;
+                return sds.SortingOrder.Value + orderDelta;
             }
             return null;
         }
@@ -59,7 +59,7 @@ public class ChildSortable : SortingDataSource
 
     public override void OnParentDataUpdated(bool incrementUndoGroup = true)
     {
-        if (slds)
+        if (sds)
         {
 #if UNITY_EDITOR
             if (incrementUndoGroup)
@@ -68,7 +68,7 @@ public class ChildSortable : SortingDataSource
                 Undo.SetCurrentGroupName("Update Child Sorting Data");
             }
 #endif
-            SetSortingData(slds.SortingLayerID, slds.SortingOrder);
+            SetSortingData(sds.SortingLayerID, sds.SortingOrder);
             Debug.Log($"{name} updated sorting data");
             DataUpdated(false);
         }
@@ -86,11 +86,11 @@ public class ChildSortable : SortingDataSource
             parent.RemoveChild(this);
         }
 
-        if (!slds || IsOurChild(slds))
+        if (!sds || IsOurChild(sds))
         {
-            slds = null;
+            sds = null;
         }
-        parent = slds;
+        parent = sds;
 
         if (parent != null)
         {

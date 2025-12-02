@@ -43,13 +43,13 @@ public class Light2DIntensityScaler : MonoBehaviour
 
     private void ScaleIntensity()
     {
-            if (Light && Camera.main)
+        if (Light && Camera.main)
+        {
+            var d = Vector3.SqrMagnitude(transform.position - Camera.main.transform.position);
+            if (d != 0)
             {
-                var d = Vector3.SqrMagnitude(transform.position - Camera.main.transform.position);
-                if (d != 0)
-                {
-                    light2D.intensity = goalIntensity / d;
-                }
+                light2D.intensity = goalIntensity / d;
             }
+        }
     }
 }

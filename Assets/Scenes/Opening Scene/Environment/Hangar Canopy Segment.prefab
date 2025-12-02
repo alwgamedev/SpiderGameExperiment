@@ -168,9 +168,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   children:
   - {fileID: 0}
-  useInvertDelta: 0
+  _renderer: {fileID: 2341300725201766676}
   orderDelta: -1
   slds: {fileID: 6722488979120194772}
+  sds: {fileID: 6722488979120194772}
 --- !u!1 &3465114671592615354
 GameObject:
   m_ObjectHideFlags: 0
@@ -282,9 +283,10 @@ MonoBehaviour:
   - {fileID: 1170884707406170821}
   - {fileID: 8824305614773345842}
   - {fileID: 3799960491434881071}
-  useInvertDelta: 0
+  _renderer: {fileID: 6081798366171348015}
   orderDelta: -1
   slds: {fileID: 338795834559967462}
+  sds: {fileID: 338795834559967462}
 --- !u!1 &5000529741536404053
 GameObject:
   m_ObjectHideFlags: 0
@@ -406,9 +408,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   children:
   - {fileID: 6722488979120194772}
-  useInvertDelta: 0
+  _renderer: {fileID: 4800697792344919096}
   orderDelta: 0
   slds: {fileID: 7317760826018567506}
+  sds: {fileID: 7317760826018567506}
 --- !u!1001 &664117324366021502
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -417,6 +420,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5424508181106619389}
     m_Modifications:
+    - target: {fileID: 1803896434968545723, guid: 0e63f5d1f6cc0df4288d6eb722ec1f50, type: 3}
+      propertyPath: sds
+      value: 
+      objectReference: {fileID: 6722488979120194772}
     - target: {fileID: 1803896434968545723, guid: 0e63f5d1f6cc0df4288d6eb722ec1f50, type: 3}
       propertyPath: slds
       value: 
@@ -471,7 +478,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7001785399101563923, guid: 0e63f5d1f6cc0df4288d6eb722ec1f50, type: 3}
       propertyPath: m_Intensity
-      value: 8.537793
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 8746981038420077136, guid: 0e63f5d1f6cc0df4288d6eb722ec1f50, type: 3}
       propertyPath: m_PreviousTrimEdge
@@ -542,6 +549,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 5424508181106619389}
     m_Modifications:
     - target: {fileID: 1803896434968545723, guid: 0e63f5d1f6cc0df4288d6eb722ec1f50, type: 3}
+      propertyPath: sds
+      value: 
+      objectReference: {fileID: 6722488979120194772}
+    - target: {fileID: 1803896434968545723, guid: 0e63f5d1f6cc0df4288d6eb722ec1f50, type: 3}
       propertyPath: slds
       value: 
       objectReference: {fileID: 6722488979120194772}
@@ -595,7 +606,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7001785399101563923, guid: 0e63f5d1f6cc0df4288d6eb722ec1f50, type: 3}
       propertyPath: m_Intensity
-      value: 6.353922
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 8746981038420077136, guid: 0e63f5d1f6cc0df4288d6eb722ec1f50, type: 3}
       propertyPath: m_PreviousTrimEdge
@@ -666,6 +677,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 5424508181106619389}
     m_Modifications:
     - target: {fileID: 1803896434968545723, guid: 0e63f5d1f6cc0df4288d6eb722ec1f50, type: 3}
+      propertyPath: sds
+      value: 
+      objectReference: {fileID: 6722488979120194772}
+    - target: {fileID: 1803896434968545723, guid: 0e63f5d1f6cc0df4288d6eb722ec1f50, type: 3}
       propertyPath: slds
       value: 
       objectReference: {fileID: 6722488979120194772}
@@ -719,7 +734,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7001785399101563923, guid: 0e63f5d1f6cc0df4288d6eb722ec1f50, type: 3}
       propertyPath: m_Intensity
-      value: 6.29507
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 8746981038420077136, guid: 0e63f5d1f6cc0df4288d6eb722ec1f50, type: 3}
       propertyPath: m_PreviousTrimEdge
@@ -790,6 +805,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 5424508181106619389}
     m_Modifications:
     - target: {fileID: 1803896434968545723, guid: 0e63f5d1f6cc0df4288d6eb722ec1f50, type: 3}
+      propertyPath: sds
+      value: 
+      objectReference: {fileID: 6722488979120194772}
+    - target: {fileID: 1803896434968545723, guid: 0e63f5d1f6cc0df4288d6eb722ec1f50, type: 3}
       propertyPath: slds
       value: 
       objectReference: {fileID: 6722488979120194772}
@@ -843,7 +862,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7001785399101563923, guid: 0e63f5d1f6cc0df4288d6eb722ec1f50, type: 3}
       propertyPath: m_Intensity
-      value: 8.513761
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 8746981038420077136, guid: 0e63f5d1f6cc0df4288d6eb722ec1f50, type: 3}
       propertyPath: m_PreviousTrimEdge
