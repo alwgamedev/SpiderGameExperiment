@@ -3,41 +3,41 @@ using UnityEditor;
 using UnityEngine;
 
 [ExecuteAlways]
-public abstract class SortingLayerDataSource : MonoBehaviour
+public abstract class SortingDataSource : MonoBehaviour
 {
-    [SerializeField] List<SortingLayerDataSource> children = new();
+    [SerializeField] protected List<SortingDataSource> children = new();
 
-    protected SortingLayerDataSource parent;
+    protected SortingDataSource parent;
 
-    public SortingLayerDataSource Parent => parent;
+    public SortingDataSource Parent => parent;
 
     public abstract int? SortingLayerID { get; }
     public abstract int? SortingOrder { get; }
 
     private void OnValidate()
     {
-        children.Sort(MiscTools.MbPathComparer);
+        children.Sort((x,y) => MiscTools.ComponentPathCompare(x, y));
     }
 
-    public void AddChild(SortingLayerDataSource c)
+    public void AddChild(SortingDataSource c)
     {
         if (c && !children.Contains(c))
         {
             children.Add(c);
-            children.Sort(MiscTools.MbPathComparer);// <- to avoid fake prefab overrides caused by lists being in different orders
+            children.Sort((x, y) => MiscTools.ComponentPathCompare(x, y));// <- to avoid fake prefab overrides caused by lists being in different orders
         }
     }
 
-    public void RemoveChild(SortingLayerDataSource c)
+    public void RemoveChild(SortingDataSource c)
     {
         children.RemoveAll(x => x == c);
     }
 
-    public abstract void OnParentDataUpdated(bool invertDelta = false, bool incrementUndoGroup = true);
+    public abstract void OnParentDataUpdated(bool incrementUndoGroup = true);
 
     public abstract void OnParentDestroyed();
 
-    public void DataUpdated(bool invertDelta = false, bool incrementUndoGroup = true)
+    public void DataUpdated(bool incrementUndoGroup = true)
     {
 #if UNITY_EDITOR
         if (incrementUndoGroup)
@@ -51,7 +51,7 @@ public abstract class SortingLayerDataSource : MonoBehaviour
         {
             if (c)
             {
-                c.OnParentDataUpdated(invertDelta, false);
+                c.OnParentDataUpdated(false);
             }
         }
     }

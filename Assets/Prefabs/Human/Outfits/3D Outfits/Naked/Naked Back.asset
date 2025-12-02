@@ -15,8 +15,12 @@ MonoBehaviour:
   outfit:
     grouping: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
     components:
-    - group: Body
-      slice: {fileID: 11400000, guid: 9875dcba52e85ed41b2bb00aa1a37371, type: 2}
+    - group: Head
+      slice: {fileID: 11400000, guid: e2c61f9c4d57ac641a2ffdb3333d2875, type: 2}
+    - group: Upper Body
+      slice: {fileID: 11400000, guid: 41d71b55aaab9924da5276b1375bb449, type: 2}
+    - group: Lower Body
+      slice: {fileID: 11400000, guid: f1dd51426d09cae4fbe5f1d25ccdf225, type: 2}
     - group: Hair
       slice: {fileID: 11400000, guid: 3033fc2719e9106428f89991c9ce256f, type: 2}
     - group: Eyebrows

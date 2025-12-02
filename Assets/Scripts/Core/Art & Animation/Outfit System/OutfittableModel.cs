@@ -4,6 +4,8 @@ using UnityEngine;
 public class OutfittableModel : MonoBehaviour
 {
     [SerializeField] OutfitSlot[] slots;
+    [SerializeField] SortingControl sortingControl;
+    [SerializeField] SortingControl reversedSortingControl;
 
     public void ApplyOutfit(Outfit outfit)
     {
@@ -17,6 +19,18 @@ public class OutfittableModel : MonoBehaviour
             {
                 slots[i].EquipOutfit(outfit);
             }
+        }
+    }
+
+    public void UpdateSortingData(bool reversed)
+    {
+        if (reversed)
+        {
+            reversedSortingControl.DataUpdated(false);
+        }
+        else
+        {
+            sortingControl.DataUpdated(false);
         }
     }
 }

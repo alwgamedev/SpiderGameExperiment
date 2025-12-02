@@ -13,7 +13,7 @@ public class ColorControl : MonoBehaviour
 
     private void OnValidate()
     {
-        children.Sort(MiscTools.MbPathComparer);
+        children.Sort((x,y) => MiscTools.ComponentPathCompare(x, y));
     }
 
     public void SetColorAndUpdateChildren(Color c, bool incrementUndoGroup = true)
@@ -63,7 +63,7 @@ public class ColorControl : MonoBehaviour
         if (c && !children.Contains(c))
         {
             children.Add(c);
-            children.Sort(MiscTools.MbPathComparer);// <- to avoid fake prefab overrides caused by lists being in different order
+            children.Sort((x,y) => MiscTools.ComponentPathCompare(x, y));// <- to avoid fake prefab overrides caused by lists being in different order
         }
     }
 

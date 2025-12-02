@@ -1026,8 +1026,13 @@ MonoBehaviour:
       m_Sprite: {fileID: -7942603193728049680, guid: db0ba0935fab1234295dea70e1d65829, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: -7942603193728049680, guid: db0ba0935fab1234295dea70e1d65829, type: 3}
+    - m_Name: Blazer Back
+      m_Hash: 720223258
+      m_Sprite: {fileID: -3943265143201133820, guid: 1ebf5c19f06886d418beeecb45b74736, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -3943265143201133820, guid: 1ebf5c19f06886d418beeecb45b74736, type: 3}
     m_FromMain: 0
-    m_EntryOverrideCount: 6
+    m_EntryOverrideCount: 7
   - m_Name: Neck
     m_Hash: 2324845
     m_CategoryList: []
@@ -1089,5 +1094,5 @@ MonoBehaviour:
     m_FromMain: 0
     m_EntryOverrideCount: 1
   m_PrimaryLibraryGUID: 
-  m_ModificationHash: 639001893946966740
+  m_ModificationHash: 639002154719262877
   m_Version: 1

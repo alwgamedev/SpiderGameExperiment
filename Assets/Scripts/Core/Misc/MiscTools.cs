@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public static class MiscTools
 {
-    public static MonobehaviorPathComparer MbPathComparer = new();
+    public static GameObjectPathComparer GOPathComparer = new();
 
     public static void RemoveAllPersistentListeners(this UnityEventBase e)
     {
@@ -16,21 +16,26 @@ public static class MiscTools
         }
     }
 
-    public class MonobehaviorPathComparer : IComparer<MonoBehaviour>
+    public static int ComponentPathCompare(Component x, Component y)
     {
-        public int Compare(MonoBehaviour x, MonoBehaviour y)
+        return GOPathComparer.Compare(x ? x.gameObject : null, y ? y.gameObject : null);
+    }
+
+    public class GameObjectPathComparer : IComparer<GameObject>
+    {
+        public int Compare(GameObject x, GameObject y)
         {
-            if (!x || !x.gameObject)
+            if (!x)
             {
                 return y ? 1 : 0;
             }
-            if (!y || !y.gameObject)
+            if (!y)
             {
                 return -1;
             }
 
-            var m = x.gameObject.name;
-            var n = y.gameObject.name;
+            var m = x.name;
+            var n = y.name;
             var s = x.transform.parent;
             var t = y.transform.parent;
 
