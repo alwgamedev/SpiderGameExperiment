@@ -338,9 +338,9 @@ MonoBehaviour:
   m_IgnoreNavMeshObstacle: 1
   m_OverrideTileSize: 0
   m_TileSize: 256
-  m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
-  m_MinRegionArea: 2
+  m_OverrideVoxelSize: 1
+  m_VoxelSize: 0.0625
+  m_MinRegionArea: 1
   m_NavMeshData: {fileID: 23800000, guid: 78beed6afe3830f4d96db2d36312b3b6, type: 2}
   m_BuildHeightMesh: 0
 --- !u!4 &1152145446
@@ -465,7 +465,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1.0000002, z: 0.1}
+  m_Size: {x: 1, y: 1.0000002, z: 0.005}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &1811452488
 PrefabInstance:
@@ -628,11 +628,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 262185491040757799, guid: 26286d760ceeb574393ee7580b8d0587, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.46627045
+      value: 0.95119286
       objectReference: {fileID: 0}
     - target: {fileID: 262185491040757799, guid: 26286d760ceeb574393ee7580b8d0587, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -3.9287813
+      value: -3.8432763
       objectReference: {fileID: 0}
     - target: {fileID: 2474650558258242709, guid: 26286d760ceeb574393ee7580b8d0587, type: 3}
       propertyPath: m_Name
@@ -640,15 +640,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2946636055384656099, guid: 26286d760ceeb574393ee7580b8d0587, type: 3}
       propertyPath: TargetOffset.y
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 3826865288387874878, guid: 26286d760ceeb574393ee7580b8d0587, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.46627045
+      value: 0.95119286
       objectReference: {fileID: 0}
     - target: {fileID: 3826865288387874878, guid: 26286d760ceeb574393ee7580b8d0587, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -3.9287813
+      value: -3.8432763
       objectReference: {fileID: 0}
     - target: {fileID: 3928787708366374079, guid: 26286d760ceeb574393ee7580b8d0587, type: 3}
       propertyPath: m_LocalPosition.x
@@ -692,11 +692,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4135405913886855172, guid: 26286d760ceeb574393ee7580b8d0587, type: 3}
       propertyPath: field of view
-      value: 20
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 4354170936662549079, guid: 26286d760ceeb574393ee7580b8d0587, type: 3}
       propertyPath: Lens.FieldOfView
-      value: 20
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 4354170936662549079, guid: 26286d760ceeb574393ee7580b8d0587, type: 3}
       propertyPath: Target.TrackingTarget

@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6dc58c4a866f4f14984fdb14089db61f, type: 3}
+  m_Name: Belt Side
+  m_EditorClassIdentifier: 
+  group:
+    groupingAsset: {fileID: 11400000, guid: 1053c5b68375d814ba10ff0e3dd09f63, type: 2}
+    groupName: Belt
+  sprites:
+  - groupingAsset: {fileID: 11400000, guid: 1053c5b68375d814ba10ff0e3dd09f63, type: 2}
+    category: Belt
+    label: Default

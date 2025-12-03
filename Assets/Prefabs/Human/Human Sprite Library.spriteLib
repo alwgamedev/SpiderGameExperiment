@@ -1021,8 +1021,8 @@ MonoBehaviour:
       m_Sprite: {fileID: 6401149741775883659, guid: db0ba0935fab1234295dea70e1d65829, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: 6401149741775883659, guid: db0ba0935fab1234295dea70e1d65829, type: 3}
-    - m_Name: Unbottoned Blazer
-      m_Hash: 547372946
+    - m_Name: Unbuttoned Blazer
+      m_Hash: 338024805
       m_Sprite: {fileID: -7942603193728049680, guid: db0ba0935fab1234295dea70e1d65829, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: -7942603193728049680, guid: db0ba0935fab1234295dea70e1d65829, type: 3}
@@ -1094,5 +1094,5 @@ MonoBehaviour:
     m_FromMain: 0
     m_EntryOverrideCount: 1
   m_PrimaryLibraryGUID: 
-  m_ModificationHash: 639002154719262877
+  m_ModificationHash: 639003096149465080
   m_Version: 1

@@ -28,7 +28,10 @@ MonoBehaviour:
     category: Facial Hair
     group: Facial Hair
   - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
-    category: Glasses
+    category: Glasses Frames
+    group: Glasses
+  - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    category: Glasses Lenses
     group: Glasses
   - availableGroups: {fileID: 6407339182004339066, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
     category: Hand L Clip On

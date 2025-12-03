@@ -33,6 +33,11 @@ public abstract class SortingDataSource : MonoBehaviour
         children.RemoveAll(x => x == c);
     }
 
+    public void ClearChildren()
+    {
+        children.Clear();
+    }
+
     public abstract void OnParentDataUpdated(bool incrementUndoGroup = true);
 
     public abstract void OnParentDestroyed();

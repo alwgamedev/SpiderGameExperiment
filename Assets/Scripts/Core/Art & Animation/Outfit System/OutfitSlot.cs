@@ -41,8 +41,13 @@ public class OutfitSlot : MonoBehaviour
         Undo.RecordObject(SpriteResolver, "Modified Sprite Resolver");
 #endif
         var cat = SpriteResolver.GetCategory();
-        if (outfit.TryGetCategoryLabel(cat, out var label) && label != "None")
+        if (cat == null)
         {
+            Debug.Log($"{gameObject.name} is missing sprite resolver category.");
+        }
+        else if (outfit.TryGetCategoryLabel(cat, out var label) && label != "None")
+        {
+            //Debug.Log($"Setting {gameObject.name} label to {label}.");
             if (!SpriteRenderer.enabled)
             {
                 SpriteRenderer.enabled = true;

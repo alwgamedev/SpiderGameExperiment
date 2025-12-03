@@ -36,5 +36,12 @@ public class ChildSortableEditor : Editor
                 ((ChildSortable)t).FindRendererInChildren();
             }
         }
+        if (GUILayout.Button("Clear Children"))
+        {
+            foreach (var t in targets)
+            {
+                ((SortingDataSource)t).ClearChildren();
+            }
+        }
     }
 }

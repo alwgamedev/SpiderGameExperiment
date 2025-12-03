@@ -10,24 +10,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6dc58c4a866f4f14984fdb14089db61f, type: 3}
-  m_Name: Blazer Unbuttoned
+  m_Name: Blazer Unbuttoned Side
   m_EditorClassIdentifier: 
   group:
-    groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+    groupingAsset: {fileID: 11400000, guid: 1053c5b68375d814ba10ff0e3dd09f63, type: 2}
     groupName: Jacket
   sprites:
-  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+  - groupingAsset: {fileID: 11400000, guid: 1053c5b68375d814ba10ff0e3dd09f63, type: 2}
     category: Bicep L 2nd Clip On
     label: Blazer
-  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+  - groupingAsset: {fileID: 11400000, guid: 1053c5b68375d814ba10ff0e3dd09f63, type: 2}
     category: Bicep R 2nd Clip On
     label: Blazer
-  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+  - groupingAsset: {fileID: 11400000, guid: 1053c5b68375d814ba10ff0e3dd09f63, type: 2}
     category: Forearm L 2nd Clip On
     label: Blazer
-  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+  - groupingAsset: {fileID: 11400000, guid: 1053c5b68375d814ba10ff0e3dd09f63, type: 2}
     category: Forearm R 2nd Clip On
     label: Blazer
-  - groupingAsset: {fileID: 11400000, guid: d715713680e8fda489530e8c3c1f755c, type: 2}
+  - groupingAsset: {fileID: 11400000, guid: 1053c5b68375d814ba10ff0e3dd09f63, type: 2}
     category: Torso 2nd Clip On
     label: Unbuttoned Blazer
