@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class BuoyancySource : MonoBehaviour
 {
@@ -34,5 +35,14 @@ public class BuoyancySource : MonoBehaviour
             return WaterMesh.WaveYPosition(xPosition);
         }
         return transform.position.y + 0.5f * transform.lossyScale.y;
+    }
+
+    private void OnTriggerStay2D(Collider2D collider)
+    {
+        //im hoping the lookup is faster than TryGetComponent?
+        if (gameObject.activeInHierarchy && BuoyantObject.LookUp.TryGetValue(collider.gameObject, out var b)) 
+        {
+            b.OnEnteredWater(this);
+        }
     }
 }
