@@ -44,11 +44,20 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: World0
+    uniqueID: 2332500801
+    locked: 0
   - name: Player
     uniqueID: 3043240387
     locked: 0
+  - name: World1
+    uniqueID: 2500534509
+    locked: 0
   - name: Ground
     uniqueID: 1967131707
+    locked: 0
+  - name: World2
+    uniqueID: 2213216569
     locked: 0
   - name: Foreground
     uniqueID: 3118093053

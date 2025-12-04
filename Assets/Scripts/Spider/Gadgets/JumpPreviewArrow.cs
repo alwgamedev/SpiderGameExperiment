@@ -12,6 +12,7 @@ public class JumpPreviewArrow : MonoBehaviour
     [SerializeField] Color colorMax0;//max = crouchProgress == 1
     [SerializeField] Color colorMax1;
 
+    SpiderMovementController player;
     Transform arrowHeadAnchor;
     Material neckMaterial;
 
@@ -59,6 +60,8 @@ public class JumpPreviewArrow : MonoBehaviour
         //    player.JumpChargeEnded.AddListener(HideArrow);
         //}
 
+        player = Spider.Player.MovementController;
+
         arrowHeadAnchor = new GameObject("Arrow Head Anchor").transform;
         arrowHeadAnchor.position = new(arrowNeck.bounds.center.x, arrowNeck.bounds.max.y, 0);//need to make sure it's right on the edge of bounding box, otherwise scales poorly
         arrowHeadAnchor.SetParent(arrowNeck.transform, true);
@@ -99,10 +102,10 @@ public class JumpPreviewArrow : MonoBehaviour
     {
         if (!hasReachedMax)
         {
-            var t = SpiderMovementController.Player.CrouchProgress;
+            var t = player.CrouchProgress;
             SetStretch(Mathf.Lerp(stretchMin, stretchMax, t));
             SetColor(t);
-            if (t >= 1)
+            if (!(t < 1))
             {
                 hasReachedMax = true;
             }

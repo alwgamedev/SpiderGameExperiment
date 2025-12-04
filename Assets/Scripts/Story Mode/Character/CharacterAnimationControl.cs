@@ -6,9 +6,6 @@ public class CharacterAnimationControl : AnimationControl
     [SerializeField] float moveSpeedDampTime;
     [SerializeField] float moveSpeedMultiplier;//easier to set it here than set it in multiple blend trees
 
-    //you may want to just give fb and side models separate Animator components instead of swapping AC's,
-    //in case e.g. walk gets out of sync
-
     public void OnOrientationChanged(MathTools.OrientationXZ o)
     {
         var ac = GetAC(o);

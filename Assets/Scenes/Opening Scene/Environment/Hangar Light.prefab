@@ -104,7 +104,6 @@ MonoBehaviour:
   children: []
   _renderer: {fileID: 3589838878766412984}
   orderDelta: 1
-  slds: {fileID: 0}
   sds: {fileID: 0}
 --- !u!1 &4938288535997839581
 GameObject:

@@ -149,7 +149,7 @@ public static class MathTools
         if (det == 0)// parallel lines
         {
             intersection = p1;
-            return p2 == p1 || Cross2D(p2 - p1, v1) == 0;
+            return Cross2D(p2 - p1, v1) == 0;
         }
 
         float b1 = Cross2D(v1, p1);

@@ -11,6 +11,7 @@ public class GrappleShootPreview : MonoBehaviour
     //[SerializeField] float extensionRate;
     [SerializeField] LayerMask terminationMask;
 
+    SpiderMovementController player;
     GrappleCannon grapple;
     Vector3[] positions;
     Vector3 lastShootPosition;
@@ -19,12 +20,13 @@ public class GrappleShootPreview : MonoBehaviour
     Vector3 lastTerminusPosition;
     bool playerFacingRight;
 
-    SpiderMovementController Player => SpiderMovementController.Player;
+    //SpiderMovementController Player => Spider.Player.MovementController;
  
 
     private void Start()
     {
-        grapple = SpiderMovementController.Player.Grapple;
+        player = Spider.Player.MovementController;
+        grapple = player.Grapple;
         positions = new Vector3[lineRenderer.positionCount];
         lineRenderer.enabled = false;
     }
@@ -39,7 +41,7 @@ public class GrappleShootPreview : MonoBehaviour
                 lastShootDirection = grapple.ShootDirection;
             }
             SetLineRendererPositions();
-            playerFacingRight = Player.transform.lossyScale.x > 0;
+            //playerFacingRight = player.FacingRight;//transform.lossyScale.x > 0;was there a reason we were doing this instead of just check player.FacingRight?
         }
         else if (lineRenderer.enabled)
         {
@@ -51,7 +53,7 @@ public class GrappleShootPreview : MonoBehaviour
     private void SetLineRendererPositions()
     {
         Vector3 p = grapple.SourcePosition;
-        bool playerFacingRight = Player.FacingRight;
+        bool playerFacingRight = player.FacingRight;
         bool directionChange = playerFacingRight != this.playerFacingRight;
         lastShootDirection = directionChange ? grapple.ShootDirection : MathTools.CheapRotationalLerpClamped(lastShootDirection, grapple.ShootDirection, velocitySmoothingRate * Time.deltaTime, out directionChange);
         Vector3 v = grapple.ShootSpeed * lastShootDirection;
@@ -66,7 +68,6 @@ public class GrappleShootPreview : MonoBehaviour
         }
         else
         {
-
             Vector3 g = Physics2D.gravity;
             Vector3 l = 0.5f * g;
 

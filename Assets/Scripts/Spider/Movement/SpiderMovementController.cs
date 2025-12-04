@@ -144,7 +144,7 @@ public class SpiderMovementController : MonoBehaviour
     float GrappleScurryResistanceFraction => Mathf.Clamp(GrappleScurryResistance / grappleScurryResistanceMax, 0, 1);
 
     public float CrouchProgress => crouchProgress;
-    public Thruster Thrusters => thruster;
+    public Thruster Thruster => thruster;
     public GrappleCannon Grapple => grapple;
 
     public static SpiderMovementController Player;
@@ -188,7 +188,7 @@ public class SpiderMovementController : MonoBehaviour
         thruster.Initialize();
         thrusterFlame.Initialize();
 
-        Player = this;
+        //Player = this;
 
         //Time.timeScale = 0.25f;//useful for spotting issues
     }
