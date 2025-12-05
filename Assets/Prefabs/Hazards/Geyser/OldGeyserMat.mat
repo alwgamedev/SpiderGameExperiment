@@ -1,5 +1,18 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-4047539041451360112
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 9
 --- !u!21 &2100000
 Material:
   serializedVersion: 8
@@ -7,8 +20,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: AcidPoolMaterial
-  m_Shader: {fileID: -6465566751694194690, guid: f9f6f944debbca44fb067415a3ef07d9, type: 3}
+  m_Name: OldGeyserMat
+  m_Shader: {fileID: -6465566751694194690, guid: c102784e67ef244478db19fe69a66490, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -53,23 +66,20 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _Curve: 0
+    - _CurveVertex: 0.484
     - _EnableExternalAlpha: 0
+    - _NoiseScale: 50
+    - _ScrollSpeed: 1
+    - _TopScaleMultplier: 0.4
+    - _TopScaleTransitionRate: 0.25
     - _ZWrite: 0
     m_Colors:
-    - _Color: {r: 1, g: 0.95505327, b: 0, a: 0.2}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color0: {r: 0.2463154, g: 0.62234575, b: 0.6981132, a: 1}
+    - _Color1: {r: 0.4433962, g: 1, b: 0.98126155, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
+    - _ScrollDirection: {r: 0, g: -1, b: 0, a: 0}
+    - _Stretch: {r: 0.5, g: 0.04, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
---- !u!114 &6996329316022083240
-MonoBehaviour:
-  m_ObjectHideFlags: 11
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  version: 9

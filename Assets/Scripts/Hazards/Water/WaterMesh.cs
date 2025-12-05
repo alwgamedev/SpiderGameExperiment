@@ -110,7 +110,7 @@ public class WaterMesh : MonoBehaviour
         var uv = new Vector2[2 * numSprings];
         var triangles = new int[6 * (numSprings - 1)];
 
-        var springSpacing = CalculateSpringSacing();//springSpacing field might not be set if this is called in editor
+        var springSpacing = CalculateSpringSacing();//springSpacing field not yet set if this is called in editor
 
         for (int i = 0; i < numSprings; i++)
         {

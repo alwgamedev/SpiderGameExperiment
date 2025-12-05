@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: AcidPoolMaterial
-  m_Shader: {fileID: -6465566751694194690, guid: f9f6f944debbca44fb067415a3ef07d9, type: 3}
+  m_Name: GeyserMat
+  m_Shader: {fileID: -6465566751694194690, guid: f9aad3a59a553ca4795cb984242876d4, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -53,14 +53,22 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _CurveVertex: 0.56
     - _EnableExternalAlpha: 0
+    - _NoiseScale: 100
+    - _ScrollSpeed: 0.2
+    - _TopScaleMultplier: 1
     - _ZWrite: 0
     m_Colors:
-    - _Color: {r: 1, g: 0.95505327, b: 0, a: 0.2}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color0: {r: 0.24446416, g: 0.38500646, b: 0.4113207, a: 1}
+    - _Color1: {r: 0.5703738, g: 0.74682254, b: 0.78113204, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
+    - _ScrollDirection: {r: 0, g: -1, b: 0, a: 0}
+    - _Stretch: {r: 0.15, g: 0.01, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
---- !u!114 &6996329316022083240
+--- !u!114 &7492343259663506173
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}

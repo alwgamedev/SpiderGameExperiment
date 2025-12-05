@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: AcidPoolMaterial
+  m_Name: WaterMaterial
   m_Shader: {fileID: -6465566751694194690, guid: f9f6f944debbca44fb067415a3ef07d9, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -56,7 +56,7 @@ Material:
     - _EnableExternalAlpha: 0
     - _ZWrite: 0
     m_Colors:
-    - _Color: {r: 1, g: 0.95505327, b: 0, a: 0.2}
+    - _Color: {r: 0.5174439, g: 0.8490566, b: 0.81147254, a: 0.2}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
