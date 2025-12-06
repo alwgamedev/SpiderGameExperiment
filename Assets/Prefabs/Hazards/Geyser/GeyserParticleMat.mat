@@ -138,7 +138,7 @@ Material:
     - _EmissionEnabled: 0
     - _EnableExternalAlpha: 0
     - _EnvironmentReflections: 1
-    - _FadeRate: 8
+    - _FadeRate: 12
     - _FlipbookMode: 0
     - _GlossMapScale: 0
     - _Glossiness: 0

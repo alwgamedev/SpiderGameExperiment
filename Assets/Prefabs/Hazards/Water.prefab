@@ -106,7 +106,7 @@ BoxCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 119
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -151,13 +151,13 @@ MonoBehaviour:
   halfWidth: 12
   halfHeight: 4
   surfaceColliderBuffer: 0
-  numSprings: 120
-  springConstant: 0.003
+  numSprings: 60
+  springConstant: 0.0035
   dampingFactor: 0.01
   agitationScale: 0.05
   agitationPower: 1
-  waveSpreadRate: 0.02
-  waveSmoothingIterations: 6
+  waveSpreadRate: 0.005
+  waveSmoothingIterations: 4
 --- !u!114 &5344611822017034405
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -170,8 +170,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4c2218022c51a644ae8627ef063b0c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fluidDensity: 3
-  dampingFactor: 0.1
+  fluidDensity: 2
+  dampingFactor: 0.125
 --- !u!210 &4088557587105662576
 SortingGroup:
   m_ObjectHideFlags: 0

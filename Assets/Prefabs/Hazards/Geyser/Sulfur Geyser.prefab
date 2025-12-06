@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8714021845555473173}
   - component: {fileID: 6060415603220415088}
   - component: {fileID: 4517228697777419281}
+  - component: {fileID: 5115242064590204327}
   - component: {fileID: 4611569008668910489}
   m_Layer: 0
   m_Name: Sulfur Geyser
@@ -101,6 +102,18 @@ SortingGroup:
   m_SortingLayer: 3
   m_SortingOrder: 0
   m_SortAtRoot: 0
+--- !u!114 &5115242064590204327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2552882246459525355}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 036a44febb9088744adf9f8900ddd976, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &4611569008668910489
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -114,11 +127,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   verticesY: 200
-  width0: 3
+  width0: 1.5
   width1: 0.75
-  vertexMultiplicity: 6
+  vertexMultiplicity: 4
   height: 10
-  fadeHeight: 2
+  fadeHeight: 3
   fadeResetLerpRate: 4
 --- !u!1 &7229585701013793047
 GameObject:
@@ -170,7 +183,7 @@ ParticleSystem:
   emitterVelocityMode: 0
   looping: 1
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   startDelay:
@@ -290,7 +303,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 3
       scalar: 26
-      minScalar: 25
+      minScalar: 25.5
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -342,8 +355,8 @@ ParticleSystem:
     startColor:
       serializedVersion: 2
       minMaxState: 2
-      minColor: {r: 1, g: 1, b: 1, a: 0.7490196}
-      maxColor: {r: 0.7056604, g: 0.7056604, b: 0.7056604, a: 0}
+      minColor: {r: 1, g: 1, b: 1, a: 1}
+      maxColor: {r: 0.7056604, g: 0.7056604, b: 0.7056604, a: 0.5019608}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -407,7 +420,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 1.5
+      scalar: 1.75
       minScalar: 0.25
       maxCurve:
         serializedVersion: 2
@@ -785,7 +798,7 @@ ParticleSystem:
     serializedVersion: 6
     enabled: 1
     type: 4
-    angle: 2
+    angle: 0.1
     length: 5
     boxThickness: {x: 0, y: 0, z: 0}
     radiusThickness: 1
@@ -871,7 +884,7 @@ ParticleSystem:
     sphericalDirectionAmount: 0.075
     randomPositionAmount: 0
     radius:
-      value: 0.1
+      value: 0.001
       mode: 0
       spread: 0
       speed:
@@ -990,7 +1003,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1000
+      scalar: 500
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -1445,7 +1458,7 @@ ParticleSystem:
         key5: {r: 0, g: 0, b: 0, a: 0}
         key6: {r: 0, g: 0, b: 0, a: 0}
         key7: {r: 0, g: 0, b: 0, a: 0}
-        ctime0: 0
+        ctime0: 8558
         ctime1: 38010
         ctime2: 40940
         ctime3: 0
@@ -3752,7 +3765,7 @@ ParticleSystem:
     serializedVersion: 4
     type: 1
     collisionMode: 1
-    colliderForce: 20
+    colliderForce: 15
     multiplyColliderForceByParticleSize: 1
     multiplyColliderForceByParticleSpeed: 1
     multiplyColliderForceByCollisionAngle: 1
@@ -3922,7 +3935,7 @@ ParticleSystem:
     collidesWith:
       serializedVersion: 2
       m_Bits: 8
-    maxCollisionShapes: 256
+    maxCollisionShapes: 4
     quality: 0
     voxelSize: 0.5
     collisionMessages: 1

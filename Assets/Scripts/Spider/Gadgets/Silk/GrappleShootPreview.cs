@@ -1,6 +1,5 @@
 ﻿using System;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class GrappleShootPreview : MonoBehaviour
 {
@@ -16,7 +15,6 @@ public class GrappleShootPreview : MonoBehaviour
     Vector3[] positions;
     Vector3 lastShootPosition;
     Vector3 lastShootDirection;
-    //Vector3 lastShootVelocity;
     Vector3 lastTerminusPosition;
     bool playerFacingRight;
 
@@ -55,7 +53,8 @@ public class GrappleShootPreview : MonoBehaviour
         Vector3 p = grapple.SourcePosition;
         bool playerFacingRight = player.FacingRight;
         bool directionChange = playerFacingRight != this.playerFacingRight;
-        lastShootDirection = directionChange ? grapple.ShootDirection : MathTools.CheapRotationalLerpClamped(lastShootDirection, grapple.ShootDirection, velocitySmoothingRate * Time.deltaTime, out directionChange);
+        lastShootDirection = directionChange ? grapple.ShootDirection : 
+            MathTools.CheapRotationalLerpClamped(lastShootDirection, grapple.ShootDirection, velocitySmoothingRate * Time.deltaTime, out directionChange);
         Vector3 v = grapple.ShootSpeed * lastShootDirection;
 
         if (!directionChange && grapple.PowerUpFraction == 1)

@@ -9643,7 +9643,7 @@ CapsuleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0.75}
-  m_Size: {x: 1.5, y: 0.75}
+  m_Size: {x: 1.5, y: 1.1}
   m_Direction: 1
 --- !u!1001 &4934841031197647702
 PrefabInstance:
@@ -9672,6 +9672,10 @@ PrefabInstance:
     - target: {fileID: 1094623380466591251, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: m_SortingLayerID
       value: -1251726909
+      objectReference: {fileID: 0}
+    - target: {fileID: 1698156405823550936, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: terminationMask.m_Bits
+      value: 64
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: minLength
