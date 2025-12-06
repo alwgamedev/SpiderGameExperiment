@@ -55,14 +55,17 @@ Material:
     m_Floats:
     - _CurveVertex: 0.56
     - _EnableExternalAlpha: 0
+    - _FadeEnd: 1
+    - _FadeStart: 1
     - _NoiseScale: 100
     - _ScrollSpeed: 0.5
     - _TopScaleMultplier: 1
+    - _VerticalFadeV0: 0
     - _ZWrite: 0
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _Color0: {r: 1, g: 0.95686275, b: 0, a: 0.2}
-    - _Color1: {r: 0.9924528, g: 0.96326303, b: 0.29773572, a: 0.33333334}
+    - _Color0: {r: 1, g: 0.95686275, b: 0, a: 0.5019608}
+    - _Color1: {r: 0.7433963, g: 0.7261447, b: 0.30717695, a: 0.5019608}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
     - _ScrollDirection: {r: 0, g: -1, b: 0, a: 0}
     - _Stretch: {r: 0.15, g: 0.02, b: 0, a: 0}
