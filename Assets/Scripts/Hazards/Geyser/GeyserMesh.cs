@@ -59,7 +59,7 @@ public class GeyserMesh : MonoBehaviour
         var g = Mathf.Max(1 - (fadeHeight / height), 0);
         if (s < g)
         {
-            material.SetFloat(fadeStartProperty, Mathf.Lerp(s, 1 - g, fadeResetLerpRate * dt));
+            material.SetFloat(fadeStartProperty, Mathf.Lerp(s, g, fadeResetLerpRate * dt));
         }
         var e = material.GetFloat(fadeEndProperty);
         if (e < 1)
