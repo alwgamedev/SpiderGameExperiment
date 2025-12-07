@@ -9792,6 +9792,22 @@ PrefabInstance:
       propertyPath: m_SortingOrder
       value: -1000
       objectReference: {fileID: 0}
+    - target: {fileID: 7127481960608768322, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_Parameters.colorGradient.key0.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7127481960608768322, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_Parameters.colorGradient.key0.g
+      value: 0.6392157
+      objectReference: {fileID: 0}
+    - target: {fileID: 7127481960608768322, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_Parameters.colorGradient.key0.r
+      value: 0.03137255
+      objectReference: {fileID: 0}
+    - target: {fileID: 7127481960608768322, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_Parameters.colorGradient.key1.a
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7337905512642426967, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: m_Name
       value: Silk Grapple

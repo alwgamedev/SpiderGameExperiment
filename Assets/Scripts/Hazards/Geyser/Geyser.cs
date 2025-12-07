@@ -5,15 +5,22 @@ public class Geyser : MonoBehaviour
     GeyserMesh mesh;
     ParticleSystem particles;
 
-    bool active;
+    bool stateTransitionRequested;
+    bool handlePlayerContact;
     bool playerInContact;
+
+    GeyserState state;
 
     float particleP0;
     float particleV0;
     float particleG;
-    bool erupting;
-    float eruptTimer;
-    float eruptTime;
+    float transitionTimer;
+    float transitionTime;
+
+    enum GeyserState
+    {
+        dormant, erupting, active, dissolving
+    }
 
     private void Awake()
     {
@@ -30,25 +37,47 @@ public class Geyser : MonoBehaviour
 
     private void Update()
     {
-        if (!active && Input.GetKey(KeyCode.P))
+        if (Input.GetKeyDown(KeyCode.P))
         {
-            Erupt();
+            stateTransitionRequested = true;
+            //will be processed after any ongoing transition completes (so e.g. if in the middle of erupt, wait until that completes then dissolve)
+        }
+
+        switch (state)
+        {
+            case GeyserState.dormant:
+                if (stateTransitionRequested)
+                {
+                    stateTransitionRequested = false;
+                    Erupt();
+                }
+                break;
+            case GeyserState.erupting:
+                UpdateEruption(Time.deltaTime);
+                break;
+            case GeyserState.active:
+                if (stateTransitionRequested)
+                {
+                    stateTransitionRequested = false;
+                    Dissolve();
+                }
+                break;
+            case GeyserState.dissolving:
+                UpdateDissolve(Time.deltaTime);
+                break;
         }
     }
 
     private void FixedUpdate()
     {
-        if (active)
+        //I guess doing it in fixedupdate so collider position will be accurate, really not that important tho
+        if (handlePlayerContact)
         {
-            if (erupting)
-            {
-                UpdateEruption(Time.deltaTime);
-            }
-            HandleCollision(Time.deltaTime);
+            HandlePlayerContact(Time.deltaTime);
         }
     }
 
-    private void HandleCollision(float dt)
+    private void HandlePlayerContact(float dt)
     {
         var c = Spider.Player.TriggerCollider;
         if (mesh.Overlap(c.bounds))
@@ -79,26 +108,47 @@ public class Geyser : MonoBehaviour
 
     private void Erupt()
     {
+        state = GeyserState.erupting;
         particleP0 = particles.transform.position.y - transform.position.y;
         particleV0 = particles.main.startSpeed.constantMin;
         particleG = particles.main.gravityModifier.constant * Physics2D.gravity.y;
-        eruptTime = -particleV0 / particleG;
-        eruptTimer = 0;
+        transitionTime = -particleV0 / particleG;
+        transitionTimer = 0;
+        handlePlayerContact = true;
         particles.Play();
-        active = true;
-        erupting = true;
     }
 
 
     private void UpdateEruption(float dt)
     {
-        eruptTimer += dt;
-        if (eruptTimer > eruptTime)
+        transitionTimer += dt;
+        if (transitionTimer > transitionTime)
         {
-            eruptTimer = eruptTime;
-            erupting = false;
+            state = GeyserState.active;
         }
-        mesh.SetHeight(ParticleHeight(eruptTimer));
+        mesh.SetHeight(ParticleHeight(transitionTimer));
+    }
+
+    private void Dissolve()
+    {
+        state = GeyserState.dissolving;
+        mesh.SetHeight(0);
+        handlePlayerContact = false;
+        EnableParticleCollision(true);//since mesh bounds can't be used to detect contact anymore, just leave particle collision on until dissolve completes
+        transitionTimer = 0;
+        transitionTime = particles.main.startLifetime.constantMax;
+        particles.Stop();
+    }
+
+    //only point of the dissolving state is so that collision stays active until last particles die;
+    private void UpdateDissolve(float dt)
+    {
+        transitionTimer += dt;
+        if (transitionTimer > transitionTime)
+        {
+            EnableParticleCollision(false);
+            state = GeyserState.dormant;
+        }
     }
 
     private float ParticleHeight(float t)
