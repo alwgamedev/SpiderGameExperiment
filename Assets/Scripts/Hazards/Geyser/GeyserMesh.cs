@@ -94,7 +94,7 @@ public class GeyserMesh : MonoBehaviour
             v.y *= scaleFactor;//this is generally not a good idea due to loss of precision over repeated calls...
             vertices[i] = v;
         }
-        mesh.vertices = vertices;
+        mesh.SetVertices(vertices);
 
         //shader uses bounds so need to update
         height = y;

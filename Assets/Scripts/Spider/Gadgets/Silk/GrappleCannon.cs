@@ -26,6 +26,7 @@ public class GrappleCannon : MonoBehaviour
     [SerializeField] float retractMaxTension;
     [SerializeField] int constraintIterations;
     [SerializeField] int constraintIterationsPerCollisionCheck;
+    [SerializeField] int nodesPerRendererPosition;
     [SerializeField] float carrySpringForce;
     [SerializeField] CannonFulcrum cannonFulcrum;
 
@@ -405,7 +406,8 @@ public class GrappleCannon : MonoBehaviour
         //var nodeSpacing = minLength / (numNodes - 1);
         grapple = new Rope(SourcePosition, width, minLength, numNodes, minNodeSpacing, maxNodeSpacing,
                     drag, collisionMask, collisionSearchRadius, tunnelEscapeRadius, bounciness, grappleAnchorMask, 
-                    constraintIterations, constraintIterationsPerCollisionCheck);
+                    constraintIterations, constraintIterationsPerCollisionCheck,
+                    nodesPerRendererPosition);
         if (rescaleBuffer == null || rescaleBuffer.Length != numNodes)
         {
             Array.Resize(ref rescaleBuffer, numNodes);

@@ -155,7 +155,7 @@ public class WaterMesh : MonoBehaviour
             vertices[i] = v;
         }
 
-        mesh.vertices = vertices;
+        mesh.SetVertices(vertices);
     }
 
     private void UpdateSprings()

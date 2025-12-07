@@ -216,7 +216,7 @@ public struct RopeNode
         var newVelocity = collisionBounciness * Mathf.Sign(b) * (velocity - 2 * a * tang);
 
         position += diff * collisionNormal;
-        lastPosition = collisionThreshold == tunnelEscapeRadius ? position : position - newVelocity * dt;
+        lastPosition = /*collisionThreshold == tunnelEscapeRadius ? position : */position - newVelocity * dt;
     }
 
     //private void StoreCollisionVelocity(Rigidbody2D attachedRb, Vector2 collisionNormal)

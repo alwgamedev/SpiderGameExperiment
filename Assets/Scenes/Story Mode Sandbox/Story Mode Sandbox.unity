@@ -626,29 +626,9 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 262185491040757799, guid: 26286d760ceeb574393ee7580b8d0587, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.95119286
-      objectReference: {fileID: 0}
-    - target: {fileID: 262185491040757799, guid: 26286d760ceeb574393ee7580b8d0587, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -3.8432763
-      objectReference: {fileID: 0}
     - target: {fileID: 2474650558258242709, guid: 26286d760ceeb574393ee7580b8d0587, type: 3}
       propertyPath: m_Name
       value: Story Mode Cameras
-      objectReference: {fileID: 0}
-    - target: {fileID: 2946636055384656099, guid: 26286d760ceeb574393ee7580b8d0587, type: 3}
-      propertyPath: TargetOffset.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3826865288387874878, guid: 26286d760ceeb574393ee7580b8d0587, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.95119286
-      objectReference: {fileID: 0}
-    - target: {fileID: 3826865288387874878, guid: 26286d760ceeb574393ee7580b8d0587, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -3.8432763
       objectReference: {fileID: 0}
     - target: {fileID: 3928787708366374079, guid: 26286d760ceeb574393ee7580b8d0587, type: 3}
       propertyPath: m_LocalPosition.x
@@ -689,14 +669,6 @@ PrefabInstance:
     - target: {fileID: 3928787708366374079, guid: 26286d760ceeb574393ee7580b8d0587, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4135405913886855172, guid: 26286d760ceeb574393ee7580b8d0587, type: 3}
-      propertyPath: field of view
-      value: 50
-      objectReference: {fileID: 0}
-    - target: {fileID: 4354170936662549079, guid: 26286d760ceeb574393ee7580b8d0587, type: 3}
-      propertyPath: Lens.FieldOfView
-      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 4354170936662549079, guid: 26286d760ceeb574393ee7580b8d0587, type: 3}
       propertyPath: Target.TrackingTarget

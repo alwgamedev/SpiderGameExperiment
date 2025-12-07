@@ -4,7 +4,7 @@ using UnityEngine;
 [Serializable]
 public class GroundMap
 {
-    [SerializeField] float smoothingRate;
+    //[SerializeField] float smoothingRate;
 
     public int numFwdIntervals;
     public float intervalWidth;
@@ -335,111 +335,111 @@ public class GroundMap
         map = new GroundMapPt[NumPts];
     }
 
-    public void LerpUpdateMap(Vector2 origin, Vector2 originDown, Vector2 originRight, float raycastLength, int centralIndex, int raycastLayerMask)
-    {
-        int n = numFwdIntervals << 1;//last index of map array
-        Vector2 dp = origin - LastOrigin;
-        LastOrigin = origin;
-        LastOriginRight = originRight;
+    //public void LerpUpdateMap(Vector2 origin, Vector2 originDown, Vector2 originRight, float raycastLength, int centralIndex, int raycastLayerMask)
+    //{
+    //    int n = numFwdIntervals << 1;//last index of map array
+    //    Vector2 dp = origin - LastOrigin;
+    //    LastOrigin = origin;
+    //    LastOriginRight = originRight;
 
-        var r = MathTools.DebugRaycast(origin, originDown, raycastLength, raycastLayerMask, RaycastColor0);
-        if (r)
-        {
-            map[centralIndex].Set(r.point, r.normal, r.normal.CWPerp(), 0, r.distance, r.collider);
-        }
-        else
-        {
-            map[centralIndex].Set(origin + raycastLength * originDown, -originDown, originRight, 0, raycastLength, null);
-        }
+    //    var r = MathTools.DebugRaycast(origin, originDown, raycastLength, raycastLayerMask, RaycastColor0);
+    //    if (r)
+    //    {
+    //        map[centralIndex].Set(r.point, r.normal, r.normal.CWPerp(), 0, r.distance, r.collider);
+    //    }
+    //    else
+    //    {
+    //        map[centralIndex].Set(origin + raycastLength * originDown, -originDown, originRight, 0, raycastLength, null);
+    //    }
 
-        int i = centralIndex;
-        while (i < n)
-        {
-            ref var lastMapPt = ref map[i];
-            var lastNormal = lastMapPt.normal;
-            var lastRight = lastMapPt.right;
-            var lastRaycastLength = lastMapPt.raycastDistance;
-            var o = lastMapPt.point + lastRaycastLength * lastNormal;
-            i++;
+    //    int i = centralIndex;
+    //    while (i < n)
+    //    {
+    //        ref var lastMapPt = ref map[i];
+    //        var lastNormal = lastMapPt.normal;
+    //        var lastRight = lastMapPt.right;
+    //        var lastRaycastLength = lastMapPt.raycastDistance;
+    //        var o = lastMapPt.point + lastRaycastLength * lastNormal;
+    //        i++;
 
-            //first raycast horizontally to check if ground kicks UP suddenly (running into a wall e.g.)
-            r = MathTools.DebugRaycast(o, lastRight, intervalWidth, raycastLayerMask, RaycastColor1);
-            if (r)
-            {
-                map[i].Set(r.point, r.normal, r.normal.CWPerp(), lastMapPt.position + Vector2.Distance(lastMapPt.point, r.point),
-                    r.distance, r.collider);
-            }
-            else
-            {
-                //now shift forward and raycast down
-                o += intervalWidth * lastRight;
-                r = MathTools.DebugRaycast(o, -lastNormal, raycastLength, raycastLayerMask, RaycastColor2);
-                if (r)
-                {
-                    map[i].LerpTowards(dp, r.point, r.normal, r.normal.CWPerp(), lastMapPt.point, lastMapPt.position,
-                        true, r.distance * Vector2.Dot(lastNormal, r.normal), r.collider, smoothingRate);
-                }
-                else
-                {
-                    var l = Mathf.Min(lastRaycastLength + 0.5f * intervalWidth, raycastLength);
-                    r = Physics2D.Raycast(o - l * lastNormal, -lastRight, 2 * intervalWidth, raycastLayerMask);
-                    if (r)
-                    {
-                        map[i].Set(r.point, r.normal, r.normal.CWPerp(), lastMapPt.position + Vector2.Distance(lastMapPt.point, r.point), r.distance, r.collider);
-                    }
-                    else
-                    {
-                        o -= raycastLength * lastNormal;
-                        map[i].LerpTowards(dp, o, lastNormal, lastMapPt.right, lastMapPt.point, lastMapPt.position, true, raycastLength, null, smoothingRate);
-                    }
-                }
-            }
-        }
+    //        //first raycast horizontally to check if ground kicks UP suddenly (running into a wall e.g.)
+    //        r = MathTools.DebugRaycast(o, lastRight, intervalWidth, raycastLayerMask, RaycastColor1);
+    //        if (r)
+    //        {
+    //            map[i].Set(r.point, r.normal, r.normal.CWPerp(), lastMapPt.position + Vector2.Distance(lastMapPt.point, r.point),
+    //                r.distance, r.collider);
+    //        }
+    //        else
+    //        {
+    //            //now shift forward and raycast down
+    //            o += intervalWidth * lastRight;
+    //            r = MathTools.DebugRaycast(o, -lastNormal, raycastLength, raycastLayerMask, RaycastColor2);
+    //            if (r)
+    //            {
+    //                map[i].LerpTowards(dp, r.point, r.normal, r.normal.CWPerp(), lastMapPt.point, lastMapPt.position,
+    //                    true, r.distance * Vector2.Dot(lastNormal, r.normal), r.collider, smoothingRate);
+    //            }
+    //            else
+    //            {
+    //                var l = Mathf.Min(lastRaycastLength + 0.5f * intervalWidth, raycastLength);
+    //                r = Physics2D.Raycast(o - l * lastNormal, -lastRight, 2 * intervalWidth, raycastLayerMask);
+    //                if (r)
+    //                {
+    //                    map[i].Set(r.point, r.normal, r.normal.CWPerp(), lastMapPt.position + Vector2.Distance(lastMapPt.point, r.point), r.distance, r.collider);
+    //                }
+    //                else
+    //                {
+    //                    o -= raycastLength * lastNormal;
+    //                    map[i].LerpTowards(dp, o, lastNormal, lastMapPt.right, lastMapPt.point, lastMapPt.position, true, raycastLength, null, smoothingRate);
+    //                }
+    //            }
+    //        }
+    //    }
 
-        i = centralIndex;
-        while (i > 0)
-        {
-            //set map[i - 1]
-            ref var lastMapPt = ref map[i];
-            var lastNormal = lastMapPt.normal;
-            var lastTangent = -lastMapPt.right;
-            var lastRaycastLength = lastMapPt.raycastDistance;
-            var o = lastMapPt.point + lastRaycastLength * lastNormal;
-            i--;
+    //    i = centralIndex;
+    //    while (i > 0)
+    //    {
+    //        //set map[i - 1]
+    //        ref var lastMapPt = ref map[i];
+    //        var lastNormal = lastMapPt.normal;
+    //        var lastTangent = -lastMapPt.right;
+    //        var lastRaycastLength = lastMapPt.raycastDistance;
+    //        var o = lastMapPt.point + lastRaycastLength * lastNormal;
+    //        i--;
 
-            r = MathTools.DebugRaycast(o, lastTangent, intervalWidth, raycastLayerMask, RaycastColor1);
-            if (r)
-            {
-                map[i].Set(r.point, r.normal, r.normal.CWPerp(), lastMapPt.position - Vector2.Distance(lastMapPt.point, r.point), r.distance, r.collider);
-            }
-            else
-            {
-                //now shift forward and raycast down
-                o += intervalWidth * lastTangent;
-                r = MathTools.DebugRaycast(o, -lastNormal, raycastLength, raycastLayerMask, RaycastColor2);
-                if (r)
-                {
-                    map[i].LerpTowards(dp, r.point, r.normal, r.normal.CWPerp(), lastMapPt.point, lastMapPt.position,
-                        false, r.distance * Vector2.Dot(lastNormal, r.normal), r.collider, smoothingRate);
-                }
-                else
-                {
-                    var l = Mathf.Min(lastRaycastLength + 0.5f * intervalWidth, raycastLength);
-                    r = Physics2D.Raycast(o - l * lastNormal, -lastTangent, 2 * intervalWidth, raycastLayerMask);
-                    if (r)
-                    {
-                        map[i].Set(r.point, r.normal, r.normal.CWPerp(), lastMapPt.position - Vector2.Distance(lastMapPt.point, r.point),
-                            r.distance, r.collider);
-                    }
-                    else
-                    {
-                        o -= raycastLength * lastNormal;
-                        map[i].LerpTowards(dp, o, lastNormal, lastMapPt.right, lastMapPt.point, lastMapPt.position, false, raycastLength, null, smoothingRate);
-                    }
-                }
-            }
-        }
-    }
+    //        r = MathTools.DebugRaycast(o, lastTangent, intervalWidth, raycastLayerMask, RaycastColor1);
+    //        if (r)
+    //        {
+    //            map[i].Set(r.point, r.normal, r.normal.CWPerp(), lastMapPt.position - Vector2.Distance(lastMapPt.point, r.point), r.distance, r.collider);
+    //        }
+    //        else
+    //        {
+    //            //now shift forward and raycast down
+    //            o += intervalWidth * lastTangent;
+    //            r = MathTools.DebugRaycast(o, -lastNormal, raycastLength, raycastLayerMask, RaycastColor2);
+    //            if (r)
+    //            {
+    //                map[i].LerpTowards(dp, r.point, r.normal, r.normal.CWPerp(), lastMapPt.point, lastMapPt.position,
+    //                    false, r.distance * Vector2.Dot(lastNormal, r.normal), r.collider, smoothingRate);
+    //            }
+    //            else
+    //            {
+    //                var l = Mathf.Min(lastRaycastLength + 0.5f * intervalWidth, raycastLength);
+    //                r = Physics2D.Raycast(o - l * lastNormal, -lastTangent, 2 * intervalWidth, raycastLayerMask);
+    //                if (r)
+    //                {
+    //                    map[i].Set(r.point, r.normal, r.normal.CWPerp(), lastMapPt.position - Vector2.Distance(lastMapPt.point, r.point),
+    //                        r.distance, r.collider);
+    //                }
+    //                else
+    //                {
+    //                    o -= raycastLength * lastNormal;
+    //                    map[i].LerpTowards(dp, o, lastNormal, lastMapPt.right, lastMapPt.point, lastMapPt.position, false, raycastLength, null, smoothingRate);
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
 
     public void UpdateMap(Vector2 origin, Vector2 originDown, Vector2 originRight, float raycastLength, int centralIndex, int raycastLayerMask)
     {
@@ -447,7 +447,8 @@ public class GroundMap
         LastOrigin = origin;
         LastOriginRight = originRight;
 
-        var r = MathTools.DebugRaycast(origin, originDown, raycastLength, raycastLayerMask, RaycastColor0);
+        //var r = MathTools.DebugRaycast(origin, originDown, raycastLength, raycastLayerMask, RaycastColor0);
+        var r = Physics2D.Raycast(origin, originDown, raycastLength, raycastLayerMask);
         if (r)
         {
             map[centralIndex].Set(r.point, r.normal, r.normal.CWPerp(), 0, r.distance, r.collider);
@@ -467,7 +468,8 @@ public class GroundMap
             var o = lastMapPt.point + lastRaycastLength * lastNormal;
 
             //first raycast horizontally to check if ground kicks UP suddenly (running into a wall e.g.)
-            r = MathTools.DebugRaycast(o, lastRight, intervalWidth, raycastLayerMask, RaycastColor1);
+            //r = MathTools.DebugRaycast(o, lastRight, intervalWidth, raycastLayerMask, RaycastColor1);
+            r = Physics2D.Raycast(o, lastRight, intervalWidth, raycastLayerMask);
             if (r)
             {
                 map[i + 1].Set(r.point, r.normal, r.normal.CWPerp(), lastMapPt.position + Vector2.Distance(lastMapPt.point, r.point),
@@ -477,7 +479,8 @@ public class GroundMap
             {
                 //now shift forward and raycast down
                 o += intervalWidth * lastRight;
-                r = MathTools.DebugRaycast(o, -lastNormal, raycastLength, raycastLayerMask, RaycastColor2);
+                //r = MathTools.DebugRaycast(o, -lastNormal, raycastLength, raycastLayerMask, RaycastColor2);
+                r = Physics2D.Raycast(o, -lastNormal, raycastLength, raycastLayerMask);
                 if (r)
                 {
                     map[i + 1].Set(r.point, r.normal, r.normal.CWPerp(), lastMapPt.position + Vector2.Distance(lastMapPt.point, r.point),
@@ -509,7 +512,8 @@ public class GroundMap
             var lastRaycastLength = lastMapPt.raycastDistance;
             var o = lastMapPt.point + lastRaycastLength * lastNormal;
 
-            r = MathTools.DebugRaycast(o, lastTangent, intervalWidth, raycastLayerMask, RaycastColor1);
+            //r = MathTools.DebugRaycast(o, lastTangent, intervalWidth, raycastLayerMask, RaycastColor1);
+            r = Physics2D.Raycast(o, lastTangent, intervalWidth, raycastLayerMask);
             if (r)
             {
                 map[i - 1].Set(r.point, r.normal, r.normal.CWPerp(), lastMapPt.position - Vector2.Distance(lastMapPt.point, r.point), r.distance, r.collider);
@@ -518,7 +522,8 @@ public class GroundMap
             {
                 //now shift forward and raycast down
                 o += intervalWidth * lastTangent;
-                r = MathTools.DebugRaycast(o, -lastNormal, raycastLength, raycastLayerMask, RaycastColor2);
+                //r = MathTools.DebugRaycast(o, -lastNormal, raycastLength, raycastLayerMask, RaycastColor2);
+                r = Physics2D.Raycast(o, -lastNormal, raycastLength, raycastLayerMask);
                 if (r)
                 {
                     map[i - 1].Set(r.point, r.normal, r.normal.CWPerp(), lastMapPt.position - Vector2.Distance(lastMapPt.point, r.point),

@@ -22,6 +22,8 @@ public class Rope
     int anchorPointer;
 
     public readonly Vector3[] renderPositions;
+    public readonly int nodesPerRendererPosition;
+    public readonly float inverseNodesPerRendererPosition;
     bool renderPositionsNeedUpdate;
 
     public int AnchorPointer => anchorPointer;
@@ -31,7 +33,7 @@ public class Rope
 
     public Rope(Vector2 position, float width, float length, int numNodes, float minNodeSpacing, float maxNodeSpacing,
         float nodeDrag, int collisionMask, float collisionSearchRadius, float tunnelingEscapeRadius, float collisionBounciness, int terminusAnchorMask,
-        int constraintIterations, int constraintIterationsPerCollisionCheck)
+        int constraintIterations, int constraintIterationsPerCollisionCheck, int nodesPerRendererPosition = 1)
     {
         lastIndex = numNodes - 1;
         this.width = width;
@@ -46,7 +48,16 @@ public class Rope
         var collisionThreshold = 0.5f * width;
         nodes = Enumerable.Range(0, numNodes).Select(i => new RopeNode(position, Vector2.zero, a, 1, nodeDrag,
             collisionMask, collisionThreshold, collisionSearchRadius, tunnelingEscapeRadius, collisionBounciness, !(i > anchorPointer))).ToArray();
-        renderPositions = nodes.Select(x => (Vector3)x.position).ToArray();
+        this.nodesPerRendererPosition = nodesPerRendererPosition;
+        inverseNodesPerRendererPosition = 1 / (float)nodesPerRendererPosition;
+        int numRenderPositions = nodesPerRendererPosition == 1 ? nodes.Length : 1 + (nodes.Length / nodesPerRendererPosition);
+        renderPositions = new Vector3[numRenderPositions];
+        for (int i = 0; i < numRenderPositions; i++)
+        {
+            renderPositions[i] = nodes[nodesPerRendererPosition * i].position;
+        }
+        renderPositions[^1] = nodes[lastIndex].position;
+            //nodes.Select(x => (Vector3)x.position).ToArray();
     }
 
     public void DrawGizmos()
@@ -163,10 +174,22 @@ public class Rope
 
     private void UpdateRenderPositions()
     {
-        for (int i = 0; i < nodes.Length; i++)
+        renderPositions[0] = nodes[0].position;
+        Vector2 p = Vector2.zero;
+        for (int i = 1; i < lastIndex; i++)
         {
-            renderPositions[i] = nodes[i].position;
+            p += nodes[i].position;
+            if (i % nodesPerRendererPosition == 0)
+            {
+                renderPositions[i / nodesPerRendererPosition] = inverseNodesPerRendererPosition * p;
+                p = Vector2.zero;
+            }
         }
+        renderPositions[^1] = nodes[lastIndex].position;
+        //for (int i = 0; i < nodes.Length; i++)
+        //{
+        //    renderPositions[i] = nodes[i].position;
+        //}
     }
 
     private void UpdateVerletSimulation(float dt, float dt2)

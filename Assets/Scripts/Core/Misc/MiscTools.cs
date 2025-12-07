@@ -1,20 +1,19 @@
 ﻿using UnityEngine;
-using UnityEditor.Events;
-using UnityEngine.Events;
+//using UnityEngine.Events;
 using System.Collections.Generic;
 
 public static class MiscTools
 {
     public static GameObjectPathComparer GOPathComparer = new();
 
-    public static void RemoveAllPersistentListeners(this UnityEventBase e)
-    {
-        int i = e.GetPersistentEventCount();
-        while (i-- > 0)
-        {
-            UnityEventTools.RemovePersistentListener(e, i);
-        }
-    }
+    //public static void RemoveAllPersistentListeners(this UnityEventBase e)
+    //{
+    //    int i = e.GetPersistentEventCount();
+    //    while (i-- > 0)
+    //    {
+    //        UnityEventTools.RemovePersistentListener(e, i);
+    //    }
+    //}
 
     public static int ComponentPathCompare(Component x, Component y)
     {

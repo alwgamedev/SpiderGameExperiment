@@ -8783,7 +8783,6 @@ MonoBehaviour:
   upcomingGroundDirectionMaxPos: 0.4
   failedGroundDirectionSmoothingRate: 45
   groundMap:
-    smoothingRate: 0.6
     numFwdIntervals: 52
     intervalWidth: 0.025
     map:
@@ -9678,6 +9677,10 @@ PrefabInstance:
       value: 64
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: width
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: minLength
       value: 1
       objectReference: {fileID: 0}
@@ -9695,7 +9698,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: tunnelEscapeRadius
-      value: 0.4
+      value: 0.325
+      objectReference: {fileID: 0}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: nodesPerRendererPosition
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: constraintIterationsPerCollisionCheck

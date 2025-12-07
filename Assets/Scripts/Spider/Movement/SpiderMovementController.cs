@@ -834,27 +834,27 @@ public class SpiderMovementController : MonoBehaviour
         }
     }
 
-    private void LerpUpdateGroundMap()
-    {
-        if (grapple.FreeHanging)
-        {
-            groundMap.LerpUpdateMap(heightReferencePoint.position,
-                FreeHangGroundMapDown(),
-                FreeHangGroundMapRight(),
-                groundmapRaycastLength,
-                groundMap.CentralIndex,
-                groundLayer);
-        }
-        else
-        {
-            groundMap.LerpUpdateMap(heightReferencePoint.position,
-                -transform.up,
-                transform.right,
-                groundmapRaycastLength,
-                groundMap.CentralIndex,
-                groundLayer);
-        }
-    }
+    //private void LerpUpdateGroundMap()
+    //{
+    //    if (grapple.FreeHanging)
+    //    {
+    //        groundMap.LerpUpdateMap(heightReferencePoint.position,
+    //            FreeHangGroundMapDown(),
+    //            FreeHangGroundMapRight(),
+    //            groundmapRaycastLength,
+    //            groundMap.CentralIndex,
+    //            groundLayer);
+    //    }
+    //    else
+    //    {
+    //        groundMap.LerpUpdateMap(heightReferencePoint.position,
+    //            -transform.up,
+    //            transform.right,
+    //            groundmapRaycastLength,
+    //            groundMap.CentralIndex,
+    //            groundLayer);
+    //    }
+    //}
 
     private Vector2 FreeHangGroundMapDown()
     {
