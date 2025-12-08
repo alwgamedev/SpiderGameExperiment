@@ -7,9 +7,10 @@ public class SpringyMeshSimulator
     [SerializeField] protected float springConstant;
     [SerializeField] protected float damping;
 
+    public Vector3[] restPositions;
     public SpringyMeshVertex[] vertices;
     public int[] quads;//indices of the vertices of the quads (like triangles array in a mesh)
-    public Vector3[] edgesAtRest;//the displacements between adjacent vertices when the shape is at rest
+    //public Vector3[] edgesAtRest;//the displacements between adjacent vertices when the shape is at rest
 
     //2do: external forces
 
@@ -21,17 +22,22 @@ public class SpringyMeshSimulator
         }
 
         //Set accelerations
-        int k = -1;
-        int numQuads = quads.Length / 4;
-        for (int i = 0; i < numQuads; i++)
+        //int k = -1;
+        for (int i = 0; i < quads.Length / 4; i++)
         {
             int j = 4 * i;
-            AddSpringAcceleration(ref vertices[quads[j]], ref vertices[quads[j + 1]], edgesAtRest[++k], dt);
-            AddSpringAcceleration(ref vertices[quads[j + 3]], ref vertices[quads[j + 2]], edgesAtRest[++k], dt);
-            AddSpringAcceleration(ref vertices[quads[j]], ref vertices[quads[j + 3]], edgesAtRest[++k], dt);
-            AddSpringAcceleration(ref vertices[quads[j + 1]], ref vertices[quads[j + 2]], edgesAtRest[++k], dt);
-            AddSpringAcceleration(ref vertices[quads[j]], ref vertices[quads[j + 2]], edgesAtRest[++k], dt);
-            AddSpringAcceleration(ref vertices[quads[j + 1]], ref vertices[quads[j + 3]], edgesAtRest[++k], dt);
+            AddSpringAcceleration(quads[j], quads[j + 1], dt);
+            AddSpringAcceleration(quads[j + 3], quads[j + 2], dt);
+            AddSpringAcceleration(quads[j], quads[j + 3], dt);
+            AddSpringAcceleration(quads[j + 1], quads[j + 2], dt);
+            AddSpringAcceleration(quads[j], quads[j + 2], dt);
+            AddSpringAcceleration(quads[j + 1], quads[j + 3], dt);
+            //AddSpringAcceleration(ref vertices[quads[j]], ref vertices[quads[j + 1]], edgesAtRest[++k], dt);
+            //AddSpringAcceleration(ref vertices[quads[j + 3]], ref vertices[quads[j + 2]], edgesAtRest[++k], dt);
+            //AddSpringAcceleration(ref vertices[quads[j]], ref vertices[quads[j + 3]], edgesAtRest[++k], dt);
+            //AddSpringAcceleration(ref vertices[quads[j + 1]], ref vertices[quads[j + 2]], edgesAtRest[++k], dt);
+            //AddSpringAcceleration(ref vertices[quads[j]], ref vertices[quads[j + 2]], edgesAtRest[++k], dt);
+            //AddSpringAcceleration(ref vertices[quads[j + 1]], ref vertices[quads[j + 3]], edgesAtRest[++k], dt);
         }
 
         for (int i = 0; i < vertices.Length; i++)
@@ -39,6 +45,11 @@ public class SpringyMeshSimulator
             vertices[i].UpdateVerletSimulation(dt);
             //vertices[i].UpdateEulerSimulation(dt);
         }
+    }
+
+    private void AddSpringAcceleration(int i, int j, float dt)
+    {
+        AddSpringAcceleration(ref vertices[i],ref  vertices[j], restPositions[j] - restPositions[i], dt);
     }
 
     private void AddSpringAcceleration(ref SpringyMeshVertex p0, ref SpringyMeshVertex p1, Vector3 displacementAtRest, float dt)

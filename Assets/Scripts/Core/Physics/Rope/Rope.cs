@@ -4,8 +4,8 @@ using UnityEngine.Events;
 
 public class Rope
 {
-    public const int MAX_NUM_COLLISIONS = 4;
-    public const float CONSTRAINTS_TOLERANCE = 0.0001f;//0.005f;
+    //public const int MAX_NUM_COLLISIONS = 4;
+    public const float CONSTRAINTS_TOLERANCE = 0.00001f;//0.005f;
 
     public float width;
     public float nodeSpacing;
@@ -110,7 +110,6 @@ public class Rope
     {
         for (int i = anchorPointer + 1; i < nodes.Length; i++)
         {
-
             var d = nodes[i].position - nodes[i - 1].position;
             var l = d.magnitude;
 
@@ -118,21 +117,63 @@ public class Rope
 
             if (error > CONSTRAINTS_TOLERANCE)
             {
-                var c = (error / l) * d;
 
-                if (nodes[i - 1].CurrentCollision && nodes[i].CurrentCollision)
+                if (nodes[i - 1].CurrentCollision && nodes[i].CurrentCollision
+                    && Vector2.Dot(nodes[i - 1].lastCollisionNormal, nodes[i].lastCollisionNormal) < MathTools.cos15)
                 {
-                    //NOTE: neither node is anchored when this happens (because we clear CurrentCollision when set anchored)
-                    if (Vector2.Dot(nodes[i - 1].LastCollisionNormal, nodes[i].LastCollisionNormal) < MathTools.cos15)
+                    var v0 = nodes[i - 1].lastCollisionNormal.CCWPerp();
+                    var v1 = nodes[i].lastCollisionNormal.CCWPerp();
+                    if (MathTools.TryIntersectLine(nodes[i - 1].position, v0, nodes[i].position, v1, out var p))
                     {
-                        var v0 = nodes[i - 1].LastCollisionNormal.CCWPerp();
-                        var v1 = nodes[i].LastCollisionNormal.CCWPerp();
-                        c = 0.5f * c;
-                        nodes[i - 1].position += Vector2.Dot(c, v0) * v0;
-                        nodes[i].position -= Vector2.Dot(c, v1) * v1;
-                        return;
+                        var l0 = Vector2.Dot(p - nodes[i - 1].position, v0);
+                        var l1 = Vector2.Dot(p - nodes[i].position, v1);
+                        //var l = Mathf.Abs(l0) + Mathf.Abs(l1);
+                        //var error = l - nodeSpacing;
+                        error *= 0.5f;// * (Mathf.Abs(l0) + Mathf.Abs(l1)) / l;
+                        //nodes[i - 1].position += Mathf.Sign(l0) * error * v0;//move in the direction of p - node.pos
+                        //nodes[i].position += Mathf.Sign(l1) * error * v1;
+                        if (error > Mathf.Abs(l0))
+                        {
+                            nodes[i - 1].position = p - Mathf.Sign(l1) * (error - Mathf.Abs(l0)) * v1;
+                            nodes[i - 1].lastCollisionNormal = MathTools.CheapRotationalLerp(nodes[i - 1].lastCollisionNormal, nodes[i].lastCollisionNormal,
+                                error / (Mathf.Abs(l0) + Mathf.Abs(l1)), out _);//nodes[i].lastCollisionNormal;
+                        }
+                        else
+                        {
+                            nodes[i - 1].position += Mathf.Sign(l0) * error * v0;//move along v0 in the direction of p - node.pos
+                        }
+                        if (error > Mathf.Abs(l1))
+                        {
+                            nodes[i].position = p - Mathf.Sign(l0) * (error - Mathf.Abs(l1)) * v0;
+                            //nodes[i].lastCollisionNormal = nodes[i - 1].lastCollisionNormal;
+                            nodes[i - 1].lastCollisionNormal = MathTools.CheapRotationalLerp(nodes[i].lastCollisionNormal, nodes[i - 1].lastCollisionNormal,
+                                error / (Mathf.Abs(l0) + Mathf.Abs(l1)), out _);
+                        }
+                        else
+                        {
+                            nodes[i].position += Mathf.Sign(l1) * error * v1;
+                        }
+
+                        //behaves a lot more stably when you also do a standard constraint pull afterwards
+                        //(WITHOUT recomputing error!)
                     }
                 }
+
+                var c = (error / l) * d;
+
+                //if (nodes[i - 1].CurrentCollision && nodes[i].CurrentCollision)
+                //{
+                //    //NOTE: neither node is anchored when this happens(because we clear CurrentCollision when set anchored)
+                //    if (Vector2.Dot(nodes[i - 1].LastCollisionNormal, nodes[i].LastCollisionNormal) < MathTools.cos15)
+                //    {
+                //        var v0 = nodes[i - 1].LastCollisionNormal.CCWPerp();
+                //        var v1 = nodes[i].LastCollisionNormal.CCWPerp();
+                //        c = 0.5f * c;
+                //        nodes[i - 1].position += Vector2.Dot(c, v0) * v0;
+                //        nodes[i].position -= Vector2.Dot(c, v1) * v1;
+                //        return;
+                //    }
+                //}
 
                 if (nodes[i - 1].Anchored)
                 {

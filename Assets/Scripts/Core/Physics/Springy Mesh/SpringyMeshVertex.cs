@@ -22,6 +22,13 @@ public struct SpringyMeshVertex
     //    velocity += new Vector3(freezeX ? 0 : dt * acceleration.x, freezeY ? 0 : dt * acceleration.y, freezeZ ? 0 : dt * acceleration.z);
     //}
 
+    public void FreezePosition()
+    {
+        freezeX = true;
+        freezeY = true;
+        freezeZ = true;
+    }
+
     public void UpdateVerletSimulation(float dt)
     {
         var p = position;

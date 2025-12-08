@@ -42,12 +42,14 @@ public class WaterMeshSimulator : SpringyMeshSimulator
 
         //initialize vertices
         vertices = new SpringyMeshVertex[numVerticesX * numVerticesY];
+        restPositions = new Vector3[vertices.Length];
         int k = -1;
         for (int i = 0; i < numVerticesY; i++)
         {
             for (int j = 0; j < numVerticesX; j++)
             {
                 vertices[++k] = new(upperLeftCorner + i * quadHeight * Vector3.down + j * quadWidth * Vector3.right);
+                restPositions[k] = vertices[k].position;
                 //note k = i * numVerticesX + j
             }
         }
@@ -55,10 +57,10 @@ public class WaterMeshSimulator : SpringyMeshSimulator
         //freeze bottom and sides of rectangle
         for (int j = 0; j < numVerticesX; j++)
         {
-            ref var v = ref vertices[(numVerticesY - 1) * numVerticesX + j];
-            v.freezeX = true;
-            v.freezeY = true;
-            v.freezeZ = true;
+            vertices[(numVerticesY - 1) * numVerticesX + j].FreezePosition();
+            //v.freezeX = true;
+            //v.freezeY = true;
+            //v.freezeZ = true;
         }
         for (int i = 0; i < numVerticesY; i++)
         {
@@ -85,23 +87,23 @@ public class WaterMeshSimulator : SpringyMeshSimulator
         }
 
         //set edges of shape
-        edgesAtRest = new Vector3[6 * numQuads];
-        k = -1;
-        for (int i = 0; i < numQuads; i++)
-        {
-            int j = 4 * i;
-            //left vertical edge
-            edgesAtRest[++k] = vertices[quads[j + 1]].position - vertices[quads[j]].position;
-            //right vertical edge
-            edgesAtRest[++k] = vertices[quads[j + 2]].position - vertices[quads[j + 3]].position;
-            //top horizontal edge
-            edgesAtRest[++k] = vertices[quads[j + 3]].position - vertices[quads[j]].position;
-            //bottom horizontal edge
-            edgesAtRest[++k] = vertices[quads[j + 2]].position - vertices[quads[j + 1]].position;
-            //02 diagonal edge
-            edgesAtRest[++k] = vertices[quads[j + 2]].position - vertices[quads[j]].position;
-            //13 diagonal edge
-            edgesAtRest[++k] = vertices[quads[j + 3]].position - vertices[quads[j + 1]].position;
-        }
+        //edgesAtRest = new Vector3[6 * numQuads];
+        //k = -1;
+        //for (int i = 0; i < numQuads; i++)
+        //{
+        //    int j = 4 * i;
+        //    //left vertical edge
+        //    edgesAtRest[++k] = vertices[quads[j + 1]].position - vertices[quads[j]].position;
+        //    //right vertical edge
+        //    edgesAtRest[++k] = vertices[quads[j + 2]].position - vertices[quads[j + 3]].position;
+        //    //top horizontal edge
+        //    edgesAtRest[++k] = vertices[quads[j + 3]].position - vertices[quads[j]].position;
+        //    //bottom horizontal edge
+        //    edgesAtRest[++k] = vertices[quads[j + 2]].position - vertices[quads[j + 1]].position;
+        //    //02 diagonal edge
+        //    edgesAtRest[++k] = vertices[quads[j + 2]].position - vertices[quads[j]].position;
+        //    //13 diagonal edge
+        //    edgesAtRest[++k] = vertices[quads[j + 3]].position - vertices[quads[j + 1]].position;
+        //}
     }
 }

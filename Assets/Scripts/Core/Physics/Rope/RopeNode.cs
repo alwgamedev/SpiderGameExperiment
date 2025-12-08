@@ -10,6 +10,8 @@ public struct RopeNode
     public Vector2 lastPosition;
     public Vector2 acceleration;
 
+    public Vector2 lastCollisionNormal;
+
     public float mass;
     float drag;
 
@@ -18,13 +20,11 @@ public struct RopeNode
     //int storedVelocityPointer;
 
     bool anchored;
-
     readonly int collisionMask;
     readonly float collisionSearchRadius;
     readonly float tunnelEscapeRadius;
     readonly float collisionThreshold;
     readonly float collisionBounciness;
-    Vector2 lastCollisionNormal;
 
     static readonly Vector2[] raycastDirections = new Vector2[]
     {
@@ -43,7 +43,7 @@ public struct RopeNode
     public int CurrentCollisionLayerMask => CurrentCollision ? 1 << CurrentCollision.gameObject.layer : 0;
     public Collider2D CurrentCollision { get; private set; }
     public float CollisionThreshold => collisionThreshold;
-    public Vector2 LastCollisionNormal => lastCollisionNormal;
+    //public Vector2 LastCollisionNormal => lastCollisionNormal;
 
     public RopeNode(Vector2 position, Vector2 velocity, Vector2 acceleration, float mass, float drag,
         int collisionMask, float collisionThreshold, float collisionSearchRadius, float tunnelEscapeRadius, float collisionBounciness,
@@ -167,36 +167,42 @@ public struct RopeNode
 
     private void HandlePotentialCollision(float dt, ref RaycastHit2D r, float collisionThreshold, float collisionBounciness)
     {
-        //var l = r.distance;
-        //var n = r.normal;
-
-        if (!(r.distance > MathTools.o41))
+        //if (!(r.distance > MathTools.o41))
+        //{
+        //    if (lastCollisionNormal == Vector2.zero)
+        //    {
+        //        //Debug.Log("using the shitty case");
+        //        lastCollisionNormal = (position - (Vector2)r.collider.bounds.center).normalized;
+        //    }
+        //    //var velocity = (position - lastPosition) / dt;
+        //    //var tang = lastCollisionNormal.CWPerp();
+        //    //var a = Vector2.Dot(velocity, tang);
+        //    //var b = Vector2.Dot(velocity, lastCollisionNormal);
+        //    //var newVelocity = collisionBounciness * Mathf.Sign(b) * (velocity - 2 * a * tang);
+        //    //position += this.collisionThreshold * lastCollisionNormal;
+        //    ////lastPosition = position - newVelocity * dt;
+        //    //lastPosition = position;
+        //    //CurrentCollision = r.collider;
+        //    //return;
+        //}
+        //else
+        //{
+        //    lastCollisionNormal = r.normal;
+        //}
+        if (r.normal == Vector2.zero || r.distance == 0)
         {
             if (lastCollisionNormal == Vector2.zero)
             {
-                //Debug.Log("using the shitty case");
-                lastCollisionNormal = (r.point - (Vector2)r.collider.bounds.center).normalized;
+                lastCollisionNormal = (position - (Vector2)r.collider.bounds.center).normalized;
             }
-            //n = lastCollisionNormal;
-            var velocity = (position - lastPosition) / dt;
-            var tang = lastCollisionNormal.CWPerp();
-            var a = Vector2.Dot(velocity, tang);
-            var b = Vector2.Dot(velocity, lastCollisionNormal);
-            var newVelocity = collisionBounciness * Mathf.Sign(b) * (velocity - 2 * a * tang);
-            position += this.collisionThreshold * lastCollisionNormal;
-            lastPosition = position - newVelocity * dt;
-            //StoreCollisionVelocity(r.collider.attachedRigidbody, n);
-            CurrentCollision = r.collider;
-            return;
+            r.normal = lastCollisionNormal;
         }
-        else
-        {
-            lastCollisionNormal = r.normal;
-        }
+        lastCollisionNormal = r.normal;
+
 
         if (r.distance < collisionThreshold)
         {
-            ResolveCollision(dt, r.distance, collisionThreshold, collisionBounciness, r.normal, r.collider.attachedRigidbody);
+            ResolveCollision(dt, r.distance, collisionThreshold, collisionBounciness, r.normal);
             CurrentCollision = r.collider;
         }
         else
@@ -206,17 +212,29 @@ public struct RopeNode
         }
     }
 
-    private void ResolveCollision(float dt, float distanceToContactPoint, float collisionThreshold, float collisionBounciness, Vector2 collisionNormal, Rigidbody2D attachedRb)
+    private void ResolveCollision(float dt, float distanceToContactPoint, float collisionThreshold, float collisionBounciness,
+        Vector2 collisionNormal)
     {
-        var velocity = (position - lastPosition) / dt;
         var diff = Mathf.Min(collisionThreshold - distanceToContactPoint, this.collisionThreshold);
+        var velocity = (position - lastPosition) / dt;
         var tang = collisionNormal.CWPerp();
         var a = Vector2.Dot(velocity, tang);
         var b = Vector2.Dot(velocity, collisionNormal);
         var newVelocity = collisionBounciness * Mathf.Sign(b) * (velocity - 2 * a * tang);
-
         position += diff * collisionNormal;
-        lastPosition = /*collisionThreshold == tunnelEscapeRadius ? position : */position - newVelocity * dt;
+        lastPosition = position - newVelocity * dt;
+        //if (tunneling)
+        //{
+        //    lastPosition = position;
+        //}
+        //else
+        //{
+        //    var tang = collisionNormal.CWPerp();
+        //    var a = Vector2.Dot(velocity, tang);
+        //    var b = Vector2.Dot(velocity, collisionNormal);
+        //    var newVelocity = collisionBounciness * Mathf.Sign(b) * (velocity - 2 * a * tang);
+        //    lastPosition = position - newVelocity * dt;
+        //}
     }
 
     //private void StoreCollisionVelocity(Rigidbody2D attachedRb, Vector2 collisionNormal)
