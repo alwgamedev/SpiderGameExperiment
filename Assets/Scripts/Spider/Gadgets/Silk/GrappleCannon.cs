@@ -28,6 +28,7 @@ public class GrappleCannon : MonoBehaviour
     [SerializeField] int constraintIterationsPerCollisionCheck;
     [SerializeField] int nodesPerRendererPosition;
     [SerializeField] float carrySpringForce;
+    [SerializeField] float carryTensionMax;
     [SerializeField] CannonFulcrum cannonFulcrum;
 
     int grappleReleaseInput;//1 = release, -1 = retract, 0 = none
@@ -371,7 +372,7 @@ public class GrappleCannon : MonoBehaviour
         var t = NormalizedStrictTension(firstCollisionIndex);//NormalizedStrictTension(firstCollisionIndex);
         if (t > 0)
         {
-            LastCarryForce = /*shooterRb.mass **/ carrySpringForce * t * LastCarryForceDirection;
+            LastCarryForce = carrySpringForce * Mathf.Min(t, carryTensionMax) * LastCarryForceDirection;
             cannonFulcrum.ApplyForce(LastCarryForce, LastCarryForceDirection, shooterRb, FreeHanging);
         }
         else

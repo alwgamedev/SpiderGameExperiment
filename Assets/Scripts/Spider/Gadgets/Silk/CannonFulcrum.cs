@@ -72,11 +72,13 @@ public class CannonFulcrum
         //^yes, dividing by leverLength is correct (as checked by computing theta'' from theta = arctan(y/x)) -- we're dealing with accelerations instead of force/torque
         if (freeHanging)
         {
-            shooterRb.AddForceAtPosition(force - fNormal * u - shooterRb.mass * linearDamping * Vector2.Dot(shooterRb.linearVelocity, forceDirection) * forceDirection, baseAnchor.position);
+            shooterRb.AddForceAtPosition(force - fNormal * u - 
+                shooterRb.mass * linearDamping * Vector2.Dot(shooterRb.linearVelocity, forceDirection) * forceDirection, baseAnchor.position);
         }
         else
         {
-            shooterRb.AddForce(force - fNormal * u - shooterRb.mass * linearDamping * Vector2.Dot(shooterRb.linearVelocity, forceDirection) * forceDirection);
+            shooterRb.AddForce(force - fNormal * u - 
+                shooterRb.mass * linearDamping * Vector2.Dot(shooterRb.linearVelocity, forceDirection) * forceDirection);
         }
     }
 

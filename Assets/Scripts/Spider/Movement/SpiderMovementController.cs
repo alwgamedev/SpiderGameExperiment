@@ -441,6 +441,7 @@ public class SpiderMovementController : MonoBehaviour
         }
         else
         {
+            //needs fixing because a) looks bad, b) can clip through solid objects when you flip
             Vector2 o = grapple.FreeHangLeveragePoint;
             var p = transform.position;
             var s = transform.localScale;

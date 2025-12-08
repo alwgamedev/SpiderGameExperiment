@@ -5,7 +5,7 @@ using UnityEngine.Events;
 public class Rope
 {
     //public const int MAX_NUM_COLLISIONS = 4;
-    public const float CONSTRAINTS_TOLERANCE = 0.00001f;//0.005f;
+    public const float CONSTRAINTS_TOLERANCE = MathTools.o41;//0.005f;
 
     public float width;
     public float nodeSpacing;
@@ -119,7 +119,7 @@ public class Rope
             {
 
                 if (nodes[i - 1].CurrentCollision && nodes[i].CurrentCollision
-                    && Vector2.Dot(nodes[i - 1].lastCollisionNormal, nodes[i].lastCollisionNormal) < MathTools.cos15)
+                    && Vector2.Dot(nodes[i - 1].lastCollisionNormal, nodes[i].lastCollisionNormal) < MathTools.sin15)
                 {
                     var v0 = nodes[i - 1].lastCollisionNormal.CCWPerp();
                     var v1 = nodes[i].lastCollisionNormal.CCWPerp();
@@ -153,9 +153,18 @@ public class Rope
                         {
                             nodes[i].position += Mathf.Sign(l1) * error * v1;
                         }
+                        //return;
 
-                        //behaves a lot more stably when you also do a standard constraint pull afterwards
-                        //(WITHOUT recomputing error!)
+                        //behaves more stably when you also do a standard constraint pull afterwards
+                        //(and without recomputing error -- bit of a fudge bc im not sure why but we'll revisit this at some point)
+                        //d = nodes[i].position - nodes[i - 1].position;
+                        //l = d.magnitude;
+
+                        //error = l - nodeSpacing;
+                        //if (!(error > CONSTRAINTS_TOLERANCE))
+                        //{
+                        //    return;
+                        //}
                     }
                 }
 
