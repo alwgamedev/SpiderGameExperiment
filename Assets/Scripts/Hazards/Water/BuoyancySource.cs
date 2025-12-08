@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class BuoyancySource : MonoBehaviour
 {
@@ -7,11 +6,11 @@ public class BuoyancySource : MonoBehaviour
     [SerializeField] float dampingFactor;
     //[SerializeField] float testingHeight;
 
-    public WaterMesh WaterMesh { get; private set; }
+    public WaterMeshManager WaterMeshManager { get; private set; }//SimpleWaterMesh WaterMesh { get; private set; }
 
     private void Awake()
     {
-        WaterMesh = GetComponent<WaterMesh>();
+        WaterMeshManager = GetComponent<WaterMeshManager>();
     }
 
     public Vector2 BuoyancyForce(float areaDisplaced)
@@ -30,11 +29,7 @@ public class BuoyancySource : MonoBehaviour
     //to-do
     public float FluidHeight(float xPosition)
     {
-        if (WaterMesh)
-        {
-            return WaterMesh.WaveYPosition(xPosition);
-        }
-        return transform.position.y + 0.5f * transform.lossyScale.y;
+        return WaterMeshManager.FluidHeight(xPosition);
     }
 
     private void OnTriggerStay2D(Collider2D collider)

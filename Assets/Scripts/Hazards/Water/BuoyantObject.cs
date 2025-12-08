@@ -56,7 +56,8 @@ public class BuoyantObject : MonoBehaviour
             }
 
             //AGITATE WATER
-            buoyancySource.WaterMesh.AgitateWater(transform.position.x, transform.position.y, halfWidth, rb.linearVelocityY);
+            buoyancySource.WaterMeshManager.HandleDisplacement(coll, Time.deltaTime);
+            //buoyancySource.WaterMeshManager.AgitateWater(transform.position.x, transform.position.y, halfWidth, rb.linearVelocityY);
         }
     }
 
@@ -70,7 +71,7 @@ public class BuoyantObject : MonoBehaviour
     /// Cross section width in direction of current velocity
     public float CrossSectionWidth(Vector2 velocityDirection)
     {
-        if (velocityDirection.y < 1E-05f)
+        if (velocityDirection.y < MathTools.o41)
         {
             return weight;
         }

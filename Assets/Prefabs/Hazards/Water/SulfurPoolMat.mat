@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: AcidPoolMaterial
-  m_Shader: {fileID: -6465566751694194690, guid: f9f6f944debbca44fb067415a3ef07d9, type: 3}
+  m_Name: SulfurPoolMat
+  m_Shader: {fileID: -6465566751694194690, guid: fc9a1aa983ce36e4b9138e03f2a9e19e, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -19,7 +19,7 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
-  m_LockedProperties: 
+  m_LockedProperties: _Color1
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -53,14 +53,30 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _Color0: 0
+    - _Color1: 0
     - _EnableExternalAlpha: 0
+    - _NoiseDensity: 0.73
+    - _NoiseScale: 2.47
+    - _ScrollSpeed: 0.28
+    - _Stretch: 1
+    - _WavinessAmplitude: 0.4
+    - _WavinessNoiseScale: 1.63
+    - _WavinessScrollSpeed: 0.36
     - _ZWrite: 0
     m_Colors:
-    - _Color: {r: 1, g: 0.95686275, b: 0, a: 0.29803923}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color0: {r: 1, g: 0.9490196, b: 0, a: 0.20392157}
+    - _Color1: {r: 1, g: 0.94972056, b: 0, a: 0.4}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
+    - _ScrollDirection: {r: 1, g: 0, b: 0, a: 0}
+    - _ScrollSpeed: {r: 1, g: 1, b: 0, a: 0}
+    - _Stretch: {r: 0.63, g: 1.12, b: 0, a: 0}
+    - _WavinessScrollDirection: {r: -2, g: -0.36, b: 0, a: 0}
+    - _WavinessStretch: {r: 0.25, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
---- !u!114 &6996329316022083240
+--- !u!114 &4914344825338016843
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}

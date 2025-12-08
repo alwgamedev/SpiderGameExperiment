@@ -1,9 +1,5 @@
 ﻿public class Spring1D
 {
-    //float springConstant;
-    //float dampingFactor;
-
-    //bool hasMoved;
     float displacement;
     float velocity;
     float acceleration;

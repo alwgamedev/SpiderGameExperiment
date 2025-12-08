@@ -151,12 +151,12 @@ MonoBehaviour:
   halfWidth: 12
   halfHeight: 4
   surfaceColliderBuffer: 0
-  numSprings: 60
+  numSprings: 120
   springConstant: 0.0035
   dampingFactor: 0.01
-  agitationScale: 0.05
+  agitationScale: 0.04
   agitationPower: 1
-  waveSpreadRate: 0.005
+  waveSpreadRate: 0.01
   waveSmoothingIterations: 4
 --- !u!114 &5344611822017034405
 MonoBehaviour:

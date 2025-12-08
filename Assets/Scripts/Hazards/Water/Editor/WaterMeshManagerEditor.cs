@@ -1,9 +1,9 @@
+﻿using UnityEditor;
 using UnityEngine;
-using UnityEditor;
 
 [CanEditMultipleObjects]
-[CustomEditor(typeof(WaterMesh))]
-public class WaterMeshEditor : Editor
+[CustomEditor(typeof(WaterMeshManager))]
+public class WaterMeshManagerEditor : Editor
 {
     public override void OnInspectorGUI()
     {
@@ -13,7 +13,7 @@ public class WaterMeshEditor : Editor
         {
             foreach (var t in targets)
             {
-                ((WaterMesh)t).GenerateMesh();
+                ((WaterMeshManager)t).Initialize();
             }
         }
 
@@ -21,7 +21,7 @@ public class WaterMeshEditor : Editor
         {
             foreach (var t in targets)
             {
-                ((WaterMesh)t).ResizeBoxCollider();
+                ((WaterMeshManager)t).ResizeCollider();
             }
         }
     }

@@ -2,7 +2,7 @@
 
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
-public class WaterMesh : MonoBehaviour
+public class SimpleWaterMesh : MonoBehaviour
 {
     [Min(.01f)][SerializeField] float halfWidth;
     [Min(.01f)][SerializeField] float halfHeight;
@@ -121,7 +121,7 @@ public class WaterMesh : MonoBehaviour
 
         for (int i = 0; i < numSprings; i++)
         {
-            var x = i / (numSprings - 1);
+            var x = (float)i / (numSprings - 1);
             uv[i] = new(x, 1);
             uv[numSprings + i] = new(x, 0);
         }
@@ -141,6 +141,7 @@ public class WaterMesh : MonoBehaviour
         mesh.triangles = triangles;
         mesh.uv = uv;
 
+        mesh.RecalculateNormals();
         meshFilter.mesh = mesh;
     }
 
