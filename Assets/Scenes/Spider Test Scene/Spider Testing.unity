@@ -2057,7 +2057,7 @@ PolygonCollider2D:
       - {x: -6.8258867, y: -1.7031908}
       - {x: -8.124191, y: -1.7731286}
       - {x: -8.340225, y: -1.7800002}
-  m_UseDelaunayMesh: 0
+  m_UseDelaunayMesh: 1
 --- !u!1 &1054297302
 GameObject:
   m_ObjectHideFlags: 0
@@ -8501,54 +8501,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: drag
-      value: 0.01
-      objectReference: {fileID: 0}
-    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: numNodes
-      value: 151
-      objectReference: {fileID: 0}
-    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: bounciness
-      value: 0.95
-      objectReference: {fileID: 0}
-    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: maxCarryForce
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: carryTensionMax
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: tunnelEscapeRadius
-      value: 0.4
-      objectReference: {fileID: 0}
-    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: constraintIterations
-      value: 21
-      objectReference: {fileID: 0}
-    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: collisionSearchRadius
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: nodesPerRendererPosition
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: cannonFulcrum.linearDamping
-      value: 8.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: cannonFulcrum.angularDamping
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1051379001623071205, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: constraintIterationsPerCollisionCheck
-      value: 3
-      objectReference: {fileID: 0}
     - target: {fileID: 8910507805382992582, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: m_LocalPosition.x
       value: -42.7

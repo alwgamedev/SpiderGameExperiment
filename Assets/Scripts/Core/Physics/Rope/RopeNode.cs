@@ -1,10 +1,13 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 [Serializable]
 public struct RopeNode
 {
     //const int NUM_STORED_VELOCITY_RBS = 4;
+
+
 
     public Vector2 position;
     public Vector2 lastPosition;
@@ -25,6 +28,9 @@ public struct RopeNode
     readonly float tunnelEscapeRadius;
     readonly float collisionThreshold;
     readonly float collisionBounciness;
+    RaycastHit2D collisionRay;
+
+    readonly static RaycastHit2D defaultRay = default;
 
     static readonly Vector2[] raycastDirections = new Vector2[]
     {
@@ -66,6 +72,7 @@ public struct RopeNode
         this.tunnelEscapeRadius = tunnelEscapeRadius;
         this.collisionBounciness = collisionBounciness;
         CurrentCollision = null;
+        collisionRay = defaultRay;
         lastCollisionNormal = Vector2.zero;
     }
 
@@ -125,43 +132,40 @@ public struct RopeNode
         if (!circleCast)
         {
             CurrentCollision = null;
-            lastCollisionNormal = Vector2.zero;
+            //lastCollisionNormal = Vector2.zero;
             return;
         }
 
         var l = collisionThreshold;
-        var r = Physics2D.Raycast(position, raycastDirections[0], collisionSearchRadius, collisionMask);
-        if (!r)
+
+        for (int i = 0; i < raycastDirections.Length; i++)
         {
-            for (int i = 0; i < raycastDirections.Length; i++)
+            collisionRay = Physics2D.Raycast(position, raycastDirections[i], collisionSearchRadius, collisionMask);
+            if (collisionRay)
             {
-                r = Physics2D.Raycast(position, raycastDirections[i], collisionSearchRadius, collisionMask);
-                if (r)
-                {
-                    break;
-                }
+                break;
             }
         }
 
-        if (r && r.distance == 0)
+
+        if (collisionRay && collisionRay.distance == 0)
         {
             l = tunnelEscapeRadius;
-            r = Physics2D.Raycast(position + l * raycastDirections[0], -raycastDirections[0], l, collisionMask);
-            for (int i = 1; i < raycastDirections.Length; i++)
+            for (int i = 0; i < raycastDirections.Length; i++)
             {
-                r = Physics2D.Raycast(position + l * raycastDirections[i], -raycastDirections[i], l, collisionMask);
-                if (r && r.distance > 0)
+                collisionRay = Physics2D.Raycast(position + l * raycastDirections[i], -raycastDirections[i], l, collisionMask);
+                if (collisionRay && collisionRay.distance > 0)
                 {
-                    lastCollisionNormal = r.normal;
+                    lastCollisionNormal = collisionRay.normal;
                     break;
                 }
             }
-            r.distance = l - r.distance;
+            collisionRay.distance = l - collisionRay.distance;
         }
 
-        if (r)
+        if (collisionRay)
         {
-            HandlePotentialCollision(dt, ref r, l, collisionBounciness);
+            HandlePotentialCollision(dt, ref collisionRay, l, collisionBounciness);
         }
     }
 
@@ -189,15 +193,22 @@ public struct RopeNode
         //{
         //    lastCollisionNormal = r.normal;
         //}
-        if (r.normal == Vector2.zero || r.distance == 0)
+        //if (r.normal == Vector2.zero || r.distance == 0)
+        //{
+        //    if (lastCollisionNormal == Vector2.zero)
+        //    {
+        //        lastCollisionNormal = (position - (Vector2)r.collider.bounds.center).normalized;
+        //    }
+        //    r.normal = lastCollisionNormal;
+        //}
+        if (r.distance != 0)
         {
-            if (lastCollisionNormal == Vector2.zero)
-            {
-                lastCollisionNormal = (position - (Vector2)r.collider.bounds.center).normalized;
-            }
+            lastCollisionNormal = r.normal;
+        }
+        else
+        {
             r.normal = lastCollisionNormal;
         }
-        lastCollisionNormal = r.normal;
 
 
         if (r.distance < collisionThreshold)

@@ -91,17 +91,13 @@ public class GrappleCannon : MonoBehaviour
         fixedDt2 = fixedDt * fixedDt;
     }
 
-    private void OnDrawGizmos()
-    {
-        if (grapple != null)
-        {
-            Gizmos.color = Color.red;
-            foreach (var n in grapple.nodes)
-            {
-                Gizmos.DrawSphere(n.position, 0.1f);
-            }
-        }
-    }
+    //private void OnDrawGizmos()
+    //{
+    //    if (grapple != null)
+    //    {
+    //        grapple.DrawGizmos();
+    //    }
+    //}
 
     private void Start()
     {
