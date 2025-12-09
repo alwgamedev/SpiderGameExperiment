@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,8 +7,6 @@ using UnityEngine.UI;
 public struct RopeNode
 {
     //const int NUM_STORED_VELOCITY_RBS = 4;
-
-
 
     public Vector2 position;
     public Vector2 lastPosition;
@@ -32,12 +31,8 @@ public struct RopeNode
 
     readonly static RaycastHit2D defaultRay = default;
 
-    static readonly Vector2[] raycastDirections = new Vector2[]
-    {
-        new(0,-1),  new(0, 1), new(1, 0), new(-1, 0),
-        new(-MathTools.cos45, MathTools.cos45),
-        new(-MathTools.cos45, -MathTools.cos45), new(MathTools.cos45, -MathTools.cos45)
-    };
+    readonly Vector2[] raycastDirections;
+    readonly Vector2[] tunnelEscapeDirections;
     //{
     //    new(1, 0), new(MathTools.cos22pt5, MathTools.sin22pt5), new(MathTools.cos45, MathTools.cos45), new(MathTools.sin22pt5, MathTools.cos22pt5),
     //    new(0, 1), new(-MathTools.sin22pt5, MathTools.cos22pt5), new(-MathTools.cos45, MathTools.cos45), new(-MathTools.cos22pt5, MathTools.sin22pt5),
@@ -74,6 +69,15 @@ public struct RopeNode
         CurrentCollision = null;
         collisionRay = defaultRay;
         lastCollisionNormal = Vector2.zero;
+
+        raycastDirections = new Vector2[]
+        {
+            new(0,-1),  new(0, 1), new(1, 0), new(-1, 0),
+            new(-MathTools.cos45, MathTools.cos45),
+            new(-MathTools.cos45, -MathTools.cos45), new(MathTools.cos45, -MathTools.cos45)
+        };
+
+        tunnelEscapeDirections = raycastDirections.Select(v => tunnelEscapeRadius * v).ToArray();
     }
 
     public void Anchor()
@@ -124,6 +128,15 @@ public struct RopeNode
         lastPosition = p;
     }
 
+    //public void ResolveCollisionsNew(Vector2 nextNodePos, float dt)
+    //{
+    //    var u = (nextNodePos - position).normalized.CCWPerp(); ;
+
+    //    var l = collisionThreshold;
+
+    //    collisionRay = Physics2D.Raycast(position, u, collisionSearchRadius, coll)
+    //}
+
     public void ResolveCollisions(float dt)
     {
         if (anchored) return;
@@ -136,7 +149,7 @@ public struct RopeNode
             return;
         }
 
-        var l = collisionThreshold;
+        bool tunneling = false;
 
         for (int i = 0; i < raycastDirections.Length; i++)
         {
@@ -150,57 +163,27 @@ public struct RopeNode
 
         if (collisionRay && collisionRay.distance == 0)
         {
-            l = tunnelEscapeRadius;
+            tunneling = true;
             for (int i = 0; i < raycastDirections.Length; i++)
             {
-                collisionRay = Physics2D.Raycast(position + l * raycastDirections[i], -raycastDirections[i], l, collisionMask);
+                collisionRay = Physics2D.Raycast(position + tunnelEscapeDirections[i], -tunnelEscapeDirections[i], tunnelEscapeRadius, collisionMask);
                 if (collisionRay && collisionRay.distance > 0)
                 {
                     lastCollisionNormal = collisionRay.normal;
                     break;
                 }
             }
-            collisionRay.distance = l - collisionRay.distance;
+            collisionRay.distance = tunnelEscapeRadius - collisionRay.distance;
         }
 
         if (collisionRay)
         {
-            HandlePotentialCollision(dt, ref collisionRay, l, collisionBounciness);
+            HandlePotentialCollision(dt, ref collisionRay, tunneling ? tunnelEscapeRadius : collisionThreshold, collisionBounciness);
         }
     }
 
     private void HandlePotentialCollision(float dt, ref RaycastHit2D r, float collisionThreshold, float collisionBounciness)
     {
-        //if (!(r.distance > MathTools.o41))
-        //{
-        //    if (lastCollisionNormal == Vector2.zero)
-        //    {
-        //        //Debug.Log("using the shitty case");
-        //        lastCollisionNormal = (position - (Vector2)r.collider.bounds.center).normalized;
-        //    }
-        //    //var velocity = (position - lastPosition) / dt;
-        //    //var tang = lastCollisionNormal.CWPerp();
-        //    //var a = Vector2.Dot(velocity, tang);
-        //    //var b = Vector2.Dot(velocity, lastCollisionNormal);
-        //    //var newVelocity = collisionBounciness * Mathf.Sign(b) * (velocity - 2 * a * tang);
-        //    //position += this.collisionThreshold * lastCollisionNormal;
-        //    ////lastPosition = position - newVelocity * dt;
-        //    //lastPosition = position;
-        //    //CurrentCollision = r.collider;
-        //    //return;
-        //}
-        //else
-        //{
-        //    lastCollisionNormal = r.normal;
-        //}
-        //if (r.normal == Vector2.zero || r.distance == 0)
-        //{
-        //    if (lastCollisionNormal == Vector2.zero)
-        //    {
-        //        lastCollisionNormal = (position - (Vector2)r.collider.bounds.center).normalized;
-        //    }
-        //    r.normal = lastCollisionNormal;
-        //}
         if (r.distance != 0)
         {
             lastCollisionNormal = r.normal;
@@ -234,18 +217,6 @@ public struct RopeNode
         var newVelocity = collisionBounciness * Mathf.Sign(b) * (velocity - 2 * a * tang);
         position += diff * collisionNormal;
         lastPosition = position - newVelocity * dt;
-        //if (tunneling)
-        //{
-        //    lastPosition = position;
-        //}
-        //else
-        //{
-        //    var tang = collisionNormal.CWPerp();
-        //    var a = Vector2.Dot(velocity, tang);
-        //    var b = Vector2.Dot(velocity, collisionNormal);
-        //    var newVelocity = collisionBounciness * Mathf.Sign(b) * (velocity - 2 * a * tang);
-        //    lastPosition = position - newVelocity * dt;
-        //}
     }
 
     //private void StoreCollisionVelocity(Rigidbody2D attachedRb, Vector2 collisionNormal)
@@ -263,6 +234,7 @@ public struct RopeNode
     //    }
     //}
 
+    //to be added to position
     public Vector2 NextPositionStep(float dt, float dt2)
     {
         var d = position - lastPosition;

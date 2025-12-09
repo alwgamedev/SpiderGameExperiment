@@ -61,8 +61,8 @@ Material:
     - _ScrollSpeed: 0.28
     - _Stretch: 1
     - _WavinessAmplitude: 0.4
-    - _WavinessNoiseScale: 1.63
-    - _WavinessScrollSpeed: 0.36
+    - _WavinessNoiseScale: 1.37
+    - _WavinessScrollSpeed: 0.47
     - _ZWrite: 0
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}

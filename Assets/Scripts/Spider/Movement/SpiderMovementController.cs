@@ -109,7 +109,6 @@ public class SpiderMovementController : MonoBehaviour
     Quaternion abdomenBoneBaseLocalRotation;
     Quaternion abdomenBoneBaseLocalRotationL;
 
-    int orientation = 1;
     bool needChangeDirection;
 
     bool grounded;
@@ -134,6 +133,7 @@ public class SpiderMovementController : MonoBehaviour
     bool grappleFreeHangPrerequisites;
 
     public bool FacingRight => transform.localScale.x > 0;
+    int Orientation => FacingRight ? 1 : -1;
     Vector2 OrientedRight => FacingRight ? transform.right : -transform.right;
     Vector2 OrientedGroundDirection => FacingRight ? groundDirection : -groundDirection;
     float PreferredBodyPosGroundHeight => transform.position.y - heightReferencePoint.position.y + preferredRideHeight;
@@ -405,7 +405,7 @@ public class SpiderMovementController : MonoBehaviour
             grappleFreeHangPrerequisites = false;
         }
 
-        if (MathTools.OppositeSigns(moveInput, orientation))
+        if (MathTools.OppositeSigns(moveInput, Orientation))
         {
             needChangeDirection = true;
         }
@@ -441,19 +441,16 @@ public class SpiderMovementController : MonoBehaviour
         }
         else
         {
-            //needs fixing because a) looks bad, b) can clip through solid objects when you flip
             Vector2 o = grapple.FreeHangLeveragePoint;
             var p = transform.position;
             var s = transform.localScale;
             transform.localScale = new Vector3(-s.x, s.y, s.z);
-            var n = grapple.FreeHanging ? grapple.LastCarryForceDirection.CWPerp() : Vector2.right;//normal to the hyperplane we're reflecting over
+            var n = grapple.ShootDirection.CCWPerp();//normal to the hyperplane we're reflecting over
             transform.up = MathTools.ReflectAcrossHyperplane(transform.up, (Vector3)n);
             var d = (Vector3)(o - grapple.FreeHangLeveragePoint);
             transform.position += d;
             legSynchronizer.OnBodyChangedDirectionFreeHanging(p, transform.position, n);
         }
-
-        orientation = FacingRight ? 1 : -1;
     }
 
     private void HandleMoveInput()
@@ -865,7 +862,7 @@ public class SpiderMovementController : MonoBehaviour
             return -transform.up;
         }
 
-        if (MathTools.OppositeSigns(r.x, orientation))//upside down
+        if (MathTools.OppositeSigns(r.x, Orientation))//upside down
         {
             return r.y < -cosFreeHangLegAngleMin ? cosFreeHangLegAngleMin * OrientedRight - sinFreeHangLegAngleMin * (Vector2)transform.up :
             MathTools.ReflectAcrossHyperplane(Vector2.down, (Vector2)transform.up);
