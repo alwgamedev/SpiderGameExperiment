@@ -1,169 +1,113 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Splines;
 using UnityEngine.U2D;
 
 public class Rope
 {
-    public const float CONSTRAINTS_TOLERANCE = MathTools.o41;//0.005f;
+    const float CONSTRAINTS_TOLERANCE = MathTools.o41;
+    const float SHARP_CORNER_THRESHOLD = MathTools.sin30;
 
-    public float width;
-    public float nodeSpacing;
-    public float minNodeSpacing;
-    public float maxNodeSpacing;
+    //Rope Data
+    readonly float width;
+    readonly float minNodeSpacing;
+    readonly float maxNodeSpacing;
+    float nodeSpacing;
 
-    public float constraintIterations;
-    public int constraintIterationsPerCollisionCheck;
-    public int terminusAnchorMask;
+    //all nodes have same drag, and all nodes have same mass except possibly the last one
+    readonly float drag;
+    readonly float nodeMass;
+    readonly float terminusMass;
 
-    public readonly RopeNode[] nodes;
-    public readonly int lastIndex;
+    readonly float constraintIterations;
+    readonly int terminusAnchorMask;
 
     int anchorPointer;
+    bool terminusAnchored;
+    readonly int terminusIndex;
 
-    public readonly Vector3[] renderPositions;
-    public readonly int nodesPerRendererPosition;
-    public readonly float inverseNodesPerRendererPosition;
+    readonly Vector3[] renderPositions;
     bool renderPositionsNeedUpdate;
 
-    public int AnchorPointer => anchorPointer;
-    public float Length => nodeSpacing * (lastIndex - anchorPointer);
+    //Node Data
+    public readonly Vector2[] position;//if we were really hardcore we could do separate arrays for x & y
+    public readonly Vector2[] lastPosition;
+    public readonly Vector2[] acceleration;
 
-    public UnityEvent TerminusAnchored;
+    readonly Vector2[] positionBuffer;
+    readonly Vector2[] lastPositionBuffer;
+
+    readonly int collisionMask;
+    readonly float collisionSearchRadius;
+    readonly float tunnelEscapeRadius;
+    readonly float collisionThreshold;
+    readonly float collisionBounciness;
+    readonly Vector2[] lastCollisionNormal;
+    public readonly Collider2D[] currentCollision;
+
+    readonly Vector2[] raycastDirections;
+
+    public int AnchorPointer => anchorPointer;
+    public int TerminusIndex => terminusIndex;
+    public float NodeSpacing => nodeSpacing;
+    public float Length => nodeSpacing * (terminusIndex - anchorPointer);
+    public bool TerminusAnchored => terminusAnchored;
+    public UnityEvent TerminusBecameAnchored;
 
     public Rope(Vector2 position, float width, float length, int numNodes, float minNodeSpacing, float maxNodeSpacing,
-        float nodeDrag, int collisionMask, float collisionSearchRadius, float tunnelingEscapeRadius, float collisionBounciness, int terminusAnchorMask,
-        int constraintIterations, int constraintIterationsPerCollisionCheck, int nodesPerRendererPosition = 1)
+    float nodeMass, float terminusMass, float nodeDrag, int collisionMask, float collisionSearchRadius, float tunnelEscapeRadius, float collisionBounciness, int terminusAnchorMask,
+    int constraintIterations)
     {
-        lastIndex = numNodes - 1;
+        terminusIndex = numNodes - 1;
         this.width = width;
-        nodeSpacing = Mathf.Clamp(length / lastIndex, minNodeSpacing, maxNodeSpacing);//0.5f * (minNodeSpacing + maxNodeSpacing);
-        anchorPointer = lastIndex - Mathf.Clamp((int)(length / nodeSpacing), 1, lastIndex);
+        nodeSpacing = Mathf.Clamp(length / terminusIndex, minNodeSpacing, maxNodeSpacing);
+        anchorPointer = terminusIndex - Mathf.Clamp((int)(length / nodeSpacing), 1, terminusIndex);
         this.minNodeSpacing = minNodeSpacing;
         this.maxNodeSpacing = maxNodeSpacing;
         this.constraintIterations = constraintIterations;
-        this.constraintIterationsPerCollisionCheck = constraintIterationsPerCollisionCheck;
         this.terminusAnchorMask = terminusAnchorMask;
-        var a = Physics2D.gravity;
-        var collisionThreshold = 0.5f * width;
-        nodes = Enumerable.Range(0, numNodes).Select(i => new RopeNode(position, Vector2.zero, a, 1, nodeDrag,
-            collisionMask, collisionThreshold, collisionSearchRadius, tunnelingEscapeRadius, collisionBounciness, !(i > anchorPointer))).ToArray();
-        this.nodesPerRendererPosition = nodesPerRendererPosition;
-        inverseNodesPerRendererPosition = 1 / (float)nodesPerRendererPosition;
-        int numRenderPositions = nodesPerRendererPosition == 1 ? nodes.Length : 1 + (nodes.Length / nodesPerRendererPosition);
-        renderPositions = new Vector3[numRenderPositions];
-        for (int i = 0; i < numRenderPositions; i++)
+
+        this.position = Enumerable.Repeat(position, numNodes).ToArray();
+        lastPosition = Enumerable.Repeat(position, numNodes).ToArray();
+        acceleration = Enumerable.Repeat(Physics2D.gravity, numNodes).ToArray();
+
+        positionBuffer = new Vector2[numNodes];
+        lastPositionBuffer = new Vector2[numNodes];
+
+        drag = nodeDrag;
+        this.nodeMass = nodeMass;
+        this.terminusMass = terminusMass;
+
+        this.collisionMask = collisionMask;
+        this.collisionSearchRadius = collisionSearchRadius;
+        this.tunnelEscapeRadius = tunnelEscapeRadius;
+        collisionThreshold = 0.5f * width;
+        this.collisionBounciness = collisionBounciness;
+        currentCollision = new Collider2D[numNodes];
+        lastCollisionNormal = new Vector2[numNodes];
+
+        raycastDirections = new Vector2[]
         {
-            renderPositions[i] = nodes[nodesPerRendererPosition * i].position;
-        }
-        renderPositions[^1] = nodes[lastIndex].position;
-        //nodes.Select(x => (Vector3)x.position).ToArray();
+            new(0,-1),  new(0, 1), new(1, 0), new(-1, 0),
+            new (MathTools.cos45, MathTools.cos45), new(-MathTools.cos45, MathTools.cos45),
+            new(-MathTools.cos45, -MathTools.cos45), new(MathTools.cos45, -MathTools.cos45)
+        };
+
+        renderPositions = Enumerable.Repeat((Vector3)position, numNodes).ToArray();
     }
+
+
+    //ROPE FUNCTIONS
 
     public void DrawGizmos()
     {
         Gizmos.color = Color.red;
-        for (int i = 0; i < nodes.Length; i++)
+        for (int i = 0; i < position.Length; i++)
         {
-            Gizmos.DrawSphere(nodes[i].position, 0.5f * width);
+            Gizmos.DrawSphere(position[i], 0.5f * width);
         }
     }
-
-    public void FixedUpate(float dt, float dt2)
-    {
-        UpdateRopePhysics(dt, dt2);
-
-        renderPositionsNeedUpdate = true;
-    }
-
-    public void SetLength(float length, RopeNode[] rescaleBuffer)
-    {
-        nodeSpacing = length / (lastIndex - anchorPointer);
-        Rescale(rescaleBuffer);
-    }
-
-    public void SetAnchorPosition(Vector2 position)
-    {
-        for (int i = 0; i < anchorPointer + 1; i++)
-        {
-            nodes[i].position = position;
-        }
-    }
-
-    public void UpdateRopePhysics(float dt, float dt2)
-    {
-        UpdateVerletSimulation(dt, dt2);
-        ResolveCollisions(dt);
-
-        int i = 0;
-        while (i < constraintIterations)
-        {
-            SpacingConstraintIteration();
-            if (++i % constraintIterationsPerCollisionCheck == 0 || i == lastIndex)//allows us to do a lot of constraintIterations without nuking performance
-            {
-                ResolveCollisions(dt);
-            }
-        }
-    }
-
-    public void SpacingConstraintIteration()
-    {
-        for (int i = anchorPointer + 1; i < nodes.Length; i++)
-        {
-            var d = nodes[i].position - nodes[i - 1].position;
-            var l = d.magnitude;
-
-            var error = l - nodeSpacing;
-
-            if (error > CONSTRAINTS_TOLERANCE)
-            {
-                if (nodes[i - 1].CurrentCollision && nodes[i].CurrentCollision
-                    && Vector2.Dot(nodes[i - 1].lastCollisionNormal, nodes[i].lastCollisionNormal) < MathTools.sin30)
-                {
-                    var v0 = nodes[i - 1].lastCollisionNormal.CCWPerp();
-                    var v1 = nodes[i].lastCollisionNormal.CCWPerp();
-                    if (Vector2.Dot(v0, d) < 0)
-                    {
-                        v0 = -v0;
-                    }
-                    if (Vector2.Dot(v1, d) < 0)
-                    {
-                        v1 = -v1;
-                    }
-
-                    var t = 0.5f * error / l;
-                    v0 *= 0.6f * l;//seems to work well
-                    v1 *= 0.6f * l;
-                    v0 = (v0 + 3 * nodes[i - 1].position) / 3;//"tangent" parameters in BezierPoint aren't really the tangents
-                    v1 = (3 * nodes[i].position - v1) / 3;
-                    var p0 = BezierUtility.BezierPoint(v0, nodes[i - 1].position, nodes[i].position, v1, t);
-                    var p1 = BezierUtility.BezierPoint(v0, nodes[i - 1].position, nodes[i].position, v1, 1 - t);
-                    nodes[i - 1].position = p0;
-                    nodes[i].position = p1;
-                    return;
-                }
-
-                var c = error / l * d;
-
-                if (nodes[i - 1].Anchored)
-                {
-                    nodes[i].position -= c;
-                }
-                else if (nodes[i].Anchored)
-                {
-                    nodes[i - 1].position += c;
-                }
-                else
-                {
-                    var m1 = 1 / (nodes[i - 1].mass + nodes[i].mass);
-                    nodes[i - 1].position += nodes[i].mass * m1 * c;
-                    nodes[i].position -= nodes[i - 1].mass * m1 * c;
-                }
-            }
-        }
-    }
-
 
     public void SetLineRendererPositions(LineRenderer lr)
     {
@@ -176,83 +120,193 @@ public class Rope
         lr.SetPositions(renderPositions);
     }
 
-    private void UpdateRenderPositions()
+    public void FixedUpate(float dt, float dt2)
     {
-        renderPositions[0] = nodes[0].position;
-        Vector2 p = Vector2.zero;
-        for (int i = 1; i < lastIndex; i++)
-        {
-            p += nodes[i].position;
-            if (i % nodesPerRendererPosition == 0)
-            {
-                renderPositions[i / nodesPerRendererPosition] = inverseNodesPerRendererPosition * p;
-                p = Vector2.zero;
-            }
-        }
-        renderPositions[^1] = nodes[lastIndex].position;
+        UpdateRopePhysics(dt, dt2);
+        renderPositionsNeedUpdate = true;
     }
 
-    private void UpdateVerletSimulation(float dt, float dt2)
+    public void SetLength(float length)
     {
-        for (int i = anchorPointer + 1; i < nodes.Length; i++)
+        nodeSpacing = length / (terminusIndex - anchorPointer);
+        Rescale();
+    }
+
+    public void SetAnchorPosition(Vector2 position)
+    {
+        for (int i = 0; i < anchorPointer + 1; i++)
         {
-            nodes[i].UpdateVerletSimulation(dt, dt2);
+            this.position[i] = position;
         }
     }
 
-    private void ResolveCollisions(float dt)
+    private void UpdateRopePhysics(float dt, float dt2)
     {
-        if (nodes[lastIndex].Anchored)
+        UpdateVerletSimulation(dt, dt2);
+        ResolveCollisions(dt);
+
+        for (int i = 0; i < constraintIterations; i++)
         {
-            for (int i = anchorPointer + 1; i < lastIndex; i++)
-            {
-                nodes[i].ResolveCollisions(dt);
-            }
+            SpacingConstraintIteration();
+            ResolveCollisions(dt);
         }
-        else
+    }
+
+    private void SpacingConstraintIteration()
+    {
+        FirstConstraint();
+        for (int i = anchorPointer + 2; i < terminusIndex; i++)
         {
-            var p = nodes[lastIndex].position;
-            for (int i = anchorPointer + 1; i < nodes.Length; i++)
-            {
-                nodes[i].ResolveCollisions(dt);
+            ApplySpacingConstraint(i);   
+        }
+        LastConstraint();
 
-            }
+        void ApplySpacingConstraint(int i)
+        {
+            var d = position[i] - position[i - 1];
+            var l = d.magnitude;
 
-            //check if last node made contact and should become anchored
-            if ((nodes[lastIndex].CurrentCollisionLayerMask & terminusAnchorMask) != 0)
+            var error = l - nodeSpacing;
+
+            if (error > CONSTRAINTS_TOLERANCE)
             {
-                var v = p - nodes[lastIndex].position;
-                var r = Physics2D.CircleCast(nodes[lastIndex].position, nodes[lastIndex].CollisionThreshold, v, v.magnitude, terminusAnchorMask);
-                if (r)
+                if (currentCollision[i - 1] && currentCollision[i]
+                    && Vector2.Dot(lastCollisionNormal[i - 1], lastCollisionNormal[i]) < SHARP_CORNER_THRESHOLD)
                 {
-                    //anchor just outside collider, so that nodes near lastIndex don't get caught in perpetual collision
-                    nodes[lastIndex].position = r.point + nodes[lastIndex].CollisionThreshold * r.normal;
-                    nodes[lastIndex].Anchor();
-                    TerminusAnchored.Invoke();
+                    var v0 = lastCollisionNormal[i - 1].CCWPerp();
+                    var v1 = lastCollisionNormal[i].CCWPerp();
+                    if (Vector2.Dot(v0, d) < 0)
+                    {
+                        v0 = -v0;
+                    }
+                    if (Vector2.Dot(v1, d) < 0)
+                    {
+                        v1 = -v1;
+                    }
+
+                    var t = 0.5f * error / l;
+                    v0 = 0.25f * l * v0 + position[i - 1];//this seems to give a reasonable scale for the tangent
+                    v1 = position[i] - 0.25f * l * v1;
+                    var p0 = BezierUtility.BezierPoint(v0, position[i - 1], position[i], v1, t);
+                    var p1 = BezierUtility.BezierPoint(v0, position[i - 1], position[i], v1, 1 - t);
+                    position[i - 1] = p0;
+                    position[i] = p1;
+                }
+                else
+                {
+                    var c = 0.5f * error / l * d;
+                    position[i - 1] += c;
+                    position[i] -= c;
+                }
+            }
+        }
+
+        void FirstConstraint()
+        {
+            var d = position[anchorPointer + 1] - position[anchorPointer];
+            var l = d.magnitude;
+
+            var error = l - nodeSpacing;
+
+            if (error > CONSTRAINTS_TOLERANCE)
+            {
+                position[anchorPointer + 1] -= error / l * d;
+            }
+        }
+
+        void LastConstraint()
+        {
+            var d = position[terminusIndex] - position[terminusIndex - 1];
+            var l = d.magnitude;
+
+            var error = l - nodeSpacing;
+
+            if (error > CONSTRAINTS_TOLERANCE)
+            {
+                if (terminusAnchored)
+                {
+                    position[terminusIndex - 1] += error / l * d;
+                }
+                else
+                {
+                    var c = (1 / (nodeMass + terminusMass)) * error / l * d;
+                    position[terminusIndex - 1] += terminusMass * c;
+                    position[terminusIndex] -= nodeMass * c;
                 }
             }
         }
     }
 
-    private void Rescale(RopeNode[] rescaleBuffer)
+    private void UpdateRenderPositions()
+    {
+        for (int i = 0; i < position.Length; i++)
+        {
+            renderPositions[i] = position[i];
+        }
+    }
+
+    private void UpdateVerletSimulation(float dt, float dt2)
+    {
+        for (int i = anchorPointer + 1; i < (terminusAnchored ? terminusIndex : position.Length); i++)
+        {
+            UpdateVerletSimulation(i, dt, dt2);
+        }
+    }
+
+    private void ResolveCollisions(float dt)
+    {
+        if (terminusAnchored)
+        {
+            for (int i = anchorPointer + 1; i < terminusIndex; i++)
+            {
+                ResolveCollision(i, dt);
+            }
+        }
+        else
+        {
+            var p = position[terminusIndex];
+            for (int i = anchorPointer + 1; i < position.Length; i++)
+            {
+                ResolveCollision(i, dt);
+
+            }
+
+            //check if last node made contact and should become anchored
+            if (currentCollision[terminusIndex] && (1 << currentCollision[terminusIndex].gameObject.layer & terminusAnchorMask) != 0)
+            {
+                var v = p - position[terminusIndex];
+                var r = Physics2D.CircleCast(position[terminusIndex], collisionThreshold, v, v.magnitude, terminusAnchorMask);
+                if (r)
+                {
+                    //anchor just outside collider, so that nodes near lastIndex don't get caught in perpetual collision
+                    position[terminusIndex] = r.point + collisionThreshold * r.normal;
+                    Anchor(terminusIndex);
+                    terminusAnchored = true;
+                    TerminusBecameAnchored.Invoke();
+                }
+            }
+        }
+    }
+
+    private void Rescale()
     {
         if (nodeSpacing < minNodeSpacing || nodeSpacing > maxNodeSpacing)
         {
             float goalSpacing = nodeSpacing < minNodeSpacing ? minNodeSpacing : maxNodeSpacing;
-            int newAnchorPointer = lastIndex - Mathf.Clamp((int)(Length / goalSpacing), 1, lastIndex);//clamps anchor pointer to btwn 0 and lastIndex - 1
+            int newAnchorPointer = terminusIndex - Mathf.Clamp((int)(Length / goalSpacing), 1, terminusIndex);//clamps anchor pointer to btwn 0 and lastIndex - 1
                                                                                                       //^note: length / nodeSpacing = num nodes PAST anchor pointer
 
             if (anchorPointer != newAnchorPointer)
             {
-                Reparametrize(newAnchorPointer, rescaleBuffer);
+                Reparametrize(newAnchorPointer);
                 renderPositionsNeedUpdate = true;
             }
         }
     }
 
-    private void Reparametrize(int newAnchorPointer, RopeNode[] rescaleBuffer)
+    private void Reparametrize(int newAnchorPointer)
     {
-        float newNodeSpacing = Length / (lastIndex - newAnchorPointer);
+        float newNodeSpacing = Length / (terminusIndex - newAnchorPointer);
         int i = anchorPointer;//start index of current segment we're copying from
         int j = newAnchorPointer + 1;//index in rescaleBuffer that we're copying to
         float dt = newNodeSpacing / nodeSpacing;//when we move one segment forward in new path, this is how many segments we cover in old path
@@ -263,10 +317,10 @@ public class Rope
             t -= 1;
         }
 
-        while (j < lastIndex)
+        while (j < terminusIndex)
         {
-            rescaleBuffer[j].position = Vector2.Lerp(nodes[i].position, nodes[i + 1].position, t);
-            rescaleBuffer[j].lastPosition = Vector2.Lerp(nodes[i].lastPosition, nodes[i + 1].lastPosition, t);
+            positionBuffer[j] = Vector2.Lerp(position[i], position[i + 1], t);
+            lastPositionBuffer[j] = Vector2.Lerp(lastPosition[i], lastPosition[i + 1], t);
 
             t += dt;
             j++;
@@ -281,26 +335,122 @@ public class Rope
         {
             for (int k = anchorPointer + 1; k < newAnchorPointer + 1; k++)
             {
-                nodes[k].position = nodes[anchorPointer].position;
-                nodes[k].Anchor();
+                position[k] = position[anchorPointer];
+                Anchor(k);
             }
         }
         else
         {
             for (int k = newAnchorPointer + 1; k < anchorPointer + 1; k++)
             {
-                nodes[k].DeAnchor(0, Vector2.zero);
+                DeAnchor(k, 0, Vector2.zero);
             }
         }
 
         anchorPointer = newAnchorPointer;
+        nodeSpacing = newNodeSpacing;
+        int start = anchorPointer + 1;
+        int count = terminusIndex - anchorPointer - 1;
+        Array.Copy(positionBuffer, start, position, start, count);
+        Array.Copy(lastPositionBuffer, start, lastPosition, start, count);
+    }
 
-        for (int k = anchorPointer + 1; k < lastIndex; k++)
+
+    //NODE FUNCTIONS
+
+    private void Anchor(int i)
+    {
+        lastPosition[i] = position[i];
+        currentCollision[i] = null;
+        lastCollisionNormal[i] = Vector2.zero;
+    }
+
+    private void DeAnchor(int i, float dt, Vector2 initialVelocity)
+    {
+        lastPosition[i] = position[i] - initialVelocity * dt;
+    }
+
+    private void UpdateVerletSimulation(int i, float dt, float dt2)
+    {
+        var p = position[i];
+        var d = p - lastPosition[i];
+        var v = d / dt;
+        position[i] += d + dt2 * (acceleration[i] - drag * v.magnitude * v);
+        lastPosition[i] = p;
+    }
+
+    //2do: lot of retardation in this method. why not use the circle cast hit (and then refine hit if needed)? does it give point inside collider?
+    //let's test the circle cast (e.g. make a script that circle casts at mouse click, then log/draw hit data)
+    //also we were thinking about alternative raycasting schemes (like "hairs" normal to rope segment -- just 2 directions; or maybe an --X-- (x pattern) diagonal to rope seg)
+    private void ResolveCollision(int i, float dt)
+    {
+        var circleCast = Physics2D.CircleCast(position[i], collisionSearchRadius, Vector2.zero, 0f, collisionMask);
+        if (!circleCast)
         {
-            nodes[k].position = rescaleBuffer[k].position;
-            nodes[k].lastPosition = rescaleBuffer[k].lastPosition;
+            currentCollision[i] = null;
+            return;
         }
 
-        nodeSpacing = newNodeSpacing;
+        bool tunneling = false;
+        RaycastHit2D r = default;
+
+        for (int j = 0; j < raycastDirections.Length; j++)
+        {
+            r = Physics2D.Raycast(position[i], raycastDirections[j], collisionSearchRadius, collisionMask);
+            if (r)
+            {
+                break;
+            }
+        }
+
+
+        if (r && r.distance == 0)
+        {
+            tunneling = true;
+            for (int j = 0; j < raycastDirections.Length; j++)
+            {
+                r = Physics2D.Raycast(position[i] + tunnelEscapeRadius * raycastDirections[j], -raycastDirections[j], tunnelEscapeRadius, collisionMask);
+                if (r && r.distance > 0)
+                {
+                    break;
+                }
+            }
+            r.distance = tunnelEscapeRadius - r.distance;
+        }
+
+        if (r)
+        {
+            HandlePotentialCollision(i, dt, ref r, tunneling ? tunnelEscapeRadius : collisionThreshold, collisionBounciness);
+        }
+    }
+
+    private void HandlePotentialCollision(int i, float dt, ref RaycastHit2D r, float collisionThreshold, float collisionBounciness)
+    {
+        if (r.distance != 0)
+        {
+            lastCollisionNormal[i] = r.normal;
+        }
+        else
+        {
+            r.normal = lastCollisionNormal[i];
+        }
+
+
+        if (r.distance < collisionThreshold)
+        {
+            currentCollision[i] = r.collider;
+            var diff = Mathf.Min(collisionThreshold - r.distance, this.collisionThreshold);
+            var velocity = (position[i] - lastPosition[i]) / dt;
+            var tang = r.normal.CWPerp();
+            var a = Vector2.Dot(velocity, tang);
+            var b = Vector2.Dot(velocity, r.normal);
+            var newVelocity = collisionBounciness * Mathf.Sign(b) * (velocity - 2 * a * tang);
+            position[i] += diff * r.normal;
+            lastPosition[i] = position[i] - newVelocity * dt;
+        }
+        else
+        {
+            currentCollision[i] = null;
+        }
     }
 }
