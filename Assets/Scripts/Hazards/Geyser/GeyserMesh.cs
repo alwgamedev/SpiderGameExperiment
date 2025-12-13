@@ -135,11 +135,11 @@ public class GeyserMesh : MonoBehaviour
         {
             int j = 6 * i;
             triangles[j] = i;
-            triangles[++j] = i + 1 + verticesY;
             triangles[++j] = i + 1;
+            triangles[++j] = i + 1 + verticesY;
             triangles[++j] = i;
-            triangles[++j] = i + verticesY;
             triangles[++j] = i + verticesY + 1;
+            triangles[++j] = i + verticesY;
         }
 
         mesh.vertices = vertices;//automatically calculates bounds when you first set vertices (shader needs bounds)

@@ -10,7 +10,6 @@ public class BuoyantObject : MonoBehaviour
     Collider2D coll;
     BuoyancySource buoyancySource;
 
-    float halfWidth;
     float width;
     float weight;
 
@@ -22,7 +21,6 @@ public class BuoyantObject : MonoBehaviour
         coll = GetComponent<Collider2D>();
 
         width = effectiveWidthMultiplier * (coll.bounds.max.x - coll.bounds.min.x);
-        halfWidth = 0.5f * width;
         weight = coll.bounds.max.y - coll.bounds.min.y;
     }
 
@@ -57,7 +55,6 @@ public class BuoyantObject : MonoBehaviour
 
             //AGITATE WATER
             buoyancySource.WaterMeshManager.HandleDisplacement(coll, Time.deltaTime);
-            //buoyancySource.WaterMeshManager.AgitateWater(transform.position.x, transform.position.y, halfWidth, rb.linearVelocityY);
         }
     }
 

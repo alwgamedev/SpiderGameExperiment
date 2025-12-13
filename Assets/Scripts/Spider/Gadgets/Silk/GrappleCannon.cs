@@ -28,6 +28,7 @@ public class GrappleCannon : MonoBehaviour
     [SerializeField] float carrySpringForce;
     [SerializeField] float carryTensionMax;
     [SerializeField] CannonFulcrum cannonFulcrum;
+    [SerializeField] RopeRenderer grappleRenderer;
 
     int grappleReleaseInput;//1 = release, -1 = retract, 0 = none
     bool poweringUp;
@@ -38,7 +39,6 @@ public class GrappleCannon : MonoBehaviour
     public int aimInput;
 
     Rope grapple;
-    LineRenderer lineRenderer;
 
     float fixedDt;
     float fixedDt2;
@@ -49,8 +49,8 @@ public class GrappleCannon : MonoBehaviour
     public int GrappleReleaseInput => grapple == null ? 0 : grappleReleaseInput;
     public Vector2 LastCarryForce { get; private set; }
     public Vector2 LastCarryForceDirection { get; private set; }
-    public Vector2 GrappleExtent => GrapplePosition - SourcePosition;
-    public Vector2 GrapplePosition => grapple.position[^1];
+    public Vector2 GrappleExtent => GrappleTerminusPosition - SourcePosition;
+    public Vector2 GrappleTerminusPosition => grapple.position[^1];
     public bool PoweringUp => poweringUp;
     public float PowerUpFraction => shootSpeedPowerUp / shootSpeedPowerUpMax;
     public float ShootSpeed => (1 + shootSpeedPowerUp) * baseShootSpeed;
@@ -79,7 +79,6 @@ public class GrappleCannon : MonoBehaviour
 
     private void Awake()
     {
-        lineRenderer = GetComponent<LineRenderer>();
         fixedDt = Time.fixedDeltaTime;
         fixedDt2 = fixedDt * fixedDt;
     }
@@ -94,7 +93,6 @@ public class GrappleCannon : MonoBehaviour
 
     private void Start()
     {
-        lineRenderer.enabled = false;
         cannonFulcrum.Initialize();
     }
 
@@ -132,7 +130,7 @@ public class GrappleCannon : MonoBehaviour
         if (grapple != null)
         {
             UpdateAnchorPosition();
-            grapple.SetLineRendererPositions(lineRenderer);
+            grappleRenderer.UpdateRenderPositions(grapple);
         }
     }
 
@@ -144,7 +142,7 @@ public class GrappleCannon : MonoBehaviour
         {
             UpdateGrappleLength();
             UpdateAnchorPosition();
-            grapple.FixedUpate(fixedDt, fixedDt2);
+            grapple.Update(fixedDt, fixedDt2);
             if (GrappleAnchored)
             {
                 UpdateCarrySpring();
@@ -297,17 +295,6 @@ public class GrappleCannon : MonoBehaviour
     public float NormalizedStrictTension() => StrictTension() / grapple.Length;
     public float NormalizedStrictTension(int lastIndex) => StrictTension(lastIndex, out var length) / (length == 0 ? 1 : length);
 
-    private void EnableLineRenderer()
-    {
-        lineRenderer.enabled = true;
-        if (lineRenderer.positionCount != grapple.position.Length)
-        {
-            lineRenderer.positionCount = grapple.position.Length;
-        }
-        lineRenderer.startWidth = width;
-        lineRenderer.endWidth = width;
-    }
-
     //FIXED UPDATE FUNCTIONS
 
     private void UpdateCannonFulcrum()
@@ -385,20 +372,19 @@ public class GrappleCannon : MonoBehaviour
         Vector2 shootVelocity = shootSpeed * lastShootDirection;
         grapple.lastPosition[^1] -= fixedDt * shootVelocity;
         shootTimer = -minLength / shootSpeed;
-        EnableLineRenderer();
-        grapple.SetLineRendererPositions(lineRenderer);
+        grappleRenderer.OnRopeSpawned(grapple);
+        
         grapple.TerminusBecameAnchored = GrappleBecameAnchored;
         GrappleShot.Invoke();
     }
 
     private void DestroyGrapple()
     {
-        //grapple = null;
         grapple = null;
         grappleReleaseInput = 0;
         shootSpeedPowerUp = 0;
         LastCarryForce = Vector2.zero;
         FreeHanging = false;
-        lineRenderer.enabled = false;
+        grappleRenderer.OnRopeDestroyed();
     }
 }

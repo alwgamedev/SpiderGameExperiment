@@ -19,7 +19,7 @@ public static class MathTools
     public const float tan45 = 1;
     public const float cos60 = sin30;
     public const float sin60 = cos30;
-    public const float tan60 = 1.7320508f;//sqrt(3)
+    public const float tan60 = 1.732051f;//sqrt(3)
 
     public enum OrientationXZ
     {
@@ -37,6 +37,20 @@ public static class MathTools
 
             return rng;
         }
+    }
+
+    public static Vector2 CubicInterpolation(Vector2 p, Vector2 v, Vector2 q, Vector2 w, float t)
+    {
+        var s = 1 - t;
+        var s2 = s * s;
+        var t2 = t * t;
+        return s2 * s * p + s2 * t * (v + 3 * p) + s * t2 * (-w + 3 * q) + t2 * t * q;//fewer operations when written in Bezier form
+    }
+
+    public static Vector2 CubicTangent(Vector2 p, Vector2 v, Vector2 q, Vector2 w, float t)
+    {
+        var s = 1 - t;
+        return s * s * v + 2 * s * t * (3 * (q - p) - v - w) + t * t * w;
     }
 
     public static float LerpAtConstantRate(float from, float to, float rate, float dt)

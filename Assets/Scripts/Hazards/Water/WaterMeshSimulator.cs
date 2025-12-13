@@ -58,9 +58,6 @@ public class WaterMeshSimulator : SpringyMeshSimulator
         for (int j = 0; j < numVerticesX; j++)
         {
             vertices[(numVerticesY - 1) * numVerticesX + j].FreezePosition();
-            //v.freezeX = true;
-            //v.freezeY = true;
-            //v.freezeZ = true;
         }
         for (int i = 0; i < numVerticesY; i++)
         {
@@ -85,25 +82,5 @@ public class WaterMeshSimulator : SpringyMeshSimulator
                 //quad vertices listed in CCW order starting in upper left corner;
             }
         }
-
-        //set edges of shape
-        //edgesAtRest = new Vector3[6 * numQuads];
-        //k = -1;
-        //for (int i = 0; i < numQuads; i++)
-        //{
-        //    int j = 4 * i;
-        //    //left vertical edge
-        //    edgesAtRest[++k] = vertices[quads[j + 1]].position - vertices[quads[j]].position;
-        //    //right vertical edge
-        //    edgesAtRest[++k] = vertices[quads[j + 2]].position - vertices[quads[j + 3]].position;
-        //    //top horizontal edge
-        //    edgesAtRest[++k] = vertices[quads[j + 3]].position - vertices[quads[j]].position;
-        //    //bottom horizontal edge
-        //    edgesAtRest[++k] = vertices[quads[j + 2]].position - vertices[quads[j + 1]].position;
-        //    //02 diagonal edge
-        //    edgesAtRest[++k] = vertices[quads[j + 2]].position - vertices[quads[j]].position;
-        //    //13 diagonal edge
-        //    edgesAtRest[++k] = vertices[quads[j + 3]].position - vertices[quads[j + 1]].position;
-        //}
     }
 }

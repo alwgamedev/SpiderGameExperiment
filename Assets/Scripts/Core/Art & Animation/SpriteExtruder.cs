@@ -33,34 +33,34 @@ public class SpriteExtruder : MonoBehaviour
             var back1 = front1 + spriteVertices.Length;
             var back2 = front2 + spriteVertices.Length;
             //front triangle
-            triangles[j] = front0;//corresponds to a vertex in the first half of new vertices array, which comes from the original sprite vertices
-            triangles[++j] = front1;
+            triangles[j] = front0;
             triangles[++j] = front2;
+            triangles[++j] = front1;
             //back triangle
             triangles[++j] = back0;
-            triangles[++j] = back2;
             triangles[++j] = back1;
+            triangles[++j] = back2;
             //quad extruding 01 edge of front triangle
             triangles[++j] = front0;
+            triangles[++j] = back1;
             triangles[++j] = back0;
-            triangles[++j] = back1;
             triangles[++j] = front0;
-            triangles[++j] = back1;
             triangles[++j] = front1;
+            triangles[++j] = back1;
             //quad extruding 12 edge of front triangle
             triangles[++j] = front1;
+            triangles[++j] = back2;
             triangles[++j] = back1;
-            triangles[++j] = back2;
             triangles[++j] = front1;
-            triangles[++j] = back2;
             triangles[++j] = front2;
+            triangles[++j] = back2;
             //quad extruding 20 edge of front triangle
             triangles[++j] = front2;
+            triangles[++j] = back0;
             triangles[++j] = back2;
-            triangles[++j] = back0;
             triangles[++j] = front2;
-            triangles[++j] = back0;
             triangles[++j] = front0;
+            triangles[++j] = back0;
         }
 
         for (int i = 0; i < spriteUV.Length; i++)

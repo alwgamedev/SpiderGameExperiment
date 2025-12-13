@@ -129,12 +129,12 @@ public class SimpleWaterMesh : MonoBehaviour
         for (int i = 0; i < numSprings - 1; i++)
         {
             triangles[6 * i] = i;
-            triangles[6 * i + 1] = numSprings + i;
-            triangles[6 * i + 2] = numSprings + i + 1;
+            triangles[6 * i + 1] = numSprings + i + 1;
+            triangles[6 * i + 2] = numSprings + i;
             triangles[6 * i + 3] = numSprings + i + 1;
-            triangles[6 * i + 4] = i + 1;
-            triangles[6 * i + 5] = i;
-            //all triangles oriented CCW
+            triangles[6 * i + 4] = i;
+            triangles[6 * i + 5] = i + 1;
+            //all triangles oriented CW (so that normal faces camera)
         }
 
         mesh.vertices = vertices;

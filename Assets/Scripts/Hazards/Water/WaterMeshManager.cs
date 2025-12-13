@@ -71,11 +71,11 @@ public class WaterMeshManager : MonoBehaviour
         {
             int j = 4 * i;
             triangles[++k] = simulation.quads[j];
+            triangles[++k] = simulation.quads[j + 2];
             triangles[++k] = simulation.quads[j + 1];
-            triangles[++k] = simulation.quads[j + 2];
             triangles[++k] = simulation.quads[j];
-            triangles[++k] = simulation.quads[j + 2];
             triangles[++k] = simulation.quads[j + 3];
+            triangles[++k] = simulation.quads[j + 2];
         }
 
         mesh.vertices = vertices;
