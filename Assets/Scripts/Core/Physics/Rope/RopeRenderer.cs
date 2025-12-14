@@ -4,7 +4,7 @@ using UnityEngine;
 public class RopeRenderer : MonoBehaviour
 {
     [Min(2)][SerializeField] int endCapTriangles;
-    [SerializeField] int taperLength;//measured in number of rope segments, just to keep things simple
+    [SerializeField] float taperLength;//measured in number of rope segments, just to keep things simple
     [SerializeField] float taperBaseScale;
 
     Mesh mesh; 
@@ -48,10 +48,15 @@ public class RopeRenderer : MonoBehaviour
 
     public void UpdateRenderPositions(Rope rope)
     {
-        var taperLength1 = 1 / (float)taperLength;
+        float taperMult = taperBaseScale;
+        var taperRate = (1 - taperBaseScale) / (float)taperLength;
         for (int i = 0; i < nodePositions.Length; i++)
         {
-            nodePositions[i] = new(rope.position[i].x, rope.position[i].y, i < taperLength ? Mathf.Lerp(taperBaseScale, 1, i * taperLength1) : 1, 0);
+            if (taperMult < 1 && i > rope.AnchorPointer)
+            {
+                taperMult += Mathf.Min(taperRate * Vector2.Distance(nodePositions[i - 1], nodePositions[i]), 1);
+            }
+            nodePositions[i] = new(rope.position[i].x, rope.position[i].y, taperMult, 0);
         }
         material.SetVectorArray(positionsProperty, nodePositions);
     }

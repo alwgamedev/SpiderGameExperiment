@@ -7,12 +7,10 @@ Shader "Custom/RopeShader"
     }
     
     SubShader {
-        Tags { "RenderType" = "Opaque" "Queue" = "Geometry" }
+        Tags { "RenderType" = "Transparent" }
 
         Pass {
-            ZTest Off
             Cull Off//o/w rope goes invisible when you turn left
-            Blend SrcAlpha OneMinusSrcAlpha
             
             CGPROGRAM
             
@@ -54,7 +52,7 @@ Shader "Custom/RopeShader"
                     int nodeIndex = v.id / 2;
                     int displacement = v.id % 2 == 0 ? -1 : 1;
                     float4 nodeData = _NodePositions[nodeIndex];
-                    half2 segmentDirection = nodeIndex < _NumNodes - 1 ?
+                    float2 segmentDirection = nodeIndex < _NumNodes - 1 ?
                         _NodePositions[nodeIndex + 1].xy - nodeData.xy : nodeData.xy - _NodePositions[nodeIndex - 1].xy;
                     if (segmentDirection.x == 0 && segmentDirection.y == 0)
                     {

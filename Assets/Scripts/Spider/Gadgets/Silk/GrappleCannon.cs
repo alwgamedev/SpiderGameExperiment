@@ -27,6 +27,8 @@ public class GrappleCannon : MonoBehaviour
     [SerializeField] int constraintIterations;
     [SerializeField] float carrySpringForce;
     [SerializeField] float carryTensionMax;
+    [SerializeField] float breakThreshold;
+    [SerializeField] float consecutiveFailuresBeforeBreaking;
     [SerializeField] CannonFulcrum cannonFulcrum;
     [SerializeField] RopeRenderer grappleRenderer;
 
@@ -42,6 +44,8 @@ public class GrappleCannon : MonoBehaviour
 
     float fixedDt;
     float fixedDt2;
+
+    int failCounter;
 
     bool freeHanging;
 
@@ -119,8 +123,24 @@ public class GrappleCannon : MonoBehaviour
             }
             else if (GrappleAnchored)
             {
-                grappleReleaseInput = (Input.GetKey(KeyCode.W) && grapple.Length < maxLength ? 1 : 0)
+                if (grapple.CollisionIsFailing(breakThreshold))
+                {
+                    failCounter++;
+                    if (failCounter > consecutiveFailuresBeforeBreaking)
+                    {
+                        failCounter = 0;
+                        DestroyGrapple();
+                    }
+                    //in the future i'd like to have a cool snap effect or something other than the grapple just disappearing instantly
+                    //that could be easy just stop enforcing constraints for the tunneled nodes and stop rendering them
+                    //so the rope appears to split in two halves that drift apart
+                }
+                else
+                {
+                    failCounter = 0;
+                    grappleReleaseInput = (Input.GetKey(KeyCode.W) && grapple.Length < maxLength ? 1 : 0)
                     + (Input.GetKey(KeyCode.S) && grapple.Length > minLength ? -1 : 0);
+                }
             }
         }
     }

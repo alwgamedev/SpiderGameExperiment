@@ -7,7 +7,7 @@ using UnityEngine.Events;
 public class Rope
 {
     const float CONSTRAINTS_TOLERANCE = MathTools.o41;
-    const float MAX_UPDATE_TIME = 3f;
+    const float MAX_UPDATE_TIME = 2.5f;
 
     //Rope Data
     public readonly float width;
@@ -74,8 +74,6 @@ public class Rope
         positionBuffer = new Vector2[numNodes];
         lastPositionBuffer = new Vector2[numNodes];
 
-        //segmentDirection = new Vector2[numNodes];
-
         drag = nodeDrag;
         this.nodeMass = nodeMass;
         this.terminusMass = terminusMass;
@@ -139,6 +137,47 @@ public class Rope
         }
 
         stopwatch.Stop();
+    }
+
+    public bool CollisionIsFailing(float threshold)
+    {
+        float distance = 0;
+        bool chaining = false;
+
+        for (int i = anchorPointer + 1; i < terminusIndex; i++)
+        {
+            if (chaining)
+            {
+                distance += Vector2.Distance(position[i - 1], position[i]);
+                if (distance > threshold)
+                {
+                    return true;
+                }
+            }
+
+            if (Physics2D.OverlapPoint(position[i], collisionMask) 
+                && Physics2D.OverlapPoint(position[i] + collisionThreshold * Vector2.up, collisionMask)
+                && Physics2D.OverlapPoint(position[i] - collisionThreshold * Vector2.up, collisionMask)
+                && Physics2D.OverlapPoint(position[i] + collisionThreshold * Vector2.right, collisionMask)
+                && Physics2D.OverlapPoint(position[i] - collisionThreshold * Vector2.right, collisionMask))
+            {
+                if (!chaining)
+                {
+                    chaining = true;
+                    distance = Vector2.Distance(position[i - 1], position[i]);
+                    if (distance > threshold)
+                    {
+                        return true;
+                    }
+                }
+            }
+            else
+            {
+                chaining = false;
+            }
+        }
+
+        return false;
     }
 
     private void SpacingConstraintIteration()
@@ -437,14 +476,14 @@ public class Rope
         {
             currentCollision[i] = r.collider;
             var diff = Mathf.Min(collisionThreshold - r.distance, this.collisionThreshold);
-            position[i] += diff * r.normal;
             var velocity = position[i] - lastPosition[i];
+            position[i] += diff * r.normal;
             var b = Vector2.Dot(velocity, r.normal);
             if (b < 0)
             {
                 var tang = r.normal.CWPerp();
                 var a = Vector2.Dot(velocity, tang);
-                var newVelocity = collisionBounciness * Mathf.Sign(b) * (velocity - 2 * a * tang);
+                var newVelocity = -collisionBounciness * (velocity - 2 * a * tang);
                 lastPosition[i] = position[i] - newVelocity;
             }
         }
