@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unity.Cinemachine;
+using UnityEngine;
 
 public class Fluid : MonoBehaviour
 {
@@ -9,14 +10,25 @@ public class Fluid : MonoBehaviour
     [SerializeField] float cellSize;
     [SerializeField] int numParticles;
     [SerializeField] float particleRadius;
+    [SerializeField] float particleDrag;
     [SerializeField] float collisionBounciness;
     [SerializeField] LayerMask collisionMask;
     [SerializeField] float spawnRate;
+    [SerializeField] float spawnSpread;
+    [SerializeField] int pushApartIterations;
+    [SerializeField] int gaussSeidelIterations;
+    [SerializeField] float overRelaxation;
+    [SerializeField] float simulationWeight;
+    [SerializeField] int updateFrequency;
 
     FluidSimulator simulator;
     Material material;
 
+    int updateCounter = 0;
+
     Vector4[] vertexData;
+
+    Vector3 lastMousePosition;
 
     int VertexIndex(int i, int j)
     {
@@ -32,11 +44,11 @@ public class Fluid : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmos()
-    {
-        simulator?.DrawParticleGizmos();
-        simulator?.DrawVelocityFieldGizmos();
-    }
+    //private void OnDrawGizmos()
+    //{
+    //    simulator?.DrawParticleGizmos(transform.position.x, transform.position.y);
+    //    simulator?.DrawVelocityFieldGizmos(transform.position.x, transform.position.y);
+    //}
 
     private void Awake()
     {
@@ -54,22 +66,29 @@ public class Fluid : MonoBehaviour
 
     private void Update()
     {
-        if (simulator != null && Input.GetKey(KeyCode.Mouse0))
+        var p = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+        if (!p.IsNaN())
         {
-            var p = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            p.x -= simulator.worldPositionX;
-            p.y -= simulator.worldPositionY;
-            if (p.x > 0 && p.x < simulator.worldWidth && p.y > 0 && p.y < simulator.worldHeight)
+            if (simulator != null && Input.GetKey(KeyCode.Mouse0))
             {
-                var n = (int)Mathf.Ceil(spawnRate * Time.deltaTime);
-                simulator.SpawnParticles(n, p.x, p.y);
+                if (p.x > 0 && p.x < simulator.worldWidth && p.y > 0 && p.y < simulator.worldHeight)
+                {
+                    var n = (int)Mathf.Ceil(spawnRate * Time.deltaTime);
+                    simulator.SpawnParticles(n, spawnSpread, p.x, p.y, (p.x - lastMousePosition.x) / Time.deltaTime, (p.y - lastMousePosition.y) / Time.deltaTime);
+                }
             }
+            lastMousePosition = p;
         }
     }
 
     private void FixedUpdate()
     {
-        simulator?.Update(Time.deltaTime);
+        if (++updateCounter > updateFrequency)
+        {
+            simulator?.Update(updateFrequency * Time.deltaTime, transform.position.x, transform.position.y, particleDrag, pushApartIterations,
+            gaussSeidelIterations, overRelaxation, simulationWeight);
+            updateCounter -= updateFrequency;
+        }
     }
 
     private void LateUpdate()
@@ -90,8 +109,8 @@ public class Fluid : MonoBehaviour
 
     public void InitializeSimulator()
     {
-        simulator = new(width, height, cellSize, transform.position.x, transform.position.y,
-            numParticles, Time.fixedDeltaTime * Physics2D.gravity.y, particleRadius, collisionBounciness, collisionMask);
+        simulator = new(width, height, cellSize, numParticles, Physics2D.gravity.y, 
+            particleRadius, collisionBounciness, collisionMask);
     }
 
     public void CreateMesh()

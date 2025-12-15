@@ -49,7 +49,7 @@ public class RopeRenderer : MonoBehaviour
     public void UpdateRenderPositions(Rope rope)
     {
         float taperMult = taperBaseScale;
-        var taperRate = (1 - taperBaseScale) / (float)taperLength;
+        var taperRate = (1 - taperBaseScale) / taperLength;
         for (int i = 0; i < nodePositions.Length; i++)
         {
             if (taperMult < 1 && i > rope.AnchorPointer)
@@ -61,7 +61,7 @@ public class RopeRenderer : MonoBehaviour
         material.SetVectorArray(positionsProperty, nodePositions);
     }
 
-    private void CreateMesh(int numNodes)//nodeSpacing used to determine uv with endcaps
+    private void CreateMesh(int numNodes)
     {
         //with 3 nodes and 2 endcap triangles, the vertices would be ordered like this
         //               1 ---------------- 3 ---------------- 5

@@ -62,7 +62,7 @@ Shader "Custom/RopeShader"
                             segmentDirection = normalize(_NodePositions[k].xy - nodeData.xy);
                         }
                     }
-                    segmentDirection = normalize(segmentDirection);//do we have to do anything about NaN or we cool?
+                    segmentDirection = normalize(segmentDirection);
                     float a = displacement * _HalfWidth * nodeData.z;
                     o.clipPos = mul(UNITY_MATRIX_VP, 
                         float4(nodeData.x - a * segmentDirection.y, nodeData.y + a * segmentDirection.x, 0, 1));
@@ -80,7 +80,7 @@ Shader "Custom/RopeShader"
                             right = normalize(center - _NodePositions[k]);
                         }
                     }
-                    int i = v.id - (_NumNodes << 1) + 1;//if there are, say, 5 endcap triangles, which one are we on? (1st, 2nd, ... not zero indexed)
+                    int i = v.id - (_NumNodes << 1) + 1;//which endcap triangle are we on? (not zero indexed)
                     float t =  (PI * i) / (_EndcapTriangles + 1);
                     float2 p = center + _HalfWidth * (cos(t) * down + sin(t) * right);
                     o.clipPos = mul(UNITY_MATRIX_VP, float4(p, 0, 1));
