@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEditor;
 
 [CanEditMultipleObjects]
-[CustomEditor(typeof(Fluid))]
+[CustomEditor(typeof(FLIPFluidManager))]
 public class FluidEditor : Editor
 {
     public override void OnInspectorGUI()
@@ -13,7 +13,7 @@ public class FluidEditor : Editor
         {
             foreach (var t in targets)
             { 
-                ((Fluid)t).CreateMesh();
+                ((FLIPFluidManager)t).CreateMesh();
             }
         }
     }

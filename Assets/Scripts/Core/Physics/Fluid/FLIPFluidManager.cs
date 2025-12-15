@@ -1,10 +1,9 @@
-﻿using Unity.Cinemachine;
+﻿using System;
+using Unity.Cinemachine;
 using UnityEngine;
 
-public class Fluid : MonoBehaviour
+public class FLIPFluidManager : MonoBehaviour
 {
-    const int MAX_NUM_VERTICES = 4091;
-
     [SerializeField] int width;
     [SerializeField] int height;
     [SerializeField] float cellSize;
@@ -18,30 +17,22 @@ public class Fluid : MonoBehaviour
     [SerializeField] int pushApartIterations;
     [SerializeField] int gaussSeidelIterations;
     [SerializeField] float overRelaxation;
-    [SerializeField] float simulationWeight;
+    [SerializeField] float flipWeight;
+    [SerializeField] float goalDensity;
     [SerializeField] int updateFrequency;
 
-    FluidSimulator simulator;
+    FLIPFluidSimulator simulator;
     Material material;
 
     int updateCounter = 0;
 
     Vector4[] vertexData;
 
-    Vector3 lastMousePosition;
+    //Vector3 lastMousePosition;
 
     int VertexIndex(int i, int j)
     {
         return i * (width + 1) + j;
-    }
-
-    private void OnValidate()
-    {
-        int vertices = (width + 1) * (height + 1);
-        if (vertices > MAX_NUM_VERTICES)
-        {
-            height = -1 + MAX_NUM_VERTICES / (width + 1);
-        }
     }
 
     //private void OnDrawGizmos()
@@ -61,32 +52,42 @@ public class Fluid : MonoBehaviour
     {
         CreateMesh();
         InitializeSimulator();
-        vertexData = new Vector4[(width + 1) * (height + 1)];
     }
 
     private void Update()
     {
-        var p = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
-        if (!p.IsNaN())
+        if (simulator != null && Input.GetKey(KeyCode.Mouse0))
         {
-            if (simulator != null && Input.GetKey(KeyCode.Mouse0))
+            var p = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+            if (p.x > 0 && p.x < simulator.worldWidth && p.y > 0 && p.y < simulator.worldHeight)
             {
-                if (p.x > 0 && p.x < simulator.worldWidth && p.y > 0 && p.y < simulator.worldHeight)
-                {
-                    var n = (int)Mathf.Ceil(spawnRate * Time.deltaTime);
-                    simulator.SpawnParticles(n, spawnSpread, p.x, p.y, (p.x - lastMousePosition.x) / Time.deltaTime, (p.y - lastMousePosition.y) / Time.deltaTime);
-                }
+                var n = (int)Mathf.Ceil(spawnRate * Time.deltaTime);
+                simulator.SpawnParticles(n, spawnSpread, p.x, p.y);
             }
-            lastMousePosition = p;
         }
+
+        //var p = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+        //if (!p.IsNaN())
+        //{
+        //    if (simulator != null && Input.GetKey(KeyCode.Mouse0))
+        //    {
+        //        if (p.x > 0 && p.x < simulator.worldWidth && p.y > 0 && p.y < simulator.worldHeight)
+        //        {
+        //            var n = (int)Mathf.Ceil(spawnRate * Time.deltaTime);
+        //            simulator.SpawnParticles(n, spawnSpread, p.x, p.y, (p.x - lastMousePosition.x) / Time.deltaTime, (p.y - lastMousePosition.y) / Time.deltaTime);
+        //        }
+        //    }
+        //    //lastMousePosition = p;
+        //}
     }
 
     private void FixedUpdate()
     {
         if (++updateCounter > updateFrequency)
         {
-            simulator?.Update(updateFrequency * Time.deltaTime, transform.position.x, transform.position.y, particleDrag, pushApartIterations,
-            gaussSeidelIterations, overRelaxation, simulationWeight);
+            simulator?.Update(updateFrequency * Time.deltaTime, transform.position.x, transform.position.y,
+                particleDrag, pushApartIterations, collisionBounciness,
+                gaussSeidelIterations, overRelaxation, flipWeight, goalDensity);
             updateCounter -= updateFrequency;
         }
     }
@@ -95,13 +96,40 @@ public class Fluid : MonoBehaviour
     {
         if (simulator != null)
         {
-            for (int i = 0; i < height + 1;  i++)
+            int n = (simulator.width + 1) * (simulator.height + 1) - 1;
+            int q0 = n / 4;
+            int r0 = n % 4;
+            for (int q = 0; q < q0; q++)
             {
-                for (int j = 0; j < width + 1; j++)
-                {
-                    vertexData[VertexIndex(i, j)] = new(simulator.DensityAtVertex(i, j), 0f, 0f, 0f);
-                }
+                int k = q << 2;
+                vertexData[q].x = simulator.DensityAtVertex(k++);
+                vertexData[q].y = simulator.DensityAtVertex(k++);
+                vertexData[q].z = simulator.DensityAtVertex(k++);
+                vertexData[q].w = simulator.DensityAtVertex(k);
             }
+
+            int k0 = q0 << 2;
+            vertexData[q0].x = simulator.DensityAtVertex(k0++);
+            if (r0 > 0)
+            {
+                vertexData[q0].y = simulator.DensityAtVertex(k0++);
+            }
+            if (r0 > 1)
+            {
+                vertexData[q0].z = simulator.DensityAtVertex(k0++);
+            }
+            if (r0 > 2)
+            {
+                vertexData[q0].w = simulator.DensityAtVertex(k0);
+
+            }
+            //for (int i = 0; i < height + 1;  i++)
+            //{
+            //    for (int j = 0; j < width + 1; j++)
+            //    {
+            //        vertexData[VertexIndex(i, j)] = new(simulator.DensityAtVertex(i, j), 0f, 0f, 0f);
+            //    }
+            //}
 
             material.SetVectorArray("_Density", vertexData);
         }
@@ -109,8 +137,8 @@ public class Fluid : MonoBehaviour
 
     public void InitializeSimulator()
     {
-        simulator = new(width, height, cellSize, numParticles, Physics2D.gravity.y, 
-            particleRadius, collisionBounciness, collisionMask);
+        simulator = new(width, height, cellSize, numParticles, Physics2D.gravity.y,
+            particleRadius, collisionMask);
     }
 
     public void CreateMesh()
@@ -153,5 +181,7 @@ public class Fluid : MonoBehaviour
         mesh.uv = uv;
         mesh.RecalculateNormals();
         GetComponent<MeshFilter>().mesh = mesh;
+
+        Array.Resize(ref vertexData, (width + 1) * (height + 1));
     }
 }

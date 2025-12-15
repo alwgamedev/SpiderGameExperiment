@@ -1,4 +1,4 @@
-Shader "Custom/FluidShader"
+Shader "Custom/FluidDensityShader"
 {
     Properties {
         _AirDensity("AirDensity", float) = 0.05
@@ -20,7 +20,7 @@ Shader "Custom/FluidShader"
             #pragma vertex vert
             #pragma fragment frag
 
-            static const int MAX_NUM_VERTICES = 4091;
+            static const int MAX_ARRAY_SIZE = 2048;
             
             struct appdata {
                 float4 vertex : POSITION;
@@ -38,14 +38,30 @@ Shader "Custom/FluidShader"
             float _AirDensity;
             float4 _ColorMin;
             float4 _ColorMax;
-            float4 _Density[MAX_NUM_VERTICES];
+            float4 _Density[MAX_ARRAY_SIZE];
 
             v2f vert (appdata v) {
 
                 v2f o;
                 o.uv = v.uv;
                 o.clipPos = UnityObjectToClipPos(v.vertex);
-                o.density = _Density[v.id].x;
+                int q = v.id / 4;
+                int r = v.id % 4;
+                switch (r)
+                {
+                    case 0: 
+                        o.density = _Density[q].x;
+                        break;
+                    case 1:
+                        o.density = _Density[q].y;
+                        break;
+                    case 2:
+                        o.density = _Density[q].z;
+                        break;
+                    case 3:
+                        o.density = _Density[q].w;
+                        break;
+                }
                 return o;
             }
 
