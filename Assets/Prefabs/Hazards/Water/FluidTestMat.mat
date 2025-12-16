@@ -41,13 +41,14 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AirDensity: 0.01
+    - _AirDensity: 0.18
     - _EnableExternalAlpha: 0
+    - _FluidDensity: 0.23
     - _ZWrite: 0
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _ColorMax: {r: 0.17410462, g: 0.17410462, b: 0.645283, a: 1}
-    - _ColorMin: {r: 1, g: 1, b: 1, a: 0}
+    - _ColorMax: {r: 0.17410457, g: 0.17410457, b: 0.6452829, a: 0.5019608}
+    - _ColorMin: {r: 0.2746671, g: 0.2746671, b: 0.87169814, a: 0}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

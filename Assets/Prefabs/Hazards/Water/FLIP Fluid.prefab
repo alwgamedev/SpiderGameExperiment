@@ -100,24 +100,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a03b53a7173f7084c89c01b767e6a464, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 75
+  width: 40
   height: 50
-  cellSize: 0.5
-  numParticles: 6000
-  particleRadius: 0.25
-  particleDrag: 0
-  collisionBounciness: 1
+  cellSize: 0.6
+  numParticles: 1200
+  particleRadius: 0.15
+  collisionBounciness: 0.25
   collisionMask:
     serializedVersion: 2
     m_Bits: 8
   spawnRate: 500
-  spawnSpread: 0.1
-  pushApartIterations: 3
+  spawnSpread: 0
+  pushApartIterations: 1
   gaussSeidelIterations: 60
   overRelaxation: 1.9
-  flipWeight: 0.925
-  goalDensity: 0.75
-  updateFrequency: 6
+  flipWeight: 0.96
+  fluidDensity: 0.5
+  obstacleVelocityNormalizer: 0.01
+  updateFrequency: 3
 --- !u!210 &1087016557449242361
 SortingGroup:
   m_ObjectHideFlags: 0

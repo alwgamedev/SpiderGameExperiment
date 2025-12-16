@@ -2,6 +2,7 @@ Shader "Custom/FluidDensityShader"
 {
     Properties {
         _AirDensity("AirDensity", float) = 0.05
+        _FluidDensity("FluidDensity", float) = 0.7
         _ColorMin("ColorMin", Color) = (0,0,1,0.05)
         _ColorMax("ColorMax", Color) = (0,0,1,1)
     }
@@ -36,6 +37,7 @@ Shader "Custom/FluidDensityShader"
             };
             
             float _AirDensity;
+            float _FluidDensity;
             float4 _ColorMin;
             float4 _ColorMax;
             float4 _Density[MAX_ARRAY_SIZE];
@@ -66,7 +68,8 @@ Shader "Custom/FluidDensityShader"
             }
 
             fixed4 frag (v2f o) : SV_Target {
-                return o.density < _AirDensity ? (0,0,0,0) : o.density < 1 ? lerp(_ColorMin, _ColorMax, (o.density - _AirDensity) / (1 - _AirDensity)) : _ColorMax;
+                return o.density < _AirDensity ? (0,0,0,0) : o.density < _FluidDensity ? 
+                    lerp(_ColorMin, _ColorMax, (o.density - _AirDensity) / (_FluidDensity - _AirDensity)) : _ColorMax;
             }
             
             ENDCG

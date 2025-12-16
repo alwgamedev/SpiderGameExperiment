@@ -15,11 +15,11 @@ public class FLIPFluidSimulator
     public readonly int numParticles;
     public readonly float gravity;
     public readonly float particleRadius;
-    public readonly float particleArea;
     public readonly float[] particlePositionX;//positions are local, where (0,0) is the lower left corner of the grid (makes transferring to grid and back easier)
     public readonly float[] particlePositionY;
     public readonly float[] particleVelocityX;
     public readonly float[] particleVelocityY;
+    public readonly float[] particleCollisionChance;//0 = full collision, 1 = no collision
 
     readonly int[] cellContainingParticle;
     readonly int[] particlesByCell;//array of length = numParticles, partitioned into chunks for each cell; each chunk stores the indices of the particles in that cell
@@ -40,6 +40,7 @@ public class FLIPFluidSimulator
     readonly int collisionMask;
     readonly Collider2D[] obstacle;//per grid cell
 
+
     public int SpawnPointer => spawnPointer;
 
     public FLIPFluidSimulator(int width, int height, float cellSize, int numParticles, float gravity, float particleRadius, int collisionMask)
@@ -56,11 +57,11 @@ public class FLIPFluidSimulator
         this.gravity = gravity;
 
         this.particleRadius = particleRadius;
-        particleArea = Mathf.PI * particleRadius * particleRadius;
         particlePositionX = new float[numParticles];
         particlePositionY = new float[numParticles];
         particleVelocityX = new float[numParticles];
         particleVelocityY = new float[numParticles];
+        particleCollisionChance = new float[numParticles];
 
         cellContainingParticle = new int[numParticles];
         particlesByCell = new int[numParticles];
@@ -116,7 +117,39 @@ public class FLIPFluidSimulator
         return sum / count;
     }
 
-    public void SpawnParticles(int num, float spread, float positionX, float positionY, float initialVelocityX = 0, float initialVelocityY = 0)
+    //good enough for now, but doesn't work very well when obstacle is right on the surface
+    public void FillObstacleDensities()
+    {
+        for (int i = height - 1; i > -1; i--)
+        {
+            for (int j = 0; j < width; j++)
+            {
+                if (obstacle[Index(i, j)])
+                {
+                    var sum = 0f;
+                    var ct = 0;
+                    if (i < height - 1)
+                    {
+                        sum += density[Index(i + 1, j)];
+                        ct++;
+                    }
+                    if (j > 0)
+                    {
+                        sum += density[Index(i, j - 1)];
+                        ct++;
+                    }
+
+                    if (ct != 0)
+                    {
+                        density[Index(i, j)] = sum / ct;
+                    }
+                }
+            }
+        }
+    }
+
+    public void SpawnParticles(int num, float spread, float positionX, float positionY,
+        float initialVelocityX = 0, float initialVelocityY = 0)
     {
         int k = 0;
         var a = 0.5f * cellSize;
@@ -126,6 +159,7 @@ public class FLIPFluidSimulator
         {
             particlePositionX[spawnPointer] = positionX + MathTools.RandomFloat(-spread, spread);
             particlePositionY[spawnPointer] = positionY + MathTools.RandomFloat(-spread, spread);
+            particleCollisionChance[spawnPointer] = MathTools.RandomFloat(0, 1);
             particleVelocityX[spawnPointer] = initialVelocityX;
             particleVelocityY[spawnPointer] = initialVelocityY;
             k++;
@@ -170,33 +204,27 @@ public class FLIPFluidSimulator
 
     //SIMULATION
 
-    public void Update(float dt, float worldPositionX, float worldPositionY, float particleDrag,
+    public void Update(float dt, float worldPositionX, float worldPositionY,
         int pushApartIterations, float collisionBounciness,
-        int gaussSeidelIterations, float overRelaxation, float flipWeight, float goalDensity)
+        int gaussSeidelIterations, float overRelaxation, float flipWeight,
+        float fluidDensity, float obstacleVelocityNormalizer)
     {
-        IntegrateParticles(dt, particleDrag);
+        IntegrateParticles(dt);
         PushParticlesApart(pushApartIterations);
         SetOccupiedCells(worldPositionX, worldPositionY);
         ResolveCollisions(dt, worldPositionX, worldPositionY, collisionBounciness);
         TransferParticleVelocitiesToGrid();
-        Project(gaussSeidelIterations, overRelaxation, goalDensity);
+        SolveDivergence(gaussSeidelIterations, overRelaxation, fluidDensity, obstacleVelocityNormalizer);
         TransferGridVelocitiesToParticles(dt, flipWeight);
     }
 
-    private void IntegrateParticles(float dt, float drag)
+    private void IntegrateParticles(float dt)
     {
         for (int k = 0; k < spawnPointer; k++)
         {
-            var d = dt * drag * Speed(k);
-            particleVelocityX[k] -= d * particleVelocityX[k];
-            particleVelocityY[k] += dt * gravity - d * particleVelocityY[k];
+            particleVelocityY[k] += dt * gravity;
             particlePositionX[k] += dt * particleVelocityX[k];
             particlePositionY[k] += dt * particleVelocityY[k];
-        }
-
-        float Speed(int k)
-        {
-            return Mathf.Sqrt(particleVelocityX[k] * particleVelocityX[k] + particleVelocityY[k] * particleVelocityY[k]);
         }
     }
 
@@ -215,127 +243,114 @@ public class FLIPFluidSimulator
 
     private void ResolveCollisions(float dt, float worldPositionX, float worldPositionY, float collisionBounciness)
     {
+        var dtInverse = 1 / dt;
+
         for (int k = 0; k < spawnPointer; k++)
         {
             var i = (int)Mathf.Floor(particlePositionY[k] / cellSize);
             var j = (int)Mathf.Floor(particlePositionX[k] / cellSize);
             if (!(i < 0) && i < height && !(j < 0) && j < width)
             {
+                ////ATM collision is only for simple colliders (circle, capsule, box)
                 var o = obstacle[Index(i, j)];
-                if (o)//if o is on ground layer we will handle differently
+                if (o)
                 {
-                    //this won't work well for collision with ground (large polygon colliders)
-                    var nX = particlePositionX[k] + worldPositionX - o.bounds.center.x;
-                    var nY = particlePositionY[k] + worldPositionY - o.bounds.center.y;
-                    var m = nX * nX + nY * nY;
-                    if (m > MathTools.o41)
+                    var localPosX = particlePositionX[k] + worldPositionX - o.bounds.center.x;
+                    var localPosY = particlePositionY[k] + worldPositionY - o.bounds.center.y;
+                    var ellipticalCoordX = localPosX / o.bounds.extents.x;
+                    var ellipticalCoordY = localPosY / o.bounds.extents.y;
+                    var ellipticalR2 = ellipticalCoordX * ellipticalCoordX + ellipticalCoordY * ellipticalCoordY;
+                    var distToCenter2 = localPosX * localPosX + localPosY * localPosY;
+                    var boundaryR2 = distToCenter2 / ellipticalR2;
+
+                    if (float.IsNormal(boundaryR2))
                     {
-                        m = 1 / Mathf.Sqrt(m);
-                        nX *= m;
-                        nY *= m;
-                        var dx = particleRadius * nX;//particleRadius is small so don't bother computing the actual overlap radius (assume particle fully tunneled)
-                        var dy = particleRadius * nY;
+                        var boundaryR = Mathf.Sqrt(boundaryR2);
+                        var distToCenter = Mathf.Sqrt(distToCenter2);
+                        var correction = boundaryR - distToCenter;
 
-                        //move the particle away from the collision
-                        particleVelocityX[k] += dx;
-                        particleVelocityY[k] += dy;
-                        particlePositionX[k] += dt * dx;
-                        particlePositionY[k] += dt * dy;
-                        if (o.attachedRigidbody)
+                        if (correction > 0)
                         {
-                            particleVelocityX[k] += dt * o.attachedRigidbody.linearVelocity.x;
-                            particleVelocityY[k] += dt * o.attachedRigidbody.linearVelocity.y;
-                        }
+                            var nX = localPosX / distToCenter;
+                            var nY = localPosY / distToCenter;
+                            var dX = correction * nX;
+                            var dY = correction * nY;
 
-                        //reflect the velocity over the collision normal
-                        var b = particleVelocityX[k] * nX + particleVelocityY[k] * nY;
-                        if (b < 0)
-                        {
-                            var a = 2 * (particleVelocityX[k] * nY - particleVelocityY[k] * nX);
-                            particleVelocityX[k] = -collisionBounciness * (particleVelocityX[k] - a * nY);
-                            particleVelocityY[k] = -collisionBounciness * (particleVelocityY[k] + a * nX);
+                            var dot = particleVelocityX[k] * nX + particleVelocityY[k] * nY;
+                            if (dot < 0)
+                            {
+                                var t = 2 * (particleVelocityX[k] * nY - particleVelocityY[k] * nX);
+                                particleVelocityX[k] = -collisionBounciness * (particleVelocityX[k] - t * nY);
+                                particleVelocityY[k] = -collisionBounciness * (particleVelocityY[k] + t * nX);
+                            }
+                            particlePositionX[k] += dX;
+                            particlePositionY[k] += dY;
+                            particleVelocityX[k] += dtInverse * dX;
+                            particleVelocityY[k] += dtInverse * dY;
                         }
                     }
                 }
-            }
 
-            //wall collisions -- can get rid of once we have ground collision
-            //(but we may still want to do something about particles escaping through the roof, e.g. just reset them to the center of the grid)
-            var c = cellSize + particleRadius;
-            if (particlePositionX[k] < c)
-            {
-                var dx = particlePositionX[k] - c;
-                particlePositionX[k] -= dx;
-                particleVelocityX[k] -= dx / dt;
-                if (particleVelocityX[k] < 0)
+                //wall collisions -- can get rid of once we have ground collision
+                //(but we may still want to do something about particles escaping through the roof, e.g. just reset them to the center of the grid)
+                var c = cellSize + particleRadius;
+                if (particlePositionX[k] < c)
                 {
-                    particleVelocityX[k] = -collisionBounciness * particleVelocityX[k];
+                    var dx = particlePositionX[k] - c;
+                    particlePositionX[k] -= dx;
+                    particleVelocityX[k] -= dx / dt;
+                    if (particleVelocityX[k] < 0)
+                    {
+                        particleVelocityX[k] = -collisionBounciness * particleVelocityX[k];
+                    }
                 }
-            }
-            else if (particlePositionX[k] > worldWidth - c)
-            {
-                var dx = particlePositionX[k] - worldWidth + c;
-                particlePositionX[k] -= dx;
-                particleVelocityX[k] -= dx / dt;
-                if (particleVelocityX[k] > 0)
+                else if (particlePositionX[k] > worldWidth - c)
                 {
-                    particleVelocityX[k] = -collisionBounciness * particleVelocityX[k];
+                    var dx = particlePositionX[k] - worldWidth + c;
+                    particlePositionX[k] -= dx;
+                    particleVelocityX[k] -= dx / dt;
+                    if (particleVelocityX[k] > 0)
+                    {
+                        particleVelocityX[k] = -collisionBounciness * particleVelocityX[k];
+                    }
                 }
-            }
 
-            if (particlePositionY[k] < c)
-            {
-                var dy = particlePositionY[k] - c;
-                particlePositionY[k] -= dy;
-                particleVelocityY[k] -= dy / dt;
-                if (particleVelocityY[k] < 0)
+                if (particlePositionY[k] < c)
                 {
-                    particleVelocityY[k] = -collisionBounciness * particleVelocityY[k];
+                    var dy = particlePositionY[k] - c;
+                    particlePositionY[k] -= dy;
+                    particleVelocityY[k] -= dy / dt;
+                    if (particleVelocityY[k] < 0)
+                    {
+                        particleVelocityY[k] = -collisionBounciness * particleVelocityY[k];
+                    }
                 }
+                //else if (particlePositionY[k] > worldHeight - c)
+                //{
+                //    var dy = particlePositionY[k] - worldHeight + c;
+                //    particlePositionY[k] -= dy;
+                //    particleVelocityY[k] -= dy / dt;
+                //    if (particleVelocityY[k] > 0)
+                //    {
+                //        particleVelocityY[k] = -collisionBounciness * particleVelocityY[k];
+                //    }
+                //}
             }
-            else if (particlePositionY[k] > worldHeight - c)
-            {
-                var dy = particlePositionY[k] - worldHeight + c;
-                particlePositionY[k] -= dy;
-                particleVelocityY[k] -= dy / dt;
-                if (particleVelocityY[k] > 0)
-                {
-                    particleVelocityY[k] = -collisionBounciness * particleVelocityY[k];
-                }
-            }
-
-            //if (ParticleBroken())
-            //{
-            //    particlePositionX[k] = 0.5f * worldWidth;
-            //    particlePositionY[k] = 0.5f * worldHeight;
-            //    particleVelocityX[k] = 0;
-            //    particleVelocityY[k] = 0;
-            //}
-
-            //bool ParticleBroken()
-            //{
-            //    return Invalid(particlePositionX[k]) || Invalid(particlePositionY[k]) || Invalid(particleVelocityX[k]) || Invalid(particleVelocityY[k]);
-            //}
-
-            //bool Invalid(float a)
-            //{
-            //    return float.IsInfinity(a) || float.IsNaN(a);
-            //}
         }
     }
+
 
     private void PushParticlesApart(int iterations)
     {
         for (int m = 0; m < iterations; m++)
         {
-            Array.Fill(cellContainingParticle, -1);
             Array.Fill(cellParticleCount, 0);
             for (int k = 0; k < spawnPointer; k++)
             {
-                var w = cellSizeInverse * particlePositionX[k];
+                var w = cellSizeInverse;
                 var h = cellSizeInverse * particlePositionY[k];
-                var i = (int)h;
-                var j = (int)w;
+                var i = Mathf.Clamp((int)h, 0, height - 1);
+                var j = Mathf.Clamp((int)w, 0, width - 1);
                 cellContainingParticle[k] = Index(i, j);
                 cellParticleCount[Index(i, j)]++;
             }
@@ -367,7 +382,7 @@ public class FLIPFluidSimulator
 
             //now loop over all particles and check for overlap with particles in adjacent cells
             //we'll ignore the fact that particles may move to different cells during this process
-            float tolerance = 2.1f * particleRadius;
+            float tolerance = 2 * particleRadius;
             float toleranceSqrd = tolerance * tolerance;
             for (int k = 0; k < spawnPointer; k++)
             {
@@ -466,10 +481,11 @@ public class FLIPFluidSimulator
                                         b *= MathTools.cos45;
                                     }
                                 }
+
                                 particlePositionX[k] -= a;
                                 particlePositionY[k] -= b;
-                                particlePositionX[k1] += a;
-                                particlePositionY[k1] += b;
+                                particleVelocityX[k1] += a;
+                                particleVelocityY[k1] += b;
                             }
                         }
                     }
@@ -489,6 +505,7 @@ public class FLIPFluidSimulator
         Array.Copy(velocityY, prevVelocityY, velocityY.Length);
         Array.Fill(velocityX, 0);
         Array.Fill(velocityY, 0);
+        Array.Fill(cellParticleCount, 0);
         Array.Fill(density, 0);
 
         var maxHeight = height - 0.5f;
@@ -507,14 +524,14 @@ public class FLIPFluidSimulator
 
             if (!(i < 0))
             {
-                if (!(j < 0) && !obstacle[Index(i, j)])
+                if (!(j < 0))
                 {
                     var wt = (1 - boxCoordX) * (1 - boxCoordY);
                     velocityX[Index(i, j)] += wt * particleVelocityX[k];
                     velocityY[Index(i, j)] += wt * particleVelocityY[k];
                     density[Index(i, j)] += wt;
                 }
-                if (j + 1 < width && !obstacle[Index(i, j + 1)])
+                if (j + 1 < width)
                 {
                     var wt = boxCoordX * (1 - boxCoordY);
                     velocityX[Index(i, j + 1)] += wt * particleVelocityX[k];
@@ -524,14 +541,14 @@ public class FLIPFluidSimulator
             }
             if (i + 1 < height)
             {
-                if (!(j < 0) && !obstacle[Index(i + 1, j)])
+                if (!(j < 0))
                 {
                     var wt = (1 - boxCoordX) * boxCoordY;
                     velocityX[Index(i + 1, j)] += wt * particleVelocityX[k];
                     velocityY[Index(i + 1, j)] += wt * particleVelocityY[k];
                     density[Index(i + 1, j)] += wt;
                 }
-                if (j + 1 < width && !obstacle[Index(i + 1, j + 1)])
+                if (j + 1 < width)
                 {
                     var wt = boxCoordX * boxCoordY;
                     velocityX[Index(i + 1, j + 1)] += wt * particleVelocityX[k];
@@ -549,8 +566,6 @@ public class FLIPFluidSimulator
                 velocityY[k] /= density[k];
             }
         }
-
-
     }
 
     private void TransferGridVelocitiesToParticles(float dt, float flipWeight)
@@ -632,79 +647,44 @@ public class FLIPFluidSimulator
         }
     }
 
-    //project velocity field onto its incompressible part
-    private void Project(int solveIterations, float overRelaxation, float goalDensity)
+    private void SolveDivergence(int solveIterations, float overRelaxation, float fluidDensity, float obstacleVelocityNormalizer)
     {
-        Array.Copy(velocityX, bufferA, velocityX.Length);
-        Array.Copy(velocityY, bufferB, velocityY.Length);
-
         for (int k = 0; k < solveIterations; k++)
         {
             for (int i = 1; i < height - 1; i++)
             {
                 for (int j = 1; j < width - 1; j++)
                 {
-                    if (density[Index(i, j)] == 0 || obstacle[Index(i, j)])
+                    if (density[Index(i, j)] == 0)
                     {
                         continue;
                     }
 
-                    var denom = 0f;
-
-                    if (!obstacle[Index(i, j + 1)])
-                    {
-                        denom++;
-                    }
-                    if (j > 1 && !obstacle[Index(i, j - 1)])
-                    {
-                        denom++;
-                    }
-                    if (!obstacle[Index(i + 1, j)])
-                    {
-                        denom++;
-                    }
-                    if (i > 1 && !obstacle[Index(i - 1, j)])
-                    {
-                        denom++;
-                    }
-
-                    if (denom == 0)
-                    {
-                        continue;
-                    }
+                    var denom = 2 + (i > 1 ? 1 : 0) + (j > 1 ? 1 : 0);
 
                     var d = velocityX[Index(i, j + 1)] - velocityX[Index(i, j)] + velocityY[Index(i + 1, j)] - velocityY[Index(i, j)];
+                    var goalDensity = obstacle[Index(i, j)] ? 
+                        obstacle[Index(i, j)].attachedRigidbody ? DynamicObstacleDensity() : 0
+                        : fluidDensity;
                     d -= density[Index(i, j)] - goalDensity;
                     d *= overRelaxation / denom;
 
-                    if (!obstacle[Index(i, j + 1)])
-                    {
-                        velocityX[Index(i, j + 1)] -= d;
-                    }
-                    if (j > 1 && !obstacle[Index(i, j - 1)])
+
+                    velocityX[Index(i, j + 1)] -= d;
+                    velocityY[Index(i + 1, j)] -= d;
+                    if (j > 1)
                     {
                         velocityX[Index(i, j)] += d;
                     }
-                    if (!obstacle[Index(i + 1, j)])
-                    {
-                        velocityY[Index(i + 1, j)] -= d;
-                    }
-                    if (i > 1 && !obstacle[Index(i - 1, j)])
+                    if (i > 1)
                     {
                         velocityY[Index(i, j)] += d;
                     }
-                }
-            }
-        }
 
-        for (int i = 1; i < height - 1; i++)
-        {
-            for (int j = 1; j < width - 1; j++)
-            {
-                if (obstacle[Index(i, j)])
-                {
-                    velocityX[Index(i, j)] = bufferA[Index(i, j)];
-                    velocityY[Index(i, j)] = bufferB[Index(i, j)];
+                    float DynamicObstacleDensity()
+                    {
+                        return fluidDensity - obstacle[Index(i, j)].attachedRigidbody.linearVelocity.magnitude * obstacleVelocityNormalizer;
+                    }
                 }
             }
         }
