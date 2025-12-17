@@ -714,7 +714,7 @@ public class SpiderMovementController : MonoBehaviour
         UpdateGroundMap();
         var i = groundMap.IndexOfFirstGroundHitFromCenter(FacingRight, out var isCentralIndex);
         ref var pt = ref groundMap.map[i];
-        var goalGroundDirection = pt.hitGround && isCentralIndex ?
+        var goalGroundDirection = pt.HitGround && isCentralIndex ?
             groundMap.AverageNormalFromCenter(-groundDirectionSampleWidth, groundDirectionSampleWidth).CWPerp()
             : pt.normal.CWPerp();
 
@@ -756,7 +756,7 @@ public class SpiderMovementController : MonoBehaviour
 
         void UpdateGroundPoint(ref GroundMapPt pt)
         {
-            if (pt.hitGround && !isCentralIndex)
+            if (pt.HitGround && !isCentralIndex)
             {
                 var r = Physics2D.Raycast(heightReferencePoint.position, -pt.normal, backupGroundPtRaycastLengthFactor * groundmapRaycastLength, groundLayer);
                 if (r)

@@ -34,11 +34,11 @@ public class FLIPFluidManager : MonoBehaviour
         return i * (width + 1) + j;
     }
 
-    //private void OnDrawGizmos()
-    //{
-    //    simulator?.DrawParticleGizmos(transform.position.x, transform.position.y);
-    //    simulator?.DrawVelocityFieldGizmos(transform.position.x, transform.position.y);
-    //}
+    private void OnDrawGizmos()
+    {
+        simulator?.DrawParticleGizmos(transform.position);
+        simulator?.DrawVelocityFieldGizmos(transform.position);
+    }
 
     private void Awake()
     {
@@ -61,7 +61,7 @@ public class FLIPFluidManager : MonoBehaviour
             if (p.x > 0 && p.x < simulator.worldWidth && p.y > 0 && p.y < simulator.worldHeight)
             {
                 var n = (int)Mathf.Ceil(spawnRate * Time.deltaTime);
-                simulator.SpawnParticles(n, spawnSpread, p.x, p.y);
+                simulator.SpawnParticles(n, spawnSpread, p);
             }
         }
     }
@@ -108,7 +108,7 @@ public class FLIPFluidManager : MonoBehaviour
     {
         if (++updateCounter > updateFrequency)
         {
-            simulator?.Update(updateFrequency * Time.deltaTime, transform.position.x, transform.position.y,
+            simulator?.Update(updateFrequency * Time.deltaTime, transform.position,
                 pushApartIterations, collisionBounciness,
                 gaussSeidelIterations, overRelaxation, flipWeight,
                 fluidDensity, obstacleVelocityNormalizer);

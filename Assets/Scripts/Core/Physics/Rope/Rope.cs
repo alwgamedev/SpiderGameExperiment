@@ -28,7 +28,7 @@ public class Rope
     readonly int terminusIndex;
 
     //Node Data
-    public readonly Vector2[] position;//if we were really hardcore we could do separate arrays for x & y
+    public readonly Vector2[] position;
     public readonly Vector2[] lastPosition;
     public readonly Vector2[] acceleration;
 
