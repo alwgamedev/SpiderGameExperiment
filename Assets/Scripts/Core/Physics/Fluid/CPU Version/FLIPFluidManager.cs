@@ -1,8 +1,8 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class FLIPFluidManager : MonoBehaviour
 {
+    [Header("Sim Settings")]
     [SerializeField] int width;
     [SerializeField] int height;
     [SerializeField] float cellSize;
@@ -23,36 +23,47 @@ public class FLIPFluidManager : MonoBehaviour
     [SerializeField] float densitySpringConstant;
     [SerializeField] float agitationPower;
     [SerializeField] float obstacleVelocityNormalizer;
-    //[SerializeField] int updateFrequency;
+
+    [Header("Rendering")]
+    [SerializeField] float particleScale;
+    [SerializeField] Mesh particleMesh;
+    [SerializeField] Color particleColor;
+    [SerializeField] Shader particleShader;
 
     FLIPFluidSimulator simulator;
-    Material material;
 
-    //int updateCounter = 0;
+    Material _material;
+    int particlePositionsProperty;
+    int particleColorProperty;
+    Vector4[] particlePositions;
 
-    Vector4[] vertexData;
+    GraphicsBuffer commandBuffer;
+    GraphicsBuffer.IndirectDrawIndexedArgs[] commandData;
 
-    int VertexIndex(int i, int j)
-    {
-        return i * (width + 1) + j;
-    }
-
-    private void OnDrawGizmos()
-    {
-        simulator?.DrawParticleGizmos(transform.position);
-        simulator?.DrawVelocityFieldGizmos(transform.position);
-    }
-
-    private void Awake()
-    {
-        var meshRender = GetComponent<MeshRenderer>();
-        material = new Material(meshRender.material);
-        meshRender.material = material;
-    }
+    //private void OnDrawGizmos()
+    //{
+    //    simulator?.DrawParticleGizmos(transform.position);
+    //    simulator?.DrawVelocityFieldGizmos(transform.position);
+    //}
 
     private void Start()
     {
-        CreateMesh();
+        _material = new Material(particleShader);
+
+        particlePositionsProperty = Shader.PropertyToID("_ParticlePositions");
+        particleColorProperty = Shader.PropertyToID("_Color");
+
+        var n = numParticles % 2 == 0 ? numParticles / 2 : numParticles / 2 + 1;
+        particlePositions = new Vector4[n];
+
+        commandBuffer = new GraphicsBuffer(GraphicsBuffer.Target.IndirectArguments, 1, GraphicsBuffer.IndirectDrawIndexedArgs.size);
+        commandData = new GraphicsBuffer.IndirectDrawIndexedArgs[1];
+
+        if (particleMesh == null)
+        {
+            CreateCircleMesh(particleScale * particleRadius, 12);
+        }
+
         InitializeSimulator();
     }
 
@@ -71,53 +82,18 @@ public class FLIPFluidManager : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (simulator != null)
-        {
-            //simulator.FillObstacleDensities();
+        UpdateMaterialProperties();
 
-            int n = (simulator.width + 1) * (simulator.height + 1) - 1;
-            int q0 = n / 4;
-            int r0 = n % 4;
-            for (int q = 0; q < q0; q++)
-            {
-                int k = q << 2;
-                vertexData[q].x = simulator.DensityAtVertex(k++);
-                vertexData[q].y = simulator.DensityAtVertex(k++);
-                vertexData[q].z = simulator.DensityAtVertex(k++);
-                vertexData[q].w = simulator.DensityAtVertex(k);
-            }
-
-            int k0 = q0 << 2;
-            vertexData[q0].x = simulator.DensityAtVertex(k0++);
-            if (r0 > 0)
-            {
-                vertexData[q0].y = simulator.DensityAtVertex(k0++);
-            }
-            if (r0 > 1)
-            {
-                vertexData[q0].z = simulator.DensityAtVertex(k0++);
-            }
-            if (r0 > 2)
-            {
-                vertexData[q0].w = simulator.DensityAtVertex(k0);
-            }
-
-            material.SetVectorArray("_Density", vertexData);
-        }
+        var renderParams = new RenderParams(_material);
+        renderParams.worldBounds = new(Vector3.zero, new(10000, 10000, 10000));
+        commandData[0].indexCountPerInstance = particleMesh.GetIndexCount(0);
+        commandData[0].instanceCount = (uint)simulator.numParticles;
+        commandBuffer.SetData(commandData);
+        Graphics.RenderMeshIndirect(in renderParams, particleMesh, commandBuffer);
     }
 
     private void FixedUpdate()
     {
-        //if (++updateCounter > updateFrequency)
-        //{
-        //    simulator?.Update(updateFrequency * Time.deltaTime, transform.position,
-        //        pushApartIterations, pushApartTolerance, collisionBounciness, flipWeight,
-        //        gaussSeidelIterations, overRelaxation, 
-        //        fluidDensity, fluidDrag,
-        //        normalizedFluidDensity, densitySpringConstant, agitationPower, obstacleVelocityNormalizer);
-        //    updateCounter -= updateFrequency;
-        //}
-
         simulator?.Update(Time.deltaTime, transform.position,
                 pushApartIterations, pushApartTolerance, collisionBounciness, flipWeight,
                 gaussSeidelIterations, overRelaxation,
@@ -127,51 +103,83 @@ public class FLIPFluidManager : MonoBehaviour
 
     private void InitializeSimulator()
     {
-        simulator = new(width, height, cellSize, numParticles, 0.5f * Physics2D.gravity.y,
+        simulator = new(width, height, cellSize, numParticles, Physics2D.gravity.y,
             particleRadius, collisionMask);
     }
 
-    public void CreateMesh()
+    private void UpdateMaterialProperties()
     {
-        Mesh mesh = new();
+        //we could move sim to gpu
+        //we have to choose between:
+        //a) run sim on cpu and send rendering data (positions, density, etc.) to gpu in late update (like below)
+        //b) run sim in compute shader and send obstacle data back and forth (need to read back buoyancy and drag forces)
+        //Let's get a) working and then we'll try b).
 
-        var vertices = new Vector3[(width + 1) * (height + 1)];
-        var uv = new Vector2[vertices.Length];
-        var triangles = new int[6 * width * height];
-
-        var du = 1 / (float)width;
-        var dv = 1 / (float)height;
-
-        for (int i = 0; i < height + 1; i++)
+        int i = 0;
+        while (i < simulator.numParticles)
         {
-            for (int j = 0; j < width + 1; j++)
+            particlePositions[i / 2] = new(
+                transform.position.x + simulator.particlePosition[i].x, transform.position.y + simulator.particlePosition[i++].y, 
+                transform.position.x + simulator.particlePosition[i].x, transform.position.y + simulator.particlePosition[i++].y
+                );
+        }
+        _material.SetVectorArray(particlePositionsProperty, particlePositions);
+        _material.SetColor(particleColorProperty, particleColor);
+    }
+
+    private void CreateCircleMesh(float radius, int numVerts)
+    {
+        particleMesh = new();
+        var vertices = new Vector3[numVerts];
+        var uv = new Vector2[numVerts];
+        var triangles = new int[3 * (numVerts - 2)];
+
+        float t = 2 * Mathf.PI / numVerts;
+        for (int i = 0; i < vertices.Length; i++)
+        {
+            vertices[i] = new(radius * Mathf.Cos(i * t), radius * Mathf.Sin(i * t));
+        }
+
+        var n2 = numVerts / 2;
+        uv[0] = new(0.5f, 0);
+        if (numVerts % 2 == 0)
+        {
+            var dv = 1f / (n2 - 2);
+            for (int j = 1; j < n2; j++)
             {
-                vertices[VertexIndex(i, j)] = new(j * cellSize, i * cellSize);
-                uv[VertexIndex(i, j)] = new(j * du, i * dv);
+                var v = (j - 1) * dv;
+                uv[j] = new(1f, v);
+                uv[numVerts - j] = new(0f, v);
+            }
+            uv[n2] = new(0.5f, 1f);
+        }
+        else
+        {
+            var dv = 1f / (n2 - 1);
+            for (int j = 1; j < n2 + 1; j++)
+            {
+                var v = (j - 1) * dv;
+                uv[j] = new(1f, v);
+                uv[numVerts - j] = new(0f, v);
             }
         }
 
         int k = -1;
-        for (int i = 0; i < height; i++)
+        for (int i = 2; i < numVerts; i++)
         {
-            for (int j = 0; j < width; j++)
-            {
-                triangles[++k] = VertexIndex(i, j);
-                triangles[++k] = VertexIndex(i + 1, j + 1);
-                triangles[++k] = VertexIndex(i, j + 1);
-                triangles[++k] = VertexIndex(i, j);
-                triangles[++k] = VertexIndex(i + 1, j);
-                triangles[++k] = VertexIndex(i + 1, j + 1);
-
-            }
+            triangles[++k] = i;
+            triangles[++k] = i - 1;
+            triangles[++k] = 0;
         }
 
-        mesh.vertices = vertices;
-        mesh.triangles = triangles;
-        mesh.uv = uv;
-        mesh.RecalculateNormals();
-        GetComponent<MeshFilter>().mesh = mesh;
+        particleMesh.vertices = vertices;
+        particleMesh.uv = uv;
+        particleMesh.triangles = triangles;
+        particleMesh.RecalculateNormals();
+    }
 
-        Array.Resize(ref vertexData, (width + 1) * (height + 1));
+    private void OnDestroy()
+    {
+        commandBuffer.Release();
     }
 }

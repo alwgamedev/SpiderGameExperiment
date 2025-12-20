@@ -37,10 +37,6 @@ public class FLIPFluidSimulator
     readonly int collisionMask;
     readonly Collider2D[] obstacle;
 
-
-
-    public int SpawnPointer => spawnPointer;
-
     public FLIPFluidSimulator(int width, int height, float cellSize, int numParticles, float gravity, float particleRadius, int collisionMask)
     {
         this.width = width;
@@ -90,22 +86,22 @@ public class FLIPFluidSimulator
         if (i < height && j < width)
         {
             count++;
-            sum += transferWeight[Index(i, j)];
+            sum += particleDensity[Index(i, j)];
         }
         if (i > 0 && j < width)
         {
             count++;
-            sum += transferWeight[Index(i - 1, j)];
+            sum += particleDensity[Index(i - 1, j)];
         }
         if (i > 0 && j > 0)
         {
             count++;
-            sum += transferWeight[Index(i - 1, j - 1)];
+            sum += particleDensity[Index(i - 1, j - 1)];
         }
         if (i < height && j > 0)
         {
             count++;
-            sum += transferWeight[Index(i, j - 1)];
+            sum += particleDensity[Index(i, j - 1)];
         }
 
         return sum / count;

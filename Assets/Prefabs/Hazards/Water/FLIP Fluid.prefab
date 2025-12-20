@@ -9,10 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1978441459504437915}
-  - component: {fileID: 1166252907134709286}
-  - component: {fileID: 3854744583798040560}
   - component: {fileID: 8865222510686650239}
-  - component: {fileID: 1087016557449242361}
   m_Layer: 0
   m_Name: FLIP Fluid
   m_TagString: Untagged
@@ -35,59 +32,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &1166252907134709286
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2348732716397572324}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 4a94d6fe11216bb45b78a21e30ac87dc, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &3854744583798040560
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2348732716397572324}
-  m_Mesh: {fileID: 0}
 --- !u!114 &8865222510686650239
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -113,23 +57,16 @@ MonoBehaviour:
   spawnSpread: 0
   pushApartIterations: 1
   pushApartTolerance: 2
-  gaussSeidelIterations: 100
+  gaussSeidelIterations: 20
   overRelaxation: 1.9
   flipWeight: 0.99
-  fluidDensity: 0.9
-  densitySpringConstant: 15
+  fluidDrag: 0.45
+  fluidDensity: 1
+  normalizedFluidDensity: 0.9
+  densitySpringConstant: 18
   agitationPower: 1
-  obstacleVelocityNormalizer: 0.025
-  updateFrequency: 1
---- !u!210 &1087016557449242361
-SortingGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2348732716397572324}
-  m_Enabled: 1
-  m_SortingLayerID: -1794432787
-  m_SortingLayer: 3
-  m_SortingOrder: 0
-  m_SortAtRoot: 0
+  obstacleVelocityNormalizer: 0.03
+  particleScale: 2.5
+  particleMesh: {fileID: 0}
+  particleColor: {r: 0.2784314, g: 0.5350333, b: 0.77254903, a: 0.37254903}
+  particleShader: {fileID: 4800000, guid: 5953a0cd5ffc03d4ab36c35bc38ae56e, type: 3}

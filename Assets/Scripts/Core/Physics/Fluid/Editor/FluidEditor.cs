@@ -9,12 +9,12 @@ public class FluidEditor : Editor
     {
         DrawDefaultInspector();
 
-        if (GUILayout.Button("Create Mesh"))
-        {
-            foreach (var t in targets)
-            { 
-                ((FLIPFluidManager)t).CreateMesh();
-            }
-        }
+        //if (GUILayout.Button("Create Mesh"))
+        //{
+        //    foreach (var t in targets)
+        //    { 
+        //        ((FLIPFluidManager)t).CreateMesh();
+        //    }
+        //}
     }
 }

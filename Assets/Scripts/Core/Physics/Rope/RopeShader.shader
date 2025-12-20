@@ -25,7 +25,7 @@ Shader "Custom/RopeShader"
             
             struct appdata {
                 float4 vertex : POSITION;
-                float3 normal : NORMAL;
+                // float3 normal : NORMAL;
                 float2 uv : TEXCOORD0;
                 uint id : SV_VertexID;
             };
@@ -67,7 +67,7 @@ Shader "Custom/RopeShader"
                     o.clipPos = mul(UNITY_MATRIX_VP, 
                         float4(nodeData.x - a * segmentDirection.y, nodeData.y + a * segmentDirection.x, 0, 1));
                 }
-                else
+                else//we're on an endcap vertex
                 {
                     float2 center = _NodePositions[_NumNodes - 1].xy;
                     float2 right = normalize(center - _NodePositions[_NumNodes - 2].xy);
