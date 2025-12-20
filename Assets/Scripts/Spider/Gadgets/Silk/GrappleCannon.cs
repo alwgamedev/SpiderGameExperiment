@@ -129,7 +129,7 @@ public class GrappleCannon : MonoBehaviour
                     if (failCounter > consecutiveFailuresBeforeBreaking)
                     {
                         failCounter = 0;
-                        DestroyGrapple();
+                        //DestroyGrapple();
                     }
                     //in the future i'd like to have a cool snap effect or something other than the grapple just disappearing instantly
                     //that could be easy just stop enforcing constraints for the tunneled nodes and stop rendering them

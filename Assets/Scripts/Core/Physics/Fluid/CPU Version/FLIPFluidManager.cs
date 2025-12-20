@@ -13,21 +13,24 @@ public class FLIPFluidManager : MonoBehaviour
     [SerializeField] float spawnRate;
     [SerializeField] float spawnSpread;
     [SerializeField] int pushApartIterations;
+    [SerializeField] float pushApartTolerance;
     [SerializeField] int gaussSeidelIterations;
     [SerializeField] float overRelaxation;
     [SerializeField] float flipWeight;
+    [SerializeField] float fluidDrag;
     [SerializeField] float fluidDensity;
+    [SerializeField] float normalizedFluidDensity;
+    [SerializeField] float densitySpringConstant;
+    [SerializeField] float agitationPower;
     [SerializeField] float obstacleVelocityNormalizer;
-    [SerializeField] int updateFrequency;
+    //[SerializeField] int updateFrequency;
 
     FLIPFluidSimulator simulator;
     Material material;
 
-    int updateCounter = 0;
+    //int updateCounter = 0;
 
     Vector4[] vertexData;
-
-    //Vector3 lastMousePosition;
 
     int VertexIndex(int i, int j)
     {
@@ -70,7 +73,7 @@ public class FLIPFluidManager : MonoBehaviour
     {
         if (simulator != null)
         {
-            simulator.FillObstacleDensities();
+            //simulator.FillObstacleDensities();
 
             int n = (simulator.width + 1) * (simulator.height + 1) - 1;
             int q0 = n / 4;
@@ -97,7 +100,6 @@ public class FLIPFluidManager : MonoBehaviour
             if (r0 > 2)
             {
                 vertexData[q0].w = simulator.DensityAtVertex(k0);
-
             }
 
             material.SetVectorArray("_Density", vertexData);
@@ -106,19 +108,26 @@ public class FLIPFluidManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (++updateCounter > updateFrequency)
-        {
-            simulator?.Update(updateFrequency * Time.deltaTime, transform.position,
-                pushApartIterations, collisionBounciness,
-                gaussSeidelIterations, overRelaxation, flipWeight,
-                fluidDensity, obstacleVelocityNormalizer);
-            updateCounter -= updateFrequency;
-        }
+        //if (++updateCounter > updateFrequency)
+        //{
+        //    simulator?.Update(updateFrequency * Time.deltaTime, transform.position,
+        //        pushApartIterations, pushApartTolerance, collisionBounciness, flipWeight,
+        //        gaussSeidelIterations, overRelaxation, 
+        //        fluidDensity, fluidDrag,
+        //        normalizedFluidDensity, densitySpringConstant, agitationPower, obstacleVelocityNormalizer);
+        //    updateCounter -= updateFrequency;
+        //}
+
+        simulator?.Update(Time.deltaTime, transform.position,
+                pushApartIterations, pushApartTolerance, collisionBounciness, flipWeight,
+                gaussSeidelIterations, overRelaxation,
+                fluidDensity, fluidDrag,
+                normalizedFluidDensity, densitySpringConstant, agitationPower, obstacleVelocityNormalizer);
     }
 
     private void InitializeSimulator()
     {
-        simulator = new(width, height, cellSize, numParticles, Physics2D.gravity.y,
+        simulator = new(width, height, cellSize, numParticles, 0.5f * Physics2D.gravity.y,
             particleRadius, collisionMask);
     }
 

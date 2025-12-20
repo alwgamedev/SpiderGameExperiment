@@ -25,7 +25,6 @@ Shader "Custom/FluidDensityShader"
             
             struct appdata {
                 float4 vertex : POSITION;
-                float3 normal : NORMAL;
                 float2 uv : TEXCOORD0;
                 uint id : SV_VertexID;
             };
@@ -40,7 +39,7 @@ Shader "Custom/FluidDensityShader"
             float _FluidDensity;
             float4 _ColorMin;
             float4 _ColorMax;
-            float4 _Density[MAX_ARRAY_SIZE];
+            float4 _Density[MAX_ARRAY_SIZE];//there's a thing called "StructuredBuffer" you can use instead
 
             v2f vert (appdata v) {
 

@@ -98,7 +98,7 @@ public class SpiderMovementController : MonoBehaviour
     bool jumpInputHeld;
     bool waitingToReleaseJump;
     float jumpVerificationTimer;
-    float jumpAngleFraction;//0 - 1 (for angle going from 0 to jumpAngleMin = -pi/6)
+    float jumpAngleFraction;//0 - 1 (for angle going from 0 to jumpAngleMin)
     float cosJumpAngleMin;
     float sinJumpAngleMin;
 
@@ -255,7 +255,7 @@ public class SpiderMovementController : MonoBehaviour
     }
 
 
-    //THRUSTER -- may move gadget management to a component class
+    //THRUSTER
 
     //do before you handle any move input
     private void UpdateThruster()
@@ -527,7 +527,7 @@ public class SpiderMovementController : MonoBehaviour
     private void RotateAbdomen(float dt)
     {
         var r = MathTools.CheapRotationalLerpClamped(AbdomenBoneRightInBaseLocalCoords(), AbdomenAngle(), abdomenRotationSpeed * dt, out bool changed);
-        //^and this returns early when already at correct rotation, so hardly creating unnecessary overhead.
+        //^and this returns early when already at correct rotation.
         //We could do this all in terms of quaternions, but it would be slower because we need to do two square roots to write down a quaternion (two half angles)
         //instead of just the one square root (normalizing) involved in CheapRotationalLerp of unit vector.
         //We could use first order deformation of quaternion (and fact that (cos(t/2))' = -0.5 * sin(t/2) = -0.5 * q.z),
@@ -536,7 +536,8 @@ public class SpiderMovementController : MonoBehaviour
         if (changed)
         {
             var p = abdomenBonePivot.position;
-            abdomenBone.rotation = transform.rotation * (FacingRight ? abdomenBoneBaseLocalRotation : abdomenBoneBaseLocalRotationL) * MathTools.QuaternionFrom2DUnitVector(r);
+            abdomenBone.rotation = transform.rotation * (FacingRight ? abdomenBoneBaseLocalRotation : abdomenBoneBaseLocalRotationL) 
+                * MathTools.QuaternionFrom2DUnitVector(r);
             abdomenBone.position += p - abdomenBonePivot.position;
         }
     }

@@ -131,12 +131,9 @@ public class Rope
             SpacingConstraintIteration();
             if (stopwatch.Elapsed.TotalMilliseconds > MAX_UPDATE_TIME)
             {
-                stopwatch.Stop();
                 return;//no more dry meat!!!
             }
         }
-
-        stopwatch.Stop();
     }
 
     public bool CollisionIsFailing(float threshold)
@@ -243,7 +240,6 @@ public class Rope
             if (error > CONSTRAINTS_TOLERANCE)
             {
                 position[anchorPointer + 1] -= error / l * d;
-
                 ResolveCollision(anchorPointer + 1);
             }
         }
@@ -412,21 +408,17 @@ public class Rope
         }
     }
 
-    //2do: lot of retardation in this method. why not use the circle cast hit (and then refine hit if needed)? does it give point inside collider?
-    //let's test the circle cast (e.g. make a script that circle casts at mouse click, then log/draw hit data)
-    //also we were thinking about alternative raycasting schemes (like "hairs" normal to rope segment -- just 2 directions; or maybe an --X-- (x pattern) diagonal to rope seg)
-    private void ResolveCollisionInternal(int i/*, float dt*/)
+    private void ResolveCollisionInternal(int i)
     {
-        var circleCast = Physics2D.CircleCast(position[i], collisionSearchRadius, Vector2.zero, 0f, collisionMask);
-        if (!circleCast)
+        var r = Physics2D.CircleCast(position[i], collisionSearchRadius, Vector2.zero, 0f, collisionMask);
+        if (!r)
         {
             currentCollision[i] = null;
             return;
         }
 
         bool tunneling = false;
-
-        var r = Physics2D.Raycast(position[i], raycastDirections[0], collisionSearchRadius, collisionMask);
+        r = Physics2D.Raycast(position[i], raycastDirections[0], collisionSearchRadius, collisionMask);
         if (!r)
         {
             for (int j = 1; j < raycastDirections.Length; j++)
@@ -438,7 +430,6 @@ public class Rope
                 }
             }
         }
-
 
         if (r && r.distance == 0)
         {
@@ -456,32 +447,31 @@ public class Rope
 
         if (r)
         {
-            HandlePotentialCollision(i, /*dt,*/ ref r, tunneling ? tunnelEscapeRadius : collisionThreshold, collisionBounciness);
+            HandlePotentialCollision(i, r.collider, r.distance, r.normal, tunneling ? tunnelEscapeRadius : collisionThreshold, collisionBounciness);
         }
     }
 
-    private void HandlePotentialCollision(int i, /*float dt,*/ ref RaycastHit2D r, float collisionThreshold, float collisionBounciness)
+    private void HandlePotentialCollision(int i, Collider2D collider, float distance, Vector2 normal, float collisionThreshold, float collisionBounciness)
     {
-        if (r.distance != 0)
+        if (distance != 0)
         {
-            lastCollisionNormal[i] = r.normal;
+            lastCollisionNormal[i] = normal;
         }
         else
         {
-            r.normal = lastCollisionNormal[i];
+            normal = lastCollisionNormal[i];
         }
 
-
-        if (r.distance < collisionThreshold)
+        if (distance < collisionThreshold)
         {
-            currentCollision[i] = r.collider;
-            var diff = Mathf.Min(collisionThreshold - r.distance, this.collisionThreshold);
+            currentCollision[i] = collider;
+            var diff = Mathf.Min(collisionThreshold - distance, this.collisionThreshold);
             var velocity = position[i] - lastPosition[i];
-            position[i] += diff * r.normal;
-            var b = Vector2.Dot(velocity, r.normal);
+            position[i] += diff * normal;
+            var b = Vector2.Dot(velocity, normal);
             if (b < 0)
             {
-                var tang = r.normal.CWPerp();
+                var tang = normal.CWPerp();
                 var a = Vector2.Dot(velocity, tang);
                 var newVelocity = -collisionBounciness * (velocity - 2 * a * tang);
                 lastPosition[i] = position[i] - newVelocity;
