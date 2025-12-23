@@ -39,7 +39,7 @@ Shader "Custom/FluidDensityShader"
             float _FluidDensity;
             float4 _ColorMin;
             float4 _ColorMax;
-            float4 _Density[MAX_ARRAY_SIZE];//there's a thing called "StructuredBuffer" you can use instead
+            float4 _Density[MAX_ARRAY_SIZE];
 
             v2f vert (appdata v) {
 

@@ -6,15 +6,6 @@ public static class MiscTools
 {
     public static GameObjectPathComparer GOPathComparer = new();
 
-    //public static void RemoveAllPersistentListeners(this UnityEventBase e)
-    //{
-    //    int i = e.GetPersistentEventCount();
-    //    while (i-- > 0)
-    //    {
-    //        UnityEventTools.RemovePersistentListener(e, i);
-    //    }
-    //}
-
     public static int ComponentPathCompare(Component x, Component y)
     {
         return GOPathComparer.Compare(x ? x.gameObject : null, y ? y.gameObject : null);

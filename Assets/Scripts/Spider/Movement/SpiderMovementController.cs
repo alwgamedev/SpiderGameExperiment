@@ -202,7 +202,7 @@ public class SpiderMovementController : MonoBehaviour
 
         InitializeGroundData();
         legSynchronizer.Initialize(PreferredBodyPosGroundHeight, FacingRight, groundMap);
-        bodyCollisionFilter.NoFilter();
+        bodyCollisionFilter = ContactFilter2D.noFilter;
         bodyCollisionFilter.useTriggers = false;
         bodyCollisionFilter.SetLayerMask(groundLayer);
     }

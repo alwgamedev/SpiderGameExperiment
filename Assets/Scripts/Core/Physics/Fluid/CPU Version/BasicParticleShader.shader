@@ -1,4 +1,4 @@
-Shader "Instanced/FluidParticleShader"
+Shader "Instanced/BasicParticleShader"
 {
     Properties
     {
@@ -6,12 +6,12 @@ Shader "Instanced/FluidParticleShader"
     }
     SubShader
     {
-        Tags { "RenderType" = "Transparent" }
+        Tags { "RenderType" = "Transparent" "RenderPipeline" = "UniversalPipeline"}
 
         Pass
         {
-            Blend SrcAlpha OneMinusSrcAlpha
             ZWrite Off
+            Blend SrcAlpha OneMinusSrcAlpha
 
             CGPROGRAM
 
@@ -22,8 +22,13 @@ Shader "Instanced/FluidParticleShader"
             #include "UnityIndirect.cginc"
             #include "UnityCG.cginc"
 
+            static const uint ARRAY_LENGTH = 1023;
+
             float4 _Color;
-            float4 _ParticlePositions[1023];//so we get a max of 2046 particles
+            float3 _PivotPosition;
+            float _ParticleScale;
+            float4 _ParticlePositions[ARRAY_LENGTH];
+
 
             struct appdata
             {
@@ -44,17 +49,19 @@ Shader "Instanced/FluidParticleShader"
                 o.uv = v.uv;
                 uint instanceID = GetIndirectInstanceID(svInstanceID);
                 uint i = svInstanceID >> 1;
-                float4 particleWorldPosition = (svInstanceID & 1) == 0 ? 
-                    float4(_ParticlePositions[i].x, _ParticlePositions[i].y, 0.0f, 0.0f) 
-                    : float4(_ParticlePositions[i].z, _ParticlePositions[i].w, 0.0f, 0.0f);
-                float4 worldPos = particleWorldPosition + mul(unity_ObjectToWorld, v.position);
-                o.clipPos = mul(UNITY_MATRIX_VP, worldPos);
+                float3 particlePos = (svInstanceID & 1) == 0 ? 
+                    float3(_PivotPosition.x + _ParticlePositions[i].x, _PivotPosition.y + _ParticlePositions[i].y, _PivotPosition.z)
+                    : float3(_PivotPosition.x + _ParticlePositions[i].z, _PivotPosition.y + _ParticlePositions[i].w, _PivotPosition.z);
+                float3 vertexWorldPos = particlePos + _ParticleScale * mul(unity_ObjectToWorld, v.position);
+                o.clipPos = mul(UNITY_MATRIX_VP, float4(vertexWorldPos, 1));
                 return o;
             }
 
             fixed4 frag (v2f i) : SV_Target
             {
-                return _Color;
+                float s = i.uv.x - 0.5;
+                float t = i.uv.y - 0.5;
+                return fixed4(_Color.x, _Color.y, _Color.z, max(1 - 4 * (s * s + t * t), 0) * _Color.w);
             }
             ENDCG
         }

@@ -47,26 +47,26 @@ MonoBehaviour:
   width: 25
   height: 35
   cellSize: 0.6
-  numParticles: 1200
-  particleRadius: 0.15
+  numParticles: 2046
+  particleRadius: 0.1
   collisionBounciness: 1
   collisionMask:
     serializedVersion: 2
     m_Bits: 8
-  spawnRate: 500
+  spawnRate: 200
   spawnSpread: 0
   pushApartIterations: 1
   pushApartTolerance: 2
   gaussSeidelIterations: 20
   overRelaxation: 1.9
   flipWeight: 0.99
-  fluidDrag: 0.45
-  fluidDensity: 1
+  fluidDrag: 0.5
+  fluidDensity: 1.15
   normalizedFluidDensity: 0.9
-  densitySpringConstant: 18
+  densitySpringConstant: 15
   agitationPower: 1
   obstacleVelocityNormalizer: 0.03
-  particleScale: 2.5
+  particleScale: 1.5
   particleMesh: {fileID: 0}
-  particleColor: {r: 0.2784314, g: 0.5350333, b: 0.77254903, a: 0.37254903}
+  particleColor: {r: 0.16004981, g: 0.29802212, b: 0.6679245, a: 0.2}
   particleShader: {fileID: 4800000, guid: 5953a0cd5ffc03d4ab36c35bc38ae56e, type: 3}

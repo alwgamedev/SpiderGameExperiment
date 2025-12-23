@@ -32,7 +32,7 @@ public class FLIPFluidManager : MonoBehaviour
 
     FLIPFluidSimulator simulator;
 
-    Material _material;
+    Material material;
     int particlePositionsProperty;
     int particleColorProperty;
     Vector4[] particlePositions;
@@ -48,20 +48,20 @@ public class FLIPFluidManager : MonoBehaviour
 
     private void Start()
     {
-        _material = new Material(particleShader);
+        material = new Material(particleShader);
 
         particlePositionsProperty = Shader.PropertyToID("_ParticlePositions");
         particleColorProperty = Shader.PropertyToID("_Color");
 
-        var n = numParticles % 2 == 0 ? numParticles / 2 : numParticles / 2 + 1;
-        particlePositions = new Vector4[n];
+        particlePositions = new Vector4[(numParticles + 1) / 2];
 
         commandBuffer = new GraphicsBuffer(GraphicsBuffer.Target.IndirectArguments, 1, GraphicsBuffer.IndirectDrawIndexedArgs.size);
         commandData = new GraphicsBuffer.IndirectDrawIndexedArgs[1];
 
         if (particleMesh == null)
         {
-            CreateCircleMesh(particleScale * particleRadius, 12);
+            //CreateCircleMesh(particleScale * particleRadius, 12);
+            CreateBoxMesh(particleRadius);
         }
 
         InitializeSimulator();
@@ -84,7 +84,7 @@ public class FLIPFluidManager : MonoBehaviour
     {
         UpdateMaterialProperties();
 
-        var renderParams = new RenderParams(_material);
+        var renderParams = new RenderParams(material);
         renderParams.worldBounds = new(Vector3.zero, new(10000, 10000, 10000));
         commandData[0].indexCountPerInstance = particleMesh.GetIndexCount(0);
         commandData[0].instanceCount = (uint)simulator.numParticles;
@@ -94,7 +94,7 @@ public class FLIPFluidManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-        simulator?.Update(Time.deltaTime, transform.position,
+        simulator.Update(Time.deltaTime, transform.position,
                 pushApartIterations, pushApartTolerance, collisionBounciness, flipWeight,
                 gaussSeidelIterations, overRelaxation,
                 fluidDensity, fluidDrag,
@@ -119,12 +119,40 @@ public class FLIPFluidManager : MonoBehaviour
         while (i < simulator.numParticles)
         {
             particlePositions[i / 2] = new(
-                transform.position.x + simulator.particlePosition[i].x, transform.position.y + simulator.particlePosition[i++].y, 
-                transform.position.x + simulator.particlePosition[i].x, transform.position.y + simulator.particlePosition[i++].y
+                simulator.particlePosition[i].x, simulator.particlePosition[i++].y,
+                simulator.particlePosition[i].x, simulator.particlePosition[i++].y
                 );
         }
-        _material.SetVectorArray(particlePositionsProperty, particlePositions);
-        _material.SetColor(particleColorProperty, particleColor);
+
+        material.SetVector("_PivotPosition", transform.position);
+        material.SetFloat("_ParticleScale", particleScale);
+        material.SetVectorArray(particlePositionsProperty, particlePositions);
+        material.SetColor(particleColorProperty, particleColor);
+    }
+
+    private void CreateBoxMesh(float halfSize)//because we can make it look like a circle in shader
+    {
+        particleMesh = new();
+        var vertices = new Vector3[]
+        {
+            new(-halfSize, -halfSize),
+            new(-halfSize, halfSize),
+            new(halfSize, halfSize),
+            new(halfSize, -halfSize)
+        };
+        var uv = new Vector2[]
+        {
+            new(0,0), new(0,1), new(1,1), new(1,0)
+        };
+        var triangles = new int[]
+        {
+            0, 1, 2, 2, 3, 0
+        };
+
+        particleMesh.vertices = vertices;
+        particleMesh.uv = uv;
+        particleMesh.triangles = triangles;
+        particleMesh.RecalculateNormals();
     }
 
     private void CreateCircleMesh(float radius, int numVerts)

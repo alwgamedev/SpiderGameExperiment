@@ -197,7 +197,7 @@ public class FLIPFluidSimulator
         IntegrateParticles(dt);
         PushParticlesApart(pushApartIterations, pushApartTolerance);
         UpdateObstacles(worldPosition);
-        ResolveCollisions(/*dt,*/ worldPosition, collisionBounciness);
+        ResolveCollisions(/*dt, worldPosition,*/ collisionBounciness);
         TransferParticleVelocitiesToGrid();//this also updates cell density (particleDensity)
         ApplyBuoyanceForces(fluidDensity, fluidDrag);//after we have computed cell densities
         SolveContinuity(gaussSeidelIterations, overRelaxation, normalizedFluidDensity, densitySpringConstant, agitationPower, obstacleVelocityNormalizer);
@@ -253,22 +253,22 @@ public class FLIPFluidSimulator
                     {
                         if (v.y  > -v.x && k + width < numCells && obstacle[k + width])//forward cell is up
                         {
-                            rb.AddForce(-dragUnit * Mathf.Sqrt(1 + Mathf.Pow(v.x / v.y, 2)) *particleDensity[k] * v.magnitude * v);
+                            rb.AddForce(-dragUnit * Mathf.Sqrt(1 + v.x * v.x / (v.y * v.y)) *particleDensity[k] * v.magnitude * v);
                         }
                         else if (!(v.y > -v.x) && k % width > 0 && obstacle[k - 1])//forward cell is left
                         {
-                            rb.AddForce(-dragUnit * Mathf.Sqrt(1 + Mathf.Pow(v.y / v.x, 2)) * particleDensity[k] * v.magnitude * v);
+                            rb.AddForce(-dragUnit * Mathf.Sqrt(1 + v.y * v.y / (v.x * v.x)) * particleDensity[k] * v.magnitude * v);
                         }
                     }
                     else
                     {
                         if (v.y > -v.x && k % width < width - 1 && obstacle[k + 1])//forward cell is right
                         {
-                            rb.AddForce(-dragUnit * Mathf.Sqrt(1 + Mathf.Pow(v.y / v.x, 2)) * particleDensity[k] * v.magnitude * v);
+                            rb.AddForce(-dragUnit * Mathf.Sqrt(1 + v.y * v.y / (v.x * v.x)) * particleDensity[k] * v.magnitude * v);
                         }
                         else if (!(v.y > -v.x) && !(k - width < 0) && obstacle[k - width])//forward cell is down
                         {
-                            rb.AddForce(-dragUnit * Mathf.Sqrt(1 + Mathf.Pow(v.x / v.y, 2)) * particleDensity[k] * v.magnitude * v);
+                            rb.AddForce(-dragUnit * Mathf.Sqrt(1 + v.x * v.x / (v.y * v.y)) * particleDensity[k] * v.magnitude * v);
                         }
                     }
                 }
@@ -276,7 +276,7 @@ public class FLIPFluidSimulator
         }
     }
 
-    private void ResolveCollisions(/*float dt,*/ Vector2 worldPosition, float collisionBounciness)
+    private void ResolveCollisions(/*float dt,*/ /*Vector2 worldPosition,*/ float collisionBounciness)
     {
         //float dtInverse = 1 / dt;
 
@@ -582,14 +582,14 @@ public class FLIPFluidSimulator
 
             if (!(i < 0))
             {
-                if (!(j < 0) && transferWeight[Index(i, j)] > 0)
+                if (!(j < 0) && particleDensity[Index(i, j)] > 0)
                 {
                     var wt = (1 - boxCoordX) * (1 - boxCoordY);
                     picSum += wt * velocity[Index(i, j)];
                     flipSum += wt * (velocity[Index(i, j)] - prevVelocity[Index(i, j)]);
                     denom += wt;
                 }
-                if (j < width - 1 && transferWeight[Index(i, j + 1)] > 0)
+                if (j < width - 1 && particleDensity[Index(i, j + 1)] > 0)
                 {
                     var wt = boxCoordX * (1 - boxCoordY);
                     picSum += wt * velocity[Index(i, j + 1)];
@@ -599,14 +599,14 @@ public class FLIPFluidSimulator
             }
             if (i < height - 1)
             {
-                if (j > 0 && transferWeight[Index(i + 1, j)] > 0)
+                if (j > 0 && particleDensity[Index(i + 1, j)] > 0)
                 {
                     var wt = (1 - boxCoordX) * boxCoordY;
                     picSum += wt * velocity[Index(i + 1, j)];
                     flipSum += wt * (velocity[Index(i + 1, j)] - prevVelocity[Index(i + 1, j)]);
                     denom += wt;
                 }
-                if (j < width - 1 && transferWeight[Index(i + 1, j + 1)] > 0)
+                if (j < width - 1 && particleDensity[Index(i + 1, j + 1)] > 0)
                 {
                     var wt = boxCoordX * boxCoordY;
                     picSum += wt * velocity[Index(i + 1, j + 1)];

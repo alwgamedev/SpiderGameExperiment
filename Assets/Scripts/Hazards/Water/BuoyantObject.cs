@@ -20,8 +20,8 @@ public class BuoyantObject : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         coll = GetComponent<Collider2D>();
 
-        width = effectiveWidthMultiplier * (coll.bounds.max.x - coll.bounds.min.x);
-        weight = coll.bounds.max.y - coll.bounds.min.y;
+        //width = effectiveWidthMultiplier * (coll.bounds.max.x - coll.bounds.min.x);
+        //weight = coll.bounds.max.y - coll.bounds.min.y;
     }
 
     private void OnEnable()
@@ -29,52 +29,52 @@ public class BuoyantObject : MonoBehaviour
         LookUp[gameObject] = this;
     }
 
-    private void FixedUpdate()
-    {
-        if (buoyancySource)
-        {
-            var h = buoyancySource.FluidHeight(coll.bounds.center.x);
+    //private void FixedUpdate()
+    //{
+    //    if (buoyancySource)
+    //    {
+    //        var h = buoyancySource.FluidHeight(coll.bounds.center.x);
 
-            if (coll.bounds.min.y > h + exitBuffer)
-            {
-                buoyancySource = null;
-                return;
-            }
+    //        if (coll.bounds.min.y > h + exitBuffer)
+    //        {
+    //            buoyancySource = null;
+    //            return;
+    //        }
 
-            //APPLY BUOYANCY FORCE & DRAG
-            rb.AddForce(buoyancySource.BuoyancyForce(DisplacedArea(h)));
+    //        //APPLY BUOYANCY FORCE & DRAG
+    //        rb.AddForce(buoyancySource.BuoyancyForce(DisplacedArea(h)));
 
-            //surely there is a better way to do this...
-            var s = rb.linearVelocity.magnitude;
-            if (s > 1E-05f)
-            {
-                var u = rb.linearVelocity / s;
-                var c = CrossSectionWidth(u);
-                rb.AddForce(buoyancySource.DragForce(s, c, u));
-            }
+    //        //surely there is a better way to do this...
+    //        var s = rb.linearVelocity.magnitude;
+    //        if (s > 1E-05f)
+    //        {
+    //            var u = rb.linearVelocity / s;
+    //            var c = CrossSectionWidth(u);
+    //            rb.AddForce(buoyancySource.DragForce(s, c, u));
+    //        }
 
-            //AGITATE WATER
-            buoyancySource.WaterMeshManager.HandleDisplacement(coll, Time.deltaTime);
-        }
-    }
+    //        //AGITATE WATER
+    //        buoyancySource.WaterMeshManager.HandleDisplacement(coll, Time.deltaTime);
+    //    }
+    //}
 
-    //assume the buoyant object is rectangular and upright (never rotates)
-    public float DisplacedArea(float fluidHeight)
-    {
-        return Mathf.Max((fluidHeight - coll.bounds.min.y) * width, 0);
-    }
+    ////assume the buoyant object is rectangular and upright (never rotates)
+    //public float DisplacedArea(float fluidHeight)
+    //{
+    //    return Mathf.Max((fluidHeight - coll.bounds.min.y) * width, 0);
+    //}
 
-    /// <summary>
-    /// Cross section width in direction of current velocity
-    public float CrossSectionWidth(Vector2 velocityDirection)
-    {
-        if (velocityDirection.y < MathTools.o41)
-        {
-            return weight;
-        }
+    ///// <summary>
+    ///// Cross section width in direction of current velocity
+    //public float CrossSectionWidth(Vector2 velocityDirection)
+    //{
+    //    if (velocityDirection.y < MathTools.o41)
+    //    {
+    //        return weight;
+    //    }
 
-        return Mathf.Min(weight, width / velocityDirection.y);
-    }
+    //    return Mathf.Min(weight, width / velocityDirection.y);
+    //}
 
     public void OnEnteredWater(BuoyancySource b)
     {
