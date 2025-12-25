@@ -1,10 +1,11 @@
-﻿#pragma kernel IntegrateParticles
-#pragma kernel HandleWallCollisions
+﻿#pragma kernel ComputePredictedPositions
 #pragma kernel CountParticles
 #pragma kernel SetCellStarts
 #pragma kernel SortParticlesByCell
 #pragma kernel CalculateDensity
 #pragma kernel AccumulateForces
+#pragma kernel IntegrateParticles
+#pragma kernel HandleWallCollisions
 
 #include "./SPHFunctions.hlsl"
 
@@ -28,13 +29,14 @@ uniform float worldWidth;
 uniform float worldHeight;
 uniform float smoothingRadius;
 uniform float smoothingRadiusSqrd;
-uniform float gravity;
+uniform float2 gravity;
 uniform float igConstant;
 uniform float restDensity;
 uniform float viscosity;
-//uniform float particleRadius;
 uniform float particleMass;
 uniform float collisionBounciness;
+uniform float obstacleRepulsion;
+uniform uint numObstacles = 1;
 
 
 //SIM DATA
@@ -43,6 +45,7 @@ RWStructuredBuffer<float> particleDensity;
 RWStructuredBuffer<float2> particleAcceleration;
 RWStructuredBuffer<float2> particleVelocity;
 RWStructuredBuffer<float2> particlePosition;
+RWStructuredBuffer<float2> predictedPosition;
 
 //particle sorting
 RWStructuredBuffer<uint> cellContainingParticle;
@@ -50,8 +53,37 @@ RWStructuredBuffer<uint> particlesByCell;
 RWStructuredBuffer<uint> cellStart;
 RWStructuredBuffer<uint> cellParticleCount;
 
+StructuredBuffer<float4> obstacleData;
+
 #define Index(i, j) i * width + j
 #define pressure(i) igConstant * (particleDensity[i] - restDensity)
+
+void ApplyExternalForces(uint p)
+{
+    for (uint k = 0; k < numObstacles; k++)
+    {
+        float4 o = obstacleData[k];
+        float2 localPos = float2((particlePosition[p].x - o.x) / o.z, (particlePosition[p].y - o.y) / o.w); //make an ellipse out of the collider's bounding box
+        float s2 = localPos.x * localPos.x + localPos.y * localPos.y;
+        if (s2 < 1)
+        {
+            float sInverse = rsqrt(s2);
+            float2 dir = isnan(sInverse) || isinf(sInverse) ? float2(0, 1) : sInverse * localPos;
+            particleVelocity[p] += (1 - s2) * (dt * obstacleRepulsion - dot(particleVelocity[p], dir)) * dir;
+        }
+    }
+}
+
+[numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
+void ComputePredictedPositions(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x < numParticles)
+    {
+        particleVelocity[id.x] += dt * gravity;
+        ApplyExternalForces(id.x);
+        predictedPosition[id.x] = particlePosition[id.x] + dt * particleVelocity[id.x];
+    }
+}
 
 [numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
 void IntegrateParticles(uint3 id : SV_DispatchThreadID)
@@ -116,8 +148,8 @@ void CountParticles(uint3 id : SV_DispatchThreadID)
 {
     if (id.x < numParticles)
     {
-        float w = particlePosition[id.x].x / cellSize;
-        float h = particlePosition[id.x].y / cellSize;
+        float w = predictedPosition[id.x].x / cellSize;
+        float h = predictedPosition[id.x].y / cellSize;
         uint i = (uint) clamp(h, 0, height - 1);
         uint j = (uint) clamp(w, 0, width - 1);
         uint c = Index(i, j);
@@ -155,7 +187,7 @@ void SearchCellDensity(uint p, uint cell)
     for (uint k = cellStart[cell]; k < cellStart[cell + 1]; k++)
     {
         uint q = particlesByCell[k];
-        float d2 = pow(particlePosition[q].x - particlePosition[p].x, 2) + pow(particlePosition[q].y - particlePosition[p].y, 2);
+        float d2 = pow(predictedPosition[q].x - predictedPosition[p].x, 2) + pow(predictedPosition[q].y - predictedPosition[p].y, 2);
         if (d2 < smoothingRadiusSqrd)
         {
             particleDensity[p] += particleMass * DensityWt(smoothingRadiusSqrd, d2);
@@ -171,50 +203,46 @@ void CalculateDensity(uint3 id : SV_DispatchThreadID)
         uint c = cellContainingParticle[id.x];
         uint i = c / width;
         uint j = c % width;
-        float cellX = particlePosition[id.x].x - j * width;
-        float cellY = particlePosition[id.x].x - i * height;
-        
-        //float upperThreshold = cellSize - smoothingRadius;
         
         particleDensity[id.x] = 0;
         
         //search middle row
         SearchCellDensity(id.x, c);
         
-        if (j > 0 /*&& cellY < smoothingRadius*/)
+        if (j > 0)
         {
             SearchCellDensity(id.x, c - 1);
         }
-        if (j < width - 1 /*&& cellY > upperThreshold*/)
+        if (j < width - 1)
         {
             SearchCellDensity(id.x, c + 1);
         }
         
         //search upper row
-        if (i < height - 1 /*&& cellY > cellSize - smoothingRadius*/)
+        if (i < height - 1)
         {
             SearchCellDensity(id.x, c + width);
             
-            if (j > 0 /*&& cellY < smoothingRadius*/)
+            if (j > 0)
             {
                 SearchCellDensity(id.x, c + width - 1);
             }
-            if (j < width - 1 /*&& cellY > upperThreshold*/)
+            if (j < width - 1)
             {
                 SearchCellDensity(id.x, c + width + 1);
             }
         }
         
         //search bottom row
-        if (i > 0 /*&& cellY < smoothingRadius*/)
+        if (i > 0)
         {
             SearchCellDensity(id.x, c - width);
             
-            if (j > 0 /*&& cellY < smoothingRadius*/)
+            if (j > 0)
             {
                 SearchCellDensity(id.x, c - width - 1);
             }
-            if (j < width - 1 /*&& cellY > upperThreshold*/)
+            if (j < width - 1)
             {
                 SearchCellDensity(id.x, c - width + 1);
             }
@@ -224,11 +252,10 @@ void CalculateDensity(uint3 id : SV_DispatchThreadID)
 
 void SearchCellForces(uint p, uint cell)
 {
-    float v = particleMass / particleDensity[p];
     for (uint k = cellStart[cell]; k < cellStart[cell + 1]; k++)
     {
         uint q = particlesByCell[k];
-        float2 displacement = float2(particlePosition[q].x - particlePosition[p].x, particlePosition[q].y - particlePosition[p].y);
+        float2 displacement = float2(predictedPosition[p].x - predictedPosition[q].x, predictedPosition[p].y - predictedPosition[q].y);
         float d2 = displacement.x * displacement.x + displacement.y * displacement.y;
         if (d2 < smoothingRadiusSqrd)
         {
@@ -236,7 +263,7 @@ void SearchCellForces(uint p, uint cell)
             float pW = PressureWt(smoothingRadius, d);
             if (!isinf(pW))
             {
-                particleAcceleration[p] -= ((pressure(p) + pressure(q)) / (2 * particleDensity[q])) * pW * displacement;
+                particleAcceleration[p] -= ((pressure(p) + pressure(q)) / (2 * particleDensity[q])) * PressureWt(smoothingRadius, d) * displacement;
             }
             particleAcceleration[p] += (viscosity * ViscosityWt(smoothingRadius, d) / particleDensity[q]) * (particleVelocity[q] - particleVelocity[p]);
         }
@@ -251,52 +278,49 @@ void SearchCellForces(uint p, uint cell)
 {
     if (id.x < numParticles)
     {
-        particleAcceleration[id.x].x = 0;
-        particleAcceleration[id.x].y = gravity;
+        particleAcceleration[id.x] = 0;
         
         uint c = cellContainingParticle[id.x];
         uint i = c / width;
         uint j = c % width;
-        float cellX = particlePosition[id.x].x - j * cellSize;
-        float cellY = particlePosition[id.x].y - i * cellSize;
         
         //search middle row
         SearchCellForces(id.x, c);
         
-        if (j > 0 /*&& cellY < smoothingRadius*/)
+        if (j > 0)
         {
             SearchCellForces(id.x, c - 1);
         }
-        if (j < width - 1 /*&& cellY > upperThreshold*/)
+        if (j < width - 1)
         {
             SearchCellForces(id.x, c + 1);
         }
         
         //search upper row
-        if (i < height - 1 /*&& cellY > cellSize - smoothingRadius*/)
+        if (i < height - 1)
         {
             SearchCellForces(id.x, c + width);
             
-            if (j > 0 /*&& cellY < smoothingRadius*/)
+            if (j > 0)
             {
                 SearchCellForces(id.x, c + width - 1);
             }
-            if (j < width - 1 /*&& cellY > upperThreshold*/)
+            if (j < width - 1)
             {
                 SearchCellForces(id.x, c + width + 1);
             }
         }
         
         //search bottom row
-        if (i > 0 /*&& cellY < smoothingRadius*/)
+        if (i > 0)
         {
             SearchCellForces(id.x, c - width);
             
-            if (j > 0 /*&& cellY < smoothingRadius*/)
+            if (j > 0)
             {
                 SearchCellForces(id.x, c - width - 1);
             }
-            if (j < width - 1 /*&& cellY > upperThreshold*/)
+            if (j < width - 1)
             {
                 SearchCellForces(id.x, c - width + 1);
             }

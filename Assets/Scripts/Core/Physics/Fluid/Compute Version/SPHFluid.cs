@@ -3,16 +3,18 @@ using UnityEngine;
 
 public class SPHFluid : MonoBehaviour
 {
-    const int threadsPerGroup = 256;
+    const int THREADS_PER_GROUP = 256;
+    const int MAX_NUM_OBSTACLES = 64;
 
-    //compute shader kernel indices
-    const int integrateParticles = 0;
-    const int handleWallCollisions = 1;
-    const int countParticles = 2;
-    const int setCellStarts = 3;
-    const int sortParticlesByCell = 4;
-    const int calculateDensity = 5;
-    const int accumulateForces = 6;
+    //kernel indices in compute shader
+    const int computePredictedPositions = 0;
+    const int countParticles = 1;
+    const int setCellStarts = 2;
+    const int sortParticlesByCell = 3;
+    const int calculateDensity = 4;
+    const int accumulateForces = 5;
+    const int integrateParticles = 6;
+    const int handleWallCollisions = 7;
 
     [SerializeField] ComputeShader computeShader;
 
@@ -23,31 +25,36 @@ public class SPHFluid : MonoBehaviour
     [SerializeField] int numParticles;
 
     [Header("Simulation Settings")]
-    //[SerializeField] float particleRadius;
     [SerializeField] float particleMass;
     [SerializeField] float igConstant;
     [SerializeField] float restDensity;
     [SerializeField] float viscosity;
-    [SerializeField] float obstacleDrag;
-    [SerializeField] float obstacleSpeedNormalizer;
-    [SerializeField] LayerMask collisionMask;
     [SerializeField] float collisionBounciness;
+    [SerializeField] LayerMask obstacleMask;
+    [SerializeField] float obstacleRepulsion;
+    [SerializeField] float drag;
 
     [Header("Rendering")]
     [SerializeField] Mesh particleMesh;
     [SerializeField] Shader particleShader;
-    [SerializeField] float particleScale;
+    [SerializeField] float particleRadius;
     [SerializeField] Color particleColor;
 
     ComputeBuffer particleDensity;
     ComputeBuffer particleAcceleration;
     ComputeBuffer particleVelocity;
     ComputeBuffer particlePosition;
+    ComputeBuffer predictedPosition;
 
     ComputeBuffer cellContainingParticle;
     ComputeBuffer particlesByCell;
     ComputeBuffer cellStart;
     ComputeBuffer cellParticleCount;
+
+    ComputeBuffer obstacleData;
+    Vector4[] obstacleDataToTransfer;
+    Collider2D[] obstacleColliders;
+    ContactFilter2D obstacleFilter;
 
     Material material;
     GraphicsBuffer commandBuffer;
@@ -66,13 +73,14 @@ public class SPHFluid : MonoBehaviour
     int igConstantProperty;
     int restDensityProperty;
     int viscosityProperty;
-    //int particleRadiusProperty;
     int particleMassProperty;
     int collisionBouncinessProperty;
+    int obstacleRepulsionProperty;
+    int numObstaclesProperty;
 
     int pivotPositionProperty;
     int particleColorProperty;
-    int particleScaleProperty;
+    int particleRadiusProperty;
 
     int numParticleThreadGroups;
 
@@ -94,13 +102,14 @@ public class SPHFluid : MonoBehaviour
         igConstantProperty = Shader.PropertyToID("igConstant");
         restDensityProperty = Shader.PropertyToID("restDensity");
         viscosityProperty = Shader.PropertyToID("viscosity");
-        //particleRadiusProperty = Shader.PropertyToID("particleRadius");
         particleMassProperty = Shader.PropertyToID("particleMass");
         collisionBouncinessProperty = Shader.PropertyToID("collisionBounciness");
+        obstacleRepulsionProperty = Shader.PropertyToID("obstacleRepulsion");
+        numObstaclesProperty = Shader.PropertyToID("numObstacles");
 
         pivotPositionProperty = Shader.PropertyToID("pivotPosition");
         particleColorProperty = Shader.PropertyToID("particleColor");
-        particleScaleProperty = Shader.PropertyToID("particleScale");
+        particleRadiusProperty = Shader.PropertyToID("particleRadius");
     }
 
 
@@ -115,11 +124,20 @@ public class SPHFluid : MonoBehaviour
         particleAcceleration = new ComputeBuffer(numParticles, 8);
         particleVelocity = new ComputeBuffer(numParticles, 8);
         particlePosition = new ComputeBuffer(numParticles, 8);
+        predictedPosition = new ComputeBuffer(numParticles, 8);
 
         cellContainingParticle = new ComputeBuffer(numParticles, 4);
         particlesByCell = new ComputeBuffer(numParticles, 4);
         cellStart = new ComputeBuffer(numCells + 1, 4);
         cellParticleCount = new ComputeBuffer(numCells, 4);
+
+        obstacleData = new ComputeBuffer(MAX_NUM_OBSTACLES, 16, ComputeBufferType.Default, ComputeBufferMode.SubUpdates);
+        obstacleDataToTransfer = new Vector4[MAX_NUM_OBSTACLES];
+        obstacleColliders = new Collider2D[MAX_NUM_OBSTACLES];
+
+        obstacleFilter = ContactFilter2D.noFilter;
+        obstacleFilter.useTriggers = false;
+        obstacleFilter.SetLayerMask(obstacleMask);
 
         //configure compute shader
         computeShader.SetInt("width", width);
@@ -130,14 +148,16 @@ public class SPHFluid : MonoBehaviour
         //bind buffers to compute shader
         computeShader.SetBuffer(particleDensity, "particleDensity", calculateDensity, accumulateForces);
         computeShader.SetBuffer(particleAcceleration, "particleAcceleration", integrateParticles, accumulateForces);
-        computeShader.SetBuffer(particleVelocity, "particleVelocity", integrateParticles, handleWallCollisions, accumulateForces);
-        computeShader.SetBuffer(particlePosition, "particlePosition", integrateParticles, handleWallCollisions, countParticles, calculateDensity, accumulateForces);
+        computeShader.SetBuffer(particleVelocity, "particleVelocity", computePredictedPositions, integrateParticles, handleWallCollisions, accumulateForces);
+        computeShader.SetBuffer(particlePosition, "particlePosition", computePredictedPositions, integrateParticles, handleWallCollisions);
+        computeShader.SetBuffer(predictedPosition, "predictedPosition", computePredictedPositions, countParticles, calculateDensity, accumulateForces);
         computeShader.SetBuffer(cellContainingParticle, "cellContainingParticle", countParticles, sortParticlesByCell, calculateDensity, accumulateForces);
         computeShader.SetBuffer(particlesByCell, "particlesByCell", sortParticlesByCell, calculateDensity, accumulateForces);
         computeShader.SetBuffer(cellStart, "cellStart", setCellStarts, sortParticlesByCell, calculateDensity, accumulateForces);
         computeShader.SetBuffer(cellParticleCount, "cellParticleCount", countParticles, setCellStarts, sortParticlesByCell);
+        computeShader.SetBuffer(obstacleData, "obstacleData", computePredictedPositions);
 
-        numParticleThreadGroups = (int)Mathf.Ceil((float)numParticles / threadsPerGroup);
+        numParticleThreadGroups = (int)Mathf.Ceil((float)numParticles / THREADS_PER_GROUP);
 
         //set up material
         material = new Material(particleShader);
@@ -173,11 +193,14 @@ public class SPHFluid : MonoBehaviour
         particleAcceleration.Release();
         particleVelocity.Release();
         particlePosition.Release();
+        predictedPosition.Release();
 
         cellContainingParticle.Release();
         particlesByCell.Release();
         cellStart.Release();
         cellParticleCount.Release();
+
+        obstacleData.Release();
 
         commandBuffer.Release();
     }
@@ -188,6 +211,7 @@ public class SPHFluid : MonoBehaviour
 
         particleAcceleration.SetData(initialPositions);
         particleVelocity.SetData(initialPositions);
+        predictedPosition.SetData(initialPositions);
 
         var spacing = 0.2f * cellSize;
         var x0 = cellSize + 0.5f * spacing;
@@ -224,13 +248,16 @@ public class SPHFluid : MonoBehaviour
             UpdateSimSettings();
         }
 
-        computeShader.Dispatch(integrateParticles, numParticleThreadGroups, 1, 1);
-        computeShader.Dispatch(handleWallCollisions, numParticleThreadGroups, 1, 1);
+        SetObstacleData();
+
+        computeShader.Dispatch(computePredictedPositions, numParticleThreadGroups, 1, 1);
         computeShader.Dispatch(countParticles, numParticleThreadGroups, 1, 1);
         computeShader.Dispatch(setCellStarts, 1, 1, 1);
         computeShader.Dispatch(sortParticlesByCell, numParticleThreadGroups, 1, 1);
         computeShader.Dispatch(calculateDensity, numParticleThreadGroups, 1, 1);
         computeShader.Dispatch(accumulateForces, numParticleThreadGroups, 1, 1);
+        computeShader.Dispatch(integrateParticles, numParticleThreadGroups, 1, 1);
+        computeShader.Dispatch(handleWallCollisions, numParticleThreadGroups, 1, 1);
     }
 
     //maybe put settings into a single struct so we only have to do one set
@@ -242,14 +269,41 @@ public class SPHFluid : MonoBehaviour
         computeShader.SetFloat(worldHeightProperty, height * cellSize);
         computeShader.SetFloat(smoothingRadiusProperty, 0.5f * cellSize);
         computeShader.SetFloat(smoothingRadiusSqrdProperty, 0.25f * cellSize * cellSize);
-        computeShader.SetFloat(gravityProperty, Physics2D.gravity.y);
+        computeShader.SetVector(gravityProperty, Physics2D.gravity);
         computeShader.SetFloat(igConstantProperty, igConstant);
         computeShader.SetFloat(restDensityProperty, restDensity);
         computeShader.SetFloat(viscosityProperty, viscosity);
         computeShader.SetFloat(particleMassProperty, particleMass);
         computeShader.SetFloat(collisionBouncinessProperty, collisionBounciness);
+        computeShader.SetFloat(obstacleRepulsionProperty, obstacleRepulsion);
 
         updateSimSettings = false;
+    }
+
+    private void SetObstacleData()
+    {
+        var worldWidth = width * cellSize;
+        var worldHeight = height * cellSize;
+        var boxCenter = new Vector2(transform.position.x + 0.5f * worldWidth, transform.position.y + 0.5f * worldHeight);
+        var boxSize = new Vector2(worldWidth, worldHeight);
+        Array.Clear(obstacleColliders, 0, obstacleColliders.Length);
+        Physics2D.OverlapBox(boxCenter, boxSize, 0, obstacleFilter, obstacleColliders);
+
+        //put non-null obstacles at the beginning of the compute buffer
+        //and we'll use numObstacles to mark the end so we don't have to clear out the rest of the buffer
+        var numObstacles = 0;
+        for (int i = 0; i < MAX_NUM_OBSTACLES; i++)
+        {
+            var o = obstacleColliders[i];
+            if (o)
+            {
+                obstacleDataToTransfer[numObstacles++] = new Vector4(o.bounds.center.x - transform.position.x, o.bounds.center.y - transform.position.y, 
+                    o.bounds.extents.x + particleRadius, o.bounds.extents.y + particleRadius);
+            }
+        }
+
+        computeShader.SetInt(numObstaclesProperty, numObstacles);
+        obstacleData.SetData(obstacleDataToTransfer);
     }
 
 
@@ -278,7 +332,7 @@ public class SPHFluid : MonoBehaviour
     {
         material.SetVector(pivotPositionProperty, transform.position);
         material.SetColor(particleColorProperty, particleColor);
-        material.SetFloat(particleScaleProperty, particleScale);
+        material.SetFloat(particleRadiusProperty, particleRadius);
         material.SetFloat(restDensityProperty, restDensity);
 
         updateMaterialProperties = false;
@@ -289,10 +343,10 @@ public class SPHFluid : MonoBehaviour
         particleMesh = new();
         var vertices = new Vector3[]
         {
-            new(-0.5f, -0.5f),
-            new(-0.5f, 0.5f),
-            new(0.5f, 0.5f),
-            new(0.5f, -0.5f)
+            new(-1f, -1f),
+            new(-1f, 1f),
+            new(1f, 1f),
+            new(1f, -1f)
         };
         var uv = new Vector2[]
         {

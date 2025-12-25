@@ -23,7 +23,7 @@ Shader "Instanced/FluidParticleShader"
             
             float3 pivotPosition;
             float4 particleColor;
-            float particleScale;
+            float particleRadius;
             float restDensity;
             
             //we'll probably incorporate density in some way too
@@ -56,7 +56,7 @@ Shader "Instanced/FluidParticleShader"
                 o.uv = v.uv;
                 uint i = GetIndirectInstanceID(svInstanceID);
                 float3 particlePos = float3(pivotPosition.x + particlePosition[i].x, pivotPosition.y + particlePosition[i].y, pivotPosition.z);
-                float3 vertexWorldPos = particlePos + particleScale * mul(unity_ObjectToWorld, v.position);
+                float3 vertexWorldPos = particlePos + particleRadius * mul(unity_ObjectToWorld, v.position);
                 o.clipPos = mul(UNITY_MATRIX_VP, float4(vertexWorldPos, 1));
                 return o;
             }
