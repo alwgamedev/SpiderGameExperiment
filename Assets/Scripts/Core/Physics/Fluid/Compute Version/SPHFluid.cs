@@ -25,8 +25,9 @@ public class SPHFluid : MonoBehaviour
     [SerializeField] int numParticles;
 
     [Header("Simulation Settings")]
-    [SerializeField] float particleMass;
-    [SerializeField] float igConstant;
+    [SerializeField] int stepsPerFrame;
+    [SerializeField] float stiffnessCoefficient;
+    [SerializeField] float nearStiffnessCoefficient;
     [SerializeField] float restDensity;
     [SerializeField] float viscosity;
     [SerializeField] float collisionBounciness;
@@ -37,10 +38,14 @@ public class SPHFluid : MonoBehaviour
     [Header("Rendering")]
     [SerializeField] Mesh particleMesh;
     [SerializeField] Shader particleShader;
-    [SerializeField] float particleRadius;
-    [SerializeField] Color particleColor;
+    [SerializeField] Color particleColorMin;
+    [SerializeField] Color particleColorMax;
+    [SerializeField] float particleRadiusMin;
+    [SerializeField] float particleRadiusMax;
+    [SerializeField] float densityNormalizer;
 
     ComputeBuffer particleDensity;
+    ComputeBuffer nearDensity;
     ComputeBuffer particleAcceleration;
     ComputeBuffer particleVelocity;
     ComputeBuffer particlePosition;
@@ -70,17 +75,20 @@ public class SPHFluid : MonoBehaviour
     int smoothingRadiusProperty;
     int smoothingRadiusSqrdProperty;
     int gravityProperty;
-    int igConstantProperty;
+    int stiffnessCoefficientProperty;
+    int nearStiffnessCoefficientProperty;
     int restDensityProperty;
     int viscosityProperty;
-    int particleMassProperty;
     int collisionBouncinessProperty;
     int obstacleRepulsionProperty;
     int numObstaclesProperty;
 
     int pivotPositionProperty;
-    int particleColorProperty;
-    int particleRadiusProperty;
+    int particleColorMinProperty;
+    int particleColorMaxProperty;
+    int particleRadiusMinProperty;
+    int particleRadiusMaxProperty;
+    int densityNormalizerProperty;
 
     int numParticleThreadGroups;
 
@@ -99,17 +107,20 @@ public class SPHFluid : MonoBehaviour
         smoothingRadiusProperty = Shader.PropertyToID("smoothingRadius");
         smoothingRadiusSqrdProperty = Shader.PropertyToID("smoothingRadiusSqrd");
         gravityProperty = Shader.PropertyToID("gravity");
-        igConstantProperty = Shader.PropertyToID("igConstant");
+        stiffnessCoefficientProperty = Shader.PropertyToID("stiffnessCoefficient");
+        nearStiffnessCoefficientProperty = Shader.PropertyToID("nearStiffnessCoefficient");
         restDensityProperty = Shader.PropertyToID("restDensity");
         viscosityProperty = Shader.PropertyToID("viscosity");
-        particleMassProperty = Shader.PropertyToID("particleMass");
         collisionBouncinessProperty = Shader.PropertyToID("collisionBounciness");
         obstacleRepulsionProperty = Shader.PropertyToID("obstacleRepulsion");
         numObstaclesProperty = Shader.PropertyToID("numObstacles");
 
         pivotPositionProperty = Shader.PropertyToID("pivotPosition");
-        particleColorProperty = Shader.PropertyToID("particleColor");
-        particleRadiusProperty = Shader.PropertyToID("particleRadius");
+        particleColorMinProperty = Shader.PropertyToID("particleColorMin");
+        particleColorMaxProperty = Shader.PropertyToID("particleColorMax");
+        particleRadiusMinProperty = Shader.PropertyToID("particleRadiusMin");
+        particleRadiusMaxProperty = Shader.PropertyToID("particleRadiusMax");
+        densityNormalizerProperty = Shader.PropertyToID("densityNormalizer");
     }
 
 
@@ -121,6 +132,7 @@ public class SPHFluid : MonoBehaviour
 
         //create buffers
         particleDensity = new ComputeBuffer(numParticles, 4);
+        nearDensity = new ComputeBuffer(numParticles, 4);
         particleAcceleration = new ComputeBuffer(numParticles, 8);
         particleVelocity = new ComputeBuffer(numParticles, 8);
         particlePosition = new ComputeBuffer(numParticles, 8);
@@ -147,6 +159,7 @@ public class SPHFluid : MonoBehaviour
 
         //bind buffers to compute shader
         computeShader.SetBuffer(particleDensity, "particleDensity", calculateDensity, accumulateForces);
+        computeShader.SetBuffer(nearDensity, "nearDensity", calculateDensity, accumulateForces);
         computeShader.SetBuffer(particleAcceleration, "particleAcceleration", integrateParticles, accumulateForces);
         computeShader.SetBuffer(particleVelocity, "particleVelocity", computePredictedPositions, integrateParticles, handleWallCollisions, accumulateForces);
         computeShader.SetBuffer(particlePosition, "particlePosition", computePredictedPositions, integrateParticles, handleWallCollisions);
@@ -190,6 +203,7 @@ public class SPHFluid : MonoBehaviour
     private void OnDisable()
     {
         particleDensity.Release();
+        nearDensity.Release();
         particleAcceleration.Release();
         particleVelocity.Release();
         particlePosition.Release();
@@ -243,13 +257,24 @@ public class SPHFluid : MonoBehaviour
 
     private void FixedUpdate()
     {
+        var dt = Time.deltaTime / stepsPerFrame;
+
         if (updateSimSettings)
         {
-            UpdateSimSettings();
+            UpdateSimSettings(dt);
         }
 
         SetObstacleData();
 
+        for (int i = 0; i < stepsPerFrame; i++)
+        {
+            RunSimulationStep();
+        }
+
+    }
+
+    private void RunSimulationStep()
+    {
         computeShader.Dispatch(computePredictedPositions, numParticleThreadGroups, 1, 1);
         computeShader.Dispatch(countParticles, numParticleThreadGroups, 1, 1);
         computeShader.Dispatch(setCellStarts, 1, 1, 1);
@@ -261,19 +286,19 @@ public class SPHFluid : MonoBehaviour
     }
 
     //maybe put settings into a single struct so we only have to do one set
-    private void UpdateSimSettings()
+    private void UpdateSimSettings(float dt)
     {
-        computeShader.SetFloat(dtProperty, Time.deltaTime);
+        computeShader.SetFloat(dtProperty, dt);
         computeShader.SetFloat(cellSizeProperty, cellSize);
         computeShader.SetFloat(worldWidthProperty, width * cellSize);
         computeShader.SetFloat(worldHeightProperty, height * cellSize);
         computeShader.SetFloat(smoothingRadiusProperty, 0.5f * cellSize);
         computeShader.SetFloat(smoothingRadiusSqrdProperty, 0.25f * cellSize * cellSize);
         computeShader.SetVector(gravityProperty, Physics2D.gravity);
-        computeShader.SetFloat(igConstantProperty, igConstant);
+        computeShader.SetFloat(stiffnessCoefficientProperty, stiffnessCoefficient);
+        computeShader.SetFloat(nearStiffnessCoefficientProperty, nearStiffnessCoefficient);
         computeShader.SetFloat(restDensityProperty, restDensity);
         computeShader.SetFloat(viscosityProperty, viscosity);
-        computeShader.SetFloat(particleMassProperty, particleMass);
         computeShader.SetFloat(collisionBouncinessProperty, collisionBounciness);
         computeShader.SetFloat(obstacleRepulsionProperty, obstacleRepulsion);
 
@@ -298,7 +323,7 @@ public class SPHFluid : MonoBehaviour
             if (o)
             {
                 obstacleDataToTransfer[numObstacles++] = new Vector4(o.bounds.center.x - transform.position.x, o.bounds.center.y - transform.position.y, 
-                    o.bounds.extents.x + particleRadius, o.bounds.extents.y + particleRadius);
+                    o.bounds.extents.x + particleRadiusMax, o.bounds.extents.y + particleRadiusMax);
             }
         }
 
@@ -331,9 +356,12 @@ public class SPHFluid : MonoBehaviour
     private void UpdateMaterialProperties()
     {
         material.SetVector(pivotPositionProperty, transform.position);
-        material.SetColor(particleColorProperty, particleColor);
-        material.SetFloat(particleRadiusProperty, particleRadius);
-        material.SetFloat(restDensityProperty, restDensity);
+        material.SetColor(particleColorMinProperty, particleColorMin);
+        material.SetColor(particleColorMaxProperty, particleColorMax);
+        material.SetFloat(particleRadiusMinProperty, particleRadiusMin);
+        material.SetFloat(particleRadiusMaxProperty, particleRadiusMax);
+        material.SetFloat(restDensityProperty, restDensity);//isn't used atm
+        material.SetFloat(densityNormalizerProperty, densityNormalizer);
 
         updateMaterialProperties = false;
     }

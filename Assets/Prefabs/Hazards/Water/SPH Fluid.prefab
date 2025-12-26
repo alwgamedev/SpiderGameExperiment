@@ -45,13 +45,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SPHFluid
   computeShader: {fileID: 7200000, guid: d5f8501c976912c4ab3014911695b0f3, type: 3}
-  width: 30
-  height: 20
-  cellSize: 1
-  numParticles: 4000
-  particleMass: 3
-  igConstant: 75
-  restDensity: 25
+  width: 15
+  height: 15
+  cellSize: 1.5
+  numParticles: 2500
+  stepsPerFrame: 10
+  stiffnessCoefficient: 2000
+  nearStiffnessCoefficient: 5000
+  restDensity: 6
   viscosity: 1
   collisionBounciness: 0.25
   obstacleMask:
@@ -61,5 +62,8 @@ MonoBehaviour:
   drag: 0
   particleMesh: {fileID: 0}
   particleShader: {fileID: 4800000, guid: 0a5371170069e7c41bcb95462907676a, type: 3}
-  particleRadius: 0.35
-  particleColor: {r: 0.022454428, g: 0, b: 0.19215687, a: 0.2509804}
+  particleColorMin: {r: 0, g: 0.368238, b: 0.5924529, a: 0}
+  particleColorMax: {r: 0.044663567, g: 0.055109285, b: 0.4641509, a: 0.2}
+  particleRadiusMin: 0.5
+  particleRadiusMax: 0.5
+  densityNormalizer: 0.3

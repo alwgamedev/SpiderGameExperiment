@@ -30,10 +30,10 @@ uniform float worldHeight;
 uniform float smoothingRadius;
 uniform float smoothingRadiusSqrd;
 uniform float2 gravity;
-uniform float igConstant;
+uniform float stiffnessCoefficient;
+uniform float nearStiffnessCoefficient;
 uniform float restDensity;
 uniform float viscosity;
-uniform float particleMass;
 uniform float collisionBounciness;
 uniform float obstacleRepulsion;
 uniform uint numObstacles = 1;
@@ -42,6 +42,7 @@ uniform uint numObstacles = 1;
 //SIM DATA
 
 RWStructuredBuffer<float> particleDensity;
+RWStructuredBuffer<float> nearDensity;
 RWStructuredBuffer<float2> particleAcceleration;
 RWStructuredBuffer<float2> particleVelocity;
 RWStructuredBuffer<float2> particlePosition;
@@ -56,9 +57,8 @@ RWStructuredBuffer<uint> cellParticleCount;
 StructuredBuffer<float4> obstacleData;
 
 #define Index(i, j) i * width + j
-#define pressure(i) igConstant * (particleDensity[i] - restDensity)
 
-void ApplyExternalForces(uint p)
+void RepelFromObstacles(uint p)
 {
     for (uint k = 0; k < numObstacles; k++)
     {
@@ -69,7 +69,7 @@ void ApplyExternalForces(uint p)
         {
             float sInverse = rsqrt(s2);
             float2 dir = isnan(sInverse) || isinf(sInverse) ? float2(0, 1) : sInverse * localPos;
-            particleVelocity[p] += (1 - s2) * (dt * obstacleRepulsion - dot(particleVelocity[p], dir)) * dir;
+            particleVelocity[p] += dt * (1 - s2) * obstacleRepulsion * dir;
         }
     }
 }
@@ -80,7 +80,7 @@ void ComputePredictedPositions(uint3 id : SV_DispatchThreadID)
     if (id.x < numParticles)
     {
         particleVelocity[id.x] += dt * gravity;
-        ApplyExternalForces(id.x);
+        RepelFromObstacles(id.x);
         predictedPosition[id.x] = particlePosition[id.x] + dt * particleVelocity[id.x];
     }
 }
@@ -95,7 +95,6 @@ void IntegrateParticles(uint3 id : SV_DispatchThreadID)
     }
 }
 
-//could switch this to being an external force
 [numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
 void HandleWallCollisions(uint3 id : SV_DispatchThreadID)
 {
@@ -106,40 +105,48 @@ void HandleWallCollisions(uint3 id : SV_DispatchThreadID)
     
     if (particlePosition[id.x].x < cellSize)
     {
-        particlePosition[id.x].x = cellSize;
+        float dx = particlePosition[id.x].x - cellSize;
+        particlePosition[id.x].x -= dx;
         if (particleVelocity[id.x].x < 0)
         {
             particleVelocity[id.x].x = -collisionBounciness * particleVelocity[id.x].x;
-            particleVelocity[id.x].y = collisionBounciness * particleVelocity[id.x].y;
+            //particleVelocity[id.x].y = collisionBounciness * particleVelocity[id.x].y;
         }
+        particleVelocity[id.x].x -= dx / dt;
     }
     else if (particlePosition[id.x].x > worldWidth - cellSize)
     {
-        particlePosition[id.x].x = worldWidth - cellSize;
+        float dx = particlePosition[id.x].x - worldWidth + cellSize;
+        particlePosition[id.x].x -= dx;
         if (particleVelocity[id.x].x > 0)
         {
             particleVelocity[id.x].x = -collisionBounciness * particleVelocity[id.x].x;
-            particleVelocity[id.x].y = collisionBounciness * particleVelocity[id.x].y;
+            //particleVelocity[id.x].y = collisionBounciness * particleVelocity[id.x].y;
         }
+        particleVelocity[id.x].x -= dx / dt;
     }
 
     if (particlePosition[id.x].y < cellSize)
     {
-        particlePosition[id.x].y = cellSize;
+        float dy = particlePosition[id.x].y - cellSize;
+        particlePosition[id.x].y -= dy;
         if (particleVelocity[id.x].y < 0)
         {
-            particleVelocity[id.x].x = collisionBounciness * particleVelocity[id.x].x;
+            //particleVelocity[id.x].x = collisionBounciness * particleVelocity[id.x].x;
             particleVelocity[id.x].y = -collisionBounciness * particleVelocity[id.x].y;
         }
+        particleVelocity[id.x].y -= dy / dt;
     }
     else if (particlePosition[id.x].y > worldHeight - cellSize)
     {
-        particlePosition[id.x].y = worldHeight - cellSize;
+        float dy = particlePosition[id.x].y - worldHeight + cellSize;
+        particlePosition[id.x].y -= dy;
         if (particleVelocity[id.x].y > 0)
         {
-            particleVelocity[id.x].x = collisionBounciness * particleVelocity[id.x].x;
+            //particleVelocity[id.x].x = collisionBounciness * particleVelocity[id.x].x;
             particleVelocity[id.x].y = -collisionBounciness * particleVelocity[id.x].y;
         }
+        particleVelocity[id.x].y -= dy / dt;
     }
 }
 
@@ -184,15 +191,23 @@ void SortParticlesByCell(uint3 id : SV_DispatchThreadID)
 
 void SearchCellDensity(uint p, uint cell)
 {
+    float sum = 0;
+    float nearSum = 0;
+    
     for (uint k = cellStart[cell]; k < cellStart[cell + 1]; k++)
     {
         uint q = particlesByCell[k];
         float d2 = pow(predictedPosition[q].x - predictedPosition[p].x, 2) + pow(predictedPosition[q].y - predictedPosition[p].y, 2);
         if (d2 < smoothingRadiusSqrd)
         {
-            particleDensity[p] += particleMass * DensityWt(smoothingRadiusSqrd, d2);
+            float d = sqrt(d2);
+            sum += QuadraticWt(smoothingRadius, d);
+            nearSum += CubicWt(smoothingRadius, d);
         }
     }
+    
+    particleDensity[p] += sum;
+    nearDensity[p] += nearSum;
 }
 
 [numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
@@ -205,6 +220,7 @@ void CalculateDensity(uint3 id : SV_DispatchThreadID)
         uint j = c % width;
         
         particleDensity[id.x] = 0;
+        nearDensity[id.x] = 0;
         
         //search middle row
         SearchCellDensity(id.x, c);
@@ -250,8 +266,13 @@ void CalculateDensity(uint3 id : SV_DispatchThreadID)
     }
 }
 
+//minor improvement: multiply pressure by igConstant only at the end; divide both forces by density[p] only at the end
 void SearchCellForces(uint p, uint cell)
 {
+    float2 pressureSum = 0;
+    float2 nearPressureSum = 0;
+    float2 viscositySum = 0;
+    
     for (uint k = cellStart[cell]; k < cellStart[cell + 1]; k++)
     {
         uint q = particlesByCell[k];
@@ -260,21 +281,25 @@ void SearchCellForces(uint p, uint cell)
         if (d2 < smoothingRadiusSqrd)
         {
             float d = sqrt(d2);
-            float pW = PressureWt(smoothingRadius, d);
-            if (!isinf(pW))
+            float2 u = displacement / d;
+            if (!isnan(u.x) && !isnan(u.y) && !isinf(u.x) && !isinf(u.y))
             {
-                particleAcceleration[p] -= ((pressure(p) + pressure(q)) / (2 * particleDensity[q])) * PressureWt(smoothingRadius, d) * displacement;
+                float avgDensity = 0.5 * (particleDensity[p] + particleDensity[q]);
+                float avgNearDensity = 0.5 * (nearDensity[p] + nearDensity[q]);
+                pressureSum += (avgDensity - restDensity) / particleDensity[q] * LinearWt(smoothingRadius, d) * u;
+                nearPressureSum += avgNearDensity / nearDensity[q] * QuadraticWt(smoothingRadius, d) * u;
             }
-            particleAcceleration[p] += (viscosity * ViscosityWt(smoothingRadius, d) / particleDensity[q]) * (particleVelocity[q] - particleVelocity[p]);
+            
+            viscositySum += viscosity * LinearWt(smoothingRadius, d) / particleDensity[q] * (particleVelocity[q] - particleVelocity[p]);
         }
     }
+    
+    //pressures added because their weight functions are already missing a negative
+    particleAcceleration[p] += (1 / particleDensity[p]) * (stiffnessCoefficient * pressureSum + nearStiffnessCoefficient * nearPressureSum + viscositySum);
 }
 
 [numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
-
-    void AccumulateForces
-    (
-    uint3 id : SV_DispatchThreadID)
+void AccumulateForces(uint3 id : SV_DispatchThreadID)
 {
     if (id.x < numParticles)
     {
