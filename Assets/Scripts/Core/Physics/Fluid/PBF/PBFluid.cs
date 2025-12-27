@@ -1,24 +1,28 @@
 ﻿using System;
 using UnityEngine;
 
-public class SPHFluid : MonoBehaviour
+public class PBFluid : MonoBehaviour
 {
     const int THREADS_PER_GROUP = 256;
     const int MAX_NUM_OBSTACLES = 64;
 
     //kernel indices in compute shader
-    const int computePredictedPositions = 0;
-    const int countParticles = 1;
-    const int setCellStarts = 2;
-    const int sortParticlesByCell = 3;
-    const int calculateDensity = 4;
-    const int accumulateForces = 5;
-    const int integrateParticles = 6;
-    const int handleWallCollisions = 7;
+    const int recalculatePressureCorrectionCoefficient = 0;
+    const int computePredictedPositions = 1;
+    const int countParticles = 2;
+    const int setCellStarts = 3;
+    const int sortParticlesByCell = 4;
+    const int calculateDensity = 5;
+    const int calculateLambda = 6;
+    const int calculatePositionDelta = 7;
+    const int addPositionDelta = 8;
+    const int integrateParticles = 9;
+    const int handleWallCollisions = 10;
 
     [SerializeField] ComputeShader computeShader;
 
     [Header("Configuration")]
+    [SerializeField] int releaseWidth;
     [SerializeField] int width;
     [SerializeField] int height;
     [SerializeField] float cellSize;
@@ -26,10 +30,13 @@ public class SPHFluid : MonoBehaviour
 
     [Header("Simulation Settings")]
     [SerializeField] int stepsPerFrame;
-    [SerializeField] float stiffnessCoefficient;
-    [SerializeField] float nearStiffnessCoefficient;
+    [SerializeField] int pressureSolveIterations;
     [SerializeField] float restDensity;
     [SerializeField] float viscosity;
+    [SerializeField] float pressureCorrectionK;
+    [SerializeField] float pressureCorrectionDQ;
+    [SerializeField] int pressureCorrectionN;
+    [SerializeField] float epsilon;//stabilizer
     [SerializeField] float collisionBounciness;
     [SerializeField] LayerMask obstacleMask;
     [SerializeField] float obstacleRepulsion;
@@ -44,12 +51,12 @@ public class SPHFluid : MonoBehaviour
     [SerializeField] float particleRadiusMax;
     [SerializeField] float densityNormalizer;
 
-    ComputeBuffer particleDensity;
-    ComputeBuffer nearDensity;
-    ComputeBuffer particleAcceleration;
-    ComputeBuffer particleVelocity;
-    ComputeBuffer particlePosition;
+    ComputeBuffer velocity;
+    ComputeBuffer position;
     ComputeBuffer predictedPosition;
+    ComputeBuffer deltaPosition;
+    ComputeBuffer density;
+    ComputeBuffer lambda;
 
     ComputeBuffer cellContainingParticle;
     ComputeBuffer particlesByCell;
@@ -69,16 +76,19 @@ public class SPHFluid : MonoBehaviour
     bool updateMaterialProperties;
 
     int dtProperty;
+    int dtInverseProperty;
     int cellSizeProperty;
     int worldWidthProperty;
     int worldHeightProperty;
     int smoothingRadiusProperty;
     int smoothingRadiusSqrdProperty;
     int gravityProperty;
-    int stiffnessCoefficientProperty;
-    int nearStiffnessCoefficientProperty;
     int restDensityProperty;
     int viscosityProperty;
+    int pressureCorrectionKProperty;
+    int pressureCorrectionDQProperty;
+    int pressureCorrectionNProperty;
+    int epsilonProperty;
     int collisionBouncinessProperty;
     int obstacleRepulsionProperty;
     int numObstaclesProperty;
@@ -101,16 +111,19 @@ public class SPHFluid : MonoBehaviour
     private void Awake()
     {
         dtProperty = Shader.PropertyToID("dt");
+        dtInverseProperty = Shader.PropertyToID("dtInverse");
         cellSizeProperty = Shader.PropertyToID("cellSize");
         worldWidthProperty = Shader.PropertyToID("worldWidth");
         worldHeightProperty = Shader.PropertyToID("worldHeight");
         smoothingRadiusProperty = Shader.PropertyToID("smoothingRadius");
         smoothingRadiusSqrdProperty = Shader.PropertyToID("smoothingRadiusSqrd");
         gravityProperty = Shader.PropertyToID("gravity");
-        stiffnessCoefficientProperty = Shader.PropertyToID("stiffnessCoefficient");
-        nearStiffnessCoefficientProperty = Shader.PropertyToID("nearStiffnessCoefficient");
         restDensityProperty = Shader.PropertyToID("restDensity");
         viscosityProperty = Shader.PropertyToID("viscosity");
+        pressureCorrectionKProperty = Shader.PropertyToID("pressureCorrectionK");
+        pressureCorrectionDQProperty = Shader.PropertyToID("pressureCorrectionDQ");
+        pressureCorrectionNProperty = Shader.PropertyToID("pressureCorrectionN");
+        epsilonProperty = Shader.PropertyToID("epsilon");
         collisionBouncinessProperty = Shader.PropertyToID("collisionBounciness");
         obstacleRepulsionProperty = Shader.PropertyToID("obstacleRepulsion");
         numObstaclesProperty = Shader.PropertyToID("numObstacles");
@@ -131,12 +144,12 @@ public class SPHFluid : MonoBehaviour
         var numCells = width * height;
 
         //create buffers
-        particleDensity = new ComputeBuffer(numParticles, 4);
-        nearDensity = new ComputeBuffer(numParticles, 4);
-        particleAcceleration = new ComputeBuffer(numParticles, 8);
-        particleVelocity = new ComputeBuffer(numParticles, 8);
-        particlePosition = new ComputeBuffer(numParticles, 8);
+        velocity = new ComputeBuffer(numParticles, 8);
+        position = new ComputeBuffer (numParticles, 8);
         predictedPosition = new ComputeBuffer(numParticles, 8);
+        deltaPosition = new ComputeBuffer(numParticles, 8);
+        density = new ComputeBuffer(numParticles, 4);
+        lambda = new ComputeBuffer(numParticles, 4);
 
         cellContainingParticle = new ComputeBuffer(numParticles, 4);
         particlesByCell = new ComputeBuffer(numParticles, 4);
@@ -158,17 +171,17 @@ public class SPHFluid : MonoBehaviour
         computeShader.SetInt("numParticles", numParticles);
 
         //bind buffers to compute shader
-        computeShader.SetBuffer(particleDensity, "particleDensity", calculateDensity, accumulateForces);
-        computeShader.SetBuffer(nearDensity, "nearDensity", calculateDensity, accumulateForces);
-        computeShader.SetBuffer(particleAcceleration, "particleAcceleration", integrateParticles, accumulateForces);
-        computeShader.SetBuffer(particleVelocity, "particleVelocity", computePredictedPositions, integrateParticles, handleWallCollisions, accumulateForces);
-        computeShader.SetBuffer(particlePosition, "particlePosition", computePredictedPositions, integrateParticles, handleWallCollisions);
-        computeShader.SetBuffer(predictedPosition, "predictedPosition", computePredictedPositions, countParticles, calculateDensity, accumulateForces);
-        computeShader.SetBuffer(cellContainingParticle, "cellContainingParticle", countParticles, sortParticlesByCell, calculateDensity, accumulateForces);
-        computeShader.SetBuffer(particlesByCell, "particlesByCell", sortParticlesByCell, calculateDensity, accumulateForces);
-        computeShader.SetBuffer(cellStart, "cellStart", setCellStarts, sortParticlesByCell, calculateDensity, accumulateForces);
+        computeShader.SetBuffer(density, "density", calculateDensity, calculateLambda);
+        computeShader.SetBuffer(lambda, "lambda", calculateLambda, calculatePositionDelta);
+        computeShader.SetBuffer(velocity, "velocity", computePredictedPositions, integrateParticles, handleWallCollisions);
+        computeShader.SetBuffer(position, "position", computePredictedPositions, integrateParticles, handleWallCollisions);
+        computeShader.SetBuffer(predictedPosition, "predictedPosition", computePredictedPositions, countParticles, calculateDensity, calculateLambda, addPositionDelta, calculatePositionDelta, integrateParticles);
+        computeShader.SetBuffer(deltaPosition, "deltaPosition", calculatePositionDelta, addPositionDelta);
+        computeShader.SetBuffer(cellContainingParticle, "cellContainingParticle", countParticles, sortParticlesByCell, calculateDensity, calculateLambda, calculatePositionDelta);
+        computeShader.SetBuffer(particlesByCell, "particlesByCell", sortParticlesByCell, calculateDensity, calculateLambda, calculatePositionDelta);
+        computeShader.SetBuffer(cellStart, "cellStart", setCellStarts, sortParticlesByCell, calculateDensity, calculateLambda, calculatePositionDelta);
         computeShader.SetBuffer(cellParticleCount, "cellParticleCount", countParticles, setCellStarts, sortParticlesByCell);
-        computeShader.SetBuffer(obstacleData, "obstacleData", computePredictedPositions);
+        computeShader.SetBuffer(obstacleData, "obstacleData", integrateParticles);
 
         numParticleThreadGroups = (int)Mathf.Ceil((float)numParticles / THREADS_PER_GROUP);
 
@@ -179,9 +192,9 @@ public class SPHFluid : MonoBehaviour
         commandData = new GraphicsBuffer.IndirectDrawIndexedArgs[1];
 
         //bind buffers to material
-        material.SetBuffer("particleDensity", particleDensity);
-        material.SetBuffer("particleVelocity", particleVelocity);
-        material.SetBuffer("particlePosition", particlePosition);
+        material.SetBuffer("particleDensity", density);
+        material.SetBuffer("particleVelocity", velocity);
+        material.SetBuffer("particlePosition", position);
 
         if (particleMesh == null)
         {
@@ -189,7 +202,7 @@ public class SPHFluid : MonoBehaviour
         }
 
         InitializeParticlePhysics();
-        cellParticleCount.SetData(new uint[numCells]);
+        cellParticleCount.SetData(new uint[numCells]);//to set all to 0
 
         updateSimSettings = true;
         updateMaterialProperties = true;
@@ -202,12 +215,12 @@ public class SPHFluid : MonoBehaviour
 
     private void OnDisable()
     {
-        particleDensity.Release();
-        nearDensity.Release();
-        particleAcceleration.Release();
-        particleVelocity.Release();
-        particlePosition.Release();
+        density.Release();
+        lambda.Release();
+        velocity.Release();
+        position.Release();
         predictedPosition.Release();
+        deltaPosition.Release();
 
         cellContainingParticle.Release();
         particlesByCell.Release();
@@ -223,15 +236,14 @@ public class SPHFluid : MonoBehaviour
     {
         var initialPositions = new Vector2[numParticles];
 
-        particleAcceleration.SetData(initialPositions);
-        particleVelocity.SetData(initialPositions);
+        velocity.SetData(initialPositions);
         predictedPosition.SetData(initialPositions);
 
         var spacing = 0.1f * cellSize;
         var x0 = cellSize + 0.5f * spacing;
         var x = x0;
         var y = cellSize * (height - 1) - 0.5f * spacing;
-        var xmax = cellSize * (width - 1) - 0.5f * spacing;
+        var xmax = cellSize * Mathf.Min(releaseWidth, width - 1) - 0.5f * spacing;
         var ymin = cellSize + 0.5f * spacing;
 
         for (int k = 0; k < numParticles; k++)
@@ -249,7 +261,7 @@ public class SPHFluid : MonoBehaviour
             initialPositions[k] = new(x, y);
         }
 
-        particlePosition.SetData(initialPositions);
+        position.SetData(initialPositions);
     }
 
 
@@ -257,10 +269,9 @@ public class SPHFluid : MonoBehaviour
 
     private void FixedUpdate()
     {
-        var dt = Time.deltaTime / stepsPerFrame;
-
         if (updateSimSettings)
         {
+            var dt = Time.deltaTime / stepsPerFrame;
             UpdateSimSettings(dt);
         }
 
@@ -276,11 +287,22 @@ public class SPHFluid : MonoBehaviour
     private void RunSimulationStep()
     {
         computeShader.Dispatch(computePredictedPositions, numParticleThreadGroups, 1, 1);
-        computeShader.Dispatch(countParticles, numParticleThreadGroups, 1, 1);
-        computeShader.Dispatch(setCellStarts, 1, 1, 1);
-        computeShader.Dispatch(sortParticlesByCell, numParticleThreadGroups, 1, 1);
-        computeShader.Dispatch(calculateDensity, numParticleThreadGroups, 1, 1);
-        computeShader.Dispatch(accumulateForces, numParticleThreadGroups, 1, 1);
+
+        for (int i = 0; i < pressureSolveIterations; i++)
+        {
+            //pressure solving iteration
+
+            computeShader.Dispatch(countParticles, numParticleThreadGroups, 1, 1);
+            computeShader.Dispatch(setCellStarts, 1, 1, 1);
+            computeShader.Dispatch(sortParticlesByCell, numParticleThreadGroups, 1, 1);
+
+            computeShader.Dispatch(calculateDensity, numParticleThreadGroups, 1, 1);
+
+            computeShader.Dispatch(calculateLambda, numParticleThreadGroups, 1, 1);
+            computeShader.Dispatch(calculatePositionDelta, numParticleThreadGroups, 1, 1);
+            computeShader.Dispatch(addPositionDelta, numParticleThreadGroups, 1, 1);
+        }
+
         computeShader.Dispatch(integrateParticles, numParticleThreadGroups, 1, 1);
         computeShader.Dispatch(handleWallCollisions, numParticleThreadGroups, 1, 1);
     }
@@ -289,18 +311,23 @@ public class SPHFluid : MonoBehaviour
     private void UpdateSimSettings(float dt)
     {
         computeShader.SetFloat(dtProperty, dt);
+        computeShader.SetFloat(dtInverseProperty, 1 / dt);
         computeShader.SetFloat(cellSizeProperty, cellSize);
         computeShader.SetFloat(worldWidthProperty, width * cellSize);
         computeShader.SetFloat(worldHeightProperty, height * cellSize);
         computeShader.SetFloat(smoothingRadiusProperty, 0.5f * cellSize);
         computeShader.SetFloat(smoothingRadiusSqrdProperty, 0.25f * cellSize * cellSize);
         computeShader.SetVector(gravityProperty, Physics2D.gravity);
-        computeShader.SetFloat(stiffnessCoefficientProperty, stiffnessCoefficient);
-        computeShader.SetFloat(nearStiffnessCoefficientProperty, nearStiffnessCoefficient);
+        computeShader.SetFloat(pressureCorrectionKProperty, pressureCorrectionK);
+        computeShader.SetFloat(pressureCorrectionDQProperty, pressureCorrectionDQ);
+        computeShader.SetInt(pressureCorrectionNProperty, pressureCorrectionN);
+        computeShader.SetFloat(epsilonProperty, epsilon);
         computeShader.SetFloat(restDensityProperty, restDensity);
         computeShader.SetFloat(viscosityProperty, viscosity);
         computeShader.SetFloat(collisionBouncinessProperty, collisionBounciness);
         computeShader.SetFloat(obstacleRepulsionProperty, obstacleRepulsion);
+
+        computeShader.Dispatch(recalculatePressureCorrectionCoefficient, 1, 1, 1);
 
         updateSimSettings = false;
     }
@@ -324,7 +351,7 @@ public class SPHFluid : MonoBehaviour
             {
                 var r = Mathf.Max(o.bounds.extents.x, o.bounds.extents.y) + particleRadiusMax;
                 obstacleDataToTransfer[numObstacles++] = new Vector4(o.bounds.center.x - transform.position.x, o.bounds.center.y - transform.position.y, r, r);
-                    //o.bounds.extents.x + particleRadiusMax, o.bounds.extents.y + particleRadiusMax);
+                //o.bounds.extents.x + particleRadiusMax, o.bounds.extents.y + particleRadiusMax);
             }
         }
 
@@ -342,6 +369,8 @@ public class SPHFluid : MonoBehaviour
             UpdateMaterialProperties();
         }
 
+        material.SetVector(pivotPositionProperty, transform.position);
+
         var renderParams = new RenderParams(material)
         {
             worldBounds = new(Vector3.zero, new(10000, 10000, 10000))//better options?
@@ -356,7 +385,6 @@ public class SPHFluid : MonoBehaviour
 
     private void UpdateMaterialProperties()
     {
-        material.SetVector(pivotPositionProperty, transform.position);
         material.SetColor(particleColorMinProperty, particleColorMin);
         material.SetColor(particleColorMaxProperty, particleColorMax);
         material.SetFloat(particleRadiusMinProperty, particleRadiusMin);

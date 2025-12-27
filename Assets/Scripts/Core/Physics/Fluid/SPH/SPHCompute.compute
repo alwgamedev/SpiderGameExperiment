@@ -7,7 +7,7 @@
 #pragma kernel IntegrateParticles
 #pragma kernel HandleWallCollisions
 
-#include "./SPHFunctions.hlsl"
+#include "./SmoothingKernels.hlsl"
 
 static const int NUM_THREADS_PER_GROUP = 256;
 static const float COS45 = rsqrt(2);
@@ -218,6 +218,9 @@ void CalculateDensity(uint3 id : SV_DispatchThreadID)
         uint c = cellContainingParticle[id.x];
         uint i = c / width;
         uint j = c % width;
+        float cellX = clamp(predictedPosition[id.x].x - j * cellSize, 0, cellSize);
+        float cellY = clamp(predictedPosition[id.x].y - i * cellSize, 0, cellSize);
+        float max = cellSize - smoothingRadius;
         
         particleDensity[id.x] = 0;
         nearDensity[id.x] = 0;
@@ -225,40 +228,40 @@ void CalculateDensity(uint3 id : SV_DispatchThreadID)
         //search middle row
         SearchCellDensity(id.x, c);
         
-        if (j > 0)
+        if (j > 0 && cellX < smoothingRadius)
         {
             SearchCellDensity(id.x, c - 1);
         }
-        if (j < width - 1)
+        if (j < width - 1 && cellX > max)
         {
             SearchCellDensity(id.x, c + 1);
         }
         
         //search upper row
-        if (i < height - 1)
+        if (i < height - 1 && cellY > max)
         {
             SearchCellDensity(id.x, c + width);
             
-            if (j > 0)
+            if (j > 0 && cellX < smoothingRadius)
             {
                 SearchCellDensity(id.x, c + width - 1);
             }
-            if (j < width - 1)
+            if (j < width - 1 && cellX > max)
             {
                 SearchCellDensity(id.x, c + width + 1);
             }
         }
         
         //search bottom row
-        if (i > 0)
+        if (i > 0 && cellY < smoothingRadius)
         {
             SearchCellDensity(id.x, c - width);
             
-            if (j > 0)
+            if (j > 0 && cellX < smoothingRadius)
             {
                 SearchCellDensity(id.x, c - width - 1);
             }
-            if (j < width - 1)
+            if (j < width - 1 && cellX > max)
             {
                 SearchCellDensity(id.x, c - width + 1);
             }
@@ -307,44 +310,47 @@ void AccumulateForces(uint3 id : SV_DispatchThreadID)
         uint c = cellContainingParticle[id.x];
         uint i = c / width;
         uint j = c % width;
+        float cellX = clamp(predictedPosition[id.x].x - j * cellSize, 0, cellSize);
+        float cellY = clamp(predictedPosition[id.x].y - i * cellSize, 0, cellSize);
+        float max = cellSize - smoothingRadius;
         
         //search middle row
         SearchCellForces(id.x, c);
         
-        if (j > 0)
+        if (j > 0 && cellX < smoothingRadius)
         {
             SearchCellForces(id.x, c - 1);
         }
-        if (j < width - 1)
+        if (j < width - 1 && cellX > max)
         {
             SearchCellForces(id.x, c + 1);
         }
         
         //search upper row
-        if (i < height - 1)
+        if (i < height - 1 && cellY > max)
         {
             SearchCellForces(id.x, c + width);
             
-            if (j > 0)
+            if (j > 0 && cellX < smoothingRadius)
             {
                 SearchCellForces(id.x, c + width - 1);
             }
-            if (j < width - 1)
+            if (j < width - 1 && cellX > max)
             {
                 SearchCellForces(id.x, c + width + 1);
             }
         }
         
         //search bottom row
-        if (i > 0)
+        if (i > 0 && cellY < smoothingRadius)
         {
             SearchCellForces(id.x, c - width);
             
-            if (j > 0)
+            if (j > 0 && cellX < smoothingRadius)
             {
                 SearchCellForces(id.x, c - width - 1);
             }
-            if (j < width - 1)
+            if (j < width - 1 && cellX > max)
             {
                 SearchCellForces(id.x, c - width + 1);
             }

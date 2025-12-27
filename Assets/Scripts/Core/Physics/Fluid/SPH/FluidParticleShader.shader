@@ -60,17 +60,11 @@ Shader "Instanced/FluidParticleShader"
                 v2f o;
                 uint i = GetIndirectInstanceID(svInstanceID);
 
-                float t = clamp(densityNormalizer * particleDensity[i], 0, 1);
+                float t = 1;//clamp(densityNormalizer * particleDensity[i], 0, 1);
                 o.density = t;
 
                 float r = lerp(particleRadiusMin, particleRadiusMax, t);
                 float3 particlePos = float3(pivotPosition.x + particlePosition[i].x, pivotPosition.y + particlePosition[i].y, pivotPosition.z);
-                float2 velocity = particleVelocity[i];
-                if (dot(v.position.xy, velocity) < 0)
-                {
-                    v.position.x -= 0.005 * t * velocity.x;
-                    v.position.y -= 0.005 * t * velocity.y;
-                }
                 float3 vertexWorldPos = particlePos + r * mul(unity_ObjectToWorld, v.position);
                 o.clipPos = mul(UNITY_MATRIX_VP, float4(vertexWorldPos, 1));
 

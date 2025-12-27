@@ -1,0 +1,462 @@
+﻿#pragma kernel RecalculatePressureCorrectionCoefficient;
+#pragma kernel ComputePredictedPositions
+#pragma kernel CountParticles
+#pragma kernel SetCellStarts
+#pragma kernel SortParticlesByCell
+#pragma kernel CalculateDensity
+#pragma kernel CalculateLambda
+#pragma kernel CalculatePositionDelta
+#pragma kernel AddPositionDelta
+#pragma kernel IntegrateParticles
+#pragma kernel HandleWallCollisions
+
+#include "../SPH/SmoothingKernels.hlsl"
+
+static const int NUM_THREADS_PER_GROUP = 256;
+static const float COS45 = rsqrt(2);
+
+
+//CONFIGURATION
+
+const uint width;
+const uint height;
+const uint numCells;
+const uint numParticles;
+
+
+//SIM SETTINGS
+
+uniform float dt;
+uniform float dtInverse;
+uniform float cellSize;
+uniform float worldWidth;
+uniform float worldHeight;
+uniform float smoothingRadius;
+uniform float smoothingRadiusSqrd;
+uniform float2 gravity;
+uniform float pressureCorrectionK;
+uniform float pressureCorrectionDQ;
+uniform int pressureCorrectionN;
+uniform float epsilon;
+uniform float restDensity;
+uniform float viscosity;
+uniform float collisionBounciness;
+uniform float obstacleRepulsion;
+uniform uint numObstacles = 1;
+
+float pressureCorrectionCoefficient;
+
+
+//SIM DATA
+
+RWStructuredBuffer<float2> velocity;
+RWStructuredBuffer<float2> position;
+RWStructuredBuffer<float2> predictedPosition;
+RWStructuredBuffer<float2> deltaPosition;
+RWStructuredBuffer<float> density;
+RWStructuredBuffer<float> lambda;
+
+//particle sorting
+RWStructuredBuffer<uint> cellContainingParticle;
+RWStructuredBuffer<uint> particlesByCell;
+RWStructuredBuffer<uint> cellStart;
+RWStructuredBuffer<uint> cellParticleCount;
+
+StructuredBuffer<float4> obstacleData;
+
+#define Index(i, j) i * width + j
+
+[numthreads(1, 1, 1)]
+void RecalculatePressureCorrectionCoefficient()
+{
+    pressureCorrectionCoefficient = -pressureCorrectionK / wholePow(Poly6Kernel(smoothingRadiusSqrd, pressureCorrectionDQ * pressureCorrectionDQ), pressureCorrectionN);
+
+}
+
+[numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
+void ComputePredictedPositions(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x < numParticles)
+    {
+        velocity[id.x] += dt * gravity;
+        predictedPosition[id.x] = position[id.x] + dt * velocity[id.x];
+    }
+}
+
+[numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
+void CountParticles(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x < numParticles)
+    {
+        float w = predictedPosition[id.x].x / cellSize;
+        float h = predictedPosition[id.x].y / cellSize;
+        uint i = (uint) clamp(h, 0, height - 1);
+        uint j = (uint) clamp(w, 0, width - 1);
+        uint c = Index(i, j);
+        cellContainingParticle[id.x] = c;
+        InterlockedAdd(cellParticleCount[c], 1);
+    }
+}
+
+//not parallelized
+[numthreads(1, 1, 1)]
+void SetCellStarts(uint3 id : SV_DispatchThreadID)
+{
+    cellStart[0] = 0;
+    for (uint k = 1; k < numCells + 1; k++)
+    {
+        cellStart[k] = cellStart[k - 1] + cellParticleCount[k - 1];
+    }
+}
+
+[numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
+void SortParticlesByCell(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x < numParticles)
+    {
+        uint c = cellContainingParticle[id.x];
+        uint d;
+        InterlockedAdd(cellParticleCount[c], -1, d);
+        uint l = cellStart[c] + d - 1;
+        particlesByCell[l] = id.x;
+    }
+}
+
+void SearchCellForDensity(uint p, uint cell)
+{
+    float sum = 0;
+    
+    for (uint k = cellStart[cell]; k < cellStart[cell + 1]; k++)
+    {
+        uint q = particlesByCell[k];
+        float2 d = predictedPosition[p] - predictedPosition[q];
+        float d2 = dot(d, d);
+        if (d2 < smoothingRadiusSqrd)
+        {
+            float d = sqrt(d2);
+            sum += SimpleQuadraticKernel(smoothingRadius, smoothingRadiusSqrd, d);
+        }
+    }
+    
+    density[p] += sum;
+}
+
+[numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
+void CalculateDensity(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x < numParticles)
+    {
+        uint c = cellContainingParticle[id.x];
+        uint i = c / width;
+        uint j = c % width;
+        float cellX = clamp(predictedPosition[id.x].x - j * cellSize, 0, cellSize);
+        float cellY = clamp(predictedPosition[id.x].y - i * cellSize, 0, cellSize);
+        float max = cellSize - smoothingRadius;
+        
+        density[id.x] = 0;
+        
+        //search middle row
+        SearchCellForDensity(id.x, c);
+        
+        if (j > 0 && cellX < smoothingRadius)
+        {
+            SearchCellForDensity(id.x, c - 1);
+        }
+        if (j < width - 1 && cellX > max)
+        {
+            SearchCellForDensity(id.x, c + 1);
+        }
+        
+        //search upper row
+        if (i < height - 1 && cellY > max)
+        {
+            SearchCellForDensity(id.x, c + width);
+            
+            if (j > 0 && cellX < smoothingRadius)
+            {
+                SearchCellForDensity(id.x, c + width - 1);
+            }
+            if (j < width - 1 && cellX > max)
+            {
+                SearchCellForDensity(id.x, c + width + 1);
+            }
+        }
+        
+        //search bottom row
+        if (i > 0 && cellY < smoothingRadius)
+        {
+            SearchCellForDensity(id.x, c - width);
+            
+            if (j > 0 && cellX < smoothingRadius)
+            {
+                SearchCellForDensity(id.x, c - width - 1);
+            }
+            if (j < width - 1 && cellX > max)
+            {
+                SearchCellForDensity(id.x, c - width + 1);
+            }
+        }
+    }
+}
+
+//recommended to use (gradient of) spiky kernel instead 
+void SearchCellForLambdaDenom(uint p, uint cell, inout float2 selfSum, inout float neighborSum)
+{
+    for (uint k = cellStart[cell]; k < cellStart[cell + 1]; k++)
+    {
+        uint q = particlesByCell[k];
+        if (q != p)
+        {
+            float2 d = predictedPosition[p] - predictedPosition[q];
+            float d2 = dot(d, d);
+            if (d2 < smoothingRadiusSqrd)
+            {
+                float2 grad = Poly6KernelGradient(smoothingRadiusSqrd, d2, d);
+                selfSum += grad;
+                neighborSum += dot(grad, grad);
+            }
+        }
+    }
+}
+
+float LambdaDenom(uint p)
+{
+    uint cell = cellContainingParticle[p];
+    uint i = cell / width;
+    uint j = cell % width;
+    float cellX = clamp(predictedPosition[p].x - j * cellSize, 0, cellSize);
+    float cellY = clamp(predictedPosition[p].y - i * cellSize, 0, cellSize);
+    float max = cellSize - smoothingRadius;
+    
+    float2 selfSum = 0;
+    float neighborSum = 0;
+    
+    //search middle row
+    SearchCellForLambdaDenom(p, cell, selfSum, neighborSum);
+        
+    if (j > 0 && cellX < smoothingRadius)
+    {
+        SearchCellForLambdaDenom(p, cell - 1, selfSum, neighborSum);
+    }
+    if (j < width - 1 && cellX > max)
+    {
+        SearchCellForLambdaDenom(p, cell + 1, selfSum, neighborSum);
+    }
+        
+    //search upper row
+    if (i < height - 1 && cellY > max)
+    {
+        SearchCellForLambdaDenom(p, cell + width, selfSum, neighborSum);
+            
+        if (j > 0 && cellX < smoothingRadius)
+        {
+            SearchCellForLambdaDenom(p, cell + width - 1, selfSum, neighborSum);
+        }
+        if (j < width - 1 && cellX > max)
+        {
+            SearchCellForLambdaDenom(p, cell + width + 1, selfSum, neighborSum);
+        }
+    }
+        
+    //search bottom row
+    if (i > 0 && cellY < smoothingRadius)
+    {
+        SearchCellForLambdaDenom(p, cell - width, selfSum, neighborSum);
+            
+        if (j > 0 && cellX < smoothingRadius)
+        {
+            SearchCellForLambdaDenom(p, cell - width - 1, selfSum, neighborSum);
+        }
+        if (j < width - 1 && cellX > max)
+        {
+            SearchCellForLambdaDenom(p, cell - width + 1, selfSum, neighborSum);
+        }
+    }
+    
+    return epsilon + dot(selfSum, selfSum) + neighborSum;
+}
+
+[numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
+void CalculateLambda(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x < numParticles)
+    {
+        lambda[id.x] = (restDensity - density[id.x]) / LambdaDenom(id.x);
+    }
+}
+
+float PressureCorrectionTerm(float d2)
+{
+    return pressureCorrectionCoefficient * wholePow(Poly6Kernel(smoothingRadiusSqrd, d2), pressureCorrectionN);
+}
+
+//recommended to use (gradient of) spiky kernel instead
+void SearchCellForPositionDelta(uint p, uint cell, inout float2 sum)
+{
+    for (uint k = cellStart[cell]; k < cellStart[cell + 1]; k++)
+    {
+        uint q = particlesByCell[k];
+        if (q != p)//otherwise gradient is zero
+        {
+            float2 d = predictedPosition[p] - predictedPosition[q];
+            float d2 = dot(d, d);
+            if (d2 < smoothingRadiusSqrd)
+            {
+                sum += (lambda[p] + lambda[q] + PressureCorrectionTerm(d2)) * Poly6KernelGradient(smoothingRadiusSqrd, d2, d);
+            }
+        }
+    }
+}
+
+[numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
+void CalculatePositionDelta(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x < numParticles)
+    {
+        uint cell = cellContainingParticle[id.x];
+        uint i = cell / width;
+        uint j = cell % width;
+        float cellX = clamp(predictedPosition[id.x].x - j * cellSize, 0, cellSize);
+        float cellY = clamp(predictedPosition[id.x].y - i * cellSize, 0, cellSize);
+        float max = cellSize - smoothingRadius;
+    
+        float2 sum = 0;
+    
+        //search middle row
+        SearchCellForPositionDelta(id.x, cell, sum);
+        
+        if (j > 0 && cellX < smoothingRadius)
+        {
+            SearchCellForPositionDelta(id.x, cell - 1, sum);
+        }
+        if (j < width - 1 && cellX > max)
+        {
+            SearchCellForPositionDelta(id.x, cell + 1, sum);
+        }
+        
+        //search upper row
+        if (i < height - 1 && cellY > max)
+        {
+            SearchCellForPositionDelta(id.x, cell + width, sum);
+            
+            if (j > 0 && cellX < smoothingRadius)
+            {
+                SearchCellForPositionDelta(id.x, cell + width - 1, sum);
+            }
+            if (j < width - 1 && cellX > max)
+            {
+                SearchCellForPositionDelta(id.x, cell + width + 1, sum);
+            }
+        }
+        
+        //search bottom row
+        if (i > 0 && cellY < smoothingRadius)
+        {
+            SearchCellForPositionDelta(id.x, cell - width, sum);
+            
+            if (j > 0 && cellX < smoothingRadius)
+            {
+                SearchCellForPositionDelta(id.x, cell - width - 1, sum);
+            }
+            if (j < width - 1 && cellX > max)
+            {
+                SearchCellForPositionDelta(id.x, cell - width + 1, sum);
+            }
+        }
+        
+        deltaPosition[id.x] = 1 / restDensity * sum;
+    }
+}
+
+[numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
+void AddPositionDelta(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x < numParticles)
+    {
+        predictedPosition[id.x] += deltaPosition[id.x];
+    }
+}
+
+//don't really like this (changing goal pressure like we did in FLIP worked better)
+//(also doing this within each constraint iteration is probably the way to go, so it doesn't throw away all our solving work)
+void RepelFromObstacles(uint p)
+{
+    for (uint k = 0; k < numObstacles; k++)
+    {
+        float4 o = obstacleData[k];
+        float2 localPos = float2((predictedPosition[p].x - o.x) / o.z, (predictedPosition[p].y - o.y) / o.w); //make an ellipse out of the collider's bounding box
+        float s2 = localPos.x * localPos.x + localPos.y * localPos.y;
+        if (s2 < 1)
+        {
+            float sInverse = rsqrt(s2);
+            float2 dir = isnan(sInverse) || isinf(sInverse) ? float2(0, 1) : sInverse * localPos;
+            velocity[p] += dt * (1 - s2) * (obstacleRepulsion - dot(velocity[p], dir)) * dir;
+        }
+    }
+}
+
+[numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
+void IntegrateParticles(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x < numParticles)
+    {
+        velocity[id.x] = dtInverse * (predictedPosition[id.x] - position[id.x]);
+        RepelFromObstacles(id.x);
+        position[id.x] += dt * velocity[id.x];
+    }
+}
+
+[numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
+void HandleWallCollisions(uint3 id : SV_DispatchThreadID)
+{
+    if (!(id.x < numParticles))
+    {
+        return;
+    }
+    
+    if (position[id.x].x < cellSize)
+    {
+        float dx = position[id.x].x - cellSize;
+        position[id.x].x -= dx;
+        if (velocity[id.x].x < 0)
+        {
+            velocity[id.x].x = -collisionBounciness * velocity[id.x].x;
+            //velocity[id.x].y = collisionBounciness * velocity[id.x].y;
+        }
+        velocity[id.x].x -= dx / dt;
+    }
+    else if (position[id.x].x > worldWidth - cellSize)
+    {
+        float dx = position[id.x].x - worldWidth + cellSize;
+        position[id.x].x -= dx;
+        if (velocity[id.x].x > 0)
+        {
+            velocity[id.x].x = -collisionBounciness * velocity[id.x].x;
+            //velocity[id.x].y = collisionBounciness * velocity[id.x].y;
+        }
+        velocity[id.x].x -= dx / dt;
+    }
+
+    if (position[id.x].y < cellSize)
+    {
+        float dy = position[id.x].y - cellSize;
+        position[id.x].y -= dy;
+        if (velocity[id.x].y < 0)
+        {
+            //velocity[id.x].x = collisionBounciness * velocity[id.x].x;
+            velocity[id.x].y = -collisionBounciness * velocity[id.x].y;
+        }
+        velocity[id.x].y -= dy / dt;
+    }
+    else if (position[id.x].y > worldHeight - cellSize)
+    {
+        float dy = position[id.x].y - worldHeight + cellSize;
+        position[id.x].y -= dy;
+        if (velocity[id.x].y > 0)
+        {
+            //velocity[id.x].x = collisionBounciness * velocity[id.x].x;
+            velocity[id.x].y = -collisionBounciness * velocity[id.x].y;
+        }
+        velocity[id.x].y -= dy / dt;
+    }
+}

@@ -3891,6 +3891,77 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
+--- !u!1 &3603553957578719804
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4282248008487151808}
+  - component: {fileID: 4282248008487151809}
+  m_Layer: 0
+  m_Name: PB Fluid
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4282248008487151808
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3603553957578719804}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -60.09, y: -2.66, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4282248008487151809
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3603553957578719804}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c958d159dbd37244486bced1fe64b6c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PBFluid
+  computeShader: {fileID: 7200000, guid: 33fbda51eab42c143863879575637ab9, type: 3}
+  releaseWidth: 10
+  width: 30
+  height: 30
+  cellSize: 0.5
+  numParticles: 2000
+  stepsPerFrame: 2
+  pressureSolveIterations: 3
+  restDensity: 70
+  viscosity: 0
+  pressureCorrectionK: 0.1
+  pressureCorrectionDQ: 0.075
+  pressureCorrectionN: 1
+  epsilon: 2
+  collisionBounciness: 0
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 8
+  obstacleRepulsion: 1500
+  drag: 0
+  particleMesh: {fileID: 0}
+  particleShader: {fileID: 4800000, guid: 0a5371170069e7c41bcb95462907676a, type: 3}
+  particleColorMin: {r: 0, g: 0.30588236, b: 1, a: 0}
+  particleColorMax: {r: 0.043137256, g: 0.05490196, b: 0.4627451, a: 0.101960786}
+  particleRadiusMin: 0
+  particleRadiusMax: 0.25
+  densityNormalizer: 0.5
 --- !u!1001 &4519272288893196500
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4047,13 +4118,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: SPH Fluid
       objectReference: {fileID: 0}
+    - target: {fileID: 3603553956419891816, guid: 09e6bcde20df06c4abd58fcf23f58247, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4282248009748748436, guid: 09e6bcde20df06c4abd58fcf23f58247, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -60.65
+      value: -61.7
       objectReference: {fileID: 0}
     - target: {fileID: 4282248009748748436, guid: 09e6bcde20df06c4abd58fcf23f58247, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.72
+      value: -2.47
       objectReference: {fileID: 0}
     - target: {fileID: 4282248009748748436, guid: 09e6bcde20df06c4abd58fcf23f58247, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4086,14 +4161,6 @@ PrefabInstance:
     - target: {fileID: 4282248009748748436, guid: 09e6bcde20df06c4abd58fcf23f58247, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4915681968513480553, guid: 09e6bcde20df06c4abd58fcf23f58247, type: 3}
-      propertyPath: height
-      value: 40
-      objectReference: {fileID: 0}
-    - target: {fileID: 4915681968513480553, guid: 09e6bcde20df06c4abd58fcf23f58247, type: 3}
-      propertyPath: particleMesh
-      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5208,5 +5275,6 @@ SceneRoots:
   - {fileID: 2585997267483865205}
   - {fileID: 4519272288893196500}
   - {fileID: 7991954045943805726}
+  - {fileID: 4282248008487151808}
   - {fileID: 334265372}
   - {fileID: 565029266}
