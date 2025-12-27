@@ -227,7 +227,7 @@ public class SPHFluid : MonoBehaviour
         particleVelocity.SetData(initialPositions);
         predictedPosition.SetData(initialPositions);
 
-        var spacing = 0.2f * cellSize;
+        var spacing = 0.1f * cellSize;
         var x0 = cellSize + 0.5f * spacing;
         var x = x0;
         var y = cellSize * (height - 1) - 0.5f * spacing;
@@ -322,8 +322,9 @@ public class SPHFluid : MonoBehaviour
             var o = obstacleColliders[i];
             if (o)
             {
-                obstacleDataToTransfer[numObstacles++] = new Vector4(o.bounds.center.x - transform.position.x, o.bounds.center.y - transform.position.y, 
-                    o.bounds.extents.x + particleRadiusMax, o.bounds.extents.y + particleRadiusMax);
+                var r = Mathf.Max(o.bounds.extents.x, o.bounds.extents.y) + particleRadiusMax;
+                obstacleDataToTransfer[numObstacles++] = new Vector4(o.bounds.center.x - transform.position.x, o.bounds.center.y - transform.position.y, r, r);
+                    //o.bounds.extents.x + particleRadiusMax, o.bounds.extents.y + particleRadiusMax);
             }
         }
 

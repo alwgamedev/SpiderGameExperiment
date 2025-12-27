@@ -69,7 +69,7 @@ void RepelFromObstacles(uint p)
         {
             float sInverse = rsqrt(s2);
             float2 dir = isnan(sInverse) || isinf(sInverse) ? float2(0, 1) : sInverse * localPos;
-            particleVelocity[p] += dt * (1 - s2) * obstacleRepulsion * dir;
+            particleVelocity[p] += dt * (1 - s2) * (obstacleRepulsion - dot(particleVelocity[p], dir)) * dir;
         }
     }
 }
@@ -201,8 +201,8 @@ void SearchCellDensity(uint p, uint cell)
         if (d2 < smoothingRadiusSqrd)
         {
             float d = sqrt(d2);
-            sum += QuadraticWt(smoothingRadius, d);
-            nearSum += CubicWt(smoothingRadius, d);
+            sum += SimpleQuadraticKernel(smoothingRadius, smoothingRadiusSqrd, d);
+            nearSum += SimpleCubicKernel(smoothingRadius, smoothingRadiusSqrd, d);
         }
     }
     
@@ -266,7 +266,6 @@ void CalculateDensity(uint3 id : SV_DispatchThreadID)
     }
 }
 
-//minor improvement: multiply pressure by igConstant only at the end; divide both forces by density[p] only at the end
 void SearchCellForces(uint p, uint cell)
 {
     float2 pressureSum = 0;
@@ -286,11 +285,11 @@ void SearchCellForces(uint p, uint cell)
             {
                 float avgDensity = 0.5 * (particleDensity[p] + particleDensity[q]);
                 float avgNearDensity = 0.5 * (nearDensity[p] + nearDensity[q]);
-                pressureSum += (avgDensity - restDensity) / particleDensity[q] * LinearWt(smoothingRadius, d) * u;
-                nearPressureSum += avgNearDensity / nearDensity[q] * QuadraticWt(smoothingRadius, d) * u;
+                pressureSum += (avgDensity - restDensity) / particleDensity[q] * SimpleLinearKernel(smoothingRadius, smoothingRadiusSqrd, d) * u;
+                nearPressureSum += avgNearDensity / nearDensity[q] * SimpleQuadraticKernel(smoothingRadius, smoothingRadiusSqrd, d) * u;
             }
             
-            viscositySum += viscosity * LinearWt(smoothingRadius, d) / particleDensity[q] * (particleVelocity[q] - particleVelocity[p]);
+            viscositySum += viscosity * SimpleLinearKernel(smoothingRadius, smoothingRadiusSqrd, d) / particleDensity[q] * (particleVelocity[q] - particleVelocity[p]);
         }
     }
     

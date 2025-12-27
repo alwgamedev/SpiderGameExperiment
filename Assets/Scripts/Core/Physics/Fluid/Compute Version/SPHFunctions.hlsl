@@ -1,43 +1,26 @@
 ﻿static const float PI = 3.14159265;
 
 //r = smoothing radius, d = distance to particle we're interpolating from
-//float DensityWt(float r, float d)
-//{
-//    return pow(1 - d / r, 2);
-//}
 
-//float NearDensityWt(float r, float d)
-//{
-//    return pow(1 - d / r, 3);
-//}
-
-//////the actual gradient at (x,y) is this times (x,y) (where (x,y) will be the difference between two particle positions)
-//float pressurewt(float r, float d)
-//{
-//    return pow(r - d, 2) / (d * pow(r, 5));
-//}
-
-//float PressureWt(float r, float d)
-//{
-//    return 1 - d / r;
-//}
-
-//float ViscosityWt(float r, float d)
-//{
-//    return (r - d) / pow(r, 5);
-//}
-
-float LinearWt(float r, float d)
+float Poly6Kernel(float r2, float d2)
 {
-    return 1 - d / r;
+    return 1.27323954 * pow(1 - d2 / r2, 3) / r2;
 }
 
-float QuadraticWt(float r, float d)
+float SimpleLinearKernel(float r, float r2, float d)
 {
-    return pow(1 - d / r, 2);
+    //normalized version of 1 - d / r
+    return 0.954929658 * (r - d) / (r * r2);
 }
 
-float CubicWt(float r, float d)
+float SimpleQuadraticKernel(float r, float r2, float d)
 {
-    return pow(1 - d / r, 3);
+    //normalized version of (1 - d / r)^2
+    return 1.90985931 * pow((r - d) / r2, 2);
+}
+
+float SimpleCubicKernel(float r, float r2, float d)
+{
+    //normalized version of (1 - d / r)^3
+    return 3.18309886 * pow(1 - d / r, 3) / r2;
 }
