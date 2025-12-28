@@ -60,7 +60,7 @@ Shader "Instanced/FluidParticleShader"
                 v2f o;
                 uint i = GetIndirectInstanceID(svInstanceID);
 
-                float t = 1;//clamp(densityNormalizer * particleDensity[i], 0, 1);
+                float t = clamp(densityNormalizer * particleDensity[i], 0, 1);
                 o.density = t;
 
                 float r = lerp(particleRadiusMin, particleRadiusMax, t);

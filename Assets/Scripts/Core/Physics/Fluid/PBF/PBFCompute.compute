@@ -1,4 +1,4 @@
-﻿#pragma kernel RecalculatePressureCorrectionCoefficient;
+﻿#pragma kernel RecalculateAntiClusterCoefficient;
 #pragma kernel ComputePredictedPositions
 #pragma kernel CountParticles
 #pragma kernel SetCellStarts
@@ -10,10 +10,9 @@
 #pragma kernel IntegrateParticles
 #pragma kernel HandleWallCollisions
 
-#include "../SPH/SmoothingKernels.hlsl"
+#include "../SPH/SPHFunctions.hlsl"
 
 static const int NUM_THREADS_PER_GROUP = 256;
-static const float COS45 = rsqrt(2);
 
 
 //CONFIGURATION
@@ -26,6 +25,8 @@ const uint numParticles;
 
 //SIM SETTINGS
 
+uniform int kernelDeg;
+uniform int densityKernelDeg;
 uniform float dt;
 uniform float dtInverse;
 uniform float cellSize;
@@ -34,9 +35,9 @@ uniform float worldHeight;
 uniform float smoothingRadius;
 uniform float smoothingRadiusSqrd;
 uniform float2 gravity;
-uniform float pressureCorrectionK;
-uniform float pressureCorrectionDQ;
-uniform int pressureCorrectionN;
+uniform float antiClusterK;
+uniform float antiClusterDQ;
+uniform int antiClusterN;
 uniform float epsilon;
 uniform float restDensity;
 uniform float viscosity;
@@ -44,7 +45,7 @@ uniform float collisionBounciness;
 uniform float obstacleRepulsion;
 uniform uint numObstacles = 1;
 
-float pressureCorrectionCoefficient;
+float antiClusterCoefficient;
 
 
 //SIM DATA
@@ -67,10 +68,27 @@ StructuredBuffer<float4> obstacleData;
 #define Index(i, j) i * width + j
 
 [numthreads(1, 1, 1)]
-void RecalculatePressureCorrectionCoefficient()
+void RecalculateAntiClusterCoefficient()
 {
-    pressureCorrectionCoefficient = -pressureCorrectionK / wholePow(Poly6Kernel(smoothingRadiusSqrd, pressureCorrectionDQ * pressureCorrectionDQ), pressureCorrectionN);
+    antiClusterCoefficient = -antiClusterK / WholePow(Poly2NKernel(kernelDeg, smoothingRadiusSqrd, antiClusterDQ * antiClusterDQ), antiClusterN);
+} 
 
+//don't really like this (changing goal pressure like we did in FLIP worked better)
+//(also doing this within each constraint iteration is probably the way to go, so it doesn't throw away all our solving work)
+void RepelFromObstacles(uint p)
+{
+    for (uint k = 0; k < numObstacles; k++)
+    {
+        float4 o = obstacleData[k];
+        float2 localPos = float2((predictedPosition[p].x - o.x) / o.z, (predictedPosition[p].y - o.y) / o.w); //make an ellipse out of the collider's bounding box
+        float s2 = localPos.x * localPos.x + localPos.y * localPos.y;
+        if (s2 < 1)
+        {
+            float sInverse = rsqrt(s2);
+            float2 dir = isnan(sInverse) || isinf(sInverse) ? float2(0, 1) : sInverse * localPos;
+            velocity[p] += dt * (1 - s2) * (obstacleRepulsion - dot(velocity[p], dir)) * dir;
+        }
+    }
 }
 
 [numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
@@ -133,8 +151,9 @@ void SearchCellForDensity(uint p, uint cell)
         float d2 = dot(d, d);
         if (d2 < smoothingRadiusSqrd)
         {
-            float d = sqrt(d2);
-            sum += SimpleQuadraticKernel(smoothingRadius, smoothingRadiusSqrd, d);
+            sum += Poly2NKernel(densityKernelDeg, smoothingRadiusSqrd, d2);
+            //float dist = sqrt(d2);
+            //sum += SimpleQuadraticKernel(smoothingRadius, smoothingRadiusSqrd, dist);
         }
     }
     
@@ -199,7 +218,6 @@ void CalculateDensity(uint3 id : SV_DispatchThreadID)
     }
 }
 
-//recommended to use (gradient of) spiky kernel instead 
 void SearchCellForLambdaDenom(uint p, uint cell, inout float2 selfSum, inout float neighborSum)
 {
     for (uint k = cellStart[cell]; k < cellStart[cell + 1]; k++)
@@ -208,10 +226,10 @@ void SearchCellForLambdaDenom(uint p, uint cell, inout float2 selfSum, inout flo
         if (q != p)
         {
             float2 d = predictedPosition[p] - predictedPosition[q];
-            float d2 = dot(d, d);
+            half d2 = dot(d, d);
             if (d2 < smoothingRadiusSqrd)
             {
-                float2 grad = Poly6KernelGradient(smoothingRadiusSqrd, d2, d);
+                float2 grad = Poly2NKernelGradient(densityKernelDeg, smoothingRadiusSqrd, d2, d);
                 selfSum += grad;
                 neighborSum += dot(grad, grad);
             }
@@ -285,9 +303,9 @@ void CalculateLambda(uint3 id : SV_DispatchThreadID)
     }
 }
 
-float PressureCorrectionTerm(float d2)
+float AntiClusterTerm(float d2)
 {
-    return pressureCorrectionCoefficient * wholePow(Poly6Kernel(smoothingRadiusSqrd, d2), pressureCorrectionN);
+    return antiClusterCoefficient * WholePow(Poly2NKernel(kernelDeg, smoothingRadiusSqrd, d2), antiClusterN);
 }
 
 //recommended to use (gradient of) spiky kernel instead
@@ -299,10 +317,10 @@ void SearchCellForPositionDelta(uint p, uint cell, inout float2 sum)
         if (q != p)//otherwise gradient is zero
         {
             float2 d = predictedPosition[p] - predictedPosition[q];
-            float d2 = dot(d, d);
+            half d2 = dot(d, d);
             if (d2 < smoothingRadiusSqrd)
             {
-                sum += (lambda[p] + lambda[q] + PressureCorrectionTerm(d2)) * Poly6KernelGradient(smoothingRadiusSqrd, d2, d);
+                sum += (lambda[p] + lambda[q] + AntiClusterTerm(d2)) * Poly2NKernelGradient(kernelDeg, smoothingRadiusSqrd, d2, d);
             }
         }
     }
@@ -374,24 +392,6 @@ void AddPositionDelta(uint3 id : SV_DispatchThreadID)
     if (id.x < numParticles)
     {
         predictedPosition[id.x] += deltaPosition[id.x];
-    }
-}
-
-//don't really like this (changing goal pressure like we did in FLIP worked better)
-//(also doing this within each constraint iteration is probably the way to go, so it doesn't throw away all our solving work)
-void RepelFromObstacles(uint p)
-{
-    for (uint k = 0; k < numObstacles; k++)
-    {
-        float4 o = obstacleData[k];
-        float2 localPos = float2((predictedPosition[p].x - o.x) / o.z, (predictedPosition[p].y - o.y) / o.w); //make an ellipse out of the collider's bounding box
-        float s2 = localPos.x * localPos.x + localPos.y * localPos.y;
-        if (s2 < 1)
-        {
-            float sInverse = rsqrt(s2);
-            float2 dir = isnan(sInverse) || isinf(sInverse) ? float2(0, 1) : sInverse * localPos;
-            velocity[p] += dt * (1 - s2) * (obstacleRepulsion - dot(velocity[p], dir)) * dir;
-        }
     }
 }
 

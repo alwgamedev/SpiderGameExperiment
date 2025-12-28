@@ -360,7 +360,7 @@ public class SPHFluid : MonoBehaviour
         material.SetColor(particleColorMaxProperty, particleColorMax);
         material.SetFloat(particleRadiusMinProperty, particleRadiusMin);
         material.SetFloat(particleRadiusMaxProperty, particleRadiusMax);
-        material.SetFloat(restDensityProperty, restDensity);//isn't used atm
+        material.SetFloat(restDensityProperty, restDensity);
         material.SetFloat(densityNormalizerProperty, densityNormalizer);
 
         updateMaterialProperties = false;

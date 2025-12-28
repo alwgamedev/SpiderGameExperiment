@@ -7,7 +7,7 @@
 #pragma kernel IntegrateParticles
 #pragma kernel HandleWallCollisions
 
-#include "./SmoothingKernels.hlsl"
+#include "./SPHFunctions.hlsl"
 
 static const int NUM_THREADS_PER_GROUP = 256;
 static const float COS45 = rsqrt(2);

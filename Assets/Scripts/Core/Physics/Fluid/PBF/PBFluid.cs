@@ -7,7 +7,7 @@ public class PBFluid : MonoBehaviour
     const int MAX_NUM_OBSTACLES = 64;
 
     //kernel indices in compute shader
-    const int recalculatePressureCorrectionCoefficient = 0;
+    const int recalculateAntiClusterCoefficient = 0;
     const int computePredictedPositions = 1;
     const int countParticles = 2;
     const int setCellStarts = 3;
@@ -29,13 +29,15 @@ public class PBFluid : MonoBehaviour
     [SerializeField] int numParticles;
 
     [Header("Simulation Settings")]
+    [SerializeField] int kernelDeg;
+    [SerializeField] int densityKernelDeg;
     [SerializeField] int stepsPerFrame;
     [SerializeField] int pressureSolveIterations;
     [SerializeField] float restDensity;
     [SerializeField] float viscosity;
-    [SerializeField] float pressureCorrectionK;
-    [SerializeField] float pressureCorrectionDQ;
-    [SerializeField] int pressureCorrectionN;
+    [SerializeField] float antiClusterK;
+    [SerializeField] float antiClusterDQ;
+    [SerializeField] int antiClusterN;
     [SerializeField] float epsilon;//stabilizer
     [SerializeField] float collisionBounciness;
     [SerializeField] LayerMask obstacleMask;
@@ -75,6 +77,8 @@ public class PBFluid : MonoBehaviour
     bool updateSimSettings;
     bool updateMaterialProperties;
 
+    int kernelDegProperty;
+    int densityKernelDegProperty;
     int dtProperty;
     int dtInverseProperty;
     int cellSizeProperty;
@@ -85,9 +89,9 @@ public class PBFluid : MonoBehaviour
     int gravityProperty;
     int restDensityProperty;
     int viscosityProperty;
-    int pressureCorrectionKProperty;
-    int pressureCorrectionDQProperty;
-    int pressureCorrectionNProperty;
+    int antiClusterKProperty;
+    int antiClusterDQProperty;
+    int antiClusterNProperty;
     int epsilonProperty;
     int collisionBouncinessProperty;
     int obstacleRepulsionProperty;
@@ -110,6 +114,8 @@ public class PBFluid : MonoBehaviour
 
     private void Awake()
     {
+        kernelDegProperty = Shader.PropertyToID("kernelDeg");
+        densityKernelDegProperty = Shader.PropertyToID("densityKernelDeg");
         dtProperty = Shader.PropertyToID("dt");
         dtInverseProperty = Shader.PropertyToID("dtInverse");
         cellSizeProperty = Shader.PropertyToID("cellSize");
@@ -120,9 +126,9 @@ public class PBFluid : MonoBehaviour
         gravityProperty = Shader.PropertyToID("gravity");
         restDensityProperty = Shader.PropertyToID("restDensity");
         viscosityProperty = Shader.PropertyToID("viscosity");
-        pressureCorrectionKProperty = Shader.PropertyToID("pressureCorrectionK");
-        pressureCorrectionDQProperty = Shader.PropertyToID("pressureCorrectionDQ");
-        pressureCorrectionNProperty = Shader.PropertyToID("pressureCorrectionN");
+        antiClusterKProperty = Shader.PropertyToID("antiClusterK");
+        antiClusterDQProperty = Shader.PropertyToID("antiClusterDQ");
+        antiClusterNProperty = Shader.PropertyToID("antiClusterN");
         epsilonProperty = Shader.PropertyToID("epsilon");
         collisionBouncinessProperty = Shader.PropertyToID("collisionBounciness");
         obstacleRepulsionProperty = Shader.PropertyToID("obstacleRepulsion");
@@ -239,7 +245,7 @@ public class PBFluid : MonoBehaviour
         velocity.SetData(initialPositions);
         predictedPosition.SetData(initialPositions);
 
-        var spacing = 0.1f * cellSize;
+        var spacing = particleRadiusMax;
         var x0 = cellSize + 0.5f * spacing;
         var x = x0;
         var y = cellSize * (height - 1) - 0.5f * spacing;
@@ -290,12 +296,9 @@ public class PBFluid : MonoBehaviour
 
         for (int i = 0; i < pressureSolveIterations; i++)
         {
-            //pressure solving iteration
-
             computeShader.Dispatch(countParticles, numParticleThreadGroups, 1, 1);
             computeShader.Dispatch(setCellStarts, 1, 1, 1);
             computeShader.Dispatch(sortParticlesByCell, numParticleThreadGroups, 1, 1);
-
             computeShader.Dispatch(calculateDensity, numParticleThreadGroups, 1, 1);
 
             computeShader.Dispatch(calculateLambda, numParticleThreadGroups, 1, 1);
@@ -310,6 +313,8 @@ public class PBFluid : MonoBehaviour
     //maybe put settings into a single struct so we only have to do one set
     private void UpdateSimSettings(float dt)
     {
+        computeShader.SetInt(kernelDegProperty, kernelDeg);
+        computeShader.SetInt(densityKernelDegProperty, densityKernelDeg);
         computeShader.SetFloat(dtProperty, dt);
         computeShader.SetFloat(dtInverseProperty, 1 / dt);
         computeShader.SetFloat(cellSizeProperty, cellSize);
@@ -318,16 +323,16 @@ public class PBFluid : MonoBehaviour
         computeShader.SetFloat(smoothingRadiusProperty, 0.5f * cellSize);
         computeShader.SetFloat(smoothingRadiusSqrdProperty, 0.25f * cellSize * cellSize);
         computeShader.SetVector(gravityProperty, Physics2D.gravity);
-        computeShader.SetFloat(pressureCorrectionKProperty, pressureCorrectionK);
-        computeShader.SetFloat(pressureCorrectionDQProperty, pressureCorrectionDQ);
-        computeShader.SetInt(pressureCorrectionNProperty, pressureCorrectionN);
+        computeShader.SetFloat(antiClusterKProperty, antiClusterK);
+        computeShader.SetFloat(antiClusterDQProperty, antiClusterDQ);
+        computeShader.SetInt(antiClusterNProperty, antiClusterN);
         computeShader.SetFloat(epsilonProperty, epsilon);
         computeShader.SetFloat(restDensityProperty, restDensity);
         computeShader.SetFloat(viscosityProperty, viscosity);
         computeShader.SetFloat(collisionBouncinessProperty, collisionBounciness);
         computeShader.SetFloat(obstacleRepulsionProperty, obstacleRepulsion);
 
-        computeShader.Dispatch(recalculatePressureCorrectionCoefficient, 1, 1, 1);
+        computeShader.Dispatch(recalculateAntiClusterCoefficient, 1, 1, 1);
 
         updateSimSettings = false;
     }
@@ -389,7 +394,7 @@ public class PBFluid : MonoBehaviour
         material.SetColor(particleColorMaxProperty, particleColorMax);
         material.SetFloat(particleRadiusMinProperty, particleRadiusMin);
         material.SetFloat(particleRadiusMaxProperty, particleRadiusMax);
-        material.SetFloat(restDensityProperty, restDensity);//isn't used atm
+        material.SetFloat(restDensityProperty, restDensity);
         material.SetFloat(densityNormalizerProperty, densityNormalizer);
 
         updateMaterialProperties = false;
