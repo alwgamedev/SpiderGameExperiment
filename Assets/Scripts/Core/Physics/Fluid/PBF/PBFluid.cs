@@ -29,10 +29,11 @@ public class PBFluid : MonoBehaviour
     [SerializeField] int numParticles;
 
     [Header("Simulation Settings")]
-    [SerializeField] int kernelDeg;
-    [SerializeField] int densityKernelDeg;
+    [SerializeField] int updateFrequency;
     [SerializeField] int stepsPerFrame;
     [SerializeField] int pressureSolveIterations;
+    [SerializeField] int kernelDeg;
+    [SerializeField] int densityKernelDeg;
     [SerializeField] float restDensity;
     [SerializeField] float viscosity;
     [SerializeField] float antiClusterK;
@@ -42,6 +43,9 @@ public class PBFluid : MonoBehaviour
     [SerializeField] float collisionBounciness;
     [SerializeField] LayerMask obstacleMask;
     [SerializeField] float obstacleRepulsion;
+    [SerializeField] float velocityBasedObstacleRepulsionMultiplier;
+    [SerializeField] float velocityBasedObstacleScaleMultiplier;
+    [SerializeField] float obstacleUpscaleMax;
     [SerializeField] float drag;
 
     [Header("Rendering")]
@@ -74,6 +78,7 @@ public class PBFluid : MonoBehaviour
     GraphicsBuffer commandBuffer;
     GraphicsBuffer.IndirectDrawIndexedArgs[] commandData;
 
+    int updateCounter;
     bool updateSimSettings;
     bool updateMaterialProperties;
 
@@ -151,7 +156,7 @@ public class PBFluid : MonoBehaviour
 
         //create buffers
         velocity = new ComputeBuffer(numParticles, 8);
-        position = new ComputeBuffer (numParticles, 8);
+        position = new ComputeBuffer(numParticles, 8);
         predictedPosition = new ComputeBuffer(numParticles, 8);
         deltaPosition = new ComputeBuffer(numParticles, 8);
         density = new ComputeBuffer(numParticles, 4);
@@ -277,15 +282,19 @@ public class PBFluid : MonoBehaviour
     {
         if (updateSimSettings)
         {
-            var dt = Time.deltaTime / stepsPerFrame;
+            var dt = updateFrequency * Time.deltaTime / stepsPerFrame;
             UpdateSimSettings(dt);
         }
 
-        SetObstacleData();
-
-        for (int i = 0; i < stepsPerFrame; i++)
+        if (--updateCounter < 0)
         {
-            RunSimulationStep();
+            updateCounter += updateFrequency;
+            SetObstacleData();
+
+            for (int i = 0; i < stepsPerFrame; i++)
+            {
+                RunSimulationStep();
+            }
         }
 
     }
@@ -337,6 +346,8 @@ public class PBFluid : MonoBehaviour
         updateSimSettings = false;
     }
 
+    //this is for dynamic obstacles moving through the fluid
+    //we'll handle static colliders like ground differently
     private void SetObstacleData()
     {
         var worldWidth = width * cellSize;
@@ -352,11 +363,19 @@ public class PBFluid : MonoBehaviour
         for (int i = 0; i < MAX_NUM_OBSTACLES; i++)
         {
             var o = obstacleColliders[i];
-            if (o)
+            if (o && o.attachedRigidbody)
             {
-                var r = Mathf.Max(o.bounds.extents.x, o.bounds.extents.y) + particleRadiusMax;
-                obstacleDataToTransfer[numObstacles++] = new Vector4(o.bounds.center.x - transform.position.x, o.bounds.center.y - transform.position.y, r, r);
-                //o.bounds.extents.x + particleRadiusMax, o.bounds.extents.y + particleRadiusMax);
+                var s2 = o.attachedRigidbody.linearVelocity.magnitude;
+                if (s2 != 0)
+                {
+                    //we'll pretend like the obstacle is a circle with radius the maximum of its bounding box extents.
+                    //the repulsive force and the object size get scaled with the obstacle's speed, so fluid can flow by motionless obstacles (useful for 2D)
+                    //and will be agitated more by faster moving obstacles.
+                    var tScale = Mathf.Min(velocityBasedObstacleScaleMultiplier * s2, obstacleUpscaleMax);
+                    var tRepulsion = Mathf.Min(velocityBasedObstacleRepulsionMultiplier * s2, 1);
+                    var r = Mathf.Max(o.bounds.extents.x, o.bounds.extents.y);
+                    obstacleDataToTransfer[numObstacles++] = new Vector4(o.bounds.center.x - transform.position.x, o.bounds.center.y - transform.position.y, tScale * r, tRepulsion);
+                }
             }
         }
 

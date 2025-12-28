@@ -73,20 +73,19 @@ void RecalculateAntiClusterCoefficient()
     antiClusterCoefficient = -antiClusterK / WholePow(Poly2NKernel(kernelDeg, smoothingRadiusSqrd, antiClusterDQ * antiClusterDQ), antiClusterN);
 } 
 
-//don't really like this (changing goal pressure like we did in FLIP worked better)
-//(also doing this within each constraint iteration is probably the way to go, so it doesn't throw away all our solving work)
 void RepelFromObstacles(uint p)
 {
     for (uint k = 0; k < numObstacles; k++)
     {
         float4 o = obstacleData[k];
-        float2 localPos = float2((predictedPosition[p].x - o.x) / o.z, (predictedPosition[p].y - o.y) / o.w); //make an ellipse out of the collider's bounding box
+        float2 localPos = float2((predictedPosition[p].x - o.x) / o.z, (predictedPosition[p].y - o.y) / o.z);//we pretend like the obstacle is a circle of radius = max(extents.x, extents.y) (from bding box)
         float s2 = localPos.x * localPos.x + localPos.y * localPos.y;
         if (s2 < 1)
         {
             float sInverse = rsqrt(s2);
             float2 dir = isnan(sInverse) || isinf(sInverse) ? float2(0, 1) : sInverse * localPos;
-            velocity[p] += dt * (1 - s2) * (obstacleRepulsion - dot(velocity[p], dir)) * dir;
+            velocity[p] += dt * (1 - s2) * (o.w * obstacleRepulsion - dot(velocity[p], dir)) * dir;
+            //o.w scales with obstacle velocity squared, so fluid gets agitated more by faster moving obstacles and will ignore motionless obstacles
         }
     }
 }
@@ -237,9 +236,8 @@ void SearchCellForLambdaDenom(uint p, uint cell, inout float2 selfSum, inout flo
     }
 }
 
-float LambdaDenom(uint p)
+float LambdaDenom(uint p, uint cell)
 {
-    uint cell = cellContainingParticle[p];
     uint i = cell / width;
     uint j = cell % width;
     float cellX = clamp(predictedPosition[p].x - j * cellSize, 0, cellSize);
@@ -299,7 +297,8 @@ void CalculateLambda(uint3 id : SV_DispatchThreadID)
 {
     if (id.x < numParticles)
     {
-        lambda[id.x] = (restDensity - density[id.x]) / LambdaDenom(id.x);
+        uint cell = cellContainingParticle[id.x];
+        lambda[id.x] = (restDensity - density[id.x]) / LambdaDenom(id.x, cell);
     }
 }
 

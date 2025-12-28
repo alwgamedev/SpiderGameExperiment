@@ -49,27 +49,31 @@ MonoBehaviour:
   width: 32
   height: 40
   cellSize: 1
-  numParticles: 3600
+  numParticles: 4500
+  updateFrequency: 2
+  stepsPerFrame: 4
+  pressureSolveIterations: 5
   kernelDeg: 7
   densityKernelDeg: 7
-  stepsPerFrame: 3
-  pressureSolveIterations: 5
   restDensity: 20
   viscosity: 0
   antiClusterK: 0.1
   antiClusterDQ: 0.1
   antiClusterN: 4
   epsilon: 2500
-  collisionBounciness: 0.5
+  collisionBounciness: 0.75
   obstacleMask:
     serializedVersion: 2
     m_Bits: 8
-  obstacleRepulsion: 2500
+  obstacleRepulsion: 25000
+  velocityBasedObstacleRepulsionMultiplier: 0.25
+  velocityBasedObstacleScaleMultiplier: 0.15
+  obstacleUpscaleMax: 2
   drag: 0
   particleMesh: {fileID: 0}
   particleShader: {fileID: 4800000, guid: 0a5371170069e7c41bcb95462907676a, type: 3}
   particleColorMin: {r: 0.57924527, g: 0.641276, b: 1, a: 1}
   particleColorMax: {r: 0, g: 0.005150084, b: 0.4188679, a: 0.5019608}
   particleRadiusMin: 0.2
-  particleRadiusMax: 0.25
+  particleRadiusMax: 0.2
   densityNormalizer: 0.05
