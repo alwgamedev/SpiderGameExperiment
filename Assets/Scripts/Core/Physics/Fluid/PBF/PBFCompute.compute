@@ -7,6 +7,9 @@
 #pragma kernel CalculateLambda
 #pragma kernel CalculatePositionDelta
 #pragma kernel AddPositionDelta
+#pragma kernel StoreSolvedVelocity
+#pragma kernel CalculateVorticityConfinementForce
+#pragma kernel ApplyVorticityConfinmentForce
 #pragma kernel IntegrateParticles
 #pragma kernel HandleWallCollisions
 
@@ -40,6 +43,7 @@ uniform float antiClusterDQ;
 uniform int antiClusterN;
 uniform float epsilon;
 uniform float restDensity;
+uniform float vorticityConfinement;
 uniform float viscosity;
 uniform float collisionBounciness;
 uniform float obstacleRepulsion;
@@ -78,14 +82,13 @@ void RepelFromObstacles(uint p)
     for (uint k = 0; k < numObstacles; k++)
     {
         float4 o = obstacleData[k];
-        float2 localPos = float2((predictedPosition[p].x - o.x) / o.z, (predictedPosition[p].y - o.y) / o.z);//we pretend like the obstacle is a circle of radius = max(extents.x, extents.y) (from bding box)
+        float2 localPos = float2((predictedPosition[p].x - o.x) / o.z, (predictedPosition[p].y - o.y) / o.z);
         float s2 = localPos.x * localPos.x + localPos.y * localPos.y;
         if (s2 < 1)
         {
             float sInverse = rsqrt(s2);
             float2 dir = isnan(sInverse) || isinf(sInverse) ? float2(0, 1) : sInverse * localPos;
             velocity[p] += dt * (1 - s2) * (o.w * obstacleRepulsion - dot(velocity[p], dir)) * dir;
-            //o.w scales with obstacle velocity squared, so fluid gets agitated more by faster moving obstacles and will ignore motionless obstacles
         }
     }
 }
@@ -151,8 +154,6 @@ void SearchCellForDensity(uint p, uint cell)
         if (d2 < smoothingRadiusSqrd)
         {
             sum += Poly2NKernel(densityKernelDeg, smoothingRadiusSqrd, d2);
-            //float dist = sqrt(d2);
-            //sum += SimpleQuadraticKernel(smoothingRadius, smoothingRadiusSqrd, dist);
         }
     }
     
@@ -395,11 +396,120 @@ void AddPositionDelta(uint3 id : SV_DispatchThreadID)
 }
 
 [numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
-void IntegrateParticles(uint3 id : SV_DispatchThreadID)
+void StoreSolvedVelocity(uint3 id : SV_DispatchThreadID)
 {
     if (id.x < numParticles)
     {
         velocity[id.x] = dtInverse * (predictedPosition[id.x] - position[id.x]);
+    }
+}
+
+void SearchCellForVorticityConfinement(uint p, uint cell, inout float2 sum)
+{
+    float rInverse = 1 / smoothingRadius;
+    for (uint k = cellStart[cell]; k < cellStart[cell + 1]; k++)
+    {
+        uint q = particlesByCell[k];
+        if (q != p)//otherwise contribution is zero
+        {
+            float2 positionDiff = predictedPosition[p] - predictedPosition[q];
+            float2 velocityDiff = velocity[p] - velocity[q];
+            float d2 = dot(positionDiff, positionDiff);
+            float dInverse = rsqrt(d2);
+            float d3Inverse = dInverse / d2;
+            if (!isnan(d3Inverse) && !isinf(d3Inverse))
+            {
+                float f = dInverse * rInverse * (velocityDiff.x * positionDiff.y - velocityDiff.y * positionDiff.x);
+                float fx = rInverse * (-positionDiff.x * d3Inverse * f - dInverse * velocityDiff.y);
+                float fy = rInverse * (-positionDiff.y * d3Inverse * f + dInverse * velocityDiff.x);
+                float2 F = abs(f) * normalize(float2(fy, -fx));
+                if (!isnan(F.x) && !isinf(F.x) && !isnan(F.y) && !isinf(F.y))
+                {
+                    sum += F;
+                }
+                //using linear kernel A(1 - d / r)
+            }
+        }
+    }
+}
+
+[numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
+void CalculateVorticityConfinementForce(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x < numParticles)
+    {
+        uint cell = cellContainingParticle[id.x];
+        uint i = cell / width;
+        uint j = cell % width;
+        float cellX = clamp(predictedPosition[id.x].x - j * cellSize, 0, cellSize);
+        float cellY = clamp(predictedPosition[id.x].y - i * cellSize, 0, cellSize);
+        float max = cellSize - smoothingRadius;
+    
+        float2 sum = 0;
+    
+        //search middle row
+        SearchCellForVorticityConfinement(id.x, cell, sum);
+        
+        if (j > 0 && cellX < smoothingRadius)
+        {
+            SearchCellForVorticityConfinement(id.x, cell - 1, sum);
+        }
+        if (j < width - 1 && cellX > max)
+        {
+            SearchCellForVorticityConfinement(id.x, cell + 1, sum);
+        }
+        
+        //search upper row
+        if (i < height - 1 && cellY > max)
+        {
+            SearchCellForVorticityConfinement(id.x, cell + width, sum);
+            
+            if (j > 0 && cellX < smoothingRadius)
+            {
+                SearchCellForVorticityConfinement(id.x, cell + width - 1, sum);
+            }
+            if (j < width - 1 && cellX > max)
+            {
+                SearchCellForVorticityConfinement(id.x, cell + width + 1, sum);
+            }
+        }
+        
+        //search bottom row
+        if (i > 0 && cellY < smoothingRadius)
+        {
+            SearchCellForVorticityConfinement(id.x, cell - width, sum);
+            
+            if (j > 0 && cellX < smoothingRadius)
+            {
+                SearchCellForVorticityConfinement(id.x, cell - width - 1, sum);
+            }
+            if (j < width - 1 && cellX > max)
+            {
+                SearchCellForVorticityConfinement(id.x, cell - width + 1, sum);
+            }
+        }
+        
+        //we'll store in deltaPosition bc it's available;
+        //(divide by density to get acceleration)
+        deltaPosition[id.x] = vorticityConfinement / density[id.x] * sum;
+    }
+}
+
+[numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
+void ApplyVorticityConfinmentForce(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x < numParticles)
+    {
+        velocity[id.x] += dt * deltaPosition[id.x];
+    }
+}
+
+[numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
+void IntegrateParticles(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x < numParticles)
+    {
+        //velocity[id.x] = dtInverse * (predictedPosition[id.x] - position[id.x]);
         RepelFromObstacles(id.x);
         position[id.x] += dt * velocity[id.x];
     }

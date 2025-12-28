@@ -16,8 +16,11 @@ public class PBFluid : MonoBehaviour
     const int calculateLambda = 6;
     const int calculatePositionDelta = 7;
     const int addPositionDelta = 8;
-    const int integrateParticles = 9;
-    const int handleWallCollisions = 10;
+    const int storeSolvedVelocity = 9;
+    const int calculateVorticityConfinementForce = 10;
+    const int applyVorticityConfinmentForce = 11;
+    const int integrateParticles = 12;
+    const int handleWallCollisions = 13;
 
     [SerializeField] ComputeShader computeShader;
 
@@ -30,11 +33,12 @@ public class PBFluid : MonoBehaviour
 
     [Header("Simulation Settings")]
     [SerializeField] int updateFrequency;
-    [SerializeField] int stepsPerFrame;
+    [SerializeField] int stepsPerUpdate;
     [SerializeField] int pressureSolveIterations;
     [SerializeField] int kernelDeg;
     [SerializeField] int densityKernelDeg;
     [SerializeField] float restDensity;
+    [SerializeField] float vorticityConfinement;
     [SerializeField] float viscosity;
     [SerializeField] float antiClusterK;
     [SerializeField] float antiClusterDQ;
@@ -93,6 +97,7 @@ public class PBFluid : MonoBehaviour
     int smoothingRadiusSqrdProperty;
     int gravityProperty;
     int restDensityProperty;
+    int vorticityConfinementProperty;
     int viscosityProperty;
     int antiClusterKProperty;
     int antiClusterDQProperty;
@@ -130,6 +135,7 @@ public class PBFluid : MonoBehaviour
         smoothingRadiusSqrdProperty = Shader.PropertyToID("smoothingRadiusSqrd");
         gravityProperty = Shader.PropertyToID("gravity");
         restDensityProperty = Shader.PropertyToID("restDensity");
+        vorticityConfinementProperty = Shader.PropertyToID("vorticityConfinement");
         viscosityProperty = Shader.PropertyToID("viscosity");
         antiClusterKProperty = Shader.PropertyToID("antiClusterK");
         antiClusterDQProperty = Shader.PropertyToID("antiClusterDQ");
@@ -182,15 +188,18 @@ public class PBFluid : MonoBehaviour
         computeShader.SetInt("numParticles", numParticles);
 
         //bind buffers to compute shader
-        computeShader.SetBuffer(density, "density", calculateDensity, calculateLambda);
+        computeShader.SetBuffer(density, "density", calculateDensity, calculateLambda, calculateVorticityConfinementForce);
         computeShader.SetBuffer(lambda, "lambda", calculateLambda, calculatePositionDelta);
-        computeShader.SetBuffer(velocity, "velocity", computePredictedPositions, integrateParticles, handleWallCollisions);
-        computeShader.SetBuffer(position, "position", computePredictedPositions, integrateParticles, handleWallCollisions);
-        computeShader.SetBuffer(predictedPosition, "predictedPosition", computePredictedPositions, countParticles, calculateDensity, calculateLambda, addPositionDelta, calculatePositionDelta, integrateParticles);
-        computeShader.SetBuffer(deltaPosition, "deltaPosition", calculatePositionDelta, addPositionDelta);
-        computeShader.SetBuffer(cellContainingParticle, "cellContainingParticle", countParticles, sortParticlesByCell, calculateDensity, calculateLambda, calculatePositionDelta);
-        computeShader.SetBuffer(particlesByCell, "particlesByCell", sortParticlesByCell, calculateDensity, calculateLambda, calculatePositionDelta);
-        computeShader.SetBuffer(cellStart, "cellStart", setCellStarts, sortParticlesByCell, calculateDensity, calculateLambda, calculatePositionDelta);
+        computeShader.SetBuffer(velocity, "velocity", computePredictedPositions, storeSolvedVelocity, calculateVorticityConfinementForce, applyVorticityConfinmentForce, 
+            integrateParticles, handleWallCollisions);
+        computeShader.SetBuffer(position, "position", computePredictedPositions, storeSolvedVelocity, integrateParticles, handleWallCollisions);
+        computeShader.SetBuffer(predictedPosition, "predictedPosition", computePredictedPositions, countParticles, 
+            calculateDensity, calculateLambda, addPositionDelta, calculatePositionDelta, storeSolvedVelocity, calculateVorticityConfinementForce, integrateParticles);
+        computeShader.SetBuffer(deltaPosition, "deltaPosition", calculatePositionDelta, addPositionDelta, calculateVorticityConfinementForce, applyVorticityConfinmentForce);
+        computeShader.SetBuffer(cellContainingParticle, "cellContainingParticle", countParticles, sortParticlesByCell, calculateDensity, 
+            calculateLambda, calculatePositionDelta, calculateVorticityConfinementForce);
+        computeShader.SetBuffer(particlesByCell, "particlesByCell", sortParticlesByCell, calculateDensity, calculateLambda, calculatePositionDelta, calculateVorticityConfinementForce);
+        computeShader.SetBuffer(cellStart, "cellStart", setCellStarts, sortParticlesByCell, calculateDensity, calculateLambda, calculatePositionDelta, calculateVorticityConfinementForce);
         computeShader.SetBuffer(cellParticleCount, "cellParticleCount", countParticles, setCellStarts, sortParticlesByCell);
         computeShader.SetBuffer(obstacleData, "obstacleData", integrateParticles);
 
@@ -282,7 +291,7 @@ public class PBFluid : MonoBehaviour
     {
         if (updateSimSettings)
         {
-            var dt = updateFrequency * Time.deltaTime / stepsPerFrame;
+            var dt = updateFrequency * Time.deltaTime / stepsPerUpdate;
             UpdateSimSettings(dt);
         }
 
@@ -291,12 +300,11 @@ public class PBFluid : MonoBehaviour
             updateCounter += updateFrequency;
             SetObstacleData();
 
-            for (int i = 0; i < stepsPerFrame; i++)
+            for (int i = 0; i < stepsPerUpdate; i++)
             {
                 RunSimulationStep();
             }
         }
-
     }
 
     private void RunSimulationStep()
@@ -315,6 +323,9 @@ public class PBFluid : MonoBehaviour
             computeShader.Dispatch(addPositionDelta, numParticleThreadGroups, 1, 1);
         }
 
+        computeShader.Dispatch(storeSolvedVelocity, numParticleThreadGroups, 1, 1);
+        computeShader.Dispatch(calculateVorticityConfinementForce, numParticleThreadGroups, 1, 1);
+        computeShader.Dispatch(applyVorticityConfinmentForce, numParticleThreadGroups, 1, 1);
         computeShader.Dispatch(integrateParticles, numParticleThreadGroups, 1, 1);
         computeShader.Dispatch(handleWallCollisions, numParticleThreadGroups, 1, 1);
     }
@@ -337,6 +348,7 @@ public class PBFluid : MonoBehaviour
         computeShader.SetInt(antiClusterNProperty, antiClusterN);
         computeShader.SetFloat(epsilonProperty, epsilon);
         computeShader.SetFloat(restDensityProperty, restDensity);
+        computeShader.SetFloat(vorticityConfinementProperty, vorticityConfinement);
         computeShader.SetFloat(viscosityProperty, viscosity);
         computeShader.SetFloat(collisionBouncinessProperty, collisionBounciness);
         computeShader.SetFloat(obstacleRepulsionProperty, obstacleRepulsion);
