@@ -17,9 +17,6 @@ Shader "Instanced/FluidParticleShader"
             #define UNITY_INDIRECT_DRAW_ARGS IndirectDrawIndexedArgs//just following the example in unity docs for RenderMeshIndirect
             #include "UnityIndirect.cginc"
             #include "UnityCG.cginc"
-
-            static const uint ARRAY_LENGTH = 1023;
-            static const float PI = 3.14169420;
             
             float4 particleColorMin;
             float4 particleColorMax;
@@ -27,9 +24,8 @@ Shader "Instanced/FluidParticleShader"
             float particleRadiusMin;
             float particleRadiusMax;
             float densityNormalizer;
-            float restDensity;
-            
-            //we'll probably incorporate density in some way too
+            float boundaryDetectionThreshold;
+
             StructuredBuffer<float> particleDensity;
             StructuredBuffer<float2> particleVelocity;
             StructuredBuffer<float2> particlePosition;
@@ -77,9 +73,15 @@ Shader "Instanced/FluidParticleShader"
             {
                 float s = i.uv.x - 0.5;
                 float t = i.uv.y - 0.5;
+                float a = 1 - 4 * (s * s + t * t);
+                if (a < 0)
+                {
+                    return 0;
+                }
+
                 float4 color = lerp(particleColorMin, particleColorMax, i.density);
-                // color.w *= 1 - clamp(pow(4 * (s * s + t * t), 16), 0, 1);
-                return s * s + t * t < 0.25 ? color : 0;
+                color.w *= a;
+                return color;
             }
             ENDCG
         }

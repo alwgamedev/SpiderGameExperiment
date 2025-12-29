@@ -1,4 +1,4 @@
-Shader "Custom/FluidDensityShader"
+Shader "Custom/FLIPDensityShader"
 {
     Properties {
         _AirDensity("AirDensity", float) = 0.05
@@ -8,7 +8,7 @@ Shader "Custom/FluidDensityShader"
     }
     
     SubShader {
-        Tags { "RenderType" = "Transparent" }
+        Tags { "RenderType" = "Transparent" "RenderPipeline" = "UniversalPipeline" }
 
         Pass {
             Blend SrcAlpha OneMinusSrcAlpha

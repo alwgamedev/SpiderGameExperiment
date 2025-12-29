@@ -47,7 +47,7 @@ MonoBehaviour:
   computeShader: {fileID: 7200000, guid: 33fbda51eab42c143863879575637ab9, type: 3}
   releaseWidth: 16
   width: 32
-  height: 40
+  height: 30
   cellSize: 1
   numParticles: 4500
   updateFrequency: 2
@@ -55,13 +55,13 @@ MonoBehaviour:
   pressureSolveIterations: 5
   kernelDeg: 7
   densityKernelDeg: 7
-  restDensity: 20
-  vorticityConfinement: -0.4
+  restDensity: 23
+  vorticityConfinement: 0.5
   viscosity: 0
   antiClusterK: 0.1
   antiClusterDQ: 0.1
   antiClusterN: 4
-  epsilon: 5
+  epsilon: 1
   collisionBounciness: 0.75
   obstacleMask:
     serializedVersion: 2
@@ -73,8 +73,9 @@ MonoBehaviour:
   drag: 0
   particleMesh: {fileID: 0}
   particleShader: {fileID: 4800000, guid: 0a5371170069e7c41bcb95462907676a, type: 3}
-  particleColorMin: {r: 0.57924527, g: 0.641276, b: 1, a: 1}
-  particleColorMax: {r: 0, g: 0.005150084, b: 0.4188679, a: 0.5019608}
-  particleRadiusMin: 0.2
-  particleRadiusMax: 0.2
-  densityNormalizer: 0.05
+  particleColorMin: {r: 1, g: 1, b: 1, a: 1}
+  particleColorMax: {r: 0, g: 0.00574853, b: 0.6150943, a: 0.101960786}
+  particleRadiusMin: 0
+  particleRadiusMax: 0.25
+  densityNormalizer: 0.043
+  boundaryDetectionThreshold: 0.05

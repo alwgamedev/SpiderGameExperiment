@@ -9,9 +9,9 @@
 #pragma kernel AddPositionDelta
 #pragma kernel StoreSolvedVelocity
 #pragma kernel CalculateVorticityConfinementForce
-#pragma kernel ApplyVorticityConfinmentForce
 #pragma kernel IntegrateParticles
 #pragma kernel HandleWallCollisions
+#pragma kernel UpdateDensityTexture
 
 #include "../SPH/SPHFunctions.hlsl"
 
@@ -56,8 +56,8 @@ float antiClusterCoefficient;
 
 RWStructuredBuffer<float2> velocity;
 RWStructuredBuffer<float2> position;
-RWStructuredBuffer<float2> predictedPosition;
-RWStructuredBuffer<float2> deltaPosition;
+RWStructuredBuffer<float2> lastPosition;//stores initial position during pressure solving (during which position is really predicted position)
+RWStructuredBuffer<float2> particleBuffer;//for deltaPosition and vorticity confinement force
 RWStructuredBuffer<float> density;
 RWStructuredBuffer<float> lambda;
 
@@ -68,6 +68,16 @@ RWStructuredBuffer<uint> cellStart;
 RWStructuredBuffer<uint> cellParticleCount;
 
 StructuredBuffer<float4> obstacleData;
+
+//RENDERING
+
+uniform uint texWidth;
+uniform uint texHeight;
+uniform float texelSizeX; //=worldWidth / texWidth
+uniform float texelSizeY;
+uniform float densityTexSmoothingRadius;
+uniform float densityTexSmoothingRadiusSqrd;
+RWTexture2D<float> densityTex;
 
 #define Index(i, j) i * width + j
 
@@ -82,7 +92,7 @@ void RepelFromObstacles(uint p)
     for (uint k = 0; k < numObstacles; k++)
     {
         float4 o = obstacleData[k];
-        float2 localPos = float2((predictedPosition[p].x - o.x) / o.z, (predictedPosition[p].y - o.y) / o.z);
+        float2 localPos = float2((position[p].x - o.x) / o.z, (position[p].y - o.y) / o.z);
         float s2 = localPos.x * localPos.x + localPos.y * localPos.y;
         if (s2 < 1)
         {
@@ -98,8 +108,9 @@ void ComputePredictedPositions(uint3 id : SV_DispatchThreadID)
 {
     if (id.x < numParticles)
     {
+        lastPosition[id.x] = position[id.x];
         velocity[id.x] += dt * gravity;
-        predictedPosition[id.x] = position[id.x] + dt * velocity[id.x];
+        position[id.x] += dt * velocity[id.x];//this is the predicted position, to feed into pressure solver
     }
 }
 
@@ -108,8 +119,8 @@ void CountParticles(uint3 id : SV_DispatchThreadID)
 {
     if (id.x < numParticles)
     {
-        float w = predictedPosition[id.x].x / cellSize;
-        float h = predictedPosition[id.x].y / cellSize;
+        float w = position[id.x].x / cellSize;
+        float h = position[id.x].y / cellSize;
         uint i = (uint) clamp(h, 0, height - 1);
         uint j = (uint) clamp(w, 0, width - 1);
         uint c = Index(i, j);
@@ -137,27 +148,78 @@ void SortParticlesByCell(uint3 id : SV_DispatchThreadID)
         uint c = cellContainingParticle[id.x];
         uint d;
         InterlockedAdd(cellParticleCount[c], -1, d);
-        uint l = cellStart[c] + d - 1;
-        particlesByCell[l] = id.x;
+        uint k = cellStart[c] + d - 1;
+        particlesByCell[k] = id.x;
     }
 }
 
-void SearchCellForDensity(uint p, uint cell)
+void SearchCellForDensity(float2 pos, uint cell, float r2, inout float sum)
 {
-    float sum = 0;
-    
     for (uint k = cellStart[cell]; k < cellStart[cell + 1]; k++)
     {
         uint q = particlesByCell[k];
-        float2 d = predictedPosition[p] - predictedPosition[q];
+        float2 d = pos - position[q];
         float d2 = dot(d, d);
-        if (d2 < smoothingRadiusSqrd)
+        if (d2 < r2)
         {
-            sum += Poly2NKernel(densityKernelDeg, smoothingRadiusSqrd, d2);
+            sum += Poly2NKernel(densityKernelDeg, r2, d2);
         }
     }
+}
+
+//yes I'm really passing all these bc if called from a cell position we don't need to calculate the cell
+//but if passed from an arbitrary position we do -- so the cell data should be calculated in whatever way is best before this method is called
+float SampleDensity(float2 pos, uint cell, uint i, uint j, float r, float r2)
+{
+    float cellX = clamp(pos.x - j * cellSize, 0, cellSize);
+    float cellY = clamp(pos.y - i * cellSize, 0, cellSize);
+    float max = cellSize - r;
     
-    density[p] += sum;
+    float sum = 0;
+        
+    //search middle row
+    SearchCellForDensity(pos, cell, r2, sum);
+        
+    if (j > 0 && cellX < r)
+    {
+        SearchCellForDensity(pos, cell - 1, r2, sum);
+    }
+    if (j < width - 1 && cellX > max)
+    {
+        SearchCellForDensity(pos, cell + 1, r2, sum);
+    }
+        
+    //search upper row
+    if (i < height - 1 && cellY > max)
+    {
+        SearchCellForDensity(pos, cell + width, r2, sum);
+            
+        if (j > 0 && cellX < r)
+        {
+            SearchCellForDensity(pos, cell + width - 1, r2, sum);
+        }
+        if (j < width - 1 && cellX > max)
+        {
+            SearchCellForDensity(pos, cell + width + 1, r2, sum);
+        }
+    }
+        
+        //search bottom row
+    if (i > 0 && cellY < r)
+    {
+        SearchCellForDensity(pos, cell - width, r2, sum);
+            
+        if (j > 0 && cellX < r)
+        {
+            SearchCellForDensity(pos, cell - width - 1, r2, sum);
+        }
+        if (j < width - 1 && cellX > max)
+        {
+            SearchCellForDensity(pos, cell - width + 1, r2, sum);
+        }
+    }
+        
+    return sum;
 }
 
 [numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
@@ -168,53 +230,8 @@ void CalculateDensity(uint3 id : SV_DispatchThreadID)
         uint c = cellContainingParticle[id.x];
         uint i = c / width;
         uint j = c % width;
-        float cellX = clamp(predictedPosition[id.x].x - j * cellSize, 0, cellSize);
-        float cellY = clamp(predictedPosition[id.x].y - i * cellSize, 0, cellSize);
-        float max = cellSize - smoothingRadius;
         
-        density[id.x] = 0;
-        
-        //search middle row
-        SearchCellForDensity(id.x, c);
-        
-        if (j > 0 && cellX < smoothingRadius)
-        {
-            SearchCellForDensity(id.x, c - 1);
-        }
-        if (j < width - 1 && cellX > max)
-        {
-            SearchCellForDensity(id.x, c + 1);
-        }
-        
-        //search upper row
-        if (i < height - 1 && cellY > max)
-        {
-            SearchCellForDensity(id.x, c + width);
-            
-            if (j > 0 && cellX < smoothingRadius)
-            {
-                SearchCellForDensity(id.x, c + width - 1);
-            }
-            if (j < width - 1 && cellX > max)
-            {
-                SearchCellForDensity(id.x, c + width + 1);
-            }
-        }
-        
-        //search bottom row
-        if (i > 0 && cellY < smoothingRadius)
-        {
-            SearchCellForDensity(id.x, c - width);
-            
-            if (j > 0 && cellX < smoothingRadius)
-            {
-                SearchCellForDensity(id.x, c - width - 1);
-            }
-            if (j < width - 1 && cellX > max)
-            {
-                SearchCellForDensity(id.x, c - width + 1);
-            }
-        }
+        density[id.x] = SampleDensity(position[id.x], c, i, j, smoothingRadius, smoothingRadiusSqrd);
     }
 }
 
@@ -223,9 +240,9 @@ void SearchCellForLambdaDenom(uint p, uint cell, inout float2 selfSum, inout flo
     for (uint k = cellStart[cell]; k < cellStart[cell + 1]; k++)
     {
         uint q = particlesByCell[k];
-        if (q != p)
+        if (q != p)//o/w grad is zero
         {
-            float2 d = predictedPosition[p] - predictedPosition[q];
+            float2 d = position[p] - position[q];
             half d2 = dot(d, d);
             if (d2 < smoothingRadiusSqrd)
             {
@@ -241,8 +258,8 @@ float LambdaDenom(uint p, uint cell)
 {
     uint i = cell / width;
     uint j = cell % width;
-    float cellX = clamp(predictedPosition[p].x - j * cellSize, 0, cellSize);
-    float cellY = clamp(predictedPosition[p].y - i * cellSize, 0, cellSize);
+    float cellX = clamp(position[p].x - j * cellSize, 0, cellSize);
+    float cellY = clamp(position[p].y - i * cellSize, 0, cellSize);
     float max = cellSize - smoothingRadius;
     
     float2 selfSum = 0;
@@ -316,7 +333,7 @@ void SearchCellForPositionDelta(uint p, uint cell, inout float2 sum)
         uint q = particlesByCell[k];
         if (q != p)//otherwise gradient is zero
         {
-            float2 d = predictedPosition[p] - predictedPosition[q];
+            float2 d = position[p] - position[q];
             half d2 = dot(d, d);
             if (d2 < smoothingRadiusSqrd)
             {
@@ -334,8 +351,8 @@ void CalculatePositionDelta(uint3 id : SV_DispatchThreadID)
         uint cell = cellContainingParticle[id.x];
         uint i = cell / width;
         uint j = cell % width;
-        float cellX = clamp(predictedPosition[id.x].x - j * cellSize, 0, cellSize);
-        float cellY = clamp(predictedPosition[id.x].y - i * cellSize, 0, cellSize);
+        float cellX = clamp(position[id.x].x - j * cellSize, 0, cellSize);
+        float cellY = clamp(position[id.x].y - i * cellSize, 0, cellSize);
         float max = cellSize - smoothingRadius;
     
         float2 sum = 0;
@@ -382,7 +399,7 @@ void CalculatePositionDelta(uint3 id : SV_DispatchThreadID)
             }
         }
         
-        deltaPosition[id.x] = 1 / restDensity * sum;
+        particleBuffer[id.x] = 1 / restDensity * sum;
     }
 }
 
@@ -391,7 +408,7 @@ void AddPositionDelta(uint3 id : SV_DispatchThreadID)
 {
     if (id.x < numParticles)
     {
-        predictedPosition[id.x] += deltaPosition[id.x];
+        position[id.x] += particleBuffer[id.x];
     }
 }
 
@@ -400,7 +417,7 @@ void StoreSolvedVelocity(uint3 id : SV_DispatchThreadID)
 {
     if (id.x < numParticles)
     {
-        velocity[id.x] = dtInverse * (predictedPosition[id.x] - position[id.x]);
+        velocity[id.x] = dtInverse * (position[id.x] - lastPosition[id.x]);
     }
 }
 
@@ -412,22 +429,27 @@ void SearchCellForVorticityConfinement(uint p, uint cell, inout float2 sum)
         uint q = particlesByCell[k];
         if (q != p)//otherwise contribution is zero
         {
-            float2 positionDiff = predictedPosition[p] - predictedPosition[q];
-            float2 velocityDiff = velocity[p] - velocity[q];
+            float2 positionDiff = position[p] - position[q];
             float d2 = dot(positionDiff, positionDiff);
-            float dInverse = rsqrt(d2);
-            float d3Inverse = dInverse / d2;
-            if (!isnan(d3Inverse) && !isinf(d3Inverse))
+            if (d2 < smoothingRadiusSqrd)
             {
-                float f = dInverse * rInverse * (velocityDiff.x * positionDiff.y - velocityDiff.y * positionDiff.x);
-                float fx = rInverse * (-positionDiff.x * d3Inverse * f - dInverse * velocityDiff.y);
-                float fy = rInverse * (-positionDiff.y * d3Inverse * f + dInverse * velocityDiff.x);
-                float2 F = abs(f) * normalize(float2(fy, -fx));
-                if (!isnan(F.x) && !isinf(F.x) && !isnan(F.y) && !isinf(F.y))
+                float dInverse = rsqrt(d2);
+                float d3Inverse = dInverse / d2;
+                
+                if (!isnan(d3Inverse) && !isinf(d3Inverse))
                 {
-                    sum += F;
+                    float2 velocityDiff = velocity[p] - velocity[q];
+                    
+                    float f = dInverse * rInverse * (velocityDiff.x * positionDiff.y - velocityDiff.y * positionDiff.x);
+                    float fx = rInverse * (-positionDiff.x * d3Inverse * f - dInverse * velocityDiff.y);
+                    float fy = rInverse * (-positionDiff.y * d3Inverse * f + dInverse * velocityDiff.x);
+                    float2 F = abs(f) * normalize(float2(fy, -fx));
+                    if (!isnan(F.x) && !isinf(F.x) && !isnan(F.y) && !isinf(F.y))
+                    {
+                        sum += F;
+                    }
+                    //using linear kernel A(1 - d / r)
                 }
-                //using linear kernel A(1 - d / r)
             }
         }
     }
@@ -441,8 +463,8 @@ void CalculateVorticityConfinementForce(uint3 id : SV_DispatchThreadID)
         uint cell = cellContainingParticle[id.x];
         uint i = cell / width;
         uint j = cell % width;
-        float cellX = clamp(predictedPosition[id.x].x - j * cellSize, 0, cellSize);
-        float cellY = clamp(predictedPosition[id.x].y - i * cellSize, 0, cellSize);
+        float cellX = clamp(position[id.x].x - j * cellSize, 0, cellSize);
+        float cellY = clamp(position[id.x].y - i * cellSize, 0, cellSize);
         float max = cellSize - smoothingRadius;
     
         float2 sum = 0;
@@ -489,18 +511,7 @@ void CalculateVorticityConfinementForce(uint3 id : SV_DispatchThreadID)
             }
         }
         
-        //we'll store in deltaPosition bc it's available;
-        //(divide by density to get acceleration)
-        deltaPosition[id.x] = vorticityConfinement / density[id.x] * sum;
-    }
-}
-
-[numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
-void ApplyVorticityConfinmentForce(uint3 id : SV_DispatchThreadID)
-{
-    if (id.x < numParticles)
-    {
-        velocity[id.x] += dt * deltaPosition[id.x];
+        particleBuffer[id.x] = -vorticityConfinement / density[id.x] * sum;
     }
 }
 
@@ -509,63 +520,77 @@ void IntegrateParticles(uint3 id : SV_DispatchThreadID)
 {
     if (id.x < numParticles)
     {
-        //velocity[id.x] = dtInverse * (predictedPosition[id.x] - position[id.x]);
+        velocity[id.x] += dt * particleBuffer[id.x];//add vorticity confinement force
         RepelFromObstacles(id.x);
-        position[id.x] += dt * velocity[id.x];
+        position[id.x] = lastPosition[id.x] + dt * velocity[id.x];
     }
 }
 
 [numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
 void HandleWallCollisions(uint3 id : SV_DispatchThreadID)
 {
-    if (!(id.x < numParticles))
+    if (id.x < numParticles)
     {
-        return;
-    }
-    
-    if (position[id.x].x < cellSize)
-    {
-        float dx = position[id.x].x - cellSize;
-        position[id.x].x -= dx;
-        if (velocity[id.x].x < 0)
+        if (position[id.x].x < cellSize)
         {
-            velocity[id.x].x = -collisionBounciness * velocity[id.x].x;
+            float dx = position[id.x].x - cellSize;
+            position[id.x].x -= dx;
+            if (velocity[id.x].x < 0)
+            {
+                velocity[id.x].x = -collisionBounciness * velocity[id.x].x;
             //velocity[id.x].y = collisionBounciness * velocity[id.x].y;
+            }
+            velocity[id.x].x -= dx / dt;
         }
-        velocity[id.x].x -= dx / dt;
-    }
-    else if (position[id.x].x > worldWidth - cellSize)
-    {
-        float dx = position[id.x].x - worldWidth + cellSize;
-        position[id.x].x -= dx;
-        if (velocity[id.x].x > 0)
+        else if (position[id.x].x > worldWidth - cellSize)
         {
-            velocity[id.x].x = -collisionBounciness * velocity[id.x].x;
+            float dx = position[id.x].x - worldWidth + cellSize;
+            position[id.x].x -= dx;
+            if (velocity[id.x].x > 0)
+            {
+                velocity[id.x].x = -collisionBounciness * velocity[id.x].x;
             //velocity[id.x].y = collisionBounciness * velocity[id.x].y;
+            }
+            velocity[id.x].x -= dx / dt;
         }
-        velocity[id.x].x -= dx / dt;
-    }
 
-    if (position[id.x].y < cellSize)
-    {
-        float dy = position[id.x].y - cellSize;
-        position[id.x].y -= dy;
-        if (velocity[id.x].y < 0)
+        if (position[id.x].y < cellSize)
         {
+            float dy = position[id.x].y - cellSize;
+            position[id.x].y -= dy;
+            if (velocity[id.x].y < 0)
+            {
             //velocity[id.x].x = collisionBounciness * velocity[id.x].x;
-            velocity[id.x].y = -collisionBounciness * velocity[id.x].y;
+                velocity[id.x].y = -collisionBounciness * velocity[id.x].y;
+            }
+            velocity[id.x].y -= dy / dt;
         }
-        velocity[id.x].y -= dy / dt;
+        else if (position[id.x].y > worldHeight - cellSize)
+        {
+            float dy = position[id.x].y - worldHeight + cellSize;
+            position[id.x].y -= dy;
+            if (velocity[id.x].y > 0)
+            {
+            //velocity[id.x].x = collisionBounciness * velocity[id.x].x;
+                velocity[id.x].y = -collisionBounciness * velocity[id.x].y;
+            }
+            velocity[id.x].y -= dy / dt;
+        }
     }
-    else if (position[id.x].y > worldHeight - cellSize)
+}
+
+[numthreads(16, 16, 1)]
+void UpdateDensityTexture(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x < texWidth && id.y < texHeight)
     {
-        float dy = position[id.x].y - worldHeight + cellSize;
-        position[id.x].y -= dy;
-        if (velocity[id.x].y > 0)
-        {
-            //velocity[id.x].x = collisionBounciness * velocity[id.x].x;
-            velocity[id.x].y = -collisionBounciness * velocity[id.x].y;
-        }
-        velocity[id.x].y -= dy / dt;
+        //position of texel center on grid (world units)
+        float x = texelSizeX * (id.x + 0.5);
+        float y = texelSizeY * (id.y + 0.5);
+        
+        uint i = (uint) clamp(y / cellSize, 0, height - 1);
+        uint j = (uint) clamp(x / cellSize, 0, width - 1);
+
+        densityTex[uint2(id.x, id.y)] = SampleDensity(float2(x, y), Index(i, j), i, j, densityTexSmoothingRadius, densityTexSmoothingRadiusSqrd);
     }
 }

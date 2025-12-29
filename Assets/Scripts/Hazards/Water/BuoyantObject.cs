@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class BuoyantObject : MonoBehaviour
 {
-    [SerializeField] float exitBuffer = .1f;
-    [SerializeField] float effectiveWidthMultiplier = 1;
+    //[SerializeField] float exitBuffer = .1f;
+    //[SerializeField] float effectiveWidthMultiplier = 1;
 
     Rigidbody2D rb;
     Collider2D coll;

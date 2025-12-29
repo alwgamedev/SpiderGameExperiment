@@ -119,6 +119,61 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &130209556 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 837259404908941842, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
+  m_PrefabInstance: {fileID: 1872969850750736896}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &130209557 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5222157793995484295, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
+  m_PrefabInstance: {fileID: 1872969850750736896}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 130209556}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c958d159dbd37244486bced1fe64b6c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PBFluid
+--- !u!114 &130209559
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 130209556}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 323cbc25206b1894180f9e0bae2b0953, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FluidParticleRenderer
+  pbFluid: {fileID: 130209557}
+  particleMesh: {fileID: 0}
+  particleShader: {fileID: 4800000, guid: 0a5371170069e7c41bcb95462907676a, type: 3}
+  particleColorMin: {r: 1, g: 1, b: 1, a: 1}
+  particleColorMax: {r: 0, g: 0.003921569, b: 0.6156863, a: 0.101960786}
+  particleRadiusMin: 0
+  particleRadiusMax: 0.25
+  densityNormalizer: 0.043
+--- !u!114 &130209560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 130209556}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c61057bba67d4f941b0959d36829b6bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PBFDensityRenderer
+  pbFluid: {fileID: 130209557}
+  shader: {fileID: 4800000, guid: 3a14e080b4604144b9b809e70d65c0b7, type: 3}
+  color: {r: 1, g: 0, b: 0.1153636, a: 1}
+  densityNormalizer: 0.25
+  texWidth: 1024
+  texHeight: 1024
+  smoothingRadius: 1
 --- !u!1001 &334265372
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3542,6 +3597,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: PB Fluid
       objectReference: {fileID: 0}
+    - target: {fileID: 5222157793995484295, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
+      propertyPath: restDensity
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 5222157793995484295, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
+      propertyPath: initialWidth
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 5222157793995484295, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
+      propertyPath: initialSpacing
+      value: 0.25
+      objectReference: {fileID: 0}
     - target: {fileID: 5648694684584665525, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
       propertyPath: m_LocalPosition.x
       value: -60.09
@@ -3585,7 +3652,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 837259404908941842, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 130209559}
+    - targetCorrespondingSourceObject: {fileID: 837259404908941842, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 130209560}
   m_SourcePrefab: {fileID: 100100000, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
 --- !u!4 &2585997267483865205
 Transform:
@@ -3730,10 +3803,6 @@ PrefabInstance:
     - target: {fileID: 2034791752815395644, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: m_LocalRotation.z
       value: -0.11848817
-      objectReference: {fileID: 0}
-    - target: {fileID: 2232881156466787493, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: m_Enabled
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2399890710218574748, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3938,10 +4007,6 @@ PrefabInstance:
     - target: {fileID: 9216623525983179644, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
       propertyPath: m_Name
       value: Spider
-      objectReference: {fileID: 0}
-    - target: {fileID: 9216623525983179644, guid: eedf0f6827a0e9d45b74a63a101c07a5, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -7,29 +7,30 @@ public class PBFluid : MonoBehaviour
     const int MAX_NUM_OBSTACLES = 64;
 
     //kernel indices in compute shader
-    const int recalculateAntiClusterCoefficient = 0;
-    const int computePredictedPositions = 1;
-    const int countParticles = 2;
-    const int setCellStarts = 3;
-    const int sortParticlesByCell = 4;
-    const int calculateDensity = 5;
-    const int calculateLambda = 6;
-    const int calculatePositionDelta = 7;
-    const int addPositionDelta = 8;
-    const int storeSolvedVelocity = 9;
-    const int calculateVorticityConfinementForce = 10;
-    const int applyVorticityConfinmentForce = 11;
-    const int integrateParticles = 12;
-    const int handleWallCollisions = 13;
+    public const int recalculateAntiClusterCoefficient = 0;
+    public const int computePredictedPositions = 1;
+    public const int countParticles = 2;
+    public const int setCellStarts = 3;
+    public const int sortParticlesByCell = 4;
+    public const int calculateDensity = 5;
+    public const int calculateLambda = 6;
+    public const int calculatePositionDelta = 7;
+    public const int addPositionDelta = 8;
+    public const int storeSolvedVelocity = 9;
+    public const int calculateVorticityConfinementForce = 10;
+    public const int integrateParticles = 11;
+    public const int handleWallCollisions = 12;
+    public const int updateDensityTexture = 13;
 
-    [SerializeField] ComputeShader computeShader;
+    public ComputeShader computeShader;
 
     [Header("Configuration")]
-    [SerializeField] int releaseWidth;
-    [SerializeField] int width;
-    [SerializeField] int height;
-    [SerializeField] float cellSize;
-    [SerializeField] int numParticles;
+    public int initialWidth;
+    public float initialSpacing;
+    public int width;
+    public int height;
+    public float cellSize;
+    public int numParticles;
 
     [Header("Simulation Settings")]
     [SerializeField] int updateFrequency;
@@ -43,7 +44,7 @@ public class PBFluid : MonoBehaviour
     [SerializeField] float antiClusterK;
     [SerializeField] float antiClusterDQ;
     [SerializeField] int antiClusterN;
-    [SerializeField] float epsilon;//stabilizer
+    [SerializeField] float epsilon;
     [SerializeField] float collisionBounciness;
     [SerializeField] LayerMask obstacleMask;
     [SerializeField] float obstacleRepulsion;
@@ -52,20 +53,11 @@ public class PBFluid : MonoBehaviour
     [SerializeField] float obstacleUpscaleMax;
     [SerializeField] float drag;
 
-    [Header("Rendering")]
-    [SerializeField] Mesh particleMesh;
-    [SerializeField] Shader particleShader;
-    [SerializeField] Color particleColorMin;
-    [SerializeField] Color particleColorMax;
-    [SerializeField] float particleRadiusMin;
-    [SerializeField] float particleRadiusMax;
-    [SerializeField] float densityNormalizer;
-
-    ComputeBuffer velocity;
-    ComputeBuffer position;
-    ComputeBuffer predictedPosition;
-    ComputeBuffer deltaPosition;
-    ComputeBuffer density;
+    public ComputeBuffer velocity;
+    public ComputeBuffer position;
+    public ComputeBuffer lastPosition;
+    public ComputeBuffer density;
+    ComputeBuffer particleBuffer;
     ComputeBuffer lambda;
 
     ComputeBuffer cellContainingParticle;
@@ -78,13 +70,8 @@ public class PBFluid : MonoBehaviour
     Collider2D[] obstacleColliders;
     ContactFilter2D obstacleFilter;
 
-    Material material;
-    GraphicsBuffer commandBuffer;
-    GraphicsBuffer.IndirectDrawIndexedArgs[] commandData;
-
     int updateCounter;
     bool updateSimSettings;
-    bool updateMaterialProperties;
 
     int kernelDegProperty;
     int densityKernelDegProperty;
@@ -107,19 +94,13 @@ public class PBFluid : MonoBehaviour
     int obstacleRepulsionProperty;
     int numObstaclesProperty;
 
-    int pivotPositionProperty;
-    int particleColorMinProperty;
-    int particleColorMaxProperty;
-    int particleRadiusMinProperty;
-    int particleRadiusMaxProperty;
-    int densityNormalizerProperty;
-
     int numParticleThreadGroups;
+
+    public event Action Initialized;
 
     private void OnValidate()
     {
         updateSimSettings = true;
-        updateMaterialProperties = true;
     }
 
     private void Awake()
@@ -144,13 +125,6 @@ public class PBFluid : MonoBehaviour
         collisionBouncinessProperty = Shader.PropertyToID("collisionBounciness");
         obstacleRepulsionProperty = Shader.PropertyToID("obstacleRepulsion");
         numObstaclesProperty = Shader.PropertyToID("numObstacles");
-
-        pivotPositionProperty = Shader.PropertyToID("pivotPosition");
-        particleColorMinProperty = Shader.PropertyToID("particleColorMin");
-        particleColorMaxProperty = Shader.PropertyToID("particleColorMax");
-        particleRadiusMinProperty = Shader.PropertyToID("particleRadiusMin");
-        particleRadiusMaxProperty = Shader.PropertyToID("particleRadiusMax");
-        densityNormalizerProperty = Shader.PropertyToID("densityNormalizer");
     }
 
 
@@ -163,8 +137,8 @@ public class PBFluid : MonoBehaviour
         //create buffers
         velocity = new ComputeBuffer(numParticles, 8);
         position = new ComputeBuffer(numParticles, 8);
-        predictedPosition = new ComputeBuffer(numParticles, 8);
-        deltaPosition = new ComputeBuffer(numParticles, 8);
+        lastPosition = new ComputeBuffer(numParticles, 8);
+        particleBuffer = new ComputeBuffer(numParticles, 8);
         density = new ComputeBuffer(numParticles, 4);
         lambda = new ComputeBuffer(numParticles, 4);
 
@@ -188,44 +162,29 @@ public class PBFluid : MonoBehaviour
         computeShader.SetInt("numParticles", numParticles);
 
         //bind buffers to compute shader
-        computeShader.SetBuffer(density, "density", calculateDensity, calculateLambda, calculateVorticityConfinementForce);
+        computeShader.SetBuffer(density, "density", calculateDensity, calculateLambda, calculateVorticityConfinementForce, updateDensityTexture);
         computeShader.SetBuffer(lambda, "lambda", calculateLambda, calculatePositionDelta);
-        computeShader.SetBuffer(velocity, "velocity", computePredictedPositions, storeSolvedVelocity, calculateVorticityConfinementForce, applyVorticityConfinmentForce, 
+        computeShader.SetBuffer(velocity, "velocity", computePredictedPositions, storeSolvedVelocity, calculateVorticityConfinementForce,
             integrateParticles, handleWallCollisions);
-        computeShader.SetBuffer(position, "position", computePredictedPositions, storeSolvedVelocity, integrateParticles, handleWallCollisions);
-        computeShader.SetBuffer(predictedPosition, "predictedPosition", computePredictedPositions, countParticles, 
-            calculateDensity, calculateLambda, addPositionDelta, calculatePositionDelta, storeSolvedVelocity, calculateVorticityConfinementForce, integrateParticles);
-        computeShader.SetBuffer(deltaPosition, "deltaPosition", calculatePositionDelta, addPositionDelta, calculateVorticityConfinementForce, applyVorticityConfinmentForce);
+        computeShader.SetBuffer(position, "position", computePredictedPositions, countParticles, calculateDensity, calculateLambda, addPositionDelta, calculatePositionDelta, 
+            storeSolvedVelocity, calculateVorticityConfinementForce, integrateParticles, handleWallCollisions, updateDensityTexture);
+        computeShader.SetBuffer(lastPosition, "lastPosition", computePredictedPositions, storeSolvedVelocity, integrateParticles, handleWallCollisions);
+        computeShader.SetBuffer(particleBuffer, "particleBuffer", calculatePositionDelta, addPositionDelta, calculateVorticityConfinementForce, integrateParticles);
         computeShader.SetBuffer(cellContainingParticle, "cellContainingParticle", countParticles, sortParticlesByCell, calculateDensity, 
             calculateLambda, calculatePositionDelta, calculateVorticityConfinementForce);
-        computeShader.SetBuffer(particlesByCell, "particlesByCell", sortParticlesByCell, calculateDensity, calculateLambda, calculatePositionDelta, calculateVorticityConfinementForce);
-        computeShader.SetBuffer(cellStart, "cellStart", setCellStarts, sortParticlesByCell, calculateDensity, calculateLambda, calculatePositionDelta, calculateVorticityConfinementForce);
+        computeShader.SetBuffer(particlesByCell, "particlesByCell", sortParticlesByCell, calculateDensity, calculateLambda, calculatePositionDelta, calculateVorticityConfinementForce, updateDensityTexture);
+        computeShader.SetBuffer(cellStart, "cellStart", setCellStarts, sortParticlesByCell, calculateDensity, calculateLambda, calculatePositionDelta, calculateVorticityConfinementForce, updateDensityTexture);
         computeShader.SetBuffer(cellParticleCount, "cellParticleCount", countParticles, setCellStarts, sortParticlesByCell);
         computeShader.SetBuffer(obstacleData, "obstacleData", integrateParticles);
 
         numParticleThreadGroups = (int)Mathf.Ceil((float)numParticles / THREADS_PER_GROUP);
 
-        //set up material
-        material = new Material(particleShader);
-
-        commandBuffer = new GraphicsBuffer(GraphicsBuffer.Target.IndirectArguments, 1, GraphicsBuffer.IndirectDrawIndexedArgs.size);
-        commandData = new GraphicsBuffer.IndirectDrawIndexedArgs[1];
-
-        //bind buffers to material
-        material.SetBuffer("particleDensity", density);
-        material.SetBuffer("particleVelocity", velocity);
-        material.SetBuffer("particlePosition", position);
-
-        if (particleMesh == null)
-        {
-            CreateBoxMesh();
-        }
-
         InitializeParticlePhysics();
         cellParticleCount.SetData(new uint[numCells]);//to set all to 0
 
         updateSimSettings = true;
-        updateMaterialProperties = true;
+
+        Initialized?.Invoke();
     }
 
     private void OnEnable()
@@ -239,8 +198,8 @@ public class PBFluid : MonoBehaviour
         lambda.Release();
         velocity.Release();
         position.Release();
-        predictedPosition.Release();
-        deltaPosition.Release();
+        lastPosition.Release();
+        particleBuffer.Release();
 
         cellContainingParticle.Release();
         particlesByCell.Release();
@@ -248,8 +207,6 @@ public class PBFluid : MonoBehaviour
         cellParticleCount.Release();
 
         obstacleData.Release();
-
-        commandBuffer.Release();
     }
 
     private void InitializeParticlePhysics()
@@ -257,25 +214,20 @@ public class PBFluid : MonoBehaviour
         var initialPositions = new Vector2[numParticles];
 
         velocity.SetData(initialPositions);
-        predictedPosition.SetData(initialPositions);
 
-        var spacing = particleRadiusMax;
-        var x0 = cellSize + 0.5f * spacing;
+        var x0 = cellSize + 0.5f * initialSpacing;
         var x = x0;
-        var y = cellSize * (height - 1) - 0.5f * spacing;
-        var xmax = cellSize * Mathf.Min(releaseWidth, width - 1) - 0.5f * spacing;
-        var ymin = cellSize + 0.5f * spacing;
+        var y = cellSize * (height - 1) - 0.5f * initialSpacing;
+        var xmax = cellSize * Mathf.Min(initialWidth, width - 1) - 0.5f * initialSpacing;
+        //var ymin = cellSize + 0.5f * spacing;
 
         for (int k = 0; k < numParticles; k++)
         {
-            x += spacing;
+            x += initialSpacing;
             if (x > xmax)
             {
                 x = x0;
-                if (y > ymin)
-                {
-                    y -= spacing;
-                }
+                y -= initialSpacing;//allowed to go past bottom of box
             }
 
             initialPositions[k] = new(x, y);
@@ -325,7 +277,6 @@ public class PBFluid : MonoBehaviour
 
         computeShader.Dispatch(storeSolvedVelocity, numParticleThreadGroups, 1, 1);
         computeShader.Dispatch(calculateVorticityConfinementForce, numParticleThreadGroups, 1, 1);
-        computeShader.Dispatch(applyVorticityConfinmentForce, numParticleThreadGroups, 1, 1);
         computeShader.Dispatch(integrateParticles, numParticleThreadGroups, 1, 1);
         computeShader.Dispatch(handleWallCollisions, numParticleThreadGroups, 1, 1);
     }
@@ -395,64 +346,11 @@ public class PBFluid : MonoBehaviour
         obstacleData.SetData(obstacleDataToTransfer);
     }
 
-
-    //RENDERING
-
-    private void LateUpdate()
+    public void UpdateDensityTexture(int threadGroupsX, int threadGroupsY)
     {
-        if (updateMaterialProperties)
-        {
-            UpdateMaterialProperties();
-        }
-
-        material.SetVector(pivotPositionProperty, transform.position);
-
-        var renderParams = new RenderParams(material)
-        {
-            worldBounds = new(Vector3.zero, new(10000, 10000, 10000))//better options?
-        };
-        commandData[0].indexCountPerInstance = particleMesh.GetIndexCount(0);
-        commandData[0].instanceCount = (uint)numParticles;
-        commandBuffer.SetData(commandData);
-        Graphics.RenderMeshIndirect(in renderParams, particleMesh, commandBuffer);
-        //there's also RenderPrimitives and RenderMeshPrimitives?
-        //you should test if there's a significant difference in performance for us
-    }
-
-    private void UpdateMaterialProperties()
-    {
-        material.SetColor(particleColorMinProperty, particleColorMin);
-        material.SetColor(particleColorMaxProperty, particleColorMax);
-        material.SetFloat(particleRadiusMinProperty, particleRadiusMin);
-        material.SetFloat(particleRadiusMaxProperty, particleRadiusMax);
-        material.SetFloat(restDensityProperty, restDensity);
-        material.SetFloat(densityNormalizerProperty, densityNormalizer);
-
-        updateMaterialProperties = false;
-    }
-
-    private void CreateBoxMesh()//we can make it look like a circle in shader
-    {
-        particleMesh = new();
-        var vertices = new Vector3[]
-        {
-            new(-1f, -1f),
-            new(-1f, 1f),
-            new(1f, 1f),
-            new(1f, -1f)
-        };
-        var uv = new Vector2[]
-        {
-            new(0,0), new(0,1), new(1,1), new(1,0)
-        };
-        var triangles = new int[]
-        {
-            0, 1, 2, 2, 3, 0
-        };
-
-        particleMesh.vertices = vertices;
-        particleMesh.uv = uv;
-        particleMesh.triangles = triangles;
-        particleMesh.RecalculateNormals();
+        computeShader.Dispatch(countParticles, numParticleThreadGroups, 1, 1);
+        computeShader.Dispatch(setCellStarts, 1, 1, 1);
+        computeShader.Dispatch(sortParticlesByCell, numParticleThreadGroups, 1, 1);
+        computeShader.Dispatch(updateDensityTexture, threadGroupsX, threadGroupsY, 1);
     }
 }
