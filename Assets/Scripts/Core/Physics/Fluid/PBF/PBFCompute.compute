@@ -56,7 +56,7 @@ float antiClusterCoefficient;
 
 RWStructuredBuffer<float2> velocity;
 RWStructuredBuffer<float2> position;
-RWStructuredBuffer<float2> lastPosition;//stores initial position during pressure solving (during which position is really predicted position)
+RWStructuredBuffer<float2> lastPosition;//stores initial position before pressure solving (during which position is really predicted position)
 RWStructuredBuffer<float2> particleBuffer;//for deltaPosition and vorticity confinement force
 RWStructuredBuffer<float> density;
 RWStructuredBuffer<float> lambda;
@@ -75,9 +75,12 @@ uniform uint texWidth;
 uniform uint texHeight;
 uniform float texelSizeX; //=worldWidth / texWidth
 uniform float texelSizeY;
+uniform float timeBlur;
 uniform float densityTexSmoothingRadius;
 uniform float densityTexSmoothingRadiusSqrd;
-RWTexture2D<float> densityTex;
+
+RWStructuredBuffer<float> noise;
+RWTexture2D<half2> densityTex;
 
 #define Index(i, j) i * width + j
 
@@ -153,7 +156,7 @@ void SortParticlesByCell(uint3 id : SV_DispatchThreadID)
     }
 }
 
-void SearchCellForDensity(float2 pos, uint cell, float r2, inout float sum)
+void SearchCellForDensity(float2 pos, uint cell, float r2, int kernelDeg, inout float sum)
 {
     for (uint k = cellStart[cell]; k < cellStart[cell + 1]; k++)
     {
@@ -162,14 +165,14 @@ void SearchCellForDensity(float2 pos, uint cell, float r2, inout float sum)
         float d2 = dot(d, d);
         if (d2 < r2)
         {
-            sum += Poly2NKernel(densityKernelDeg, r2, d2);
+            sum += Poly2NKernel(kernelDeg, r2, d2);
         }
     }
 }
 
-//yes I'm really passing all these bc if called from a cell position we don't need to calculate the cell
-//but if passed from an arbitrary position we do -- so the cell data should be calculated in whatever way is best before this method is called
-float SampleDensity(float2 pos, uint cell, uint i, uint j, float r, float r2)
+//yes I'm really passing all these bc if called for a particle position we don't need to calculate the cell
+//but if called for an arbitrary position we do -- so the cell data should be calculated in whatever way is best before this method is called
+float SampleDensity(float2 pos, uint cell, uint i, uint j, float r, float r2, int kernelDeg)
 {
     float cellX = clamp(pos.x - j * cellSize, 0, cellSize);
     float cellY = clamp(pos.y - i * cellSize, 0, cellSize);
@@ -178,44 +181,44 @@ float SampleDensity(float2 pos, uint cell, uint i, uint j, float r, float r2)
     float sum = 0;
         
     //search middle row
-    SearchCellForDensity(pos, cell, r2, sum);
+    SearchCellForDensity(pos, cell, r2, kernelDeg, sum);
         
     if (j > 0 && cellX < r)
     {
-        SearchCellForDensity(pos, cell - 1, r2, sum);
+        SearchCellForDensity(pos, cell - 1, r2, kernelDeg, sum);
     }
     if (j < width - 1 && cellX > max)
     {
-        SearchCellForDensity(pos, cell + 1, r2, sum);
+        SearchCellForDensity(pos, cell + 1, r2, kernelDeg, sum);
     }
         
     //search upper row
     if (i < height - 1 && cellY > max)
     {
-        SearchCellForDensity(pos, cell + width, r2, sum);
+        SearchCellForDensity(pos, cell + width, r2, kernelDeg, sum);
             
         if (j > 0 && cellX < r)
         {
-            SearchCellForDensity(pos, cell + width - 1, r2, sum);
+            SearchCellForDensity(pos, cell + width - 1, r2, kernelDeg, sum);
         }
         if (j < width - 1 && cellX > max)
         {
-            SearchCellForDensity(pos, cell + width + 1, r2, sum);
+            SearchCellForDensity(pos, cell + width + 1, r2, kernelDeg, sum);
         }
     }
         
         //search bottom row
     if (i > 0 && cellY < r)
     {
-        SearchCellForDensity(pos, cell - width, r2, sum);
+        SearchCellForDensity(pos, cell - width, r2, kernelDeg, sum);
             
         if (j > 0 && cellX < r)
         {
-            SearchCellForDensity(pos, cell - width - 1, r2, sum);
+            SearchCellForDensity(pos, cell - width - 1, r2, kernelDeg, sum);
         }
         if (j < width - 1 && cellX > max)
         {
-            SearchCellForDensity(pos, cell - width + 1, r2, sum);
+            SearchCellForDensity(pos, cell - width + 1, r2, kernelDeg, sum);
         }
     }
         
@@ -231,7 +234,7 @@ void CalculateDensity(uint3 id : SV_DispatchThreadID)
         uint i = c / width;
         uint j = c % width;
         
-        density[id.x] = SampleDensity(position[id.x], c, i, j, smoothingRadius, smoothingRadiusSqrd);
+        density[id.x] = SampleDensity(position[id.x], c, i, j, smoothingRadius, smoothingRadiusSqrd, densityKernelDeg);
     }
 }
 
@@ -579,6 +582,74 @@ void HandleWallCollisions(uint3 id : SV_DispatchThreadID)
     }
 }
 
+void SearchCellForNoise(float2 pos, uint cell, float r2, int kernelDeg, inout float sum)
+{
+    for (uint k = cellStart[cell]; k < cellStart[cell + 1]; k++)
+    {
+        uint q = particlesByCell[k];
+        float2 d = pos - position[q];
+        float d2 = dot(d, d);
+        if (d2 < r2)
+        {
+            sum += noise[q] / density[q] * Poly2NKernel(kernelDeg, r2, d2);
+        }
+    }
+}
+
+//2do: for the density texture, we should just do one search (tracking two sums along the way - density & noise)
+float SampleNoise(float2 pos, uint cell, uint i, uint j, float r, float r2, int kernelDeg)
+{
+    float cellX = clamp(pos.x - j * cellSize, 0, cellSize);
+    float cellY = clamp(pos.y - i * cellSize, 0, cellSize);
+    float max = cellSize - r;
+    
+    float sum = 0;
+        
+    //search middle row
+    SearchCellForNoise(pos, cell, r2, kernelDeg, sum);
+        
+    if (j > 0 && cellX < r)
+    {
+        SearchCellForNoise(pos, cell - 1, r2, kernelDeg, sum);
+    }
+    if (j < width - 1 && cellX > max)
+    {
+        SearchCellForNoise(pos, cell + 1, r2, kernelDeg, sum);
+    }
+        
+    //search upper row
+    if (i < height - 1 && cellY > max)
+    {
+        SearchCellForNoise(pos, cell + width, r2, kernelDeg, sum);
+            
+        if (j > 0 && cellX < r)
+        {
+            SearchCellForNoise(pos, cell + width - 1, r2, kernelDeg, sum);
+        }
+        if (j < width - 1 && cellX > max)
+        {
+            SearchCellForNoise(pos, cell + width + 1, r2, kernelDeg, sum);
+        }
+    }
+        
+    //search bottom row
+    if (i > 0 && cellY < r)
+    {
+        SearchCellForNoise(pos, cell - width, r2, kernelDeg, sum);
+            
+        if (j > 0 && cellX < r)
+        {
+            SearchCellForNoise(pos, cell - width - 1, r2, kernelDeg, sum);
+        }
+        if (j < width - 1 && cellX > max)
+        {
+            SearchCellForNoise(pos, cell - width + 1, r2, kernelDeg, sum);
+        }
+    }
+        
+    return sum;
+}
+
 [numthreads(16, 16, 1)]
 void UpdateDensityTexture(uint3 id : SV_DispatchThreadID)
 {
@@ -590,7 +661,9 @@ void UpdateDensityTexture(uint3 id : SV_DispatchThreadID)
         
         uint i = (uint) clamp(y / cellSize, 0, height - 1);
         uint j = (uint) clamp(x / cellSize, 0, width - 1);
-
-        densityTex[uint2(id.x, id.y)] = SampleDensity(float2(x, y), Index(i, j), i, j, densityTexSmoothingRadius, densityTexSmoothingRadiusSqrd);
+        
+        uint2 k = uint2(id.x, id.y);
+        densityTex[k] = half2(lerp(densityTex[k].x, SampleDensity(float2(x, y), Index(i, j), i, j, densityTexSmoothingRadius, densityTexSmoothingRadiusSqrd, densityKernelDeg), timeBlur),
+            SampleNoise(float2(x, y), Index(i, j), i, j, densityTexSmoothingRadius, densityTexSmoothingRadiusSqrd, densityKernelDeg)); //can add radius and time blur to noise (maybe also translate over time)
     }
 }

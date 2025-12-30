@@ -24,8 +24,11 @@
                 float2 uv : TEXCOORD0;
             };
             
-            float4 color;//we could instead of a min color and a max color with a min cutoff (below which color is zero)
-            float densityNormalizer;
+            half4 colorMin;//we could instead of a min color and a max color with a min cutoff (below which color is zero)
+            half4 colorMax;
+            half normalizer;
+            half noiseNormalizer;
+            half threshold;
             
             sampler2D densityTex;
 
@@ -38,9 +41,17 @@
             }
 
             fixed4 frag (v2f o) : SV_Target {
-                float4 c = color;
-                c.w *= densityNormalizer * tex2D(densityTex, o.uv);
-                return c;
+                half2 densitySample = tex2D(densityTex, o.uv);
+                densitySample.x *= normalizer;
+                if (densitySample.x < threshold)
+                {
+                    return 0;
+                }
+
+                densitySample.x = clamp(densitySample.x - threshold, 0, 1);
+                half4 color0 = half4(colorMin.x, colorMin.y, colorMin.z, densitySample.x * colorMin.w);
+                half4 color1 = half4(colorMax.x, colorMax.y, colorMax.z, densitySample.x * colorMax.w);
+                return lerp(color0, color1, clamp(noiseNormalizer * densitySample.y, 0, 1));
             }
             
             ENDCG

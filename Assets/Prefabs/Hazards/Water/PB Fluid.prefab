@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5648694684584665525}
   - component: {fileID: 5222157793995484295}
+  - component: {fileID: 3643009442913324898}
+  - component: {fileID: 6766266259801090171}
   m_Layer: 0
   m_Name: PB Fluid
   m_TagString: Untagged
@@ -45,18 +47,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PBFluid
   computeShader: {fileID: 7200000, guid: 33fbda51eab42c143863879575637ab9, type: 3}
-  releaseWidth: 16
+  initialWidth: 20
+  initialSpacing: 0.25
   width: 32
   height: 30
   cellSize: 1
   numParticles: 4500
-  updateFrequency: 2
-  stepsPerUpdate: 4
-  pressureSolveIterations: 5
+  updateFrequency: 1
+  stepsPerUpdate: 3
+  pressureSolveIterations: 2
   kernelDeg: 7
   densityKernelDeg: 7
-  restDensity: 23
-  vorticityConfinement: 0.5
+  restDensity: 18
+  vorticityConfinement: 3
   viscosity: 0
   antiClusterK: 0.1
   antiClusterDQ: 0.1
@@ -66,16 +69,52 @@ MonoBehaviour:
   obstacleMask:
     serializedVersion: 2
     m_Bits: 8
-  obstacleRepulsion: 15000
-  velocityBasedObstacleRepulsionMultiplier: 0.5
+  obstacleRepulsion: 10000
+  velocityBasedObstacleRepulsionMultiplier: 0.1
   velocityBasedObstacleScaleMultiplier: 0.1
-  obstacleUpscaleMax: 2.25
+  obstacleUpscaleMax: 2.5
   drag: 0
+  densityTexture: {fileID: 0}
+  texWidth: 1024
+  texHeight: 1024
+  timeBlur: 0.4
+  densityTexSmoothingRadius: 1.1
+--- !u!114 &3643009442913324898
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 837259404908941842}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 323cbc25206b1894180f9e0bae2b0953, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FluidParticleRenderer
+  pbFluid: {fileID: 5222157793995484295}
   particleMesh: {fileID: 0}
   particleShader: {fileID: 4800000, guid: 0a5371170069e7c41bcb95462907676a, type: 3}
   particleColorMin: {r: 1, g: 1, b: 1, a: 1}
-  particleColorMax: {r: 0, g: 0.00574853, b: 0.6150943, a: 0.101960786}
+  particleColorMax: {r: 0, g: 0.003921569, b: 0.6156863, a: 0.101960786}
   particleRadiusMin: 0
   particleRadiusMax: 0.25
   densityNormalizer: 0.043
-  boundaryDetectionThreshold: 0.05
+--- !u!114 &6766266259801090171
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 837259404908941842}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c61057bba67d4f941b0959d36829b6bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PBFDensityRenderer
+  pbFluid: {fileID: 5222157793995484295}
+  shader: {fileID: 4800000, guid: 3a14e080b4604144b9b809e70d65c0b7, type: 3}
+  colorMin: {r: 0, g: 0.019607844, b: 0.60784316, a: 0.5019608}
+  colorMax: {r: 0, g: 0.22062412, b: 0.4113207, a: 0.7490196}
+  normalizer: 0.25
+  noiseNormalizer: 1.28
+  threshold: 0.3

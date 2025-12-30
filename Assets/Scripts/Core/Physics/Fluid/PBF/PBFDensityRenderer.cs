@@ -1,48 +1,36 @@
 ﻿using UnityEngine;
+using Unity.Mathematics;
 
 public class PBFDensityRenderer : MonoBehaviour
 {
     [SerializeField] PBFluid pbFluid;
 
-    [Header("Render Settings")]
+    [Header("Material Settings")]
     [SerializeField] Shader shader;
-    [SerializeField] Color color;
-    [SerializeField] float densityNormalizer;
-
-    [Header("Density Texture")]
-    [SerializeField] int texWidth;
-    [SerializeField] int texHeight;
-    [SerializeField] float smoothingRadius;
+    [SerializeField] Color colorMin;
+    [SerializeField] Color colorMax;
+    [SerializeField] float normalizer;
+    [SerializeField] float noiseNormalizer;
+    [SerializeField] float threshold;
 
     Mesh mesh;
     Material material;
 
-    RenderTexture densityTexture;
+    int colorMinProperty;
+    int colorMaxProperty;
+    int normalizerProperty;
+    int noiseNormalizerProperty;
+    int thresholdProperty;
 
-    int threadGroupsX;
-    int threadGroupsY;
-
-    int colorProperty;
-    int densityNormalizerProperty;
-    int texWidthProperty;
-    int texHeightProperty;
-    int texelSizeXProperty;
-    int texelSizeYProperty;
-    int smoothingRadiusProperty;
-    int smoothingRadiusSqrdProperty;
-
-    bool updateMaterialProperties;
+    bool updateProperties;
 
     private void Awake()
     {
-        colorProperty = Shader.PropertyToID("color");
-        densityNormalizerProperty = Shader.PropertyToID("densityNormalizer");
-        texWidthProperty = Shader.PropertyToID("texWidth");
-        texHeightProperty = Shader.PropertyToID("texHeight");
-        texelSizeXProperty = Shader.PropertyToID("texelSizeX");
-        texelSizeYProperty = Shader.PropertyToID("texelSizeY");
-        smoothingRadiusProperty = Shader.PropertyToID("densityTexSmoothingRadius");
-        smoothingRadiusSqrdProperty = Shader.PropertyToID("densityTexSmoothingRadiusSqrd");
+        colorMinProperty = Shader.PropertyToID("colorMin");
+        colorMaxProperty = Shader.PropertyToID("colorMax");
+        normalizerProperty = Shader.PropertyToID("normalizer");
+        noiseNormalizerProperty = Shader.PropertyToID("noiseNormalizer");
+        thresholdProperty = Shader.PropertyToID("threshold");
     }
 
     private void OnEnable()
@@ -61,46 +49,21 @@ public class PBFDensityRenderer : MonoBehaviour
         {
             pbFluid.Initialized -= OnPBFInitialized;
         }
+    }
 
-        if (densityTexture != null)
-        {
-            densityTexture.Release();
-            Destroy(densityTexture);
-        }
+    private void OnValidate()
+    {
+        updateProperties = true;
     }
 
     private void OnPBFInitialized()
     {
         material = new Material(shader);
-
-        densityTexture = new(texWidth, texHeight, 0)
-        {
-            graphicsFormat = UnityEngine.Experimental.Rendering.GraphicsFormat.R16_SFloat,
-            dimension = UnityEngine.Rendering.TextureDimension.Tex2D,
-            enableRandomWrite = true
-        };
-
-        pbFluid.computeShader.SetInt(texWidthProperty, texWidth);
-        pbFluid.computeShader.SetInt(texHeightProperty, texHeight);
-        float w = pbFluid.width * pbFluid.cellSize;
-        float h = pbFluid.height * pbFluid.cellSize;
-        pbFluid.computeShader.SetFloat(texelSizeXProperty, w / texWidth);
-        pbFluid.computeShader.SetFloat(texelSizeYProperty, h / texHeight);
-
-        material.SetTexture("densityTex", densityTexture);
-        pbFluid.computeShader.SetTexture(PBFluid.updateDensityTexture, "densityTex", densityTexture);
-
-        threadGroupsX = (int)Mathf.Ceil(texWidth / 16f);
-        threadGroupsY = (int)Mathf.Ceil(texHeight / 16f);
+        material.SetTexture("densityTex", pbFluid.densityTexture);
 
         CreateMesh();
 
-        updateMaterialProperties = true;
-    }
-
-    private void OnValidate()
-    {
-        updateMaterialProperties = true;
+        updateProperties = true;
     }
 
     //RENDERING
@@ -109,12 +72,12 @@ public class PBFDensityRenderer : MonoBehaviour
     {
         if (pbFluid.enabled)
         {
-            if (updateMaterialProperties)
+            if (updateProperties)
             {
                 UpdateProperties();
             }
 
-            pbFluid.UpdateDensityTexture(threadGroupsX, threadGroupsY);
+            pbFluid.UpdateDensityTexture();
 
             Graphics.DrawMesh(mesh, pbFluid.transform.position, Quaternion.identity, material, 0);
         }
@@ -122,13 +85,13 @@ public class PBFDensityRenderer : MonoBehaviour
 
     private void UpdateProperties()
     {
-        material.SetColor(colorProperty, color);
-        material.SetFloat(densityNormalizerProperty, densityNormalizer);
+        material.SetColor(colorMinProperty, colorMin);
+        material.SetColor(colorMaxProperty, colorMax);
+        material.SetFloat(normalizerProperty, normalizer);
+        material.SetFloat(noiseNormalizerProperty, noiseNormalizer);
+        material.SetFloat(thresholdProperty, threshold);
 
-        pbFluid.computeShader.SetFloat(smoothingRadiusProperty, smoothingRadius);
-        pbFluid.computeShader.SetFloat(smoothingRadiusSqrdProperty, smoothingRadius * smoothingRadius);
-
-        updateMaterialProperties = false;
+        updateProperties = false;
     }
 
     private void CreateMesh()//we can make it look like a circle in shader
