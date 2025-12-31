@@ -58,7 +58,7 @@ public class PBFDensityRenderer : MonoBehaviour
 
     private void OnPBFInitialized()
     {
-        material = new Material(shader);
+        material = new Material(Instantiate(shader));
         material.SetTexture("densityTex", pbFluid.densityTexture);
 
         CreateMesh();

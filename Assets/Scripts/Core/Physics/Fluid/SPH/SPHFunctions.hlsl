@@ -80,6 +80,14 @@ float2 Poly2NKernelGradient(int N, float r2, float d2, float2 dVector)
     return -2 * N * (N + 1) / (PI * r2 * r2) * WholePow(a, N - 1) * dVector;
 }
 
+float2 Poly2NKernelLaplacian(int N, float r2, float d2)
+{
+    float b = d2 / r2;
+    float a = 1 - b;
+    return -4 * N * (N + 1) / (PI * r2 * r2) * WholePow(a, N - 2) * (1 - N * b);
+
+}
+
 float SimpleLinearKernel(float r, float r2, float d)
 {
     //normalized version of 1 - d / r

@@ -42,15 +42,16 @@
 
             fixed4 frag (v2f o) : SV_Target {
                 half2 densitySample = tex2D(densityTex, o.uv);
-                densitySample.x *= normalizer;
-                if (densitySample.x < threshold)
+                float a = normalizer * densitySample.x;
+                if (a < threshold)
                 {
                     return 0;
                 }
 
-                densitySample.x = clamp(densitySample.x - threshold, 0, 1);
-                half4 color0 = half4(colorMin.x, colorMin.y, colorMin.z, densitySample.x * colorMin.w);
-                half4 color1 = half4(colorMax.x, colorMax.y, colorMax.z, densitySample.x * colorMax.w);
+                a = clamp(a - threshold, 0, 1);
+                a *= a * (3 - 2 * a);//smooth step helps keep crisp edge when using a larger density smoothing radius (could even apply smooth step multiple times)
+                half4 color0 = half4(colorMin.x, colorMin.y, colorMin.z, a * colorMin.w);
+                half4 color1 = half4(colorMax.x, colorMax.y, colorMax.z, a * colorMax.w);
                 return lerp(color0, color1, clamp(noiseNormalizer * densitySample.y, 0, 1));
             }
             

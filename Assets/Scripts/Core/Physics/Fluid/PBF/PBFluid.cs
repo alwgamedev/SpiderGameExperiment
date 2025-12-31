@@ -18,11 +18,12 @@ public class PBFluid : MonoBehaviour
     public const int addPositionDelta = 8;
     public const int storeSolvedVelocity = 9;
     public const int calculateVorticityConfinementForce = 10;
-    public const int integrateParticles = 11;
-    public const int handleWallCollisions = 12;
-    public const int updateDensityTexture = 13;
+    public const int calculateViscosity = 11;
+    public const int integrateParticles = 12;
+    public const int handleWallCollisions = 13;
+    public const int updateDensityTexture = 14;
 
-    public ComputeShader computeShader;
+    [SerializeField] ComputeShader _computeShader;
 
     [Header("Configuration")]
     public int initialWidth;
@@ -31,6 +32,7 @@ public class PBFluid : MonoBehaviour
     public int height;
     public float cellSize;
     public int numParticles;
+    [SerializeField] bool drawGizmos;
 
     [Header("Simulation Settings")]
     [SerializeField] int updateFrequency;
@@ -54,11 +56,14 @@ public class PBFluid : MonoBehaviour
     [SerializeField] float drag;
 
     [Header("Density Texture")]
-    [HideInInspector] public RenderTexture densityTexture;
     [SerializeField] int texWidth;
     [SerializeField] int texHeight;
     [SerializeField] float timeBlur;
     [SerializeField] float densityTexSmoothingRadius;
+    [SerializeField] float noiseSmoothingRadius;
+
+    [HideInInspector] public ComputeShader computeShader;
+    [HideInInspector] public RenderTexture densityTexture;
 
     public ComputeBuffer velocity;
     public ComputeBuffer position;
@@ -82,6 +87,7 @@ public class PBFluid : MonoBehaviour
     int updateCounter;
     bool updateSimSettings;
 
+    //this is getting dumb
     int kernelDegProperty;
     int densityKernelDegProperty;
     int dtProperty;
@@ -110,12 +116,36 @@ public class PBFluid : MonoBehaviour
     int timeBlurProperty;
     int densityTexSmoothingRadiusProperty;
     int densityTexSmoothingRadiusSqrdProperty;
+    int noiseSmoothingRadiusProperty;
+    int noiseSmoothingRadiusSqrdProperty;
 
     int numParticleThreadGroups;
     int texThreadGroupsX;
     int texThreadGroupsY;
 
     public event Action Initialized;
+
+    private void OnDrawGizmos()
+    {
+        if (drawGizmos)
+        {
+            Gizmos.color = Color.yellow;
+            float w = width * cellSize;
+            float h = height * cellSize;
+            var p = transform.position;
+            var q = transform.position + h * Vector3.up;
+            Gizmos.DrawLine(p, q);
+            p = q;
+            q += w * Vector3.right;
+            Gizmos.DrawLine(p, q);
+            p = q;
+            q -= h * Vector3.up;
+            Gizmos.DrawLine(p, q);
+            p = q;
+            q -= w * Vector3.right;
+            Gizmos.DrawLine(p, q);
+        }
+    }
 
     private void OnValidate()
     {
@@ -124,6 +154,8 @@ public class PBFluid : MonoBehaviour
 
     private void Awake()
     {
+        computeShader = Instantiate(_computeShader);
+
         kernelDegProperty = Shader.PropertyToID("kernelDeg");
         densityKernelDegProperty = Shader.PropertyToID("densityKernelDeg");
         dtProperty = Shader.PropertyToID("dt");
@@ -153,6 +185,8 @@ public class PBFluid : MonoBehaviour
         timeBlurProperty = Shader.PropertyToID("timeBlur");
         densityTexSmoothingRadiusProperty = Shader.PropertyToID("densityTexSmoothingRadius");
         densityTexSmoothingRadiusSqrdProperty = Shader.PropertyToID("densityTexSmoothingRadiusSqrd");
+        noiseSmoothingRadiusProperty = Shader.PropertyToID("noiseSmoothingRadius");
+        noiseSmoothingRadiusSqrdProperty = Shader.PropertyToID("noiseSmoothingRadiusSqrd");
     }
 
 
@@ -216,16 +250,17 @@ public class PBFluid : MonoBehaviour
         //bind buffers to compute shader
         computeShader.SetBuffer(density, "density", calculateDensity, calculateLambda, calculateVorticityConfinementForce, updateDensityTexture);
         computeShader.SetBuffer(lambda, "lambda", calculateLambda, calculatePositionDelta);
-        computeShader.SetBuffer(velocity, "velocity", computePredictedPositions, storeSolvedVelocity, calculateVorticityConfinementForce,
+        computeShader.SetBuffer(velocity, "velocity", computePredictedPositions, storeSolvedVelocity, calculateVorticityConfinementForce, calculateViscosity,
             integrateParticles, handleWallCollisions);
         computeShader.SetBuffer(position, "position", computePredictedPositions, countParticles, calculateDensity, calculateLambda, addPositionDelta, calculatePositionDelta, 
-            storeSolvedVelocity, calculateVorticityConfinementForce, integrateParticles, handleWallCollisions, updateDensityTexture);
+            storeSolvedVelocity, calculateVorticityConfinementForce, calculateViscosity, integrateParticles, handleWallCollisions, updateDensityTexture);
         computeShader.SetBuffer(lastPosition, "lastPosition", computePredictedPositions, storeSolvedVelocity, calculateDensity, integrateParticles, handleWallCollisions, updateDensityTexture);
-        computeShader.SetBuffer(particleBuffer, "particleBuffer", calculatePositionDelta, addPositionDelta, calculateVorticityConfinementForce, integrateParticles);
+        computeShader.SetBuffer(particleBuffer, "particleBuffer", calculatePositionDelta, addPositionDelta, calculateVorticityConfinementForce, calculateViscosity, integrateParticles);
         computeShader.SetBuffer(cellContainingParticle, "cellContainingParticle", countParticles, sortParticlesByCell, calculateDensity, 
-            calculateLambda, calculatePositionDelta, calculateVorticityConfinementForce);
-        computeShader.SetBuffer(particlesByCell, "particlesByCell", sortParticlesByCell, calculateDensity, calculateLambda, calculatePositionDelta, calculateVorticityConfinementForce, updateDensityTexture);
-        computeShader.SetBuffer(cellStart, "cellStart", setCellStarts, sortParticlesByCell, calculateDensity, calculateLambda, calculatePositionDelta, calculateVorticityConfinementForce, updateDensityTexture);
+            calculateLambda, calculatePositionDelta, calculateVorticityConfinementForce, calculateViscosity);
+        computeShader.SetBuffer(particlesByCell, "particlesByCell", sortParticlesByCell, calculateDensity, calculateLambda, calculatePositionDelta, calculateVorticityConfinementForce, calculateViscosity, updateDensityTexture);
+        computeShader.SetBuffer(cellStart, "cellStart", setCellStarts, sortParticlesByCell, calculateDensity, calculateLambda, calculatePositionDelta, calculateVorticityConfinementForce,
+            calculateViscosity, updateDensityTexture);
         computeShader.SetBuffer(cellParticleCount, "cellParticleCount", countParticles, setCellStarts, sortParticlesByCell);
         computeShader.SetBuffer(obstacleData, "obstacleData", integrateParticles);
 
@@ -336,6 +371,7 @@ public class PBFluid : MonoBehaviour
 
         computeShader.Dispatch(storeSolvedVelocity, numParticleThreadGroups, 1, 1);
         computeShader.Dispatch(calculateVorticityConfinementForce, numParticleThreadGroups, 1, 1);
+        computeShader.Dispatch(calculateViscosity, numParticleThreadGroups, 1, 1);
         computeShader.Dispatch(integrateParticles, numParticleThreadGroups, 1, 1);
         computeShader.Dispatch(handleWallCollisions, numParticleThreadGroups, 1, 1);
     }
@@ -370,6 +406,8 @@ public class PBFluid : MonoBehaviour
         computeShader.SetFloat(texelSizeYProperty, h / texHeight);
         computeShader.SetFloat(densityTexSmoothingRadiusProperty, densityTexSmoothingRadius);
         computeShader.SetFloat(densityTexSmoothingRadiusSqrdProperty, densityTexSmoothingRadius * densityTexSmoothingRadius);
+        computeShader.SetFloat(noiseSmoothingRadiusProperty, noiseSmoothingRadius);
+        computeShader.SetFloat(noiseSmoothingRadiusSqrdProperty, noiseSmoothingRadius * noiseSmoothingRadius);
         computeShader.SetFloat(timeBlurProperty, timeBlur);
 
         computeShader.Dispatch(recalculateAntiClusterCoefficient, 1, 1, 1);

@@ -9,6 +9,7 @@
 #pragma kernel AddPositionDelta
 #pragma kernel StoreSolvedVelocity
 #pragma kernel CalculateVorticityConfinementForce
+#pragma kernel CalculateViscosity
 #pragma kernel IntegrateParticles
 #pragma kernel HandleWallCollisions
 #pragma kernel UpdateDensityTexture
@@ -78,6 +79,8 @@ uniform float texelSizeY;
 uniform float timeBlur;
 uniform float densityTexSmoothingRadius;
 uniform float densityTexSmoothingRadiusSqrd;
+uniform float noiseSmoothingRadius;
+uniform float noiseSmoothingRadiusSqrd;
 
 RWStructuredBuffer<float> noise;
 RWTexture2D<half2> densityTex;
@@ -207,7 +210,7 @@ float SampleDensity(float2 pos, uint cell, uint i, uint j, float r, float r2, in
         }
     }
         
-        //search bottom row
+    //search bottom row
     if (i > 0 && cellY < r)
     {
         SearchCellForDensity(pos, cell - width, r2, kernelDeg, sum);
@@ -518,12 +521,91 @@ void CalculateVorticityConfinementForce(uint3 id : SV_DispatchThreadID)
     }
 }
 
+void SearchCellForViscosity(uint p, uint cell, inout float2 sum)
+{
+    float rInverse = 1 / smoothingRadius;
+    for (uint k = cellStart[cell]; k < cellStart[cell + 1]; k++)
+    {
+        uint q = particlesByCell[k];
+        if (q != p)//otherwise contribution is zero
+        {
+            float2 positionDiff = position[p] - position[q];
+            float d2 = dot(positionDiff, positionDiff);
+            if (d2 < smoothingRadiusSqrd)
+            {
+                sum += (smoothingRadius - sqrt(d2)) * (velocity[q] - velocity[p]);
+            }
+        }
+    }
+}
+
+[numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
+void CalculateViscosity(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x < numParticles)
+    {
+        uint cell = cellContainingParticle[id.x];
+        uint i = cell / width;
+        uint j = cell % width;
+        float cellX = clamp(position[id.x].x - j * cellSize, 0, cellSize);
+        float cellY = clamp(position[id.x].y - i * cellSize, 0, cellSize);
+        float max = cellSize - smoothingRadius;
+    
+        float2 sum = 0;
+    
+        //search middle row
+        SearchCellForViscosity(id.x, cell, sum);
+        
+        if (j > 0 && cellX < smoothingRadius)
+        {
+            SearchCellForViscosity(id.x, cell - 1, sum);
+        }
+        if (j < width - 1 && cellX > max)
+        {
+            SearchCellForViscosity(id.x, cell + 1, sum);
+        }
+        
+        //search upper row
+        if (i < height - 1 && cellY > max)
+        {
+            SearchCellForViscosity(id.x, cell + width, sum);
+            
+            if (j > 0 && cellX < smoothingRadius)
+            {
+                SearchCellForViscosity(id.x, cell + width - 1, sum);
+            }
+            if (j < width - 1 && cellX > max)
+            {
+                SearchCellForViscosity(id.x, cell + width + 1, sum);
+            }
+        }
+        
+        //search bottom row
+        if (i > 0 && cellY < smoothingRadius)
+        {
+            SearchCellForViscosity(id.x, cell - width, sum);
+            
+            if (j > 0 && cellX < smoothingRadius)
+            {
+                SearchCellForViscosity(id.x, cell - width - 1, sum);
+            }
+            if (j < width - 1 && cellX > max)
+            {
+                SearchCellForViscosity(id.x, cell - width + 1, sum);
+            }
+        }
+        
+        particleBuffer[id.x] += dtInverse * viscosity * sum;
+    }
+}
+
+
 [numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
 void IntegrateParticles(uint3 id : SV_DispatchThreadID)
 {
     if (id.x < numParticles)
     {
-        velocity[id.x] += dt * particleBuffer[id.x];//add vorticity confinement force
+        velocity[id.x] += dt * particleBuffer[id.x];//add viscosity and vorticity confinement forces
         RepelFromObstacles(id.x);
         position[id.x] = lastPosition[id.x] + dt * velocity[id.x];
     }
@@ -582,7 +664,7 @@ void HandleWallCollisions(uint3 id : SV_DispatchThreadID)
     }
 }
 
-void SearchCellForNoise(float2 pos, uint cell, float r2, int kernelDeg, inout float sum)
+void SearchCellForNoise(float2 pos, uint cell, float r2, inout float noiseSum)
 {
     for (uint k = cellStart[cell]; k < cellStart[cell + 1]; k++)
     {
@@ -591,63 +673,63 @@ void SearchCellForNoise(float2 pos, uint cell, float r2, int kernelDeg, inout fl
         float d2 = dot(d, d);
         if (d2 < r2)
         {
-            sum += noise[q] / density[q] * Poly2NKernel(kernelDeg, r2, d2);
+            noiseSum += noise[q] / density[q] * Poly2NKernel(densityKernelDeg, r2, d2);
         }
     }
 }
 
 //2do: for the density texture, we should just do one search (tracking two sums along the way - density & noise)
-float SampleNoise(float2 pos, uint cell, uint i, uint j, float r, float r2, int kernelDeg)
+float SampleNoise(float2 pos, uint cell, uint i, uint j, float r, float r2)
 {
     float cellX = clamp(pos.x - j * cellSize, 0, cellSize);
     float cellY = clamp(pos.y - i * cellSize, 0, cellSize);
     float max = cellSize - r;
+
+    float nSum = 0;
     
-    float sum = 0;
-        
     //search middle row
-    SearchCellForNoise(pos, cell, r2, kernelDeg, sum);
+    SearchCellForNoise(pos, cell, r2, nSum);
         
     if (j > 0 && cellX < r)
     {
-        SearchCellForNoise(pos, cell - 1, r2, kernelDeg, sum);
+        SearchCellForNoise(pos, cell - 1, r2, nSum);
     }
     if (j < width - 1 && cellX > max)
     {
-        SearchCellForNoise(pos, cell + 1, r2, kernelDeg, sum);
+        SearchCellForNoise(pos, cell + 1, r2, nSum);
     }
         
     //search upper row
     if (i < height - 1 && cellY > max)
     {
-        SearchCellForNoise(pos, cell + width, r2, kernelDeg, sum);
+        SearchCellForNoise(pos, cell + width, r2, nSum);
             
         if (j > 0 && cellX < r)
         {
-            SearchCellForNoise(pos, cell + width - 1, r2, kernelDeg, sum);
+            SearchCellForNoise(pos, cell + width - 1, r2, nSum);
         }
         if (j < width - 1 && cellX > max)
         {
-            SearchCellForNoise(pos, cell + width + 1, r2, kernelDeg, sum);
+            SearchCellForNoise(pos, cell + width + 1, r2, nSum);
         }
     }
         
     //search bottom row
     if (i > 0 && cellY < r)
     {
-        SearchCellForNoise(pos, cell - width, r2, kernelDeg, sum);
+        SearchCellForNoise(pos, cell - width, r2, nSum);
             
         if (j > 0 && cellX < r)
         {
-            SearchCellForNoise(pos, cell - width - 1, r2, kernelDeg, sum);
+            SearchCellForNoise(pos, cell - width - 1, r2, nSum);
         }
         if (j < width - 1 && cellX > max)
         {
-            SearchCellForNoise(pos, cell - width + 1, r2, kernelDeg, sum);
+            SearchCellForNoise(pos, cell - width + 1, r2, nSum);
         }
     }
-        
-    return sum;
+    
+    return nSum;
 }
 
 [numthreads(16, 16, 1)]
@@ -664,6 +746,7 @@ void UpdateDensityTexture(uint3 id : SV_DispatchThreadID)
         
         uint2 k = uint2(id.x, id.y);
         densityTex[k] = half2(lerp(densityTex[k].x, SampleDensity(float2(x, y), Index(i, j), i, j, densityTexSmoothingRadius, densityTexSmoothingRadiusSqrd, densityKernelDeg), timeBlur),
-            SampleNoise(float2(x, y), Index(i, j), i, j, densityTexSmoothingRadius, densityTexSmoothingRadiusSqrd, densityKernelDeg)); //can add radius and time blur to noise (maybe also translate over time)
+            SampleNoise(float2(x, y), Index(i, j), i, j, noiseSmoothingRadius, noiseSmoothingRadiusSqrd));
+
     }
 }
