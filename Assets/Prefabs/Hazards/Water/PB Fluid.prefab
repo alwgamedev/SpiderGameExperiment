@@ -54,32 +54,39 @@ MonoBehaviour:
   numParticles: 4500
   drawGizmos: 0
   updateFrequency: 1
-  stepsPerUpdate: 3
-  pressureSolveIterations: 2
+  stepsPerUpdate: 2
+  pressureSolveIterations: 1
   kernelDeg: 7
   densityKernelDeg: 7
   restDensity: 18
-  vorticityConfinement: 3
-  viscosity: 0.006
+  gravityScale: 1
+  vorticityConfinement: 1
+  viscosity: 1.6
   antiClusterK: 0.1
   antiClusterDQ: 0.1
   antiClusterN: 4
-  epsilon: 1
-  collisionBounciness: 0.75
+  epsilon: 50
+  collisionBounciness: 0.5
   obstacleMask:
     serializedVersion: 2
     m_Bits: 8
   obstacleRepulsion: 10000
-  velocityBasedObstacleRepulsionMultiplier: 0.1
+  velocityBasedObstacleRepulsionMultiplier: 0.25
   velocityBasedObstacleScaleMultiplier: 0.25
   obstacleUpscaleMax: 2.5
   drag: 0
   texWidth: 1600
   texHeight: 1600
   timeBlur: 0.25
-  densityTexSmoothingRadius: 0.8
-  noiseSmoothingRadius: 1
-  computeShader: {fileID: 7200000, guid: 33fbda51eab42c143863879575637ab9, type: 3}
+  densityTexSmoothingRadius: 1
+  noiseSmoothingRadius: 0.75
+  noiseVelocityRadius: 0.7
+  noiseScrollRate: 2
+  noiseStretch: {x: 1.5, y: 1}
+  noiseTimeBlur: 0.5
+  noiseVelocityInfluence: 0.025
+  noiseVelocityInfluenceMax: 1
+  computeShader: {fileID: 0}
   densityTexture: {fileID: 0}
 --- !u!114 &6766266259801090171
 MonoBehaviour:
@@ -97,6 +104,7 @@ MonoBehaviour:
   shader: {fileID: 4800000, guid: 3a14e080b4604144b9b809e70d65c0b7, type: 3}
   colorMin: {r: 0, g: 0.019607844, b: 0.60784316, a: 0.5019608}
   colorMax: {r: 0, g: 0.22062412, b: 0.4113207, a: 0.7490196}
-  normalizer: 0.1
-  noiseNormalizer: 0.3
-  threshold: 0.1
+  smoothStepIterations: 2
+  normalizer: 0.08
+  noiseNormalizer: 0.25
+  threshold: 0.001

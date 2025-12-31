@@ -9,6 +9,7 @@ public class PBFDensityRenderer : MonoBehaviour
     [SerializeField] Shader shader;
     [SerializeField] Color colorMin;
     [SerializeField] Color colorMax;
+    [SerializeField] int smoothStepIterations;
     [SerializeField] float normalizer;
     [SerializeField] float noiseNormalizer;
     [SerializeField] float threshold;
@@ -18,6 +19,7 @@ public class PBFDensityRenderer : MonoBehaviour
 
     int colorMinProperty;
     int colorMaxProperty;
+    int smoothStepIterationsProperty;
     int normalizerProperty;
     int noiseNormalizerProperty;
     int thresholdProperty;
@@ -28,6 +30,7 @@ public class PBFDensityRenderer : MonoBehaviour
     {
         colorMinProperty = Shader.PropertyToID("colorMin");
         colorMaxProperty = Shader.PropertyToID("colorMax");
+        smoothStepIterationsProperty = Shader.PropertyToID("smoothStepIterations");
         normalizerProperty = Shader.PropertyToID("normalizer");
         noiseNormalizerProperty = Shader.PropertyToID("noiseNormalizer");
         thresholdProperty = Shader.PropertyToID("threshold");
@@ -87,6 +90,7 @@ public class PBFDensityRenderer : MonoBehaviour
     {
         material.SetColor(colorMinProperty, colorMin);
         material.SetColor(colorMaxProperty, colorMax);
+        material.SetInt(smoothStepIterationsProperty, smoothStepIterations);
         material.SetFloat(normalizerProperty, normalizer);
         material.SetFloat(noiseNormalizerProperty, noiseNormalizer);
         material.SetFloat(thresholdProperty, threshold);

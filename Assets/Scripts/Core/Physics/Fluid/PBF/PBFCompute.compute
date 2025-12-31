@@ -9,9 +9,9 @@
 #pragma kernel AddPositionDelta
 #pragma kernel StoreSolvedVelocity
 #pragma kernel CalculateVorticityConfinementForce
-#pragma kernel CalculateViscosity
 #pragma kernel IntegrateParticles
 #pragma kernel HandleWallCollisions
+#pragma kernel ScrollNoise
 #pragma kernel UpdateDensityTexture
 
 #include "../SPH/SPHFunctions.hlsl"
@@ -81,8 +81,15 @@ uniform float densityTexSmoothingRadius;
 uniform float densityTexSmoothingRadiusSqrd;
 uniform float noiseSmoothingRadius;
 uniform float noiseSmoothingRadiusSqrd;
+uniform float noiseVelocityRadius;
+uniform float noiseVelocityRadiusSqrd;
+uniform float noiseScrollRate;
+uniform float2 noiseStretch;
+uniform float noiseTimeBlur;
+uniform float noiseVelocityInfluence;
+uniform float noiseVelocityInfluenceMax;
 
-RWStructuredBuffer<float> noise;
+RWStructuredBuffer<float2> noise;
 RWTexture2D<half2> densityTex;
 
 #define Index(i, j) i * width + j
@@ -427,7 +434,7 @@ void StoreSolvedVelocity(uint3 id : SV_DispatchThreadID)
     }
 }
 
-void SearchCellForVorticityConfinement(uint p, uint cell, inout float2 sum)
+void SearchCellForVorticityConfinement(uint p, uint cell, inout float2 viscSum, inout float2 vortSum)
 {
     float rInverse = 1 / smoothingRadius;
     for (uint k = cellStart[cell]; k < cellStart[cell + 1]; k++)
@@ -439,7 +446,10 @@ void SearchCellForVorticityConfinement(uint p, uint cell, inout float2 sum)
             float d2 = dot(positionDiff, positionDiff);
             if (d2 < smoothingRadiusSqrd)
             {
-                float dInverse = rsqrt(d2);
+                float d = sqrt(d2);
+                viscSum += (smoothingRadius - d) * (velocity[q] - velocity[p]);//let's grab some viscosity while we're here
+                
+                float dInverse = 1 / d;
                 float d3Inverse = dInverse / d2;
                 
                 if (!isnan(d3Inverse) && !isinf(d3Inverse))
@@ -452,7 +462,7 @@ void SearchCellForVorticityConfinement(uint p, uint cell, inout float2 sum)
                     float2 F = abs(f) * normalize(float2(fy, -fx));
                     if (!isnan(F.x) && !isinf(F.x) && !isnan(F.y) && !isinf(F.y))
                     {
-                        sum += F;
+                        vortSum += F;
                     }
                     //using linear kernel A(1 - d / r)
                 }
@@ -473,129 +483,52 @@ void CalculateVorticityConfinementForce(uint3 id : SV_DispatchThreadID)
         float cellY = clamp(position[id.x].y - i * cellSize, 0, cellSize);
         float max = cellSize - smoothingRadius;
     
-        float2 sum = 0;
+        float2 viscSum = 0;
+        float2 vortSum = 0;
     
         //search middle row
-        SearchCellForVorticityConfinement(id.x, cell, sum);
+        SearchCellForVorticityConfinement(id.x, cell, viscSum, vortSum);
         
         if (j > 0 && cellX < smoothingRadius)
         {
-            SearchCellForVorticityConfinement(id.x, cell - 1, sum);
+            SearchCellForVorticityConfinement(id.x, cell - 1, viscSum, vortSum);
         }
         if (j < width - 1 && cellX > max)
         {
-            SearchCellForVorticityConfinement(id.x, cell + 1, sum);
+            SearchCellForVorticityConfinement(id.x, cell + 1, viscSum, vortSum);
         }
         
         //search upper row
         if (i < height - 1 && cellY > max)
         {
-            SearchCellForVorticityConfinement(id.x, cell + width, sum);
+            SearchCellForVorticityConfinement(id.x, cell + width, viscSum, vortSum);
             
             if (j > 0 && cellX < smoothingRadius)
             {
-                SearchCellForVorticityConfinement(id.x, cell + width - 1, sum);
+                SearchCellForVorticityConfinement(id.x, cell + width - 1, viscSum, vortSum);
             }
             if (j < width - 1 && cellX > max)
             {
-                SearchCellForVorticityConfinement(id.x, cell + width + 1, sum);
+                SearchCellForVorticityConfinement(id.x, cell + width + 1, viscSum, vortSum);
             }
         }
         
         //search bottom row
         if (i > 0 && cellY < smoothingRadius)
         {
-            SearchCellForVorticityConfinement(id.x, cell - width, sum);
+            SearchCellForVorticityConfinement(id.x, cell - width, viscSum, vortSum);
             
             if (j > 0 && cellX < smoothingRadius)
             {
-                SearchCellForVorticityConfinement(id.x, cell - width - 1, sum);
+                SearchCellForVorticityConfinement(id.x, cell - width - 1, viscSum, vortSum);
             }
             if (j < width - 1 && cellX > max)
             {
-                SearchCellForVorticityConfinement(id.x, cell - width + 1, sum);
+                SearchCellForVorticityConfinement(id.x, cell - width + 1, viscSum, vortSum);
             }
         }
         
-        particleBuffer[id.x] = -vorticityConfinement / density[id.x] * sum;
-    }
-}
-
-void SearchCellForViscosity(uint p, uint cell, inout float2 sum)
-{
-    float rInverse = 1 / smoothingRadius;
-    for (uint k = cellStart[cell]; k < cellStart[cell + 1]; k++)
-    {
-        uint q = particlesByCell[k];
-        if (q != p)//otherwise contribution is zero
-        {
-            float2 positionDiff = position[p] - position[q];
-            float d2 = dot(positionDiff, positionDiff);
-            if (d2 < smoothingRadiusSqrd)
-            {
-                sum += (smoothingRadius - sqrt(d2)) * (velocity[q] - velocity[p]);
-            }
-        }
-    }
-}
-
-[numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
-void CalculateViscosity(uint3 id : SV_DispatchThreadID)
-{
-    if (id.x < numParticles)
-    {
-        uint cell = cellContainingParticle[id.x];
-        uint i = cell / width;
-        uint j = cell % width;
-        float cellX = clamp(position[id.x].x - j * cellSize, 0, cellSize);
-        float cellY = clamp(position[id.x].y - i * cellSize, 0, cellSize);
-        float max = cellSize - smoothingRadius;
-    
-        float2 sum = 0;
-    
-        //search middle row
-        SearchCellForViscosity(id.x, cell, sum);
-        
-        if (j > 0 && cellX < smoothingRadius)
-        {
-            SearchCellForViscosity(id.x, cell - 1, sum);
-        }
-        if (j < width - 1 && cellX > max)
-        {
-            SearchCellForViscosity(id.x, cell + 1, sum);
-        }
-        
-        //search upper row
-        if (i < height - 1 && cellY > max)
-        {
-            SearchCellForViscosity(id.x, cell + width, sum);
-            
-            if (j > 0 && cellX < smoothingRadius)
-            {
-                SearchCellForViscosity(id.x, cell + width - 1, sum);
-            }
-            if (j < width - 1 && cellX > max)
-            {
-                SearchCellForViscosity(id.x, cell + width + 1, sum);
-            }
-        }
-        
-        //search bottom row
-        if (i > 0 && cellY < smoothingRadius)
-        {
-            SearchCellForViscosity(id.x, cell - width, sum);
-            
-            if (j > 0 && cellX < smoothingRadius)
-            {
-                SearchCellForViscosity(id.x, cell - width - 1, sum);
-            }
-            if (j < width - 1 && cellX > max)
-            {
-                SearchCellForViscosity(id.x, cell - width + 1, sum);
-            }
-        }
-        
-        particleBuffer[id.x] += dtInverse * viscosity * sum;
+        particleBuffer[id.x] = viscosity * viscSum - vorticityConfinement / density[id.x] * vortSum;
     }
 }
 
@@ -664,7 +597,7 @@ void HandleWallCollisions(uint3 id : SV_DispatchThreadID)
     }
 }
 
-void SearchCellForNoise(float2 pos, uint cell, float r2, inout float noiseSum)
+void SearchCellForVelocity(float2 pos, uint cell, float r2, inout float2 sum)
 {
     for (uint k = cellStart[cell]; k < cellStart[cell + 1]; k++)
     {
@@ -673,7 +606,90 @@ void SearchCellForNoise(float2 pos, uint cell, float r2, inout float noiseSum)
         float d2 = dot(d, d);
         if (d2 < r2)
         {
-            noiseSum += noise[q] / density[q] * Poly2NKernel(densityKernelDeg, r2, d2);
+            sum += 1 / density[q] * Poly2NKernel(densityKernelDeg, r2, d2) * velocity[q];
+        }
+    }
+}
+
+float2 SampleVelocity(float2 pos, uint cell, uint i, uint j, float r, float r2)
+{
+    float cellX = clamp(pos.x - j * cellSize, 0, cellSize);
+    float cellY = clamp(pos.y - i * cellSize, 0, cellSize);
+    float max = cellSize - r;
+
+    float2 sum = 0;
+    
+    //search middle row
+    SearchCellForVelocity(pos, cell, r2, sum);
+        
+    if (j > 0 && cellX < r)
+    {
+        SearchCellForVelocity(pos, cell - 1, r2, sum);
+    }
+    if (j < width - 1 && cellX > max)
+    {
+        SearchCellForVelocity(pos, cell + 1, r2, sum);
+    }
+        
+    //search upper row
+    if (i < height - 1 && cellY > max)
+    {
+        SearchCellForVelocity(pos, cell + width, r2, sum);
+            
+        if (j > 0 && cellX < r)
+        {
+            SearchCellForVelocity(pos, cell + width - 1, r2, sum);
+        }
+        if (j < width - 1 && cellX > max)
+        {
+            SearchCellForVelocity(pos, cell + width + 1, r2, sum);
+        }
+    }
+        
+    //search bottom row
+    if (i > 0 && cellY < r)
+    {
+        SearchCellForVelocity(pos, cell - width, r2, sum);
+            
+        if (j > 0 && cellX < r)
+        {
+            SearchCellForVelocity(pos, cell - width - 1, r2, sum);
+        }
+        if (j < width - 1 && cellX > max)
+        {
+            SearchCellForVelocity(pos, cell - width + 1, r2, sum);
+        }
+    }
+    
+    return sum;
+}
+
+[numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
+void ScrollNoise(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x  < numParticles)
+    {
+        noise[id.x].x += noise[id.x].y * noiseScrollRate * dt;
+        if (noise[id.x].x > 1 || noise[id.x].x < 0)
+        {
+            noise[id.x].y *= -1;
+        }
+    }
+}
+
+void SearchCellForNoise(float2 pos, float2 v, float2 w, float s, uint cell, float r2, inout float noiseSum)
+{
+    for (uint k = cellStart[cell]; k < cellStart[cell + 1]; k++)
+    {
+        uint q = particlesByCell[k];
+        float2 d = pos - position[q];
+        float2 a = dot(d, v);
+        float2 b = dot(d, w);
+        d = (a * s / noiseStretch.x) * v + (b * s / noiseStretch.y) * w;//stretch the noise wrt velocity!
+        float d2 = dot(d, d);
+        if (d2 < r2)
+        {
+            noiseSum += noise[q].x / density[q] * Poly2NKernel(densityKernelDeg, r2, d2);
         }
     }
 }
@@ -685,51 +701,60 @@ float SampleNoise(float2 pos, uint cell, uint i, uint j, float r, float r2)
     float cellY = clamp(pos.y - i * cellSize, 0, cellSize);
     float max = cellSize - r;
 
+    float2 v = SampleVelocity(pos, cell, i, j, noiseVelocityRadius, noiseVelocityRadiusSqrd);
+    float v2 = dot(v, v);
+    float s = 1 / v2;
+    if (isnan(s) || isinf(s))
+    {
+        v = float2(1, 0);
+        s = 1;
+    }
+    float2 w = float2(-v.y, v.x);
     float nSum = 0;
     
     //search middle row
-    SearchCellForNoise(pos, cell, r2, nSum);
+    SearchCellForNoise(pos, v, w, s, cell, r2, nSum);
         
     if (j > 0 && cellX < r)
     {
-        SearchCellForNoise(pos, cell - 1, r2, nSum);
+        SearchCellForNoise(pos, v, w, s, cell - 1, r2, nSum);
     }
     if (j < width - 1 && cellX > max)
     {
-        SearchCellForNoise(pos, cell + 1, r2, nSum);
+        SearchCellForNoise(pos, v, w, s, cell + 1, r2, nSum);
     }
         
     //search upper row
     if (i < height - 1 && cellY > max)
     {
-        SearchCellForNoise(pos, cell + width, r2, nSum);
+        SearchCellForNoise(pos, v, w, s, cell + width, r2, nSum);
             
         if (j > 0 && cellX < r)
         {
-            SearchCellForNoise(pos, cell + width - 1, r2, nSum);
+            SearchCellForNoise(pos, v, w, s, cell + width - 1, r2, nSum);
         }
         if (j < width - 1 && cellX > max)
         {
-            SearchCellForNoise(pos, cell + width + 1, r2, nSum);
+            SearchCellForNoise(pos, v, w, s, cell + width + 1, r2, nSum);
         }
     }
         
     //search bottom row
     if (i > 0 && cellY < r)
     {
-        SearchCellForNoise(pos, cell - width, r2, nSum);
+        SearchCellForNoise(pos, v, w, s, cell - width, r2, nSum);
             
         if (j > 0 && cellX < r)
         {
-            SearchCellForNoise(pos, cell - width - 1, r2, nSum);
+            SearchCellForNoise(pos, v, w, s, cell - width - 1, r2, nSum);
         }
         if (j < width - 1 && cellX > max)
         {
-            SearchCellForNoise(pos, cell - width + 1, r2, nSum);
+            SearchCellForNoise(pos, v, w, s, cell - width + 1, r2, nSum);
         }
     }
     
-    return nSum;
+    return (1 + min(noiseVelocityInfluence * nSum * v2, noiseVelocityInfluenceMax)) * nSum;
 }
 
 [numthreads(16, 16, 1)]
@@ -746,7 +771,6 @@ void UpdateDensityTexture(uint3 id : SV_DispatchThreadID)
         
         uint2 k = uint2(id.x, id.y);
         densityTex[k] = half2(lerp(densityTex[k].x, SampleDensity(float2(x, y), Index(i, j), i, j, densityTexSmoothingRadius, densityTexSmoothingRadiusSqrd, densityKernelDeg), timeBlur),
-            SampleNoise(float2(x, y), Index(i, j), i, j, noiseSmoothingRadius, noiseSmoothingRadiusSqrd));
-
+            lerp(densityTex[k].y, SampleNoise(float2(x, y), Index(i, j), i, j, noiseSmoothingRadius, noiseSmoothingRadiusSqrd), noiseTimeBlur));
     }
 }

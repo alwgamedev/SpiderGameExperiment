@@ -26,6 +26,7 @@
             
             half4 colorMin;//we could instead of a min color and a max color with a min cutoff (below which color is zero)
             half4 colorMax;
+            int smoothStepIterations;
             half normalizer;
             half noiseNormalizer;
             half threshold;
@@ -49,7 +50,14 @@
                 }
 
                 a = clamp(a - threshold, 0, 1);
-                a *= a * (3 - 2 * a);//smooth step helps keep crisp edge when using a larger density smoothing radius (could even apply smooth step multiple times)
+
+                //helps keep the border crisp when using a larger smoothing radius
+                for (int i = 0; i < smoothStepIterations; i++)
+                {
+                    float a2 = a * a;
+                    a *= a2 * (6 * a2 - 15 * a + 10);
+                }
+
                 half4 color0 = half4(colorMin.x, colorMin.y, colorMin.z, a * colorMin.w);
                 half4 color1 = half4(colorMax.x, colorMax.y, colorMax.z, a * colorMax.w);
                 return lerp(color0, color1, clamp(noiseNormalizer * densitySample.y, 0, 1));
