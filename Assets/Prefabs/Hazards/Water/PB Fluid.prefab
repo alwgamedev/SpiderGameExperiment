@@ -60,7 +60,7 @@ MonoBehaviour:
   densityKernelDeg: 7
   restDensity: 18
   gravityScale: 1
-  vorticityConfinement: 1
+  vorticityConfinement: 3
   viscosity: 1.6
   antiClusterK: 0.1
   antiClusterDQ: 0.1
@@ -75,12 +75,12 @@ MonoBehaviour:
   velocityBasedObstacleScaleMultiplier: 0.25
   obstacleUpscaleMax: 2.5
   drag: 0
-  texWidth: 1600
-  texHeight: 1600
-  timeBlur: 0.25
+  texWidth: 1024
+  texHeight: 1024
+  timeBlur: 0.1
   densityTexSmoothingRadius: 1
-  noiseSmoothingRadius: 0.75
-  noiseVelocityRadius: 0.7
+  noiseSmoothingRadius: 0.8
+  noiseVelocityRadius: 0.5
   noiseScrollRate: 2
   noiseStretch: {x: 1.5, y: 1}
   noiseTimeBlur: 0.5
@@ -104,7 +104,7 @@ MonoBehaviour:
   shader: {fileID: 4800000, guid: 3a14e080b4604144b9b809e70d65c0b7, type: 3}
   colorMin: {r: 0, g: 0.019607844, b: 0.60784316, a: 0.5019608}
   colorMax: {r: 0, g: 0.22062412, b: 0.4113207, a: 0.7490196}
-  smoothStepIterations: 2
-  normalizer: 0.08
+  smoothStepIterations: 1
+  normalizer: 0.125
   noiseNormalizer: 0.25
-  threshold: 0.001
+  threshold: 0.00001

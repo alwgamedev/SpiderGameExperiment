@@ -94,7 +94,7 @@ public class PBFluid : MonoBehaviour
     int updateCounter;
     bool updateSimSettings;
 
-    //this is getting dumb
+    //this is getting dumb (combine the properties into one struct)
     int kernelDegProperty;
     int densityKernelDegProperty;
     int dtProperty;
@@ -143,6 +143,7 @@ public class PBFluid : MonoBehaviour
     {
         if (drawGizmos)
         {
+            //to visualize the grid bounds
             Gizmos.color = Color.yellow;
             float w = width * cellSize;
             float h = height * cellSize;
@@ -248,7 +249,7 @@ public class PBFluid : MonoBehaviour
         var noiseData = new Vector2[numParticles];
         for (int i = 0; i < noiseData.Length; i++)
         {
-            noiseData[i] = new(MathTools.RandomFloat(0f, 1f), MathTools.RandomFloat(0.5f, 1.5f));
+            noiseData[i] = new(MathTools.RandomFloat(0f, 1f), MathTools.RandomFloat(0.25f, 1.75f));
         }
         noise = new ComputeBuffer(noiseData.Length, 8);
         noise.SetData(noiseData);
