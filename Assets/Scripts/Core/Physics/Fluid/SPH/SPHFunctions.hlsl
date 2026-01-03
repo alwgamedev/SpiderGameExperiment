@@ -18,6 +18,20 @@ float WholePow(float x, int n)
     return y;
 }
 
+//from Lague
+uint RandomUInt(inout uint state)
+{
+    state = state * 747796405 + 2891336453;
+    uint result = ((state >> ((state >> 28) + 4)) ^ state) * 277803737;
+    result = (result >> 22) ^ result;
+    return result;
+}
+
+float RandomFloat01(inout uint state)
+{
+    return RandomUInt(state) / 4294967295.0;
+}
+
 float Poly2Kernel(float r2, float d2)
 {
     //coeff is 1 / pi

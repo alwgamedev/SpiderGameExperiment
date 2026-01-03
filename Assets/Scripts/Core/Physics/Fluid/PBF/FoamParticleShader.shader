@@ -1,4 +1,4 @@
-Shader "Instanced/FluidParticleShader"
+﻿Shader "Instanced/FoamParticleShader"
 {
     SubShader
     {
@@ -6,7 +6,6 @@ Shader "Instanced/FluidParticleShader"
 
         Pass
         {
-            ZWrite Off
             Blend SrcAlpha OneMinusSrcAlpha
 
             CGPROGRAM
@@ -17,18 +16,20 @@ Shader "Instanced/FluidParticleShader"
             #define UNITY_INDIRECT_DRAW_ARGS IndirectDrawIndexedArgs//just following the example in unity docs for RenderMeshIndirect
             #include "UnityIndirect.cginc"
             #include "UnityCG.cginc"
-            
-            float4 particleColorMin;
-            float4 particleColorMax;
-            float3 pivotPosition;
-            float particleRadiusMin;
-            float particleRadiusMax;
-            float densityNormalizer;
-            float boundaryDetectionThreshold;
 
-            StructuredBuffer<float> particleDensity;
-            StructuredBuffer<float2> particleVelocity;
-            StructuredBuffer<float2> particlePosition;
+            struct FoamParticle
+            {
+                float2 velocity;
+                float2 position;
+                float life;
+            };
+
+            float4 particleColor;
+            float3 pivotPosition;
+            float particleRadius;
+
+            StructuredBuffer<FoamParticle> particles;
+            StructuredBuffer<uint> particleCounter;
 
             struct appdata
             {
@@ -40,7 +41,6 @@ Shader "Instanced/FluidParticleShader"
             {
                 float4 clipPos : SV_POSITION;
                 float2 uv : TEXCOORD0;
-                float density : TEXCOORD1;
             };
 
             v2f vert (appdata v, uint svInstanceID : SV_InstanceID)
@@ -49,16 +49,12 @@ Shader "Instanced/FluidParticleShader"
 
                 v2f o;
                 uint i = GetIndirectInstanceID(svInstanceID);
+                o.uv = v.uv;
 
-                float t = clamp(densityNormalizer * particleDensity[i], 0, 1);
-                o.density = t;
-
-                float r = lerp(particleRadiusMin, particleRadiusMax, t);
-                float3 particlePos = float3(pivotPosition.x + particlePosition[i].x, pivotPosition.y + particlePosition[i].y, pivotPosition.z);
+                float r = i < particleCounter[0] ? particleRadius : 0;
+                float3 particlePos = float3(pivotPosition.x + particles[i].position.x, pivotPosition.y + particles[i].position.y, pivotPosition.z);
                 float3 vertexWorldPos = particlePos + r * mul(unity_ObjectToWorld, v.position);
                 o.clipPos = mul(UNITY_MATRIX_VP, float4(vertexWorldPos, 1));
-
-                o.uv = v.uv;
 
                 return o;
             }
@@ -72,10 +68,7 @@ Shader "Instanced/FluidParticleShader"
                 {
                     return 0;
                 }
-
-                float4 color = lerp(particleColorMin, particleColorMax, i.density);
-                color.w *= a;
-                return color;
+                return fixed4(particleColor.x, particleColor.y, particleColor.z, a * particleColor.w);
             }
             ENDCG
         }

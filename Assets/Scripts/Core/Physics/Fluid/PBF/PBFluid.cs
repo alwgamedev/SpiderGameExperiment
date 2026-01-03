@@ -22,6 +22,11 @@ public class PBFluid : MonoBehaviour
     public const int handleWallCollisions = 12;
     public const int scrollNoise = 13;
     public const int updateDensityTexture = 14;
+    public const int spawnFoam = 15;
+    public const int updateFoam = 16;
+    public const int transferFoamSurvivorsToBuffer = 17;
+    public const int transferFoamSurvivorsBack = 18;
+    public const int completeFoamUpdate = 19;
 
     [SerializeField] ComputeShader _computeShader;
 
@@ -32,6 +37,7 @@ public class PBFluid : MonoBehaviour
     public int height;
     public float cellSize;
     public int numParticles;
+    public int numFoamParticles;
     [SerializeField] bool drawGizmos;
 
     [Header("Simulation Settings")]
@@ -39,7 +45,6 @@ public class PBFluid : MonoBehaviour
     [SerializeField] int stepsPerUpdate;
     [SerializeField] int pressureSolveIterations;
     [SerializeField] int kernelDeg;
-    [SerializeField] int densityKernelDeg;
     [SerializeField] float restDensity;
     [SerializeField] float gravityScale;
     [SerializeField] float vorticityConfinement;
@@ -54,7 +59,17 @@ public class PBFluid : MonoBehaviour
     [SerializeField] float velocityBasedObstacleRepulsionMultiplier;
     [SerializeField] float velocityBasedObstacleScaleMultiplier;
     [SerializeField] float obstacleUpscaleMax;
-    [SerializeField] float drag;
+
+    [Header("Foam Particles")]
+    [SerializeField] float foamSpawnRate;
+    [SerializeField] float foamSpawnRadiusMultiplier;
+    [SerializeField] float foamSpawnRadiusMax;
+    [SerializeField] float foamLifetimeMin;
+    [SerializeField] float foamLifetimeMax;
+    [SerializeField] float bubbleThreshold;
+    [SerializeField] float foamThreshold;
+    [SerializeField] float bubbleBuoyancy;
+    [SerializeField] float bubbleDrag;
 
     [Header("Density Texture")]
     [SerializeField] int texWidth;
@@ -68,9 +83,13 @@ public class PBFluid : MonoBehaviour
     [SerializeField] float noiseTimeBlur;
     [SerializeField] float noiseVelocityInfluence;
     [SerializeField] float noiseVelocityInfluenceMax;
+    [SerializeField] float foamSmoothingRadius;
+    [SerializeField] float foamVelocityInfluence;
+    [SerializeField] float foamVelocityThreshold;
 
     [HideInInspector] public ComputeShader computeShader;
     [HideInInspector] public RenderTexture densityTexture;
+    [HideInInspector] public RenderTexture velocityTexture;
 
     public ComputeBuffer velocity;
     public ComputeBuffer position;
@@ -89,6 +108,10 @@ public class PBFluid : MonoBehaviour
     Collider2D[] obstacleColliders;
     ContactFilter2D obstacleFilter;
 
+    public ComputeBuffer foamParticleCounter;
+    public ComputeBuffer foamParticle;
+    ComputeBuffer foamParticleBuffer;
+
     ComputeBuffer noise;
 
     int updateCounter;
@@ -96,7 +119,6 @@ public class PBFluid : MonoBehaviour
 
     //this is getting dumb (combine the properties into one struct)
     int kernelDegProperty;
-    int densityKernelDegProperty;
     int dtProperty;
     int dtInverseProperty;
     int cellSizeProperty;
@@ -114,7 +136,17 @@ public class PBFluid : MonoBehaviour
     int epsilonProperty;
     int collisionBouncinessProperty;
     int obstacleRepulsionProperty;
-    int numObstaclesProperty; 
+    int numObstaclesProperty;
+
+    int foamSpawnRateProperty;
+    int foamSpawnRadiusMultiplierProperty;
+    int foamSpawnRadiusMaxProperty;
+    int foamLifetimeMinProperty;
+    int foamLifetimeMaxProeprty;
+    int bubbleThresholdProperty;
+    int foamThresholdProperty;
+    int bubbleBuoyancyProperty;
+    int bubbleDragProperty;
     
     int texWidthProperty;
     int texHeightProperty;
@@ -132,8 +164,13 @@ public class PBFluid : MonoBehaviour
     int noiseTimeBlurProperty;
     int noiseVelocityInfluenceProperty;
     int noiseVelocityInfluenceMaxProperty;
+    int foamSmoothingRadiusProperty;
+    int foamSmoothingRadiusSqrdProperty;
+    int foamVelocityInfluenceProperty;
+    int foamVelocityThresholdProperty;
 
     int numParticleThreadGroups;
+    int numFoamParticleThreadGroups;
     int texThreadGroupsX;
     int texThreadGroupsY;
 
@@ -172,7 +209,6 @@ public class PBFluid : MonoBehaviour
         computeShader = Instantiate(_computeShader);
 
         kernelDegProperty = Shader.PropertyToID("kernelDeg");
-        densityKernelDegProperty = Shader.PropertyToID("densityKernelDeg");
         dtProperty = Shader.PropertyToID("dt");
         dtInverseProperty = Shader.PropertyToID("dtInverse");
         cellSizeProperty = Shader.PropertyToID("cellSize");
@@ -193,6 +229,16 @@ public class PBFluid : MonoBehaviour
         obstacleRepulsionProperty = Shader.PropertyToID("obstacleRepulsion");
         numObstaclesProperty = Shader.PropertyToID("numObstacles");
 
+        foamSpawnRateProperty = Shader.PropertyToID("foamSpawnRate");
+        foamSpawnRadiusMultiplierProperty = Shader.PropertyToID("foamSpawnRadiusMultiplier");
+        foamSpawnRadiusMaxProperty = Shader.PropertyToID("foamSpawnRadiusMax");
+        foamLifetimeMinProperty = Shader.PropertyToID("foamLifetimeMin");
+        foamLifetimeMaxProeprty = Shader.PropertyToID("foamLifetimeMax");
+        bubbleThresholdProperty = Shader.PropertyToID("bubbleThreshold");
+        foamThresholdProperty = Shader.PropertyToID("foamThreshold");
+        bubbleBuoyancyProperty = Shader.PropertyToID("bubbleBuoyancy");
+        bubbleDragProperty = Shader.PropertyToID("bubbleDrag");
+
         texWidthProperty = Shader.PropertyToID("texWidth");
         texHeightProperty = Shader.PropertyToID("texHeight");
         texelSizeXProperty = Shader.PropertyToID("texelSizeX");
@@ -209,6 +255,10 @@ public class PBFluid : MonoBehaviour
         noiseTimeBlurProperty = Shader.PropertyToID("noiseTimeBlur");
         noiseVelocityInfluenceProperty = Shader.PropertyToID("noiseVelocityInfluence");
         noiseVelocityInfluenceMaxProperty = Shader.PropertyToID("noiseVelocityInfluenceMax");
+        foamSmoothingRadiusProperty = Shader.PropertyToID("foamSmoothingRadius");
+        foamSmoothingRadiusSqrdProperty = Shader.PropertyToID("foamSmoothingRadiusSqrd");
+        foamVelocityInfluenceProperty = Shader.PropertyToID("foamVelocityInfluence");
+        foamVelocityThresholdProperty = Shader.PropertyToID("foamVelocityThreshold");
     }
 
 
@@ -239,11 +289,17 @@ public class PBFluid : MonoBehaviour
         obstacleFilter.useTriggers = false;
         obstacleFilter.SetLayerMask(obstacleMask);
 
+        foamParticle = new ComputeBuffer(numFoamParticles, 20);
+        foamParticleBuffer = new ComputeBuffer(numFoamParticles, 20);
+        foamParticleCounter = new ComputeBuffer(2, 4);
+        foamParticleCounter.SetData(new int[2]);
+
         //configure compute shader
         computeShader.SetInt("width", width);
         computeShader.SetInt("height", height);
         computeShader.SetInt("numCells", numCells);
         computeShader.SetInt("numParticles", numParticles);
+        computeShader.SetInt("numFoamParticles", numFoamParticles);
 
         //generate particle noise values
         var noiseData = new Vector2[numParticles];
@@ -256,6 +312,13 @@ public class PBFluid : MonoBehaviour
 
         //configure density texture
         densityTexture = new(texWidth, texHeight, 0)
+        {
+            graphicsFormat = UnityEngine.Experimental.Rendering.GraphicsFormat.R16G16B16A16_SFloat,
+            dimension = UnityEngine.Rendering.TextureDimension.Tex2D,
+            enableRandomWrite = true
+        };
+
+        velocityTexture = new(texWidth, texHeight, 0)
         {
             graphicsFormat = UnityEngine.Experimental.Rendering.GraphicsFormat.R16G16_SFloat,
             dimension = UnityEngine.Rendering.TextureDimension.Tex2D,
@@ -270,26 +333,32 @@ public class PBFluid : MonoBehaviour
 
 
         //bind buffers to compute shader
-        computeShader.SetBuffer(density, "density", calculateDensity, calculateLambda, calculateVorticityConfinementForce, updateDensityTexture);
+        computeShader.SetBuffer(density, "density", calculateDensity, calculateLambda, calculateVorticityConfinementForce, updateDensityTexture, spawnFoam, updateFoam);
         computeShader.SetBuffer(lambda, "lambda", calculateLambda, calculatePositionDelta);
         computeShader.SetBuffer(velocity, "velocity", computePredictedPositions, storeSolvedVelocity, calculateVorticityConfinementForce,
-            integrateParticles, handleWallCollisions, updateDensityTexture);
+            integrateParticles, handleWallCollisions, updateDensityTexture, spawnFoam, updateFoam);
         computeShader.SetBuffer(position, "position", computePredictedPositions, countParticles, calculateDensity, calculateLambda, addPositionDelta, calculatePositionDelta, 
-            storeSolvedVelocity, calculateVorticityConfinementForce, integrateParticles, handleWallCollisions, updateDensityTexture);
+            storeSolvedVelocity, calculateVorticityConfinementForce, integrateParticles, handleWallCollisions, updateDensityTexture, spawnFoam, updateFoam);
         computeShader.SetBuffer(lastPosition, "lastPosition", computePredictedPositions, storeSolvedVelocity, calculateDensity, integrateParticles, handleWallCollisions, updateDensityTexture);
         computeShader.SetBuffer(particleBuffer, "particleBuffer", calculatePositionDelta, addPositionDelta, calculateVorticityConfinementForce, integrateParticles);
-        computeShader.SetBuffer(cellContainingParticle, "cellContainingParticle", countParticles, sortParticlesByCell, calculateDensity, 
-            calculateLambda, calculatePositionDelta, calculateVorticityConfinementForce);
-        computeShader.SetBuffer(particlesByCell, "particlesByCell", sortParticlesByCell, calculateDensity, calculateLambda, calculatePositionDelta, calculateVorticityConfinementForce, updateDensityTexture);
+        computeShader.SetBuffer(cellContainingParticle, "cellContainingParticle", countParticles, sortParticlesByCell);
+        computeShader.SetBuffer(particlesByCell, "particlesByCell", sortParticlesByCell, calculateDensity, calculateLambda, calculatePositionDelta, calculateVorticityConfinementForce, 
+            updateDensityTexture, updateFoam);
         computeShader.SetBuffer(cellStart, "cellStart", setCellStarts, sortParticlesByCell, calculateDensity, calculateLambda, calculatePositionDelta, calculateVorticityConfinementForce,
-            updateDensityTexture);
+            updateDensityTexture, updateFoam);
         computeShader.SetBuffer(cellParticleCount, "cellParticleCount", countParticles, setCellStarts, sortParticlesByCell);
         computeShader.SetBuffer(obstacleData, "obstacleData", integrateParticles);
 
+        computeShader.SetBuffer(foamParticle, "foamParticle", spawnFoam, updateFoam, transferFoamSurvivorsToBuffer, transferFoamSurvivorsBack);
+        computeShader.SetBuffer(foamParticleBuffer, "foamParticleBuffer", transferFoamSurvivorsToBuffer, transferFoamSurvivorsBack);
+        computeShader.SetBuffer(foamParticleCounter, "foamParticleCounter", spawnFoam, updateFoam, transferFoamSurvivorsToBuffer, transferFoamSurvivorsBack, completeFoamUpdate);
+
         computeShader.SetBuffer(noise, "noise", scrollNoise, updateDensityTexture);
-        computeShader.SetTexture(updateDensityTexture, "densityTex", densityTexture);
+        computeShader.SetTexture(densityTexture, "densityTex", updateDensityTexture, spawnFoam, updateFoam);
+        computeShader.SetTexture(velocityTexture, "velocityTex", updateDensityTexture, updateFoam);
 
         numParticleThreadGroups = (int)Mathf.Ceil((float)numParticles / THREADS_PER_GROUP);
+        numFoamParticleThreadGroups = (int)Mathf.Ceil((float)numFoamParticles / THREADS_PER_GROUP);
 
         InitializeParticlePhysics();
         cellParticleCount.SetData(new uint[numCells]);//to set all to 0
@@ -320,9 +389,17 @@ public class PBFluid : MonoBehaviour
 
         obstacleData.Release();
 
+        foamParticle.Release();
+        foamParticleBuffer.Release();
+        foamParticleCounter.Release();
+
         noise.Release();
+
         densityTexture.Release();
         Destroy(densityTexture);
+
+        velocityTexture.Release();
+        Destroy(velocityTexture);
     }
 
     private void InitializeParticlePhysics()
@@ -395,6 +472,13 @@ public class PBFluid : MonoBehaviour
         computeShader.Dispatch(calculateVorticityConfinementForce, numParticleThreadGroups, 1, 1);
         computeShader.Dispatch(integrateParticles, numParticleThreadGroups, 1, 1);
         computeShader.Dispatch(handleWallCollisions, numParticleThreadGroups, 1, 1);
+        
+        //update foam particles
+        computeShader.Dispatch(spawnFoam, numParticleThreadGroups, 1, 1);
+        computeShader.Dispatch(updateFoam, numFoamParticleThreadGroups, 1, 1);
+        computeShader.Dispatch(transferFoamSurvivorsToBuffer, numFoamParticleThreadGroups, 1, 1);
+        computeShader.Dispatch(transferFoamSurvivorsBack, numFoamParticles, 1, 1);
+        computeShader.Dispatch(completeFoamUpdate, 1, 1, 1);
     }
 
     //maybe put settings into a single struct so we only have to do one set
@@ -404,7 +488,6 @@ public class PBFluid : MonoBehaviour
         float h = height * cellSize;
 
         computeShader.SetInt(kernelDegProperty, kernelDeg);
-        computeShader.SetInt(densityKernelDegProperty, densityKernelDeg);
         computeShader.SetFloat(dtProperty, dt);
         computeShader.SetFloat(dtInverseProperty, 1 / dt);
         computeShader.SetFloat(cellSizeProperty, cellSize);
@@ -423,6 +506,16 @@ public class PBFluid : MonoBehaviour
         computeShader.SetFloat(collisionBouncinessProperty, collisionBounciness);
         computeShader.SetFloat(obstacleRepulsionProperty, obstacleRepulsion);
 
+        computeShader.SetFloat(foamSpawnRateProperty, foamSpawnRate);
+        computeShader.SetFloat(foamSpawnRadiusMultiplierProperty, foamSpawnRadiusMultiplier);
+        computeShader.SetFloat(foamSpawnRadiusMaxProperty, foamSpawnRadiusMax);
+        computeShader.SetFloat(foamLifetimeMinProperty, foamLifetimeMin);
+        computeShader.SetFloat(foamLifetimeMaxProeprty, foamLifetimeMax);
+        computeShader.SetFloat(bubbleThresholdProperty, bubbleThreshold);
+        computeShader.SetFloat(foamThresholdProperty, foamThreshold);
+        computeShader.SetFloat(bubbleBuoyancyProperty, bubbleBuoyancy);
+        computeShader.SetFloat(bubbleDragProperty, bubbleDrag);
+
         computeShader.SetFloat(texelSizeXProperty, w / texWidth);
         computeShader.SetFloat(texelSizeYProperty, h / texHeight);
         computeShader.SetFloat(densityTexSmoothingRadiusProperty, densityTexSmoothingRadius);
@@ -437,6 +530,10 @@ public class PBFluid : MonoBehaviour
         computeShader.SetFloat(noiseTimeBlurProperty, noiseTimeBlur);
         computeShader.SetFloat(noiseVelocityInfluenceProperty, noiseVelocityInfluence);
         computeShader.SetFloat(noiseVelocityInfluenceMaxProperty, noiseVelocityInfluenceMax);
+        computeShader.SetFloat(foamSmoothingRadiusProperty, foamSmoothingRadius);
+        computeShader.SetFloat(foamSmoothingRadiusSqrdProperty, foamSmoothingRadius * foamSmoothingRadius);
+        computeShader.SetFloat(foamVelocityInfluenceProperty, foamVelocityInfluence);
+        computeShader.SetFloat(foamVelocityThresholdProperty, foamVelocityThreshold);
 
         computeShader.Dispatch(recalculateAntiClusterCoefficient, 1, 1, 1);
 

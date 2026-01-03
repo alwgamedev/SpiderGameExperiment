@@ -114,8 +114,8 @@ public class PBFParticleRenderer : MonoBehaviour
 
     private void UpdateMaterialProperties()
     {
-        particleMaterial.SetColor(particleColorMinProperty, particleColorMin);
-        particleMaterial.SetColor(particleColorMaxProperty, particleColorMax);
+        particleMaterial.SetColor(particleColorMinProperty, particleColorMin.linear);
+        particleMaterial.SetColor(particleColorMaxProperty, particleColorMax.linear);
         particleMaterial.SetFloat(particleRadiusMinProperty, particleRadiusMin);
         particleMaterial.SetFloat(particleRadiusMaxProperty, particleRadiusMax);
         particleMaterial.SetFloat(densityNormalizerProperty, densityNormalizer);
