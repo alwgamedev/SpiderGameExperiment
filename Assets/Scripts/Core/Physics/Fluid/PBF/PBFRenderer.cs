@@ -1,4 +1,12 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+
+[Serializable]
+struct ColorTuple
+{
+    public Color c0;
+    public Color c1;
+}
 
 public class PBFRenderer : MonoBehaviour
 {
@@ -16,11 +24,23 @@ public class PBFRenderer : MonoBehaviour
     [SerializeField] float noiseThreshold;
     [SerializeField] float foaminessNormalizer;
     [SerializeField] float foaminessThreshold;
+    [SerializeField] float maxThresholdMult;
 
     [Header("Foam Particle Settings")]
     [SerializeField] Shader particleShader;
-    [SerializeField] Color particleColor;
-    [SerializeField] float particleRadius;
+    [SerializeField] float lifeFadeTime;
+    [SerializeField] float velocityStretchFactor;
+    [SerializeField] float velocityStretchMax;
+    [SerializeField] ColorTuple particleColorMin;
+    [SerializeField] ColorTuple particleColorSpray;
+    [SerializeField] ColorTuple particleColorFoam;
+    [SerializeField] ColorTuple particleColorBubble;
+    [SerializeField] ColorTuple particleColorMax;
+    [SerializeField] Vector2 particleRadiusMin;
+    [SerializeField] Vector2 particleRadiusSpray;
+    [SerializeField] Vector2 particleRadiusFoam;
+    [SerializeField] Vector2 particleRadiusBubble;
+    [SerializeField] Vector2 particleRadiusMax;
 
     Mesh densityMesh;
     Material densityMaterial;
@@ -42,8 +62,30 @@ public class PBFRenderer : MonoBehaviour
     int foaminessThresholdProperty;
 
     int pivotPositionProperty;
-    int particleColorProperty;
-    int particleRadiusProperty;
+    int dtProperty;
+    int velocityStretchFactorProperty;
+    int velocityStretchMaxProperty;
+    int particleColorMin0Property;
+    int particleColorMin1Property;
+    int particleColorSpray0Property;
+    int particleColorSpray1Property;
+    int particleColorFoam0Property;
+    int particleColorFoam1Property;
+    int particleColorBubble0Property;
+    int particleColorBubble1Property;
+    int particleColorMax0Property;
+    int particleColorMax1Property;
+    int particleRadiusMinProperty;
+    int particleRadiusSprayProperty;
+    int particleRadiusFoamProperty;
+    int particleRadiusBubbleProperty;
+    int particleRadiusMaxProperty;
+
+    int sprayThresholdProperty;
+    int foamThresholdProperty;
+    int bubbleThresholdProperty;
+    int densityMaxProperty;
+    int lifeFadeTimeProperty;
 
     bool updateProperties;
 
@@ -62,13 +104,36 @@ public class PBFRenderer : MonoBehaviour
         foaminessThresholdProperty = Shader.PropertyToID("foaminessThreshold");
 
         pivotPositionProperty = Shader.PropertyToID("pivotPosition");
-        particleColorProperty = Shader.PropertyToID("particleColor");
-        particleRadiusProperty = Shader.PropertyToID("particleRadius");
+        dtProperty = Shader.PropertyToID("dt");
+        velocityStretchFactorProperty = Shader.PropertyToID("velocityStretchFactor");
+        velocityStretchMaxProperty = Shader.PropertyToID("velocityStretchMax");
+        particleColorMin0Property = Shader.PropertyToID("particleColorMin0");
+        particleColorMin1Property = Shader.PropertyToID("particleColorMin1");
+        particleColorSpray0Property = Shader.PropertyToID("particleColorSpray0");
+        particleColorSpray1Property = Shader.PropertyToID("particleColorSpray1");
+        particleColorFoam0Property = Shader.PropertyToID("particleColorFoam0");
+        particleColorFoam1Property = Shader.PropertyToID("particleColorFoam1");
+        particleColorBubble0Property = Shader.PropertyToID("particleColorBubble0");
+        particleColorBubble1Property = Shader.PropertyToID("particleColorBubble1");
+        particleColorMax0Property = Shader.PropertyToID("particleColorMax0");
+        particleColorMax1Property = Shader.PropertyToID("particleColorMax1");
+        particleRadiusMinProperty = Shader.PropertyToID("particleRadiusMin");
+        particleRadiusSprayProperty = Shader.PropertyToID("particleRadiusSpray");
+        particleRadiusFoamProperty = Shader.PropertyToID("particleRadiusFoam");
+        particleRadiusBubbleProperty = Shader.PropertyToID("particleRadiusBubble");
+        particleRadiusMaxProperty = Shader.PropertyToID("particleRadiusMax");
+
+        sprayThresholdProperty = Shader.PropertyToID("sprayThreshold");
+        foamThresholdProperty = Shader.PropertyToID("foamThreshold");
+        bubbleThresholdProperty = Shader.PropertyToID("bubbleThreshold");
+        densityMaxProperty = Shader.PropertyToID("densityMax");
+        lifeFadeTimeProperty = Shader.PropertyToID("lifeFadeTime");
     }
 
     private void OnEnable()
     {
         pbFluid.Initialized += OnPBFInitialized;
+        pbFluid.SettingsChanged += OnPBFSettingsChanged;
 
         if (pbFluid.enabled)
         {
@@ -87,6 +152,7 @@ public class PBFRenderer : MonoBehaviour
         if (pbFluid != null)
         {
             pbFluid.Initialized -= OnPBFInitialized;
+            pbFluid.SettingsChanged -= OnPBFSettingsChanged;
         }
     }
 
@@ -106,12 +172,17 @@ public class PBFRenderer : MonoBehaviour
         densityMaterial.SetTexture("densityTex", pbFluid.densityTexture);
 
         particleMaterial = new Material(particleShader);
-        particleMaterial.SetBuffer("particles", pbFluid.foamParticle);
+        particleMaterial.SetBuffer("particle", pbFluid.foamParticle);
         particleMaterial.SetBuffer("particleCounter", pbFluid.foamParticleCounter);
 
         CreateDensityMesh();
         CreateFoamParticleMesh();
 
+        updateProperties = true;
+    }
+
+    private void OnPBFSettingsChanged()
+    {
         updateProperties = true;
     }
 
@@ -126,17 +197,18 @@ public class PBFRenderer : MonoBehaviour
                 UpdateProperties();
             }
 
+            particleMaterial.SetVector(pivotPositionProperty, pbFluid.transform.position);
+            particleMaterial.SetFloat(dtProperty, Time.deltaTime);
+
             pbFluid.UpdateDensityTexture();
 
             Graphics.DrawMesh(densityMesh, pbFluid.transform.position, Quaternion.identity, densityMaterial, 0);
-
-            particleMaterial.SetVector(pivotPositionProperty, pbFluid.transform.position);
             var renderParams = new RenderParams(particleMaterial)
             {
                 worldBounds = new(Vector3.zero, new(10000, 10000, 10000))//better options?
             };
             commandData[0].indexCountPerInstance = particleMesh.GetIndexCount(0);
-            commandData[0].instanceCount = (uint)pbFluid.numFoamParticles;//it would be nice if we could set this from the foamParticleCounter but idk how bad it would be to get data from GPU
+            commandData[0].instanceCount = (uint)pbFluid.configuration.numFoamParticles;//it would be nice if we could set this from the foamParticleCounter but idk how bad it would be to get data from GPU
             commandBuffer.SetData(commandData);
             Graphics.RenderMeshIndirect(in renderParams, particleMesh, commandBuffer);
         }
@@ -156,9 +228,30 @@ public class PBFRenderer : MonoBehaviour
         densityMaterial.SetFloat(foaminessNormalizerProperty, foaminessNormalizer);
         densityMaterial.SetFloat(foaminessThresholdProperty, foaminessThreshold);
 
-        particleMaterial.SetVector(pivotPositionProperty, pbFluid.transform.position);
-        particleMaterial.SetColor(particleColorProperty, particleColor.linear);
-        particleMaterial.SetFloat(particleRadiusProperty, particleRadius);
+        particleMaterial.SetFloat(velocityStretchFactorProperty, velocityStretchFactor);
+        particleMaterial.SetFloat(velocityStretchMaxProperty, velocityStretchMax);
+        particleMaterial.SetFloat(sprayThresholdProperty, pbFluid.foamParticleSettings.sprayThreshold);
+        particleMaterial.SetFloat(foamThresholdProperty, pbFluid.foamParticleSettings.foamThreshold);
+        particleMaterial.SetFloat(bubbleThresholdProperty, pbFluid.foamParticleSettings.bubbleThreshold);
+        particleMaterial.SetFloat(densityMaxProperty, maxThresholdMult * pbFluid.simSettings.restDensity);
+        particleMaterial.SetFloat(lifeFadeTimeProperty, lifeFadeTime);
+
+        particleMaterial.SetColor(particleColorMin0Property, particleColorMin.c0.linear);
+        particleMaterial.SetColor(particleColorMin1Property, particleColorMin.c1.linear);
+        particleMaterial.SetColor(particleColorSpray0Property, particleColorSpray.c0.linear);
+        particleMaterial.SetColor(particleColorSpray1Property, particleColorSpray.c1.linear);
+        particleMaterial.SetColor(particleColorFoam0Property, particleColorFoam.c0.linear);
+        particleMaterial.SetColor(particleColorFoam1Property, particleColorFoam.c1.linear);
+        particleMaterial.SetColor(particleColorBubble0Property, particleColorBubble.c0.linear);
+        particleMaterial.SetColor(particleColorBubble1Property, particleColorBubble.c1.linear);
+        particleMaterial.SetColor(particleColorMax0Property, particleColorMax.c0.linear);
+        particleMaterial.SetColor(particleColorMax1Property, particleColorMax.c1.linear);
+
+        particleMaterial.SetVector(particleRadiusMinProperty, particleRadiusMin);
+        particleMaterial.SetVector(particleRadiusSprayProperty, particleRadiusSpray);
+        particleMaterial.SetVector(particleRadiusFoamProperty, particleRadiusFoam);
+        particleMaterial.SetVector(particleRadiusBubbleProperty, particleRadiusBubble);
+        particleMaterial.SetVector(particleRadiusMaxProperty, particleRadiusMax); 
 
         updateProperties = false;
     }
@@ -166,8 +259,8 @@ public class PBFRenderer : MonoBehaviour
     private void CreateDensityMesh()//we can make it look like a circle in shader
     {
         densityMesh = new();
-        float w = pbFluid.width * pbFluid.cellSize;
-        float h = pbFluid.height * pbFluid.cellSize;
+        float w = pbFluid.configuration.width * pbFluid.simSettings.cellSize;
+        float h = pbFluid.configuration.height * pbFluid.simSettings.cellSize;
         var vertices = new Vector3[]
         {
             new(0, 0),

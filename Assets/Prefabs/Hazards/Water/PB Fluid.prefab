@@ -46,57 +46,65 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PBFluid
   _computeShader: {fileID: 7200000, guid: 33fbda51eab42c143863879575637ab9, type: 3}
-  initialWidth: 20
-  initialSpacing: 0.25
-  width: 32
-  height: 30
-  cellSize: 1
-  numParticles: 4500
-  numFoamParticles: 4500
-  drawGizmos: 0
-  updateFrequency: 1
-  stepsPerUpdate: 2
-  pressureSolveIterations: 2
-  kernelDeg: 7
-  restDensity: 18
-  gravityScale: 1
-  vorticityConfinement: 3
-  viscosity: 2.4
-  antiClusterK: 0.1
-  antiClusterDQ: 0.1
-  antiClusterN: 4
-  epsilon: 50
-  collisionBounciness: 0.5
-  obstacleMask:
-    serializedVersion: 2
-    m_Bits: 8
-  obstacleRepulsion: 12500
-  velocityBasedObstacleRepulsionMultiplier: 0.5
-  velocityBasedObstacleScaleMultiplier: 0.15
-  obstacleUpscaleMax: 3
-  foamSpawnRate: 100
-  foamSpawnRadiusMultiplier: 1
-  foamSpawnRadiusMax: 0.5
-  foamLifetimeMin: 0.2
-  foamLifetimeMax: 1
-  bubbleThreshold: 12
-  foamThreshold: 5
-  bubbleBuoyancy: 20
-  bubbleDrag: 0.5
-  texWidth: 1024
-  texHeight: 1024
-  timeBlur: 0.2
-  densityTexSmoothingRadius: 0.75
-  noiseSmoothingRadius: 0.8
-  noiseVelocityRadius: 0.5
-  noiseScrollRate: 2
-  noiseStretch: {x: 1.5, y: 1}
-  noiseTimeBlur: 0.5
-  noiseVelocityInfluence: 0.025
-  noiseVelocityInfluenceMax: 1
-  foamSmoothingRadius: 0.45
-  foamVelocityInfluence: 250
-  foamVelocityThreshold: 0
+  configuration:
+    width: 32
+    height: 30
+    releaseWidth: 20
+    releaseSpacing: 0.25
+    numParticles: 4500
+    numFoamParticles: 4500
+    drawGizmos: 0
+  simSettings:
+    cellSize: 1
+    updateFrequency: 1
+    stepsPerUpdate: 2
+    pressureSolveIterations: 2
+    kernelDeg: 7
+    restDensity: 18
+    gravityScale: 1
+    vorticityConfinement: 3
+    viscosity: 2.4
+    antiClusterK: 0.1
+    antiClusterDQ: 0.1
+    antiClusterN: 4
+    epsilon: 50
+    collisionBounciness: 0.1
+    obstacleMask:
+      serializedVersion: 2
+      m_Bits: 8
+    obstacleRepulsion: 12500
+    velocityBasedObstacleRepulsionMultiplier: 0.5
+    velocityBasedObstacleScaleMultiplier: 0.15
+    obstacleUpscaleMax: 3
+    surfaceNormalThreshold: 0.1
+  foamParticleSettings:
+    spawnRate: 150
+    spawnRadiusMultiplier: 5
+    spawnRadiusMax: 5
+    lifetimeMin: 0.5
+    lifetimeMax: 2
+    sprayThreshold: 0.1
+    foamThreshold: 8
+    bubbleThreshold: 15
+    bubbleBuoyancy: 20
+    bubbleDrag: 0.4
+    sprayDrag: 3
+    smoothingRadius: 0.4
+  densityTexSettings:
+    texWidth: 1024
+    texHeight: 1024
+    timeBlur: 0.2
+    smoothingRadius: 0.75
+    noiseSmoothingRadius: 0.8
+    noiseVelocityRadius: 0.5
+    noiseScrollRate: 2
+    noiseStretch: {x: 1.5, y: 1}
+    noiseTimeBlur: 0.5
+    noiseVelocityInfluence: 0.025
+    noiseVelocityInfluenceMax: 1
+    foamSmoothingRadius: 0.65
+    foamVelocityInfluence: 250
+    foamVelocityThreshold: 0
   computeShader: {fileID: 0}
   densityTexture: {fileID: 0}
   velocityTexture: {fileID: 0}
@@ -116,14 +124,36 @@ MonoBehaviour:
   densityShader: {fileID: 4800000, guid: 3a14e080b4604144b9b809e70d65c0b7, type: 3}
   colorMin: {r: 0, g: 0.0022601862, b: 0.7509433, a: 0.7490196}
   colorMax: {r: 0, g: 0.03658533, b: 1, a: 0.7490196}
-  foamColor: {r: 0.2245282, g: 0.43506333, b: 1, a: 0.7490196}
+  foamColor: {r: 0.25471687, g: 0.46371153, b: 1, a: 0.7490196}
   smoothStepIterations: 2
-  densityNormalizer: 0.04
-  densityThreshold: 0.02
+  densityNormalizer: 0.06
+  densityThreshold: 0.03
   noiseNormalizer: 0.25
   noiseThreshold: 0
-  foaminessNormalizer: 3.5
+  foaminessNormalizer: 0.3
   foaminessThreshold: 0
+  maxThresholdMult: 1.25
   particleShader: {fileID: 4800000, guid: 496b5e757139d3d43949eddebd0fec1a, type: 3}
-  particleColor: {r: 0.28627452, g: 0.45882353, b: 0.93333334, a: 0.050980393}
-  particleRadius: 0.25
+  lifeFadeTime: 0.1
+  velocityStretchFactor: 35
+  velocityStretchMax: 4
+  particleColorMin:
+    c0: {r: 0.5019608, g: 0.77254903, b: 1, a: 0}
+    c1: {r: 0.72156864, g: 0.8745098, b: 1, a: 0}
+  particleColorSpray:
+    c0: {r: 0.50377357, g: 0.77179664, b: 1, a: 0.050980393}
+    c1: {r: 0.72264147, g: 0.8733323, b: 1, a: 0.050980393}
+  particleColorFoam:
+    c0: {r: 0.3754716, g: 0.7141989, b: 1, a: 0.101960786}
+    c1: {r: 0.65471697, g: 0.8423117, b: 1, a: 0.050980393}
+  particleColorBubble:
+    c0: {r: 0.390566, g: 0.5592792, b: 1, a: 0.2}
+    c1: {r: 0.50377357, g: 0.6394089, b: 1, a: 0.2}
+  particleColorMax:
+    c0: {r: 0.28415084, g: 0.46411315, b: 0.94716984, a: 0.101960786}
+    c1: {r: 0.09803922, g: 0.3254902, b: 0.9411765, a: 0.2}
+  particleRadiusMin: {x: 0.05, y: 0.1}
+  particleRadiusSpray: {x: 0.1, y: 0.2}
+  particleRadiusFoam: {x: 0.1, y: 0.2}
+  particleRadiusBubble: {x: 0.05, y: 0.2}
+  particleRadiusMax: {x: 0.05, y: 0.2}

@@ -6,6 +6,11 @@ public static class MiscTools
 {
     public static GameObjectPathComparer GOPathComparer = new();
 
+    public static int Stride<T>()
+    {
+        return System.Runtime.InteropServices.Marshal.SizeOf<T>();
+    }
+
     public static int ComponentPathCompare(Component x, Component y)
     {
         return GOPathComparer.Compare(x ? x.gameObject : null, y ? y.gameObject : null);

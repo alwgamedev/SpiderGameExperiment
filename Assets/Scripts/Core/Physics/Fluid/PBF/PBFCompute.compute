@@ -20,50 +20,16 @@
 #pragma kernel CompleteFoamUpdate
 
 #include "../SPH/SPHFunctions.hlsl"
+#include "./PBFComputeSettings.hlsl"
 
 static const int NUM_THREADS_PER_GROUP = 256;
 
+StructuredBuffer<PBFConfig> configBuffer;//so the macro can have the short name
+StructuredBuffer<PBFVariables> varsBuffer;
+uniform uint numObstacles;
 
-//CONFIGURATION
-
-const uint width;
-const uint height;
-const uint numCells;
-const uint numParticles;
-const uint numFoamParticles;
-
-
-//SIM SETTINGS
-
-uniform int kernelDeg;
-uniform float dt;
-uniform float dtInverse;
-uniform float cellSize;
-uniform float worldWidth;
-uniform float worldHeight;
-uniform float smoothingRadius;
-uniform float smoothingRadiusSqrd;
-uniform float2 gravity;
-uniform float antiClusterK;
-uniform float antiClusterDQ;
-uniform int antiClusterN;
-uniform float epsilon;
-uniform float restDensity;
-uniform float vorticityConfinement;
-uniform float viscosity;
-uniform float collisionBounciness;
-uniform float obstacleRepulsion;
-uniform uint numObstacles = 1;
-
-uniform float foamSpawnRate;
-uniform float foamSpawnRadiusMultiplier;
-uniform float foamSpawnRadiusMax;
-uniform float foamLifetimeMin;
-uniform float foamLifetimeMax;
-uniform float bubbleThreshold;
-uniform float foamThreshold;
-uniform float bubbleBuoyancy;
-uniform float bubbleDrag;
+#define config configBuffer[0]
+#define vars varsBuffer[0]
 
 float antiClusterCoefficient;
 
@@ -72,10 +38,11 @@ float antiClusterCoefficient;
 
 RWStructuredBuffer<float2> velocity;
 RWStructuredBuffer<float2> position;
-RWStructuredBuffer<float2> lastPosition; //stores initial position before pressure solving (during which position is really predicted position)
-RWStructuredBuffer<float2> particleBuffer; //temp storage for deltaPosition and viscosity/vorticity confinement forces
+RWStructuredBuffer<float2> lastPosition;//stores initial position before pressure solving (during which position is really predicted position)
+RWStructuredBuffer<float2> particleBuffer;//temp storage for deltaPosition and viscosity/vorticity confinement forces
 RWStructuredBuffer<float> density;
 RWStructuredBuffer<float> lambda;
+RWStructuredBuffer<float2> noise;
 
 //particle sorting
 RWStructuredBuffer<uint> cellContainingParticle;
@@ -92,44 +59,19 @@ struct FoamParticle//combining into struct bc we're running up against the per-k
     float2 velocity;
     float2 position;
     float life;
+    float colorNoise;
+    float sizeNoise;
+    float density;
 };
 
 RWStructuredBuffer<FoamParticle> foamParticle;
 RWStructuredBuffer<FoamParticle> foamParticleBuffer;
 RWStructuredBuffer<uint> foamParticleCounter;//[0] = num active, [1] = num surviving after update
 
-
-//DENSITY TEXTURE
-
-uniform uint texWidth;
-uniform uint texHeight;
-uniform float texelSizeX;//world width of texel = worldWidth / texWidth
-uniform float texelSizeY;
-uniform float timeBlur;
-
-uniform float densityTexSmoothingRadius;
-uniform float densityTexSmoothingRadiusSqrd;
-
-uniform float noiseSmoothingRadius;
-uniform float noiseSmoothingRadiusSqrd;
-uniform float noiseVelocityRadius;
-uniform float noiseVelocityRadiusSqrd;
-uniform float noiseScrollRate;
-uniform float2 noiseStretch;
-uniform float noiseTimeBlur;
-uniform float noiseVelocityInfluence;
-uniform float noiseVelocityInfluenceMax;
-
-uniform float foamSmoothingRadius;
-uniform float foamSmoothingRadiusSqrd;
-uniform float foamVelocityInfluence;
-uniform float foamVelocityThreshold;
-
-RWStructuredBuffer<float2> noise;
+//density texture
 RWTexture2D<half4> densityTex;
-//RWTexture2D<half2> velocityTex;
 
-#define Index(i, j) i * width + j
+#define Index(i, j) i * config.width + j
 
 void SearchCellFloat(RWStructuredBuffer<float> particleData, float2 pos, uint cell, float r2, int kernelDeg, inout float sum)
 {
@@ -148,10 +90,10 @@ void SearchCellFloat(RWStructuredBuffer<float> particleData, float2 pos, uint ce
 //2do: let's make this work for any readius (so may need to sample more than 9 cells)
 float SampleFloat(RWStructuredBuffer<float> particleData, float2 pos, float r, float r2, int kernelDeg)
 {
-    int iMin = (int) clamp((pos.y - r) / cellSize, 0, height - 1);
-    int iMax = (int) clamp((pos.y + r) / cellSize, 0, height - 1);
-    int jMin = (int) clamp((pos.x - r) / cellSize, 0, width - 1);
-    int jMax = (int) clamp((pos.x + r) / cellSize, 0, width - 1);
+    int iMin = (int) clamp((pos.y - r) / vars.cellSize, 0, config.height - 1);
+    int iMax = (int) clamp((pos.y + r) / vars.cellSize, 0, config.height - 1);
+    int jMin = (int) clamp((pos.x - r) / vars.cellSize, 0, config.width - 1);
+    int jMax = (int) clamp((pos.x + r) / vars.cellSize, 0, config.width - 1);
     
     float sum = 0;
     for (int i = iMin; i < iMax + 1; i++)
@@ -181,10 +123,10 @@ void SearchCellFloat2(RWStructuredBuffer<float2> particleData, float2 pos, uint 
 //2do: let's make this work for any readius (so may need to sample more than 9 cells)
 float2 SampleFloat2(RWStructuredBuffer<float2> particleData, float2 pos, float r, float r2, int kernelDeg)
 {
-    int iMin = (int) clamp((pos.y - r) / cellSize, 0, height - 1);
-    int iMax = (int) clamp((pos.y + r) / cellSize, 0, height - 1);
-    int jMin = (int) clamp((pos.x - r) / cellSize, 0, width - 1);
-    int jMax = (int) clamp((pos.x + r) / cellSize, 0, width - 1);
+    int iMin = (int) clamp((pos.y - r) / vars.cellSize, 0, config.height - 1);
+    int iMax = (int) clamp((pos.y + r) / vars.cellSize, 0, config.height - 1);
+    int jMin = (int) clamp((pos.x - r) / vars.cellSize, 0, config.width - 1);
+    int jMax = (int) clamp((pos.x + r) / vars.cellSize, 0, config.width - 1);
     
     float2 sum = 0;
     for (int i = iMin; i < iMax + 1; i++)
@@ -197,10 +139,54 @@ float2 SampleFloat2(RWStructuredBuffer<float2> particleData, float2 pos, float r
     return sum;
 }
 
+void SearchCellGradient(RWStructuredBuffer<float> particleData, float2 pos, uint cell, float r2, int kernelDeg, inout float2 sum)
+{
+    for (uint k = cellStart[cell]; k < cellStart[cell + 1]; k++)
+    {
+        uint q = particlesByCell[k];
+        float2 d = pos - position[q];
+        float d2 = dot(d, d);
+        if (d2 < r2)
+        {
+            sum += particleData[q] / density[q] * Poly2NKernelGradient(kernelDeg, r2, d2, d);
+        }
+    }
+}
+
+float2 SampleGradient(RWStructuredBuffer<float> particleData, float2 pos, float r, float r2, int kernelDeg)
+{
+    int iMin = (int) clamp((pos.y - r) / vars.cellSize, 0, config.height - 1);
+    int iMax = (int) clamp((pos.y + r) / vars.cellSize, 0, config.height - 1);
+    int jMin = (int) clamp((pos.x - r) / vars.cellSize, 0, config.width - 1);
+    int jMax = (int) clamp((pos.x + r) / vars.cellSize, 0, config.width - 1);
+    
+    float2 sum = 0;
+    for (int i = iMin; i < iMax + 1; i++)
+    {
+        for (int j = jMin; j < jMax + 1; j++)
+        {
+            SearchCellGradient(particleData, pos, Index(i, j), r2, kernelDeg, sum);
+        }
+    }
+    return sum;
+}
+
+float2 NonnormalizedSurfaceNormal(float2 pos, float r, float r2)
+{
+    return -SampleGradient(density, pos, r, r2, vars.kernelDeg);
+}
+
+float2 SurfaceNormal(float2 pos, float r, float r2)
+{
+    float2 n = NonnormalizedSurfaceNormal(pos, r, r2);
+    float l = dot(n, n);
+    return l > vars.surfaceNormalThreshold ? -rsqrt(l) * n : 0;
+}
+
 [numthreads(1, 1, 1)]
 void RecalculateAntiClusterCoefficient()
 {
-    antiClusterCoefficient = -antiClusterK / WholePow(Poly2NKernel(kernelDeg, smoothingRadiusSqrd, antiClusterDQ * antiClusterDQ), antiClusterN);
+    antiClusterCoefficient = -vars.antiClusterK / WholePow(Poly2NKernel(vars.kernelDeg, vars.smoothingRadiusSqrd, vars.antiClusterDQ * vars.antiClusterDQ), vars.antiClusterN);
 }
 
 void RepelFromObstacles(uint p)
@@ -212,11 +198,10 @@ void RepelFromObstacles(uint p)
         float s2 = localPos.x * localPos.x + localPos.y * localPos.y;
         if (s2 < 1)
         {
-            s2 = max(s2, 0.01);
+            s2 = max(s2, 0.25);
             float sInverse = rsqrt(s2);
-            //float2 dir = isnan(sInverse) || isinf(sInverse) ? float2(0, 1) : sInverse * localPos;
             float2 dir = sInverse * localPos;
-            velocity[p] += dt * (1 - s2) * (o.w * obstacleRepulsion - dot(velocity[p], dir)) * dir;
+            velocity[p] += vars.dt * (1 - s2) * (o.w * vars.obstacleRepulsion * dir - velocity[p]);
         }
         }
 }
@@ -224,23 +209,23 @@ void RepelFromObstacles(uint p)
 [numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
 void ComputePredictedPositions(uint3 id : SV_DispatchThreadID)
 {
-    if (id.x < numParticles)
+    if (id.x < config.numParticles)
     {
         lastPosition[id.x] = position[id.x];
-        velocity[id.x] += dt * gravity;
-        position[id.x] += dt * velocity[id.x]; //this is the predicted position, to feed into pressure solver
+        velocity[id.x] += vars.dt * vars.gravity;
+        position[id.x] += vars.dt * velocity[id.x]; //this is the predicted position, to feed into pressure solver
     }
 }
 
 [numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
 void CountParticles(uint3 id : SV_DispatchThreadID)
 {
-    if (id.x < numParticles)
+    if (id.x < config.numParticles)
     {
-        float w = position[id.x].x / cellSize;
-        float h = position[id.x].y / cellSize;
-        uint i = (uint) clamp(h, 0, height - 1);
-        uint j = (uint) clamp(w, 0, width - 1);
+        float w = position[id.x].x / vars.cellSize;
+        float h = position[id.x].y / vars.cellSize;
+        uint i = (uint) clamp(h, 0, config.height - 1);
+        uint j = (uint) clamp(w, 0, config.width - 1);
         uint c = Index(i, j);
         cellContainingParticle[id.x] = c;
         InterlockedAdd(cellParticleCount[c], 1);
@@ -252,7 +237,7 @@ void CountParticles(uint3 id : SV_DispatchThreadID)
 void SetCellStarts()
 {
     cellStart[0] = 0;
-    for (uint k = 1; k < numCells + 1; k++)
+    for (uint k = 1; k < config.numCells + 1; k++)
     {
         cellStart[k] = cellStart[k - 1] + cellParticleCount[k - 1];
     }
@@ -261,7 +246,7 @@ void SetCellStarts()
 [numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
 void SortParticlesByCell(uint3 id : SV_DispatchThreadID)
 {
-    if (id.x < numParticles)
+    if (id.x < config.numParticles)
     {
         uint c = cellContainingParticle[id.x];
         uint d;
@@ -274,9 +259,9 @@ void SortParticlesByCell(uint3 id : SV_DispatchThreadID)
 [numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
 void CalculateDensity(uint3 id : SV_DispatchThreadID)
 {
-    if (id.x < numParticles)
+    if (id.x < config.numParticles)
     {
-        density[id.x] = SampleFloat(density, position[id.x], smoothingRadius, smoothingRadiusSqrd, kernelDeg);
+        density[id.x] = SampleFloat(density, position[id.x], vars.smoothingRadius, vars.smoothingRadiusSqrd, vars.kernelDeg);
     }
 }
 
@@ -289,9 +274,9 @@ void SearchCellForLambdaDenom(uint p, uint cell, inout float2 selfSum, inout flo
         {
             float2 d = position[p] - position[q];
             half d2 = dot(d, d);
-            if (d2 < smoothingRadiusSqrd)
+            if (d2 < vars.smoothingRadiusSqrd)
             {
-                float2 grad = Poly2NKernelGradient(kernelDeg, smoothingRadiusSqrd, d2, d);
+                float2 grad = Poly2NKernelGradient(vars.kernelDeg, vars.smoothingRadiusSqrd, d2, d);
                 selfSum += grad;
                 neighborSum += dot(grad, grad);
             }
@@ -302,10 +287,10 @@ void SearchCellForLambdaDenom(uint p, uint cell, inout float2 selfSum, inout flo
 float LambdaDenom(uint p)
 {
     float2 pos = position[p];
-    int iMin = (int) clamp((pos.y - smoothingRadius) / cellSize, 0, height - 1);
-    int iMax = (int) clamp((pos.y + smoothingRadius) / cellSize, 0, height - 1);
-    int jMin = (int) clamp((pos.x - smoothingRadius) / cellSize, 0, width - 1);
-    int jMax = (int) clamp((pos.x + smoothingRadius) / cellSize, 0, width - 1);
+    int iMin = (int) clamp((pos.y - vars.smoothingRadius) / vars.cellSize, 0, config.height - 1);
+    int iMax = (int) clamp((pos.y + vars.smoothingRadius) / vars.cellSize, 0, config.height - 1);
+    int jMin = (int) clamp((pos.x - vars.smoothingRadius) / vars.cellSize, 0, config.width - 1);
+    int jMax = (int) clamp((pos.x + vars.smoothingRadius) / vars.cellSize, 0, config.width - 1);
     
     float2 selfSum = 0;
     float neighborSum = 0;
@@ -317,22 +302,22 @@ float LambdaDenom(uint p)
         }
     }
     
-    return epsilon + dot(selfSum, selfSum) + neighborSum;
+    return vars.epsilon + dot(selfSum, selfSum) + neighborSum;
 }
 
 [numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
 void CalculateLambda(uint3 id : SV_DispatchThreadID)
 {
-    if (id.x < numParticles)
+    if (id.x < config.numParticles)
     {
         uint cell = cellContainingParticle[id.x];
-        lambda[id.x] = (restDensity - density[id.x]) / LambdaDenom(id.x);
+        lambda[id.x] = (vars.restDensity - density[id.x]) / LambdaDenom(id.x);
     }
 }
 
 float AntiClusterTerm(float d2)
 {
-    return antiClusterCoefficient * WholePow(Poly2NKernel(kernelDeg, smoothingRadiusSqrd, d2), antiClusterN);
+    return antiClusterCoefficient * WholePow(Poly2NKernel(vars.kernelDeg, vars.smoothingRadiusSqrd, d2), vars.antiClusterN);
 }
 
 void SearchCellForPositionDelta(uint p, uint cell, inout float2 sum)
@@ -344,9 +329,9 @@ void SearchCellForPositionDelta(uint p, uint cell, inout float2 sum)
         {
             float2 d = position[p] - position[q];
             half d2 = dot(d, d);
-            if (d2 < smoothingRadiusSqrd)
+            if (d2 < vars.smoothingRadiusSqrd)
             {
-                sum += (lambda[p] + lambda[q] + AntiClusterTerm(d2)) * Poly2NKernelGradient(kernelDeg, smoothingRadiusSqrd, d2, d);
+                sum += (lambda[p] + lambda[q] + AntiClusterTerm(d2)) * Poly2NKernelGradient(vars.kernelDeg, vars.smoothingRadiusSqrd, d2, d);
             }
         }
     }
@@ -355,13 +340,13 @@ void SearchCellForPositionDelta(uint p, uint cell, inout float2 sum)
 [numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
 void CalculatePositionDelta(uint3 id : SV_DispatchThreadID)
 {
-    if (id.x < numParticles)
+    if (id.x < config.numParticles)
     {
         float2 pos = position[id.x];
-        int iMin = (int) clamp((pos.y - smoothingRadius) / cellSize, 0, height - 1);
-        int iMax = (int) clamp((pos.y + smoothingRadius) / cellSize, 0, height - 1);
-        int jMin = (int) clamp((pos.x - smoothingRadius) / cellSize, 0, width - 1);
-        int jMax = (int) clamp((pos.x + smoothingRadius) / cellSize, 0, width - 1);
+        int iMin = (int) clamp((pos.y - vars.smoothingRadius) / vars.cellSize, 0, config.height - 1);
+        int iMax = (int) clamp((pos.y + vars.smoothingRadius) / vars.cellSize, 0, config.height - 1);
+        int jMin = (int) clamp((pos.x - vars.smoothingRadius) / vars.cellSize, 0, config.width - 1);
+        int jMax = (int) clamp((pos.x + vars.smoothingRadius) / vars.cellSize, 0, config.width - 1);
     
         float2 sum = 0;
         for (int i = iMin; i < iMax + 1; i++)
@@ -372,14 +357,14 @@ void CalculatePositionDelta(uint3 id : SV_DispatchThreadID)
             }
         }
     
-        particleBuffer[id.x] = 1 / restDensity * sum;
+        particleBuffer[id.x] = 1 / vars.restDensity * sum;
     }
 }
 
 [numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
 void AddPositionDelta(uint3 id : SV_DispatchThreadID)
 {
-    if (id.x < numParticles)
+    if (id.x < config.numParticles)
     {
         position[id.x] += particleBuffer[id.x];
     }
@@ -388,15 +373,15 @@ void AddPositionDelta(uint3 id : SV_DispatchThreadID)
 [numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
 void StoreSolvedVelocity(uint3 id : SV_DispatchThreadID)
 {
-    if (id.x < numParticles)
+    if (id.x < config.numParticles)
     {
-        velocity[id.x] = dtInverse * (position[id.x] - lastPosition[id.x]);
+        velocity[id.x] = vars.dtInverse * (position[id.x] - lastPosition[id.x]);
     }
 }
 
 void SearchCellForVorticityConfinement(uint p, uint cell, inout float2 viscSum, inout float2 vortSum)
 {
-    float rInverse = 1 / smoothingRadius;
+    float rInverse = 1 / vars.smoothingRadius;
     for (uint k = cellStart[cell]; k < cellStart[cell + 1]; k++)
     {
         uint q = particlesByCell[k];
@@ -404,10 +389,10 @@ void SearchCellForVorticityConfinement(uint p, uint cell, inout float2 viscSum, 
         {
             float2 positionDiff = position[p] - position[q];
             float d2 = dot(positionDiff, positionDiff);
-            if (d2 < smoothingRadiusSqrd)
+            if (d2 < vars.smoothingRadiusSqrd)
             {
                 float d = sqrt(d2);
-                viscSum += (smoothingRadius - d) * (velocity[q] - velocity[p]); //let's sample some viscosity while we're here
+                viscSum += (vars.smoothingRadius - d) * (velocity[q] - velocity[p]); //let's sample some viscosity while we're here
                 
                 float dInverse = 1 / d;
                 float d3Inverse = dInverse / d2;
@@ -434,13 +419,13 @@ void SearchCellForVorticityConfinement(uint p, uint cell, inout float2 viscSum, 
 [numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
 void CalculateVorticityConfinementForce(uint3 id : SV_DispatchThreadID)
 {
-    if (id.x < numParticles)
+    if (id.x < config.numParticles)
     {
         float2 pos = position[id.x];
-        int iMin = (int) clamp((pos.y - smoothingRadius) / cellSize, 0, height - 1);
-        int iMax = (int) clamp((pos.y + smoothingRadius) / cellSize, 0, height - 1);
-        int jMin = (int) clamp((pos.x - smoothingRadius) / cellSize, 0, width - 1);
-        int jMax = (int) clamp((pos.x + smoothingRadius) / cellSize, 0, width - 1);
+        int iMin = (int) clamp((pos.y - vars.smoothingRadius) / vars.cellSize, 0, config.height - 1);
+        int iMax = (int) clamp((pos.y + vars.smoothingRadius) / vars.cellSize, 0, config.height - 1);
+        int jMin = (int) clamp((pos.x - vars.smoothingRadius) / vars.cellSize, 0, config.width - 1);
+        int jMax = (int) clamp((pos.x + vars.smoothingRadius) / vars.cellSize, 0, config.width - 1);
     
         float2 viscSum = 0;
         float2 vortSum = 0;
@@ -452,7 +437,7 @@ void CalculateVorticityConfinementForce(uint3 id : SV_DispatchThreadID)
             }
         }
         
-        particleBuffer[id.x] = viscosity * viscSum - vorticityConfinement / density[id.x] * vortSum;
+        particleBuffer[id.x] = vars.viscosity * viscSum - vars.vorticityConfinement / density[id.x] * vortSum;
     }
 }
 
@@ -460,67 +445,67 @@ void CalculateVorticityConfinementForce(uint3 id : SV_DispatchThreadID)
 [numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
 void IntegrateParticles(uint3 id : SV_DispatchThreadID)
 {
-    if (id.x < numParticles)
+    if (id.x < config.numParticles)
     {
-        velocity[id.x] += dt * particleBuffer[id.x];//add viscosity and vorticity confinement forces
+        velocity[id.x] += vars.dt * particleBuffer[id.x];//add viscosity and vorticity confinement forces
         RepelFromObstacles(id.x);
-        position[id.x] = lastPosition[id.x] + dt * velocity[id.x];
+        position[id.x] = lastPosition[id.x] + vars.dt * velocity[id.x];
     }
 }
 
 void HandleWallCollisions(inout float2 position, inout float2 velocity)
 {
-    if (position.x < cellSize)
+    if (position.x < vars.cellSize)
     {
-        float dx = position.x - cellSize;
+        float dx = position.x - vars.cellSize;
         position.x -= dx;
         if (velocity.x < 0)
         {
-            velocity.x = -collisionBounciness * velocity.x;
+            velocity.x = -vars.collisionBounciness * velocity.x;
             //velocity.y = collisionBounciness * velocity.y;
         }
-        velocity.x -= dx / dt;
+        velocity.x -= dx / vars.dt;
     }
-    else if (position.x > worldWidth - cellSize)
+    else if (position.x > vars.worldWidth - vars.cellSize)
     {
-        float dx = position.x - worldWidth + cellSize;
+        float dx = position.x - vars.worldWidth + vars.cellSize;
         position.x -= dx;
         if (velocity.x > 0)
         {
-            velocity.x = -collisionBounciness * velocity.x;
-            //velocity[id.x].y = collisionBounciness * velocity[id.x].y;
+            velocity.x = -vars.collisionBounciness * velocity.x;
+            //velocity.y = collisionBounciness * velocity.y;
         }
-        velocity.x -= dx / dt;
+        velocity.x -= dx / vars.dt;
     }
 
-    if (position.y < cellSize)
+    if (position.y < vars.cellSize)
     {
-        float dy = position.y - cellSize;
+        float dy = position.y - vars.cellSize;
         position.y -= dy;
         if (velocity.y < 0)
         {
             //velocity.x = collisionBounciness * velocity.x;
-            velocity.y = -collisionBounciness * velocity.y;
+            velocity.y = -vars.collisionBounciness * velocity.y;
         }
-        velocity.y -= dy / dt;
+        velocity.y -= dy / vars.dt;
     }
-    else if (position.y > worldHeight - cellSize)
+    else if (position.y > vars.worldHeight - vars.cellSize)
     {
-        float dy = position.y - worldHeight + cellSize;
+        float dy = position.y - vars.worldHeight + vars.cellSize;
         position.y -= dy;
         if (velocity.y > 0)
         {
             //velocity.x = collisionBounciness * velocity.x;
-            velocity.y = -collisionBounciness * velocity.y;
+            velocity.y = -vars.collisionBounciness * velocity.y;
         }
-        velocity.y -= dy / dt;
+        velocity.y -= dy / vars.dt;
     }
 }
 
 [numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
 void HandleWallCollisions(uint3 id : SV_DispatchThreadID)
 {
-    if (id.x < numParticles)
+    if (id.x < config.numParticles)
     {
         HandleWallCollisions(position[id.x], velocity[id.x]);
     }
@@ -529,9 +514,9 @@ void HandleWallCollisions(uint3 id : SV_DispatchThreadID)
 [numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
 void ScrollNoise(uint3 id : SV_DispatchThreadID)
 {
-    if (id.x < numParticles)
+    if (id.x < config.numParticles)
     {
-        noise[id.x].x += noise[id.x].y * noiseScrollRate * dt;
+        noise[id.x].x += noise[id.x].y * vars.noiseScrollRate * vars.dt;
         if (noise[id.x].x > 1 || noise[id.x].x < 0)
         {
             noise[id.x].y *= -1;
@@ -547,23 +532,23 @@ void SearchCellForNoise(float2 pos, float2 v, float2 w, float2 sv, float2 sw, ui
         float2 d = pos - position[q];
         float2 a = dot(d, sv);
         float2 b = dot(d, sw);
-        d = (a / noiseStretch.x) * v + (b / noiseStretch.y) * w; //stretch the noise wrt velocity!
+        d = (a / vars.noiseStretch.x) * v + (b / vars.noiseStretch.y) * w; //stretch the noise wrt velocity!
         float d2 = dot(d, d);
         if (d2 < r2)
         {
-            noiseSum += noise[q].x / density[q] * Poly2NKernel(kernelDeg, r2, d2);
+            noiseSum += noise[q].x / density[q] * Poly2NKernel(vars.kernelDeg, r2, d2);
         }
     }
 }
 
 float SampleNoise(float2 pos, float r, float r2, out float2 v)
 {
-    int iMin = (int) clamp((pos.y - r) / cellSize, 0, height - 1);
-    int iMax = (int) clamp((pos.y + r) / cellSize, 0, height - 1);
-    int jMin = (int) clamp((pos.x - r) / cellSize, 0, width - 1);
-    int jMax = (int) clamp((pos.x + r) / cellSize, 0, width - 1);
+    int iMin = (int) clamp((pos.y - r) / vars.cellSize, 0, config.height - 1);
+    int iMax = (int) clamp((pos.y + r) / vars.cellSize, 0, config.height - 1);
+    int jMin = (int) clamp((pos.x - r) / vars.cellSize, 0, config.width - 1);
+    int jMax = (int) clamp((pos.x + r) / vars.cellSize, 0, config.width - 1);
     
-    v = SampleFloat2(velocity, pos, r, r2, kernelDeg);
+    v = SampleFloat2(velocity, pos, r, r2, vars.kernelDeg);
     float v2 = dot(v, v);
     float s = 1 / v2;
     if (isnan(s) || isinf(s))
@@ -583,17 +568,10 @@ float SampleNoise(float2 pos, float r, float r2, out float2 v)
         }
     }
     
-    return (1 + min(noiseVelocityInfluence * nSum * nSum * v2, noiseVelocityInfluenceMax)) * nSum;
+    return (1 + min(vars.noiseVelocityInfluence * nSum * nSum * v2, vars.noiseVelocityInfluenceMax)) * nSum;
 }
 
-//float2 SampleSurfaceNormal(float2 pos, float r, float r2)
-//{
-//    float2 n = SampleGradient(density, pos, r, r2, densityKernelDeg);
-//    float l = dot(n, n);
-//    return l > surfaceNormalThreshold ? -rsqrt(l) * n : 0;
-//}
-
-void SearchCellForFoaminess(float2 pos, float2 vel, uint cell, float r, float r2, inout float sum)
+void SearchCellForFoaminess(float2 pos, float2 vel, uint cell, float r, float r2, inout float vSum)
 {
     for (uint k = cellStart[cell]; k < cellStart[cell + 1]; k++)
     {
@@ -602,7 +580,6 @@ void SearchCellForFoaminess(float2 pos, float2 vel, uint cell, float r, float r2
         float d2 = dot(posDiff, posDiff);
         if (d2 < r2)
         {
-            
             float d = sqrt(d2);
             float dInverse = 1 / d;
             if (!isnan(dInverse) && !isinf(dInverse))
@@ -610,7 +587,7 @@ void SearchCellForFoaminess(float2 pos, float2 vel, uint cell, float r, float r2
                     
                 float2 velDiff = vel - velocity[q];
                 float s = sqrt(dot(velDiff, velDiff));
-                sum.x += (s - dInverse * dot(velDiff, posDiff)) * SimpleLinearKernel(r, r2, d) / density[q];
+                vSum += (s - dInverse * dot(velDiff, posDiff)) * Poly2NKernel(vars.kernelDeg, r2, d2) / density[q];
             }
         }
     }
@@ -618,94 +595,96 @@ void SearchCellForFoaminess(float2 pos, float2 vel, uint cell, float r, float r2
 
 float SampleFoaminess(float2 pos, float2 vel, float densitySample, float r, float r2)
 {
-    float a = clamp(foamVelocityInfluence * dot(vel, vel) - foamVelocityThreshold, 0, 1);
+    float a = clamp(vars.foamVelocityInfluence * dot(vel, vel) - vars.foamVelocityThreshold, 0, 1);
     if (a == 0)
     {
         return 0;
     }
     
-    int iMin = (int) clamp((pos.y - r) / cellSize, 0, height - 1);
-    int iMax = (int) clamp((pos.y + r) / cellSize, 0, height - 1);
-    int jMin = (int) clamp((pos.x - r) / cellSize, 0, width - 1);
-    int jMax = (int) clamp((pos.x + r) / cellSize, 0, width - 1);
+    int iMin = (int) clamp((pos.y - r) / vars.cellSize, 0, config.height - 1);
+    int iMax = (int) clamp((pos.y + r) / vars.cellSize, 0, config.height - 1);
+    int jMin = (int) clamp((pos.x - r) / vars.cellSize, 0, config.width - 1);
+    int jMax = (int) clamp((pos.x + r) / vars.cellSize, 0, config.width - 1);
     
-    float sum = 0;
+    float vSum = 0;
     
     for (int i = iMin; i < iMax + 1; i++)
     {
         for (int j = jMin; j < jMax + 1; j++)
         {
-            SearchCellForFoaminess(pos, vel, Index(i, j), r, r2, sum);
+            SearchCellForFoaminess(pos, vel, Index(i, j), r, r2, vSum);
         }
     }
     
-    return a * sum / (0.01 + densitySample);//divide by density an easy way to make foaminess stronger near the surface
+    return a * vSum;
 }
 
 [numthreads(16, 16, 1)]
 void UpdateDensityTexture(uint3 id : SV_DispatchThreadID)
 {
-    if (id.x < texWidth && id.y < texHeight)
+    if (id.x < vars.texWidth && id.y < vars.texHeight)
     {
         //position of texel center on grid (world units)
-        float2 pos = float2(texelSizeX * (id.x + 0.5), texelSizeY * (id.y + 0.5));
+        float2 pos = float2(vars.texelSizeX * (id.x + 0.5), vars.texelSizeY * (id.y + 0.5));
         
         float2 vel;
-        float densitySample = SampleFloat(density, pos, densityTexSmoothingRadius, densityTexSmoothingRadiusSqrd, kernelDeg);
-        float noiseSample = SampleNoise(pos, noiseSmoothingRadius, noiseSmoothingRadiusSqrd, vel);
-        float foaminess = SampleFoaminess(pos, vel, densitySample, foamSmoothingRadius, foamSmoothingRadiusSqrd);
-        //^divide by density easy way of making foaminess stronger near surface (not doing wave crest detection bc i think it already looks great as is)
+        float densitySample = SampleFloat(density, pos, vars.densityTexSmoothingRadius, vars.densityTexSmoothingRadiusSqrd, vars.kernelDeg);
+        float noiseSample = SampleNoise(pos, vars.noiseSmoothingRadius, vars.noiseSmoothingRadiusSqrd, vel);
+        float foaminess = SampleFoaminess(pos, vel, densitySample, vars.foamSmoothingRadius, vars.foamSmoothingRadiusSqrd);   
         
         uint2 k = uint2(id.x, id.y);
         densityTex[k] = half4(
-            lerp(densityTex[k].x, densitySample, timeBlur),
-            lerp(densityTex[k].y, noiseSample, noiseTimeBlur),
-            lerp(densityTex[k].z, foaminess, timeBlur),
+            lerp(densityTex[k].x, densitySample, vars.timeBlur),
+            lerp(densityTex[k].y, noiseSample, vars.noiseTimeBlur),
+            lerp(densityTex[k].z, foaminess, vars.timeBlur),
             0
         );
-        //velocityTex[k] = vel;
     }
 }
 
 [numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
 void SpawnFoam(uint3 id :SV_DispatchThreadID)
 {
-    if (id.x < numParticles && foamParticleCounter[0] < numFoamParticles)
+    if (id.x < config.numParticles && foamParticleCounter[0] < config.numFoamParticles)
     {
         float2 pos = position[id.x];
-        uint2 k = uint2(
-            (uint) clamp(pos.x / texelSizeX, 0, texWidth - 1),
-            (uint) clamp(pos.y / texelSizeY, 0, texHeight - 1)
-        );
+        if (pos.x < 1.5 * vars.cellSize || pos.x > vars.worldWidth - 1.5 * vars.cellSize || pos.y < 1.5 * vars.cellSize)//don't know how else to get rid of the exaggerated foam at edges
+        {
+            return;
+        }
         
-        uint seed = asuint(69 * pos.x + 54321 * pos.y/* + 1234569 * foamTime*/);
+        float2 vel = velocity[id.x];
+        float dens = density[id.x];
         
-        int numToSpawn = densityTex[k].x * densityTex[k].z * foamSpawnRate * dt;
+        float foaminess = SampleFoaminess(pos, vel, dens, vars.foamParticleSmoothingRadius, vars.foamParticleSmoothingRadiusSqrd);
+        
+        uint seed = 73856093 * asuint(pos.x) ^ 19349669 * asuint(pos.y);
+        
+        int numToSpawn = /*dens **/ foaminess * vars.foamSpawnRate * vars.dt;
         
         if (numToSpawn > 0)
         {
-            float spawnRadius = min(densityTex[k].x * foamSpawnRadiusMultiplier, foamSpawnRadiusMax);
+            float spawnRadius = min(dens * vars.foamSpawnRadiusMultiplier, vars.foamSpawnRadiusMax);
             
-            float2 v = dt * velocity[id.x];
-            float d = rsqrt(dot(v, v));
-            if (isnan(d) || isinf(d))
-            {
-                return;
-            }
-            float2 w = foamSpawnRadiusMax * d * v;
-            w = (-w.y, w.x);
+            float2 v = vars.dt * vel;
+            float2 w = float2(-v.y, v.x);
+            //foamSpawnRadiusMax * d * v;
+            //w = (-w.y, w.x);
             while (numToSpawn > 0)
             {
                 uint index;
                 InterlockedAdd(foamParticleCounter[0], 1, index);
-                if (index < numFoamParticles)
+                if (index < config.numFoamParticles)
                 {
                     float a = RandomFloat01(seed);
                     float b = 2 * RandomFloat01(seed) - 1;
-                    float2 c = b * w;
+                    float2 c = b * spawnRadius * w;
                     foamParticle[index].position = pos + a * v + c;
                     foamParticle[index].velocity = velocity[id.x] + c;
-                    foamParticle[index].life = lerp(foamLifetimeMin, foamLifetimeMax, RandomFloat01(seed));
+                    foamParticle[index].life = lerp(vars.foamLifetimeMin, vars.foamLifetimeMax, RandomFloat01(seed));
+                    foamParticle[index].colorNoise = RandomFloat01(seed);
+                    foamParticle[index].sizeNoise = RandomFloat01(seed);
+                    foamParticle[index].density = dens;
                     
                     numToSpawn--;
                 }
@@ -723,33 +702,38 @@ void UpdateFoam(uint3 id : SV_DispatchThreadID)
 {
     if (id.x < foamParticleCounter[0])
     {
-        foamParticle[id.x].life -= dt;
-        if (foamParticle[id.x].life > 0)
+        foamParticle[id.x].life -= vars.dt;
+        if (!(foamParticle[id.x].life > 0))
         {
-            float2 pos = foamParticle[id.x].position;
-            uint2 k = uint2(
-                (uint) clamp(pos.x / texelSizeX, 0, texWidth - 1),
-                (uint) clamp(pos.y / texelSizeY, 0, texHeight - 1)
-            );
-            float density = densityTex[k].x;
-        
-            if (density > bubbleThreshold)//bubble particle
-            {
-                float2 v = SampleFloat2(velocity, pos, foamSmoothingRadius, foamSmoothingRadiusSqrd, kernelDeg);
-                foamParticle[id.x].velocity += -dt * bubbleBuoyancy * gravity + bubbleDrag * (v - foamParticle[id.x].velocity);
-            }
-            else if (density > foamThreshold)//foam particle
-            {
-                foamParticle[id.x].velocity = SampleFloat2(velocity, pos, foamSmoothingRadius, foamSmoothingRadiusSqrd, kernelDeg);
-            }
-            else //spray particle
-            {
-                foamParticle[id.x].velocity += dt * gravity;
-            }
-        
-            foamParticle[id.x].position += dt * foamParticle[id.x].velocity;
-            HandleWallCollisions(foamParticle[id.x].position, foamParticle[id.x].velocity);
+            return;
         }
+
+        float2 pos = foamParticle[id.x].position;
+        uint2 k = uint2(
+            (uint) clamp(pos.x / vars.texelSizeX, 0, vars.texWidth - 1),
+            (uint) clamp(pos.y / vars.texelSizeY, 0, vars.texHeight - 1)
+        );
+        
+        float density = densityTex[k].x;
+        
+        foamParticle[id.x].density = density;
+        
+        if (density > vars.bubbleThreshold)//bubble particle
+        {
+            float2 v = SampleFloat2(velocity, pos, vars.foamParticleSmoothingRadius, vars.foamParticleSmoothingRadiusSqrd, vars.kernelDeg);
+            foamParticle[id.x].velocity += -vars.dt * vars.bubbleBuoyancy * vars.gravity + vars.bubbleDrag * (v - foamParticle[id.x].velocity);
+        }
+        else if (density > vars.foamThreshold)//foam particle
+        {
+            foamParticle[id.x].velocity = SampleFloat2(velocity, pos, vars.foamSmoothingRadius, vars.foamSmoothingRadiusSqrd, vars.kernelDeg);
+        }
+        else//spray particle
+        {
+            foamParticle[id.x].velocity += vars.dt * (vars.gravity - vars.sprayDrag * foamParticle[id.x].velocity);
+        }
+        
+        foamParticle[id.x].position += vars.dt * foamParticle[id.x].velocity;
+        HandleWallCollisions(foamParticle[id.x].position, foamParticle[id.x].velocity);
     }
 }
 

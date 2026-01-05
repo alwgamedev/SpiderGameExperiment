@@ -104,7 +104,7 @@ public class PBFParticleRenderer : MonoBehaviour
                 worldBounds = new(Vector3.zero, new(10000, 10000, 10000))//better options?
             };
             commandData[0].indexCountPerInstance = particleMesh.GetIndexCount(0);
-            commandData[0].instanceCount = (uint)pbFluid.numParticles;
+            commandData[0].instanceCount = (uint)pbFluid.configuration.numParticles;
             commandBuffer.SetData(commandData);
             Graphics.RenderMeshIndirect(in renderParams, particleMesh, commandBuffer);
             //there's also RenderPrimitives and RenderMeshPrimitives?
