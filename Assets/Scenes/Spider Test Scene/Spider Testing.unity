@@ -3493,6 +3493,30 @@ PrefabInstance:
       propertyPath: m_Name
       value: PB Fluid
       objectReference: {fileID: 0}
+    - target: {fileID: 5222157793995484295, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
+      propertyPath: computeShader
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5222157793995484295, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
+      propertyPath: densityTexture
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5222157793995484295, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
+      propertyPath: velocityTexture
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5222157793995484295, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
+      propertyPath: foamParticleSettings.lifetimeMax
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5222157793995484295, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
+      propertyPath: foamParticleSettings.spawnRadiusMax
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 5222157793995484295, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
+      propertyPath: foamParticleSettings.spawnRadiusMultiplier
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 5648694684584665525, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
       propertyPath: m_LocalPosition.x
       value: -60.09

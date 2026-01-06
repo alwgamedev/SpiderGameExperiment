@@ -213,7 +213,7 @@ void ComputePredictedPositions(uint3 id : SV_DispatchThreadID)
     {
         lastPosition[id.x] = position[id.x];
         velocity[id.x] += vars.dt * vars.gravity;
-        position[id.x] += vars.dt * velocity[id.x]; //this is the predicted position, to feed into pressure solver
+        position[id.x] += vars.dt * velocity[id.x];//this is the predicted position, to feed into pressure solver
     }
 }
 
@@ -571,7 +571,7 @@ float SampleNoise(float2 pos, float r, float r2, out float2 v)
     return (1 + min(vars.noiseVelocityInfluence * nSum * nSum * v2, vars.noiseVelocityInfluenceMax)) * nSum;
 }
 
-void SearchCellForFoaminess(float2 pos, float2 vel, uint cell, float r, float r2, inout float vSum)
+void SearchCellForFoaminess(float2 pos, float2 vel, uint cell, float r, float r2, inout float trappedAirSum)
 {
     for (uint k = cellStart[cell]; k < cellStart[cell + 1]; k++)
     {
@@ -587,7 +587,8 @@ void SearchCellForFoaminess(float2 pos, float2 vel, uint cell, float r, float r2
                     
                 float2 velDiff = vel - velocity[q];
                 float s = sqrt(dot(velDiff, velDiff));
-                vSum += (s - dInverse * dot(velDiff, posDiff)) * Poly2NKernel(vars.kernelDeg, r2, d2) / density[q];
+                float k = Poly2NKernel(vars.kernelDeg, r2, d2) / density[q];
+                trappedAirSum += (s - dInverse * dot(velDiff, posDiff)) * k;
             }
         }
     }
@@ -595,28 +596,23 @@ void SearchCellForFoaminess(float2 pos, float2 vel, uint cell, float r, float r2
 
 float SampleFoaminess(float2 pos, float2 vel, float densitySample, float r, float r2)
 {
-    float a = clamp(vars.foamVelocityInfluence * dot(vel, vel) - vars.foamVelocityThreshold, 0, 1);
-    if (a == 0)
-    {
-        return 0;
-    }
-    
     int iMin = (int) clamp((pos.y - r) / vars.cellSize, 0, config.height - 1);
     int iMax = (int) clamp((pos.y + r) / vars.cellSize, 0, config.height - 1);
     int jMin = (int) clamp((pos.x - r) / vars.cellSize, 0, config.width - 1);
     int jMax = (int) clamp((pos.x + r) / vars.cellSize, 0, config.width - 1);
     
-    float vSum = 0;
+    float trappedAirSum = 0;
     
     for (int i = iMin; i < iMax + 1; i++)
     {
         for (int j = jMin; j < jMax + 1; j++)
         {
-            SearchCellForFoaminess(pos, vel, Index(i, j), r, r2, vSum);
+            SearchCellForFoaminess(pos, vel, Index(i, j), r, r2, trappedAirSum);
         }
     }
     
-    return a * vSum;
+    float kineticEnergy = NormalizeFloat(dot(vel, vel), vars.kineticEnergyNormalizer, vars.kineticEnergyThreshold);
+    return kineticEnergy * vars.trappedAirDiffuseRate * NormalizeFloat(trappedAirSum, vars.trappedAirNormalizer, vars.trappedAirThreshold);
 }
 
 [numthreads(16, 16, 1)]
@@ -660,7 +656,7 @@ void SpawnFoam(uint3 id :SV_DispatchThreadID)
         
         uint seed = 73856093 * asuint(pos.x) ^ 19349669 * asuint(pos.y);
         
-        int numToSpawn = /*dens **/ foaminess * vars.foamSpawnRate * vars.dt;
+        int numToSpawn = vars.dt * foaminess;
         
         if (numToSpawn > 0)
         {
@@ -668,8 +664,6 @@ void SpawnFoam(uint3 id :SV_DispatchThreadID)
             
             float2 v = vars.dt * vel;
             float2 w = float2(-v.y, v.x);
-            //foamSpawnRadiusMax * d * v;
-            //w = (-w.y, w.x);
             while (numToSpawn > 0)
             {
                 uint index;

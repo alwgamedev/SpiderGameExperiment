@@ -18,6 +18,13 @@ float WholePow(float x, int n)
     return y;
 }
 
+//returns clamp(x * normalizer - threshold, 0, 1);
+float NormalizeFloat(float x, float normalizer, float threshold)
+{
+    x *= normalizer;
+    return x > threshold ? min(x - threshold, 1) : 0;
+}
+
 //from Lague
 uint RandomUInt(inout uint state)
 {

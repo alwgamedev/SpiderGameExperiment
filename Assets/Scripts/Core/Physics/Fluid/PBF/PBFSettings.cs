@@ -42,7 +42,7 @@ public struct PBFSimSettings
 [Serializable]
 public struct PBFFoamParticleSettings
 {
-    public float spawnRate;
+    public float trappedAirDiffuseRate;
     public float spawnRadiusMultiplier;
     public float spawnRadiusMax;
     public float lifetimeMin;
@@ -54,6 +54,10 @@ public struct PBFFoamParticleSettings
     public float bubbleDrag;
     public float sprayDrag;
     public float smoothingRadius;
+    public float trappedAirNormalizer;
+    public float trappedAirThreshold;
+    public float kineticEnergyNormalizer;
+    public float kineticEnergyThreshold;
 }
 
 [Serializable]
@@ -71,8 +75,6 @@ public struct PBFDensityTexSettings
     public float noiseVelocityInfluence;
     public float noiseVelocityInfluenceMax;
     public float foamSmoothingRadius;
-    public float foamVelocityInfluence;
-    public float foamVelocityThreshold;
 }
 
 public struct PBFComputeConfig
@@ -116,7 +118,7 @@ public struct PBFComputeVariables
     public float surfaceNormalThreshold;
 
     //FOAM PARTICLES
-    public float foamSpawnRate;
+    public float trappedAirDiffuseRate;
     public float foamSpawnRadiusMultiplier;
     public float foamSpawnRadiusMax;
     public float foamLifetimeMin;
@@ -129,6 +131,10 @@ public struct PBFComputeVariables
     public float sprayDrag;
     public float foamParticleSmoothingRadius;
     public float foamParticleSmoothingRadiusSqrd;
+    public float trappedAirNormalizer;
+    public float trappedAirThreshold;
+    public float kineticEnergyNormalizer;
+    public float kineticEnergyThreshold;
 
     //DENSITY TEX
     public int texWidth;
@@ -149,10 +155,8 @@ public struct PBFComputeVariables
     public float noiseVelocityInfluenceMax;
     public float foamSmoothingRadius;
     public float foamSmoothingRadiusSqrd;
-    public float foamVelocityInfluence;
-    public float foamVelocityThreshold;
 
-    public PBFComputeVariables(PBFConfiguration config, PBFSimSettings settings, PBFFoamParticleSettings foamParticleSettings, 
+    public PBFComputeVariables(PBFConfiguration config, PBFSimSettings settings, PBFFoamParticleSettings foamParticleSettings,
         PBFDensityTexSettings densityTexSettings, float dt)
     {
         float w = config.width * settings.cellSize;
@@ -178,7 +182,7 @@ public struct PBFComputeVariables
         obstacleRepulsion = settings.obstacleRepulsion;
         surfaceNormalThreshold = settings.surfaceNormalThreshold;
 
-        foamSpawnRate = foamParticleSettings.spawnRate;
+        trappedAirDiffuseRate = foamParticleSettings.trappedAirDiffuseRate;
         foamSpawnRadiusMultiplier = foamParticleSettings.spawnRadiusMultiplier;
         foamSpawnRadiusMax = foamParticleSettings.spawnRadiusMax;
         foamLifetimeMin = foamParticleSettings.lifetimeMin;
@@ -191,6 +195,10 @@ public struct PBFComputeVariables
         sprayDrag = foamParticleSettings.sprayDrag;
         foamParticleSmoothingRadius = foamParticleSettings.smoothingRadius;
         foamParticleSmoothingRadiusSqrd = foamParticleSettings.smoothingRadius * foamParticleSettings.smoothingRadius;
+        trappedAirNormalizer = foamParticleSettings.trappedAirNormalizer;
+        trappedAirThreshold = foamParticleSettings.trappedAirThreshold;
+        kineticEnergyNormalizer = foamParticleSettings.kineticEnergyNormalizer;
+        kineticEnergyThreshold = foamParticleSettings.kineticEnergyThreshold;
 
         texWidth = densityTexSettings.texWidth;
         texHeight = densityTexSettings.texHeight;
@@ -210,8 +218,5 @@ public struct PBFComputeVariables
         noiseVelocityInfluenceMax = densityTexSettings.noiseVelocityInfluenceMax;
         foamSmoothingRadius = densityTexSettings.foamSmoothingRadius;
         foamSmoothingRadiusSqrd = densityTexSettings.foamSmoothingRadius * densityTexSettings.foamSmoothingRadius;
-        foamVelocityInfluence = densityTexSettings.foamVelocityInfluence;
-        foamVelocityThreshold = densityTexSettings.foamVelocityThreshold;
-}
-
+    }
 }

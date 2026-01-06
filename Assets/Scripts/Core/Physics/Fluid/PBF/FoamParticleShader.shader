@@ -50,7 +50,6 @@
             float4 particleColorMax0;
             float4 particleColorMax1;
 
-            //x-coord is when sizeNoise = 0, y-coord is when sizeNoise = 1;
             float2 particleRadiusMin;
             float2 particleRadiusSpray;
             float2 particleRadiusFoam;
@@ -138,7 +137,7 @@
                     radius = lerp(particleRadiusMin, particleRadiusSpray, t);
                 }
 
-                float r = i < particleCounter[0] ? /*life **/ lerp(radius.x, radius.y, particle[i].sizeNoise) : 0;
+                float r = i < particleCounter[0] ? life * lerp(radius.x, radius.y, particle[i].sizeNoise) : 0;
                 float3 particlePos = float3(pivotPosition.x + particle[i].position.x, pivotPosition.y + particle[i].position.y, pivotPosition.z);
                 float3 vertexWorldPos = particlePos + r * mul(unity_ObjectToWorld, v.position);
                 o.clipPos = mul(UNITY_MATRIX_VP, float4(vertexWorldPos, 1));
@@ -155,8 +154,6 @@
                 {
                     return 0;
                 }
-
-                //2do: fade out particle color at end of life 
 
                 fixed4 colorMin0;
                 fixed4 colorMin1;

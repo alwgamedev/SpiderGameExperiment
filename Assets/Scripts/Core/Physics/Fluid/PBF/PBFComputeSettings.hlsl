@@ -30,7 +30,7 @@ struct PBFVariables
     float surfaceNormalThreshold;
     
     //foam particles
-    float foamSpawnRate;
+    float trappedAirDiffuseRate;
     float foamSpawnRadiusMultiplier;
     float foamSpawnRadiusMax;
     float foamLifetimeMin;
@@ -43,6 +43,10 @@ struct PBFVariables
     float sprayDrag;
     float foamParticleSmoothingRadius;
     float foamParticleSmoothingRadiusSqrd;
+    float trappedAirNormalizer;
+    float trappedAirThreshold;
+    float kineticEnergyNormalizer;
+    float kineticEnergyThreshold;
     
     //density tex
     uint texWidth;
@@ -63,6 +67,4 @@ struct PBFVariables
     float noiseVelocityInfluenceMax;
     float foamSmoothingRadius;
     float foamSmoothingRadiusSqrd;
-    float foamVelocityInfluence;
-    float foamVelocityThreshold;
 };
