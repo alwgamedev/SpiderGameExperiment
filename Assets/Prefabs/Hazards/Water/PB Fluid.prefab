@@ -79,10 +79,10 @@ MonoBehaviour:
     surfaceNormalThreshold: 100
   foamParticleSettings:
     trappedAirDiffuseRate: 800
-    spawnRadiusMultiplier: 10
-    spawnRadiusMax: 15
+    spawnRadiusMultiplier: 100
+    spawnRadiusMax: 25
     lifetimeMin: 0.25
-    lifetimeMax: 1.5
+    lifetimeMax: 2
     sprayThreshold: 0.0001
     foamThreshold: 10
     bubbleThreshold: 15

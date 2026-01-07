@@ -35,8 +35,8 @@ Shader "Custom/RopeShader"
                 float2 uv : TEXCOORD0;
             };
             
-            int _NumNodes;
-            int _EndcapTriangles;
+            uint _NumNodes;
+            uint _EndcapTriangles;
             float _HalfWidth;
             float4 _EdgeColor;
             float4 _MiddleColor;

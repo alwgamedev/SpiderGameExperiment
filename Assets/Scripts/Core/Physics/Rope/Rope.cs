@@ -10,7 +10,7 @@ public class Rope
     const float MAX_UPDATE_TIME = 2.5f;
 
     //Rope Data
-    public readonly float width;
+    public readonly float width;//really the width of the rope (not half of it)
     public readonly float minNodeSpacing;
     public readonly float maxNodeSpacing;
     float nodeSpacing;
@@ -40,8 +40,10 @@ public class Rope
     readonly float tunnelEscapeRadius;
     readonly float collisionThreshold;
     readonly float collisionBounciness;
-    readonly Vector2[] lastCollisionNormal;
-    public readonly Collider2D[] currentCollision;
+    public readonly Vector2[] lastCollisionNormal;
+    public readonly Collider2D[] nearestCollider;
+    public readonly bool[] hadCollision;
+
 
     readonly Vector2[] raycastDirections;
 
@@ -83,7 +85,8 @@ public class Rope
         this.tunnelEscapeRadius = tunnelEscapeRadius;
         collisionThreshold = 0.5f * width;
         this.collisionBounciness = collisionBounciness;
-        currentCollision = new Collider2D[numNodes];
+        nearestCollider = new Collider2D[numNodes];
+        hadCollision = new bool[numNodes];
         lastCollisionNormal = new Vector2[numNodes];
 
         raycastDirections = new Vector2[]
@@ -124,6 +127,7 @@ public class Rope
     {
         stopwatch.Restart();
         UpdateVerletSimulation(dt, dt2);
+
         ResolveCollisions();
 
         for (int i = 0; i < constraintIterations; i++)
@@ -183,6 +187,15 @@ public class Rope
         for (int i = anchorPointer + 2; i < terminusIndex; i++)
         {
             ApplySpacingConstraint(i);
+            //gives it a nice bouncy but stable feel (twice the work per iteration, but can get away with ~1/3 of the iterations)
+            if (i > anchorPointer + 2)
+            {
+                ApplySpacingConstraint(i - 1);
+            }
+            //if (i < terminusIndex - 1)
+            //{
+            //    ApplySpacingConstraint(i + 1);
+            //}
         }
         LastConstraint();
 
@@ -195,7 +208,7 @@ public class Rope
 
             if (error > CONSTRAINTS_TOLERANCE)
             {
-                if (currentCollision[i - 1] && currentCollision[i])
+                if (hadCollision[i - 1] && hadCollision[i])
                 {
                     var v0 = lastCollisionNormal[i - 1].CCWPerp();
                     var v1 = lastCollisionNormal[i].CCWPerp();
@@ -359,7 +372,7 @@ public class Rope
     private void Anchor(int i)
     {
         lastPosition[i] = position[i];
-        currentCollision[i] = null;
+        nearestCollider[i] = null;
         lastCollisionNormal[i] = Vector2.zero;
     }
 
@@ -387,7 +400,7 @@ public class Rope
                 ResolveCollisionInternal(terminusIndex);
 
                 //check if terminus made contact and should become anchored
-                if (currentCollision[terminusIndex] && (1 << currentCollision[terminusIndex].gameObject.layer & terminusAnchorMask) != 0)
+                if (nearestCollider[terminusIndex] && (1 << nearestCollider[terminusIndex].gameObject.layer & terminusAnchorMask) != 0)
                 {
                     var v = p - position[terminusIndex];
                     var r = Physics2D.CircleCast(position[terminusIndex], collisionThreshold, v, v.magnitude, terminusAnchorMask);
@@ -410,11 +423,20 @@ public class Rope
 
     private void ResolveCollisionInternal(int i)
     {
-        var r = Physics2D.CircleCast(position[i], collisionSearchRadius, Vector2.zero, 0f, collisionMask);
-        if (!r)
+        RaycastHit2D r;
+
+        if (nearestCollider[i] == null)
         {
-            currentCollision[i] = null;
-            return;
+            r = Physics2D.CircleCast(position[i], collisionSearchRadius, Vector2.zero, 0f, collisionMask);
+            if (r)
+            {
+                nearestCollider[i] = r.collider;
+            }
+            else
+            {
+                hadCollision[i] = false;
+                return;
+            }
         }
 
         bool tunneling = false;
@@ -449,6 +471,11 @@ public class Rope
         {
             HandlePotentialCollision(i, r.collider, r.distance, r.normal, tunneling ? tunnelEscapeRadius : collisionThreshold, collisionBounciness);
         }
+        else
+        {
+            nearestCollider[i] = null;
+            hadCollision[i] = false;
+        }
     }
 
     private void HandlePotentialCollision(int i, Collider2D collider, float distance, Vector2 normal, float collisionThreshold, float collisionBounciness)
@@ -464,7 +491,7 @@ public class Rope
 
         if (distance < collisionThreshold)
         {
-            currentCollision[i] = collider;
+            nearestCollider[i] = collider;
             var diff = Mathf.Min(collisionThreshold - distance, this.collisionThreshold);
             var velocity = position[i] - lastPosition[i];
             position[i] += diff * normal;
@@ -479,7 +506,7 @@ public class Rope
         }
         else
         {
-            currentCollision[i] = null;
+            hadCollision[i] = false;
         }
     }
 }

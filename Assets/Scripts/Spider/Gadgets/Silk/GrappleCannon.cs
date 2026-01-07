@@ -27,6 +27,7 @@ public class GrappleCannon : MonoBehaviour
     [SerializeField] int constraintIterations;
     [SerializeField] float carrySpringForce;
     [SerializeField] float carryTensionMax;
+    [SerializeField] float carryTensionSlackThreshold;
     [SerializeField] float breakThreshold;
     [SerializeField] float consecutiveFailuresBeforeBreaking;
     [SerializeField] CannonFulcrum cannonFulcrum;
@@ -180,12 +181,27 @@ public class GrappleCannon : MonoBehaviour
     private Vector2 GrappleExtentFromFirstCollision(out int firstCollisionIndex)
     {
         firstCollisionIndex = grapple.AnchorPointer + 1;
-        while (firstCollisionIndex < grapple.TerminusIndex && !grapple.currentCollision[firstCollisionIndex])
+        while (firstCollisionIndex < grapple.TerminusIndex && !grapple.nearestCollider[firstCollisionIndex])
         {
             firstCollisionIndex++;
         }
 
         return grapple.position[firstCollisionIndex] - SourcePosition;
+    }
+
+    private int IndexOfNextCollision(int startIndex)
+    {
+        int i = startIndex;
+        var c = grapple.nearestCollider[startIndex];
+        while (i < grapple.TerminusIndex && grapple.nearestCollider[i] == c)
+        {
+            i++;
+        }
+        while(i < grapple.TerminusIndex && !grapple.nearestCollider[i])
+        {
+            i++;
+        }
+        return i;
     }
 
     public float Tension()
@@ -260,7 +276,7 @@ public class GrappleCannon : MonoBehaviour
         return total;
     }
 
-    public float StrictTension(int lastIndex, out float length)
+    public float StrictTension(int lastIndex, float slackThreshold, out float length)
     {
         int nodesPerSeg = (int)Mathf.Ceil(tensionCalculationInterval / grapple.NodeSpacing);
         float total = 0;
@@ -277,8 +293,15 @@ public class GrappleCannon : MonoBehaviour
                 d = (j - i) * grapple.NodeSpacing;
             }
 
+            //can't get reliable tension around corners -- works better if you just ignore them
+            if (grapple.nearestCollider[i] && grapple.nearestCollider[j])
+            {
+                i = j;
+                continue;
+            }
+            
             var err = (grapple.position[j] - grapple.position[i]).magnitude - d;
-            if (err > 0)
+            if (err > -slackThreshold * d)
             {
                 total += err;
                 length += d;
@@ -313,7 +336,8 @@ public class GrappleCannon : MonoBehaviour
     public float NormalizedTension(int lastIndex) => Tension(lastIndex, out var length) / length;
 
     public float NormalizedStrictTension() => StrictTension() / grapple.Length;
-    public float NormalizedStrictTension(int lastIndex) => StrictTension(lastIndex, out var length) / (length == 0 ? 1 : length);
+    public float NormalizedStrictTension(int lastIndex, float threshold) 
+        => StrictTension(lastIndex, threshold, out var length) / (length == 0 ? 1 : length);
 
     //FIXED UPDATE FUNCTIONS
 
@@ -336,8 +360,8 @@ public class GrappleCannon : MonoBehaviour
 
     private void UpdateCarrySpring()
     {
-        LastCarryForceDirection = GrappleExtentFromFirstCollision(out int firstCollisionIndex).normalized;
-        var t = NormalizedStrictTension(firstCollisionIndex);//NormalizedStrictTension(firstCollisionIndex);
+        LastCarryForceDirection = GrappleExtentFromFirstCollision(out _).normalized;
+        var t = NormalizedStrictTension(grapple.TerminusIndex, carryTensionSlackThreshold);
         if (t > 0)
         {
             LastCarryForce = carrySpringForce * Mathf.Min(t, carryTensionMax) * LastCarryForceDirection;
