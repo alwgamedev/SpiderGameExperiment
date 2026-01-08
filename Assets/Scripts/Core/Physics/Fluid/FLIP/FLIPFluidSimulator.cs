@@ -253,7 +253,7 @@ public class FLIPFluidSimulator
                     {
                         if (v.y  > -v.x && k + width < numCells && obstacle[k + width])//forward cell is up
                         {
-                            rb.AddForce(-dragUnit * Mathf.Sqrt(1 + v.x * v.x / (v.y * v.y)) *particleDensity[k] * v.magnitude * v);
+                            rb.AddForce(-dragUnit * Mathf.Sqrt(1 + v.x * v.x / (v.y * v.y)) * particleDensity[k] * v.magnitude * v);
                         }
                         else if (!(v.y > -v.x) && k % width > 0 && obstacle[k - 1])//forward cell is left
                         {

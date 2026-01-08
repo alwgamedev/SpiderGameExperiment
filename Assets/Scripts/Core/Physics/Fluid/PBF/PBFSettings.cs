@@ -37,6 +37,9 @@ public struct PBFSimSettings
     public float velocityBasedObstacleScaleMultiplier;
     public float obstacleUpscaleMax;
     public float surfaceNormalThreshold;
+
+    public float obstacleBuoyancy;
+    public float obstacleDrag;
 }
 
 [Serializable]
