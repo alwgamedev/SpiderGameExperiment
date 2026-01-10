@@ -10,68 +10,64 @@ public class Rope
     const float MAX_UPDATE_TIME = 2.5f;
 
     //Rope Data
-    public readonly float width;//really the width of the rope (not half of it)
-    public readonly float minNodeSpacing;
-    public readonly float maxNodeSpacing;
+    public float width;//really the width of the rope (not half of it)
+    public float minNodeSpacing;
+    public float maxNodeSpacing;
     float nodeSpacing;
 
     //all nodes have same drag, and all nodes have same mass except possibly the last one
-    public readonly float drag;
-    public readonly float nodeMass;
-    public readonly float terminusMass;
+    public float drag;
+    public float nodeMass;
+    public float terminusMass;
 
-    public readonly float constraintIterations;
-    public readonly int terminusAnchorMask;
+    public float constraintIterations;
 
-    int anchorPointer;
+    int anchorIndex;
     bool terminusAnchored;
-    readonly int terminusIndex;
 
     //Node Data
-    public readonly Vector2[] position;
-    public readonly Vector2[] lastPosition;
-    public readonly Vector2[] acceleration;
+    public Vector2[] position;
+    public Vector2[] lastPosition;
 
-    readonly Vector2[] positionBuffer;
-    readonly Vector2[] lastPositionBuffer;
+    Vector2[] positionBuffer;
+    Vector2[] lastPositionBuffer;
 
-    readonly int collisionMask;
-    readonly float collisionSearchRadius;
-    readonly float tunnelEscapeRadius;
-    readonly float collisionThreshold;
-    readonly float collisionBounciness;
-    public readonly Vector2[] lastCollisionNormal;
-    public readonly Collider2D[] nearestCollider;
-    public readonly bool[] hadCollision;
-
+    public int collisionMask;
+    public float collisionSearchRadius;
+    public float tunnelEscapeRadius;
+    public float collisionThreshold;
+    public float collisionBounciness;
+    public Vector2[] lastCollisionNormal;
+    public bool[] nearCollision;
+    public bool[] hadCollision;
 
     readonly Vector2[] raycastDirections;
 
     Stopwatch stopwatch = new();
 
-    public int AnchorPointer => anchorPointer;
-    public int TerminusIndex => terminusIndex;
+    public bool Enabled { get; private set; }
+    public int AnchorIndex => anchorIndex;
+    public int TerminusIndex => position.Length - 1;
     public float NodeSpacing => nodeSpacing;
-    public float Length => nodeSpacing * (terminusIndex - anchorPointer);
+    public float Length => nodeSpacing * (TerminusIndex - anchorIndex);
     public bool TerminusAnchored => terminusAnchored;
+
     public UnityEvent TerminusBecameAnchored;
 
     public Rope(Vector2 position, float width, float length, int numNodes, float minNodeSpacing, float maxNodeSpacing,
-    float nodeMass, float terminusMass, float nodeDrag, int collisionMask, float collisionSearchRadius, float tunnelEscapeRadius, float collisionBounciness, int terminusAnchorMask,
+    float nodeMass, float terminusMass, float nodeDrag, int collisionMask, float collisionSearchRadius, float tunnelEscapeRadius, float collisionBounciness,
     int constraintIterations)
     {
-        terminusIndex = numNodes - 1;
+        int terminusIndex = numNodes - 1;
         this.width = width;
         nodeSpacing = Mathf.Clamp(length / terminusIndex, minNodeSpacing, maxNodeSpacing);
-        anchorPointer = terminusIndex - Mathf.Clamp((int)(length / nodeSpacing), 1, terminusIndex);
+        anchorIndex = terminusIndex - Mathf.Clamp((int)(length / nodeSpacing), 1, terminusIndex);
         this.minNodeSpacing = minNodeSpacing;
         this.maxNodeSpacing = maxNodeSpacing;
         this.constraintIterations = constraintIterations;
-        this.terminusAnchorMask = terminusAnchorMask;
 
         this.position = Enumerable.Repeat(position, numNodes).ToArray();
         lastPosition = Enumerable.Repeat(position, numNodes).ToArray();
-        acceleration = Enumerable.Repeat(Physics2D.gravity, numNodes).ToArray();
 
         positionBuffer = new Vector2[numNodes];
         lastPositionBuffer = new Vector2[numNodes];
@@ -85,7 +81,7 @@ public class Rope
         this.tunnelEscapeRadius = tunnelEscapeRadius;
         collisionThreshold = 0.5f * width;
         this.collisionBounciness = collisionBounciness;
-        nearestCollider = new Collider2D[numNodes];
+        nearCollision = new bool[numNodes];
         hadCollision = new bool[numNodes];
         lastCollisionNormal = new Vector2[numNodes];
 
@@ -95,8 +91,45 @@ public class Rope
             new (MathTools.cos45, -MathTools.cos45), new(-MathTools.cos45, MathTools.cos45),
             new(-MathTools.cos45, -MathTools.cos45), new(MathTools.cos45, MathTools.cos45)
         };
+
+        Enabled = true;
     }
 
+    public void Respawn(Vector2 position, float length, int numNodes)
+    {
+        int terminusIndex = numNodes - 1;
+        nodeSpacing = Mathf.Clamp(length / terminusIndex, minNodeSpacing, maxNodeSpacing);
+        anchorIndex = terminusIndex - Mathf.Clamp((int)(length / nodeSpacing), 1, terminusIndex);
+        terminusAnchored = false;
+
+        if (this.position.Length != numNodes)
+        {
+            this.position = Enumerable.Repeat(position, numNodes).ToArray();
+            lastPosition = Enumerable.Repeat(position, numNodes).ToArray();
+            positionBuffer = new Vector2[numNodes];
+            lastPositionBuffer = new Vector2[numNodes];
+            nearCollision = new bool[numNodes];
+            hadCollision = new bool[numNodes];
+            lastCollisionNormal = new Vector2[numNodes];
+        }
+        else
+        {
+            Array.Fill(this.position, position);
+            Array.Fill(lastPosition, position);
+            Array.Clear(positionBuffer, 0, numNodes);
+            Array.Clear(lastPositionBuffer, 0, numNodes);
+            Array.Clear(nearCollision, 0, numNodes);
+            Array.Clear(hadCollision, 0, numNodes);
+            Array.Clear(lastCollisionNormal, 0, numNodes);
+        }
+
+        Enabled = true;
+    }
+
+    public void Disable()
+    {
+        Enabled = false;
+    }
 
     //ROPE FUNCTIONS
 
@@ -111,13 +144,13 @@ public class Rope
 
     public void SetLength(float length)
     {
-        nodeSpacing = length / (terminusIndex - anchorPointer);
+        nodeSpacing = length / (TerminusIndex - anchorIndex);
         Rescale();
     }
 
     public void SetAnchorPosition(Vector2 position)
     {
-        for (int i = 0; i < anchorPointer + 1; i++)
+        for (int i = 0; i < anchorIndex + 1; i++)
         {
             this.position[i] = position;
         }
@@ -145,7 +178,7 @@ public class Rope
         float distance = 0;
         bool chaining = false;
 
-        for (int i = anchorPointer + 1; i < terminusIndex; i++)
+        for (int i = anchorIndex + 1; i < TerminusIndex; i++)
         {
             if (chaining)
             {
@@ -156,7 +189,7 @@ public class Rope
                 }
             }
 
-            if (Physics2D.OverlapPoint(position[i], collisionMask) 
+            if (Physics2D.OverlapPoint(position[i], collisionMask)
                 && Physics2D.OverlapPoint(position[i] + collisionThreshold * Vector2.up, collisionMask)
                 && Physics2D.OverlapPoint(position[i] - collisionThreshold * Vector2.up, collisionMask)
                 && Physics2D.OverlapPoint(position[i] + collisionThreshold * Vector2.right, collisionMask)
@@ -184,18 +217,14 @@ public class Rope
     private void SpacingConstraintIteration()
     {
         FirstConstraint();
-        for (int i = anchorPointer + 2; i < terminusIndex; i++)
+        for (int i = anchorIndex + 2; i < TerminusIndex; i++)
         {
             ApplySpacingConstraint(i);
-            //gives it a nice bouncy but stable feel (twice the work per iteration, but can get away with ~1/3 of the iterations)
-            if (i > anchorPointer + 2)
+            //gives it a nice bouncy but stable feel (and can get away with ~1/3 of the iterations (for twice the work per iteration))
+            if (i > anchorIndex + 2)
             {
                 ApplySpacingConstraint(i - 1);
             }
-            //if (i < terminusIndex - 1)
-            //{
-            //    ApplySpacingConstraint(i + 1);
-            //}
         }
         LastConstraint();
 
@@ -237,7 +266,8 @@ public class Rope
 
                 //RELIABLE COLLISION IS THE #1 PRIORITY!
                 //constraints pulling nodes through obstacles was the biggest problem with collision,
-                //and it's much, MUCH better when you resolve collisions immediately after each constraint step
+                //and it's much, MUCH better when you resolve collisions immediately after each constraint
+                ResolveCollision(i - 2);
                 ResolveCollision(i - 1);
                 ResolveCollision(i);
             }
@@ -245,21 +275,21 @@ public class Rope
 
         void FirstConstraint()
         {
-            var d = position[anchorPointer + 1] - position[anchorPointer];
+            var d = position[anchorIndex + 1] - position[anchorIndex];
             var l = d.magnitude;
 
             var error = l - nodeSpacing;
 
             if (error > CONSTRAINTS_TOLERANCE)
             {
-                position[anchorPointer + 1] -= error / l * d;
-                ResolveCollision(anchorPointer + 1);
+                position[anchorIndex + 1] -= error / l * d;
+                ResolveCollision(anchorIndex + 1);
             }
         }
 
         void LastConstraint()
         {
-            var d = position[terminusIndex] - position[terminusIndex - 1];
+            var d = position[TerminusIndex] - position[TerminusIndex - 1];
             var l = d.magnitude;
 
             var error = l - nodeSpacing;
@@ -268,16 +298,16 @@ public class Rope
             {
                 if (terminusAnchored)
                 {
-                    position[terminusIndex - 1] += error / l * d;
-                    ResolveCollision(terminusIndex - 1);
+                    position[TerminusIndex - 1] += error / l * d;
+                    ResolveCollision(TerminusIndex - 1);
                 }
                 else
                 {
                     var c = 1 / (nodeMass + terminusMass) * error / l * d;
-                    position[terminusIndex - 1] += terminusMass * c;
-                    position[terminusIndex] -= nodeMass * c;
-                    ResolveCollision(terminusIndex - 1);
-                    ResolveCollision(terminusIndex);
+                    position[TerminusIndex - 1] += terminusMass * c;
+                    position[TerminusIndex] -= nodeMass * c;
+                    ResolveCollision(TerminusIndex - 1);
+                    ResolveCollision(TerminusIndex);
                 }
             }
         }
@@ -285,7 +315,7 @@ public class Rope
 
     private void UpdateVerletSimulation(float dt, float dt2)
     {
-        for (int i = anchorPointer + 1; i < (terminusAnchored ? terminusIndex : position.Length); i++)
+        for (int i = anchorIndex + 1; i < (terminusAnchored ? TerminusIndex : position.Length); i++)
         {
             UpdateVerletSimulation(i, dt, dt2);
         }
@@ -293,7 +323,7 @@ public class Rope
 
     private void ResolveCollisions()
     {
-        for (int i = anchorPointer + 1; i < position.Length; i++)
+        for (int i = anchorIndex + 1; i < position.Length; i++)
         {
             ResolveCollision(i);
         }
@@ -304,22 +334,22 @@ public class Rope
         if (nodeSpacing < minNodeSpacing || nodeSpacing > maxNodeSpacing)
         {
             float goalSpacing = nodeSpacing < minNodeSpacing ? minNodeSpacing : maxNodeSpacing;
-            int newAnchorPointer = terminusIndex - Mathf.Clamp((int)(Length / goalSpacing), 1, terminusIndex);
+            int newAnchorIndex = TerminusIndex - Mathf.Clamp((int)(Length / goalSpacing), 1, TerminusIndex);
             //clamps anchor pointer to btwn 0 and lastIndex - 1
             //note: length / nodeSpacing = num nodes PAST anchor pointer
 
-            if (anchorPointer != newAnchorPointer)
+            if (anchorIndex != newAnchorIndex)
             {
-                Reparametrize(newAnchorPointer);
+                Reparametrize(newAnchorIndex);
             }
         }
     }
 
-    private void Reparametrize(int newAnchorPointer)
+    private void Reparametrize(int newAnchorIndex)
     {
-        float newNodeSpacing = Length / (terminusIndex - newAnchorPointer);
-        int i = anchorPointer;//start index of current segment we're copying from
-        int j = newAnchorPointer + 1;//index in rescaleBuffer that we're copying to
+        float newNodeSpacing = Length / (TerminusIndex - newAnchorIndex);
+        int i = anchorIndex;//start index of current segment we're copying from
+        int j = newAnchorIndex + 1;//index in rescaleBuffer that we're copying to
         float dt = newNodeSpacing / nodeSpacing;//when we move one segment forward in new path, this is how many segments we cover in old path
         float t = dt;//time along current segment we're copying from (0 = nodes[i], 1 = nodes[i + 1])
         while (t > 1)
@@ -328,7 +358,7 @@ public class Rope
             t -= 1;
         }
 
-        while (j < terminusIndex)
+        while (j < TerminusIndex)
         {
             positionBuffer[j] = Vector2.Lerp(position[i], position[i + 1], t);
             lastPositionBuffer[j] = Vector2.Lerp(lastPosition[i], lastPosition[i + 1], t);
@@ -342,26 +372,26 @@ public class Rope
             }
         }
 
-        if (newAnchorPointer > anchorPointer)
+        if (newAnchorIndex > anchorIndex)
         {
-            for (int k = anchorPointer + 1; k < newAnchorPointer + 1; k++)
+            for (int k = anchorIndex + 1; k < newAnchorIndex + 1; k++)
             {
-                position[k] = position[anchorPointer];
+                position[k] = position[anchorIndex];
                 Anchor(k);
             }
         }
         else
         {
-            for (int k = newAnchorPointer + 1; k < anchorPointer + 1; k++)
+            for (int k = newAnchorIndex + 1; k < anchorIndex + 1; k++)
             {
                 DeAnchor(k, 0, Vector2.zero);
             }
         }
 
-        anchorPointer = newAnchorPointer;
+        anchorIndex = newAnchorIndex;
         nodeSpacing = newNodeSpacing;
-        int start = anchorPointer + 1;
-        int count = terminusIndex - anchorPointer - 1;
+        int start = anchorIndex + 1;
+        int count = TerminusIndex - anchorIndex - 1;
         Array.Copy(positionBuffer, start, position, start, count);
         Array.Copy(lastPositionBuffer, start, lastPosition, start, count);
     }
@@ -372,7 +402,8 @@ public class Rope
     private void Anchor(int i)
     {
         lastPosition[i] = position[i];
-        nearestCollider[i] = null;
+        nearCollision[i] = false;
+        hadCollision[i] = false;
         lastCollisionNormal[i] = Vector2.zero;
     }
 
@@ -386,29 +417,30 @@ public class Rope
         var p = position[i];
         var d = p - lastPosition[i];
         var v = d / dt;
-        position[i] += d + dt2 * (acceleration[i] - drag * v.magnitude * v);
+        position[i] += d + dt2 * (Physics2D.gravity - drag * v.magnitude * v);
         lastPosition[i] = p;
     }
 
     private void ResolveCollision(int i)
     {
-        if (i == terminusIndex)
+        if (i == TerminusIndex)
         {
             if (!terminusAnchored)
             {
-                var p = position[terminusIndex];
-                ResolveCollisionInternal(terminusIndex);
+                var p = position[TerminusIndex];
+                ResolveCollisionInternal(TerminusIndex);
 
                 //check if terminus made contact and should become anchored
-                if (nearestCollider[terminusIndex] && (1 << nearestCollider[terminusIndex].gameObject.layer & terminusAnchorMask) != 0)
+                //unnecessary layer check -- the "terminusAnchorMask" and nearestCollider layers should both just be the collisionMask
+                if (nearCollision[TerminusIndex]/*nearestCollider[terminusIndex] && (1 << nearestCollider[terminusIndex].gameObject.layer & terminusAnchorMask) != 0*/)
                 {
-                    var v = p - position[terminusIndex];
-                    var r = Physics2D.CircleCast(position[terminusIndex], collisionThreshold, v, v.magnitude, terminusAnchorMask);
+                    var v = p - position[TerminusIndex];
+                    var r = Physics2D.CircleCast(position[TerminusIndex], collisionThreshold, v, v.magnitude, collisionMask/*terminusAnchorMask*/);
                     if (r)
                     {
                         //anchor just outside collider, so that nodes near lastIndex don't get caught in perpetual collision
-                        position[terminusIndex] = r.point + collisionThreshold * r.normal;
-                        Anchor(terminusIndex);
+                        position[TerminusIndex] = r.point + collisionThreshold * r.normal;
+                        Anchor(TerminusIndex);
                         terminusAnchored = true;
                         TerminusBecameAnchored.Invoke();
                     }
@@ -425,12 +457,12 @@ public class Rope
     {
         RaycastHit2D r;
 
-        if (nearestCollider[i] == null)
+        if (!nearCollision[i])
         {
             r = Physics2D.CircleCast(position[i], collisionSearchRadius, Vector2.zero, 0f, collisionMask);
             if (r)
             {
-                nearestCollider[i] = r.collider;
+                nearCollision[i] = true;
             }
             else
             {
@@ -473,7 +505,7 @@ public class Rope
         }
         else
         {
-            nearestCollider[i] = null;
+            nearCollision[i] = false;
             hadCollision[i] = false;
         }
     }
@@ -491,7 +523,6 @@ public class Rope
 
         if (distance < collisionThreshold)
         {
-            nearestCollider[i] = collider;
             var diff = Mathf.Min(collisionThreshold - distance, this.collisionThreshold);
             var velocity = position[i] - lastPosition[i];
             position[i] += diff * normal;

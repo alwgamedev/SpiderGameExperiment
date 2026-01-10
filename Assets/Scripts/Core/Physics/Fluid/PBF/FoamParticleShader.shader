@@ -198,7 +198,7 @@
                 }
 
                 fixed4 color = ParticleColor(i.colorNoise, t, colorMin0, colorMin1, colorMax0, colorMax1);
-                color.w *= s * i.life;
+                color.w *= s *  i.life;
                 return color;
             }
             ENDCG

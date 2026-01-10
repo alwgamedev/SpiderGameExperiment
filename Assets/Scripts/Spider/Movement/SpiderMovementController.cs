@@ -44,7 +44,7 @@ public class SpiderMovementController : MonoBehaviour
     [SerializeField] float heightSpringDamping;
     [SerializeField] float heightSpringBreakThreshold;
     [SerializeField] float grappleSquatReduction;
-    [SerializeField] float heightSampleWidth;//2do: scale with spider size (and same for other fields)
+    [SerializeField] float heightSampleWidth;
 
     [Header("Balance & Rotation")]
     [SerializeField] float abdomenRotationSpeed;
@@ -92,11 +92,13 @@ public class SpiderMovementController : MonoBehaviour
     ContactFilter2D bodyCollisionFilter;
     LegSynchronizer legSynchronizer;
 
-    int moveInput;
-    int leanInput;//used to control either cannon fulcrum rotation or jump aim when jumpInput held
+    SpiderInput spiderInput;
 
-    bool jumpInputHeld;
-    bool waitingToReleaseJump;
+    //int moveInput;
+    //int leanInput;//used to control either cannon fulcrum rotation or jump aim when jumpInput held
+
+    bool chargingJump;
+    bool waitingToHandleJump;
     float jumpVerificationTimer;
     float jumpAngleFraction;//0 - 1 (for angle going from 0 to jumpAngleMin)
     float cosJumpAngleMin;
@@ -108,8 +110,6 @@ public class SpiderMovementController : MonoBehaviour
     Vector2 abdomenBoneBaseUpL;
     Quaternion abdomenBoneBaseLocalRotation;
     Quaternion abdomenBoneBaseLocalRotationL;
-
-    bool needChangeDirection;
 
     bool grounded;
     float groundednessRating;
@@ -123,16 +123,17 @@ public class SpiderMovementController : MonoBehaviour
     float cosScurryAngleMin;
     float sinScurryAngleMin;
 
+    bool needChangeDirection;
     float crouchProgress;//0-1
-
     bool grappleScurrying;
-
     bool thrusterCooldownWarningSent;
-
-    bool freeHangInput;
     bool grappleFreeHangPrerequisites;
+    //bool forceFreeHang;
 
-    public bool FacingRight => transform.localScale.x > 0;
+    float MoveInput => spiderInput.MoveInput.x;
+    float LeanInput => spiderInput.SecondaryInput.x;
+    bool ForceFreeHang => grapple.GrappleAnchored && spiderInput.ShiftHeld;
+
     int Orientation => FacingRight ? 1 : -1;
     Vector2 OrientedRight => FacingRight ? transform.right : -transform.right;
     Vector2 OrientedGroundDirection => FacingRight ? groundDirection : -groundDirection;
@@ -143,6 +144,7 @@ public class SpiderMovementController : MonoBehaviour
     float GrappleScurryResistance => Vector2.Dot(grapple.LastCarryForce, -OrientedGroundDirection);
     float GrappleScurryResistanceFraction => Mathf.Clamp(GrappleScurryResistance / grappleScurryResistanceMax, 0, 1);
 
+    public bool FacingRight => transform.localScale.x > 0;
     public float CrouchProgress => crouchProgress;
     public Thruster Thruster => thruster;
     public GrappleCannon Grapple => grapple;
@@ -188,6 +190,8 @@ public class SpiderMovementController : MonoBehaviour
         thruster.Initialize();
         thrusterFlame.Initialize();
 
+        spiderInput = GetComponent<SpiderInput>();
+
         //Player = this;
 
         //Time.timeScale = 0.25f;//useful for spotting issues
@@ -209,7 +213,7 @@ public class SpiderMovementController : MonoBehaviour
 
     private void Update()
     {
-        CaptureInput();
+        UpdateState();
     }
 
     private void LateUpdate()
@@ -235,11 +239,11 @@ public class SpiderMovementController : MonoBehaviour
             needChangeDirection = false;
         }
 
-        if (jumpInputHeld)
+        if (chargingJump)
         {
-            jumpAngleFraction = Mathf.Clamp(jumpAngleFraction - leanInput * jumpAngleLerpRate * Time.deltaTime, 0, 1);
+            jumpAngleFraction = Mathf.Clamp(jumpAngleFraction + LeanInput * jumpAngleLerpRate * Time.deltaTime, 0, 1);
         }
-        else if (jumpAngleFraction != 0 && !waitingToReleaseJump)
+        else if (jumpAngleFraction != 0 && !waitingToHandleJump)
         {
             jumpAngleFraction = 0;
         }
@@ -287,12 +291,12 @@ public class SpiderMovementController : MonoBehaviour
     {
         if (thruster.Engaged)
         {
-            if (grounded || grapple.FreeHanging || moveInput == 0)
+            if (grounded || grapple.FreeHanging || MoveInput == 0)
             {
                 DisengageThruster();
             }
         }
-        else if (!grounded && moveInput != 0 && !freeHangInput)
+        else if (!grounded && MoveInput != 0 && !ForceFreeHang)
         {
             TryEngageThruster();
         }
@@ -352,19 +356,19 @@ public class SpiderMovementController : MonoBehaviour
     //INPUT
 
     //2do: event based input (will save us from doing a bunch of redundant checks every frame)
-    private void CaptureInput()
+    private void UpdateState()
     {
-        if (jumpInputHeld)
+        if (chargingJump)
         {
             if (!grounded)
             {
-                jumpInputHeld = false;
+                chargingJump = false;
                 JumpChargeEnded.Invoke();
             }
-            else if (Input.GetKeyUp(KeyCode.Space))
+            else if (!spiderInput.SpaceHeld)
             {
-                jumpInputHeld = false;
-                waitingToReleaseJump = !Input.GetKey(KeyCode.LeftControl);
+                chargingJump = false;
+                waitingToHandleJump = !spiderInput.ControlHeld;
                 JumpChargeEnded.Invoke();
             }
             else if (crouchProgress < 1)
@@ -372,15 +376,12 @@ public class SpiderMovementController : MonoBehaviour
                 UpdateCrouch(Time.deltaTime);
             }
         }
-        else if (!waitingToReleaseJump)
+        else if (!waitingToHandleJump)
         {
-            if (grounded)
+            if (grounded && spiderInput.SpaceHeld)
             {
-                jumpInputHeld = Input.GetKey(KeyCode.Space);
-                if (jumpInputHeld)
-                {
-                    JumpChargeBegan.Invoke();
-                }
+                chargingJump = true;
+                JumpChargeBegan.Invoke();
             }
             if (crouchProgress > 0)
             {
@@ -388,29 +389,30 @@ public class SpiderMovementController : MonoBehaviour
             }
         }
 
-        moveInput = (Input.GetKey(KeyCode.RightArrow) ? 1 : 0) + (Input.GetKey(KeyCode.LeftArrow) ? -1 : 0);
-        freeHangInput = grapple.GrappleAnchored && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
-        leanInput = (Input.GetKey(KeyCode.A) ? 1 : 0) + (Input.GetKey(KeyCode.D) ? -1 : 0);
-        grapple.aimInput = jumpInputHeld ? 0 : leanInput;
+        //moveInput = (Input.GetKey(KeyCode.RightArrow) ? 1 : 0) + (Input.GetKey(KeyCode.LeftArrow) ? -1 : 0);
+        //freeHangInput = grapple.GrappleAnchored && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
+        //leanInput = (Input.GetKey(KeyCode.A) ? 1 : 0) + (Input.GetKey(KeyCode.D) ? -1 : 0);
+        //forceFreeHang = grapple.GrappleAnchored && spiderInput.ShiftHeld;
+        grapple.aimInput = chargingJump ? 0 : LeanInput;
         UpdateGrappleScurrying();//needs to be updated before changing direction
 
         //make sure you update freeHanging before changing direction
         if (grapple.GrappleAnchored)
         {
             //hold shift to enter freehang/swing mode (if it's the default state, then repelling and direction change gets annoying)
-            grappleFreeHangPrerequisites = moveInput == 0 || freeHangInput || thruster.Cooldown;
+            grappleFreeHangPrerequisites = MoveInput == 0 || ForceFreeHang || thruster.Cooldown;
         }
         else if (grappleFreeHangPrerequisites)
         {
             grappleFreeHangPrerequisites = false;
         }
 
-        if (MathTools.OppositeSigns(moveInput, Orientation))
+        if (MathTools.OppositeSigns(MoveInput, Orientation))
         {
             needChangeDirection = true;
         }
 
-        if (thrusterCooldownWarningSent && moveInput == 0)
+        if (thrusterCooldownWarningSent && MoveInput == 0)
         {
             thrusterCooldownWarningSent = false;
             //so that you will only get the cooldown warning when you first press input or right after thrusters ran out of charge if you enter cooldown while holding input
@@ -428,7 +430,7 @@ public class SpiderMovementController : MonoBehaviour
 
     private void UpdateGrappleScurrying()
     {
-        grappleScurrying = grounded && moveInput != 0 && grapple.GrappleAnchored;
+        grappleScurrying = grounded && MoveInput != 0 && grapple.GrappleAnchored;
     }
 
     private void ChangeDirection()
@@ -458,9 +460,9 @@ public class SpiderMovementController : MonoBehaviour
         //accelCap bc otherwise if speed is highly negative, we get ungodly rates of acceleration
         //(and note that we are doing it in a way that scales with max speed
         //-- so you can limit maxSpd - spd to being e.g. double the maxSpeed or w/e)
-        if (moveInput != 0)
+        if (MoveInput != 0)
         {
-            if (grounded || !grapple.GrappleAnchored || (!freeHangInput && thruster.Engaged))
+            if (grounded || !grapple.GrappleAnchored || (!ForceFreeHang && thruster.Engaged))
             {
                 Vector2 d = OrientedGroundDirection;
                 var spd = Vector2.Dot(rb.linearVelocity, d);
@@ -557,7 +559,7 @@ public class SpiderMovementController : MonoBehaviour
     //in abdomen bone's "base local coords" (i.e. right = abdomenBoneBaseRight)
     private Vector2 AbdomenAngle()
     {
-        return jumpInputHeld ? JumpAbdomenAngle() : grappleScurrying ? ScurryAbdomenAngle() : Vector2.right;
+        return chargingJump ? JumpAbdomenAngle() : grappleScurrying ? ScurryAbdomenAngle() : Vector2.right;
     }
 
     private Vector2 JumpAbdomenAngle()
@@ -609,9 +611,9 @@ public class SpiderMovementController : MonoBehaviour
     //(i.e. when grounded and not verifying jump)
     private void HandleJumpInput()
     {
-        if (waitingToReleaseJump)
+        if (waitingToHandleJump)
         {
-            waitingToReleaseJump = false;
+            waitingToHandleJump = false;
             jumpVerificationTimer = jumpVerificationTime;//needs to be first bc SetGround > OnTakeoff depends on VerifyingJump()
             groundednessRating = 0;
             SetGrounded(false);
@@ -697,9 +699,9 @@ public class SpiderMovementController : MonoBehaviour
 
     private void OnTakeOff()
     {
-        if (jumpInputHeld)
+        if (chargingJump)
         {
-            jumpInputHeld = false;
+            chargingJump = false;
             JumpChargeEnded.Invoke();
         }
         RecomputeGroundMapRaycastLength();
@@ -728,7 +730,7 @@ public class SpiderMovementController : MonoBehaviour
             grapple.FreeHanging = grappleFreeHangPrerequisites && !grounded;
         }
 
-        if (moveInput != 0 || !grounded)
+        if (MoveInput != 0 || !grounded)
         {
             UpdateGroundPoint(ref pt);
         }
@@ -786,7 +788,8 @@ public class SpiderMovementController : MonoBehaviour
     private void UpdateGroundednessRating()
     {
         groundednessRating = groundednessRating == 0 ? legSynchronizer.FractionTouchingGround > 0 ? Mathf.Max(legSynchronizer.FractionTouchingGround, groundednessInitialContactValue) : 0
-            : grapple.GrappleAnchored && grapple.GrappleReleaseInput < 0 ? legSynchronizer.FractionTouchingGround : MathTools.LerpAtConstantRate(groundednessRating, legSynchronizer.FractionTouchingGround, groundednessSmoothingRate, Time.deltaTime);
+            : grapple.GrappleAnchored && grapple.GrappleReleaseInput < 0 ? legSynchronizer.FractionTouchingGround 
+            : MathTools.LerpAtConstantRate(groundednessRating, legSynchronizer.FractionTouchingGround, groundednessSmoothingRate, Time.deltaTime);
     }
 
     private void InitializeGroundMap()
@@ -832,28 +835,6 @@ public class SpiderMovementController : MonoBehaviour
                 groundLayer);
         }
     }
-
-    //private void LerpUpdateGroundMap()
-    //{
-    //    if (grapple.FreeHanging)
-    //    {
-    //        groundMap.LerpUpdateMap(heightReferencePoint.position,
-    //            FreeHangGroundMapDown(),
-    //            FreeHangGroundMapRight(),
-    //            groundmapRaycastLength,
-    //            groundMap.CentralIndex,
-    //            groundLayer);
-    //    }
-    //    else
-    //    {
-    //        groundMap.LerpUpdateMap(heightReferencePoint.position,
-    //            -transform.up,
-    //            transform.right,
-    //            groundmapRaycastLength,
-    //            groundMap.CentralIndex,
-    //            groundLayer);
-    //    }
-    //}
 
     private Vector2 FreeHangGroundMapDown()
     {

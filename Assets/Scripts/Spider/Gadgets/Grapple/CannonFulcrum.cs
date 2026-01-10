@@ -49,11 +49,12 @@ public class CannonFulcrum
         }
     }
 
-    public void UpdateKinematic(float dt, int rotationInput, Transform shooterTransform)
+    //aimInput > 0 is clockwise
+    public void UpdateKinematic(float dt, float aimInput, Transform shooterTransform)
     {
-        if (rotationInput != 0)
+        if (aimInput != 0)
         {
-            kinematicRotation = Mathf.Clamp(kinematicRotation + rotationInput * kinematicRotationSpeed * dt, kinematicRotationMin, kinematicRotationMax);
+            kinematicRotation = Mathf.Clamp(kinematicRotation - aimInput * kinematicRotationSpeed * dt, kinematicRotationMin, kinematicRotationMax);
         }
         var a = kinematicRotation0 + kinematicRotation;
         var g = Mathf.Cos(a) * shooterTransform.right + (shooterTransform.localScale.x > 0 ? Mathf.Sin(a) : -Mathf.Sin(a)) * shooterTransform.transform.up;

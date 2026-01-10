@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2736823961886970043}
   - component: {fileID: 5422170248155208703}
   - component: {fileID: 2038807929032400696}
+  - component: {fileID: 3361875892571689291}
   m_Layer: 3
   m_Name: Fluid Test Obstacle
   m_TagString: Untagged
@@ -30,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -35.55, y: 5.04, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -170,3 +171,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 20
+--- !u!114 &3361875892571689291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2348509275744514939}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4d84ff93cd79c24da79b3bdcedb7b22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PBFDynamicObstacle
+  coll: {fileID: 2736823961886970043}
+  rb: {fileID: 5422170248155208703}
+  repulsionRadius: 0.5641896
+  repulsionRadiusMax: 0.5641896

@@ -72,12 +72,12 @@ MonoBehaviour:
     obstacleMask:
       serializedVersion: 2
       m_Bits: 8
-    obstacleRepulsion: 15000
-    velocityBasedObstacleRepulsionMultiplier: 0.5
+    obstacleRepulsion: 25000
+    velocityBasedObstacleRepulsionMultiplier: 1
     velocityBasedObstacleScaleMultiplier: 0.2
-    obstacleUpscaleMax: 1.3
+    obstacleUpscaleMax: 3
     surfaceNormalThreshold: 100
-    obstacleBuoyancy: 0.1
+    obstacleBuoyancy: 0.0175
     obstacleDrag: 0.2
   foamParticleSettings:
     trappedAirDiffuseRate: 800

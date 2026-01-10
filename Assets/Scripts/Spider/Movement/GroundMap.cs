@@ -4,10 +4,6 @@ using UnityEngine;
 [Serializable]
 public class GroundMap
 {
-    //2do:
-    //soa?
-    //batch raycasting/jobs?
-
     public int numFwdIntervals;
     public float intervalWidth;
     public GroundMapPt[] map;

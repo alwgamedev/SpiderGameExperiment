@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class RopeRenderer : MonoBehaviour
 {
@@ -37,8 +36,18 @@ public class RopeRenderer : MonoBehaviour
             CreateMesh(nodePositions.Length);
         }
         meshRenderer.enabled = true;
-        material.SetFloat("_HalfWidth", 0.5f * rope.width);
+        SetRenderWidth(rope);
         UpdateRenderPositions(rope);
+    }
+
+    public void SetRenderWidth(Rope rope)
+    {
+        SetRenderWidth(rope.width);
+    }
+
+    public void SetRenderWidth(float ropeWidth)
+    {
+        material.SetFloat("_HalfWidth", 0.5f * ropeWidth);
     }
 
     public void OnRopeDestroyed()
@@ -52,7 +61,7 @@ public class RopeRenderer : MonoBehaviour
         var taperRate = (1 - taperBaseScale) / taperLength;
         for (int i = 0; i < nodePositions.Length; i++)
         {
-            if (taperMult < 1 && i > rope.AnchorPointer)
+            if (taperMult < 1 && i > rope.AnchorIndex)
             {
                 taperMult += Mathf.Min(taperRate * Vector2.Distance(nodePositions[i - 1], nodePositions[i]), 1);
             }

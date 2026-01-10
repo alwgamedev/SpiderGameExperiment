@@ -6,7 +6,7 @@ using UnityEngine.Rendering;
 public class PBFluid : MonoBehaviour
 {
     const int THREADS_PER_GROUP = 256;
-    const int MAX_NUM_OBSTACLES = 1;
+    const int MAX_NUM_OBSTACLES = 1;//we'll make it more when we need to
 
     //kernel indices in compute shader
     public const int recalculateAntiClusterCoefficient = 0;
@@ -40,7 +40,6 @@ public class PBFluid : MonoBehaviour
 
     [HideInInspector] public ComputeShader computeShader;
     [HideInInspector] public RenderTexture densityTexture;
-    [HideInInspector] public RenderTexture velocityTexture;
 
     PBFComputeConfig[] configTransfer;
     PBFComputeVariables[] varsTransfer;
@@ -69,17 +68,19 @@ public class PBFluid : MonoBehaviour
 
     ComputeBuffer obstacleData;
     ObstacleData[] obstacleDataTransfer;
-    Collider2D[] obstacleCollider;
-    ContactFilter2D obstacleFilter;
+    Collider2D[] colliderQueryBuffer;
+    ContactFilter2D colliderFilter;
+    PBFDynamicObstacle[] obstacle;
     int numObstacles;
 
     ComputeBuffer obstacleDisplacement;
     bool displacementReadbackInProgress;
     NativeArray<int> obstacleDisplacementNA;
-    Collider2D[] obstacleColliderSnapshot;//snapshots taken when we send a readback request (so we have the correct collider lookup to go with the displacements)
+    PBFDynamicObstacle[] obstacleSnapshot;//snapshots taken when we send a readback request (so we have the correct collider lookup to go with the displacements)
     int numObstaclesSnapshot;
-    Collider2D[] obstacleColliderLastReadback;//copied from the snapshot when readback comes in, to be used for physics updates until the next readback comes in
-    int numObstaclesLastReadback;
+    //PBFDynamicObstacle[] obstacleLastReadback;//copied from the snapshot when readback comes in, to be used for physics updates until the next readback comes in
+    //int numObstaclesLastReadback;
+    float lastReadbackTime;
 
     public ComputeBuffer foamParticleCounter;
     public ComputeBuffer foamParticle;
@@ -163,16 +164,18 @@ public class PBFluid : MonoBehaviour
 
         obstacleData = new ComputeBuffer(MAX_NUM_OBSTACLES, MiscTools.Stride<ObstacleData>());
         obstacleDataTransfer = new ObstacleData[MAX_NUM_OBSTACLES];
-        obstacleCollider = new Collider2D[MAX_NUM_OBSTACLES];
+        colliderQueryBuffer = new Collider2D[MAX_NUM_OBSTACLES];
 
         obstacleDisplacement = new ComputeBuffer(MAX_NUM_OBSTACLES, 4);
-        obstacleColliderSnapshot = new Collider2D[MAX_NUM_OBSTACLES];
-        obstacleColliderLastReadback = new Collider2D[MAX_NUM_OBSTACLES];
-        //obstacleDisplacementNA = new(MAX_NUM_OBSTACLES, Allocator.Persistent);
+        colliderQueryBuffer = new Collider2D[MAX_NUM_OBSTACLES];
+        obstacle = new PBFDynamicObstacle[MAX_NUM_OBSTACLES];
+        obstacleSnapshot = new PBFDynamicObstacle[MAX_NUM_OBSTACLES];
+        //obstacleLastReadback = new PBFDynamicObstacle[MAX_NUM_OBSTACLES];
+        lastReadbackTime = Time.time;
 
-        obstacleFilter = ContactFilter2D.noFilter;
-        obstacleFilter.useTriggers = false;
-        obstacleFilter.SetLayerMask(simSettings.obstacleMask);
+        colliderFilter = ContactFilter2D.noFilter;
+        colliderFilter.useTriggers = false;
+        colliderFilter.SetLayerMask(simSettings.obstacleMask);
 
         foamParticle = new ComputeBuffer(configuration.numFoamParticles, 32);
         foamParticleBuffer = new ComputeBuffer(configuration.numFoamParticles, 32);
@@ -196,13 +199,6 @@ public class PBFluid : MonoBehaviour
         densityTexture = new(densityTexSettings.texWidth, densityTexSettings.texHeight, 0)
         {
             graphicsFormat = UnityEngine.Experimental.Rendering.GraphicsFormat.R16G16B16A16_SFloat,
-            dimension = UnityEngine.Rendering.TextureDimension.Tex2D,
-            enableRandomWrite = true
-        };
-
-        velocityTexture = new(densityTexSettings.texWidth, densityTexSettings.texHeight, 0)
-        {
-            graphicsFormat = UnityEngine.Experimental.Rendering.GraphicsFormat.R16G16_SFloat,
             dimension = UnityEngine.Rendering.TextureDimension.Tex2D,
             enableRandomWrite = true
         };
@@ -240,7 +236,6 @@ public class PBFluid : MonoBehaviour
 
         computeShader.SetBuffer(noise, "noise", scrollNoise, updateDensityTexture);
         computeShader.SetTexture(densityTexture, "densityTex", updateDensityTexture, spawnFoam, updateFoam);
-        computeShader.SetTexture(velocityTexture, "velocityTex", updateDensityTexture, updateFoam);
 
         numParticleThreadGroups = (int)Mathf.Ceil((float)configuration.numParticles / THREADS_PER_GROUP);
         numFoamParticleThreadGroups = (int)Mathf.Ceil((float)configuration.numFoamParticles / THREADS_PER_GROUP);
@@ -291,9 +286,6 @@ public class PBFluid : MonoBehaviour
 
         densityTexture.Release();
         Destroy(densityTexture);
-
-        velocityTexture.Release();
-        Destroy(velocityTexture);
     }
 
     private void OnDestroy()
@@ -356,18 +348,19 @@ public class PBFluid : MonoBehaviour
         if (!displacementReadbackInProgress)
         {
             //a readback just finished, so copy snapshot data to use until next readback is ready
-            numObstaclesLastReadback = numObstaclesSnapshot;
-            Array.Copy(obstacleColliderSnapshot, obstacleColliderLastReadback, obstacleColliderSnapshot.Length);
+            //numObstaclesLastReadback = numObstaclesSnapshot;
+            //Array.Copy(obstacleSnapshot, obstacleLastReadback, obstacleSnapshot.Length);
+
+            ApplyBuoyanceForces(Mathf.Min(Time.time - lastReadbackTime, 4 * Time.deltaTime));
+            lastReadbackTime = Time.time;
 
             //take new snapshot to get ready for next readback
             numObstaclesSnapshot = numObstacles;
-            Array.Copy(obstacleCollider, obstacleColliderSnapshot, obstacleCollider.Length);
+            Array.Copy(obstacle, obstacleSnapshot, obstacle.Length);
 
             //send new readback
             SendDisplacementReadbackRequest();
         }
-
-        ApplyBuoyanceForces();
     }
 
     private void RunSimulationStep()
@@ -419,35 +412,28 @@ public class PBFluid : MonoBehaviour
         var worldHeight = configuration.height * simSettings.cellSize;
         var boxCenter = new Vector2(transform.position.x + 0.5f * worldWidth, transform.position.y + 0.5f * worldHeight);
         var boxSize = new Vector2(worldWidth, worldHeight);
-        Array.Clear(obstacleCollider, 0, obstacleCollider.Length);
-        Physics2D.OverlapBox(boxCenter, boxSize, 0, obstacleFilter, obstacleCollider);
+        Array.Clear(colliderQueryBuffer, 0, colliderQueryBuffer.Length);
+        Physics2D.OverlapBox(boxCenter, boxSize, 0, colliderFilter, colliderQueryBuffer);
 
         //put non-null obstacles at the beginning of the compute buffer
         //and we'll use numObstacles to mark the end so we don't have to clear out the rest of the buffer
         numObstacles = 0;
         for (int i = 0; i < MAX_NUM_OBSTACLES; i++)
         {
-            var o = obstacleCollider[i];
-            if (o && o.attachedRigidbody)
+            var c = colliderQueryBuffer[i];
+            if (c && c.gameObject.TryGetComponent(out PBFDynamicObstacle o))
             {
-                var spd = o.attachedRigidbody.linearVelocity.magnitude;
-
-                //we'll pretend like the obstacle is a circle with radius the maximum of its bounding box extents.
-                //the repulsive force and the object size get scaled with the obstacle's speed, so fluid can flow by motionless obstacles (useful for 2D)
-                //and will be agitated more by faster moving obstacles.
+                var spd = o.Rigidbody.linearVelocity.magnitude;
                 var tScale = Mathf.Min(simSettings.velocityBasedObstacleScaleMultiplier * spd, simSettings.obstacleUpscaleMax);
                 var tRepulsion = Mathf.Min(simSettings.velocityBasedObstacleRepulsionMultiplier * spd, 1);
-                var r = Mathf.Max(o.bounds.extents.x, o.bounds.extents.y);
+                obstacle[numObstacles] = o;
                 obstacleDataTransfer[numObstacles++] = new()
                 {
-                    center = new(o.bounds.center.x - transform.position.x, o.bounds.center.y - transform.position.y),
-                    extents = new(r + 0.1f, r + 0.1f),
-                    speedScaledRadius = tScale * r,
+                    center = new(o.Collider.bounds.center.x - transform.position.x, o.Collider.bounds.center.y - transform.position.y),
+                    extents = o.Collider.bounds.extents,
+                    speedScaledRadius = Mathf.Min(tScale * o.RepulsionRadius, o.RepulsionRadiusMax),
                     repulsionMultiplier = tRepulsion
                 };
-                //speedScaledObstacleBoundsTransfer[numObstacles++] = new Vector4(o.bounds.center.x - transform.position.x, o.bounds.center.y - transform.position.y, tScale * r, tRepulsion);
-                //obstacleBoundsTransfer[numObstacles] = new Vector4(o.bounds.center.x - transform.position.x, o.bounds.center.y - transform.position.y,
-                //    o.bounds.extents.x, o.bounds.extents.y);
             }
         }
 
@@ -464,9 +450,7 @@ public class PBFluid : MonoBehaviour
 
     private void OnDisplacementReadbackComplete(AsyncGPUReadbackRequest req)
     {
-
-
-        if (!this || !enabled)
+        if (!this)
         {
             if (obstacleDisplacementNA.IsCreated)
             {
@@ -486,22 +470,24 @@ public class PBFluid : MonoBehaviour
         displacementReadbackInProgress = false;
     }
 
-    private void ApplyBuoyanceForces()
+    private void ApplyBuoyanceForces(float dt)
     {
         var b = -simSettings.obstacleBuoyancy * Physics2D.gravity;
-        for (int i = 0; i < numObstaclesLastReadback; i++)
+        for (int i = 0; i < numObstaclesSnapshot; i++)
         {
             if (!(obstacleDisplacementNA[i] > 0))
             {
                 return;
             }
 
-            var c = obstacleColliderLastReadback[i];
-            if (c && c.attachedRigidbody)
+            var o = obstacleSnapshot[i];
+            if (o)
             {
-                var v = c.attachedRigidbody.linearVelocity;
-                var f = obstacleDisplacementNA[i] * (b - c.bounds.size.x * simSettings.obstacleDrag * v.magnitude * v);
-                c.attachedRigidbody.linearVelocity += Time.deltaTime * f;
+                Debug.Log(obstacleDisplacementNA[i]);
+                Debug.Log(o.Collider.bounds.extents);
+                var v = o.Rigidbody.linearVelocity;
+                var f = obstacleDisplacementNA[i] * b - o.Collider.bounds.size.x * simSettings.obstacleDrag * v.magnitude * v;
+                o.Rigidbody.linearVelocity += dt * f;
             }
         }
     }
