@@ -145,6 +145,7 @@ public class SpiderMovementController : MonoBehaviour
     float GrappleScurryResistanceFraction => Mathf.Clamp(GrappleScurryResistance / grappleScurryResistanceMax, 0, 1);
 
     public bool FacingRight => transform.localScale.x > 0;
+    public bool Grounded => grounded;
     public float CrouchProgress => crouchProgress;
     public Thruster Thruster => thruster;
     public GrappleCannon Grapple => grapple;
@@ -447,7 +448,7 @@ public class SpiderMovementController : MonoBehaviour
             var p = transform.position;
             var s = transform.localScale;
             transform.localScale = new Vector3(-s.x, s.y, s.z);
-            var n = grapple.ShootDirection.CCWPerp();//normal to the hyperplane we're reflecting over
+            var n = transform.up;//grapple.ShootDirection.CCWPerp();//normal to the hyperplane we're reflecting over
             transform.up = MathTools.ReflectAcrossHyperplane(transform.up, (Vector3)n);
             var d = (Vector3)(o - grapple.FreeHangLeveragePoint);
             transform.position += d;

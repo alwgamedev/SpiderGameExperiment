@@ -173,6 +173,29 @@ public static class MathTools
         return true;
     }
 
+    //returns pt on line that is at desired distance from ptOffLine
+    public static bool PointOnLineAtDistance(Vector2 ptOffLine, Vector2 lineOrigin, Vector2 lineDirection, float dist, out Vector2 ptOnLine)
+    {
+        var proj = Vector2.Dot(ptOffLine - lineOrigin, lineDirection);
+        var q = lineOrigin + proj * lineDirection;
+        var a2 = Vector2.SqrMagnitude(ptOffLine - q);
+        var l2 = dist * dist;
+        if (l2 < a2)//desired distance is less than distance to line, so just go dist units towards line
+        {
+            ptOnLine = ptOffLine;
+            return false;
+            //var n = lineDirection.CCWPerp();
+            //if (Vector2.Dot(q - ptOffLine, n) < 0)
+            //{
+            //    n = -n;
+            //}
+            //success = false;
+            //return ptOffLine + dist * n;
+        }
+        ptOnLine = q + Mathf.Sqrt(l2 - a2) * lineDirection;
+        return true;
+    }
+
     public static Quaternion QuaternionFrom2DUnitVector(Vector2 u)
     {
         if (u.x >= 1)
