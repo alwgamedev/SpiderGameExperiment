@@ -35,7 +35,7 @@ public class ThrusterFlame
         }
         if (cur != goal)
         {
-            cur = MathTools.LerpAtConstantRate(cur, goal, bodySpeed < 0 ? disengageLerpRate : intensityLerpRate, dt);
+            cur = MathTools.LerpAtConstantSpeed(cur, goal, bodySpeed < 0 ? disengageLerpRate : intensityLerpRate, dt);
             material.SetFloat(intensityProperty, cur);
             var p = hook.position;
             var s = sr.transform.localScale;

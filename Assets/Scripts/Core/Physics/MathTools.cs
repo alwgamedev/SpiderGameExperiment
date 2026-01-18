@@ -53,9 +53,17 @@ public static class MathTools
         return s * s * v + 2 * s * t * (3 * (q - p) - v - w) + t * t * w;
     }
 
-    public static float LerpAtConstantRate(float from, float to, float rate, float dt)
+    public static float LerpAtConstantSpeed(float from, float to, float speed, float dt)
     {
-        return from == to ? from : from < to ? Mathf.Min(from + rate * dt, to) : Mathf.Max(from - rate * dt, to);
+        return from == to ? from : from < to ? Mathf.Min(from + speed * dt, to) : Mathf.Max(from - speed * dt, to);
+    }
+
+    public static Vector2 LerpAtConstantSpeed(Vector2 from, Vector2 to, float speed, float dt)
+    {
+        var dist = Vector2.Distance(from, to);
+        var maxDist = speed * dt;
+        var t = maxDist / dist;
+        return float.IsNormal(t) ? Vector2.Lerp(from, to, t) : from;
     }
 
     /// <summary>
@@ -151,7 +159,7 @@ public static class MathTools
     //when v1, v2 are unit vectors, this equals the sine of the angle from v1 to v2 (being dot(v1, v2.CWPerp()) = cos(theta-90))
     public static float Cross2D(Vector2 v1, Vector2 v2)
     {
-        return -v1.y * v2.x + v1.x * v2.y;
+        return v1.x * v2.y - v1.y * v2.x;
     }
 
     /// <summary>
@@ -242,7 +250,7 @@ public static class MathTools
     }
 
     /// <summary>
-    /// u1, u2 unit vectors
+    /// u1, u2 unit vectors. Don't try to do more than 180 deg of rotation.
     /// </summary>
     public static Vector2 CheapRotationalLerp(Vector2 u1, Vector2 u2, float lerpAmount, out bool changed)
     {
@@ -255,7 +263,10 @@ public static class MathTools
         if (u1 == -u2)
         {
             changed = true;
-            return Vector2.LerpUnclamped(u1, u2.CCWPerp(), 2 * lerpAmount).normalized;
+            //return Vector2.LerpUnclamped(u1, u1.CCWPerp(), 2 * lerpAmount);
+            return lerpAmount > 0 ?
+                Vector2.LerpUnclamped(u1, u1.CCWPerp(), 2 * lerpAmount).normalized
+                : Vector2.LerpUnclamped(u1, u1.CWPerp(), -2 * lerpAmount).normalized;
         }
         changed = true;
         return Vector2.LerpUnclamped(u1, u2, lerpAmount).normalized;
@@ -272,7 +283,10 @@ public static class MathTools
         if (u1 == -u2)
         {
             changed = true;
-            return Vector2.Lerp(u1, u2.CCWPerp(), 2 * lerpAmount).normalized;
+            //return Vector2.Lerp(u1, u1.CCWPerp(), 2 * lerpAmount).normalized;
+            return lerpAmount > 0 ?
+                Vector2.Lerp(u1, u1.CCWPerp(), 2 * lerpAmount).normalized
+                : Vector2.Lerp(u1, u1.CWPerp(), -2 * lerpAmount).normalized;
         }
         changed = true;
         return Vector2.Lerp(u1, u2, lerpAmount).normalized;
@@ -296,9 +310,15 @@ public static class MathTools
         }
     }
 
+    public static Vector2 CheapRotation(Vector2 u, float angleInRadians, out bool changed)
+    {
+        //return CheapFromToRotation(u, u.CCWPerp(), angleInRadians, out changed);
+        return angleInRadians > 0 ? CheapFromToRotation(u, u.CCWPerp(), angleInRadians, out changed)
+            : CheapFromToRotation(u, u.CWPerp(), -angleInRadians, out changed);
+    }
+
     public static Vector2 CheapFromToRotation(Vector2 u1, Vector2 u2, float angleInRadians, out bool changed)
     {
-        //we could also return early if angle = 0, but we should just avoid passing in 0 if we're worried about it
         var t = AbsolutePseudoAngle(u1, u2);
         if (t == 0)
         {

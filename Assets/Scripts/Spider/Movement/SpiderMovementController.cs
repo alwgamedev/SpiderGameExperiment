@@ -790,7 +790,7 @@ public class SpiderMovementController : MonoBehaviour
     {
         groundednessRating = groundednessRating == 0 ? legSynchronizer.FractionTouchingGround > 0 ? Mathf.Max(legSynchronizer.FractionTouchingGround, groundednessInitialContactValue) : 0
             : grapple.GrappleAnchored && grapple.GrappleReleaseInput < 0 ? legSynchronizer.FractionTouchingGround 
-            : MathTools.LerpAtConstantRate(groundednessRating, legSynchronizer.FractionTouchingGround, groundednessSmoothingRate, Time.deltaTime);
+            : MathTools.LerpAtConstantSpeed(groundednessRating, legSynchronizer.FractionTouchingGround, groundednessSmoothingRate, Time.deltaTime);
     }
 
     private void InitializeGroundMap()
@@ -917,14 +917,14 @@ public class SpiderMovementController : MonoBehaviour
             var dX = grounded ? 0 : r.y < -MathTools.sin15 ? (-r.y - MathTools.sin15)/(1 - MathTools.sin15)  : 0;
             legSynchronizer.LerpDriftWeights(dX);
             legSynchronizer.stepHeightFraction *= 1 - freeHangStepHeightReductionMax * dX;
-            legSynchronizer.strideMultiplier = MathTools.LerpAtConstantRate(legSynchronizer.strideMultiplier, Mathf.Lerp(AirborneStrideMultiplier(), freeHangStrideMultiplier, dX),
+            legSynchronizer.strideMultiplier = MathTools.LerpAtConstantSpeed(legSynchronizer.strideMultiplier, Mathf.Lerp(AirborneStrideMultiplier(), freeHangStrideMultiplier, dX),
                     strideMultiplierSmoothingRate, Time.deltaTime);
         }
         else
         {
             if (!grounded)
             {
-                legSynchronizer.strideMultiplier = MathTools.LerpAtConstantRate(legSynchronizer.strideMultiplier, AirborneStrideMultiplier(),
+                legSynchronizer.strideMultiplier = MathTools.LerpAtConstantSpeed(legSynchronizer.strideMultiplier, AirborneStrideMultiplier(),
                     strideMultiplierSmoothingRate, Time.deltaTime);
             }
             else if (legSynchronizer.strideMultiplier != 1)
