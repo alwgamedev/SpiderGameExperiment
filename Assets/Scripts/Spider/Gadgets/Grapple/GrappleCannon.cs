@@ -126,7 +126,7 @@ public class GrappleCannon : MonoBehaviour
         }
         else
         {
-            if (spiderInput.ZHeld)
+            if (spiderInput.ZAction.IsPressed())
             {
                 DestroyGrapple();
             }

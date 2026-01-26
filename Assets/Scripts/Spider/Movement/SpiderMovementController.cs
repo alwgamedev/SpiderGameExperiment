@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
 
 public class SpiderMovementController : MonoBehaviour
@@ -128,11 +127,10 @@ public class SpiderMovementController : MonoBehaviour
     bool grappleScurrying;
     bool thrusterCooldownWarningSent;
     bool grappleFreeHangPrerequisites;
-    //bool forceFreeHang;
 
     float MoveInput => spiderInput.MoveInput.x;
     float LeanInput => spiderInput.SecondaryInput.x;
-    bool ForceFreeHang => grapple.GrappleAnchored && spiderInput.ShiftHeld;
+    bool ForceFreeHang => grapple.GrappleAnchored && spiderInput.ShiftAction.IsPressed();
 
     int Orientation => FacingRight ? 1 : -1;
     Vector2 OrientedRight => FacingRight ? transform.right : -transform.right;
@@ -149,8 +147,6 @@ public class SpiderMovementController : MonoBehaviour
     public float CrouchProgress => crouchProgress;
     public Thruster Thruster => thruster;
     public GrappleCannon Grapple => grapple;
-
-    public static SpiderMovementController Player;
 
     public UnityEvent JumpChargeBegan;
     public UnityEvent JumpChargeEnded;
@@ -192,8 +188,6 @@ public class SpiderMovementController : MonoBehaviour
         thrusterFlame.Initialize();
 
         spiderInput = GetComponent<SpiderInput>();
-
-        //Player = this;
 
         //Time.timeScale = 0.25f;//useful for spotting issues
     }
@@ -366,10 +360,10 @@ public class SpiderMovementController : MonoBehaviour
                 chargingJump = false;
                 JumpChargeEnded.Invoke();
             }
-            else if (!spiderInput.SpaceHeld)
+            else if (!spiderInput.SpaceAction.IsPressed())
             {
                 chargingJump = false;
-                waitingToHandleJump = !spiderInput.ControlHeld;
+                waitingToHandleJump = !spiderInput.ControlAction.IsPressed();
                 JumpChargeEnded.Invoke();
             }
             else if (crouchProgress < 1)
@@ -379,7 +373,7 @@ public class SpiderMovementController : MonoBehaviour
         }
         else if (!waitingToHandleJump)
         {
-            if (grounded && spiderInput.SpaceHeld)
+            if (grounded && spiderInput.SpaceAction.IsPressed())
             {
                 chargingJump = true;
                 JumpChargeBegan.Invoke();
@@ -914,7 +908,7 @@ public class SpiderMovementController : MonoBehaviour
         if (legSynchronizer.FreeHanging)
         {
             var r = OrientedRight;
-            var dX = grounded ? 0 : r.y < -MathTools.sin15 ? (-r.y - MathTools.sin15)/(1 - MathTools.sin15)  : 0;
+            var dX = grounded ? 0 : r.y < -MathTools.sin15 ? (-r.y - MathTools.sin15) / (1 - MathTools.sin15)  : 0;
             legSynchronizer.LerpDriftWeights(dX);
             legSynchronizer.stepHeightFraction *= 1 - freeHangStepHeightReductionMax * dX;
             legSynchronizer.strideMultiplier = MathTools.LerpAtConstantSpeed(legSynchronizer.strideMultiplier, Mathf.Lerp(AirborneStrideMultiplier(), freeHangStrideMultiplier, dX),

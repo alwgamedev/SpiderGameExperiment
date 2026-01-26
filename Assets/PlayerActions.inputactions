@@ -52,6 +52,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "QAction",
+                    "type": "Button",
+                    "id": "c3361555-cca0-499d-93d3-7f757e0bbf7e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "ZAction",
                     "type": "Button",
                     "id": "b5452c6d-c00d-4994-82fc-051114ad4756",
@@ -213,6 +222,17 @@
                     "processors": "",
                     "groups": ";Keyboard",
                     "action": "ZAction",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9ac3b9e5-e83c-4fa3-b026-4f085ab98ab7",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard",
+                    "action": "QAction",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
