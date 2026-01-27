@@ -7,7 +7,7 @@ public class PhysicsBasedIKArm : MonoBehaviour
     [SerializeField] float[] armHalfWidth;
     [SerializeField] LayerMask collisionMask;
     [SerializeField] float collisionResponse;
-    [SerializeField] float collisionDamping;
+    //[SerializeField] float collisionDamping;
     [SerializeField] float horizontalRaycastSpacing;
     [SerializeField] float tunnelInterval;
     [SerializeField] float tunnelMax;
@@ -15,11 +15,10 @@ public class PhysicsBasedIKArm : MonoBehaviour
     [SerializeField] float maxTargetPursuitSpeed;
     [SerializeField] float jointDamping;
     [SerializeField] float targetTolerance;
+    [SerializeField] float targetingErrorMin;//keeps arm from slowing too much as it gets close to target
     [SerializeField] float configurationSpringConstant;
     [SerializeField] float maxConfigurationPursuitSpeed;
     [SerializeField] float configurationTolerance;
-    [SerializeField] float targetingErrorMin;
-    //[SerializeField] float smallErrorPower;
 
     float[] length;
     float[] angularVelocity;
@@ -61,20 +60,23 @@ public class PhysicsBasedIKArm : MonoBehaviour
         }
 
         angularVelocity = new float[chain.Length - 1];
-        targetConfiguration = new Vector2[chain.Length];
-        foldedConfiguration = new Vector2[chain.Length];
+
+        targetConfiguration = new Vector2[chain.Length - 1];
+        foldedConfiguration = new Vector2[chain.Length - 1];
+        foldedConfiguration1 = new Vector2[chain.Length - 1];
+
         var sign = 1;
-        for (int i = 1; i < foldedConfiguration.Length; i++)
+        for (int i = 0; i < foldedConfiguration.Length; i++)
         {
-            foldedConfiguration[i] = foldedConfiguration[i - 1] + new Vector2(sign * length[i - 1], 0);
+            foldedConfiguration[i] = new Vector2(sign, 0);
             sign = -sign;
         }
+
         sign = 1;
-        foldedConfiguration1 = new Vector2[chain.Length];
-        foldedConfiguration1[1] = new Vector2(length[0], 0);
-        for (int i = 2; i < foldedConfiguration1.Length; i++)
+        foldedConfiguration1[0] = Vector2.right;
+        for (int i = 1; i < foldedConfiguration1.Length; i++)
         {
-            foldedConfiguration1[i] = foldedConfiguration1[i - 1] + new Vector2(sign * length[i - 1], 0);
+            foldedConfiguration1[i] = new Vector2(sign, 0);
             sign = -sign;
         }
     }
@@ -123,12 +125,15 @@ public class PhysicsBasedIKArm : MonoBehaviour
 
     public void SnapToConfiguration(Vector2[] configuration)
     {
-        for (int i = 1; i < configuration.Length; i++)
+        for (int i = 0; i < configuration.Length; i++)
         {
-            var p = Anchor.position + configuration[i].x * transform.right + configuration[i].y * transform.up;
-            chain[i].position = p;
-            Vector2 u = (chain[i].position - chain[i - 1].position) / length[i - 1];
-            chain[i - 1].rotation = MathTools.QuaternionFrom2DUnitVector(u);
+            var u = MathTools.QuaternionFrom2DUnitVector(configuration[i]);
+            chain[i].rotation = u;
+            chain[i + 1].position = chain[i].position + length[i] * (Vector3)configuration[i];
+            //var p = Anchor.position + configuration[i].x * transform.right + configuration[i].y * transform.up;
+            //chain[i].position = p;
+            //Vector2 u = (chain[i].position - chain[i - 1].position) / length[i - 1];
+            //chain[i - 1].rotation = MathTools.QuaternionFrom2DUnitVector(u);
         }
     }
 
@@ -188,7 +193,7 @@ public class PhysicsBasedIKArm : MonoBehaviour
     {
         PhysicsBasedIK.IntegrateJoints(chain, length, angularVelocity, jointDamping, Time.deltaTime);
         PhysicsBasedIK.ApplyCollisionForces(chain, length, armHalfWidth, angularVelocity, collisionMask, collisionResponse * Time.deltaTime,
-            horizontalRaycastSpacing, tunnelInterval, tunnelMax, collisionDamping);
+            horizontalRaycastSpacing, tunnelInterval, tunnelMax/*, collisionDamping*/);
     }
 
     private void TrackPositionBehavior()
@@ -256,30 +261,28 @@ public class PhysicsBasedIKArm : MonoBehaviour
         }
 
         var err = Mathf.Sqrt(err2);
-        err = Mathf.Max(err, targetingErrorMin);//this keeps it from slowing down too much as it gets close to the target
-        var a = effectorSpringConstant * dt * Mathf.Min(err, maxTargetPursuitSpeed) / err * error;
+        var clampedErr = Mathf.Max(err, targetingErrorMin);//this keeps it from slowing down too much as it gets close to the target
+        var a = effectorSpringConstant * dt * Mathf.Min(clampedErr, maxTargetPursuitSpeed) / err * error;
         PhysicsBasedIK.ApplyForceToJoint(chain, length, angularVelocity, a, chain.Length - 1);
     }
 
     private void PullTowardsConfiguration(Vector2[] targetConfiguration, float dt)
     {
-        var anyChanged = false;
-        for (int i = 1; i < targetConfiguration.Length; i++)
+        bool anyChanged = false;
+        for (int i = 0; i < targetConfiguration.Length; i++)
         {
-            Vector2 p = Anchor.position + targetConfiguration[i].x * transform.right + targetConfiguration[i].y * transform.up;
-            var error = p - (Vector2)chain[i].position;
-            var err2 = error.sqrMagnitude;
-            if (err2 < configurationTolerance * configurationTolerance)
+            Vector2 u = (chain[i + 1].position - chain[i].position) / length[i];
+            var angle = MathTools.PseudoAngle(u, targetConfiguration[i]);
+            if (Mathf.Abs(angle) < configurationTolerance)
             {
                 continue;
             }
 
             anyChanged = true;
-            var err = Mathf.Sqrt(err2);
-            err = Mathf.Max(err, targetingErrorMin);
-            var a = configurationSpringConstant * dt * Mathf.Min(err, maxConfigurationPursuitSpeed) / err * error;
-            PhysicsBasedIK.ApplyForceToJoint(chain, length, angularVelocity, a, i);
+            var a = configurationSpringConstant * angle * dt;
+            angularVelocity[i] += Mathf.Sign(a) * Mathf.Min(Mathf.Abs(a), maxConfigurationPursuitSpeed);
             //break here would be cool? i.e. we just fold one joint at a time
+            //or we can also do them backwards
         }
 
         if (!anyChanged && !hasInvokedTargetReached)

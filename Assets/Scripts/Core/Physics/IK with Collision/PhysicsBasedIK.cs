@@ -4,7 +4,7 @@ public static class PhysicsBasedIK
 {
     //acceleration should already by multiplied by deltaTime
     //damping useful for collision (to keep from bouncing off collision repeatedly)
-    public static void ApplyForceToJoint(Transform[] chain, float[] length, float[] angularVelocity, Vector2 acceleration, int joint, float damping = 0)
+    public static void ApplyForceToJoint(Transform[] chain, float[] length, float[] angularVelocity, Vector2 acceleration, int joint)
     {
         for (int i = joint - 1; i > -1; i--)
         {
@@ -16,14 +16,16 @@ public static class PhysicsBasedIK
             Vector2 u = chain[i + 1].position - chain[i].position;
             u /= length[i];
             var n = u.CCWPerp();
-            var aPerp = Vector2.Dot(acceleration, n) / length[i];
-            //NOTE: if you don't divide by length, or you divide by some power of length (0 <= p <= 1), the shorter arms become more lively and it gives a really cool feel,
-            //but it will wiggle up and down like a wave when target is out of reach
-            if (Mathf.Sign(angularVelocity[i]) == Mathf.Sign(aPerp))
+            var a = acceleration.magnitude;
+            var dot = Vector2.Dot(acceleration, n);
+            if (dot == 0)
             {
-                angularVelocity[i] -= damping * angularVelocity[i];
+                continue;
             }
-            angularVelocity[i] += aPerp - damping * angularVelocity[i];
+            var aPerp = a * Mathf.Sign(dot) / length[i];
+            //using magnitude of the original acceleration, rather than just normal component helps keep it from getting bogged down when direction of force
+            //is nearly parallel to arm
+            angularVelocity[i] += aPerp;
             acceleration -= aPerp * n;//component of acceleration parallel to that arm will get transferred to next joint
         }
     }
@@ -43,8 +45,8 @@ public static class PhysicsBasedIK
 
     //collisionResponse can already be multiplied by dt
     public static void ApplyCollisionForces(Transform[] chain, float[] length, float[] armHalfWidth, float[] angularVelocity,
-        int collisionMask, float collisionResponse, float horizontalRaycastSpacing, float tunnelInterval, float tunnelMax,
-        float collisionDamping)
+        int collisionMask, float collisionResponse, float horizontalRaycastSpacing, float tunnelInterval, float tunnelMax
+        /*float collisionDamping*/)
     {
         for (int i = chain.Length - 2; i > -1; i--)
         {
@@ -96,8 +98,8 @@ public static class PhysicsBasedIK
 
 
                 var a = correction * collisionResponse * n;
-                ApplyForceToJoint(chain, length, angularVelocity, a, i, collisionDamping);
-                ApplyForceToJoint(chain, length, angularVelocity, a, i + 1, collisionDamping);
+                ApplyForceToJoint(chain, length, angularVelocity, a, i/*, collisionDamping*/);
+                ApplyForceToJoint(chain, length, angularVelocity, a, i + 1/*, collisionDamping*/);
 
                 float EscapeYValue(bool escapingUp)
                 {

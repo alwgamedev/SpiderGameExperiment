@@ -164,15 +164,22 @@ public class GrabberArm : MonoBehaviour
     private void Update()
     {
         //handle input
-        if (!actionInProgress && Keyboard.current.qKey.wasPressedThisFrame)
+        if (!actionInProgress)
         {
-            if (arm.IsOff)
+            if (Keyboard.current.qKey.wasPressedThisFrame)
             {
-                Deploy();
+                if (arm.IsOff)
+                {
+                    Deploy();
+                }
+                else
+                {
+                    TryBeginGrab();
+                }
             }
-            else
+            else if (Keyboard.current.pKey.wasPressedThisFrame)
             {
-                TryBeginGrab();
+                arm.BeginTargetingTransform(testTarget);
             }
         }
     }
