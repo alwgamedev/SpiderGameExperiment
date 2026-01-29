@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7846396420207155614}
   - component: {fileID: 4773659117919509220}
   - component: {fileID: 8181555562958281257}
-  m_Layer: 3
+  m_Layer: 2
   m_Name: 'Hinge2 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -121,7 +121,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4275733385023722146}
-  m_Layer: 3
+  m_Layer: 2
   m_Name: arm3 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -137,7 +137,7 @@ Transform:
   m_GameObject: {fileID: 1835960099741553848}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0.7790313, w: 0.6269851}
-  m_LocalPosition: {x: 16.994198, y: 5.2562113, z: 0}
+  m_LocalPosition: {x: 16.994194, y: 5.2562227, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -152,7 +152,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4441328826201566813}
-  m_Layer: 3
+  m_Layer: 2
   m_Name: grabber arm upper1 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -185,7 +185,7 @@ GameObject:
   - component: {fileID: 6810218586430422166}
   - component: {fileID: 6905702334341548815}
   - component: {fileID: 3153656455280793140}
-  m_Layer: 3
+  m_Layer: 2
   m_Name: 'Grabber Arm Upper 0 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -295,7 +295,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6247738345379638063}
-  m_Layer: 3
+  m_Layer: 2
   m_Name: arm0 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -328,7 +328,7 @@ GameObject:
   - component: {fileID: 6664204276111028086}
   - component: {fileID: 7543864775582510485}
   - component: {fileID: 7709831544689432519}
-  m_Layer: 3
+  m_Layer: 2
   m_Name: 'Grabber Arm Upper 1 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -440,7 +440,7 @@ GameObject:
   - component: {fileID: 6187581522992570135}
   - component: {fileID: 8793469299174390252}
   - component: {fileID: 4669541455261561503}
-  m_Layer: 3
+  m_Layer: 2
   m_Name: 'Arm0 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -550,7 +550,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5840169939259167555}
-  m_Layer: 3
+  m_Layer: 2
   m_Name: arm1 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -566,7 +566,7 @@ Transform:
   m_GameObject: {fileID: 4098145970681456891}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.09825967, w: 0.9951608}
-  m_LocalPosition: {x: 3.537673, y: 8.257243, z: 0}
+  m_LocalPosition: {x: 3.537672, y: 8.257243, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -581,7 +581,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5892142175585028091}
-  m_Layer: 3
+  m_Layer: 2
   m_Name: grabber arm lower1 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -612,7 +612,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 468504370708120230}
-  m_Layer: 3
+  m_Layer: 2
   m_Name: arm2 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -628,7 +628,7 @@ Transform:
   m_GameObject: {fileID: 5025584574447641527}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0.3143709, w: 0.9493003}
-  m_LocalPosition: {x: 10.968136, y: 9.739018, z: 0}
+  m_LocalPosition: {x: 10.968145, y: 9.73902, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -645,7 +645,7 @@ GameObject:
   - component: {fileID: 3745775398776755436}
   - component: {fileID: 19003098623553743}
   - component: {fileID: 4707576002521943196}
-  m_Layer: 3
+  m_Layer: 2
   m_Name: 'Arm1 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -757,7 +757,7 @@ GameObject:
   - component: {fileID: 4988739235599292979}
   - component: {fileID: 4775225789085403376}
   - component: {fileID: 677151515422558250}
-  m_Layer: 3
+  m_Layer: 2
   m_Name: 'Arm2 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -867,7 +867,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 219750284902355839}
-  m_Layer: 3
+  - component: {fileID: 2937749974650434540}
+  m_Layer: 2
   m_Name: grabber arm lower0 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -890,6 +891,63 @@ Transform:
   - {fileID: 5892142175585028091}
   m_Father: {fileID: 5485431387252796140}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!60 &2937749974650434540
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5249314536631541980}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 8
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: 2.3736556, y: 1.1124574}
+      - {x: 1.9957744, y: 0.61495703}
+      - {x: 1.3460296, y: 0.33530405}
+      - {x: 0.21524233, y: 0.34360808}
+      - {x: 0.20164713, y: 0.30037686}
+      - {x: 0.16931827, y: -0.31064507}
+      - {x: 0.94161457, y: -0.30103382}
+      - {x: 1.7011778, y: -0.166201}
+      - {x: 2.4304142, y: 0.40403688}
+      - {x: 2.6013587, y: 0.9779408}
+  m_UseDelaunayMesh: 1
 --- !u!1 &5986210086416672372
 GameObject:
   m_ObjectHideFlags: 0
@@ -901,7 +959,7 @@ GameObject:
   - component: {fileID: 4248833285768162537}
   - component: {fileID: 9014493012313193011}
   - component: {fileID: 5245248573355968093}
-  m_Layer: 3
+  m_Layer: 2
   m_Name: 'Arm3 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1013,7 +1071,7 @@ GameObject:
   - component: {fileID: 9027283974276887006}
   - component: {fileID: 740984958358288925}
   - component: {fileID: 940471112351530560}
-  m_Layer: 3
+  m_Layer: 2
   m_Name: 'Grabber '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1125,7 +1183,7 @@ GameObject:
   - component: {fileID: 2793478332040194545}
   - component: {fileID: 3395330695753744097}
   - component: {fileID: 5354079769130169783}
-  m_Layer: 3
+  m_Layer: 2
   m_Name: 'Hinge3 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1239,8 +1297,8 @@ GameObject:
   - component: {fileID: 1472496846458269233}
   - component: {fileID: 6721185391477429269}
   - component: {fileID: 5995575784789208824}
-  m_Layer: 3
-  m_Name: Test Robo Arm
+  m_Layer: 2
+  m_Name: Grabber Arm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1256,7 +1314,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -8.9, y: 12.2, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2793478332040194545}
@@ -1307,12 +1365,6 @@ MonoBehaviour:
   - {fileID: 4775225789085403376}
   - {fileID: 19003098623553743}
   - {fileID: 8793469299174390252}
-  grabber: {fileID: 5485431387252796140}
-  grabberRayEndPt: {fileID: 3541387447881304545}
-  upperGrabArm: {fileID: 2648576817369858537}
-  lowerGrabArm: {fileID: 219750284902355839}
-  grabArmRotationSpeed: 6
-  grabArmMaxRotationRad: 0.9817477
   grabMask:
     serializedVersion: 2
     m_Bits: 1
@@ -1320,6 +1372,24 @@ MonoBehaviour:
   depositTarget: {fileID: 0}
   offAnchorPosition: {fileID: 0}
   deployedAnchorPosition: {fileID: 0}
+  foldedPose:
+  - {x: 1, y: 0}
+  - {x: 1, y: 0}
+  - {x: -1, y: 0}
+  - {x: 1, y: 0}
+  - {x: -1, y: 0}
+  defaultPose:
+  - {x: 0.98078525, y: 0.19509032}
+  - {x: -0.38268343, y: 0.9238795}
+  - {x: 0.9238795, y: -0.38268343}
+  - {x: 0.38268343, y: -0.9238795}
+  - {x: 0.98078525, y: -0.19509032}
+  depositPose:
+  - {x: 0.8660254, y: 0.5}
+  - {x: -0.5, y: 0.8660254}
+  - {x: -1, y: 0}
+  - {x: -0.8660254, y: -0.5}
+  - {x: 0, y: -1}
 --- !u!114 &1472496846458269233
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1340,26 +1410,34 @@ MonoBehaviour:
   - {fileID: 5485431387252796140}
   - {fileID: 3541387447881304545}
   armHalfWidth:
-  - 0.7
-  - 0.7
-  - 1
-  - 0.7
-  - 1
+  - 0.0525
+  - 0.0525
+  - 0.075
+  - 0.0525
+  - 0.1125
   collisionMask:
-    serializedVersion: 2
+  - serializedVersion: 2
     m_Bits: 64
-  collisionResponse: 12.5
-  horizontalRaycastSpacing: 1
-  tunnelInterval: 3
-  tunnelMax: 30
-  effectorSpringConstant: 12.5
-  maxTargetPursuitSpeed: 12.5
+  - serializedVersion: 2
+    m_Bits: 72
+  - serializedVersion: 2
+    m_Bits: 72
+  - serializedVersion: 2
+    m_Bits: 72
+  - serializedVersion: 2
+    m_Bits: 72
+  collisionResponse: 15
+  horizontalRaycastSpacing: 0.075
+  tunnelInterval: 0.225
+  tunnelMax: 2.25
+  effectorSpringConstant: 20
+  maxTargetPursuitSpeed: 3
   jointDamping: 8
-  targetTolerance: 0.1
-  targetingErrorMin: 3
-  configurationSpringConstant: 45
-  maxConfigurationPursuitSpeed: 10
-  configurationTolerance: 0.01
+  targetTolerance: 0.01
+  targetingErrorMin: 0.4
+  poseSpringConstant: 45
+  maxPosePursuitSpeed: 10
+  poseTolerance: 0.01
 --- !u!114 &6721185391477429269
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1379,7 +1457,7 @@ MonoBehaviour:
   - {fileID: 4275733385023722146}
   - {fileID: 5485431387252796140}
   - {fileID: 3541387447881304545}
-  moveSpeed: 25
+  moveSpeed: 5
   targetTolerance: 0.01
 --- !u!114 &5995575784789208824
 MonoBehaviour:
@@ -1397,8 +1475,11 @@ MonoBehaviour:
   grabberRayEndPt: {fileID: 3541387447881304545}
   upperGrabArm: {fileID: 2648576817369858537}
   lowerGrabArm: {fileID: 219750284902355839}
+  upperArmCollider: {fileID: 3301777758548608377}
+  lowerArmCollider: {fileID: 2937749974650434540}
+  grabTolerance: 0
   grabArmRotationSpeed: 6
-  grabArmMaxRotationRad: 0.9817477
+  grabArmMaxRotationRad: 0.9
   rotationTolerance: 0.9999
 --- !u!1 &7064115709004238814
 GameObject:
@@ -1411,7 +1492,7 @@ GameObject:
   - component: {fileID: 4828271786416684691}
   - component: {fileID: 6952061862276826624}
   - component: {fileID: 6158698353923270431}
-  m_Layer: 3
+  m_Layer: 2
   m_Name: 'Grabber Arm Lower 0 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1523,7 +1604,7 @@ GameObject:
   - component: {fileID: 417899801905736670}
   - component: {fileID: 1607374978872316149}
   - component: {fileID: 885020369145553370}
-  m_Layer: 3
+  m_Layer: 2
   m_Name: 'Grabber Arm Lower 1 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1635,7 +1716,7 @@ GameObject:
   - component: {fileID: 7191657863516624507}
   - component: {fileID: 553886659812588818}
   - component: {fileID: 1080929862721460782}
-  m_Layer: 3
+  m_Layer: 2
   m_Name: 'Hinge1 '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1745,7 +1826,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5485431387252796140}
-  m_Layer: 3
+  m_Layer: 2
   m_Name: grabber bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1760,8 +1841,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7833739086674810379}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0.8845319, w: 0.46647966}
-  m_LocalPosition: {x: 15.27399, y: -2.604416, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0.8845319, w: 0.46647972}
+  m_LocalPosition: {x: 15.273986, y: -2.6044054, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1778,7 +1859,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2648576817369858537}
-  m_Layer: 3
+  - component: {fileID: 3301777758548608377}
+  m_Layer: 2
   m_Name: grabber arm upper0 bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1801,6 +1883,61 @@ Transform:
   - {fileID: 4441328826201566813}
   m_Father: {fileID: 5485431387252796140}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 39}
+--- !u!60 &3301777758548608377
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8993488537441344661}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 8
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: 2.457626, y: -0.27226397}
+      - {x: 1.4332787, y: 0.24890438}
+      - {x: -0.039384216, y: 0.3034669}
+      - {x: 0.2908165, y: -0.27647153}
+      - {x: 1.4366708, y: -0.25463513}
+      - {x: 2.0577195, y: -0.54017466}
+      - {x: 2.5299842, y: -1.0741793}
+      - {x: 2.6981773, y: -0.89508134}
+  m_UseDelaunayMesh: 1
 --- !u!1 &9114859482407800266
 GameObject:
   m_ObjectHideFlags: 0
@@ -1810,7 +1947,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3541387447881304545}
-  m_Layer: 3
+  m_Layer: 2
   m_Name: Effector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1826,7 +1963,7 @@ Transform:
   m_GameObject: {fileID: 9114859482407800266}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.45840737, w: 0.8887422}
-  m_LocalPosition: {x: 13.656666, y: -4.8781776, z: 0}
+  m_LocalPosition: {x: 13.989992, y: -4.409995, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

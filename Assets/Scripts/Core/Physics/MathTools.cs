@@ -389,4 +389,11 @@ public static class MathTools
 #endif
         return Physics2D.Raycast(origin, direction, length, layerMask);
     }
+
+    public static void SetKinematic(this Rigidbody2D rb)
+    {
+        rb.bodyType = RigidbodyType2D.Kinematic;
+        rb.totalForce = Vector2.zero;
+        rb.linearVelocity = Vector2.zero;
+    }
 }

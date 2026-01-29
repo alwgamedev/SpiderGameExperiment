@@ -7,12 +7,18 @@ public class GrabberClaw : MonoBehaviour
     [SerializeField] Transform grabberRayEndPt;
     [SerializeField] Transform upperGrabArm;//on positive half grabberRay
     [SerializeField] Transform lowerGrabArm;
+    [SerializeField] Collider2D upperArmCollider;
+    [SerializeField] Collider2D lowerArmCollider;
+    [SerializeField] float grabTolerance;
     [SerializeField] float grabArmRotationSpeed;
     [SerializeField] float grabArmMaxRotationRad;
     [SerializeField] float rotationTolerance;//closer to 1 is stricter
 
     Vector2 grabArmMaxDirection;
     Vector2 goalGrabArmDirection = Vector2.right;//in grabber's local frame
+
+    Collider2D grabTarget;
+
 
     bool hasInvokedTargetReached;
 
@@ -32,6 +38,12 @@ public class GrabberClaw : MonoBehaviour
         hasInvokedTargetReached = false;
     }
 
+    public void BeginGrab(Collider2D collider)
+    {
+        Close();
+        grabTarget = collider;
+    }
+
     private void OnValidate()
     {
         grabArmMaxDirection = new(Mathf.Cos(grabArmMaxRotationRad), Mathf.Sin(grabArmMaxRotationRad));
@@ -44,7 +56,22 @@ public class GrabberClaw : MonoBehaviour
 
     private void FixedUpdate()
     {
-        RotateGrabArms(goalGrabArmDirection, Time.deltaTime);
+        if (!hasInvokedTargetReached)
+        {
+            RotateGrabArms(goalGrabArmDirection, Time.deltaTime);
+
+            if (grabTarget && !hasInvokedTargetReached)
+            {
+                var d1 = grabTarget.Distance(upperArmCollider);
+                var d2 = grabTarget.Distance(lowerArmCollider);
+                if (Mathf.Max(d1.distance, d2.distance) < grabTolerance)
+                {
+                    grabTarget = null;
+                    hasInvokedTargetReached = true;
+                    TargetReached?.Invoke();
+                }
+            }
+        }
     }
 
     private void RotateGrabArms(Vector2 goalGrabArmDirection, float dt)
@@ -57,8 +84,8 @@ public class GrabberClaw : MonoBehaviour
         {
             if (!hasInvokedTargetReached)
             {
-                TargetReached?.Invoke();
                 hasInvokedTargetReached = true;
+                TargetReached?.Invoke();
             }
             return;
         }

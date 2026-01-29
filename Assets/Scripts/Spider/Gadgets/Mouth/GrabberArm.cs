@@ -8,20 +8,14 @@ public class GrabberArm : MonoBehaviour
     [SerializeField] ArmAnchor anchor;
     [SerializeField] GrabberClaw grabberClaw;
     [SerializeField] SpriteRenderer[] armSprites;
-    [SerializeField] Transform grabber;
-    [SerializeField] Transform grabberRayEndPt;
-    [SerializeField] Transform upperGrabArm;//on positive half grabberRay
-    [SerializeField] Transform lowerGrabArm;
-    [SerializeField] float grabArmRotationSpeed;
-    [SerializeField] float grabArmMaxRotationRad;
     [SerializeField] LayerMask grabMask;
     [SerializeField] Transform testTarget;
     [SerializeField] Transform depositTarget;
     [SerializeField] Transform offAnchorPosition;
     [SerializeField] Transform deployedAnchorPosition;
-
-    Vector2 grabArmMaxDirection;
-    Vector2 goalGrabArmDirection = Vector2.right;//in grabber's local frame
+    [SerializeField] Vector2[] foldedPose;
+    [SerializeField] Vector2[] defaultPose;
+    [SerializeField] Vector2[] depositPose;
 
     bool actionInProgress;//will not process input while action in progress
 
@@ -31,50 +25,95 @@ public class GrabberArm : MonoBehaviour
     Action onAnchorTargetReached;
     Action onGrabberTargetReached;
 
-    private void Deploy()
+    //pull out of the garage
+    private void DeployPhase1()
     {
         Debug.Log("deploying");
         actionInProgress = true;
-        arm.SnapToFolded1();
+        arm.SnapToPose(foldedPose);
         ShowSprites();
         anchor.BeginTargetingTransform(deployedAnchorPosition);
 
         onArmTargetReached = null;
-        onAnchorTargetReached = () =>
-        {
-            arm.GoIdle();
-            actionInProgress = false;
-            Debug.Log("deployment complete");
-        };
+        onAnchorTargetReached = DeployPhase2;
         onGrabberTargetReached = null;
         //let's set all 3 every time we start a new action (so we don't have any old unneeded callbacks coming in when they shouldn't)
     }
 
-    private void PrepareToPark()
+    //move to default pose
+    private void DeployPhase2()
     {
-        Debug.Log("preparing to park (folding up)");
         actionInProgress = true;
-        arm.FoldUp1();
-        grabberClaw.Close();
+        arm.BeginTargetingPose(defaultPose);
 
-        onArmTargetReached = Park;
+        onArmTargetReached = CompleteDeployment;
         onAnchorTargetReached = null;
         onGrabberTargetReached = null;
     }
 
-    private void Park()
+    private void CompleteDeployment()
     {
-        Debug.Log("parking");
+        Debug.Log("deployment complete");
+        //arm.GoIdle();
+        //^instead of going idle, we'll continue tracking default pose in case collision knocks the arm out of place
+        actionInProgress = false;
+
+        onArmTargetReached = null;
+        onAnchorTargetReached = null;
+        onGrabberTargetReached = null;
+    }
+
+    //return to default pose
+    private void ParkPhase1()
+    {
+        actionInProgress = true;
+        arm.BeginTargetingPose(defaultPose);
+
+        onArmTargetReached = ParkPhase2;
+        onAnchorTargetReached = null;
+        onGrabberTargetReached = null;
+    }
+
+    //close grabber and fold up
+    private void ParkPhase2()
+    {
+        actionInProgress = true;
+        grabberClaw.Close();
+
+        onArmTargetReached = null;
+        onAnchorTargetReached = null;
+        onGrabberTargetReached = ParkPhase3;
+    }
+
+    private void ParkPhase3()
+    {
+        actionInProgress = true;
+        arm.BeginTargetingPose(foldedPose);
+
+        onArmTargetReached = ParkPhase4;
+        onAnchorTargetReached = null;
+        onGrabberTargetReached = null;
+    }
+
+    //back into the garage
+    private void ParkPhase4()
+    {
         actionInProgress = true;
         arm.TurnOff();
         anchor.BeginTargetingTransform(offAnchorPosition);
 
         onArmTargetReached = null;
-        onAnchorTargetReached = () =>
-        {
-            HideSprites();
-            actionInProgress = false;
-        };
+        onAnchorTargetReached = CompletePark;
+        onGrabberTargetReached = null;
+    }
+
+    private void CompletePark()
+    {
+        HideSprites();
+        actionInProgress = false;
+
+        onArmTargetReached = null;
+        onAnchorTargetReached = null;
         onGrabberTargetReached = null;
     }
 
@@ -85,8 +124,6 @@ public class GrabberArm : MonoBehaviour
             return false;
         }
 
-        Debug.Log("looking for grab target...");
-
         var o = arm.Anchor;
         var c = Physics2D.OverlapCircle(o.position, arm.TotalLength, grabMask);
         if (c)
@@ -96,8 +133,6 @@ public class GrabberArm : MonoBehaviour
             grabTarget = c;
             grabberClaw.Open();
             arm.BeginTargetingCollider(c);
-
-            Debug.Log("reaching for grab target");
 
             onArmTargetReached = GrabTargetWithClaw;//grip the object with claw and then deposit
             onAnchorTargetReached = null;
@@ -114,28 +149,34 @@ public class GrabberArm : MonoBehaviour
 
     private void GrabTargetWithClaw()
     {
-        Debug.Log("grabbing target with claw");
         actionInProgress = true;
         arm.GoIdle();
-        grabberClaw.Close();
+        grabberClaw.BeginGrab(grabTarget);
 
         onArmTargetReached = null;
         onAnchorTargetReached = null;
-        onGrabberTargetReached = Deposit;
+        onGrabberTargetReached = HeadToDeposit;
     }
 
-    //simple for now (in future we will want to first grip object with claw (closing to specific width),
-    //anchor that object in so it looks like we're carrying it, and then begin deposit)
-    private void Deposit()
+    private void HeadToDeposit()
     {
-        Debug.Log("beginning deposit");
         actionInProgress = true;
-        grabberClaw.Close();
         arm.BeginTargetingTransform(depositTarget);
+        //arm.BeginTargetingPose(depositPose);
 
-        onArmTargetReached = PrepareToPark;
+        onArmTargetReached = Deposit;
         onAnchorTargetReached = null;
         onGrabberTargetReached = null;
+    }
+
+    private void Deposit()
+    {
+        actionInProgress = true;
+        grabberClaw.Open();
+
+        onArmTargetReached = null;
+        onAnchorTargetReached = null;
+        onGrabberTargetReached = ParkPhase1;
     }
 
     private void OnEnable()
@@ -149,7 +190,7 @@ public class GrabberArm : MonoBehaviour
     {
         arm.Initialize();
         arm.TurnOff();
-        arm.SnapToFolded();
+        arm.SnapToPose(foldedPose);
         anchor.SetPosition(offAnchorPosition.position);
         HideSprites();
     }
@@ -170,17 +211,25 @@ public class GrabberArm : MonoBehaviour
             {
                 if (arm.IsOff)
                 {
-                    Deploy();
+                    DeployPhase1();
+                }
+                else if (Keyboard.current.altKey.isPressed)//alt+Q to close arm
+                {
+                    ParkPhase1();
                 }
                 else
                 {
                     TryBeginGrab();
                 }
             }
-            else if (Keyboard.current.pKey.wasPressedThisFrame)
-            {
-                arm.BeginTargetingTransform(testTarget);
-            }
+            //else if (Keyboard.current.rKey.wasPressedThisFrame && !arm.IsOff)
+            //{
+            //    arm.BeginTargetingTransform(testTarget);
+            //}
+            //else if (Keyboard.current.pKey.wasPressedThisFrame && !arm.IsOff)
+            //{
+            //    ParkPhase1();
+            //}
         }
     }
 

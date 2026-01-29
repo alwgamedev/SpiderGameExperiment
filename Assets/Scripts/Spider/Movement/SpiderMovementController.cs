@@ -93,9 +93,6 @@ public class SpiderMovementController : MonoBehaviour
 
     SpiderInput spiderInput;
 
-    //int moveInput;
-    //int leanInput;//used to control either cannon fulcrum rotation or jump aim when jumpInput held
-
     bool chargingJump;
     bool waitingToHandleJump;
     float jumpVerificationTimer;
@@ -200,7 +197,7 @@ public class SpiderMovementController : MonoBehaviour
         rb.centerOfMass = heightReferencePoint.position - transform.position;
 
         InitializeGroundData();
-        legSynchronizer.Initialize(PreferredBodyPosGroundHeight, FacingRight, groundMap);
+        legSynchronizer.Initialize(PreferredBodyPosGroundHeight, FacingRight);
         bodyCollisionFilter = ContactFilter2D.noFilter;
         bodyCollisionFilter.useTriggers = false;
         bodyCollisionFilter.SetLayerMask(groundLayer);

@@ -13,7 +13,8 @@ public class LegSynchronizer : MonoBehaviour
     [SerializeField] float freeHangSmoothingRate;
     [SerializeField] float freeHangStepHeightMultiplier;
     [SerializeField] float driftWeightSmoothingRate;
-    [SerializeField] SynchronizedLeg[] synchronizedLegs;
+    [SerializeField] LegAnimator[] leg;
+    [SerializeField] float[] timeOffset;
 
     class LegTimer
     {
@@ -77,10 +78,8 @@ public class LegSynchronizer : MonoBehaviour
         }
     }
 
-    LegTimer[] timers;
+    LegTimer[] timer;
     bool freeHanging;
-    //Vector2 driftWeight;
-    //float masterDriftWeight;
     int legCount;
     float legCountInverse;
 
@@ -89,25 +88,7 @@ public class LegSynchronizer : MonoBehaviour
     public float timeScale = 1;
     public float stepHeightFraction;
     public float strideMultiplier = 1;
-    
 
-    //public float MasterDriftWeight
-    //{
-    //    get => masterDriftWeight;
-    //    set
-    //    {
-    //        masterDriftWeight = FreeHanging ? Mathf.Lerp(masterDriftWeight, value, driftWeightSmoothingRate * Time.deltaTime) : value;
-    //    }
-    //}
-
-    //public Vector2 DriftWeight
-    //{
-    //    get => driftWeight;
-    //    set
-    //    {
-    //        driftWeight = FreeHanging ? Vector2.Lerp(driftWeight, value, driftWeightSmoothingRate * Time.deltaTime) : value;
-    //    }
-    //}
     public bool FreeHanging//freeHanging = ikTargets gradually catch up to body as it moves to make legs seem like they're dangling freely
     {
         get => freeHanging;
@@ -135,7 +116,7 @@ public class LegSynchronizer : MonoBehaviour
         {
             for (int i = legCount / 2; i < legCount; i++)
             {
-                if (synchronizedLegs[i].Leg.IsTouchingGround)
+                if (leg[i].IsTouchingGround)
                 {
                     return true;
                 }
@@ -145,7 +126,6 @@ public class LegSynchronizer : MonoBehaviour
         }
     }
     public bool AllTouchingGround => FractionTouchingGround == 1;
-    public SynchronizedLeg[] SynchronizedLegs => synchronizedLegs;
 
     float SmoothingRate => FreeHanging ? freeHangSmoothingRate : stepSmoothingRate;
 
@@ -156,9 +136,9 @@ public class LegSynchronizer : MonoBehaviour
             return false;
         }
 
-        for (int i = 0; i < synchronizedLegs.Length; i++)
+        for (int i = 0; i < leg.Length; i++)
         {
-            var l = synchronizedLegs[i].Leg;
+            var l = leg[i];
             if (l.IsTouchingGround && l.LegExtensionFraction < threshold)
             {
                 return true;
@@ -183,8 +163,8 @@ public class LegSynchronizer : MonoBehaviour
 
         for (int i = 0; i < legCount; i++)
         {
-            var t = timers[i];
-            var l = synchronizedLegs[i].Leg;
+            var t = timer[i];
+            var l = leg[i];
 
             t.Update(bodyGroundSpeedSign * speedScaledDt);
 
@@ -216,7 +196,7 @@ public class LegSynchronizer : MonoBehaviour
     {
         for (int i = 0; i < legCount; i++)
         {
-            synchronizedLegs[i].Leg.OnBodyChangedDirectionFreeHanging(position0, position1, flipNormal);
+            leg[i].OnBodyChangedDirectionFreeHanging(position0, position1, flipNormal);
         }
     }
 
@@ -224,7 +204,7 @@ public class LegSynchronizer : MonoBehaviour
     {
         for (int i = 0; i < legCount; i++)
         {
-            var l = synchronizedLegs[i].Leg;
+            var l = leg[i];
             l.driftWeight = Mathf.Lerp(l.driftWeight, l.IsTouchingGround ? 0 : goal, driftWeightSmoothingRate);
         }
     }
@@ -233,7 +213,7 @@ public class LegSynchronizer : MonoBehaviour
     {
         for (int i = 0; i < legCount; i++)
         {
-            synchronizedLegs[i].Leg.driftWeight = goal;
+            leg[i].driftWeight = goal;
         }
     }
 
@@ -249,13 +229,13 @@ public class LegSynchronizer : MonoBehaviour
     {
         for (int i = 0; i < legCount; i++)
         {
-            synchronizedLegs[i].Leg.CacheFreeHangPosition();
+            leg[i].CacheFreeHangPosition();
         }
     }
 
-    public void Initialize(float bodyPosGroundHeight, bool bodyFacingRight, GroundMap groundMap)
+    public void Initialize(float bodyPosGroundHeight, bool bodyFacingRight)
     {
-        legCount = synchronizedLegs.Length;
+        legCount = leg.Length;
         legCountInverse = 1 / (float)legCount;
         InitializeTimers();
         InitializeLegPositions(bodyFacingRight, bodyPosGroundHeight);
@@ -264,7 +244,7 @@ public class LegSynchronizer : MonoBehaviour
     private void InitializeTimers()
     {
         float randomOffset = MathTools.RandomFloat(0, stepTime + restTime);
-        timers = synchronizedLegs.Select(l => new LegTimer(l.TimeOffset + randomOffset, stepTime, restTime/*, RandomFreeHangPerturbation()*/)).ToArray();
+        timer = timeOffset.Select(o => new LegTimer(o + randomOffset, stepTime, restTime/*, RandomFreeHangPerturbation()*/)).ToArray();
     }
 
     private void InitializeLegPositions(bool bodyFacingRight, float preferredBodyPosGroundHeight)
@@ -276,8 +256,8 @@ public class LegSynchronizer : MonoBehaviour
         int count = 0;
         for (int i = 0; i < legCount; i++)
         {
-            var t = timers[i];
-            var l = synchronizedLegs[i].Leg;
+            var t = timer[i];
+            var l = leg[i];
             l.InitializePosition(preferredBodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, 
                 t.Stepping, t.StateProgress, t.StepTime, t.RestTime);
             if (l.IsTouchingGround)

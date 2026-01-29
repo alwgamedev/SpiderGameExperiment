@@ -41,8 +41,8 @@ public class ArmAnchor : MonoBehaviour
         var d = Vector2.SqrMagnitude(v);
         if (d < targetTolerance * targetTolerance)
         {
-            TargetReached?.Invoke();
             targetTransform = null;
+            TargetReached?.Invoke();
             return;
         }
 

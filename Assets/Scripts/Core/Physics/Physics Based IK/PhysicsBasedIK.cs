@@ -22,10 +22,12 @@ public static class PhysicsBasedIK
             {
                 continue;
             }
-            var aPerp = a * Mathf.Sign(dot) / length[i];
+            var aPerp = a * Mathf.Sign(dot);// / length[i];
             //using magnitude of the original acceleration, rather than just normal component helps keep it from getting bogged down when direction of force
             //is nearly parallel to arm
-            angularVelocity[i] += aPerp;
+            //usually we would use: aPerp = Vector2.Dot(acceleration, n)
+            //var aPerp = Vector2.Dot(acceleration, n);
+            angularVelocity[i] += aPerp / length[i];
             acceleration -= aPerp * n;//component of acceleration parallel to that arm will get transferred to next joint
         }
     }
@@ -43,25 +45,24 @@ public static class PhysicsBasedIK
         }
     }
 
-    //collisionResponse can already be multiplied by dt
     public static void ApplyCollisionForces(Transform[] chain, float[] length, float[] armHalfWidth, float[] angularVelocity,
-        int collisionMask, float collisionResponse, float horizontalRaycastSpacing, float tunnelInterval, float tunnelMax
-        /*float collisionDamping*/)
+        LayerMask[] collisionMask, float collisionResponse, float horizontalRaycastSpacing, float tunnelInterval, float tunnelMax)
     {
         for (int i = chain.Length - 2; i > -1; i--)
         {
+            var cMask = collisionMask[i];
             Vector2 p0 = chain[i].position;
             Vector2 p1 = chain[i + 1].position;
             Vector2 u = (p1 - p0) / length[i];
             var n = u.CCWPerp();
             var h = armHalfWidth[i] * n;
-            var r = Physics2D.Linecast(p0 + h, p1 + h, collisionMask);
+            var r = Physics2D.Linecast(p0 + h, p1 + h, cMask);
             bool initialHitOnUpSide = true;
 
             if (!r)
             {
                 initialHitOnUpSide = false;
-                r = Physics2D.Linecast(p0 - h, p1 - h, collisionMask);
+                r = Physics2D.Linecast(p0 - h, p1 - h, cMask);
             }
 
             if (r)
@@ -74,7 +75,7 @@ public static class PhysicsBasedIK
 
                 if (initialHitOnUpSide)
                 {
-                    var s = Physics2D.Linecast(r.point - 2 * h, r.point, collisionMask);
+                    var s = Physics2D.Linecast(r.point - 2 * h, r.point, cMask);
                     if (s && s.distance > 0)
                     {
                         //then we know obstacle is on + side
@@ -97,7 +98,7 @@ public static class PhysicsBasedIK
                 }
 
 
-                var a = correction * collisionResponse * n;
+                var a = correction * collisionResponse / length[i] * n;
                 ApplyForceToJoint(chain, length, angularVelocity, a, i/*, collisionDamping*/);
                 ApplyForceToJoint(chain, length, angularVelocity, a, i + 1/*, collisionDamping*/);
 
@@ -144,11 +145,11 @@ public static class PhysicsBasedIK
                     }
 
                     var q1 = qMid + x * u;
-                    var q2 = q1 + (escapingUp ? -armHalfWidth[i] : armHalfWidth[i]) * n;
+                    //var q2 = q1 + (escapingUp ? -armHalfWidth[i] : armHalfWidth[i]) * n;
 
                     while (YInBounds())
                     {
-                        var r = Physics2D.Linecast(q1 + y * n, q1, collisionMask);
+                        var r = Physics2D.Linecast(q1 + y * n, q1, cMask);
                         if (r && r.distance > 0)
                         {
                             return Vector2.Dot(r.point - p0, n);

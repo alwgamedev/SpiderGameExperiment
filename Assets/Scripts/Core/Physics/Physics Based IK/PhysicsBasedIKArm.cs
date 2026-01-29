@@ -5,9 +5,8 @@ public class PhysicsBasedIKArm : MonoBehaviour
 {
     [SerializeField] Transform[] chain;//transforms not nested
     [SerializeField] float[] armHalfWidth;
-    [SerializeField] LayerMask collisionMask;
+    [SerializeField] LayerMask[] collisionMask;
     [SerializeField] float collisionResponse;
-    //[SerializeField] float collisionDamping;
     [SerializeField] float horizontalRaycastSpacing;
     [SerializeField] float tunnelInterval;
     [SerializeField] float tunnelMax;
@@ -16,9 +15,9 @@ public class PhysicsBasedIKArm : MonoBehaviour
     [SerializeField] float jointDamping;
     [SerializeField] float targetTolerance;
     [SerializeField] float targetingErrorMin;//keeps arm from slowing too much as it gets close to target
-    [SerializeField] float configurationSpringConstant;
-    [SerializeField] float maxConfigurationPursuitSpeed;
-    [SerializeField] float configurationTolerance;
+    [SerializeField] float poseSpringConstant;
+    [SerializeField] float maxPosePursuitSpeed;
+    [SerializeField] float poseTolerance;
 
     float[] length;
     float[] angularVelocity;
@@ -27,9 +26,7 @@ public class PhysicsBasedIKArm : MonoBehaviour
     Vector2 targetPosition;
     Transform targetTransform;
     Collider2D targetCollider;
-    Vector2[] targetConfiguration;//in local frame (but relative to anchor position)
-    Vector2[] foldedConfiguration;
-    Vector2[] foldedConfiguration1;
+    Vector2[] targetPose;//unit vectors for arm directions in local frame
     Mode mode;
 
     Vector2 lastTargetPositionUsed;
@@ -37,7 +34,7 @@ public class PhysicsBasedIKArm : MonoBehaviour
 
     enum Mode
     {
-        off, idle, trackPosition, trackTransform, trackCollider, trackConfiguration
+        off, idle, trackPosition, trackTransform, trackCollider, trackPose
     }
 
     public Transform Anchor => chain[0];
@@ -61,24 +58,24 @@ public class PhysicsBasedIKArm : MonoBehaviour
 
         angularVelocity = new float[chain.Length - 1];
 
-        targetConfiguration = new Vector2[chain.Length - 1];
-        foldedConfiguration = new Vector2[chain.Length - 1];
-        foldedConfiguration1 = new Vector2[chain.Length - 1];
+        //targetPose = new Vector2[chain.Length - 1];
+        //foldedConfiguration = new Vector2[chain.Length - 1];
+        //foldedConfiguration1 = new Vector2[chain.Length - 1];
 
-        var sign = 1;
-        for (int i = 0; i < foldedConfiguration.Length; i++)
-        {
-            foldedConfiguration[i] = new Vector2(sign, 0);
-            sign = -sign;
-        }
+        //var sign = 1;
+        //for (int i = 0; i < foldedConfiguration.Length; i++)
+        //{
+        //    foldedConfiguration[i] = new Vector2(sign, 0);
+        //    sign = -sign;
+        //}
 
-        sign = 1;
-        foldedConfiguration1[0] = Vector2.right;
-        for (int i = 1; i < foldedConfiguration1.Length; i++)
-        {
-            foldedConfiguration1[i] = new Vector2(sign, 0);
-            sign = -sign;
-        }
+        //sign = 1;
+        //foldedConfiguration1[0] = Vector2.right;
+        //for (int i = 1; i < foldedConfiguration1.Length; i++)
+        //{
+        //    foldedConfiguration1[i] = new Vector2(sign, 0);
+        //    sign = -sign;
+        //}
     }
 
     public void BeginTargetingPosition(Vector2 position)
@@ -105,31 +102,32 @@ public class PhysicsBasedIKArm : MonoBehaviour
         Debug.Log($"begin targeting collider {collider.name}");
     }
 
-    public void BeginTargetingConfiguration(Vector2[] configuration)
+    public void BeginTargetingPose(Vector2[] pose)
     {
         //Array.Copy(configuration, targetConfiguration, configuration.Length);
-        targetConfiguration = configuration;
-        mode = Mode.trackConfiguration;
+        targetPose = pose;
+        mode = Mode.trackPose;
         hasInvokedTargetReached = false;
     }
 
-    public void FoldUp()
-    {
-        BeginTargetingConfiguration(foldedConfiguration);
-    }
+    //public void FoldUp()
+    //{
+    //    BeginTargetingConfiguration(foldedConfiguration);
+    //}
 
-    public void FoldUp1()
-    {
-        BeginTargetingConfiguration(foldedConfiguration1);
-    }
+    //public void FoldUp1()
+    //{
+    //    BeginTargetingConfiguration(foldedConfiguration1);
+    //}
 
-    public void SnapToConfiguration(Vector2[] configuration)
+    public void SnapToPose(Vector2[] pose)
     {
-        for (int i = 0; i < configuration.Length; i++)
+        for (int i = 0; i < pose.Length; i++)
         {
-            var u = MathTools.QuaternionFrom2DUnitVector(configuration[i]);
-            chain[i].rotation = u;
-            chain[i + 1].position = chain[i].position + length[i] * (Vector3)configuration[i];
+            var v = pose[i].x * transform.right + pose[i].y * transform.up;
+            var q = MathTools.QuaternionFrom2DUnitVector(pose[i]);
+            chain[i].rotation = q;
+            chain[i + 1].position = chain[i].position + length[i] * v;
             //var p = Anchor.position + configuration[i].x * transform.right + configuration[i].y * transform.up;
             //chain[i].position = p;
             //Vector2 u = (chain[i].position - chain[i - 1].position) / length[i - 1];
@@ -137,15 +135,15 @@ public class PhysicsBasedIKArm : MonoBehaviour
         }
     }
 
-    public void SnapToFolded()
-    {
-        SnapToConfiguration(foldedConfiguration);
-    }
+    //public void SnapToFolded()
+    //{
+    //    SnapToConfiguration(foldedConfiguration);
+    //}
 
-    public void SnapToFolded1()
-    {
-        SnapToConfiguration(foldedConfiguration1);
-    }
+    //public void SnapToFolded1()
+    //{
+    //    SnapToConfiguration(foldedConfiguration1);
+    //}
 
     public void GoIdle()
     {
@@ -182,10 +180,10 @@ public class PhysicsBasedIKArm : MonoBehaviour
             case Mode.trackCollider:
                 TrackColliderBehavior();
                 break;
-            case Mode.trackConfiguration:
-                TrackConfigurationBehavior();
+            case Mode.trackPose:
+                TrackPoseBehavior();
                 break;
-                //Mode.off => do nothing
+            //Mode.off => do nothing
         }
     }
 
@@ -193,7 +191,7 @@ public class PhysicsBasedIKArm : MonoBehaviour
     {
         PhysicsBasedIK.IntegrateJoints(chain, length, angularVelocity, jointDamping, Time.deltaTime);
         PhysicsBasedIK.ApplyCollisionForces(chain, length, armHalfWidth, angularVelocity, collisionMask, collisionResponse * Time.deltaTime,
-            horizontalRaycastSpacing, tunnelInterval, tunnelMax/*, collisionDamping*/);
+            horizontalRaycastSpacing, tunnelInterval, tunnelMax);
     }
 
     private void TrackPositionBehavior()
@@ -237,10 +235,10 @@ public class PhysicsBasedIKArm : MonoBehaviour
         }
     }
 
-    private void TrackConfigurationBehavior()
+    private void TrackPoseBehavior()
     {
         RunSimulationStep();
-        PullTowardsConfiguration(targetConfiguration, Time.deltaTime);
+        PullTowardsPose(targetPose, Time.deltaTime);
     }
 
     private void PullTowardsTarget(Vector2 targetPosition, float dt)
@@ -266,28 +264,29 @@ public class PhysicsBasedIKArm : MonoBehaviour
         PhysicsBasedIK.ApplyForceToJoint(chain, length, angularVelocity, a, chain.Length - 1);
     }
 
-    private void PullTowardsConfiguration(Vector2[] targetConfiguration, float dt)
+    private void PullTowardsPose(Vector2[] pose, float dt)
     {
         bool anyChanged = false;
-        for (int i = 0; i < targetConfiguration.Length; i++)
+        for (int i = 0; i < pose.Length; i++)
         {
             Vector2 u = (chain[i + 1].position - chain[i].position) / length[i];
-            var angle = MathTools.PseudoAngle(u, targetConfiguration[i]);
-            if (Mathf.Abs(angle) < configurationTolerance)
+            Vector2 v = pose[i].x * transform.right + pose[i].y * transform.up;
+            var angle = MathTools.PseudoAngle(u, v);
+            if (Mathf.Abs(angle) < poseTolerance)
             {
                 continue;
             }
 
             anyChanged = true;
-            var a = configurationSpringConstant * angle * dt;
-            angularVelocity[i] += Mathf.Sign(a) * Mathf.Min(Mathf.Abs(a), maxConfigurationPursuitSpeed);
+            var a = poseSpringConstant * angle * dt;
+            angularVelocity[i] += Mathf.Sign(a) * Mathf.Min(Mathf.Abs(a), maxPosePursuitSpeed);
             //break here would be cool? i.e. we just fold one joint at a time
             //or we can also do them backwards
         }
 
         if (!anyChanged && !hasInvokedTargetReached)
         {
-            Debug.Log("arm reached target configuration");
+            Debug.Log("arm reached target pose");
             hasInvokedTargetReached = true;
             TargetReached?.Invoke();
         }
