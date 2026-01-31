@@ -9,6 +9,7 @@ public class GrabberArm : MonoBehaviour
     [SerializeField] GrabberClaw grabberClaw;
     [SerializeField] SpriteRenderer[] armSprites;
     [SerializeField] LayerMask grabMask;
+    [SerializeField] float grabAttemptRadius;
     [SerializeField] Transform testTarget;
     [SerializeField] Transform depositTarget;
     [SerializeField] Transform offAnchorPosition;
@@ -16,8 +17,11 @@ public class GrabberArm : MonoBehaviour
     [SerializeField] Vector2[] foldedPose;
     [SerializeField] Vector2[] defaultPose;
     [SerializeField] Vector2[] depositPose;
+    [SerializeField] int depositPoseStartIndex;
+    [SerializeField] float grabTimeOut;
 
     bool actionInProgress;//will not process input while action in progress
+    float grabTimer;
 
     Collider2D grabTarget;
 
@@ -26,7 +30,7 @@ public class GrabberArm : MonoBehaviour
     Action onGrabberTargetReached;
 
     //pull out of the garage
-    private void DeployPhase1()
+    private void Deploy()
     {
         Debug.Log("deploying");
         actionInProgress = true;
@@ -35,27 +39,26 @@ public class GrabberArm : MonoBehaviour
         anchor.BeginTargetingTransform(deployedAnchorPosition);
 
         onArmTargetReached = null;
-        onAnchorTargetReached = DeployPhase2;
+        onAnchorTargetReached = GoIdle;
         onGrabberTargetReached = null;
         //let's set all 3 every time we start a new action (so we don't have any old unneeded callbacks coming in when they shouldn't)
     }
 
     //move to default pose
-    private void DeployPhase2()
+    private void GoIdle()
     {
         actionInProgress = true;
+        grabberClaw.Close();
         arm.BeginTargetingPose(defaultPose);
 
-        onArmTargetReached = CompleteDeployment;
+        onArmTargetReached = CompleteGoIdle;
         onAnchorTargetReached = null;
         onGrabberTargetReached = null;
     }
 
-    private void CompleteDeployment()
+    private void CompleteGoIdle()
     {
-        Debug.Log("deployment complete");
-        //arm.GoIdle();
-        //^instead of going idle, we'll continue tracking default pose in case collision knocks the arm out of place
+        //we'll continue tracking default pose in case collision knocks the arm out of place
         actionInProgress = false;
 
         onArmTargetReached = null;
@@ -89,6 +92,7 @@ public class GrabberArm : MonoBehaviour
     {
         actionInProgress = true;
         arm.BeginTargetingPose(foldedPose);
+        grabberClaw.TurnOff();
 
         onArmTargetReached = ParkPhase4;
         onAnchorTargetReached = null;
@@ -117,15 +121,17 @@ public class GrabberArm : MonoBehaviour
         onGrabberTargetReached = null;
     }
 
-    private bool TryBeginGrab()
+    private void TryBeginGrab()
     {
         if (actionInProgress || arm.IsOff)
         {
-            return false;
+            return;
         }
 
         var o = arm.Anchor;
-        var c = Physics2D.OverlapCircle(o.position, arm.TotalLength, grabMask);
+        var c = Physics2D.OverlapCircle(o.position, grabAttemptRadius, grabMask);
+        //^we'll use a manually set radius here rather than actual arm length, so we can still try when object is slightly out of reach
+        //(maybe it's rolling and will become in reach, or maybe it has a large collider that will allow us to reach the edge of it)
         if (c)
         {
             //2DO: also enforce a time-out for reaching the target + trying to grab it with claw
@@ -133,40 +139,51 @@ public class GrabberArm : MonoBehaviour
             grabTarget = c;
             grabberClaw.Open();
             arm.BeginTargetingCollider(c);
+            grabTimer = grabTimeOut;
 
-            onArmTargetReached = GrabTargetWithClaw;//grip the object with claw and then deposit
+            onArmTargetReached = CompleteGrab;//grip the object with claw and then deposit
             onAnchorTargetReached = null;
             onGrabberTargetReached = null;
-            return true;
-
         }
         else
         {
             Debug.Log("no grabbable target in range.");//replace with ui message in future
-            return false;
         }
     }
 
-    private void GrabTargetWithClaw()
+    private void CompleteGrab()
     {
         actionInProgress = true;
-        arm.GoIdle();
-        grabberClaw.BeginGrab(grabTarget);
+        grabTimer = 0;
+        if (grabTarget)
+        {
+            grabberClaw.BeginGrab(grabTarget);
 
-        onArmTargetReached = null;
-        onAnchorTargetReached = null;
-        onGrabberTargetReached = HeadToDeposit;
+            onArmTargetReached = null;
+            onAnchorTargetReached = null;
+            onGrabberTargetReached = HeadToDeposit;
+        }
+        else
+        {
+            OnGrabFailed();
+        }
     }
 
     private void HeadToDeposit()
     {
-        actionInProgress = true;
-        arm.BeginTargetingTransform(depositTarget);
-        //arm.BeginTargetingPose(depositPose);
+        if (grabTarget)
+        {
+            arm.BeginTargetingTransform(depositTarget, depositPoseStartIndex, depositPose);
+            grabberClaw.BeginHold(grabTarget);
 
-        onArmTargetReached = Deposit;
-        onAnchorTargetReached = null;
-        onGrabberTargetReached = null;
+            onArmTargetReached = Deposit;
+            onAnchorTargetReached = null;
+            onGrabberTargetReached = OnGrabFailed;
+        }
+        else
+        {
+            OnGrabFailed();
+        }
     }
 
     private void Deposit()
@@ -176,7 +193,21 @@ public class GrabberArm : MonoBehaviour
 
         onArmTargetReached = null;
         onAnchorTargetReached = null;
-        onGrabberTargetReached = ParkPhase1;
+        onGrabberTargetReached = CompleteDeposit;
+    }
+
+    private void CompleteDeposit()
+    {
+        if (grabTarget)
+        {
+            Debug.Log($"deposited {grabTarget.name}");
+            grabTarget = null;
+            GoIdle();
+        }
+        else
+        {
+            OnGrabFailed();
+        }
     }
 
     private void OnEnable()
@@ -211,9 +242,9 @@ public class GrabberArm : MonoBehaviour
             {
                 if (arm.IsOff)
                 {
-                    DeployPhase1();
+                    Deploy();
                 }
-                else if (Keyboard.current.altKey.isPressed)//alt+Q to close arm
+                else if (Keyboard.current.shiftKey.isPressed)//shift+Q to close arm
                 {
                     ParkPhase1();
                 }
@@ -222,14 +253,18 @@ public class GrabberArm : MonoBehaviour
                     TryBeginGrab();
                 }
             }
-            //else if (Keyboard.current.rKey.wasPressedThisFrame && !arm.IsOff)
-            //{
-            //    arm.BeginTargetingTransform(testTarget);
-            //}
-            //else if (Keyboard.current.pKey.wasPressedThisFrame && !arm.IsOff)
-            //{
-            //    ParkPhase1();
-            //}
+            else if (Keyboard.current.rKey.wasPressedThisFrame && !arm.IsOff)
+            {
+                arm.BeginTargetingTransform(testTarget);
+            }
+        }
+        else if (grabTimer > 0)
+        {
+            grabTimer -= Time.deltaTime;
+            if (!(grabTimer > 0))
+            {
+                OnGrabFailed();
+            }
         }
     }
 
@@ -262,5 +297,12 @@ public class GrabberArm : MonoBehaviour
         {
             r.enabled = false;
         }
+    }
+
+    private void OnGrabFailed()
+    {
+        Debug.Log("grab failed");
+        grabTarget = null;
+        GoIdle();
     }
 }

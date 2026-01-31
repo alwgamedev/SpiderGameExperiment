@@ -16,23 +16,23 @@ public static class PhysicsBasedIK
             Vector2 u = chain[i + 1].position - chain[i].position;
             u /= length[i];
             var n = u.CCWPerp();
-            var a = acceleration.magnitude;
-            var dot = Vector2.Dot(acceleration, n);
-            if (dot == 0)
-            {
-                continue;
-            }
-            var aPerp = a * Mathf.Sign(dot);// / length[i];
+            //var a = acceleration.magnitude;
+            //var dot = Vector2.Dot(acceleration, n);
+            //if (dot == 0)
+            //{
+            //    continue;
+            //}
+            //var aPerp = a * Mathf.Sign(dot);// / length[i];
             //using magnitude of the original acceleration, rather than just normal component helps keep it from getting bogged down when direction of force
             //is nearly parallel to arm
             //usually we would use: aPerp = Vector2.Dot(acceleration, n)
-            //var aPerp = Vector2.Dot(acceleration, n);
+            var aPerp = Vector2.Dot(acceleration, n);
             angularVelocity[i] += aPerp / length[i];
             acceleration -= aPerp * n;//component of acceleration parallel to that arm will get transferred to next joint
         }
     }
 
-    public static void IntegrateJoints(Transform[] chain, float[] length, float[] angularVelocity, float damping, float dt)
+    public static void IntegrateJoints(Transform[] chain,/* float[] length,*/ float[] angularVelocity, float damping, float dt)
     {
         for (int i = 0; i < chain.Length - 1; i++)
         {
@@ -41,7 +41,14 @@ public static class PhysicsBasedIK
             var dAngle = dt * angularVelocity[i];
             var q = MathTools.QuaternionFrom2DUnitVector(new(Mathf.Cos(dAngle), Mathf.Sin(dAngle)));//honestly worth it to just use trig functions
             chain[i].rotation *= q;
-            chain[i + 1].position = chain[i].position + length[i] * chain[i].right;
+            if (i < chain.Length - 2)
+            {
+                q = MathTools.InverseOfUnitQuaternion(q);
+                chain[i + 1].rotation *= q;
+                //chain transforms assumed to be nested, so this allows joints to rotate independently
+                //(i.e. when joint i rotates, all later joints maintain their world rotation)
+                //this gives better tracking movement and more reliable collision
+            }
         }
     }
 
