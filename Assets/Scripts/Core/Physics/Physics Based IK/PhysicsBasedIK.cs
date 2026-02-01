@@ -16,16 +16,6 @@ public static class PhysicsBasedIK
             Vector2 u = chain[i + 1].position - chain[i].position;
             u /= length[i];
             var n = u.CCWPerp();
-            //var a = acceleration.magnitude;
-            //var dot = Vector2.Dot(acceleration, n);
-            //if (dot == 0)
-            //{
-            //    continue;
-            //}
-            //var aPerp = a * Mathf.Sign(dot);// / length[i];
-            //using magnitude of the original acceleration, rather than just normal component helps keep it from getting bogged down when direction of force
-            //is nearly parallel to arm
-            //usually we would use: aPerp = Vector2.Dot(acceleration, n)
             var aPerp = Vector2.Dot(acceleration, n);
             angularVelocity[i] += aPerp / length[i];
             acceleration -= aPerp * n;//component of acceleration parallel to that arm will get transferred to next joint

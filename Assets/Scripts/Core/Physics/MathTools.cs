@@ -218,10 +218,51 @@ public static class MathTools
         return new(-q.x, -q.y, -q.z, q.w);
     }
 
-    //public static Quaternion InverseOf2DUnitQuaternion(this Quaternion q)
-    //{
-    //    return new(0, 0, -q.z, q.w);
-    //}
+    /// <summary>
+    /// Rotates w around the axis perpendicular to plane spanned by a & b, by the angle that takes a to b.
+    /// If a, b, or a x b is zero, returns w.
+    /// </summary>
+    public static Vector3 FromToRotation(Vector3 a, Vector3 b, Vector3 w, bool alreadyNormalized = false)
+    {
+        if (!alreadyNormalized)
+        {
+            a = a.normalized;
+            b = b.normalized;
+        }
+
+        if (a == Vector3.zero || b == Vector3.zero)
+        {
+            return w;
+        }
+
+        var c = Vector3.Cross(a, b);
+        var u = c.normalized;
+
+        if (u == Vector3.zero)
+        {
+            return w;
+        }
+
+        //follows from the 2d version below (just add the u-component of w, which is unchanged by the rotation)
+        return Vector3.Dot(a, b) * w + Vector3.Cross(c, w) + Vector3.Dot(u, w) * u;
+    }
+
+    public static Vector2 FromToRotation(Vector2 a, Vector2 b, Vector2 w, bool alreadyNormalized = false)
+    {
+        if (!alreadyNormalized)
+        {
+            a = a.normalized;
+            b = b.normalized;
+        }
+
+        if (a == Vector2.zero || b == Vector2.zero)
+        {
+            return w;
+        }
+
+        //(b dot a)w + (b dot aPerp)wPerp
+        return Vector2.Dot(a, b) * w + Cross2D(a,b) * w.CCWPerp();
+    }
 
     /// <summary>
     /// fast alternative to arctan; as angle from u1 to u2 varies over (-pi,pi], output varies smoothly from -1 to 1 (specifically output is sin(theta/2), where theta is the correct angle)
@@ -308,6 +349,18 @@ public static class MathTools
         {
             t.rotation = QuaternionFrom2DUnitVector(v);
         }
+    }
+
+    public static void ApplyCheapRotationalLerp(this Transform t, Vector2 u, Vector2 v, float lerpAmount, out bool changed)
+    {
+        v = new(Vector2.Dot(v, u), Vector2.Dot(v, u.CCWPerp()));
+        t.ApplyCheapRotationalLerp(v, lerpAmount, out changed);
+    }
+
+    public static void ApplyCheapRotationalLerpClamped(this Transform t, Vector2 u, Vector2 v, float lerpAmount, out bool changed)
+    {
+        v = Vector2.Dot(v, u) * t.right + Vector2.Dot(v, u.CCWPerp()) * t.up;
+        t.ApplyCheapRotationalLerpClamped(v, lerpAmount, out changed);
     }
 
     public static Vector2 CheapRotation(Vector2 u, float angleInRadians, out bool changed)

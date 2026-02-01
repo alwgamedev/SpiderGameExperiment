@@ -7,6 +7,8 @@ public class GrabberArm : MonoBehaviour
     [SerializeField] PhysicsBasedIKArm arm;
     [SerializeField] ArmAnchor anchor;
     [SerializeField] GrabberClaw grabberClaw;
+    [SerializeField] DoubleDoor inventoryDoor;
+    [SerializeField] DoubleDoor mouth;
     [SerializeField] SpriteRenderer[] armSprites;
     [SerializeField] LayerMask grabMask;
     [SerializeField] float grabAttemptRadius;
@@ -37,6 +39,7 @@ public class GrabberArm : MonoBehaviour
         arm.SnapToPose(foldedPose);
         ShowSprites();
         anchor.BeginTargetingTransform(deployedAnchorPosition);
+        mouth.Open();
 
         onArmTargetReached = null;
         onAnchorTargetReached = GoIdle;
@@ -49,6 +52,7 @@ public class GrabberArm : MonoBehaviour
     {
         actionInProgress = true;
         grabberClaw.Close();
+        inventoryDoor.Close();
         arm.BeginTargetingPose(defaultPose);
 
         onArmTargetReached = CompleteGoIdle;
@@ -92,7 +96,6 @@ public class GrabberArm : MonoBehaviour
     {
         actionInProgress = true;
         arm.BeginTargetingPose(foldedPose);
-        grabberClaw.TurnOff();
 
         onArmTargetReached = ParkPhase4;
         onAnchorTargetReached = null;
@@ -114,6 +117,8 @@ public class GrabberArm : MonoBehaviour
     private void CompletePark()
     {
         HideSprites();
+        mouth.Close();
+        grabberClaw.TurnOff();
         actionInProgress = false;
 
         onArmTargetReached = null;
@@ -175,6 +180,7 @@ public class GrabberArm : MonoBehaviour
         {
             arm.BeginTargetingTransform(depositTarget, depositPoseStartIndex, depositPose);
             grabberClaw.BeginHold(grabTarget);
+            inventoryDoor.Open();
 
             onArmTargetReached = Deposit;
             onAnchorTargetReached = null;
@@ -222,6 +228,10 @@ public class GrabberArm : MonoBehaviour
         arm.Initialize();
         arm.TurnOff();
         arm.SnapToPose(foldedPose);
+        inventoryDoor.Initialize();
+        inventoryDoor.SnapClosed();
+        mouth.Initialize();
+        mouth.SnapClosed();
         anchor.SetPosition(offAnchorPosition.position);
         HideSprites();
     }

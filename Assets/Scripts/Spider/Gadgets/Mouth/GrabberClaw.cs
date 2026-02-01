@@ -51,7 +51,6 @@ public class GrabberClaw : MonoBehaviour
 
     public void BeginGrab(Collider2D collider)
     {
-        //Close();
         grabTarget = collider;
         mode = Mode.grabbingTarget;
         hasInvokedTargetReached = false;
@@ -80,6 +79,7 @@ public class GrabberClaw : MonoBehaviour
     private void Awake()
     {
         grabArmMaxDirection = new(Mathf.Cos(grabArmMaxRotationRad), Mathf.Sin(grabArmMaxRotationRad));
+        grabArmMinDirection = new(Mathf.Cos(grabArbMinRotationRad), Mathf.Sin(grabArbMinRotationRad));
     }
 
     private void FixedUpdate()
@@ -97,22 +97,6 @@ public class GrabberClaw : MonoBehaviour
                 break;
             //Mode.off => do nothing
         }
-        //if (!hasInvokedTargetReached)
-        //{
-        //    RotateGrabArms(goalGrabArmDirection, Time.deltaTime);
-
-        //    if (grabTarget && !hasInvokedTargetReached)
-        //    {
-        //        var d1 = grabTarget.Distance(upperArmCollider);
-        //        var d2 = grabTarget.Distance(lowerArmCollider);
-        //        if (Mathf.Max(d1.distance, d2.distance) < grabTolerance)
-        //        {
-        //            grabTarget = null;
-        //            hasInvokedTargetReached = true;
-        //            TargetReached?.Invoke();
-        //        }
-        //    }
-        //}
     }
 
     private void GrabBehavior()
