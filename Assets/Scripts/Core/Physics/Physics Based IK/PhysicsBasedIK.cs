@@ -4,7 +4,7 @@ public static class PhysicsBasedIK
 {
     //acceleration should already by multiplied by deltaTime
     //damping useful for collision (to keep from bouncing off collision repeatedly)
-    public static void ApplyForceToJoint(Transform[] chain, float[] length, float[] angularVelocity, Vector2 acceleration, int joint)
+    public static void ApplyForceToJoint(Transform[] chain, float[] length, float[] angularVelocity, Vector2 acceleration, int joint, float[] poseWeight = null)
     {
         for (int i = joint - 1; i > -1; i--)
         {
@@ -17,6 +17,10 @@ public static class PhysicsBasedIK
             u /= length[i];
             var n = u.CCWPerp();
             var aPerp = Vector2.Dot(acceleration, n);
+            if (poseWeight != null)
+            {
+                aPerp *= 1 - poseWeight[i];
+            }
             angularVelocity[i] += aPerp / length[i];
             acceleration -= aPerp * n;//component of acceleration parallel to that arm will get transferred to next joint
         }

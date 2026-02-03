@@ -72,12 +72,7 @@ public class DoubleDoor : MonoBehaviour
             case Mode.closing:
                 if (!RotateTowardsGoal(door1Closed, door2Closed, rotationSpeed * Time.deltaTime))
                 {
-                    Debug.Log($"{gameObject.name} close complete.");
                     mode = Mode.idle;
-                }
-                else
-                {
-                    Debug.Log($"{gameObject.name} closing...");
                 }
                 break;
         }

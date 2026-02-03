@@ -26,11 +26,13 @@ public class PhysicsBasedIKArm : MonoBehaviour
     float[] angularVelocity;
     float totalLength;
 
+
+
     Vector2 targetPosition;
     Transform targetTransform;
     Collider2D targetCollider;
     Vector2[] targetPose;//unit vectors for arm directions in local frame
-    int poseStartIndex;
+    float[] poseWeight;
     Mode mode;
 
     Vector2 lastTargetPositionUsed;
@@ -41,7 +43,7 @@ public class PhysicsBasedIKArm : MonoBehaviour
     enum Mode
     {
         off, idle, trackPosition, trackTransform, trackCollider, trackPose,
-        trackPositionMixed, trackTransformMixed, trackColliderMixed
+        //trackPositionMixed, trackTransformMixed, trackColliderMixed
     }
 
     public Transform Anchor => chain[0];
@@ -66,53 +68,59 @@ public class PhysicsBasedIKArm : MonoBehaviour
         angularVelocity = new float[chain.Length - 1];
     }
 
-    public void BeginTargetingPosition(Vector2 position)
+    public void BeginTargetingPosition(Vector2 position, float[] poseWeight = null, Vector2[] pose = null)
     {
         targetPosition = position;
+        this.poseWeight = poseWeight;
+        targetPose = pose;
         mode = Mode.trackPosition;
         hasInvokedTargetReached = false;
     }
 
-    public void BeginTargetingPosition(Vector2 position, int poseStartIndex, Vector2[] pose)
-    {
-        targetPosition = position;
-        this.poseStartIndex = poseStartIndex;
-        targetPose = pose;
-        mode = Mode.trackPositionMixed;
-        hasInvokedTargetReached = false;
-    }
+    //public void BeginTargetingPosition(Vector2 position, int poseStartIndex, Vector2[] pose)
+    //{
+    //    targetPosition = position;
+    //    this.poseStartIndex = poseStartIndex;
+    //    targetPose = pose;
+    //    mode = Mode.trackPositionMixed;
+    //    hasInvokedTargetReached = false;
+    //}
 
-    public void BeginTargetingTransform(Transform target)
+    public void BeginTargetingTransform(Transform target, float[] poseWeight = null, Vector2[] pose = null)
     {
-        targetTransform = target;
+        targetTransform = target; 
+        this.poseWeight = poseWeight;
+        targetPose = pose;
         mode = Mode.trackTransform;
         hasInvokedTargetReached = false;
     }
 
-    public void BeginTargetingTransform(Transform target, int poseStartIndex, Vector2[] pose)
-    {
-        targetTransform = target;
-        this.poseStartIndex = poseStartIndex;
-        targetPose = pose;
-        mode = Mode.trackTransformMixed;
-        hasInvokedTargetReached = false;
-    }
+    //public void BeginTargetingTransform(Transform target, int poseStartIndex, Vector2[] pose)
+    //{
+    //    targetTransform = target;
+    //    this.poseStartIndex = poseStartIndex;
+    //    targetPose = pose;
+    //    mode = Mode.trackTransformMixed;
+    //    hasInvokedTargetReached = false;
+    //}
 
-    public void BeginTargetingCollider(Collider2D collider)
+    public void BeginTargetingCollider(Collider2D collider, float[] poseWeight = null, Vector2[] pose = null)
     {
         targetCollider = collider;
+        this.poseWeight = poseWeight;
+        targetPose = pose;
         mode = Mode.trackCollider;
         hasInvokedTargetReached = false;
     }
 
-    public void BeginTargetingCollider(Collider2D collider, int poseStartIndex, Vector2[] pose)
-    {
-        targetCollider = collider;
-        this.poseStartIndex = poseStartIndex;
-        targetPose = pose;
-        mode = Mode.trackColliderMixed;
-        hasInvokedTargetReached = false;
-    }
+    //public void BeginTargetingCollider(Collider2D collider, int poseStartIndex, Vector2[] pose)
+    //{
+    //    targetCollider = collider;
+    //    this.poseStartIndex = poseStartIndex;
+    //    targetPose = pose;
+    //    mode = Mode.trackColliderMixed;
+    //    hasInvokedTargetReached = false;
+    //}
 
     public void BeginTargetingPose(Vector2[] pose)
     {
@@ -160,21 +168,21 @@ public class PhysicsBasedIKArm : MonoBehaviour
             case Mode.trackPosition:
                 TrackPositionBehavior();
                 break;
-            case Mode.trackPositionMixed:
-                TrackPositionMixedBehavior();
-                break;
+            //case Mode.trackPositionMixed:
+            //    TrackPositionMixedBehavior();
+            //    break;
             case Mode.trackTransform:
                 TrackTransformBehavior();
                 break;
-            case Mode.trackTransformMixed:
-                TrackTransformMixedBehavior();
-                break;
+            //case Mode.trackTransformMixed:
+            //    TrackTransformMixedBehavior();
+            //    break;
             case Mode.trackCollider:
                 TrackColliderBehavior();
                 break;
-            case Mode.trackColliderMixed:
-                TrackColliderMixedBehavior();
-                break;
+            //case Mode.trackColliderMixed:
+            //    TrackColliderMixedBehavior();
+            //    break;
             case Mode.trackPose:
                 TrackPoseBehavior();
                 break;
@@ -197,19 +205,19 @@ public class PhysicsBasedIKArm : MonoBehaviour
             hasInvokedTargetReached = false;
             lastTargetPositionUsed = targetPosition;
         }
-        PullTowardsTarget(targetPosition, Time.deltaTime);
+        PullTowardsTarget(targetTransform.position, poseWeight, targetPose, Time.deltaTime);
     }
 
-    private void TrackPositionMixedBehavior()
-    {
-        RunSimulationStep();
-        if (targetPosition != lastTargetPositionUsed)
-        {
-            hasInvokedTargetReached = false;
-            lastTargetPositionUsed = targetPosition;
-        }
-        PullTowardsTarget(targetPosition, poseStartIndex, targetPose, Time.deltaTime);
-    }
+    //private void TrackPositionMixedBehavior()
+    //{
+    //    RunSimulationStep();
+    //    if (targetPosition != lastTargetPositionUsed)
+    //    {
+    //        hasInvokedTargetReached = false;
+    //        lastTargetPositionUsed = targetPosition;
+    //    }
+    //    PullTowardsTarget(targetPosition, poseStartIndex, targetPose, Time.deltaTime);
+    //}
 
     private void TrackTransformBehavior()
     {
@@ -222,7 +230,7 @@ public class PhysicsBasedIKArm : MonoBehaviour
                 hasInvokedTargetReached = false;
                 lastTargetPositionUsed = target;
             }
-            PullTowardsTarget(targetTransform.position, Time.deltaTime);
+            PullTowardsTarget(target, poseWeight, targetPose, Time.deltaTime);
         }
         else if (targetTransform != null)
         {
@@ -235,29 +243,29 @@ public class PhysicsBasedIKArm : MonoBehaviour
         }
     }
 
-    private void TrackTransformMixedBehavior()
-    {
-        RunSimulationStep();
-        if (targetTransform)
-        {
-            Vector2 target = targetTransform.position;
-            if (target != lastTargetPositionUsed)
-            {
-                hasInvokedTargetReached = false;
-                lastTargetPositionUsed = target;
-            }
-            PullTowardsTarget(targetTransform.position, poseStartIndex, targetPose, Time.deltaTime);
-        }
-        else if (targetTransform != null)
-        {
-            targetTransform = null;
-            if (!hasInvokedTargetReached)
-            {
-                hasInvokedTargetReached = true;
-                TargetReached?.Invoke();
-            }
-        }
-    }
+    //private void TrackTransformMixedBehavior()
+    //{
+    //    RunSimulationStep();
+    //    if (targetTransform)
+    //    {
+    //        Vector2 target = targetTransform.position;
+    //        if (target != lastTargetPositionUsed)
+    //        {
+    //            hasInvokedTargetReached = false;
+    //            lastTargetPositionUsed = target;
+    //        }
+    //        PullTowardsTarget(targetTransform.position, poseStartIndex, targetPose, Time.deltaTime);
+    //    }
+    //    else if (targetTransform != null)
+    //    {
+    //        targetTransform = null;
+    //        if (!hasInvokedTargetReached)
+    //        {
+    //            hasInvokedTargetReached = true;
+    //            TargetReached?.Invoke();
+    //        }
+    //    }
+    //}
 
 
     private void TrackColliderBehavior()
@@ -271,7 +279,7 @@ public class PhysicsBasedIKArm : MonoBehaviour
                 hasInvokedTargetReached = false;
                 lastTargetPositionUsed = target;
             }
-            PullTowardsTarget(target, Time.deltaTime);
+            PullTowardsTarget(target, poseWeight, targetPose, Time.deltaTime);
         }
         else if (targetCollider != null)
         {
@@ -284,29 +292,29 @@ public class PhysicsBasedIKArm : MonoBehaviour
         }
     }
 
-    private void TrackColliderMixedBehavior()
-    {
-        RunSimulationStep();
-        if (targetCollider)
-        {
-            Vector2 target = targetCollider.ClosestPoint(Effector.position);
-            if (target != lastTargetPositionUsed)
-            {
-                hasInvokedTargetReached = false;
-                lastTargetPositionUsed = target;
-            }
-            PullTowardsTarget(target, poseStartIndex, targetPose, Time.deltaTime);
-        }
-        else if (targetCollider != null)
-        {
-            targetCollider = null; 
-            if (!hasInvokedTargetReached)
-            {
-                hasInvokedTargetReached = true;
-                TargetReached?.Invoke();
-            }
-        }
-    }
+    //private void TrackColliderMixedBehavior()
+    //{
+    //    RunSimulationStep();
+    //    if (targetCollider)
+    //    {
+    //        Vector2 target = targetCollider.ClosestPoint(Effector.position);
+    //        if (target != lastTargetPositionUsed)
+    //        {
+    //            hasInvokedTargetReached = false;
+    //            lastTargetPositionUsed = target;
+    //        }
+    //        PullTowardsTarget(target, poseStartIndex, targetPose, Time.deltaTime);
+    //    }
+    //    else if (targetCollider != null)
+    //    {
+    //        targetCollider = null; 
+    //        if (!hasInvokedTargetReached)
+    //        {
+    //            hasInvokedTargetReached = true;
+    //            TargetReached?.Invoke();
+    //        }
+    //    }
+    //}
 
     private void TrackPoseBehavior()
     {
@@ -363,29 +371,33 @@ public class PhysicsBasedIKArm : MonoBehaviour
         PhysicsBasedIK.ApplyForceToJoint(chain, length, angularVelocity, a, chain.Length - 1);
     }
 
-    private void PullTowardsTarget(Vector2 targetPosition, int poseStartIndex, Vector2[] pose, float dt)
+    private void PullTowardsTarget(Vector2 targetPosition, float[] poseWeight, Vector2[] pose, float dt)
     {
-        bool reachedPose = true;
-        var poseSpan = Vector2.zero;
-        for (int i = poseStartIndex; i < pose.Length; i++)
+        if (poseWeight != null && pose != null)
         {
-            Vector2 u = (chain[i + 1].position - chain[i].position) / length[i];
-            Vector2 v = pose[i].x * Mathf.Sign(orientingTransform.localScale.x) * orientingTransform.right + pose[i].y * orientingTransform.up;
-            poseSpan += length[i] * v;
-            var angle = MathTools.PseudoAngle(u, v);
-            if (Mathf.Abs(angle) < poseTolerance)
+            for (int i = 0; i < pose.Length; i++)
             {
-                continue;
-            }
+                if (poseWeight[i] == 0)
+                {
+                    continue;
+                }
+                Vector2 u = (chain[i + 1].position - chain[i].position) / length[i];
+                Vector2 v = pose[i].x * Mathf.Sign(orientingTransform.localScale.x) * orientingTransform.right + pose[i].y * orientingTransform.up;
+                var angle = MathTools.PseudoAngle(u, v);
+                if (Mathf.Abs(angle) < poseTolerance)
+                {
+                    continue;
+                }
 
-            reachedPose = false;
-            var a = poseSpringConstant * angle * dt;
-            angularVelocity[i] += Mathf.Sign(a) * Mathf.Min(Mathf.Abs(a), maxPosePursuitSpeed);
+                //reachedPose = false;
+                var a = poseWeight[i] * poseSpringConstant * angle * dt;
+                angularVelocity[i] += Mathf.Sign(a) * Mathf.Min(Mathf.Abs(a), maxPosePursuitSpeed);
+            }
         }
 
-        var error = targetPosition - poseSpan - (Vector2)chain[poseStartIndex].position;
+        var error = targetPosition - (Vector2)chain[^1].position;
         var err = error.sqrMagnitude;
-        if (reachedPose && err < targetTolerance * targetTolerance)
+        if (/*reachedPose && */err < targetTolerance * targetTolerance)
         {
             if (!hasInvokedTargetReached)
             {
@@ -401,6 +413,6 @@ public class PhysicsBasedIKArm : MonoBehaviour
         err = Mathf.Sqrt(err);
         var clampedErr = Mathf.Max(err, targetingErrorMin);//this keeps it from slowing down too much as it gets close to the target
         var accel = effectorSpringConstant * dt * Mathf.Min(clampedErr, maxTargetPursuitSpeed) / err * error;
-        PhysicsBasedIK.ApplyForceToJoint(chain, length, angularVelocity, accel, poseStartIndex);
+        PhysicsBasedIK.ApplyForceToJoint(chain, length, angularVelocity, accel, chain.Length - 1, poseWeight);
     }
 }

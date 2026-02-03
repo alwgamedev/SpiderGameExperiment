@@ -6656,6 +6656,7 @@ MonoBehaviour:
   door2Open: {x: 0, y: 0, z: -0.9238795, w: 0.38268343}
   door2Closed: {x: 0, y: 0, z: 0, w: 1}
   rotationSpeed: 5
+  rotationTolerance: 0.9999
 --- !u!1 &5226597478830926667
 GameObject:
   m_ObjectHideFlags: 0
@@ -11708,6 +11709,22 @@ PrefabInstance:
       propertyPath: depositPose.Array.data[3].y
       value: -0.19509032
       objectReference: {fileID: 0}
+    - target: {fileID: 1712633781287781073, guid: c48c2c27835040c4583bc8b1bcda90c6, type: 3}
+      propertyPath: depositPoseWeight.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1712633781287781073, guid: c48c2c27835040c4583bc8b1bcda90c6, type: 3}
+      propertyPath: 'depositPoseWeight.Array.data[0]'
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1712633781287781073, guid: c48c2c27835040c4583bc8b1bcda90c6, type: 3}
+      propertyPath: 'depositPoseWeight.Array.data[3]'
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1712633781287781073, guid: c48c2c27835040c4583bc8b1bcda90c6, type: 3}
+      propertyPath: 'depositPoseWeight.Array.data[4]'
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2648576817369858537, guid: c48c2c27835040c4583bc8b1bcda90c6, type: 3}
       propertyPath: m_LocalScale.x
       value: 1.25
@@ -11968,6 +11985,14 @@ PrefabInstance:
       propertyPath: m_SortingLayerID
       value: -1251726909
       objectReference: {fileID: 0}
+    - target: {fileID: 3541387447881304545, guid: c48c2c27835040c4583bc8b1bcda90c6, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 3.34
+      objectReference: {fileID: 0}
+    - target: {fileID: 3541387447881304545, guid: c48c2c27835040c4583bc8b1bcda90c6, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.06
+      objectReference: {fileID: 0}
     - target: {fileID: 4441328826201566813, guid: c48c2c27835040c4583bc8b1bcda90c6, type: 3}
       propertyPath: m_LocalScale.x
       value: 1.5
@@ -12081,8 +12106,40 @@ PrefabInstance:
       value: -0.01
       objectReference: {fileID: 0}
     - target: {fileID: 5995575784789208824, guid: c48c2c27835040c4583bc8b1bcda90c6, type: 3}
+      propertyPath: lowerArmOpen.w
+      value: 0.81915206
+      objectReference: {fileID: 0}
+    - target: {fileID: 5995575784789208824, guid: c48c2c27835040c4583bc8b1bcda90c6, type: 3}
+      propertyPath: lowerArmOpen.z
+      value: -0.57357645
+      objectReference: {fileID: 0}
+    - target: {fileID: 5995575784789208824, guid: c48c2c27835040c4583bc8b1bcda90c6, type: 3}
+      propertyPath: upperArmOpen.w
+      value: 0.81915206
+      objectReference: {fileID: 0}
+    - target: {fileID: 5995575784789208824, guid: c48c2c27835040c4583bc8b1bcda90c6, type: 3}
+      propertyPath: upperArmOpen.z
+      value: 0.57357645
+      objectReference: {fileID: 0}
+    - target: {fileID: 5995575784789208824, guid: c48c2c27835040c4583bc8b1bcda90c6, type: 3}
+      propertyPath: lowerArmClosed.w
+      value: 0.9961947
+      objectReference: {fileID: 0}
+    - target: {fileID: 5995575784789208824, guid: c48c2c27835040c4583bc8b1bcda90c6, type: 3}
+      propertyPath: lowerArmClosed.z
+      value: -0.08715574
+      objectReference: {fileID: 0}
+    - target: {fileID: 5995575784789208824, guid: c48c2c27835040c4583bc8b1bcda90c6, type: 3}
+      propertyPath: upperArmClosed.w
+      value: 0.9961947
+      objectReference: {fileID: 0}
+    - target: {fileID: 5995575784789208824, guid: c48c2c27835040c4583bc8b1bcda90c6, type: 3}
+      propertyPath: upperArmClosed.z
+      value: 0.08715574
+      objectReference: {fileID: 0}
+    - target: {fileID: 5995575784789208824, guid: c48c2c27835040c4583bc8b1bcda90c6, type: 3}
       propertyPath: rotationTolerance
-      value: 0.99999
+      value: 0.9999
       objectReference: {fileID: 0}
     - target: {fileID: 5995575784789208824, guid: c48c2c27835040c4583bc8b1bcda90c6, type: 3}
       propertyPath: orientingTransform
@@ -13686,11 +13743,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoubleDoor
   door1: {fileID: 6285777102407955248}
   door2: {fileID: 5817964061739868655}
-  door1Open: {x: -0, y: -0, z: 0.44898915, w: 0.8935372}
+  door1Open: {x: -0, y: -0, z: 0.5160331, w: 0.85656863}
   door1Closed: {x: 0, y: 0, z: -0.2651568, w: 0.9642053}
-  door2Open: {x: -0, y: -0, z: -0.36520365, w: 0.93092775}
+  door2Open: {x: -0, y: -0, z: -0.5633005, w: 0.82625216}
   door2Closed: {x: -0, y: -0, z: -0.12022732, w: 0.99274635}
   rotationSpeed: 5
+  rotationTolerance: 0.9999
 --- !u!114 &3584806701475779356 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7949791867309721174, guid: ba9133cc0281c364f93a3e6f92f60946, type: 3}

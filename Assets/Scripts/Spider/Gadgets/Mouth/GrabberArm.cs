@@ -19,7 +19,8 @@ public class GrabberArm : MonoBehaviour
     [SerializeField] Vector2[] foldedPose;
     [SerializeField] Vector2[] defaultPose;
     [SerializeField] Vector2[] depositPose;
-    [SerializeField] int depositPoseStartIndex;
+    //[SerializeField] int depositPoseStartIndex;
+    [SerializeField] float[] depositPoseWeight;
     [SerializeField] float grabTimeOut;
 
     bool actionInProgress;//will not process input while action in progress
@@ -178,7 +179,8 @@ public class GrabberArm : MonoBehaviour
     {
         if (grabTarget)
         {
-            arm.BeginTargetingTransform(depositTarget, depositPoseStartIndex, depositPose);
+            //arm.BeginTargetingTransform(depositTarget, depositPoseStartIndex, depositPose);
+            arm.BeginTargetingTransform(depositTarget, depositPoseWeight, depositPose);
             grabberClaw.BeginHold(grabTarget);
             inventoryDoor.Open();
 
