@@ -3,23 +3,21 @@ using UnityEngine;
 
 public class GrabberClaw : MonoBehaviour
 {
-    [SerializeField] Transform orientingTransform;
-    [SerializeField] Transform grabberBase;
-    [SerializeField] Transform grabberRayEndPt;
     [SerializeField] Transform upperGrabArm;//on positive half of grabberRay
     [SerializeField] Transform lowerGrabArm;
     [SerializeField] Collider2D upperArmCollider;
     [SerializeField] Collider2D lowerArmCollider;
+    [SerializeField] Quaternion upperArmOpen;
+    [SerializeField] Quaternion upperArmClosed;
+    [SerializeField] Quaternion lowerArmOpen;
+    [SerializeField] Quaternion lowerArmClosed;
+    [SerializeField] float grabArmRotationSpeed;
+    [SerializeField] float rotationTolerance;//closer to 1 is stricter
     [SerializeField] float grabTolerance;
     [SerializeField] float dropTolerance;
-    [SerializeField] float grabArmRotationSpeed;
-    [SerializeField] float grabArmMaxRotationRad;
-    [SerializeField] float grabArbMinRotationRad;
-    [SerializeField] float rotationTolerance;//closer to 1 is stricter
 
-    Vector2 grabArmMaxDirection;
-    Vector2 grabArmMinDirection;
-    Vector2 goalGrabArmDirection;//in grabber's local frame
+    Quaternion upperGoal;
+    Quaternion lowerGoal;
     Mode mode;
 
     Collider2D grabTarget;
@@ -36,17 +34,31 @@ public class GrabberClaw : MonoBehaviour
     public void Open()
     {
         Debug.Log("opening");
-        goalGrabArmDirection = grabArmMaxDirection;
+        upperGoal = upperArmOpen;
+        lowerGoal = lowerArmOpen;
         mode = Mode.standard;
         hasInvokedTargetReached = false;
+    }
+
+    public void SnapOpen()
+    {
+        upperGrabArm.localRotation = upperArmOpen;
+        lowerGrabArm.localRotation = lowerArmOpen;
     }
 
     public void Close()
     {
         Debug.Log("closing");
-        goalGrabArmDirection = grabArmMinDirection;
+        upperGoal = upperArmClosed;
+        lowerGoal = lowerArmClosed;
         mode = Mode.standard;
         hasInvokedTargetReached = false;
+    }
+
+    public void SnapClosed()
+    {
+        upperGrabArm.localRotation = upperArmClosed;
+        lowerGrabArm.localRotation = lowerArmClosed;
     }
 
     public void BeginGrab(Collider2D collider)
@@ -70,40 +82,28 @@ public class GrabberClaw : MonoBehaviour
         hasInvokedTargetReached = false;
     }
 
-    private void OnValidate()
-    {
-        grabArmMaxDirection = new(Mathf.Cos(grabArmMaxRotationRad), Mathf.Sin(grabArmMaxRotationRad));
-        grabArmMinDirection = new(Mathf.Cos(grabArbMinRotationRad), Mathf.Sin(grabArbMinRotationRad));
-    }
-
-    private void Awake()
-    {
-        grabArmMaxDirection = new(Mathf.Cos(grabArmMaxRotationRad), Mathf.Sin(grabArmMaxRotationRad));
-        grabArmMinDirection = new(Mathf.Cos(grabArbMinRotationRad), Mathf.Sin(grabArbMinRotationRad));
-    }
-
     private void FixedUpdate()
     {
         switch(mode)
         {
             case Mode.standard:
-                RotateGrabArms(goalGrabArmDirection, Time.deltaTime);
+                RotateGrabArms(upperGoal, lowerGoal, grabArmRotationSpeed * Time.deltaTime, true);
                 break;
             case Mode.grabbingTarget:
-                GrabBehavior();
+                GrabBehavior(Time.deltaTime);
                 break;
             case Mode.holdingTarget:
-                HoldBehavior();
+                HoldBehavior(Time.deltaTime);
                 break;
             //Mode.off => do nothing
         }
     }
 
-    private void GrabBehavior()
+    private void GrabBehavior(float dt)
     {
         if (grabTarget)
-        { 
-            RotateGrabArms(grabArmMinDirection, Time.deltaTime);
+        {
+            RotateGrabArms(upperArmClosed, lowerArmClosed, grabArmRotationSpeed * dt, true);
             if (hasInvokedTargetReached)
             {
                 grabTarget = null;//we reached min direction
@@ -133,7 +133,7 @@ public class GrabberClaw : MonoBehaviour
 
     //will tighten grip whenever distance from grab arms to target is > grabThreshold
     //and will invoke "TargetReached" if target is DROPPED
-    private void HoldBehavior()
+    private void HoldBehavior(float dt)
     {
         if (grabTarget)
         {
@@ -148,7 +148,7 @@ public class GrabberClaw : MonoBehaviour
             }
             else if (max > grabTolerance)
             {
-                RotateGrabArms(grabArmMinDirection, Time.deltaTime, false);
+                RotateGrabArms(upperArmClosed, lowerArmClosed, grabArmRotationSpeed * dt, false);
             }
         }
         else if (grabTarget != null)
@@ -162,14 +162,10 @@ public class GrabberClaw : MonoBehaviour
         }
     }
 
-    private void RotateGrabArms(Vector2 goalGrabArmDirection, float dt, bool invokeEvent = true)
+    private void RotateGrabArms(Quaternion upperGoal, Quaternion lowerGoal, float lerpAmount, bool invokeEvent = true)
     {
-        //when parent (e.g. spider) is flipped horizontally, bones will be pointing in direction -boneTransform.right
-        //but we have to rotate based on goal for bone right
-        var goalUpper = goalGrabArmDirection.x * grabberBase.transform.right + Mathf.Sign(orientingTransform.localScale.x) * goalGrabArmDirection.y * grabberBase.transform.up;
-        var goalLower = goalGrabArmDirection.x * grabberBase.transform.right - Mathf.Sign(orientingTransform.localScale.x) * goalGrabArmDirection.y * grabberBase.transform.up;
-
-        var min = Mathf.Min(Vector2.Dot(goalUpper, upperGrabArm.right), Vector2.Dot(goalLower, lowerGrabArm.right));
+        //q & -q represent the same rotation so take abs of the dot!
+        var min = Mathf.Min(Mathf.Abs(Quaternion.Dot(upperGoal, upperGrabArm.localRotation)), Mathf.Abs(Quaternion.Dot(lowerGoal, lowerGrabArm.localRotation)));
         if (min > rotationTolerance)
         {
             if (invokeEvent && !hasInvokedTargetReached)
@@ -180,7 +176,7 @@ public class GrabberClaw : MonoBehaviour
             return;
         }
 
-        upperGrabArm.ApplyCheapRotationalLerpClamped(goalUpper, grabArmRotationSpeed * dt, out _);
-        lowerGrabArm.ApplyCheapRotationalLerpClamped(goalLower, grabArmRotationSpeed * dt, out _);
+        upperGrabArm.localRotation = Quaternion.Lerp(upperGrabArm.localRotation, upperGoal, lerpAmount);
+        lowerGrabArm.localRotation = Quaternion.Lerp(lowerGrabArm.localRotation, lowerGoal, lerpAmount);
     }
 }

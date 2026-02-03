@@ -6649,17 +6649,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 966989c69b55b50419e45d4837e0df82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoubleDoor
-  orientingTransform: {fileID: 8910507805382992582}
   door1: {fileID: 5917537714303917508}
   door2: {fileID: 774845573194438397}
-  door1EndPt: {fileID: 2252862095111846807}
-  door2EndPt: {fileID: 3829329790895010722}
-  door1ClosedAngleRad: 0
-  door1OpenAngleRad: 2.0943952
-  door2ClosedAngleRad: 3.1415927
-  door2OpenAngleRad: 1.0471976
+  door1Open: {x: 0, y: 0, z: 0.9238795, w: 0.38268343}
+  door1Closed: {x: 0, y: 0, z: 0, w: 1}
+  door2Open: {x: 0, y: 0, z: -0.9238795, w: 0.38268343}
+  door2Closed: {x: 0, y: 0, z: 0, w: 1}
   rotationSpeed: 5
-  rotationTolerance: 0.9999
 --- !u!1 &5226597478830926667
 GameObject:
   m_ObjectHideFlags: 0
@@ -13688,17 +13684,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 966989c69b55b50419e45d4837e0df82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoubleDoor
-  orientingTransform: {fileID: 8910507805382992582}
   door1: {fileID: 6285777102407955248}
   door2: {fileID: 5817964061739868655}
-  door1EndPt: {fileID: 3917700750310063002}
-  door2EndPt: {fileID: 5525571167630288983}
-  door1ClosedAngleRad: 0.80057067
-  door1OpenAngleRad: 2.246028
-  door2ClosedAngleRad: 1.6007749
-  door2OpenAngleRad: 0.9790724
+  door1Open: {x: -0, y: -0, z: 0.44898915, w: 0.8935372}
+  door1Closed: {x: 0, y: 0, z: -0.2651568, w: 0.9642053}
+  door2Open: {x: -0, y: -0, z: -0.36520365, w: 0.93092775}
+  door2Closed: {x: -0, y: -0, z: -0.12022732, w: 0.99274635}
   rotationSpeed: 5
-  rotationTolerance: 0.9999
 --- !u!114 &3584806701475779356 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7949791867309721174, guid: ba9133cc0281c364f93a3e6f92f60946, type: 3}

@@ -228,11 +228,10 @@ public class GrabberArm : MonoBehaviour
         arm.Initialize();
         arm.TurnOff();
         arm.SnapToPose(foldedPose);
-        inventoryDoor.Initialize();
         inventoryDoor.SnapClosed();
-        mouth.Initialize();
         mouth.SnapClosed();
         anchor.SetPosition(offAnchorPosition.position);
+        grabberClaw.SnapClosed();
         HideSprites();
     }
 
