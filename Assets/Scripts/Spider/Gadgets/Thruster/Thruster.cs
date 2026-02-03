@@ -4,9 +4,13 @@ using UnityEngine;
 [Serializable]
 public class Thruster
 {
-    [SerializeField] float drainRate;//charge lost per second
-    [SerializeField] float rechargeRate;//charge gained per second
+    [SerializeField] float secondsToDrain;
+    [SerializeField] float secondsToRecharge;
     [SerializeField] float rechargeThreshold;
+    [SerializeField] float gravityReduction;
+
+    float drainPerUpdate;
+    float rechargePerUpdate;
    
     public bool Cooldown { get; private set; }//cooldown kicks in when you drain charge all the way to 0, then you can't engage again until back above rechargeThreshold
     public float Charge { get; private set; }
@@ -21,13 +25,19 @@ public class Thruster
     public void Initialize()
     {
         Charge = 1;
+        drainPerUpdate = (1 / secondsToDrain) * Time.fixedDeltaTime;
+        rechargePerUpdate = (1 / secondsToRecharge) * Time.fixedDeltaTime;
     }
 
-    public ThrustersUpdateResult Update(float dt)
+    public ThrustersUpdateResult FixedUpdate(Rigidbody2D rb)
     {
         if (Engaged)
         {
-            Charge -= drainRate * dt;
+            Charge -= drainPerUpdate;
+            if (!(rb.linearVelocity.y > 0))
+            {
+                rb.AddForce(-gravityReduction * rb.mass * Physics2D.gravity);
+            }
             if (Charge <= 0)
             {
                 Charge = 0;
@@ -38,7 +48,7 @@ public class Thruster
         }
         else if (Charge < 1)
         {
-            Charge += rechargeRate * dt;
+            Charge += rechargePerUpdate;
             if (Charge > 1)
             {
                 Charge = 1;

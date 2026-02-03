@@ -1332,7 +1332,7 @@ Transform:
   m_GameObject: {fileID: 578503952745777078}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0.6810022, w: 0.7322814}
-  m_LocalPosition: {x: -11.23, y: -1.46, z: 0}
+  m_LocalPosition: {x: -7.19, y: -1.25, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9232,8 +9232,8 @@ Transform:
   m_GameObject: {fileID: 7040435755840891707}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.21015674, w: 0.97766775}
-  m_LocalPosition: {x: -2.845, y: -2.089, z: 0}
-  m_LocalScale: {x: 4.037958, y: 0.9027725, z: 1}
+  m_LocalPosition: {x: -2.136, y: -1.83, z: 0}
+  m_LocalScale: {x: 3.252519, y: 1.0283698, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3254518024213778436}
@@ -10304,7 +10304,7 @@ Rigidbody2D:
   m_LinearDamping: 0.25
   m_AngularDamping: 0.2
   m_GravityScale: 1
-  m_Material: {fileID: 6200000, guid: 0fb3a02a58aa5114b8ef3cbdb77daef0, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -11164,6 +11164,7 @@ MonoBehaviour:
   airborneBalanceSpringForce: 60
   balanceSpringDamping: 0.175
   airborneBalanceSpringDamping: 0.04
+  balanceSpeedThreshold: 0.25
   grappleScurryResistanceMax: 175
   grappleScurryAngleMin: -0.5235988
   jumpForce: 10
@@ -11187,9 +11188,10 @@ MonoBehaviour:
   freeHangStepHeightReductionMax: 0.9
   freeHangStrideMultiplier: 0.5
   thruster:
-    drainRate: 0.075
-    rechargeRate: 0.05
+    secondsToDrain: 5
+    secondsToRecharge: 10
     rechargeThreshold: 0.2
+    gravityReduction: 0.5
   thrusterFlame:
     hook: {fileID: 3254518024213778436}
     widthMin: 1.5
@@ -11199,7 +11201,6 @@ MonoBehaviour:
     intensityLerpRate: 9
     disengageLerpRate: 15
     sr: {fileID: 4522143551512331849}
-  thrustingGravityScale: 0.7
   JumpChargeBegan:
     m_PersistentCalls:
       m_Calls:

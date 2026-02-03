@@ -52,6 +52,7 @@ public class SpiderMovementController : MonoBehaviour
     [SerializeField] float airborneBalanceSpringForce;
     [SerializeField] float balanceSpringDamping;
     [SerializeField] float airborneBalanceSpringDamping;
+    [SerializeField] float balanceSpeedThreshold;
     [SerializeField] float grappleScurryResistanceMax;
     [SerializeField] float grappleScurryAngleMin;
 
@@ -82,7 +83,6 @@ public class SpiderMovementController : MonoBehaviour
     [Header("Thrusters")]
     [SerializeField] Thruster thruster;
     [SerializeField] ThrusterFlame thrusterFlame;
-    [SerializeField] float thrustingGravityScale;
 
     Rigidbody2D rb;
     Collider2D headCollider;
@@ -256,7 +256,7 @@ public class SpiderMovementController : MonoBehaviour
     //do before you handle any move input
     private void UpdateThruster()
     {
-        switch (thruster.Update(Time.deltaTime))
+        switch (thruster.FixedUpdate(rb))
         {
             case Thruster.ThrustersUpdateResult.ChargeRanOut:
                 OnThrusterRanOutOfCharge();
@@ -325,7 +325,7 @@ public class SpiderMovementController : MonoBehaviour
 
     private void OnThrusterEngaged()
     {
-        rb.gravityScale = thrustingGravityScale;
+        //rb.gravityScale = thrustingGravityScale;
         ThrustersEngaged.Invoke();
     }
 
@@ -341,7 +341,7 @@ public class SpiderMovementController : MonoBehaviour
     private void OnThrusterDisengaged()
     {
         //Debug.Log("disengaging thrusters.");
-        rb.gravityScale = 1;
+        //rb.gravityScale = 1;
         ThrustersDisengaged.Invoke();
     }
 
@@ -509,7 +509,7 @@ public class SpiderMovementController : MonoBehaviour
     {
         var f = -(grounded ? balanceSpringDamping : airborneBalanceSpringDamping) * rb.angularVelocity;
 
-        if (!grapple.FreeHanging)
+        if (!grapple.FreeHanging && legSynchronizer.absoluteBodyGroundSpeed > balanceSpeedThreshold)
         {
             var a = MathTools.PseudoAngle(transform.right, groundDirection);
             f += a * (grounded ? balanceSpringForce : airborneBalanceSpringForce);

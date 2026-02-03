@@ -54,11 +54,11 @@ Material:
     m_Ints: []
     m_Floats:
     - _BodyNoiseDensity: 1
-    - _BodyNoiseMax: 3.5
-    - _BodyNoiseMin: 0.1
-    - _BodyNoiseScale: 25
+    - _BodyNoiseMax: 4
+    - _BodyNoiseMin: 0
+    - _BodyNoiseScale: 20
     - _EnableExternalAlpha: 0
-    - _FadeRate: 1
+    - _FadeRate: 0.53
     - _FlameMin: 1
     - _NoiseMin: 0.25
     - _NoiseScale: 100
@@ -74,8 +74,8 @@ Material:
     - White: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
-    - _StrongColor: {r: 0, g: 0.7372549, b: 0.53101623, a: 0.5019608}
-    - _WeakColor: {r: 1, g: 0.30785865, b: 0, a: 0.2509804}
+    - _StrongColor: {r: 0, g: 0.737255, b: 0.53101623, a: 0.2}
+    - _WeakColor: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &6467137741201487658

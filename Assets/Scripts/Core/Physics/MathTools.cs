@@ -260,7 +260,7 @@ public static class MathTools
             return w;
         }
 
-        //(b dot a)w + (b dot aPerp)wPerp
+        //this is (b dot a)w + (b dot aPerp)wPerp
         return Vector2.Dot(a, b) * w + Cross2D(a,b) * w.CCWPerp();
     }
 

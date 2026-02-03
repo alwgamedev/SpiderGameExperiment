@@ -32,8 +32,6 @@ public class DoubleDoor : MonoBehaviour
         idle, opening, closing
     }
 
-    public event Action TargetReached;
-
     public void Initialize()
     {
         door1ClosedDirection = new(Mathf.Cos(door1ClosedAngleRad), Mathf.Sin(door1ClosedAngleRad));
@@ -111,13 +109,19 @@ public class DoubleDoor : MonoBehaviour
 
     private void FixedUpdate()
     {
-        switch(mode)
+        switch (mode)
         {
             case Mode.opening:
-                RotateTowardsGoal(door1OpenDirection, door2OpenDirection, rotationSpeed * Time.deltaTime);
+                if (!RotateTowardsGoal(door1OpenDirection, door2OpenDirection, rotationSpeed * Time.deltaTime))
+                {
+                    mode = Mode.idle;
+                }
                 break;
             case Mode.closing:
-                RotateTowardsGoal(door1ClosedDirection, door2ClosedDirection, rotationSpeed * Time.deltaTime);
+                if (!RotateTowardsGoal(door1ClosedDirection, door2ClosedDirection, rotationSpeed * Time.deltaTime))
+                {
+                    mode = Mode.idle;
+                }
                 break;
         }
     }
@@ -140,7 +144,7 @@ public class DoubleDoor : MonoBehaviour
         door2.rotation = MathTools.QuaternionFrom2DUnitVector(w2);
     }
 
-    private void RotateTowardsGoal(Vector2 goal1, Vector2 goal2, float lerpAmount)
+    private bool RotateTowardsGoal(Vector2 goal1, Vector2 goal2, float lerpAmount)
     {
         Vector2 u = (door2.position - door1.position) / doorwayWidth;
         var v = orientingTransform.localScale.x > 0 ? u.CCWPerp() : u.CWPerp();
@@ -151,15 +155,9 @@ public class DoubleDoor : MonoBehaviour
         Vector2 cur1 = (door1EndPt.position - door1.position) / door1Width;
         Vector2 cur2 = (door2EndPt.position - door2.position) / door2Width;
 
-        var error = Mathf.Min(Vector2.Dot(cur1, goal1), Vector2.Dot(cur2, goal2));
-        if (error > rotationTolerance)
-        {
-            mode = Mode.idle;
-            TargetReached?.Invoke();
-            return;
-        }
+        door1.ApplyCheapRotationalLerpClamped(cur1, goal1, lerpAmount, out var changed1);
+        door2.ApplyCheapRotationalLerpClamped(cur2, goal2, lerpAmount, out var changed2);
 
-        door1.ApplyCheapRotationalLerpClamped(cur1, goal1, lerpAmount, out _);
-        door2.ApplyCheapRotationalLerpClamped(cur2, goal2, lerpAmount, out _);
+        return changed1 || changed2;
     }
 }
