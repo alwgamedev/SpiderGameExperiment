@@ -206,11 +206,15 @@ public static class MathTools
 
     public static Quaternion QuaternionFrom2DUnitVector(Vector2 u)
     {
-        if (u.x >= 1)
+        if (!(u.x < 1))
         {
             return Quaternion.identity;
         }
-        return new Quaternion(0, 0, Mathf.Sqrt(0.5f * (1 - u.x)), u.y < 0 ? -Mathf.Sqrt(0.5f * (1 + u.x)) : Mathf.Sqrt(0.5f * (1 + u.x)));
+        if (!(u.x > -1))
+        {
+            return new(0, 0, u.y < 0 ? -1 : 1, 0);
+        }
+        return new Quaternion(0, 0, u.y < 0 ? -Mathf.Sqrt(0.5f * (1 - u.x)) : Mathf.Sqrt(0.5f * (1 - u.x)), Mathf.Sqrt(0.5f * (1 + u.x)));
     }
 
     public static Quaternion InverseOfUnitQuaternion(Quaternion q)

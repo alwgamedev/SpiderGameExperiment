@@ -1,23 +1,26 @@
+﻿using System;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.U2D.IK;
 
-public class LegAnimator : MonoBehaviour
+[Serializable]
+public class LegTarget
 {
+    [SerializeField] Transform hipBone;
+    [SerializeField] Transform ikEffector;
+    [SerializeField] Transform ikTarget;
+    [SerializeField] LayerMask groundMask;
     [SerializeField] float hipRaycastLength = 2;
     [SerializeField] float hipRaycastUpwardBuffer = 0.5f;
     [SerializeField] float stepMax;
     [SerializeField] float groundContactRadius;
-    //[SerializeField] float preferredExtension;
     [SerializeField] Vector2 freeHangLagWeights;
     [SerializeField] Vector2 drift;
-    
-    int groundLayer;
+
+    //int groundLayer;
     float groundContactRadius2;
-    Transform hipBone;
-    Transform ikEffector;
-    Transform ikTarget;
-    float ikChainLength;
+
+    //float ikChainLength;
     float ikChainLengthInverse;
     //float preferredExtensionPower;
 
@@ -29,41 +32,30 @@ public class LegAnimator : MonoBehaviour
 
     public Vector2 HipPosition => hipBone.position;
     public Vector2 FootPosition => ikEffector.position;
+    public Transform Target => ikTarget;
     public bool IsTouchingGround { get; private set; }
-    public Vector2 ContactNormal { get; private set; }
+    //public Vector2 ContactNormal { get; private set; }
     public Vector2 LegExtensionVector => FootPosition - HipPosition;
     public float LegExtensionFraction => LegExtensionVector.magnitude * ikChainLengthInverse;
 
-    private void Awake()
+    public void Initialize(IKChain2D ikChain)
     {
-        groundLayer = LayerMask.GetMask("Ground");
         groundContactRadius2 = groundContactRadius * groundContactRadius;
-        var ikChain = GetComponent<Solver2D>().GetChain(0);
         hipBone = ikChain.transforms[0];
         ikEffector = ikChain.effector;
         ikTarget = ikChain.target;
 
         var lengths = ikChain.lengths;
-        ikChainLength = 0;
+        var ikChainLength = 0f;
         for (int i = 0; i < lengths.Length; i++)
         {
             ikChainLength += lengths[i];
         }
 
         ikChainLengthInverse = 1 / ikChainLength;
-        //preferredExtensionPower = (1 / preferredExtension) - 1;
     }
 
-    //public void ApplyContactForce(Rigidbody2D rb, float forceScale)
-    //{
-    //    if (IsTouchingGround)
-    //    {
-    //        rb.AddForceAtPosition(rb.mass * forceScale * Vector2.Dot(LegExtensionVector, ContactNormal) * Mathf.Pow(1 - LegExtensionFraction, preferredExtensionPower) * LegExtensionVector,
-    //            FootPosition);
-    //    }
-    //}
-
-    public void InitializePosition(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, 
+    public void InitializePosition(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp,
         bool stepping, float stateProgress, float stepTime, float restTime)
     {
         if (stepping)
@@ -83,8 +75,7 @@ public class LegAnimator : MonoBehaviour
             ikTarget.position = c.point;
         }
 
-        IsTouchingGround = Physics2D.OverlapCircle(ikTarget.position, groundContactRadius, groundLayer);
-        //UpdateExtension();
+        IsTouchingGround = Physics2D.OverlapCircle(ikEffector.position/*ikTarget.position*/, groundContactRadius, groundMask);
     }
 
     public void UpdateStep(float dt, GroundMap map, bool bodyFacingRight, bool freeHanging,
@@ -93,17 +84,11 @@ public class LegAnimator : MonoBehaviour
     {
         var stepStart = GetStepStart(map, bodyFacingRight, stepProgress, stepTime, restTime);
         var stepGoal = GetStepGoal(map, bodyFacingRight, 0, restTime);
-        //var stepRight = (stepGoal - stepStart).normalized;
-        //var stepUp = bodyFacingRight ? stepRight.CCWPerp() : stepRight.CWPerp();
-        //var stepCenter = 0.5f * (stepGoal + stepStart);
-        //var stepRadius = Vector2.Dot(stepGoal - stepCenter, stepRight);
-        //var t = Mathf.PI * stepProgress;
         var stepRight = stepGoal - stepStart;
         var stepUp = bodyFacingRight ? 0.5f * stepRight.CCWPerp() : 0.5f * stepRight.CWPerp();
 
         //parabola instead of trig fcts
         var newTargetPos = stepStart + stepProgress * stepRight + 4 * stepProgress * (1 - stepProgress) * baseStepHeightMultiplier * stepUp;
-            //stepCenter - stepRadius * Mathf.Cos(t) * stepRight + stepRadius * baseStepHeightMultiplier * Mathf.Sin(t) * stepUp;
 
         if (stepHeightSpeedMultiplier < 1)
         {
@@ -124,7 +109,6 @@ public class LegAnimator : MonoBehaviour
         }
 
         UpdateIsTouchingGround(map);
-        //UpdateExtension();
     }
 
     public void UpdateRest(float dt, GroundMap map, bool bodyFacingRight, bool freeHanging,
@@ -144,7 +128,6 @@ public class LegAnimator : MonoBehaviour
         }
 
         UpdateIsTouchingGround(map);
-        //UpdateExtension();
     }
 
     public void OnBodyChangedDirectionFreeHanging(Vector2 position0, Vector2 position1, Vector2 flipNormal)
@@ -164,7 +147,7 @@ public class LegAnimator : MonoBehaviour
 
         Vector2 q = ikEffector.position;
         q -= groundMap.ClosestPoint(q, out var n, out var hitGround);
-        ContactNormal = n;
+        //ContactNormal = n;
         IsTouchingGround = hitGround && (Vector2.SqrMagnitude(q) < groundContactRadius2 || Vector2.Dot(q, n) < 0);
 
         if (!wasTouchingGround && IsTouchingGround)
@@ -173,16 +156,9 @@ public class LegAnimator : MonoBehaviour
         }
     }
 
-    //private void UpdateExtension()
-    //{
-    //    LegExtensionVector = new(ikTarget.position.x - hipBone.position.x, ikTarget.position.y - hipBone.position.y);
-    //    LegExtensionFraction = LegExtensionVector.magnitude / ikChainLength;
-    //}
-
     private Vector2 GetStepStart(GroundMap map, bool bodyFacingRight, float stepProgress, float stepTime, float restTime)
     {
-        //var c = map.Center;
-        var h = Vector2.Dot((Vector2)hipBone.position - map.LastOrigin/*c.point*/, map.LastOriginRight/*c.normal.CWPerp()*/);//we could also use body position and body right
+        var h = Vector2.Dot((Vector2)hipBone.position - map.LastOrigin, map.LastOriginRight);//we could also use body position and body right
         h = bodyFacingRight ? h + StepStartHorizontalOffset(stepProgress, stepTime, restTime)
             : h - StepStartHorizontalOffset(stepProgress, stepTime, restTime);
         return map.PointFromCenterByPosition(bodyFacingRight ? h + driftWeight * drift.x : h - driftWeight * drift.x, out var n, out _) + driftWeight * drift.y * n;
@@ -190,14 +166,13 @@ public class LegAnimator : MonoBehaviour
 
     private Vector2 GetStepGoal(GroundMap map, bool bodyFacingRight, float restProgress, float restTime)
     {
-        //var c = map.Center;
-        var h = Vector2.Dot((Vector2)hipBone.position - map.LastOrigin/*c.point*/, map.LastOriginRight/*c.normal.CWPerp()*/);//we could also use body position and body right
+        var h = Vector2.Dot((Vector2)hipBone.position - map.LastOrigin, map.LastOriginRight);//we could also use body position and body right
         h = bodyFacingRight ? h + StepGoalHorizontalOffset(restProgress, restTime)
             : h - StepGoalHorizontalOffset(restProgress, restTime);
         return map.PointFromCenterByPosition(bodyFacingRight ? h + driftWeight * drift.x : h - driftWeight * drift.x, out var n, out _) + driftWeight * drift.y * n;
     }
 
-    private Vector2 GetStepStart(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, 
+    private Vector2 GetStepStart(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp,
         float stepProgress, float stepTime, float restTime)
     {
         var r = StepStartRaycast(bodyMovementRight, bodyUp, stepProgress, stepTime, restTime);
@@ -208,7 +183,7 @@ public class LegAnimator : MonoBehaviour
         return StaticStepStart(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, stepProgress, stepTime, restTime);
     }
 
-    private Vector2 GetStepGoal(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, 
+    private Vector2 GetStepGoal(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp,
         float restProgress, float restTime)
     {
         var r = StepGoalRaycast(bodyMovementRight, bodyUp, restProgress, restTime);
@@ -221,7 +196,7 @@ public class LegAnimator : MonoBehaviour
 
     RaycastHit2D GroundRaycast(Vector2 origin, Vector2 bodyUp, float raycastLength, float upwardBuffer = .5f)
     {
-        return Physics2D.Raycast(origin + upwardBuffer * bodyUp, -bodyUp, raycastLength + upwardBuffer, groundLayer);
+        return Physics2D.Raycast(origin + upwardBuffer * bodyUp, -bodyUp, raycastLength + upwardBuffer, groundMask);
     }
 
     RaycastHit2D StepPosRaycast(Vector2 searchRight, Vector2 searchUp, float horizontalOffset)
@@ -251,7 +226,7 @@ public class LegAnimator : MonoBehaviour
         return StaticStepPos(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, StepGoalHorizontalOffset(restProgress, restTime));
     }
 
-    Vector2 StaticStepStart(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp, 
+    Vector2 StaticStepStart(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp,
         float stepProgress, float stepTime, float restTime)
     {
         return StaticStepPos(bodyPosGroundHeight, bodyPos, bodyMovementRight, bodyUp, StepStartHorizontalOffset(stepProgress, stepTime, restTime));

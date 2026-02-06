@@ -26,19 +26,30 @@ public static class PhysicsBasedIK
         }
     }
 
-    public static void IntegrateJoints(Transform[] chain,/* float[] length,*/ float[] angularVelocity, float damping, float dt)
+    public static void ApplyGravity(Transform[] chain, float[] length, float[] angularVelocity, float gravityScale, float dt)
     {
-        for (int i = 0; i < chain.Length - 1; i++)
+        var g = gravityScale * dt * Physics2D.gravity;
+        for (int i = 0; i < angularVelocity.Length; i++)
+        {
+            //ApplyForceToJoint works well when you're trying to pull the joint towards a target,
+            //but this works a lot better for gravity (just gives a more natural feel)
+            //(i.e. don't transfer remaining acceleration to the next joint like we do in ApplyForceToJoint)
+            Vector2 v = chain[i + 1].position - chain[i].position;
+            angularVelocity[i] += Vector2.Dot(g, v.CCWPerp()) / length[i];
+        }
+    }
+
+    public static void IntegrateJoints(Transform[] chain, float[] angularVelocity, float damping, float dt)
+    {
+        for (int i = 0; i < angularVelocity.Length; i++)
         {
             angularVelocity[i] -= damping * angularVelocity[i] * dt;
-            //chain[i].ApplyCheapRotationBySpeed(angularVelocity[i], dt, out _);
             var dAngle = dt * angularVelocity[i];
             var q = MathTools.QuaternionFrom2DUnitVector(new(Mathf.Cos(dAngle), Mathf.Sin(dAngle)));//honestly worth it to just use trig functions
             chain[i].rotation *= q;
             if (i < chain.Length - 2)
             {
-                q = MathTools.InverseOfUnitQuaternion(q);
-                chain[i + 1].rotation *= q;
+                chain[i + 1].rotation *= MathTools.InverseOfUnitQuaternion(q);
                 //chain transforms assumed to be nested, so this allows joints to rotate independently
                 //(i.e. when joint i rotates, all later joints maintain their world rotation)
                 //this gives better tracking movement and more reliable collision
@@ -47,23 +58,23 @@ public static class PhysicsBasedIK
     }
 
     public static void ApplyCollisionForces(Transform[] chain, float[] length, float[] armHalfWidth, float[] angularVelocity,
-        LayerMask[] collisionMask, float collisionResponse, float horizontalRaycastSpacing, float tunnelInterval, float tunnelMax)
+        LayerMask collisionMask, float collisionResponse, float horizontalRaycastSpacing, float tunnelInterval, float tunnelMax)
     {
         for (int i = chain.Length - 2; i > -1; i--)
         {
-            var cMask = collisionMask[i];
+            //var cMask = collisionMask[i];
             Vector2 p0 = chain[i].position;
             Vector2 p1 = chain[i + 1].position;
             Vector2 u = (p1 - p0) / length[i];
             var n = u.CCWPerp();
             var h = armHalfWidth[i] * n;
-            var r = Physics2D.Linecast(p0 + h, p1 + h, cMask);
+            var r = Physics2D.Linecast(p0 + h, p1 + h, collisionMask);
             bool initialHitOnUpSide = true;
 
             if (!r)
             {
                 initialHitOnUpSide = false;
-                r = Physics2D.Linecast(p0 - h, p1 - h, cMask);
+                r = Physics2D.Linecast(p0 - h, p1 - h, collisionMask);
             }
 
             if (r)
@@ -76,7 +87,7 @@ public static class PhysicsBasedIK
 
                 if (initialHitOnUpSide)
                 {
-                    var s = Physics2D.Linecast(r.point - 2 * h, r.point, cMask);
+                    var s = Physics2D.Linecast(r.point - 2 * h, r.point, collisionMask);
                     if (s && s.distance > 0)
                     {
                         //then we know obstacle is on + side
@@ -150,7 +161,7 @@ public static class PhysicsBasedIK
 
                     while (YInBounds())
                     {
-                        var r = Physics2D.Linecast(q1 + y * n, q1, cMask);
+                        var r = Physics2D.Linecast(q1 + y * n, q1, collisionMask);
                         if (r && r.distance > 0)
                         {
                             return Vector2.Dot(r.point - p0, n);

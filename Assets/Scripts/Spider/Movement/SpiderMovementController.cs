@@ -89,7 +89,7 @@ public class SpiderMovementController : MonoBehaviour
     Collider2D abdomenCollider;
     Collider2D[] bodyCollisionBuffer = new Collider2D[1];
     ContactFilter2D bodyCollisionFilter;
-    LegSynchronizer legSynchronizer;
+    PhysicsLegSynchronizer legSynch;
 
     SpiderInput spiderInput;
 
@@ -164,7 +164,8 @@ public class SpiderMovementController : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        legSynchronizer = GetComponent<LegSynchronizer>();
+        //legSynchronizer = GetComponent<LegSynchronizer>();
+        legSynch = GetComponent<PhysicsLegSynchronizer>();
 
         abdomenBoneBaseRight = abdomenBone.right.InFrameV2(transform.right, transform.up);
         abdomenBoneBaseRightL = new(abdomenBoneBaseRight.x, -abdomenBoneBaseRight.y);
@@ -197,7 +198,8 @@ public class SpiderMovementController : MonoBehaviour
         rb.centerOfMass = heightReferencePoint.position - transform.position;
 
         InitializeGroundData();
-        legSynchronizer.Initialize(PreferredBodyPosGroundHeight, FacingRight);
+        //legSynchronizer.Initialize(PreferredBodyPosGroundHeight, FacingRight);
+        legSynch.Initialize();
         bodyCollisionFilter = ContactFilter2D.noFilter;
         bodyCollisionFilter.useTriggers = false;
         bodyCollisionFilter.SetLayerMask(groundLayer);
@@ -276,7 +278,7 @@ public class SpiderMovementController : MonoBehaviour
 
         }
 
-        thrusterFlame.Update(thruster.Engaged ? legSynchronizer.absoluteBodyGroundSpeed : -1, Time.deltaTime);
+        thrusterFlame.Update(thruster.Engaged ? legSynch.absoluteBodyGroundSpeed : -1, Time.deltaTime);
     }
 
     private void UpdateThrusterEngagement()
@@ -428,10 +430,11 @@ public class SpiderMovementController : MonoBehaviour
     private void ChangeDirection()
     {
         //2do: can we interpolate between these by free hang strength in a reasonable way (or is there no need to do that?)
-        if (!grapple.FreeHanging/*!legSynchronizer.FreeHanging*/)
+        if (!grapple.FreeHanging)
         {
             var s = transform.localScale;
             transform.localScale = new Vector3(-s.x, s.y, s.z);
+            legSynch.OnBodyChangedDirection(transform.position, transform.position, transform.right);
         }
         else
         {
@@ -443,7 +446,7 @@ public class SpiderMovementController : MonoBehaviour
             transform.up = MathTools.ReflectAcrossHyperplane(transform.up, (Vector3)n);
             var d = (Vector3)(o - grapple.FreeHangLeveragePoint);
             transform.position += d;
-            legSynchronizer.OnBodyChangedDirectionFreeHanging(p, transform.position, n);
+            legSynch.OnBodyChangedDirection(p, transform.position, n);
         }
     }
 
@@ -509,7 +512,7 @@ public class SpiderMovementController : MonoBehaviour
     {
         var f = -(grounded ? balanceSpringDamping : airborneBalanceSpringDamping) * rb.angularVelocity;
 
-        if (!grapple.FreeHanging && legSynchronizer.absoluteBodyGroundSpeed > balanceSpeedThreshold)
+        if (!grapple.FreeHanging && legSynch.absoluteBodyGroundSpeed > balanceSpeedThreshold)
         {
             var a = MathTools.PseudoAngle(transform.right, groundDirection);
             f += a * (grounded ? balanceSpringForce : airborneBalanceSpringForce);
@@ -772,16 +775,16 @@ public class SpiderMovementController : MonoBehaviour
 
     private bool GroundedCondition()
     {
-        return (!grapple.FreeHanging || grounded || legSynchronizer.AnyGroundedLegsUnderextended(freeHangGroundedEntryLegExtensionThreshold)) 
-            && groundednessRating > 0 || IsTouchingGroundLayer(headCollider) || IsTouchingGroundLayer(abdomenCollider);
+        return ((!grapple.FreeHanging || grounded || legSynch.AnyGroundedLegsUnderextended(freeHangGroundedEntryLegExtensionThreshold)) 
+            && groundednessRating > 0) || IsTouchingGroundLayer(headCollider) || IsTouchingGroundLayer(abdomenCollider);
         //keep the IsTouchingGroundLayer(coll) out of parentheses; these on their own automatically qualify you as grounded!
     }
 
     private void UpdateGroundednessRating()
     {
-        groundednessRating = groundednessRating == 0 ? legSynchronizer.FractionTouchingGround > 0 ? Mathf.Max(legSynchronizer.FractionTouchingGround, groundednessInitialContactValue) : 0
-            : grapple.GrappleAnchored && grapple.GrappleReleaseInput < 0 ? legSynchronizer.FractionTouchingGround 
-            : MathTools.LerpAtConstantSpeed(groundednessRating, legSynchronizer.FractionTouchingGround, groundednessSmoothingRate, Time.deltaTime);
+        groundednessRating = groundednessRating == 0 ? legSynch.FractionTouchingGround > 0 ? Mathf.Max(legSynch.FractionTouchingGround, groundednessInitialContactValue) : 0
+            : grapple.GrappleAnchored && grapple.GrappleReleaseInput < 0 ? legSynch.FractionTouchingGround 
+            : MathTools.LerpAtConstantSpeed(groundednessRating, legSynch.FractionTouchingGround, groundednessSmoothingRate, Time.deltaTime);
     }
 
     private void InitializeGroundMap()
@@ -894,36 +897,35 @@ public class SpiderMovementController : MonoBehaviour
 
     private void UpdateLegSynch()
     {
-        legSynchronizer.FreeHanging = !grounded;// && !thruster.Engaged;//grapple.FreeHanging;
+        legSynch.State = 
+            grounded ? PhysicsLegSynchronizer.LegState.standard 
+            : grapple.FreeHanging ? PhysicsLegSynchronizer.LegState.limp 
+            : PhysicsLegSynchronizer.LegState.airborne;
 
         var v = GroundVelocity;
-        legSynchronizer.bodyGroundSpeedSign = (grounded && grapple.GrappleAnchored) || grapple.FreeHanging ? 1 : Mathf.Sign(v);
-        legSynchronizer.absoluteBodyGroundSpeed = grounded || thruster.Engaged ? Mathf.Abs(v) : rb.linearVelocity.magnitude;
-        legSynchronizer.stepHeightFraction = 1 - crouchProgress * crouchHeightFraction;
-        legSynchronizer.timeScale = grounded || thruster.Engaged ? 1 : airborneLegAnimationTimeScale;
+        legSynch.bodyGroundSpeedSign = (grounded && grapple.GrappleAnchored) || grapple.FreeHanging ? 1 : Mathf.Sign(v);
+        legSynch.absoluteBodyGroundSpeed = grounded || thruster.Engaged ? Mathf.Abs(v) : rb.linearVelocity.magnitude;
+        legSynch.stepHeightFraction = 1 - crouchProgress * crouchHeightFraction;
+        legSynch.timeScale = grounded || thruster.Engaged ? 1 : airborneLegAnimationTimeScale;
 
-        if (legSynchronizer.FreeHanging)
+        switch(legSynch.State)
         {
-            var r = OrientedRight;
-            var dX = grounded ? 0 : r.y < -MathTools.sin15 ? (-r.y - MathTools.sin15) / (1 - MathTools.sin15)  : 0;
-            legSynchronizer.LerpDriftWeights(dX);
-            legSynchronizer.stepHeightFraction *= 1 - freeHangStepHeightReductionMax * dX;
-            legSynchronizer.strideMultiplier = MathTools.LerpAtConstantSpeed(legSynchronizer.strideMultiplier, Mathf.Lerp(AirborneStrideMultiplier(), freeHangStrideMultiplier, dX),
+            case PhysicsLegSynchronizer.LegState.standard:
+                legSynch.strideMultiplier = 1;
+                break;
+            case PhysicsLegSynchronizer.LegState.airborne:
+                legSynch.strideMultiplier = MathTools.LerpAtConstantSpeed(legSynch.strideMultiplier, AirborneStrideMultiplier(),
                     strideMultiplierSmoothingRate, Time.deltaTime);
-        }
-        else
-        {
-            if (!grounded)
-            {
-                legSynchronizer.strideMultiplier = MathTools.LerpAtConstantSpeed(legSynchronizer.strideMultiplier, AirborneStrideMultiplier(),
-                    strideMultiplierSmoothingRate, Time.deltaTime);
-            }
-            else if (legSynchronizer.strideMultiplier != 1)
-            {
-                legSynchronizer.strideMultiplier = 1;
-            }
+                break;
+            case PhysicsLegSynchronizer.LegState.limp://idk if we need all dis anymore
+                var r = OrientedRight;
+                var dX = grounded ? 0 : r.y < -MathTools.sin15 ? (-r.y - MathTools.sin15) / (1 - MathTools.sin15) : 0;
+                legSynch.stepHeightFraction *= 1 - freeHangStepHeightReductionMax * dX;
+                legSynch.strideMultiplier = MathTools.LerpAtConstantSpeed(legSynch.strideMultiplier, Mathf.Lerp(AirborneStrideMultiplier(), freeHangStrideMultiplier, dX),
+                        strideMultiplierSmoothingRate, Time.deltaTime);
+                break;
         }
 
-        legSynchronizer.UpdateAllLegs(Time.deltaTime, groundMap);
+        legSynch.UpdateAllLegs(Time.deltaTime, groundMap);
     }
 }
