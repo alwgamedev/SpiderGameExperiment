@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -7,7 +6,7 @@ using UnityEngine.Events;
 public struct PhysicsLegSettings
 {
     public float gravityStrength;
-    public float poseStrength;
+    public float poseForce;
     public float limpness;
     public float jointDamping;
     public float stepHeight;
@@ -16,7 +15,8 @@ public struct PhysicsLegSettings
 [Serializable]
 public class PhysicsBasedIKLeg
 {
-    public PhysicsLegSettings settings;
+    public PhysicsLegSettings contactSettings;
+    public PhysicsLegSettings noContactSettings;
     public UnityEvent HitGround;
 
     [SerializeField] Transform orientingTransform;
@@ -28,6 +28,7 @@ public class PhysicsBasedIKLeg
     Vector2[] positionBuffer;
     float[] angularVelocity;
     float[] length;
+    float[] inverseLength;
     float totalLength;
     float totalLengthInverse;
 
@@ -39,6 +40,7 @@ public class PhysicsBasedIKLeg
     {
         totalLength = 0f;
         length = new float[chain.Length - 1];
+        inverseLength = new float[chain.Length - 1];
         angularVelocity = new float[chain.Length - 1];
         defaultPose = new Vector2[chain.Length - 1];
         positionBuffer = new Vector2[chain.Length];
@@ -48,6 +50,7 @@ public class PhysicsBasedIKLeg
             Vector2 v = chain[i + 1].position - chain[i].position;
             var l = v.magnitude;
             length[i] = l;
+            inverseLength[i] = 1 / l;
             totalLength += l;
             defaultPose[i] = new(Vector2.Dot(v, orientingTransform.right) / l, Vector2.Dot(v, orientingTransform.up) / l);
             positionBuffer[i] = chain[i].position;
@@ -58,26 +61,29 @@ public class PhysicsBasedIKLeg
         target.position = chain[^1].position;
     }
 
-    public void UpdateJoints(GroundMap groundMap, int fabrikIterations, float fabrikTolerance, float groundContactRadiusSqrd, float dt)
+    public void UpdateJoints(GroundMap groundMap, int fabrikIterations, float fabrikTolerance,
+        float groundContactRadiusSqrd, float dt)
     {
+        ref var settings = ref EffectorIsTouchingGround ? ref contactSettings : ref noContactSettings;
         if (settings.limpness > 0 && (chain[0].position.x != positionBuffer[0].x || chain[0].position.y != positionBuffer[0].y))
         {
             for (int i = 1; i < positionBuffer.Length; i++)
             {
+                //var p = positionBuffer[i] + dt * settings.gravityStrength * Physics2D.gravity;
                 var p = Vector2.Lerp(chain[i].position, positionBuffer[i], settings.limpness);
                 Vector2 u = orientingTransform.localScale.x * (p - (Vector2)chain[i - 1].position).normalized;
                 chain[i - 1].rotation = MathTools.QuaternionFrom2DUnitVector(u);
             }
         }
         PhysicsBasedIK.IntegrateJoints(chain, angularVelocity, settings.jointDamping, dt);
+        UpdateGroundContact(groundMap, groundContactRadiusSqrd);
+
+        settings = ref EffectorIsTouchingGround ? ref contactSettings : ref noContactSettings;
         SolveForTargetPose(target.position, fabrikIterations, fabrikTolerance);
-        if (settings.poseStrength != 0)
-        { 
-            PushTowardsTargetPose(settings.poseStrength, dt);
-        }
-        if (settings.gravityStrength != 0)
+        PushTowardsTargetPose(settings.poseForce, dt);
+        if (!EffectorIsTouchingGround && settings.gravityStrength != 0)
         {
-            PhysicsBasedIK.ApplyGravity(chain, length, angularVelocity, settings.gravityStrength, dt);
+            PhysicsBasedIK.ApplyGravity(chain, inverseLength, angularVelocity, settings.gravityStrength, dt);
         }
 
         for (int i = 0; i < positionBuffer.Length; i++)
@@ -85,12 +91,13 @@ public class PhysicsBasedIKLeg
             //put current positions into buffer (for limpness to use next update)
             positionBuffer[i] = chain[i].position;
         }
-
-        UpdateIsTouchingGround(groundMap, groundContactRadiusSqrd);
     }
 
-    public void UpdateTargetStepping(GroundMap map, float stepHeightSpeedMultiplier, float stepHeightFraction, float stepProgress, float stepDistance, float restDistance)
+    public void UpdateTargetStepping(GroundMap map, float stepHeightSpeedMultiplier, float stepHeightFraction, float stepProgress, float stepDistance,
+        float restDistance)
     {
+        ref var settings = ref EffectorIsTouchingGround ? ref contactSettings : ref noContactSettings;
+        var stepHeight = settings.stepHeight;
         var bodyFacingRight = orientingTransform.localScale.x > 0;
         var stepStart = GetStepStart(map, bodyFacingRight, stepProgress, stepDistance, restDistance);
         var stepGoal = GetStepGoal(map, bodyFacingRight, 0, restDistance);
@@ -98,7 +105,7 @@ public class PhysicsBasedIKLeg
         var stepUp = bodyFacingRight ? 0.5f * stepRight.CCWPerp() : 0.5f * stepRight.CWPerp();
 
         //parabola instead of trig fcts
-        var newTargetPos = stepStart + stepProgress * stepRight + 4 * stepProgress * (1 - stepProgress) * stepHeightFraction * settings.stepHeight * stepUp;
+        var newTargetPos = stepStart + stepProgress * stepRight + 4 * stepProgress * (1 - stepProgress) * stepHeightFraction * stepHeight * stepUp;
 
         if (stepHeightSpeedMultiplier < 1)
         {
@@ -148,13 +155,10 @@ public class PhysicsBasedIKLeg
 
     private void PushTowardsTargetPose(float accelFactor, float dt)
     {
-        for (int i = 0; i < positionBuffer.Length - 1; i++)
-        {
-            Debug.DrawLine(positionBuffer[i], positionBuffer[i + 1], Color.red);
-        }
         for (int i = 0; i < angularVelocity.Length; i++)
         {
-            var v = orientingTransform.localScale.x * (positionBuffer[i + 1] - positionBuffer[i]) / length[i];
+            Debug.DrawLine(positionBuffer[i], positionBuffer[i + 1], Color.red);
+            var v = orientingTransform.localScale.x * inverseLength[i] * (positionBuffer[i + 1] - positionBuffer[i]);
             var q = MathTools.QuaternionFrom2DUnitVector(v);
             q *= MathTools.InverseOfUnitQuaternion(chain[i].rotation);
             if (q.w < 0)
@@ -165,7 +169,7 @@ public class PhysicsBasedIKLeg
         }
     }
 
-    private void UpdateIsTouchingGround(GroundMap groundMap, float groundContactRadiusSqrd)
+    private void UpdateGroundContact(GroundMap groundMap, float groundContactRadiusSqrd)
     {
         var wasTouchingGround = EffectorIsTouchingGround;
 

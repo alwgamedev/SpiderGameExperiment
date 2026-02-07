@@ -8,9 +8,9 @@ public class PhysicsLegSynchronizer : MonoBehaviour
     [SerializeField] float stepHeightSpeed0;//at or below this speed, stepHeight is zero
     [SerializeField] float stepHeightSpeed1;//at or above this speed, use full stepHeight
     [SerializeField] PhysicsBasedIKLeg[] leg;
-    [SerializeField] PhysicsLegSettings stdSettings;
-    [SerializeField] PhysicsLegSettings airborneSettings;
-    [SerializeField] PhysicsLegSettings limpSettings;
+    [SerializeField] PhysicsLegSettings[] stdSettings;
+    [SerializeField] PhysicsLegSettings[] airborneSettings;
+    [SerializeField] PhysicsLegSettings[] limpSettings;
     [SerializeField] float[] timeOffset;
     [SerializeField] int fabrikIterations;
     [SerializeField] float fabrikTolerance;
@@ -133,28 +133,29 @@ public class PhysicsLegSynchronizer : MonoBehaviour
         for (int i = 0; i < leg.Length; i++)
         {
             leg[i].Initialize();
+            leg[i].contactSettings = stdSettings[i];
         }
     }
 
     private void UpdateSettings()
     {
-        ref var settings = ref Settings(state);
+        var settings = Settings(state);
         for (int i = 0; i < leg.Length; i++)
         {
-            leg[i].settings = settings;
+            leg[i].noContactSettings = settings[i];
         }
     }
 
-    ref PhysicsLegSettings Settings(LegState state)
+    PhysicsLegSettings[] Settings(LegState state)
     {
         switch(state)
         {
             case LegState.airborne:
-                return ref airborneSettings;
+                return airborneSettings;
             case LegState.limp:
-                return ref limpSettings;
+                return limpSettings;
             default:
-                return ref stdSettings;
+                return stdSettings;
         }
     }
 }

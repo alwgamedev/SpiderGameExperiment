@@ -74,9 +74,8 @@ public class SpiderMovementController : MonoBehaviour
     [Header("Free Hang")]
     [SerializeField] float freeHangGroundedEntryLegExtensionThreshold;
     [SerializeField] float freeHangLegAngleMin;
-    [SerializeField] float freeHangLegAngleSkew;
+    //[SerializeField] float freeHangLegAngleSkew;
     [SerializeField] float freeHangHeadAngle;
-    [SerializeField] Vector2 baseFreeHangDriftWeight;
     [SerializeField] float freeHangStepHeightReductionMax;
     [SerializeField] float freeHangStrideMultiplier;
 
@@ -115,7 +114,7 @@ public class SpiderMovementController : MonoBehaviour
     GroundMapPt groundPt;
 
     float cosFreeHangLegAngleMin;
-    float sinFreeHangLegAngleMin;
+    //float sinFreeHangLegAngleMin;
     float cosScurryAngleMin;
     float sinScurryAngleMin;
 
@@ -132,7 +131,7 @@ public class SpiderMovementController : MonoBehaviour
     int Orientation => FacingRight ? 1 : -1;
     Vector2 OrientedRight => FacingRight ? transform.right : -transform.right;
     Vector2 OrientedGroundDirection => FacingRight ? groundDirection : -groundDirection;
-    float PreferredBodyPosGroundHeight => transform.position.y - heightReferencePoint.position.y + preferredRideHeight;
+    //float PreferredBodyPosGroundHeight => transform.position.y - heightReferencePoint.position.y + preferredRideHeight;
     float MaxSpeed => grounded ? maxSpeed : maxSpeedAirborne;
     float GroundVelocity => Vector2.Dot(rb.linearVelocity, OrientedGroundDirection);
     Vector2 GroundPtGroundDirection => groundPt.normal.CWPerp();
@@ -151,20 +150,19 @@ public class SpiderMovementController : MonoBehaviour
     public UnityEvent ThrustersEngaged;
     public UnityEvent ThrustersDisengaged;
 
-    //private void OnDrawGizmos()
-    //{
-    //    if (Application.isPlaying)
-    //    {
-    //        groundMap.DrawGizmos();
-    //        Gizmos.color = Color.magenta;
-    //        Gizmos.DrawSphere(groundPt.point, 0.1f);
-    //    }
-    //}
+    private void OnDrawGizmos()
+    {
+        if (Application.isPlaying)
+        {
+            groundMap.DrawGizmos();
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawSphere(groundPt.point, 0.1f);
+        }
+    }
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        //legSynchronizer = GetComponent<LegSynchronizer>();
         legSynch = GetComponent<PhysicsLegSynchronizer>();
 
         abdomenBoneBaseRight = abdomenBone.right.InFrameV2(transform.right, transform.up);
@@ -176,7 +174,7 @@ public class SpiderMovementController : MonoBehaviour
         //bc abdomenBone is not a direct child of this.transform (so abdomenBone.localRotation is not what we want)
 
         cosFreeHangLegAngleMin = Mathf.Cos(freeHangLegAngleMin);
-        sinFreeHangLegAngleMin = Mathf.Sin(freeHangLegAngleMin);
+        //sinFreeHangLegAngleMin = Mathf.Sin(freeHangLegAngleMin);
         cosScurryAngleMin = Mathf.Cos(grappleScurryAngleMin);
         sinScurryAngleMin = Mathf.Sin(grappleScurryAngleMin);
         cosJumpAngleMin = Mathf.Cos(jumpAngleMin);
@@ -198,7 +196,6 @@ public class SpiderMovementController : MonoBehaviour
         rb.centerOfMass = heightReferencePoint.position - transform.position;
 
         InitializeGroundData();
-        //legSynchronizer.Initialize(PreferredBodyPosGroundHeight, FacingRight);
         legSynch.Initialize();
         bodyCollisionFilter = ContactFilter2D.noFilter;
         bodyCollisionFilter.useTriggers = false;
@@ -442,8 +439,9 @@ public class SpiderMovementController : MonoBehaviour
             var p = transform.position;
             var s = transform.localScale;
             transform.localScale = new Vector3(-s.x, s.y, s.z);
-            var n = transform.up;//grapple.ShootDirection.CCWPerp();//normal to the hyperplane we're reflecting over
-            transform.up = MathTools.ReflectAcrossHyperplane(transform.up, (Vector3)n);
+            Vector2 n = transform.up;//grapple.ShootDirection.CCWPerp();//normal to the hyperplane we're reflecting over
+            //transform.up = MathTools.ReflectAcrossHyperplane(transform.up, (Vector3)n);//BAD!!!! FIX!!!
+            transform.rotation = MathTools.QuaternionFrom2DUnitVector(n.CCWPerp());//really it should be ReflectAcrossHyperplane(transform.up, n).CWPerp() (the new right)
             var d = (Vector3)(o - grapple.FreeHangLeveragePoint);
             transform.position += d;
             legSynch.OnBodyChangedDirection(p, transform.position, n);
@@ -533,7 +531,7 @@ public class SpiderMovementController : MonoBehaviour
         if (changed)
         {
             var p = abdomenBonePivot.position;
-            abdomenBone.rotation = transform.rotation * (FacingRight ? abdomenBoneBaseLocalRotation : abdomenBoneBaseLocalRotationL) 
+            abdomenBone.rotation = transform.rotation * (FacingRight ? abdomenBoneBaseLocalRotation : abdomenBoneBaseLocalRotationL)
                 * MathTools.QuaternionFrom2DUnitVector(r);
             abdomenBone.position += p - abdomenBonePivot.position;
         }
@@ -775,7 +773,7 @@ public class SpiderMovementController : MonoBehaviour
 
     private bool GroundedCondition()
     {
-        return ((!grapple.FreeHanging || grounded || legSynch.AnyGroundedLegsUnderextended(freeHangGroundedEntryLegExtensionThreshold)) 
+        return ((!grapple.FreeHanging || grounded || legSynch.AnyGroundedLegsUnderextended(freeHangGroundedEntryLegExtensionThreshold))
             && groundednessRating > 0) || IsTouchingGroundLayer(headCollider) || IsTouchingGroundLayer(abdomenCollider);
         //keep the IsTouchingGroundLayer(coll) out of parentheses; these on their own automatically qualify you as grounded!
     }
@@ -783,81 +781,18 @@ public class SpiderMovementController : MonoBehaviour
     private void UpdateGroundednessRating()
     {
         groundednessRating = groundednessRating == 0 ? legSynch.FractionTouchingGround > 0 ? Mathf.Max(legSynch.FractionTouchingGround, groundednessInitialContactValue) : 0
-            : grapple.GrappleAnchored && grapple.GrappleReleaseInput < 0 ? legSynch.FractionTouchingGround 
+            : grapple.GrappleAnchored && grapple.GrappleReleaseInput < 0 ? legSynch.FractionTouchingGround
             : MathTools.LerpAtConstantSpeed(groundednessRating, legSynch.FractionTouchingGround, groundednessSmoothingRate, Time.deltaTime);
-    }
-
-    private void InitializeGroundMap()
-    {
-        if (grapple.FreeHanging)
-        {
-            groundMap.UpdateMap(heightReferencePoint.position,
-                FreeHangGroundMapDown(),
-                FreeHangGroundMapRight(),
-                groundmapRaycastLength,
-                groundMap.CentralIndex,
-                groundLayer);
-        }
-        else
-        {
-            groundMap.UpdateMap(heightReferencePoint.position,
-                -transform.up,
-                transform.right,
-                groundmapRaycastLength,
-                groundMap.CentralIndex,
-                groundLayer);
-        }
     }
 
     private void UpdateGroundMap()
     {
-        if (grapple.FreeHanging)
-        {
-            groundMap.UpdateMap(heightReferencePoint.position,
-                FreeHangGroundMapDown(),
-                FreeHangGroundMapRight(),
-                groundmapRaycastLength,
-                groundMap.CentralIndex,
-                groundLayer);
-        }
-        else
-        {
-            groundMap.UpdateMap(heightReferencePoint.position,
-                -transform.up,
-                transform.right,
-                groundmapRaycastLength,
-                groundMap.CentralIndex,
-                groundLayer);
-        }
-    }
-
-    private Vector2 FreeHangGroundMapDown()
-    {
-        var r = OrientedRight;
-        if (r.y > 0)
-        {
-            return -transform.up;
-        }
-
-        if (MathTools.OppositeSigns(r.x, Orientation))//upside down
-        {
-            return r.y < -cosFreeHangLegAngleMin ? cosFreeHangLegAngleMin * OrientedRight - sinFreeHangLegAngleMin * (Vector2)transform.up :
-            MathTools.ReflectAcrossHyperplane(Vector2.down, (Vector2)transform.up);
-        }
-
-        return r.y < -cosFreeHangLegAngleMin ? cosFreeHangLegAngleMin * OrientedRight - sinFreeHangLegAngleMin * (Vector2)transform.up : Vector2.down;
-    }
-
-    private Vector2 FreeHangGroundMapRight()
-    {
-        var y = transform.right.y;
-        if (y > 0)
-        {
-            return transform.right;
-        }
-
-        y *= FacingRight ? -freeHangLegAngleSkew : freeHangLegAngleSkew;//to get -/+ tUp based on FacingRight
-        return Mathf.Cos(y) * transform.right + Mathf.Sin(y) * transform.up;
+        groundMap.UpdateMap(heightReferencePoint.position,
+            -transform.up,
+            transform.right,
+            groundmapRaycastLength,
+            groundMap.CentralIndex,
+            groundLayer);
     }
 
     //only used for releasing freeHang state, but we'll put it in this section I guess
@@ -878,7 +813,8 @@ public class SpiderMovementController : MonoBehaviour
     {
         RecomputeGroundMapRaycastLength();
         groundMap.Initialize();
-        InitializeGroundMap();
+        //InitializeGroundMap();
+        UpdateGroundMap();
         UpdateGroundednessRating();
         InitializeGroundPoint();
     }
@@ -897,9 +833,9 @@ public class SpiderMovementController : MonoBehaviour
 
     private void UpdateLegSynch()
     {
-        legSynch.State = 
-            grounded ? PhysicsLegSynchronizer.LegState.standard 
-            : grapple.FreeHanging ? PhysicsLegSynchronizer.LegState.limp 
+        legSynch.State =
+            grounded ? PhysicsLegSynchronizer.LegState.standard
+            : grapple.FreeHanging ? PhysicsLegSynchronizer.LegState.limp
             : PhysicsLegSynchronizer.LegState.airborne;
 
         var v = GroundVelocity;
@@ -908,7 +844,7 @@ public class SpiderMovementController : MonoBehaviour
         legSynch.stepHeightFraction = 1 - crouchProgress * crouchHeightFraction;
         legSynch.timeScale = grounded || thruster.Engaged ? 1 : airborneLegAnimationTimeScale;
 
-        switch(legSynch.State)
+        switch (legSynch.State)
         {
             case PhysicsLegSynchronizer.LegState.standard:
                 legSynch.strideMultiplier = 1;

@@ -22,8 +22,8 @@ public class PhysicsBasedIKArm : MonoBehaviour
     public float gravityScale;
 
     float[] length;
+    float[] inverseLength;
     float[] angularVelocity;
-    float totalLength;
 
     Vector2 targetPosition;
     Transform targetTransform;
@@ -42,21 +42,19 @@ public class PhysicsBasedIKArm : MonoBehaviour
 
     public Transform Anchor => chain[0];
     public Transform Effector => chain[^1];
-    public float[] Length => length;
-    public float TotalLength => totalLength;
     public bool IsOff => mode == Mode.off;
 
     public event Action TargetReached;
 
     public void Initialize()
     {
-        totalLength = 0f;
         length = new float[chain.Length - 1];
+        inverseLength = new float[chain.Length - 1];
         for (int i = 0; i < length.Length; i++)
         {
             var d = Vector2.Distance(chain[i].position, chain[i + 1].position);
             length[i] = d;
-            totalLength += d;
+            inverseLength[i] = 1 / d;
         }
 
         angularVelocity = new float[chain.Length - 1];
@@ -136,25 +134,6 @@ public class PhysicsBasedIKArm : MonoBehaviour
         }
     }
 
-    public void SolvePoseWithFABRIK(Transform target, Vector2[] startPose, Vector2[] targetPose, Vector2[] positionBuffer, int iterations, float tolerance)
-    {
-        positionBuffer[0] = chain[0].position;
-        for (int i = 1; i < positionBuffer.Length; i++)
-        {
-            positionBuffer[i] = positionBuffer[i - 1] + length[i - 1] * PoseToWorldDirection(startPose, i - 1);
-        }
-
-        for (int i = 0; i < iterations; i++)
-        {
-            FABRIKSolver.RunFABRIKIteration(positionBuffer, length, totalLength, target.position, tolerance);
-        }
-
-        for (int i = 0; i < targetPose.Length; i++)
-        {
-            targetPose[i] = WorldToPoseDirection((positionBuffer[i + 1] - positionBuffer[i]) / length[i]);
-        }
-    }
-
     private void FixedUpdate()
     {
         switch (mode)
@@ -183,12 +162,12 @@ public class PhysicsBasedIKArm : MonoBehaviour
         PhysicsBasedIK.IntegrateJoints(chain, angularVelocity, jointDamping, Time.deltaTime);
         if (collisionResponse > 0)
         {
-            PhysicsBasedIK.ApplyCollisionForces(chain, length, armHalfWidth, angularVelocity, collisionMask, collisionResponse * Time.deltaTime,
+            PhysicsBasedIK.ApplyCollisionForces(chain, length, inverseLength, armHalfWidth, angularVelocity, collisionMask, collisionResponse * Time.deltaTime,
             horizontalRaycastSpacing, tunnelInterval, tunnelMax);
         }
         if (gravityScale != 0)
         {
-            PhysicsBasedIK.ApplyGravity(chain, length, angularVelocity, gravityScale, Time.deltaTime);
+            PhysicsBasedIK.ApplyGravity(chain, inverseLength, angularVelocity, gravityScale, Time.deltaTime);
         }
     }
 
@@ -262,7 +241,7 @@ public class PhysicsBasedIKArm : MonoBehaviour
         bool reachedPose = true;
         for (int i = 0; i < pose.Length; i++)
         {
-            Vector2 u = (chain[i + 1].position - chain[i].position) / length[i];
+            Vector2 u = inverseLength[i] * (chain[i + 1].position - chain[i].position);
             Vector2 v = PoseToWorldDirection(pose, i);
             var angle = MathTools.PseudoAngle(u, v);
             if (Mathf.Abs(angle) < poseTolerance)
@@ -292,7 +271,7 @@ public class PhysicsBasedIKArm : MonoBehaviour
                 {
                     continue;
                 }
-                Vector2 u = (chain[i + 1].position - chain[i].position) / length[i];
+                Vector2 u = inverseLength[i] * (chain[i + 1].position - chain[i].position);
                 Vector2 v = PoseToWorldDirection(pose, i);
                 var angle = MathTools.PseudoAngle(u, v);
                 if (Mathf.Abs(angle) < poseTolerance)
@@ -322,7 +301,7 @@ public class PhysicsBasedIKArm : MonoBehaviour
         err = Mathf.Sqrt(err);
         var clampedErr = Mathf.Max(err, targetingErrorMin);//this keeps it from slowing down too much as it gets close to the target
         var accel = effectorSpringConstant * dt * Mathf.Min(clampedErr, maxTargetPursuitSpeed) / err * error;
-        PhysicsBasedIK.ApplyForceToJoint(chain, length, angularVelocity, accel, chain.Length - 1, poseWeight);
+        PhysicsBasedIK.ApplyForceToJoint(chain, inverseLength, angularVelocity, accel, chain.Length - 1, poseWeight);
     }
 
     private Vector2 PoseToWorldDirection(Vector2[] pose, int i)

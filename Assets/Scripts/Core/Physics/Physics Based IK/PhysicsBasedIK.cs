@@ -2,9 +2,7 @@
 
 public static class PhysicsBasedIK
 {
-    //acceleration should already by multiplied by deltaTime
-    //damping useful for collision (to keep from bouncing off collision repeatedly)
-    public static void ApplyForceToJoint(Transform[] chain, float[] length, float[] angularVelocity, Vector2 acceleration, int joint, float[] poseWeight = null)
+    public static void ApplyForceToJoint(Transform[] chain, float[] inverseLength, float[] angularVelocity, Vector2 acceleration, int joint, float[] poseWeight = null)
     {
         for (int i = joint - 1; i > -1; i--)
         {
@@ -14,28 +12,29 @@ public static class PhysicsBasedIK
             }
 
             Vector2 u = chain[i + 1].position - chain[i].position;
-            u /= length[i];
+            u *= inverseLength[i];
             var n = u.CCWPerp();
             var aPerp = Vector2.Dot(acceleration, n);
             if (poseWeight != null)
             {
                 aPerp *= 1 - poseWeight[i];
             }
-            angularVelocity[i] += aPerp / length[i];
+            angularVelocity[i] += aPerp * inverseLength[i];
             acceleration -= aPerp * n;//component of acceleration parallel to that arm will get transferred to next joint
         }
     }
 
-    public static void ApplyGravity(Transform[] chain, float[] length, float[] angularVelocity, float gravityScale, float dt)
+    public static void ApplyGravity(Transform[] chain, float[] inverseLength, float[] angularVelocity, float gravityScale, float dt)
     {
         var g = gravityScale * dt * Physics2D.gravity;
-        for (int i = 0; i < angularVelocity.Length; i++)
+        for (int i = 1 /*0*/; i < angularVelocity.Length; i++)
         {
+            ApplyForceToJoint(chain, inverseLength, angularVelocity, g, i);
             //ApplyForceToJoint works well when you're trying to pull the joint towards a target,
             //but this works a lot better for gravity (just gives a more natural feel)
             //(i.e. don't transfer remaining acceleration to the next joint like we do in ApplyForceToJoint)
-            Vector2 v = chain[i + 1].position - chain[i].position;
-            angularVelocity[i] += Vector2.Dot(g, v.CCWPerp()) / length[i];
+            //Vector2 v = chain[i + 1].position - chain[i].position;
+            //angularVelocity[i] += Vector2.Dot(g, v.CCWPerp()) * inverseLength[i] * inverseLength[i];
         }
     }
 
@@ -57,7 +56,7 @@ public static class PhysicsBasedIK
         }
     }
 
-    public static void ApplyCollisionForces(Transform[] chain, float[] length, float[] armHalfWidth, float[] angularVelocity,
+    public static void ApplyCollisionForces(Transform[] chain, float[] length, float[] inverseLength, float[] armHalfWidth, float[] angularVelocity,
         LayerMask collisionMask, float collisionResponse, float horizontalRaycastSpacing, float tunnelInterval, float tunnelMax)
     {
         for (int i = chain.Length - 2; i > -1; i--)
@@ -65,7 +64,7 @@ public static class PhysicsBasedIK
             //var cMask = collisionMask[i];
             Vector2 p0 = chain[i].position;
             Vector2 p1 = chain[i + 1].position;
-            Vector2 u = (p1 - p0) / length[i];
+            Vector2 u = (p1 - p0) * inverseLength[i];
             var n = u.CCWPerp();
             var h = armHalfWidth[i] * n;
             var r = Physics2D.Linecast(p0 + h, p1 + h, collisionMask);
@@ -110,9 +109,9 @@ public static class PhysicsBasedIK
                 }
 
 
-                var a = correction * collisionResponse / length[i] * n;
-                ApplyForceToJoint(chain, length, angularVelocity, a, i/*, collisionDamping*/);
-                ApplyForceToJoint(chain, length, angularVelocity, a, i + 1/*, collisionDamping*/);
+                var a = correction * collisionResponse * inverseLength[i] * n;
+                ApplyForceToJoint(chain, inverseLength, angularVelocity, a, i/*, collisionDamping*/);
+                ApplyForceToJoint(chain, inverseLength, angularVelocity, a, i + 1/*, collisionDamping*/);
 
                 float EscapeYValue(bool escapingUp)
                 {
