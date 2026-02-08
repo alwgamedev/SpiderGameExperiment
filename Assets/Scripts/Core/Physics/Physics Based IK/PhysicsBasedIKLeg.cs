@@ -157,7 +157,7 @@ public class PhysicsBasedIKLeg
     {
         for (int i = 0; i < angularVelocity.Length; i++)
         {
-            Debug.DrawLine(positionBuffer[i], positionBuffer[i + 1], Color.red);
+            //Debug.DrawLine(positionBuffer[i], positionBuffer[i + 1], Color.red);
             var v = orientingTransform.localScale.x * inverseLength[i] * (positionBuffer[i + 1] - positionBuffer[i]);
             var q = MathTools.QuaternionFrom2DUnitVector(v);
             q *= MathTools.InverseOfUnitQuaternion(chain[i].rotation);

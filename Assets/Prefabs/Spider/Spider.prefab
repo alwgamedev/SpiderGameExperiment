@@ -10314,11 +10314,11 @@ MonoBehaviour:
   crouchBoostMinProgress: 0.4
   crouchReleaseSpeedMultiplier: 2.5
   airborneLegAnimationTimeScale: 0.075
+  airborneLegSpeedMax: 12.5
   airborneStrideMultiplier: 1.5
   strideMultiplierSmoothingRate: 1
   freeHangGroundedEntryLegExtensionThreshold: 0.95
   freeHangLegAngleMin: 1.047198
-  freeHangLegAngleSkew: 0.1308997
   freeHangHeadAngle: 0.2094395
   freeHangStepHeightReductionMax: 0.9
   freeHangStrideMultiplier: 0.7
@@ -10326,7 +10326,7 @@ MonoBehaviour:
     secondsToDrain: 5
     secondsToRecharge: 10
     rechargeThreshold: 0.2
-    gravityReduction: 0.5
+    gravityReduction: 0.65
   thrusterFlame:
     hook: {fileID: 3254518024213778436}
     widthMin: 1.5
@@ -10436,9 +10436,9 @@ MonoBehaviour:
       stepHeight: 0.8
     noContactSettings:
       gravityStrength: 0
-      poseForce: 600
-      limpness: 0.7
-      jointDamping: 20
+      poseForce: 800
+      limpness: 0.5
+      jointDamping: 15
       stepHeight: 0.8
     HitGround:
       m_PersistentCalls:
@@ -10460,9 +10460,9 @@ MonoBehaviour:
       stepHeight: 0.8
     noContactSettings:
       gravityStrength: 0
-      poseForce: 600
-      limpness: 0.7
-      jointDamping: 20
+      poseForce: 800
+      limpness: 0.5
+      jointDamping: 15
       stepHeight: 0.8
     HitGround:
       m_PersistentCalls:
@@ -10484,9 +10484,9 @@ MonoBehaviour:
       stepHeight: 0.8
     noContactSettings:
       gravityStrength: 0
-      poseForce: 600
-      limpness: 0.7
-      jointDamping: 20
+      poseForce: 800
+      limpness: 0.5
+      jointDamping: 15
       stepHeight: 0.8
     HitGround:
       m_PersistentCalls:
@@ -10508,9 +10508,9 @@ MonoBehaviour:
       stepHeight: 0.8
     noContactSettings:
       gravityStrength: 0
-      poseForce: 600
-      limpness: 0.7
-      jointDamping: 20
+      poseForce: 800
+      limpness: 0.5
+      jointDamping: 15
       stepHeight: 0.8
     HitGround:
       m_PersistentCalls:
@@ -10532,9 +10532,9 @@ MonoBehaviour:
       stepHeight: 0.8
     noContactSettings:
       gravityStrength: 0
-      poseForce: 600
-      limpness: 0.7
-      jointDamping: 20
+      poseForce: 800
+      limpness: 0.5
+      jointDamping: 15
       stepHeight: 0.8
     HitGround:
       m_PersistentCalls:
@@ -10556,9 +10556,9 @@ MonoBehaviour:
       stepHeight: 0.8
     noContactSettings:
       gravityStrength: 0
-      poseForce: 600
-      limpness: 0.7
-      jointDamping: 20
+      poseForce: 800
+      limpness: 0.5
+      jointDamping: 15
       stepHeight: 0.8
     HitGround:
       m_PersistentCalls:
@@ -10580,9 +10580,9 @@ MonoBehaviour:
       stepHeight: 0.8
     noContactSettings:
       gravityStrength: 0
-      poseForce: 600
-      limpness: 0.7
-      jointDamping: 20
+      poseForce: 800
+      limpness: 0.5
+      jointDamping: 15
       stepHeight: 0.8
     HitGround:
       m_PersistentCalls:
@@ -10604,9 +10604,9 @@ MonoBehaviour:
       stepHeight: 0.8
     noContactSettings:
       gravityStrength: 0
-      poseForce: 600
-      limpness: 0.7
-      jointDamping: 20
+      poseForce: 800
+      limpness: 0.5
+      jointDamping: 15
       stepHeight: 0.8
     HitGround:
       m_PersistentCalls:
@@ -10622,126 +10622,126 @@ MonoBehaviour:
     stepMax: -0.2
   stdSettings:
   - gravityStrength: 0
-    poseForce: 600
-    limpness: 0.7
-    jointDamping: 20
+    poseForce: 800
+    limpness: 0.5
+    jointDamping: 15
     stepHeight: 0.8
   - gravityStrength: 0
-    poseForce: 600
-    limpness: 0.7
-    jointDamping: 20
+    poseForce: 800
+    limpness: 0.5
+    jointDamping: 15
     stepHeight: 0.8
   - gravityStrength: 0
-    poseForce: 600
-    limpness: 0.7
-    jointDamping: 20
+    poseForce: 800
+    limpness: 0.5
+    jointDamping: 15
     stepHeight: 0.8
   - gravityStrength: 0
-    poseForce: 600
-    limpness: 0.7
-    jointDamping: 20
+    poseForce: 800
+    limpness: 0.5
+    jointDamping: 15
     stepHeight: 0.8
   - gravityStrength: 0
-    poseForce: 600
-    limpness: 0.7
-    jointDamping: 20
+    poseForce: 800
+    limpness: 0.5
+    jointDamping: 15
     stepHeight: 0.8
   - gravityStrength: 0
-    poseForce: 600
-    limpness: 0.7
-    jointDamping: 20
+    poseForce: 800
+    limpness: 0.5
+    jointDamping: 15
     stepHeight: 0.8
   - gravityStrength: 0
-    poseForce: 600
-    limpness: 0.7
-    jointDamping: 20
+    poseForce: 800
+    limpness: 0.5
+    jointDamping: 15
     stepHeight: 0.8
   - gravityStrength: 0
-    poseForce: 600
-    limpness: 0.7
-    jointDamping: 20
+    poseForce: 800
+    limpness: 0.5
+    jointDamping: 15
     stepHeight: 0.8
   airborneSettings:
-  - gravityStrength: 0.4
-    poseForce: 500
-    limpness: 0.025
-    jointDamping: 10
+  - gravityStrength: 0.6
+    poseForce: 600
+    limpness: 0.015
+    jointDamping: 7
     stepHeight: 0.9
-  - gravityStrength: 0.4
-    poseForce: 500
-    limpness: 0.025
-    jointDamping: 10
+  - gravityStrength: 0.6
+    poseForce: 600
+    limpness: 0.015
+    jointDamping: 7
     stepHeight: 0.9
-  - gravityStrength: 0.4
-    poseForce: 500
-    limpness: 0.025
-    jointDamping: 10
+  - gravityStrength: 0.6
+    poseForce: 600
+    limpness: 0.015
+    jointDamping: 7
     stepHeight: 0.9
-  - gravityStrength: 0.4
-    poseForce: 500
-    limpness: 0.025
-    jointDamping: 10
+  - gravityStrength: 0.6
+    poseForce: 600
+    limpness: 0.015
+    jointDamping: 7
     stepHeight: 0.9
-  - gravityStrength: 0.4
-    poseForce: 500
-    limpness: 0.025
-    jointDamping: 10
+  - gravityStrength: 0.6
+    poseForce: 600
+    limpness: 0.015
+    jointDamping: 7
     stepHeight: 0.9
-  - gravityStrength: 0.4
-    poseForce: 500
-    limpness: 0.025
-    jointDamping: 10
+  - gravityStrength: 0.6
+    poseForce: 600
+    limpness: 0.015
+    jointDamping: 7
     stepHeight: 0.9
-  - gravityStrength: 0.4
-    poseForce: 500
-    limpness: 0.025
-    jointDamping: 10
+  - gravityStrength: 0.6
+    poseForce: 600
+    limpness: 0.015
+    jointDamping: 7
     stepHeight: 0.9
-  - gravityStrength: 0.4
-    poseForce: 500
-    limpness: 0.025
-    jointDamping: 10
+  - gravityStrength: 0.6
+    poseForce: 600
+    limpness: 0.015
+    jointDamping: 7
     stepHeight: 0.9
   limpSettings:
-  - gravityStrength: 2
-    poseForce: 250
+  - gravityStrength: 3.5
+    poseForce: 300
     limpness: 0.02
     jointDamping: 10
     stepHeight: 0.25
-  - gravityStrength: 2
-    poseForce: 250
+  - gravityStrength: 3.5
+    poseForce: 300
     limpness: 0.02
     jointDamping: 10
     stepHeight: 0.25
-  - gravityStrength: 2
-    poseForce: 250
+  - gravityStrength: 3.5
+    poseForce: 300
     limpness: 0.02
     jointDamping: 10
     stepHeight: 0.25
-  - gravityStrength: 2
-    poseForce: 250
+  - gravityStrength: 3.5
+    poseForce: 300
     limpness: 0.02
     jointDamping: 10
     stepHeight: 0.25
   - gravityStrength: 1
-    poseForce: 700
+    poseForce: 500
     limpness: 0.03
-    jointDamping: 10
+    jointDamping: 6
     stepHeight: 0.5
   - gravityStrength: 1
-    poseForce: 700
+    poseForce: 500
     limpness: 0.03
-    jointDamping: 10
+    jointDamping: 6
     stepHeight: 0.5
   - gravityStrength: 1
-    poseForce: 700
+    poseForce: 500
     limpness: 0.03
-    jointDamping: 10
+    jointDamping: 6
     stepHeight: 0.5
   - gravityStrength: 1
-    poseForce: 700
+    poseForce: 500
     limpness: 0.03
-    jointDamping: 10
+    jointDamping: 6
     stepHeight: 0.5
   timeOffset:
   - 0
@@ -10752,7 +10752,7 @@ MonoBehaviour:
   - 0.525
   - 0.375
   - 0.775
-  fabrikIterations: 5
+  fabrikIterations: 10
   fabrikTolerance: 0.01
   groundContactRadius: 0.085
   bodyGroundSpeedSign: 0
@@ -11025,7 +11025,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1472496846458269233, guid: c48c2c27835040c4583bc8b1bcda90c6, type: 3}
       propertyPath: jointDamping
-      value: 2.75
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1472496846458269233, guid: c48c2c27835040c4583bc8b1bcda90c6, type: 3}
       propertyPath: poseTolerance
@@ -11057,7 +11057,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1472496846458269233, guid: c48c2c27835040c4583bc8b1bcda90c6, type: 3}
       propertyPath: effectorSpringConstant
-      value: 40
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 1472496846458269233, guid: c48c2c27835040c4583bc8b1bcda90c6, type: 3}
       propertyPath: horizontalRaycastSpacing

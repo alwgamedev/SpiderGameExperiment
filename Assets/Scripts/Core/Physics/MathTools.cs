@@ -156,7 +156,7 @@ public static class MathTools
         return new Vector2(v.y, -v.x);
     }
     
-    //when v1, v2 are unit vectors, this equals the sine of the angle from v1 to v2 (being dot(v1, v2.CWPerp()) = cos(theta-90))
+    //when v1, v2 are unit vectors, this equals the sine of the CCW angle from v1 to v2 (being dot(v1, v2.CWPerp()) = cos(theta-90))
     public static float Cross2D(Vector2 v1, Vector2 v2)
     {
         return v1.x * v2.y - v1.y * v2.x;

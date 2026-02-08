@@ -69,12 +69,12 @@ public class PhysicsLegSynchronizer : MonoBehaviour
 
     public void UpdateAllLegs(float dt, GroundMap map)
     {
-        var sf = absoluteBodyGroundSpeed < stepHeightSpeed0 ? 0 : absoluteBodyGroundSpeed / stepHeightSpeed1;
+        var speedFraction = absoluteBodyGroundSpeed < stepHeightSpeed0 ? 0 : absoluteBodyGroundSpeed / stepHeightSpeed1;
 
         dt *= timeScale;
-        var speedScaledDt = sf * dt;
-        dt = sf < 1 ? dt : speedScaledDt;
-        var stepHeightSpeedMultiplier = Mathf.Min(sf, 1);
+        var speedScaledDt = speedFraction * dt;
+        dt = speedFraction < 1 ? dt : speedScaledDt;
+        var stepHeightSpeedMultiplier = Mathf.Min(speedFraction, 1);
 
         int count = 0;
 

@@ -2,6 +2,8 @@
 
 public static class PhysicsBasedIK
 {
+    const float PIInverse = 1 / Mathf.PI;
+
     public static void ApplyForceToJoint(Transform[] chain, float[] inverseLength, float[] angularVelocity, Vector2 acceleration, int joint, float[] poseWeight = null)
     {
         for (int i = joint - 1; i > -1; i--)
@@ -44,7 +46,8 @@ public static class PhysicsBasedIK
         {
             angularVelocity[i] -= damping * angularVelocity[i] * dt;
             var dAngle = dt * angularVelocity[i];
-            var q = MathTools.QuaternionFrom2DUnitVector(new(Mathf.Cos(dAngle), Mathf.Sin(dAngle)));//honestly worth it to just use trig functions
+            var u = MathTools.CheapRotationalLerp(Vector2.right, Vector2.left, dAngle * PIInverse, out _);
+            var q = MathTools.QuaternionFrom2DUnitVector(u/*new(Mathf.Cos(dAngle), Mathf.Sin(dAngle))*/);//honestly worth it to just use trig functions
             chain[i].rotation *= q;
             if (i < chain.Length - 2)
             {

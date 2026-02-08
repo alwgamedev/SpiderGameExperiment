@@ -68,13 +68,13 @@ public class SpiderMovementController : MonoBehaviour
     [SerializeField] float crouchBoostMinProgress;
     [SerializeField] float crouchReleaseSpeedMultiplier;
     [SerializeField] float airborneLegAnimationTimeScale;
+    [SerializeField] float airborneLegSpeedMax;
     [SerializeField] float airborneStrideMultiplier;
     [SerializeField] float strideMultiplierSmoothingRate;
 
     [Header("Free Hang")]
     [SerializeField] float freeHangGroundedEntryLegExtensionThreshold;
     [SerializeField] float freeHangLegAngleMin;
-    //[SerializeField] float freeHangLegAngleSkew;
     [SerializeField] float freeHangHeadAngle;
     [SerializeField] float freeHangStepHeightReductionMax;
     [SerializeField] float freeHangStrideMultiplier;
@@ -114,7 +114,6 @@ public class SpiderMovementController : MonoBehaviour
     GroundMapPt groundPt;
 
     float cosFreeHangLegAngleMin;
-    //float sinFreeHangLegAngleMin;
     float cosScurryAngleMin;
     float sinScurryAngleMin;
 
@@ -131,7 +130,6 @@ public class SpiderMovementController : MonoBehaviour
     int Orientation => FacingRight ? 1 : -1;
     Vector2 OrientedRight => FacingRight ? transform.right : -transform.right;
     Vector2 OrientedGroundDirection => FacingRight ? groundDirection : -groundDirection;
-    //float PreferredBodyPosGroundHeight => transform.position.y - heightReferencePoint.position.y + preferredRideHeight;
     float MaxSpeed => grounded ? maxSpeed : maxSpeedAirborne;
     float GroundVelocity => Vector2.Dot(rb.linearVelocity, OrientedGroundDirection);
     Vector2 GroundPtGroundDirection => groundPt.normal.CWPerp();
@@ -139,7 +137,6 @@ public class SpiderMovementController : MonoBehaviour
     float GrappleScurryResistanceFraction => Mathf.Clamp(GrappleScurryResistance / grappleScurryResistanceMax, 0, 1);
 
     public bool FacingRight => transform.localScale.x > 0;
-    public bool Grounded => grounded;
     public float CrouchProgress => crouchProgress;
     public Thruster Thruster => thruster;
     public GrappleCannon Grapple => grapple;
@@ -150,15 +147,15 @@ public class SpiderMovementController : MonoBehaviour
     public UnityEvent ThrustersEngaged;
     public UnityEvent ThrustersDisengaged;
 
-    private void OnDrawGizmos()
-    {
-        if (Application.isPlaying)
-        {
-            groundMap.DrawGizmos();
-            Gizmos.color = Color.magenta;
-            Gizmos.DrawSphere(groundPt.point, 0.1f);
-        }
-    }
+    //private void OnDrawGizmos()
+    //{
+    //    if (Application.isPlaying)
+    //    {
+    //        groundMap.DrawGizmos();
+    //        Gizmos.color = Color.magenta;
+    //        Gizmos.DrawSphere(groundPt.point, 0.1f);
+    //    }
+    //}
 
     private void Awake()
     {
@@ -174,7 +171,6 @@ public class SpiderMovementController : MonoBehaviour
         //bc abdomenBone is not a direct child of this.transform (so abdomenBone.localRotation is not what we want)
 
         cosFreeHangLegAngleMin = Mathf.Cos(freeHangLegAngleMin);
-        //sinFreeHangLegAngleMin = Mathf.Sin(freeHangLegAngleMin);
         cosScurryAngleMin = Mathf.Cos(grappleScurryAngleMin);
         sinScurryAngleMin = Mathf.Sin(grappleScurryAngleMin);
         cosJumpAngleMin = Mathf.Cos(jumpAngleMin);
@@ -340,7 +336,6 @@ public class SpiderMovementController : MonoBehaviour
     private void OnThrusterDisengaged()
     {
         //Debug.Log("disengaging thrusters.");
-        //rb.gravityScale = 1;
         ThrustersDisengaged.Invoke();
     }
 
@@ -380,10 +375,6 @@ public class SpiderMovementController : MonoBehaviour
             }
         }
 
-        //moveInput = (Input.GetKey(KeyCode.RightArrow) ? 1 : 0) + (Input.GetKey(KeyCode.LeftArrow) ? -1 : 0);
-        //freeHangInput = grapple.GrappleAnchored && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
-        //leanInput = (Input.GetKey(KeyCode.A) ? 1 : 0) + (Input.GetKey(KeyCode.D) ? -1 : 0);
-        //forceFreeHang = grapple.GrappleAnchored && spiderInput.ShiftHeld;
         grapple.aimInput = chargingJump ? 0 : LeanInput;
         UpdateGrappleScurrying();//needs to be updated before changing direction
 
@@ -426,7 +417,6 @@ public class SpiderMovementController : MonoBehaviour
 
     private void ChangeDirection()
     {
-        //2do: can we interpolate between these by free hang strength in a reasonable way (or is there no need to do that?)
         if (!grapple.FreeHanging)
         {
             var s = transform.localScale;
@@ -439,9 +429,10 @@ public class SpiderMovementController : MonoBehaviour
             var p = transform.position;
             var s = transform.localScale;
             transform.localScale = new Vector3(-s.x, s.y, s.z);
-            Vector2 n = transform.up;//grapple.ShootDirection.CCWPerp();//normal to the hyperplane we're reflecting over
-            //transform.up = MathTools.ReflectAcrossHyperplane(transform.up, (Vector3)n);//BAD!!!! FIX!!!
-            transform.rotation = MathTools.QuaternionFrom2DUnitVector(n.CCWPerp());//really it should be ReflectAcrossHyperplane(transform.up, n).CWPerp() (the new right)
+            Vector2 n = transform.up;//normal to the hyperplane we're reflecting over
+            transform.rotation = MathTools.QuaternionFrom2DUnitVector(n.CCWPerp());
+            //^really the direction is ReflectAcrossHyperplane(transform.up, n).CWPerp() (the new right), but since our n = transform.up, we can take a shortcut
+            //(leaving this note in case you change n)
             var d = (Vector3)(o - grapple.FreeHangLeveragePoint);
             transform.position += d;
             legSynch.OnBodyChangedDirection(p, transform.position, n);
@@ -813,7 +804,6 @@ public class SpiderMovementController : MonoBehaviour
     {
         RecomputeGroundMapRaycastLength();
         groundMap.Initialize();
-        //InitializeGroundMap();
         UpdateGroundMap();
         UpdateGroundednessRating();
         InitializeGroundPoint();
@@ -840,7 +830,7 @@ public class SpiderMovementController : MonoBehaviour
 
         var v = GroundVelocity;
         legSynch.bodyGroundSpeedSign = (grounded && grapple.GrappleAnchored) || grapple.FreeHanging ? 1 : Mathf.Sign(v);
-        legSynch.absoluteBodyGroundSpeed = grounded || thruster.Engaged ? Mathf.Abs(v) : rb.linearVelocity.magnitude;
+        legSynch.absoluteBodyGroundSpeed = grounded ? Mathf.Abs(v) : Mathf.Min(thruster.Engaged ? Mathf.Abs(v) : rb.linearVelocity.magnitude, airborneLegSpeedMax);
         legSynch.stepHeightFraction = 1 - crouchProgress * crouchHeightFraction;
         legSynch.timeScale = grounded || thruster.Engaged ? 1 : airborneLegAnimationTimeScale;
 
@@ -853,7 +843,7 @@ public class SpiderMovementController : MonoBehaviour
                 legSynch.strideMultiplier = MathTools.LerpAtConstantSpeed(legSynch.strideMultiplier, AirborneStrideMultiplier(),
                     strideMultiplierSmoothingRate, Time.deltaTime);
                 break;
-            case PhysicsLegSynchronizer.LegState.limp://idk if we need all dis anymore
+            case PhysicsLegSynchronizer.LegState.limp:
                 var r = OrientedRight;
                 var dX = grounded ? 0 : r.y < -MathTools.sin15 ? (-r.y - MathTools.sin15) / (1 - MathTools.sin15) : 0;
                 legSynch.stepHeightFraction *= 1 - freeHangStepHeightReductionMax * dX;
