@@ -1,6 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
+[CanEditMultipleObjects]
 [CustomEditor(typeof(SpriteShapeMeshGenerator))]
 public class SpriteShapeMeshGeneratorEditor : Editor
 {
@@ -10,7 +11,18 @@ public class SpriteShapeMeshGeneratorEditor : Editor
 
         if (GUILayout.Button("Generate Mesh"))
         {
-            ((SpriteShapeMeshGenerator)target).GenerateMesh();
+            foreach (var t in targets)
+            {
+                ((SpriteShapeMeshGenerator)t).GenerateMesh();
+            }
+        }
+
+        if (GUILayout.Button("Apply Mesh"))
+        {
+            foreach (var t in targets)
+            {
+                ((SpriteShapeMeshGenerator)t).ApplyMesh();
+            }
         }
 
         if (GUILayout.Button("Save Mesh"))

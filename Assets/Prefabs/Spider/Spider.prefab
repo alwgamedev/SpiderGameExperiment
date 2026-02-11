@@ -10624,42 +10624,42 @@ MonoBehaviour:
   - gravityStrength: 0
     poseForce: 800
     limpness: 0.5
-    jointDamping: 15
+    jointDamping: 20
     stepHeight: 0.8
   - gravityStrength: 0
     poseForce: 800
     limpness: 0.5
-    jointDamping: 15
+    jointDamping: 20
     stepHeight: 0.8
   - gravityStrength: 0
     poseForce: 800
     limpness: 0.5
-    jointDamping: 15
+    jointDamping: 20
     stepHeight: 0.8
   - gravityStrength: 0
     poseForce: 800
     limpness: 0.5
-    jointDamping: 15
+    jointDamping: 20
     stepHeight: 0.8
   - gravityStrength: 0
     poseForce: 800
     limpness: 0.5
-    jointDamping: 15
+    jointDamping: 20
     stepHeight: 0.8
   - gravityStrength: 0
     poseForce: 800
     limpness: 0.5
-    jointDamping: 15
+    jointDamping: 20
     stepHeight: 0.8
   - gravityStrength: 0
     poseForce: 800
     limpness: 0.5
-    jointDamping: 15
+    jointDamping: 20
     stepHeight: 0.8
   - gravityStrength: 0
     poseForce: 800
     limpness: 0.5
-    jointDamping: 15
+    jointDamping: 20
     stepHeight: 0.8
   airborneSettings:
   - gravityStrength: 0.6

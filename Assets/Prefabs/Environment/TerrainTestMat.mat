@@ -54,28 +54,49 @@ Material:
     m_Ints: []
     m_Floats:
     - _BlendOpacity: 0.99
-    - _CurvaturePower: 0
+    - _CurvaturePower: 2
+    - _DistortionDensity: 5
+    - _DistortionMax: 1.61
+    - _DistortionMin: 0.5
+    - _DistortionScale: 1
     - _EnableExternalAlpha: 0
+    - _MarblineNoiseMax: 0
     - _MarblingBlendOpacity: 0
+    - _MarblingNoiseMin: 0
     - _MarblingScale: 3
     - _NoiseScale: 200
+    - _RadialShadowPower: 0
+    - _RoughColor: 0
     - _Roughness: 50
+    - _RoughnessDensity: 2
+    - _RoughnessMax: 5
+    - _RoughnessMin: 0
     - _RoughnessPower: -0.5
+    - _RoughnessScale: 1000
     - _SecondaryTextureNoiseScale: 0
     - _ShadowNoiseContrast: 1
-    - _ShadowNoiseScale: 1
+    - _ShadowNoiseDensity: 3
+    - _ShadowNoiseMax: 3
+    - _ShadowNoiseMin: 0.75
+    - _ShadowNoiseScale: 3.11
     - _ShadowSmoothingRadius: 0
     - _SmoothingPower: 1
     - _StriationScale: 1
     - _TextureNoiseContrast: 0.75
     - _TextureNoiseScale: 10
     - _TextureNoiseScaleNoiseScale: 5
+    - _UndersidePower: 1
     - _UndersideShadingPower: 0
     - _ZWrite: 0
     m_Colors:
     - White: {r: 1, g: 1, b: 1, a: 1}
+    - _BaseColor: {r: 0.7660377, g: 0.7660377, b: 0.7660377, a: 1}
     - _Color: {r: 0.5320754, g: 0.42643368, b: 0.29615515, a: 1}
+    - _HighlightColor: {r: 1, g: 1, b: 1, a: 1}
+    - _RadialShadowCenter: {r: 0.5, g: 1, b: 0, a: 0}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
+    - _RoughColor: {r: 0.8490566, g: 0.7108061, b: 0.4405482, a: 1}
+    - _ShadowColor: {r: 0.2981131, g: 0.2981131, b: 0.2981131, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &33163082245678444
