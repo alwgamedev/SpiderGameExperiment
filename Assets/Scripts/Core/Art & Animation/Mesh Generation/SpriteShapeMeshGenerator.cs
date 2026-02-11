@@ -2,7 +2,6 @@
 using UnityEngine;
 using UnityEngine.U2D;
 
-[ExecuteInEditMode]
 public class SpriteShapeMeshGenerator : MonoBehaviour
 {
     public Mesh mesh;
@@ -11,16 +10,10 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
     [SerializeField] MeshFilter meshFilter;
     [SerializeField] int arcLengthSamples;
     [SerializeField] float splineSampleRate;//number of sample points per unit of distance between sprite shape vertices
-    [SerializeField] float maxTriangleArea;
-    [SerializeField] int geomSmoothingIterations;
-    [SerializeField] float geomSmoothingWeight;
-    [SerializeField] float shadowDistanceMax;
-    [SerializeField] float shadowCastIncrement;
 
     [Header("Refinement Settings")]
     [SerializeField] float minAngleRad;
     [SerializeField] int refinementIterations;
-    [SerializeField] int repairIterations;
     [SerializeField] float boundingBoxSize = 3;
 
     public void GenerateMesh()
@@ -176,10 +169,9 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
 
 
         //TRIANGLES
-        //this approach sucks and produces a lot of shitty little sliver triangles
-        //we'll switch to Delaunay triangulation, hopefully for more even triangulation
 
-        var triangles = Triangulator.TriangulatePolygon(vertices, Mathf.PI / 6, refinementIterations, repairIterations, boundingBoxSize);
+        var triangles = Triangulator.TriangulatePolygon(vertices, minAngleRad, refinementIterations, boundingBoxSize, out var graph);
+        //we can use graph to compute uv's now
 
         int t = 0;
         while (t < triangles.Count)

@@ -4,18 +4,16 @@ using UnityEngine;
 
 public static class Triangulator
 {
-    public static List<int> TriangulatePolygon(IList<Vector3> vertices, float minAngleRad, 
-        int maxRefinementIterations, int maxRepairIterations, float boundingBoxSize)
+    public static List<int> TriangulatePolygon(IList<Vector3> vertices, float minAngleRad,
+        int maxRefinementIterations, float boundingBoxSize, out List<(int, int)> refinedPolygon)
     {
-        List<(int, int)> graph = Enumerable.Range(0, vertices.Count).Select(i => (i, i == vertices.Count - 1 ? 0 : i + 1)).ToList();
+        refinedPolygon = Enumerable.Range(0, vertices.Count).Select(i => (i, i == vertices.Count - 1 ? 0 : i + 1)).ToList();
         HashSet<(int, int, int)> triangles = new();
         HashSet<(int, int, int)> badTriangles = new();
         HashSet<(int, int)> cut = new();
         HashSet<int> encroachedSegments = new();
+        HashSet<int> externalVertices = new();
 
-        //if any perimeter corners have angle < 90, we'll lop off a small pointy bit at that corner -- or just make that pointy bit a triangle
-
-        //add 3x bounding box
         var bb = BoundingBox(vertices);
         var max = bb.Item1;
         var min = bb.Item2;
@@ -33,23 +31,15 @@ public static class Triangulator
         var bb3 = vertices.Count;
         vertices.Add(new(min.x, max.y));//upper left of bounding box
 
-        //if (debugTransform)
-        //{
-        //    var p0 = debugTransform.TransformPoint(vertices[bb0]);
-        //    var p1 = debugTransform.TransformPoint(vertices[bb1]);
-        //    var p2 = debugTransform.TransformPoint(vertices[bb2]);
-        //    var p3 = debugTransform.TransformPoint(vertices[bb3]);
+        externalVertices.Add(bb0);
+        externalVertices.Add(bb1);
+        externalVertices.Add(bb2);
+        externalVertices.Add(bb3);
 
-        //    Debug.DrawLine(p0, p1, Color.blue, 10);
-        //    Debug.DrawLine(p1, p2, Color.blue, 10);
-        //    Debug.DrawLine(p2, p3, Color.blue, 10);
-        //    Debug.DrawLine(p3, p0, Color.blue, 10);
-        //}
-
-        graph.Add((bb0, bb1));
-        graph.Add((bb1, bb2));
-        graph.Add((bb2, bb3));
-        graph.Add((bb3, bb0));
+        refinedPolygon.Add((bb0, bb1));
+        refinedPolygon.Add((bb1, bb2));
+        refinedPolygon.Add((bb2, bb3));
+        refinedPolygon.Add((bb3, bb0));
 
         triangles.Add((bb0, bb1, bb2));
         triangles.Add((bb2, bb3, bb0));
@@ -59,60 +49,88 @@ public static class Triangulator
             AddVertexToTriangulation(vertices, triangles, badTriangles, cut, i);
         }
 
-        RefineDelaunayTriangulation(graph, vertices, triangles, badTriangles, cut, encroachedSegments, 
-            minAngleRad, maxRefinementIterations, maxRepairIterations);
+        RefineDelaunayTriangulation(refinedPolygon, vertices, triangles, badTriangles, cut, encroachedSegments,
+            minAngleRad, maxRefinementIterations);
 
-        //remove auxiliary vertices and build final triangle list
+        FindExternalVertices(refinedPolygon, vertices, triangles, externalVertices);
+
         var triangleList = new List<int>();
         foreach (var t in triangles)
         {
-            if (IsAuxiliaryVertex(t.Item1) || IsAuxiliaryVertex(t.Item2) || IsAuxiliaryVertex(t.Item3))
+            var t0 = t.Item1;
+            var t0Before = t0;
+            var t1 = t.Item2;
+            var t1Before = t1;
+            var t2 = t.Item3;
+            var t2Before = t2;
+
+            if (externalVertices.Contains(t0) || externalVertices.Contains(t1) || externalVertices.Contains(t2))
             {
                 continue;
             }
 
-            triangleList.Add(t.Item1 > bb3 ? t.Item1 - 4 : t.Item1);
-            triangleList.Add(t.Item2 > bb3 ? t.Item2 - 4 : t.Item2);
-            triangleList.Add(t.Item3 > bb3 ? t.Item3 - 4 : t.Item3);
+            foreach (var v in externalVertices)
+            {
+                if (t0Before > v)
+                {
+                    t0--;
+                }
+                if (t1Before > v)
+                {
+                    t1--;
+                }
+                if (t2Before > v)
+                {
+                    t2--;
+                }
+            }
+            triangleList.Add(t0);
+            triangleList.Add(t1);
+            triangleList.Add(t2);
         }
 
-        vertices.RemoveAt(bb3);
-        vertices.RemoveAt(bb2);
-        vertices.RemoveAt(bb1);
-        vertices.RemoveAt(bb0);
-
-        bool IsAuxiliaryVertex(int v)
+        for (int i = 0; i < refinedPolygon.Count; i++)
         {
-            return !(v < bb0) && !(v > bb3);
+            var e0 = refinedPolygon[i].Item1;
+            var e1 = refinedPolygon[i].Item2;
+
+            var e0Before = e0;
+            var e1Before = e1;
+            foreach (var v in externalVertices)
+            {
+                if (e0Before > v)
+                {
+                    e0--;
+                }
+                if (e1Before > v)
+                {
+                    e1--;
+                }
+            }
+
+            refinedPolygon[i] = (e0, e1);
         }
-        //trim off external triangles... remember to also remove any vertices outside the boundary (does this happen? -- yes it appears so)
-        //and return triangle list
+
+        var externalVertexList = externalVertices.ToList();
+        externalVertexList.Sort();
+        for (int i = externalVertexList.Count - 1; i > -1; i--)
+        {
+            vertices.RemoveAt(externalVertexList[i]);
+        }
 
         return triangleList;
     }
 
     //Ruppert's algorithm
-    public static void RefineDelaunayTriangulation(IList<(int, int)> graph, IList<Vector3> vertices, ICollection<(int, int, int)> triangles, 
-        ICollection<(int, int, int)> badTriangles, ICollection<(int, int)> cut, ICollection<int> encroachedSegments, 
-        float minAngleRad, int maxRefinementIterations, int maxRepairIterations)
+    public static void RefineDelaunayTriangulation(IList<(int, int)> graph, IList<Vector3> vertices, ICollection<(int, int, int)> triangles,
+        ICollection<(int, int, int)> badTriangles, ICollection<(int, int)> cut, ICollection<int> encroachedSegments,
+        float minAngleRad, int maxRefinementIterations)
     {
-        Debug.Log("beginning refinement...");
         float sineMinAngle = Mathf.Sin(minAngleRad);
         int i = 0;
         while (i < maxRefinementIterations)
         {
-            bool changed = false;
-
-            if (Repair(graph, vertices, triangles, badTriangles, cut, maxRepairIterations))
-            {
-                changed = true;
-            }
             if (SplitFirstSkinnyTriangle(graph, vertices, triangles, badTriangles, cut, encroachedSegments, sineMinAngle))
-            {
-                changed = true;
-            }
-
-            if (changed)
             {
                 i++;
             }
@@ -125,51 +143,87 @@ public static class Triangulator
         Debug.Log($"Completed refinement after {i}/{maxRefinementIterations} iterations.");
     }
 
-    private static bool Repair(IList<(int, int)> graph, IList<Vector3> vertices, ICollection<(int, int, int)> triangles, 
-        ICollection<(int, int, int)> badTriangles, ICollection<(int, int)> cut, int maxIterations)
+    public static (Vector2, Vector2) BoundingBox(IList<Vector3> vertices)
     {
-        int i = 0;
-        while (i < maxIterations)
+        Vector2 max = new(-Mathf.Infinity, -Mathf.Infinity);
+        Vector2 min = new(Mathf.Infinity, Mathf.Infinity);
+
+        for (int i = 0; i < vertices.Count; i++)
         {
-            if (SplitFirstEncroachedSegment(graph, vertices, triangles, badTriangles, cut))
-            {
-                i++;
-            }
-            else
-            {
-                break;
-            }
+            max.x = Mathf.Max(vertices[i].x, max.x);
+            max.y = Mathf.Max(vertices[i].y, max.y);
+            min.x = Mathf.Min(vertices[i].x, min.x);
+            min.y = Mathf.Min(vertices[i].y, min.y);
         }
 
-        Debug.Log($"Repair terminated after {i}/{maxIterations} iterations");
-
-        return i > 0;
+        return (max, min);
     }
 
-    private static bool SplitFirstEncroachedSegment(IList<(int, int)> graph, IList<Vector3> vertices, ICollection<(int, int, int)> triangles, 
-        ICollection<(int, int, int)> badTriangles, ICollection<(int, int)> cut)
+    private static void FindExternalVertices(IEnumerable<(int, int)> graph, IList<Vector3> vertices, IEnumerable<(int, int, int)> triangles, ICollection<int> externalVertices)
     {
-        for (int i = 0; i < graph.Count; i++)
-        {
-            var p0 = vertices[graph[i].Item1];
-            var p1 = vertices[graph[i].Item2];
-            var p = 0.5f * (p0 + p1);
-            var r2 = (p - p0).sqrMagnitude;
+        List<int>[] neighbors = new List<int>[vertices.Count];
 
-            foreach (var v in vertices)
+        foreach (var t in triangles)
+        {
+            var t0 = t.Item1;
+            var t1 = t.Item2;
+            var t2 = t.Item3;
+
+            //we expect at most 6 neighbors for min angle = pi / 6
+            neighbors[t0] ??= new(10);
+            neighbors[t1] ??= new(10);
+            neighbors[t2] ??= new(10);
+
+            neighbors[t0].Add(t1);
+            neighbors[t0].Add(t2);
+
+            neighbors[t1].Add(t2);
+            neighbors[t1].Add(t0);
+
+            neighbors[t2].Add(t1);
+            neighbors[t2].Add(t0);
+        }
+
+        HashSet<int> border = new();
+        foreach (var e in graph)
+        {
+            border.Add(e.Item1);
+            border.Add(e.Item2);
+        }
+
+        Queue<int> queue = new();
+        bool[] seen = new bool[vertices.Count];
+        foreach (var v in externalVertices)
+        {
+            queue.Enqueue(v);
+            seen[v] = true;
+        }
+
+        while (queue.Count != 0)
+        {
+            var v = queue.Dequeue();
+            externalVertices.Add(v);
+
+            if (neighbors[v] == null)
             {
-                if ((v - p).sqrMagnitude <= r2)
+                continue;
+            }
+
+            foreach (var n in neighbors[v])
+            {
+                if (!seen[n])
                 {
-                    SplitSegment(graph, vertices, triangles, badTriangles, cut, i);
-                    return true;
+                    seen[n] = true;
+                    if (!border.Contains(n))
+                    {
+                        queue.Enqueue(n);
+                    }
                 }
             }
         }
-
-        return false;
     }
 
-    private static void SplitSegment(IList<(int, int)> graph, IList<Vector3> vertices, ICollection<(int, int, int)> triangles, 
+    private static void SplitSegment(IList<(int, int)> graph, IList<Vector3> vertices, ICollection<(int, int, int)> triangles,
         ICollection<(int, int, int)> badTriangles, ICollection<(int, int)> cut, int segment)
     {
         var i0 = graph[segment].Item1;
@@ -251,13 +305,11 @@ public static class Triangulator
 
         if (encroachedSegments.Count == 0)
         {
-            //Debug.Log($"splitting triangle {triangle.Item1}: {p0}, {triangle.Item2}: {p1}, {triangle.Item3}: {p2} by adding its circumcenter {c}");
             vertices.Add(c);
             AddVertexToTriangulation(vertices, triangles, badTriangles, cut, vertices.Count - 1);
         }
         else
         {
-            Debug.Log("Instead of splitting triangle, we'll split the segments its circumcenter encroaches upon");
             foreach (var s in encroachedSegments)
             {
                 SplitSegment(graph, vertices, triangles, badTriangles, cut, s);
@@ -269,7 +321,6 @@ public static class Triangulator
         ICollection<(int, int)> cut, int vertexIndex)
     {
         Vector2 p = vertices[vertexIndex];
-        Debug.Log($"Adding vertex {p}");
         badTriangles.Clear();
         cut.Clear();
 
@@ -350,9 +401,7 @@ public static class Triangulator
 
                 //all triangles are oriented clockwise, so triangles sharing an edge will traverse it in opposite directions
                 //(meaning we don't have to check equality of edges in the other direction)
-                if ((s.Item2 == e0 && s.Item1 == e1) /*|| (s.Item1 == e0 && s.Item2 == e1)*/
-                    || (s.Item3 == e0 && s.Item2 == e1) /*|| (s.Item2 == e0 && s.Item3 == e1)*/
-                    || (s.Item1 == e0 && s.Item3 == e1) /*|| (s.Item3 == e0 && s.Item1 == e1)*/)
+                if ((s.Item2 == e0 && s.Item1 == e1) || (s.Item3 == e0 && s.Item2 == e1) || (s.Item1 == e0 && s.Item3 == e1))
                 {
                     return false;
                 }
@@ -360,21 +409,5 @@ public static class Triangulator
 
             return true;
         }
-    }
-
-    private static (Vector2, Vector2) BoundingBox(IList<Vector3> vertices)
-    {
-        Vector2 max = new(-Mathf.Infinity, -Mathf.Infinity);
-        Vector2 min = new(Mathf.Infinity, Mathf.Infinity);
-
-        for (int i = 0; i < vertices.Count; i++)
-        {
-            max.x = Mathf.Max(vertices[i].x, max.x);
-            max.y = Mathf.Max(vertices[i].y, max.y);
-            min.x = Mathf.Min(vertices[i].x, min.x);
-            min.y = Mathf.Min(vertices[i].y, min.y);
-        }
-
-        return (max, min);
     }
 }

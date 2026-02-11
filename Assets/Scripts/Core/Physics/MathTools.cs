@@ -185,7 +185,7 @@ public static class MathTools
     {
         if (!TryIntersectLine(0.5f * (p0 + p1), (p1 - p0).CCWPerp(), 0.5f * (p0 + p2), (p2 - p0).CCWPerp(), out var c))
         {
-            Debug.Log($"Trying to find circumcenter. Lines didn't intersect (tri points {p0}, {p1}, {p2})");
+            Debug.LogWarning($"Invalid triangle (vertices are colinear).");
         }
         return c;
     }
