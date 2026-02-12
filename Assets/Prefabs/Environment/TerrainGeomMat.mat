@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: TerrainTestMat
-  m_Shader: {fileID: -6465566751694194690, guid: 2a0d5150f63846f4faadd1bfef1d3387, type: 3}
+  m_Name: TerrainGeomMat
+  m_Shader: {fileID: -6465566751694194690, guid: eefd51e18a19f8648a5cbe0171a24e7a, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -19,7 +19,7 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
-  m_LockedProperties: _TextureNoiseScale
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -53,53 +53,18 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _BlendOpacity: 0.99
-    - _CurvaturePower: 3.7
-    - _DistortionDensity: 5
-    - _DistortionMax: 1.61
-    - _DistortionMin: 0.5
-    - _DistortionScale: 1
+    - _BorderFadeRate: 0.75
+    - _DensityPower: 0.75
     - _EnableExternalAlpha: 0
-    - _MarblineNoiseMax: 0
-    - _MarblingBlendOpacity: 0
-    - _MarblingNoiseMin: 0
-    - _MarblingScale: 3
-    - _NoiseScale: 200
-    - _RadialShadowPower: 0
-    - _RoughColor: 0
-    - _Roughness: 50
-    - _RoughnessDensity: 2
-    - _RoughnessMax: 5
-    - _RoughnessMin: 0
-    - _RoughnessPower: -0.5
-    - _RoughnessScale: 1000
-    - _SecondaryTextureNoiseScale: 0
-    - _ShadowNoiseContrast: 1
-    - _ShadowNoiseDensity: 3
-    - _ShadowNoiseMax: 3
-    - _ShadowNoiseMin: 0.75
-    - _ShadowNoiseScale: 3.11
-    - _ShadowSmoothingRadius: 0
-    - _SmoothingPower: 1
-    - _StriationScale: 1
-    - _TextureNoiseContrast: 0.75
-    - _TextureNoiseScale: 10
-    - _TextureNoiseScaleNoiseScale: 5
-    - _UndersidePower: 1
-    - _UndersideShadingPower: 0
     - _ZWrite: 0
     m_Colors:
     - White: {r: 1, g: 1, b: 1, a: 1}
-    - _BaseColor: {r: 0.7660377, g: 0.7660377, b: 0.7660377, a: 1}
-    - _Color: {r: 0.5320754, g: 0.42643368, b: 0.29615515, a: 1}
-    - _HighlightColor: {r: 1, g: 1, b: 1, a: 1}
-    - _RadialShadowCenter: {r: 0.5, g: 1, b: 0, a: 0}
+    - _BorderShadow: {r: 0.5849056, g: 0.5849056, b: 0.5849056, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
-    - _RoughColor: {r: 0.8490566, g: 0.7108061, b: 0.4405482, a: 1}
-    - _ShadowColor: {r: 0.2981131, g: 0.2981131, b: 0.2981131, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
---- !u!114 &33163082245678444
+--- !u!114 &8220188078833339901
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}

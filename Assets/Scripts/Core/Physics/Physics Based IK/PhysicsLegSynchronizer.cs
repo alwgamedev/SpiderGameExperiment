@@ -9,7 +9,8 @@ public class PhysicsLegSynchronizer : MonoBehaviour
     [SerializeField] float stepHeightSpeed1;//at or above this speed, use full stepHeight
     [SerializeField] PhysicsBasedIKLeg[] leg;
     [SerializeField] PhysicsLegSettings[] stdSettings;
-    [SerializeField] PhysicsLegSettings[] airborneSettings;
+    [SerializeField] PhysicsLegSettings[] jumpSettings;
+    [SerializeField] PhysicsLegSettings[] freefallSettings;
     [SerializeField] PhysicsLegSettings[] limpSettings;
     [SerializeField] float[] timeOffset;
     [SerializeField] int fabrikIterations;
@@ -25,11 +26,12 @@ public class PhysicsLegSynchronizer : MonoBehaviour
     public float absoluteBodyGroundSpeed;
     public float timeScale = 1;
     public float stepHeightFraction;
+    public float reachFraction;
     public float strideMultiplier = 1;
 
     public enum LegState
     {
-        standard, airborne, limp
+        standard, jumping, freefall, limp
     }
 
     public LegState State
@@ -67,16 +69,13 @@ public class PhysicsLegSynchronizer : MonoBehaviour
         return false;
     }
 
-    public void UpdateAllLegs(float dt, GroundMap map)
+    public void UpdateAllLegs(float dt, GroundMap map, float simulateContactWeight = 0)
     {
         var speedFraction = absoluteBodyGroundSpeed < stepHeightSpeed0 ? 0 : absoluteBodyGroundSpeed / stepHeightSpeed1;
-
-        dt *= timeScale;
-        var speedScaledDt = speedFraction * dt;
-        dt = speedFraction < 1 ? dt : speedScaledDt;
+        var speedScaledDt = timeScale * speedFraction * dt;
         var stepHeightSpeedMultiplier = Mathf.Min(speedFraction, 1);
-
-        int count = 0;
+        var reachFraction = Mathf.Lerp(this.reachFraction, 1, simulateContactWeight);
+        var count = 0;
 
         for (int i = 0; i < leg.Length; i++)
         {
@@ -87,14 +86,14 @@ public class PhysicsLegSynchronizer : MonoBehaviour
 
             if (t.Stepping)
             {
-                l.UpdateTargetStepping(map, stepHeightSpeedMultiplier, stepHeightFraction, t.StateProgress, strideMultiplier * t.StepTime, strideMultiplier * t.RestTime);
+                l.UpdateTargetStepping(map, dt, stepHeightSpeedMultiplier, stepHeightFraction, reachFraction, t.StateProgress, strideMultiplier * t.StepTime, strideMultiplier * t.RestTime);
             }
             else
             {
-                l.UpdateTargetResting(map, t.StateProgress, strideMultiplier * t.RestTime);
+                l.UpdateTargetResting(map, dt, reachFraction, t.StateProgress, strideMultiplier * t.RestTime);
             }
 
-            l.UpdateJoints(map, fabrikIterations, fabrikTolerance, groundContactRadiusSqrd, dt);
+            l.UpdateJoints(map, fabrikIterations, fabrikTolerance, groundContactRadiusSqrd, dt, simulateContactWeight);
 
             if (l.EffectorIsTouchingGround)
             {
@@ -150,8 +149,12 @@ public class PhysicsLegSynchronizer : MonoBehaviour
     {
         switch(state)
         {
-            case LegState.airborne:
-                return airborneSettings;
+            //case LegState.airborne:
+            //    return airborneSettings;
+            case LegState.jumping:
+                return jumpSettings;
+            case LegState.freefall:
+                return freefallSettings;
             case LegState.limp:
                 return limpSettings;
             default:

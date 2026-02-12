@@ -78,6 +78,8 @@ public class SpiderMovementController : MonoBehaviour
     [SerializeField] float freeHangHeadAngle;
     [SerializeField] float freeHangStepHeightReductionMax;
     [SerializeField] float freeHangStrideMultiplier;
+    [SerializeField] float freeHangLegReachFraction;
+    [SerializeField] float freeHangSimulateContactMax;
 
     [Header("Thrusters")]
     [SerializeField] Thruster thruster;
@@ -812,7 +814,7 @@ public class SpiderMovementController : MonoBehaviour
 
     //LEGS
 
-    private float AirborneStrideMultiplier()
+    private float FreeHangStrideMultiplier()
     {
         var y = transform.right.y;
         //using y > cosLegAngleMax b/c we really want sin(90 - legAngleMax)
@@ -825,33 +827,46 @@ public class SpiderMovementController : MonoBehaviour
     {
         legSynch.State =
             grounded ? PhysicsLegSynchronizer.LegState.standard
+            : thruster.Engaged ? PhysicsLegSynchronizer.LegState.jumping
             : grapple.FreeHanging ? PhysicsLegSynchronizer.LegState.limp
-            : PhysicsLegSynchronizer.LegState.airborne;
+            : PhysicsLegSynchronizer.LegState.freefall;
 
         var v = GroundVelocity;
         legSynch.bodyGroundSpeedSign = (grounded && grapple.GrappleAnchored) || grapple.FreeHanging ? 1 : Mathf.Sign(v);
         legSynch.absoluteBodyGroundSpeed = grounded ? Mathf.Abs(v) : Mathf.Min(thruster.Engaged ? Mathf.Abs(v) : rb.linearVelocity.magnitude, airborneLegSpeedMax);
         legSynch.stepHeightFraction = 1 - crouchProgress * crouchHeightFraction;
         legSynch.timeScale = grounded || thruster.Engaged ? 1 : airborneLegAnimationTimeScale;
+        legSynch.reachFraction = grapple.FreeHanging ? freeHangLegReachFraction : 1;
+
+        var simulateContactWeight = 0f;
 
         switch (legSynch.State)
         {
             case PhysicsLegSynchronizer.LegState.standard:
                 legSynch.strideMultiplier = 1;
                 break;
-            case PhysicsLegSynchronizer.LegState.airborne:
-                legSynch.strideMultiplier = MathTools.LerpAtConstantSpeed(legSynch.strideMultiplier, AirborneStrideMultiplier(),
+            case PhysicsLegSynchronizer.LegState.jumping:
+                legSynch.strideMultiplier = MathTools.LerpAtConstantSpeed(legSynch.strideMultiplier, airborneStrideMultiplier,
+                    strideMultiplierSmoothingRate, Time.deltaTime);
+                break;
+            case PhysicsLegSynchronizer.LegState.freefall:
+                legSynch.strideMultiplier = MathTools.LerpAtConstantSpeed(legSynch.strideMultiplier, airborneStrideMultiplier,
                     strideMultiplierSmoothingRate, Time.deltaTime);
                 break;
             case PhysicsLegSynchronizer.LegState.limp:
                 var r = OrientedRight;
-                var dX = grounded ? 0 : r.y < -MathTools.sin15 ? (-r.y - MathTools.sin15) / (1 - MathTools.sin15) : 0;
-                legSynch.stepHeightFraction *= 1 - freeHangStepHeightReductionMax * dX;
-                legSynch.strideMultiplier = MathTools.LerpAtConstantSpeed(legSynch.strideMultiplier, Mathf.Lerp(AirborneStrideMultiplier(), freeHangStrideMultiplier, dX),
+                var y = grounded ? 0 : r.y < -MathTools.sin15 ? (-r.y - MathTools.sin15) / (1 - MathTools.sin15) : 0;
+                legSynch.stepHeightFraction *= 1 - freeHangStepHeightReductionMax * y;
+                legSynch.strideMultiplier = MathTools.LerpAtConstantSpeed(legSynch.strideMultiplier, Mathf.Lerp(FreeHangStrideMultiplier(), freeHangStrideMultiplier, y),
                         strideMultiplierSmoothingRate, Time.deltaTime);
+                simulateContactWeight = (1 - y);
+                simulateContactWeight *= simulateContactWeight * freeHangSimulateContactMax;
+                legSynch.absoluteBodyGroundSpeed *= simulateContactWeight;
+                //what was the point of all this again^?
+                //(may not be necessary anymore as we're just dangling now)
                 break;
         }
 
-        legSynch.UpdateAllLegs(Time.deltaTime, groundMap);
+        legSynch.UpdateAllLegs(Time.deltaTime, groundMap, simulateContactWeight);
     }
 }

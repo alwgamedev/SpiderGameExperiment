@@ -10,6 +10,18 @@ public struct PhysicsLegSettings
     public float limpness;
     public float jointDamping;
     public float stepHeight;
+
+    public static PhysicsLegSettings Lerp(PhysicsLegSettings s1, PhysicsLegSettings s2, float t)
+    {
+        return new PhysicsLegSettings
+        {
+            gravityStrength = Mathf.Lerp(s1.gravityStrength, s2.gravityStrength, t),
+            poseForce = Mathf.Lerp(s1.poseForce, s2.poseForce, t),
+            limpness = Mathf.Lerp(s1.limpness, s2.limpness, t),
+            jointDamping = Mathf.Lerp(s1.jointDamping, s2.jointDamping, t),
+            stepHeight = Mathf.Lerp(s1.stepHeight, s2.stepHeight, t)
+        };
+    }
 }
 
 [Serializable]
@@ -22,6 +34,7 @@ public class PhysicsBasedIKLeg
     [SerializeField] Transform orientingTransform;
     [SerializeField] Transform[] chain;
     [SerializeField] Transform target;
+    [SerializeField] float targetSmoothingRate;
     [SerializeField] float stepMax;
 
     Vector2[] defaultPose;
@@ -62,9 +75,11 @@ public class PhysicsBasedIKLeg
     }
 
     public void UpdateJoints(GroundMap groundMap, int fabrikIterations, float fabrikTolerance,
-        float groundContactRadiusSqrd, float dt)
+        float groundContactRadiusSqrd, float dt, float simulateContactWeight = 0)
     {
-        ref var settings = ref EffectorIsTouchingGround ? ref contactSettings : ref noContactSettings;
+        var settings = EffectorIsTouchingGround ? contactSettings 
+            : simulateContactWeight > 0 ? PhysicsLegSettings.Lerp(noContactSettings, contactSettings, simulateContactWeight)
+            : noContactSettings;
         if (settings.limpness > 0 && (chain[0].position.x != positionBuffer[0].x || chain[0].position.y != positionBuffer[0].y))
         {
             for (int i = 1; i < positionBuffer.Length; i++)
@@ -76,9 +91,7 @@ public class PhysicsBasedIKLeg
             }
         }
         PhysicsBasedIK.IntegrateJoints(chain, angularVelocity, settings.jointDamping, dt);
-        UpdateGroundContact(groundMap, groundContactRadiusSqrd);
 
-        settings = ref EffectorIsTouchingGround ? ref contactSettings : ref noContactSettings;
         SolveForTargetPose(target.position, fabrikIterations, fabrikTolerance);
         PushTowardsTargetPose(settings.poseForce, dt);
         if (!EffectorIsTouchingGround && settings.gravityStrength != 0)
@@ -91,16 +104,18 @@ public class PhysicsBasedIKLeg
             //put current positions into buffer (for limpness to use next update)
             positionBuffer[i] = chain[i].position;
         }
+
+        UpdateGroundContact(groundMap, groundContactRadiusSqrd);
     }
 
-    public void UpdateTargetStepping(GroundMap map, float stepHeightSpeedMultiplier, float stepHeightFraction, float stepProgress, float stepDistance,
+    public void UpdateTargetStepping(GroundMap map, float dt, float stepHeightSpeedMultiplier, float stepHeightFraction, float reachFraction, float stepProgress, float stepDistance,
         float restDistance)
     {
         ref var settings = ref EffectorIsTouchingGround ? ref contactSettings : ref noContactSettings;
         var stepHeight = settings.stepHeight;
         var bodyFacingRight = orientingTransform.localScale.x > 0;
-        var stepStart = GetStepStart(map, bodyFacingRight, stepProgress, stepDistance, restDistance);
-        var stepGoal = GetStepGoal(map, bodyFacingRight, 0, restDistance);
+        var stepStart = GetStepStart(map, bodyFacingRight, stepProgress, stepDistance, restDistance, reachFraction);
+        var stepGoal = GetStepGoal(map, bodyFacingRight, 0, restDistance, reachFraction);
         var stepRight = stepGoal - stepStart;
         var stepUp = bodyFacingRight ? 0.5f * stepRight.CCWPerp() : 0.5f * stepRight.CWPerp();
 
@@ -109,16 +124,16 @@ public class PhysicsBasedIKLeg
 
         if (stepHeightSpeedMultiplier < 1)
         {
-            var g = map.ProjectOntoGroundByArcLength(newTargetPos, out _, out _);
+            var g = map.ProjectOntoGroundByArcLength(newTargetPos, out _, out _, reachFraction, true);
             newTargetPos = Vector2.Lerp(g, newTargetPos, stepHeightSpeedMultiplier);
         }
 
-        target.position = newTargetPos;//Vector2.Lerp(target.position, newTargetPos, smoothingRate * dt);
+        target.position = Vector2.Lerp(target.position, newTargetPos, targetSmoothingRate * dt);
     }
 
-    public void UpdateTargetResting(GroundMap map, float restProgress, float restDistance)
+    public void UpdateTargetResting(GroundMap map, float dt, float reachFraction, float restProgress, float restDistance)
     {
-        target.position = GetStepGoal(map, orientingTransform.localScale.x > 0, restProgress, restDistance);
+        target.position = Vector2.Lerp(target.position, GetStepGoal(map, orientingTransform.localScale.x > 0, restProgress, restDistance, reachFraction), targetSmoothingRate * dt);
     }
 
     public void OnBodyChangedDirection(Vector2 position0, Vector2 position1, Vector2 flipNormal)
@@ -183,20 +198,20 @@ public class PhysicsBasedIKLeg
         }
     }
 
-    private Vector2 GetStepStart(GroundMap map, bool bodyFacingRight, float stepProgress, float stepDistance, float restDistance)
+    private Vector2 GetStepStart(GroundMap map, bool bodyFacingRight, float stepProgress, float stepDistance, float restDistance, float reachFraction = 1)
     {
         var h = Vector2.Dot((Vector2)chain[0].position - map.LastOrigin, map.LastOriginRight);//we could also use body position and body right
         h = bodyFacingRight ? h + StepStartHorizontalOffset(stepProgress, stepDistance, restDistance)
             : h - StepStartHorizontalOffset(stepProgress, stepDistance, restDistance);
-        return map.PointFromCenterByPosition(h, out _, out _);
+        return map.PointFromCenterByPosition(h, out _, out _, reachFraction, true);
     }
 
-    private Vector2 GetStepGoal(GroundMap map, bool bodyFacingRight, float restProgress, float restDistance)
+    private Vector2 GetStepGoal(GroundMap map, bool bodyFacingRight, float restProgress, float restDistance, float reachFraction = 1)
     {
         var h = Vector2.Dot((Vector2)chain[0].position - map.LastOrigin, map.LastOriginRight);//we could also use body position and body right
         h = bodyFacingRight ? h + StepGoalHorizontalOffset(restProgress, restDistance)
             : h - StepGoalHorizontalOffset(restProgress, restDistance);
-        return map.PointFromCenterByPosition(h, out _, out _);
+        return map.PointFromCenterByPosition(h, out _, out _, reachFraction, true);
     }
 
     private float StepGoalHorizontalOffset(float restProgress, float restDistance)

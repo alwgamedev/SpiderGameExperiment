@@ -135,7 +135,6 @@ void SearchCellFloat2(RWStructuredBuffer<float2> particleData, float2 pos, uint 
     }
 }
 
-//2do: let's make this work for any readius (so may need to sample more than 9 cells)
 float2 SampleFloat2(RWStructuredBuffer<float2> particleData, float2 pos, float r, float r2, int kernelDeg)
 {
     int iMin = (int) clamp((pos.y - r) / vars.cellSize, 0, config.height - 1);

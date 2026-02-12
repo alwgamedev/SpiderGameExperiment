@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 public static class Triangulator
 {
     public static List<int> TriangulatePolygon(IList<Vector3> vertices, float minAngleRad,
-        int maxRefinementIterations, float boundingBoxSize, out List<(int, int)> refinedPolygon)
+        int maxRefinementIterations, float boundingBoxSize, out List<(int, int)> refinedPolygon, out List<int>[] neighbors)
     {
         refinedPolygon = Enumerable.Range(0, vertices.Count).Select(i => (i, i == vertices.Count - 1 ? 0 : i + 1)).ToList();
         HashSet<(int, int, int)> triangles = new();
@@ -52,22 +53,23 @@ public static class Triangulator
         RefineDelaunayTriangulation(refinedPolygon, vertices, triangles, badTriangles, cut, encroachedSegments,
             minAngleRad, maxRefinementIterations);
 
-        FindExternalVertices(refinedPolygon, vertices, triangles, externalVertices);
+        FindExternalVertices(refinedPolygon, vertices, triangles, externalVertices, out neighbors);
 
         var triangleList = new List<int>();
         foreach (var t in triangles)
         {
             var t0 = t.Item1;
-            var t0Before = t0;
             var t1 = t.Item2;
-            var t1Before = t1;
             var t2 = t.Item3;
-            var t2Before = t2;
 
             if (externalVertices.Contains(t0) || externalVertices.Contains(t1) || externalVertices.Contains(t2))
             {
                 continue;
             }
+
+            var t0Before = t0;
+            var t1Before = t1;
+            var t2Before = t2;
 
             foreach (var v in externalVertices)
             {
@@ -96,6 +98,7 @@ public static class Triangulator
 
             var e0Before = e0;
             var e1Before = e1;
+
             foreach (var v in externalVertices)
             {
                 if (e0Before > v)
@@ -110,6 +113,56 @@ public static class Triangulator
 
             refinedPolygon[i] = (e0, e1);
         }
+
+        for (int i = 0; i < neighbors.Length; i++)
+        {
+            if (neighbors[i] == null || externalVertices.Contains(i))
+            {
+                continue;
+            }
+
+            int j = 0;
+            while (j < neighbors[i].Count)
+            {
+                var v = neighbors[i][j];
+                if (externalVertices.Contains(v))
+                {
+                    neighbors[i].RemoveAt(j);
+                }
+                else
+                {
+                    var vBefore = v;
+                    foreach (var w in externalVertices)
+                    {
+                        if (vBefore > w)
+                        {
+                            v--;
+                        }
+                    }
+
+                    neighbors[i][j] = v;
+                    j++;
+                }
+            }
+        }
+
+        int a = 0;//index we're copying to
+        int b = 0;//index we're copying from
+        while (b < neighbors.Length)
+        {
+            if (externalVertices.Contains(b))
+            {
+                b++;
+            }
+            else
+            {
+                neighbors[a] = neighbors[b];
+                a++;
+                b++;
+            }
+        }
+
+        Array.Resize(ref neighbors, vertices.Count - externalVertices.Count);
 
         var externalVertexList = externalVertices.ToList();
         externalVertexList.Sort();
@@ -159,9 +212,10 @@ public static class Triangulator
         return (max, min);
     }
 
-    private static void FindExternalVertices(IEnumerable<(int, int)> graph, IList<Vector3> vertices, IEnumerable<(int, int, int)> triangles, ICollection<int> externalVertices)
+    private static void FindExternalVertices(IEnumerable<(int, int)> graph, IList<Vector3> vertices, IEnumerable<(int, int, int)> triangles, 
+        ICollection<int> externalVertices, out List<int>[] neighbors)
     {
-        List<int>[] neighbors = new List<int>[vertices.Count];
+        neighbors = new List<int>[vertices.Count];
 
         foreach (var t in triangles)
         {
@@ -169,10 +223,10 @@ public static class Triangulator
             var t1 = t.Item2;
             var t2 = t.Item3;
 
-            //we expect at most 6 neighbors for min angle = pi / 6
-            neighbors[t0] ??= new(10);
-            neighbors[t1] ??= new(10);
-            neighbors[t2] ??= new(10);
+            //we expect at most 12 neighbors for min angle = pi / 6
+            neighbors[t0] ??= new(16);
+            neighbors[t1] ??= new(16);
+            neighbors[t2] ??= new(16);
 
             neighbors[t0].Add(t1);
             neighbors[t0].Add(t2);
@@ -387,7 +441,7 @@ public static class Triangulator
             {
                 triangles.Add((t0, t1, t2));
             }
-            //a == 0 can (and will!) happen when you split a segment
+            //a == 0 can (and will) happen when you split a segment! don't add the triangle in that case (when the three vertices are lined up on a segment)
         }
 
         bool IsBoundaryEdge((int, int, int) triangle, int e0, int e1)

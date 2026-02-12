@@ -368,7 +368,6 @@ public class FLIPFluidSimulator
         }
     }
 
-
     private void PushParticlesApart(int iterations, float toleranceMultiplier)
     {
         //float dtInverse = 1 / dt;

@@ -175,11 +175,34 @@ public class GroundMap
         return map[numFwdIntervals + i];
     }
 
-    public Vector2 ProjectOntoGroundByArcLength(Vector2 p, out Vector2 normal, out bool hitGround)
+    public Vector2 ProjectOntoGroundByArcLength(Vector2 p, out Vector2 normal, out bool hitGround, float htFraction = 1, bool onlyUseHtFractionIfNotHitGround = false)
     {
-        return PointFromCenterByPosition(Vector2.Dot(p - LastOrigin, LastOriginRight), out normal, out hitGround);
-        //using lastOrigin rather than center has made things so much smoother (eg. for rounding hard corners)
-        //but still project by arc length giving better results than normal projection
+        p = PointFromCenterByPosition(Vector2.Dot(p - LastOrigin, LastOriginRight), out normal, out hitGround);
+        if (htFraction < 1 && (!onlyUseHtFractionIfNotHitGround || !hitGround))
+        {
+            var y = Vector2.Dot(LastOrigin - p, normal);
+            if (y > 0)
+            {
+                p += (1 - htFraction) * y * normal;
+            }
+        }
+
+        return p;
+    }
+
+    public Vector2 PointFromCenterByPosition(float x, out Vector2 normal, out bool hitGround, float htFraction = 1, bool onlyUseHtFractionIfNotHitGround = false)
+    {
+        var p = PointFromCenterByPosition(x, out normal, out hitGround);
+        if (htFraction < 1 && (!onlyUseHtFractionIfNotHitGround || !hitGround))
+        {
+            var y = Vector2.Dot(LastOrigin - p, normal);
+            if (y > 0)
+            {
+                p += (1 - htFraction) * y * normal;
+            }
+        }
+
+        return p;
     }
 
     public Vector2 PointFromCenterByPosition(float x, out Vector2 normal, out bool hitGround)
