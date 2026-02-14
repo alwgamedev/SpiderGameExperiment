@@ -41,7 +41,7 @@ public class SpriteShapeMeshGeneratorEditor : Editor
 
         var path = EditorUtility.SaveFilePanel("Save Terrain Mesh", "Assets/", "New Terrain Mesh", "asset");
         //^and this gives you a warning if asset already exists at that path, which is nice
-        if (string.IsNullOrWhiteSpace(path))
+        if (string.IsNullOrWhiteSpace(path))//panel was closed without selecting path
         {
             return;
         }

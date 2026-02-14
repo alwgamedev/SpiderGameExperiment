@@ -17,9 +17,14 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
     [SerializeField] float minAngleRad;
     [SerializeField] int refinementIterations;
     [SerializeField] float boundingBoxSize = 3;
-    [SerializeField] int geomSmoothingIterations;
-    [SerializeField] float geomSmoothingWeight;
+
+    [Header("Geometry Settings")]
     [SerializeField] float borderWidth;
+    [SerializeField] int geomSpreadIterations;
+    [SerializeField] float highlightSpreadRate;
+    [SerializeField] float shadowSpreadRate;
+    [SerializeField] int geomSmoothingIterations;
+    [SerializeField] float geomSmoothingRate;
 
     public void GenerateMesh()
     {
@@ -62,31 +67,52 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         //it outs the refined graph (polygon border), which you could use to get a "tight" uv if you want
         var triangles = Triangulator.TriangulatePolygon(vertices, minAngleRad, refinementIterations, boundingBoxSize, out var refinedPolygon, out var neighbors);
 
-        int t = 0;
-        while (t < triangles.Count)
-        {
-            var t0 = triangles[t++];
-            var t1 = triangles[t++];
-            var t2 = triangles[t++];
+        //int t = 0;
+        //while (t < triangles.Count)
+        //{
+        //    var t0 = triangles[t++];
+        //    var t1 = triangles[t++];
+        //    var t2 = triangles[t++];
 
-            var p0 = spriteShapeController.transform.TransformPoint(vertices[t0]);
-            var p1 = spriteShapeController.transform.TransformPoint(vertices[t1]);
-            var p2 = spriteShapeController.transform.TransformPoint(vertices[t2]);
+        //    var p0 = spriteShapeController.transform.TransformPoint(vertices[t0]);
+        //    var p1 = spriteShapeController.transform.TransformPoint(vertices[t1]);
+        //    var p2 = spriteShapeController.transform.TransformPoint(vertices[t2]);
 
-            Debug.DrawLine(p0, p1, Color.red, 3);
-            Debug.DrawLine(p1, p2, Color.red, 3);
-            Debug.DrawLine(p2, p0, Color.red, 3);
-        }
+        //    Debug.DrawLine(p0, p1, Color.red, 3);
+        //    Debug.DrawLine(p1, p2, Color.red, 3);
+        //    Debug.DrawLine(p2, p0, Color.red, 3);
+        //}
 
-        //for now let's just do a simple bounding box uv
+
+        //UV -- for now just a simple bounding box uv
+
         var bb = Triangulator.BoundingBox(vertices);//(max, min)
         var max = bb.Item1;
         var min = bb.Item2;
         var span = max - min;
         var uv = vertices.Select(v => new Vector2((v.x - min.x) / span.x, (v.y - min.y) / span.y)).ToArray();
 
-        var uv1 = GenerateUV1(refinedPolygon, vertices, neighbors, borderWidth);
-        SmoothData(uv1, neighbors, geomSmoothingIterations, geomSmoothingWeight);
+
+        //UV1&2 -- other geometry data to use in shaders
+
+        HashSet<int> polygonVertices = new();
+        for (int i = 0; i < refinedPolygon.Count; i++)
+        {
+            var e = refinedPolygon[i];
+            polygonVertices.Add(e.Item1);
+            var color = (i % 3) switch
+            {
+                0 => Color.red,
+                1 => Color.green,
+                _ => Color.blue
+            };
+            Debug.DrawLine(transform.TransformPoint(vertices[e.Item1]), transform.TransformPoint(vertices[e.Item2]), color, 60);
+        }
+
+        var uv1 = GenerateUV1(vertices, refinedPolygon, polygonVertices, neighbors, borderWidth);
+        var uv2 = GenerateUV2(vertices, refinedPolygon, polygonVertices);
+        SpreadGeomData(uv2, neighbors, geomSpreadIterations, highlightSpreadRate, shadowSpreadRate);
+        SmoothData(uv2, neighbors, geomSmoothingIterations, geomSmoothingRate);
 
         //CREATE MESH
         mesh = new();
@@ -94,6 +120,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         mesh.SetTriangles(triangles, 0);
         mesh.SetUVs(0, uv);
         mesh.SetUVs(1, uv1);
+        mesh.SetUVs(2, uv2);
         mesh.RecalculateNormals();
     }
 
@@ -107,18 +134,11 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
 
     //uv1.x = "neighbor density" (sum over neighbors of 1 / distance)
     //uv1.y = distance to border
-    private Vector2[] GenerateUV1(IList<(int, int)> polygon, IList<Vector3> vertices, List<int>[] neighbors, float borderWidth)
+    private Vector2[] GenerateUV1(IList<Vector3> vertices, IList<(int, int)> polygon, HashSet<int> polygonVertices, List<int>[] neighbors, float borderWidth)
     {
-        var geomData = new Vector2[vertices.Count];
-        HashSet<int> borderVertices = new();
+        var uv1 = new Vector2[vertices.Count];
         HashSet<int> seen = new();
         Queue<int> queue = new();
-
-        foreach (var e in polygon)
-        {
-            borderVertices.Add(e.Item1);
-            borderVertices.Add(e.Item2);
-        }
 
         var max = 0f;
         var borderWidth2 = borderWidth * borderWidth;
@@ -136,7 +156,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             }
 
             max = Math.Max(max, sum);
-            geomData[i].x = sum;
+            uv1[i].x = sum;
 
             queue.Clear();
             seen.Clear();
@@ -150,144 +170,71 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
                 var d = Vector2.SqrMagnitude(vertices[j] - vertices[i]);
                 if (d < borderWidth2)
                 {
-                    if (borderVertices.Contains(j))
+                    if (polygonVertices.Contains(j))
                     {
                         distanceToBorder = Mathf.Min(distanceToBorder, Mathf.Sqrt(d));
                     }
-                    else
+                    else if (neighbors[j] != null)
                     {
-                        if (neighbors[j] != null)
+                        foreach (var k in neighbors[j])
                         {
-                            foreach (var k in neighbors[j])
+                            if (!seen.Contains(k))
                             {
-                                if (!seen.Contains(k))
-                                {
-                                    queue.Enqueue(k);
-                                    seen.Add(k);
-                                }
+                                queue.Enqueue(k);
+                                seen.Add(k);
                             }
                         }
                     }
                 }
             }
 
-            geomData[i].y = Mathf.Clamp(distanceToBorder / borderWidth, 0, 1f);
+            uv1[i].y = Mathf.Clamp(distanceToBorder / borderWidth, 0, 1f);
         }
 
-        for (int i = 0; i < geomData.Length; i++)
+        for (int i = 0; i < uv1.Length; i++)
         {
-            geomData[i].x /= max;
+            uv1[i].x /= max;
         }
 
-        return geomData;
+        return uv1;
     }
 
-    //private Vector2[] GenerateUV1(IList<Vector3> vertices, IList<int> triangles, IList<(int, int)> graph,  Vector2 bbMax, Vector2 bbMin, float cellSize, float densitySmoothingRadius)
-    //{
-    //    var geomData = new Vector2[vertices.Count];
-    //    HashSet<int> graphVertices = new();
+    //uv2.x = convexity wrt polygon interior (-1 = concave in toward interior, 1 = convex)    
+    //uv2.y = top-side highlight/underside shadow (-1 = shadow, 1 = highlight)
+    //we'll start with border vertices, then spread to neighbors within certain distance
+    private Vector2[] GenerateUV2(IList<Vector3> vertices, IList<(int, int)> polygon, HashSet<int> polygonVertices)
+    {
+        //polygon is CW oriented (sprite shape spline  always cw oriented)
 
-    //    foreach (var e in graph)
-    //    {
-    //        graphVertices.Add(e.Item1);
-    //        graphVertices.Add(e.Item2);
-    //    }
+        var uv2 = new Vector2[vertices.Count];
 
-    //    //x-coord will be density of vertices near that vertex
-    //    //y-coord will be overshadowing
-    //    //(then we can use this data how we want in shader)
-    //    //(no point in generating a "height map" here because we can do that in shader with noise)
+        for (int i = 0; i < polygon.Count; i++)
+        {
+            var e0 = polygon[i > 0 ? i - 1 : polygon.Count - 1];
+            var e1 = polygon[i];
 
-    //    //organize vertices into grid
-    //    var span = bbMax - bbMin;
-    //    var gridWidth = (int)Mathf.Ceil(span.x / cellSize);
-    //    var gridHeight = (int)Mathf.Ceil(span.y / cellSize);
-    //    var numCells = gridWidth * gridHeight;
+            Vector2 u0 = (vertices[e0.Item1] - vertices[e0.Item2]).normalized;
+            Vector2 u1 = (vertices[e1.Item2] - vertices[e1.Item1]).normalized;
+            var convexity = MathTools.Cross2D(u0, u1);
+            var outwardNormal = convexity == 0 ? u1.CCWPerp() : -Mathf.Sign(convexity) * (0.5f * (u0 + u1)).normalized;
 
-    //    int Index(int i, int j) => i * gridWidth + j;
+            if (outwardNormal == Vector2.zero)
+            {
+                outwardNormal = u1.CCWPerp();
+            }
+            //var color = i == 0 ? Color.aquamarine : Color.pink;
+            //Debug.DrawLine(transform.TransformPoint(vertices[e1.Item1]), transform.TransformPoint((Vector2)vertices[e1.Item1] + outwardNormal), color, 60);
 
-    //    var cellVertexCount = new int[numCells];
-    //    var cellContainingVertex = new int[vertices.Count];
+            uv2[e1.Item1].x = convexity;
+            uv2[e1.Item1].y = outwardNormal.y;
+        }
 
-    //    for (int i = 0; i < vertices.Count; i++)
-    //    {
-    //        var p = vertices[i];
-    //        var a = Mathf.Clamp((int)((p.y - bbMin.y) / cellSize), 0, gridHeight - 1);
-    //        var b = Mathf.Clamp((int)((p.x - bbMin.x) / cellSize), 0, gridWidth - 1);
-    //        var cell = Index(a, b);
-    //        cellVertexCount[cell]++;
-    //        cellContainingVertex[i] = cell;
-    //    }
+        return uv2;
+    }
 
-    //    var cellStart = new int[numCells + 1];
-    //    for (int i = 1; i < cellStart.Length; i++)
-    //    {
-    //        cellStart[i] = cellStart[i - 1] + cellVertexCount[i - 1];
-    //    }
-
-    //    var verticesByCell = new int[vertices.Count];
-    //    for (int i = 0; i < cellContainingVertex.Length; i++)
-    //    {
-    //        var cell = cellContainingVertex[i];
-    //        var j = cellStart[cell] + --cellVertexCount[cell];
-    //        verticesByCell[j] = i;
-    //    }
-
-    //    var maxDens = 0f;
-    //    for (int i = 0; i < vertices.Count; i++)
-    //    {
-    //        Vector2 p = vertices[i];
-    //        var min = new Vector2(p.x - densitySmoothingRadius - bbMin.x, p.y - densitySmoothingRadius - bbMin.y);
-    //        var max = new Vector2(p.x + densitySmoothingRadius - bbMin.x, p.y + densitySmoothingRadius - bbMin.y);
-    //        var r2 = Mathf.Min((p - min).sqrMagnitude / 2, (p - max).sqrMagnitude / 2);
-    //        var aMin = Mathf.Clamp((int)(min.y / cellSize), 0, gridHeight - 1);
-    //        var bMin = Mathf.Clamp((int)(min.x / cellSize), 0, gridWidth - 1);
-    //        var aMax = Mathf.Clamp((int)(max.y / cellSize), 0, gridHeight - 1);
-    //        var bMax = Mathf.Clamp((int)(max.x / cellSize), 0, gridWidth - 1);
-
-    //        int occupiedCells = 0;
-    //        for (int a = aMin; a < aMax + 1; a++)
-    //        {
-    //            for (int b = bMin; b < bMax + 1; b++)
-    //            {
-    //                var cell = Index(a, b);
-    //                if (cellStart[cell] < cellStart[cell + 1])
-    //                {
-    //                    occupiedCells++;
-    //                    for (int v = cellStart[cell]; v < cellStart[cell + 1]; v++)
-    //                    {
-    //                        var d2 = Vector2.SqrMagnitude((Vector2)vertices[v] - p);
-    //                        if (d2 < r2)
-    //                        {
-    //                            geomData[i].x += SmoothingKernel(densityKernelDeg, d2, r2);
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //        }
-
-    //        geomData[i].x /= occupiedCells;
-    //        maxDens = Mathf.Max(geomData[i].x, maxDens);
-    //        geomData[i].y = 1;
-    //    }
-
-    //    for (int i = 0; i < vertices.Count; i++)
-    //    {
-    //        geomData[i].x = geomData[i].x / maxDens;
-    //        if (graphVertices.Contains(i))
-    //        {
-    //            geomData[i].x = Mathf.SmoothStep(geomData[i].x, 1, borderShadow);
-    //        }
-    //    }
-
-    //    //float SmoothingKernel(float N, float dist2, float radius2)
-    //    //{
-    //    //    return Mathf.Pow(1 - dist2 / radius2, N);
-    //    //}
-
-    //    return geomData;
-    //}
-
+    //rewrite to smooth only from vertices have values above a threshold
+    //and only to neighbors within a certain distance
+    //(and you may want to use a copy of the data for checking the thresholds, so it always checks the starting values)
     private void SmoothData(Vector2[] data, List<int>[] neighbors, int smoothingIterations, float smoothingWeight)
     {
         var dataCopy = new Vector2[data.Length];
@@ -296,20 +243,54 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             Array.Copy(data, dataCopy, data.Length);
             for (int j = 0; j < data.Length; j++)
             {
-                var n = neighbors[j].Count;
-                if (n == 0)
-                {
-                    continue;
-                }
-
                 var sum = Vector2.zero;
-                foreach (var k in neighbors[i])
+                foreach (var k in neighbors[j])
                 {
                     sum += dataCopy[k];
                 }
 
-                sum /= n;
+                sum /= neighbors[j].Count;
                 data[j] = Vector2.Lerp(dataCopy[j], sum, smoothingWeight);
+            }
+        }
+    }
+
+    private void SpreadGeomData(Vector2[] data, List<int>[] neighbors, int smoothingIterations, float highlightSpreadRate, float shadowSpreadRate)
+    {
+        var dataCopy = new Vector2[data.Length];
+        for (int i = 0; i < smoothingIterations; i++)
+        {
+            bool anyNonzero = false;
+            Array.Copy(data, dataCopy, data.Length);
+            for (int j = 0; j < data.Length; j++)
+            {
+                if (data[j] != Vector2.zero)
+                {
+                    continue;
+                }
+
+                anyNonzero = true;
+                var sum = Vector2.zero;
+                var count = 0;
+                foreach (var k in neighbors[j])
+                {
+                    if (dataCopy[k] != Vector2.zero)
+                    {
+                        sum += (dataCopy[k].y > 0 ? highlightSpreadRate  : shadowSpreadRate) * dataCopy[k];
+                        count++;
+                    }
+                }
+
+                if (count != 0)
+                {
+                    data[j] = sum / count;
+                }
+            }
+
+            if (!anyNonzero)
+            {
+                Debug.Log($"Finished spread after {i} iterations");
+                break;
             }
         }
     }
