@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: TerrainGeomMat
+  m_Name: TerrainTestMat
   m_Shader: {fileID: -6465566751694194690, guid: eefd51e18a19f8648a5cbe0171a24e7a, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -53,15 +53,46 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _BorderFadeRate: 0.5
+    - _BorderFadeRate: 0.1
+    - _ColorNoiseDensity: 0.5
+    - _ColorNoiseScale: 4
+    - _ConcaveShadowContrast: 1
+    - _ConcaveShadowStrength: 2
+    - _ConvexHighlightContrast: 1
+    - _ConvexHighlightStrength: 1
     - _DensityPower: 0.5
+    - _DistortionDensity: 1
+    - _DistortionMax: 1
+    - _DistortionMin: 0.5
+    - _DistortionScale: 1
     - _EnableExternalAlpha: 0
+    - _GeometryBlendOpacity: 0.9
+    - _HighlightOverNoisePower: 0.71
+    - _NoiseBlendMax: 1
+    - _NoiseBlendMin: 0.5
+    - _NoiseDensity: 2
+    - _NoiseMax: 1
+    - _NoiseMin: 0
+    - _NoiseScale: 35
+    - _ShadowColor: 0
+    - _UV1OutputMax: 1.5
+    - _UV1OutputMin: 0
+    - _UV2OutputContrast: 1
+    - _UV2OutputMax: 2
+    - _UV2OutputMin: 0
+    - _UndersideShadowContrast: 0.9
+    - _UndersideShadowStrength: 1
+    - _UpsideHighlightContrast: 1
+    - _UpsideHighlightStrength: 1
     - _ZWrite: 0
     m_Colors:
     - White: {r: 1, g: 1, b: 1, a: 1}
     - _BorderShadow: {r: 0.5320754, g: 0.5320754, b: 0.5320754, a: 1}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.81886786, g: 0.62264854, b: 0.6962143, a: 1}
+    - _Color1: {r: 0.4756624, g: 0.3882353, b: 0.6392157, a: 1}
+    - _Color2: {r: 0.7604495, g: 0.6666667, b: 0.81960785, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
+    - _ShadowColorMultiplier: {r: 0.11014286, g: 0.096952625, b: 0.19245279, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &8220188078833339901

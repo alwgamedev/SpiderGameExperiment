@@ -20,15 +20,11 @@ namespace Collider2DOptimization{
 				//When first getting a reference to the collider save the paths
 				//so that the optimization is redoable (by performing it on the original path
 				//every time)
-				coll = GetComponent<PolygonCollider2D>();
-				for(int i = 0; i < coll.pathCount; i++)
-				{
-					List<Vector2> path = new List<Vector2>(coll.GetPath(i));
-					originalPaths.Add(path);
-				}
+				Refresh();
 			}
-			//Reset the original paths
-			if(tolerance <= 0)
+
+            //Reset the original paths
+            if (tolerance <= 0)
 			{
 				for(int i = 0; i < originalPaths.Count; i++)
 				{
@@ -45,5 +41,15 @@ namespace Collider2DOptimization{
 
 			}
 		}
+
+		public void Refresh()
+		{
+            coll = GetComponent<PolygonCollider2D>();
+            for (int i = 0; i < coll.pathCount; i++)
+            {
+                List<Vector2> path = new List<Vector2>(coll.GetPath(i));
+                originalPaths.Add(path);
+            }
+        }
 	}
 }

@@ -255,17 +255,6 @@ public static class Triangulator
             }
         }
 
-        //e = 0;
-        //while (e < graph.Count)
-        //{
-        //    var next = e == graph.Count - 1 ? 0 : e + 1;
-        //    if (graph[e].Item2 != graph[next].Item1)
-        //    {
-        //        graph.Insert(next, (graph[e].Item2, graph[next].Item1));
-        //    }
-        //    e++;
-        //}
-
         HashSet<int> border = new();
         foreach (var edge in graph)
         {

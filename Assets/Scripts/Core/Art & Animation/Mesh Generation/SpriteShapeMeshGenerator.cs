@@ -10,6 +10,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
 
     [SerializeField] SpriteShapeController spriteShapeController;
     [SerializeField] MeshFilter meshFilter;
+    [SerializeField] PolygonCollider2D polygonCollider;
     [SerializeField] int arcLengthSamples;
     [SerializeField] float splineSampleRate;//number of sample points per unit of distance between sprite shape vertices
 
@@ -26,7 +27,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
     [SerializeField] int geomSmoothingIterations;
     [SerializeField] float geomSmoothingRate;
 
-    public void GenerateMesh()
+    public void GenerateMesh(bool updateCollider)
     {
         var spline = spriteShapeController.spline;
 
@@ -58,6 +59,9 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             {
                 var s = (float)j / numSubPoints;
                 var pj = BezierUtility.BezierPoint(pRightTangent, p, q, qLeftTangent, s);
+                pj = spriteShapeController.transform.TransformPoint(pj);
+                pj += transform.position - spriteShapeController.transform.position;
+                pj = transform.InverseTransformPoint(pj);
                 vertices.Add(pj);
             }
         }
@@ -74,9 +78,9 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         //    var t1 = triangles[t++];
         //    var t2 = triangles[t++];
 
-        //    var p0 = spriteShapeController.transform.TransformPoint(vertices[t0]);
-        //    var p1 = spriteShapeController.transform.TransformPoint(vertices[t1]);
-        //    var p2 = spriteShapeController.transform.TransformPoint(vertices[t2]);
+        //    var p0 = transform.TransformPoint(vertices[t0]);
+        //    var p1 = transform.TransformPoint(vertices[t1]);
+        //    var p2 = transform.TransformPoint(vertices[t2]);
 
         //    Debug.DrawLine(p0, p1, Color.red, 3);
         //    Debug.DrawLine(p1, p2, Color.red, 3);
@@ -100,13 +104,13 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         {
             var e = refinedPolygon[i];
             polygonVertices.Add(e.Item1);
-            var color = (i % 3) switch
-            {
-                0 => Color.red,
-                1 => Color.green,
-                _ => Color.blue
-            };
-            Debug.DrawLine(transform.TransformPoint(vertices[e.Item1]), transform.TransformPoint(vertices[e.Item2]), color, 60);
+            //var color = (i % 3) switch
+            //{
+            //    0 => Color.red,
+            //    1 => Color.green,
+            //    _ => Color.blue
+            //};
+            //Debug.DrawLine(transform.TransformPoint(vertices[e.Item1]), transform.TransformPoint(vertices[e.Item2]), color, 60);
         }
 
         var uv1 = GenerateUV1(vertices, refinedPolygon, polygonVertices, neighbors, borderWidth);
@@ -122,6 +126,11 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         mesh.SetUVs(1, uv1);
         mesh.SetUVs(2, uv2);
         mesh.RecalculateNormals();
+
+        if (updateCollider && polygonCollider)
+        {
+            polygonCollider.points = refinedPolygon.Select(e => (Vector2)vertices[e.Item1]).ToArray();
+        }
     }
 
     public void ApplyMesh()

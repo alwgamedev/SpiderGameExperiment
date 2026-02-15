@@ -13,7 +13,15 @@ public class SpriteShapeMeshGeneratorEditor : Editor
         {
             foreach (var t in targets)
             {
-                ((SpriteShapeMeshGenerator)t).GenerateMesh();
+                ((SpriteShapeMeshGenerator)t).GenerateMesh(false);
+            }
+        }
+
+        if (GUILayout.Button("Generate Mesh and Collider"))
+        {
+            foreach (var t in targets)
+            {
+                ((SpriteShapeMeshGenerator)t).GenerateMesh(true);
             }
         }
 
