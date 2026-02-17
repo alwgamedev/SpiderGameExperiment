@@ -9603,704 +9603,705 @@ MonoBehaviour:
   groundednessInitialContactValue: 1
   groundDirectionSampleWidth: 0.5
   backupGroundPtRaycastLengthFactor: 1.1
-  groundPtSlipRate: 85
-  groundPtSlipThreshold: 0.2
+  groundPtSlipSpeedThreshold: 0.5
   upcomingGroundDirectionMinPos: 0
-  upcomingGroundDirectionMaxPos: 0.4
+  upcomingGroundDirectionMaxPos: 0.8
   failedGroundDirectionSmoothingRate: 45
+  forceGroundMapUpdateThreshold: 0.2
   groundMap:
-    numFwdIntervals: 55
-    intervalWidth: 0.03
+    numFwdIntervals: 40
+    intervalWidth: 0.05
     map:
-    - position: -1.6500036
-      raycastDistance: 0.828
-      point: {x: 7.629009, y: 3.1061437}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -1.6200035
-      raycastDistance: 0.828
-      point: {x: 7.63569, y: 3.0768971}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -1.5900034
-      raycastDistance: 0.828
-      point: {x: 7.6423717, y: 3.0476506}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -1.5600033
-      raycastDistance: 0.828
-      point: {x: 7.649053, y: 3.018404}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -1.5300032
-      raycastDistance: 0.828
-      point: {x: 7.6557345, y: 2.9891574}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -1.5000031
-      raycastDistance: 0.828
-      point: {x: 7.662416, y: 2.9599109}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -1.470003
-      raycastDistance: 0.828
-      point: {x: 7.6690974, y: 2.9306643}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -1.4400029
-      raycastDistance: 0.828
-      point: {x: 7.675779, y: 2.9014177}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -1.4100028
-      raycastDistance: 0.828
-      point: {x: 7.6824603, y: 2.8721712}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -1.3800027
-      raycastDistance: 0.828
-      point: {x: 7.6891418, y: 2.8429246}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -1.3500026
-      raycastDistance: 0.828
-      point: {x: 7.695823, y: 2.813678}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -1.3200026
-      raycastDistance: 0.828
-      point: {x: 7.7025046, y: 2.7844315}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -1.2900025
-      raycastDistance: 0.828
-      point: {x: 7.709186, y: 2.755185}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -1.2600024
-      raycastDistance: 0.828
-      point: {x: 7.7158675, y: 2.7259383}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -1.2300023
-      raycastDistance: 0.828
-      point: {x: 7.722549, y: 2.6966918}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -1.2000022
-      raycastDistance: 0.828
-      point: {x: 7.7292304, y: 2.6674452}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -1.1700021
-      raycastDistance: 0.828
-      point: {x: 7.735912, y: 2.6381986}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -1.140002
-      raycastDistance: 0.828
-      point: {x: 7.7425933, y: 2.608952}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -1.1100019
-      raycastDistance: 0.828
-      point: {x: 7.7492747, y: 2.5797055}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -1.0800018
-      raycastDistance: 0.828
-      point: {x: 7.755956, y: 2.550459}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -1.0500017
-      raycastDistance: 0.828
-      point: {x: 7.7626376, y: 2.5212123}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -1.0200016
-      raycastDistance: 0.828
-      point: {x: 7.769319, y: 2.4919658}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -0.9900016
-      raycastDistance: 0.828
-      point: {x: 7.7760005, y: 2.4627192}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -0.9600016
-      raycastDistance: 0.828
-      point: {x: 7.782682, y: 2.4334726}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -0.93000156
-      raycastDistance: 0.828
-      point: {x: 7.7893634, y: 2.404226}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -0.9000015
-      raycastDistance: 0.828
-      point: {x: 7.796045, y: 2.3749795}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -0.8700015
-      raycastDistance: 0.828
-      point: {x: 7.8027263, y: 2.345733}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -0.84000146
-      raycastDistance: 0.828
-      point: {x: 7.8094077, y: 2.3164864}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -0.81000143
-      raycastDistance: 0.828
-      point: {x: 7.816089, y: 2.2872398}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -0.7800014
-      raycastDistance: 0.828
-      point: {x: 7.8227706, y: 2.2579932}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -0.7500014
-      raycastDistance: 0.828
-      point: {x: 7.829452, y: 2.2287467}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -0.72000134
-      raycastDistance: 0.828
-      point: {x: 7.8361335, y: 2.1995}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -0.6900013
-      raycastDistance: 0.828
-      point: {x: 7.842815, y: 2.1702535}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -0.6600013
-      raycastDistance: 0.828
-      point: {x: 7.8494964, y: 2.141007}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -0.63000125
-      raycastDistance: 0.828
-      point: {x: 7.856178, y: 2.1117604}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -0.6000012
-      raycastDistance: 0.828
-      point: {x: 7.8628592, y: 2.0825138}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -0.5700012
-      raycastDistance: 0.828
-      point: {x: 7.8695407, y: 2.0532672}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -0.54000115
-      raycastDistance: 0.828
-      point: {x: 7.876222, y: 2.0240207}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -0.5100011
-      raycastDistance: 0.828
-      point: {x: 7.8829036, y: 1.9947741}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -0.48000106
-      raycastDistance: 0.828
-      point: {x: 7.889585, y: 1.9655275}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -0.450001
-      raycastDistance: 0.828
-      point: {x: 7.8962665, y: 1.936281}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -0.42000094
-      raycastDistance: 0.828
-      point: {x: 7.902948, y: 1.9070344}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -0.39000088
-      raycastDistance: 0.828
-      point: {x: 7.9096293, y: 1.8777878}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -0.36000082
-      raycastDistance: 0.828
-      point: {x: 7.916311, y: 1.8485413}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -0.33000076
-      raycastDistance: 0.828
-      point: {x: 7.922992, y: 1.8192947}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -0.30000058
-      raycastDistance: 0.828
-      point: {x: 7.9296737, y: 1.790048}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -0.27000052
-      raycastDistance: 0.828
-      point: {x: 7.936355, y: 1.7608014}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -0.24000047
-      raycastDistance: 0.828
-      point: {x: 7.9430366, y: 1.7315549}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -0.21000041
-      raycastDistance: 0.828
-      point: {x: 7.949718, y: 1.7023083}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -0.18000035
-      raycastDistance: 0.828
-      point: {x: 7.9563994, y: 1.6730617}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -0.15000029
-      raycastDistance: 0.828
-      point: {x: 7.963081, y: 1.6438152}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -0.12000023
-      raycastDistance: 0.828
-      point: {x: 7.9697623, y: 1.6145686}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -0.09000017
-      raycastDistance: 0.828
-      point: {x: 7.976444, y: 1.585322}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -0.060000114
-      raycastDistance: 0.828
-      point: {x: 7.983125, y: 1.5560755}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: -0.030000057
-      raycastDistance: 0.828
-      point: {x: 7.9898067, y: 1.5268289}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 0
-      raycastDistance: 0.828
-      point: {x: 7.996488, y: 1.4975823}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 0.02999995
-      raycastDistance: 0.828
-      point: {x: 8.003169, y: 1.4683357}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 0.06000001
-      raycastDistance: 0.828
-      point: {x: 8.0098505, y: 1.4390892}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 0.09000006
-      raycastDistance: 0.828
-      point: {x: 8.016532, y: 1.4098426}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 0.120000124
-      raycastDistance: 0.828
-      point: {x: 8.023213, y: 1.380596}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 0.15000018
-      raycastDistance: 0.828
-      point: {x: 8.029895, y: 1.3513495}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 0.18000025
-      raycastDistance: 0.828
-      point: {x: 8.036576, y: 1.3221029}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 0.2100003
-      raycastDistance: 0.828
-      point: {x: 8.043258, y: 1.2928563}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 0.24000037
-      raycastDistance: 0.828
-      point: {x: 8.049939, y: 1.2636098}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 0.27000043
-      raycastDistance: 0.828
-      point: {x: 8.056621, y: 1.2343632}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 0.3000005
-      raycastDistance: 0.828
-      point: {x: 8.063302, y: 1.2051166}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 0.33000055
-      raycastDistance: 0.828
-      point: {x: 8.0699835, y: 1.1758701}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 0.3600006
-      raycastDistance: 0.828
-      point: {x: 8.076665, y: 1.1466235}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 0.39000067
-      raycastDistance: 0.828
-      point: {x: 8.083346, y: 1.1173769}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 0.42000073
-      raycastDistance: 0.828
-      point: {x: 8.090028, y: 1.0881304}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 0.4500008
-      raycastDistance: 0.828
-      point: {x: 8.096709, y: 1.0588838}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 0.48000085
-      raycastDistance: 0.828
-      point: {x: 8.103391, y: 1.0296372}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 0.5100009
-      raycastDistance: 0.828
-      point: {x: 8.110072, y: 1.0003906}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 0.54000086
-      raycastDistance: 0.828
-      point: {x: 8.116754, y: 0.97114414}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 0.5700009
-      raycastDistance: 0.828
-      point: {x: 8.123435, y: 0.9418976}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 0.6000009
-      raycastDistance: 0.828
-      point: {x: 8.130116, y: 0.912651}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 0.63000095
-      raycastDistance: 0.828
-      point: {x: 8.136798, y: 0.88340443}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 0.660001
-      raycastDistance: 0.828
-      point: {x: 8.143479, y: 0.85415787}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 0.690001
-      raycastDistance: 0.828
-      point: {x: 8.150161, y: 0.8249113}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 0.72000104
-      raycastDistance: 0.828
-      point: {x: 8.156842, y: 0.7956647}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 0.7500011
-      raycastDistance: 0.828
-      point: {x: 8.163524, y: 0.76641816}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 0.7800011
-      raycastDistance: 0.828
-      point: {x: 8.170205, y: 0.7371716}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 0.81000113
-      raycastDistance: 0.828
-      point: {x: 8.176887, y: 0.707925}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 0.84000117
-      raycastDistance: 0.828
-      point: {x: 8.183568, y: 0.67867845}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 0.8700012
-      raycastDistance: 0.828
-      point: {x: 8.190249, y: 0.6494319}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 0.9000012
-      raycastDistance: 0.828
-      point: {x: 8.196931, y: 0.6201853}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 0.93000126
-      raycastDistance: 0.828
-      point: {x: 8.203612, y: 0.59093875}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 0.9600013
-      raycastDistance: 0.828
-      point: {x: 8.210294, y: 0.5616922}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 0.9900013
-      raycastDistance: 0.828
-      point: {x: 8.216975, y: 0.5324456}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 1.0200014
-      raycastDistance: 0.828
-      point: {x: 8.223657, y: 0.50319904}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 1.0500015
-      raycastDistance: 0.828
-      point: {x: 8.230338, y: 0.47395247}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 1.0800016
-      raycastDistance: 0.828
-      point: {x: 8.23702, y: 0.4447059}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 1.1100017
-      raycastDistance: 0.828
-      point: {x: 8.243701, y: 0.41545933}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 1.1400018
-      raycastDistance: 0.828
-      point: {x: 8.250382, y: 0.38621277}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 1.1700019
-      raycastDistance: 0.828
-      point: {x: 8.257064, y: 0.3569662}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 1.200002
-      raycastDistance: 0.828
-      point: {x: 8.263745, y: 0.32771963}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 1.230002
-      raycastDistance: 0.828
-      point: {x: 8.270427, y: 0.298473}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 1.2600021
-      raycastDistance: 0.828
-      point: {x: 8.277108, y: 0.26922637}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 1.2900022
-      raycastDistance: 0.828
-      point: {x: 8.28379, y: 0.23997976}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 1.3200023
-      raycastDistance: 0.828
-      point: {x: 8.290471, y: 0.21073316}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 1.3500024
-      raycastDistance: 0.828
-      point: {x: 8.2971525, y: 0.18148656}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 1.3800025
-      raycastDistance: 0.828
-      point: {x: 8.303834, y: 0.15223996}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 1.4100026
-      raycastDistance: 0.828
-      point: {x: 8.310515, y: 0.122993365}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 1.4400027
-      raycastDistance: 0.828
-      point: {x: 8.317197, y: 0.09374677}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 1.4700028
-      raycastDistance: 0.828
-      point: {x: 8.323878, y: 0.06450018}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 1.5000029
-      raycastDistance: 0.828
-      point: {x: 8.33056, y: 0.0352536}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 1.530003
-      raycastDistance: 0.828
-      point: {x: 8.337241, y: 0.0060070157}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 1.560003
-      raycastDistance: 0.828
-      point: {x: 8.343923, y: -0.023239568}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 1.5900031
-      raycastDistance: 0.828
-      point: {x: 8.350604, y: -0.05248615}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 1.6200032
-      raycastDistance: 0.828
-      point: {x: 8.3572855, y: -0.081732735}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
-      groundCollider: {fileID: 0}
-    - position: 1.6500033
-      raycastDistance: 0.828
-      point: {x: 8.363967, y: -0.11097932}
-      normal: {x: 0.97488624, y: 0.22270364}
-      right: {x: 0.22270364, y: -0.97488624}
+    - arcLengthPosition: -1.6403018
+      raycastDistance: 0.016334534
+      point: {x: -12.317773, y: 5.265467}
+      normal: {x: 0, y: -1}
+      right: {x: -1, y: -0}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -1.6103011
+      raycastDistance: 0.016334534
+      point: {x: -12.347774, y: 5.265467}
+      normal: {x: 0, y: -1}
+      right: {x: -1, y: -0}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -1.5803014
+      raycastDistance: 0.016334534
+      point: {x: -12.377773, y: 5.265467}
+      normal: {x: 0, y: -1}
+      right: {x: -1, y: -0}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -1.5503017
+      raycastDistance: 0.016334534
+      point: {x: -12.407773, y: 5.265467}
+      normal: {x: 0, y: -1}
+      right: {x: -1, y: -0}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -1.520301
+      raycastDistance: 0.016334534
+      point: {x: -12.437774, y: 5.265467}
+      normal: {x: 0, y: -1}
+      right: {x: -1, y: -0}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -1.4903013
+      raycastDistance: 0.016334534
+      point: {x: -12.467773, y: 5.265467}
+      normal: {x: 0, y: -1}
+      right: {x: -1, y: -0}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -1.4603015
+      raycastDistance: 0.016334534
+      point: {x: -12.497773, y: 5.265467}
+      normal: {x: 0, y: -1}
+      right: {x: -1, y: -0}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -1.4303018
+      raycastDistance: 0.016334534
+      point: {x: -12.527773, y: 5.265467}
+      normal: {x: 0, y: -1}
+      right: {x: -1, y: -0}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -1.4003011
+      raycastDistance: 0.016334534
+      point: {x: -12.557774, y: 5.265467}
+      normal: {x: 0, y: -1}
+      right: {x: -1, y: -0}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -1.3703014
+      raycastDistance: 0.016334534
+      point: {x: -12.587773, y: 5.265467}
+      normal: {x: 0, y: -1}
+      right: {x: -1, y: -0}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -1.3403016
+      raycastDistance: 0.016334534
+      point: {x: -12.617773, y: 5.265467}
+      normal: {x: 0, y: -1}
+      right: {x: -1, y: -0}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -1.310301
+      raycastDistance: 0.016334534
+      point: {x: -12.647774, y: 5.265467}
+      normal: {x: 0, y: -1}
+      right: {x: -1, y: -0}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -1.2803003
+      raycastDistance: 0.016334534
+      point: {x: -12.677774, y: 5.265467}
+      normal: {x: 0, y: -1}
+      right: {x: -1, y: -0}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -1.2503005
+      raycastDistance: 0.016334534
+      point: {x: -12.707774, y: 5.265467}
+      normal: {x: 0, y: -1}
+      right: {x: -1, y: -0}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -1.2300086
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 5.279133}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -1.2000084
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 5.309133}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -1.1700082
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 5.3391333}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -1.140008
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 5.3691335}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -1.1100078
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 5.3991337}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -1.0800076
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 5.429134}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -1.0500073
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 5.459134}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -1.0200071
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 5.4891343}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -0.9900069
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 5.5191345}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -0.9600072
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 5.5491343}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -0.9300065
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 5.579135}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -0.9000063
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 5.609135}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -0.8700061
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 5.6391354}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -0.8400059
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 5.6691356}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -0.81000566
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 5.699136}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -0.78000593
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 5.7291355}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -0.75000525
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 5.759136}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -0.72000504
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 5.7891364}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -0.6900048
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 5.8191366}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -0.6600046
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 5.849137}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -0.6300044
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 5.879137}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -0.6000047
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 5.909137}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -0.570004
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 5.9391375}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -0.5400038
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 5.9691377}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -0.51000357
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 5.999138}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -0.48000336
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 6.029138}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -0.45000315
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 6.0591383}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -0.4200034
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 6.089138}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -0.39000273
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 6.1191387}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -0.36000204
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 6.1491394}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -0.33000183
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 6.1791396}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -0.30000162
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 6.20914}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -0.2700014
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 6.23914}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -0.2400012
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 6.2691402}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -0.21000147
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 6.29914}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -0.18000078
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 6.3291407}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -0.15000057
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 6.359141}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -0.12000036
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 6.389141}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -0.09000015
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 6.4191413}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -0.059999943
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 6.4491415}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: -0.03000021
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 6.479141}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 0
+      raycastDistance: 0.9198314
+      point: {x: -12.7227745, y: 6.5091414}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 0.03000021
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 6.5391417}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 0.06000042
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 6.569142}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 0.09000063
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 6.599142}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 0.120001316
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 6.6291428}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 0.15000105
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 6.6591425}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 0.18000126
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 6.6891427}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 0.21000147
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 6.719143}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 0.24000168
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 6.749143}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 0.2700019
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 6.7791433}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 0.30000257
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 6.809144}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 0.33000326
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 6.8391447}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 0.360003
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 6.8691444}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 0.3900032
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 6.8991446}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 0.4200034
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 6.929145}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 0.45000362
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 6.959145}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 0.48000383
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 6.9891453}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 0.5100045
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 7.019146}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 0.54000425
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 7.0491457}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 0.57000446
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 7.079146}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 0.6000047
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 7.109146}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 0.6300049
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 7.1391463}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 0.6600051
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 7.1691465}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 0.6900058
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 7.199147}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 0.7200055
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 7.229147}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 0.7500057
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 7.259147}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 0.78000593
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 7.2891474}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 0.81000614
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 7.3191476}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 0.84000635
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 7.349148}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 0.87000704
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 7.3791485}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 0.9000068
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 7.409148}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 0.930007
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 7.4391484}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 0.9600072
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 7.4691486}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 0.9900074
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 7.499149}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 1.0200076
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 7.529149}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 1.0500083
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 7.5591497}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 1.080009
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 7.5891504}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 1.1100087
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 7.61915}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 1.1400089
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 7.6491504}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 1.1700091
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 7.6791506}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 1.2000093
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 7.709151}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 1.2300096
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 7.739151}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 1.2600102
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 7.7691517}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 1.29001
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 7.7991514}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 1.3200102
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 7.8291516}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 1.3500104
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 7.859152}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 1.3800106
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 7.889152}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 1.4100108
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 7.9191523}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 1.4400115
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 7.949153}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 1.4700112
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 7.9791527}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 1.500011
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 8.009152}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 1.5300107
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 8.039152}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 1.5600104
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 8.069152}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 1.5900102
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 8.099152}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 1.6200099
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 8.129151}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
+      groundCollider: {fileID: 0}
+    - arcLengthPosition: 1.6500096
+      raycastDistance: 0.9198313
+      point: {x: -12.7227745, y: 8.159151}
+      normal: {x: -1, y: -0}
+      right: {x: -0, y: 1}
       groundCollider: {fileID: 0}
   accelFactor: 35
   accelFactorFreeHanging: 15.5
   deadThrusterAccelFactor: 4
   thrustingAccelFactor: 25
   accelCap: 3
-  decelFactor: 50
-  gripStrength: 450
+  decelFactor: 375
+  gripStrength: 1000
   grapplePullGripReduction: 0.95
   maxSpeed: 5
   maxSpeedAirborne: 9
   preferredRideHeight: 0.92
-  heightSpringForce: 450
-  heightSpringDamping: 17
+  heightSpringForce: 500
+  heightSpringDamping: 30
   heightSpringBreakThreshold: 0.01
   grappleSquatReduction: 0.4
   heightSampleWidth: 0.8
   abdomenRotationSpeed: 6
   headRotationSpeed: 10
-  balanceSpringForce: 200
+  balanceSpringForce: 225
+  balanceSpringForceMin: 20
+  balanceSpringForceSpeedThreshold: 0.2
   airborneBalanceSpringForce: 100
-  balanceSpringDamping: 0.175
+  balanceSpringDamping: 0.25
   airborneBalanceSpringDamping: 0.04
-  balanceSpeedThreshold: 0.25
   grappleScurryResistanceMax: 175
   grappleScurryAngleMin: -0.5235988
   jumpForce: 10
@@ -10322,8 +10323,8 @@ MonoBehaviour:
   freeHangHeadAngle: 0.2094395
   freeHangStepHeightReductionMax: 0.9
   freeHangStrideMultiplier: 0.7
-  freeHangLegReachFraction: 0.9
-  freeHangSimulateContactMax: 0.15
+  freeHangLegReachFraction: 1
+  freeHangSimulateContactMax: 0.1
   thruster:
     secondsToDrain: 5
     secondsToRecharge: 10
@@ -10453,7 +10454,6 @@ MonoBehaviour:
     - {fileID: 871183515759155505}
     - {fileID: 8270222540382114309}
     target: {fileID: 2278123347475011000}
-    targetSmoothingRate: 25
     stepMax: 0.9
   - contactSettings:
       gravityStrength: 0
@@ -10478,7 +10478,6 @@ MonoBehaviour:
     - {fileID: 8378328544454571262}
     - {fileID: 3120058777622577783}
     target: {fileID: 4380958847150461223}
-    targetSmoothingRate: 25
     stepMax: 0.9
   - contactSettings:
       gravityStrength: 0
@@ -10503,7 +10502,6 @@ MonoBehaviour:
     - {fileID: 3033994015570042515}
     - {fileID: 8714597820655926901}
     target: {fileID: 1238561792403655595}
-    targetSmoothingRate: 25
     stepMax: 0.825
   - contactSettings:
       gravityStrength: 0
@@ -10528,7 +10526,6 @@ MonoBehaviour:
     - {fileID: 2034791752815395644}
     - {fileID: 7669166903120010156}
     target: {fileID: 1137408330521889720}
-    targetSmoothingRate: 25
     stepMax: 0.825
   - contactSettings:
       gravityStrength: 0
@@ -10553,7 +10550,6 @@ MonoBehaviour:
     - {fileID: 3912250904285809636}
     - {fileID: 4327750774746436712}
     target: {fileID: 6915238945053128507}
-    targetSmoothingRate: 25
     stepMax: -0.05
   - contactSettings:
       gravityStrength: 0
@@ -10578,7 +10574,6 @@ MonoBehaviour:
     - {fileID: 1262494296321640506}
     - {fileID: 4109640117689536782}
     target: {fileID: 8327284446163506453}
-    targetSmoothingRate: 25
     stepMax: -0.05
   - contactSettings:
       gravityStrength: 0
@@ -10603,7 +10598,6 @@ MonoBehaviour:
     - {fileID: 7203260424078161818}
     - {fileID: 4199633852037162369}
     target: {fileID: 7491916336825498184}
-    targetSmoothingRate: 25
     stepMax: -0.2
   - contactSettings:
       gravityStrength: 0
@@ -10628,47 +10622,46 @@ MonoBehaviour:
     - {fileID: 7261066662746368589}
     - {fileID: 1884732402649843420}
     target: {fileID: 5994156311465296893}
-    targetSmoothingRate: 25
     stepMax: -0.2
   stdSettings:
   - gravityStrength: 0
     poseForce: 1500
-    limpness: 0.1
+    limpness: 0
     jointDamping: 25
     stepHeight: 0.8
   - gravityStrength: 0
     poseForce: 1500
-    limpness: 0.1
+    limpness: 0
     jointDamping: 25
     stepHeight: 0.8
   - gravityStrength: 0
     poseForce: 1500
-    limpness: 0.1
+    limpness: 0
     jointDamping: 25
     stepHeight: 0.8
   - gravityStrength: 0
     poseForce: 1500
-    limpness: 0.1
+    limpness: 0
     jointDamping: 25
     stepHeight: 0.8
   - gravityStrength: 0
     poseForce: 1500
-    limpness: 0.1
+    limpness: 0
     jointDamping: 25
     stepHeight: 0.8
   - gravityStrength: 0
     poseForce: 1500
-    limpness: 0.1
+    limpness: 0
     jointDamping: 25
     stepHeight: 0.8
   - gravityStrength: 0
     poseForce: 1500
-    limpness: 0.1
+    limpness: 0
     jointDamping: 25
     stepHeight: 0.8
   - gravityStrength: 0
     poseForce: 1500
-    limpness: 0.1
+    limpness: 0
     jointDamping: 25
     stepHeight: 0.8
   jumpSettings:
@@ -10755,22 +10748,22 @@ MonoBehaviour:
     stepHeight: 0.8
   limpSettings:
   - gravityStrength: 1
-    poseForce: 50
+    poseForce: 25
     limpness: 0.035
     jointDamping: 16
     stepHeight: 0.1
   - gravityStrength: 1
-    poseForce: 50
+    poseForce: 25
     limpness: 0.035
     jointDamping: 16
     stepHeight: 0.1
   - gravityStrength: 1
-    poseForce: 50
+    poseForce: 25
     limpness: 0.035
     jointDamping: 16
     stepHeight: 0.1
   - gravityStrength: 1
-    poseForce: 50
+    poseForce: 25
     limpness: 0.035
     jointDamping: 16
     stepHeight: 0.1
@@ -10805,6 +10798,7 @@ MonoBehaviour:
   - 0.775
   fabrikIterations: 10
   fabrikTolerance: 0.01
+  targetSmoothingRate: 50
   groundContactRadius: 0.085
   bodyGroundSpeedSign: 0
   absoluteBodyGroundSpeed: 0
@@ -11077,7 +11071,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1472496846458269233, guid: c48c2c27835040c4583bc8b1bcda90c6, type: 3}
       propertyPath: jointDamping
-      value: 5
+      value: 5.75
       objectReference: {fileID: 0}
     - target: {fileID: 1472496846458269233, guid: c48c2c27835040c4583bc8b1bcda90c6, type: 3}
       propertyPath: poseTolerance

@@ -146,7 +146,7 @@ public class LegTarget
         var wasTouchingGround = IsTouchingGround;
 
         Vector2 q = ikEffector.position;
-        q -= groundMap.ClosestPoint(q, out var n, out var hitGround);
+        q -= groundMap.FastClosestPoint(q, out var n, out var hitGround);
         //ContactNormal = n;
         IsTouchingGround = hitGround && (Vector2.SqrMagnitude(q) < groundContactRadius2 || Vector2.Dot(q, n) < 0);
 
@@ -161,7 +161,7 @@ public class LegTarget
         var h = Vector2.Dot((Vector2)hipBone.position - map.LastOrigin, map.LastOriginRight);//we could also use body position and body right
         h = bodyFacingRight ? h + StepStartHorizontalOffset(stepProgress, stepTime, restTime)
             : h - StepStartHorizontalOffset(stepProgress, stepTime, restTime);
-        return map.PointFromCenterByPosition(bodyFacingRight ? h + driftWeight * drift.x : h - driftWeight * drift.x, out var n, out _) + driftWeight * drift.y * n;
+        return map.PointFromCenterByArcLength(bodyFacingRight ? h + driftWeight * drift.x : h - driftWeight * drift.x, out var n, out _) + driftWeight * drift.y * n;
     }
 
     private Vector2 GetStepGoal(GroundMap map, bool bodyFacingRight, float restProgress, float restTime)
@@ -169,7 +169,7 @@ public class LegTarget
         var h = Vector2.Dot((Vector2)hipBone.position - map.LastOrigin, map.LastOriginRight);//we could also use body position and body right
         h = bodyFacingRight ? h + StepGoalHorizontalOffset(restProgress, restTime)
             : h - StepGoalHorizontalOffset(restProgress, restTime);
-        return map.PointFromCenterByPosition(bodyFacingRight ? h + driftWeight * drift.x : h - driftWeight * drift.x, out var n, out _) + driftWeight * drift.y * n;
+        return map.PointFromCenterByArcLength(bodyFacingRight ? h + driftWeight * drift.x : h - driftWeight * drift.x, out var n, out _) + driftWeight * drift.y * n;
     }
 
     private Vector2 GetStepStart(float bodyPosGroundHeight, Vector2 bodyPos, Vector2 bodyMovementRight, Vector2 bodyUp,

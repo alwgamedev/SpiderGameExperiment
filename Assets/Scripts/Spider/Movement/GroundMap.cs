@@ -68,18 +68,18 @@ public class GroundMap
         for (int i = 1; i < numFwdIntervals; i++)
         {
             ref var r = ref map[numFwdIntervals + i];
-            if (r.position < maxPosition && !r.HitGround)
+            if (r.arcLengthPosition < maxPosition && !r.HitGround)
             {
                 return false;
             }
 
             ref var l = ref map[numFwdIntervals - i];
-            if (l.position > minPosition && l.HitGround)
+            if (l.arcLengthPosition > minPosition && l.HitGround)
             {
                 return false;
             }
 
-            if (r.position > maxPosition && l.position < minPosition)
+            if (r.arcLengthPosition > maxPosition && l.arcLengthPosition < minPosition)
             {
                 return true;
             }
@@ -100,18 +100,18 @@ public class GroundMap
         for (int i = 1; i < numFwdIntervals; i++)
         {
             ref var r = ref map[numFwdIntervals + i];
-            if (r.position < maxPosition && r.HitGround)
+            if (r.arcLengthPosition < maxPosition && r.HitGround)
             {
                 return true;
             }
 
             ref var l = ref map[numFwdIntervals - i];
-            if (l.position > minPosition && l.HitGround)
+            if (l.arcLengthPosition > minPosition && l.HitGround)
             {
                 return true;
             }
 
-            if (r.position > maxPosition && l.position < minPosition)
+            if (r.arcLengthPosition > maxPosition && l.arcLengthPosition < minPosition)
             {
                 return false;
             }
@@ -175,9 +175,27 @@ public class GroundMap
         return map[numFwdIntervals + i];
     }
 
+    public Vector2 PointFromCenterByIntervalWidth(float x)
+    {
+        var i = (int)(x / intervalWidth);
+        if (!(i < numFwdIntervals))
+        {
+            return RightEndPt.point;
+        }
+        if (!(i > -numFwdIntervals))
+        {
+            return LeftEndPt.point;
+        }
+
+        i += numFwdIntervals;
+        var x0 = i * intervalWidth;
+        var x1 = x - x0;
+        return x1 > 0 ? Vector2.Lerp(map[i].point, map[i + 1].point, x1 / intervalWidth) : Vector2.Lerp(map[i].point, map[i - 1].point, - x1 / intervalWidth);
+    }
+
     public Vector2 ProjectOntoGroundByArcLength(Vector2 p, out Vector2 normal, out bool hitGround, float htFraction = 1, bool onlyUseHtFractionIfNotHitGround = false)
     {
-        p = PointFromCenterByPosition(Vector2.Dot(p - LastOrigin, LastOriginRight), out normal, out hitGround);
+        p = PointFromCenterByArcLength(Vector2.Dot(p - LastOrigin, LastOriginRight), out normal, out hitGround);
         if (htFraction < 1 && (!onlyUseHtFractionIfNotHitGround || !hitGround))
         {
             var y = Vector2.Dot(LastOrigin - p, normal);
@@ -190,9 +208,9 @@ public class GroundMap
         return p;
     }
 
-    public Vector2 PointFromCenterByPosition(float x, out Vector2 normal, out bool hitGround, float htFraction = 1, bool onlyUseHtFractionIfNotHitGround = false)
+    public Vector2 PointFromCenterByArcLength(float x, out Vector2 normal, out bool hitGround, float htFraction, bool onlyUseHtFractionIfNotHitGround)
     {
-        var p = PointFromCenterByPosition(x, out normal, out hitGround);
+        var p = PointFromCenterByArcLength(x, out normal, out hitGround);
         if (htFraction < 1 && (!onlyUseHtFractionIfNotHitGround || !hitGround))
         {
             var y = Vector2.Dot(LastOrigin - p, normal);
@@ -205,24 +223,24 @@ public class GroundMap
         return p;
     }
 
-    public Vector2 PointFromCenterByPosition(float x, out Vector2 normal, out bool hitGround)
+    public Vector2 PointFromCenterByArcLength(float x, out Vector2 normal, out bool hitGround)
     {
         if (x > 0)
         {
             for (int i = numFwdIntervals; i < map.Length - 1; i++)
             {
                 ref var p = ref map[i + 1];
-                if (p.position > x)
+                if (p.arcLengthPosition > x)
                 {
                     ref var q = ref map[i];
-                    var s = p.position - q.position;
+                    var s = p.arcLengthPosition - q.arcLengthPosition;
                     normal = q.normal;
                     hitGround = q.HitGround;
-                    return Vector2.Lerp(q.point, p.point, (x - q.position) / s);
+                    return Vector2.Lerp(q.point, p.point, (x - q.arcLengthPosition) / s);
                 }
             }
 
-            var t = x - RightEndPt.position;
+            var t = x - RightEndPt.arcLengthPosition;
             normal = RightEndPt.normal;
             hitGround = RightEndPt.HitGround;
             return RightEndPt.point + t * RightEndPt.normal.CWPerp();
@@ -231,17 +249,17 @@ public class GroundMap
         for (int i = numFwdIntervals; i > 0; i--)
         {
             ref var p = ref map[i - 1];
-            if (p.position < x)
+            if (p.arcLengthPosition < x)
             {
                 ref var q = ref map[i];
-                var s = p.position - q.position;
+                var s = p.arcLengthPosition - q.arcLengthPosition;
                 normal = q.normal;
                 hitGround = q.HitGround;
-                return Vector2.Lerp(q.point, p.point, (x - q.position) / s);
+                return Vector2.Lerp(q.point, p.point, (x - q.arcLengthPosition) / s);
             }
         }
 
-        var u = x - LeftEndPt.position;
+        var u = x - LeftEndPt.arcLengthPosition;
         normal = LeftEndPt.normal;
         hitGround = LeftEndPt.HitGround;
         return LeftEndPt.point + u * LeftEndPt.normal.CWPerp();
@@ -253,10 +271,10 @@ public class GroundMap
         {
             for (int i = numFwdIntervals; i < map.Length - 1; i++)
             {
-                if (map[i + 1].position > x)
+                if (map[i + 1].arcLengthPosition > x)
                 {
-                    var s = map[i + 1].position - map[i].position;
-                    pt.Set(Vector2.Lerp(map[i].point, map[i + 1].point, (x - map[i].position) / s), map[i].normal, map[i].right, 0, 0, map[i].groundCollider);
+                    var s = map[i + 1].arcLengthPosition - map[i].arcLengthPosition;
+                    pt.Set(Vector2.Lerp(map[i].point, map[i + 1].point, (x - map[i].arcLengthPosition) / s), map[i].normal, map[i].right, 0, 0, map[i].groundCollider);
                 }
             }
             pt = RightEndPt;
@@ -264,16 +282,71 @@ public class GroundMap
 
         for (int i = numFwdIntervals; i > 0; i--)
         {
-            if (map[i - 1].position < x)
+            if (map[i - 1].arcLengthPosition < x)
             {
-                var s = map[i - 1].position - map[i].position;
-                pt.Set(Vector2.Lerp(map[i].point, map[i - 1].point, (x - map[i].position) / s), map[i].normal, map[i].right, 0, 0, map[i].groundCollider);
+                var s = map[i - 1].arcLengthPosition - map[i].arcLengthPosition;
+                pt.Set(Vector2.Lerp(map[i].point, map[i - 1].point, (x - map[i].arcLengthPosition) / s), map[i].normal, map[i].right, 0, 0, map[i].groundCollider);
             }
         }
         pt = LeftEndPt;
     }
 
-    public Vector2 ClosestPoint(Vector2 p, out Vector2 normal, out bool hitGround)
+    public Vector2 TrueClosestPoint(Vector2 p, out float arcLengthPosition)
+    {
+        var bestIndex = -1;
+        var bestDistSqrd = Mathf.Infinity;
+
+        for (int i = 0; i < map.Length; i++)
+        {
+            var d2 = (p - map[i].point).sqrMagnitude;
+            if (d2 < bestDistSqrd)
+            {
+                bestIndex = i;
+                bestDistSqrd = d2;
+            }
+        }
+
+        var q = map[bestIndex].point;
+        arcLengthPosition = map[bestIndex].arcLengthPosition;
+        var q1 = q;
+        var v = p - q;
+
+        //see if a point on next or prev segments is closer
+        if (bestIndex < map.Length - 1)
+        {
+            var w = map[bestIndex + 1].point - q;
+            var dot = Vector2.Dot(v, w);
+            if (dot > 0 && dot < w.sqrMagnitude)
+            {
+                var t = dot / w.magnitude;
+                q1 = Vector2.Lerp(q, map[bestIndex + 1].point, t);
+                arcLengthPosition = Mathf.Lerp(arcLengthPosition, map[bestIndex + 1].arcLengthPosition, t);
+                bestDistSqrd = (p - q1).sqrMagnitude;
+            }
+        }
+
+        if (bestIndex > 0)
+        {
+            var w = map[bestIndex - 1].point - q;
+            var dot = Vector2.Dot(v, w);
+            if (dot > 0 && dot < w.sqrMagnitude)
+            {
+                var t = dot / w.magnitude;
+                var q2 = Vector2.Lerp(q, map[bestIndex - 1].point, t);
+                var dist2 = (p - q2).sqrMagnitude;
+                if (dist2 < bestDistSqrd)
+                {
+                    q1 = q2;
+                    arcLengthPosition = Mathf.Lerp(arcLengthPosition, map[bestIndex - 1].arcLengthPosition, t);
+                }
+            }
+        }
+
+        return q1;
+    }
+
+    //finds first local min in distance and returns that point
+    public Vector2 FastClosestPoint(Vector2 p, out Vector2 normal, out bool hitGround)
     {
         var a1 = MathTools.Cross2D(p - map[0].point, map[0].normal);
         if (a1 == 0)
@@ -322,7 +395,7 @@ public class GroundMap
 
         for (int i = 0; i < map.Length; i++)
         {
-            if (map[i].position < maxPos && map[i].position > minPos)
+            if (map[i].arcLengthPosition < maxPos && map[i].arcLengthPosition > minPos)
             {
                 sum += map[i].point;
                 ct++;
@@ -341,7 +414,7 @@ public class GroundMap
 
         for (int i = 0; i < map.Length; i++)
         {
-            if (map[i].position < maxPos && map[i].position > minPos)
+            if (map[i].arcLengthPosition < maxPos && map[i].arcLengthPosition > minPos)
             {
                 sum += map[i].normal;
                 ct++;
@@ -356,7 +429,7 @@ public class GroundMap
         map = new GroundMapPt[NumPts];
     }
 
-    public void UpdateMap(Vector2 origin, Vector2 originDown, Vector2 originRight, float raycastLength, int centralIndex, int raycastLayerMask)
+    public void UpdateMap(Vector2 origin, Vector2 originDown, Vector2 originRight, float raycastLength, /*int centralIndex,*/ int raycastLayerMask)
     {
         int n = numFwdIntervals << 1;//last index of map array
         LastOrigin = origin;
@@ -366,97 +439,136 @@ public class GroundMap
         var r = Physics2D.Raycast(origin, originDown, raycastLength, raycastLayerMask);
         if (r)
         {
-            map[centralIndex].Set(r.point, r.normal, r.normal.CWPerp(), 0, r.distance, r.collider);
+            map[CentralIndex].Set(r.point, r.normal, r.normal.CWPerp(), 0, r.distance, r.collider);
         }
         else
         {
-            map[centralIndex].Set(origin + raycastLength * originDown, -originDown, originRight, 0, raycastLength, null);
+            map[CentralIndex].Set(origin + raycastLength * originDown, -originDown, originRight, 0, raycastLength, null);
         }
 
-        for (int i = centralIndex; i < n; i++)
+        for (int i = CentralIndex; i < n; i++)
         {
             //set map[i + 1]
             ref var lastMapPt = ref map[i];
-            var lastNormal = lastMapPt.normal;
-            var lastRight = lastMapPt.right;
-            var lastRaycastLength = lastMapPt.raycastDistance;
-            var o = lastMapPt.point + lastRaycastLength * lastNormal;
+            //var lastNormal = lastMapPt.normal;
+            //var lastRight = lastMapPt.right;
+            //var lastRaycastLength = lastMapPt.raycastDistance;
+            var o = lastMapPt.point + lastMapPt.raycastDistance * lastMapPt.normal;//lastRaycastLength * lastNormal;
 
             //first raycast horizontally to check if ground kicks UP suddenly (running into a wall e.g.)
             //r = MathTools.DebugRaycast(o, lastRight, intervalWidth, raycastLayerMask, RaycastColor1);
-            r = Physics2D.Raycast(o, lastRight, intervalWidth, raycastLayerMask);
+            r = Physics2D.Raycast(lastMapPt.point + intervalWidth * lastMapPt.normal, lastMapPt.right, 2 * intervalWidth, raycastLayerMask);
+
             if (r)
             {
-                map[i + 1].Set(r.point, r.normal, r.normal.CWPerp(), lastMapPt.position + Vector2.Distance(lastMapPt.point, r.point),
+                map[i + 1].Set(r.point, r.normal, r.normal.CWPerp(), lastMapPt.arcLengthPosition + Vector2.Distance(lastMapPt.point, r.point),
                     r.distance, r.collider);
+                //Debug.DrawLine(map[i].point, map[i + 1].point, Color.red);
+                //Debug.DrawLine(map[i + 1].point, map[i + 1].point + 0.25f * map[i + 1].normal, Color.red);
             }
             else
             {
                 //now shift forward and raycast down
-                o += intervalWidth * lastRight;
+                o += intervalWidth * lastMapPt.right;
                 //r = MathTools.DebugRaycast(o, -lastNormal, raycastLength, raycastLayerMask, RaycastColor2);
-                r = Physics2D.Raycast(o, -lastNormal, raycastLength, raycastLayerMask);
+                r = Physics2D.Raycast(o, -lastMapPt.normal, raycastLength, raycastLayerMask);
+
+                if (r && r.distance == 0)
+                {
+                    var y = intervalWidth;
+                    while (y < lastMapPt.raycastDistance)
+                    {
+                        r = Physics2D.Raycast(o - y * lastMapPt.normal, -lastMapPt.normal, raycastLength, raycastLayerMask);
+                        if (!r || r.distance > 0)
+                        {
+                            break;
+                        }
+
+                        y += intervalWidth;
+                    }
+                }
+
                 if (r)
                 {
-                    map[i + 1].Set(r.point, r.normal, r.normal.CWPerp(), lastMapPt.position + Vector2.Distance(lastMapPt.point, r.point),
-                        r.distance * Vector2.Dot(lastNormal, r.normal), r.collider);
+                    //if (r.distance == 0)
+                    //{
+                    //    Debug.Log("vert hit with no distance");
+                    //}
+                    map[i + 1].Set(r.point, r.normal, r.normal.CWPerp(), lastMapPt.arcLengthPosition + Vector2.Distance(lastMapPt.point, r.point),
+                        r.distance * Vector2.Dot(lastMapPt.normal, r.normal), r.collider);
                 }
                 else
                 {
-                    var l = Mathf.Min(lastRaycastLength + 0.5f * intervalWidth, raycastLength);
-                    r = Physics2D.Raycast(o - l * lastNormal, -lastRight, 2 * intervalWidth, raycastLayerMask);
+                    var l = Mathf.Min(lastMapPt.raycastDistance + 0.5f * intervalWidth, raycastLength);
+                    r = Physics2D.Raycast(o - l * lastMapPt.normal, -lastMapPt.right, 2 * intervalWidth, raycastLayerMask);
                     if (r)
                     {
-                        map[i + 1].Set(r.point, r.normal, r.normal.CWPerp(), lastMapPt.position + Vector2.Distance(lastMapPt.point, r.point), r.distance, r.collider);
+                        map[i + 1].Set(r.point, r.normal, r.normal.CWPerp(), lastMapPt.arcLengthPosition + Vector2.Distance(lastMapPt.point, r.point), r.distance, r.collider);
                     }
                     else
                     {
-                        o -= raycastLength * lastNormal;
-                        map[i + 1].Set(o, lastNormal, lastMapPt.right, lastMapPt.position + Vector2.Distance(lastMapPt.point, o), raycastLength, null);
+                        o -= raycastLength * lastMapPt.normal;
+                        map[i + 1].Set(o, lastMapPt.normal, lastMapPt.right, lastMapPt.arcLengthPosition + Vector2.Distance(lastMapPt.point, o), raycastLength, null);
                     }
                 }
             }
         }
 
-        for (int i = centralIndex; i > 0; i--)
+        for (int i = CentralIndex; i > 0; i--)
         {
             //set map[i - 1]
             ref var lastMapPt = ref map[i];
-            var lastNormal = lastMapPt.normal;
-            var lastTangent = -lastMapPt.right;
-            var lastRaycastLength = lastMapPt.raycastDistance;
-            var o = lastMapPt.point + lastRaycastLength * lastNormal;
+            //var lastNormal = lastMapPt.normal;
+            //var lastTangent = -lastMapPt.right;
+            //var lastRaycastLength = lastMapPt.raycastDistance;
+            var o = lastMapPt.point + lastMapPt.raycastDistance * lastMapPt.normal;//lastRaycastLength * lastNormal;
 
             //r = MathTools.DebugRaycast(o, lastTangent, intervalWidth, raycastLayerMask, RaycastColor1);
-            r = Physics2D.Raycast(o, lastTangent, intervalWidth, raycastLayerMask);
+            r = Physics2D.Raycast(lastMapPt.point + intervalWidth * lastMapPt.normal, -lastMapPt.right, 2 * intervalWidth, raycastLayerMask);
             if (r)
             {
-                map[i - 1].Set(r.point, r.normal, r.normal.CWPerp(), lastMapPt.position - Vector2.Distance(lastMapPt.point, r.point), r.distance, r.collider);
+                map[i - 1].Set(r.point, r.normal, r.normal.CWPerp(), lastMapPt.arcLengthPosition - Vector2.Distance(lastMapPt.point, r.point), r.distance, r.collider);
             }
             else
             {
                 //now shift forward and raycast down
-                o += intervalWidth * lastTangent;
+                o -= intervalWidth * lastMapPt.right;
                 //r = MathTools.DebugRaycast(o, -lastNormal, raycastLength, raycastLayerMask, RaycastColor2);
-                r = Physics2D.Raycast(o, -lastNormal, raycastLength, raycastLayerMask);
+                r = Physics2D.Raycast(o, -lastMapPt.normal, raycastLength, raycastLayerMask); 
+                
+                if (r && r.distance == 0)
+                {
+                    var y = intervalWidth;
+                    while (y < lastMapPt.raycastDistance)
+                    {
+                        r = Physics2D.Raycast(o - y * lastMapPt.normal, -lastMapPt.normal, raycastLength, raycastLayerMask);
+                        if (!r || r.distance > 0)
+                        {
+                            break;
+                        }
+
+                        y += intervalWidth;
+                    }
+                }
+
                 if (r)
                 {
-                    map[i - 1].Set(r.point, r.normal, r.normal.CWPerp(), lastMapPt.position - Vector2.Distance(lastMapPt.point, r.point),
-                        r.distance * Vector2.Dot(lastNormal, r.normal), r.collider);
+                    map[i - 1].Set(r.point, r.normal, r.normal.CWPerp(), lastMapPt.arcLengthPosition - Vector2.Distance(lastMapPt.point, r.point),
+                        r.distance * Vector2.Dot(lastMapPt.normal, r.normal), r.collider);
                 }
                 else
                 {
-                    var l = Mathf.Min(lastRaycastLength + 0.5f * intervalWidth, raycastLength);
-                    r = Physics2D.Raycast(o - l * lastNormal, -lastTangent, 2 * intervalWidth, raycastLayerMask);
+                    var l = Mathf.Min(lastMapPt.raycastDistance + 0.5f * intervalWidth, raycastLength);
+                    r = Physics2D.Raycast(o - l * lastMapPt.normal, lastMapPt.right, 2 * intervalWidth, raycastLayerMask);
                     if (r)
                     {
-                        map[i - 1].Set(r.point, r.normal, r.normal.CWPerp(), lastMapPt.position - Vector2.Distance(lastMapPt.point, r.point),
+                        map[i - 1].Set(r.point, r.normal, r.normal.CWPerp(), lastMapPt.arcLengthPosition - Vector2.Distance(lastMapPt.point, r.point),
                             r.distance, r.collider);
                     }
                     else
                     {
-                        o -= raycastLength * lastNormal;
-                        map[i - 1].Set(o, lastNormal, lastMapPt.right, lastMapPt.position - Vector2.Distance(lastMapPt.point, o), raycastLength, null);
+                        o -= raycastLength * lastMapPt.normal;
+                        map[i - 1].Set(o, lastMapPt.normal, lastMapPt.right, lastMapPt.arcLengthPosition - Vector2.Distance(lastMapPt.point, o), raycastLength, null);
                     }
                 }
             }
@@ -485,7 +597,7 @@ public class GroundMap
 [Serializable]//just so i can watch them in the inspector
 public struct GroundMapPt
 {
-    public float position;
+    public float arcLengthPosition;
     public float raycastDistance;
     public Vector2 point;
     public Vector2 normal;
@@ -494,22 +606,22 @@ public struct GroundMapPt
 
     public bool HitGround => groundCollider != null;
 
-    public GroundMapPt(Vector2 point, Vector2 normal, Vector2 right, float position, float raycastDistance, Collider2D groundCollider)
+    public GroundMapPt(Vector2 point, Vector2 normal, Vector2 right, float arcLengthPosition, float raycastDistance, Collider2D groundCollider)
     {
         this.point = point;
         this.normal = normal;
         this.right = right;
-        this.position = position;
+        this.arcLengthPosition = arcLengthPosition;
         this.raycastDistance = raycastDistance;
         this.groundCollider = groundCollider;
     }
 
-    public void Set(Vector2 point, Vector2 normal, Vector2 right, float position, float raycastDistance, Collider2D groundCollider)
+    public void Set(Vector2 point, Vector2 normal, Vector2 right, float arcLengthPosition, float raycastDistance, Collider2D groundCollider)
     {
         this.point = point;
         this.normal = normal;
         this.right = right;
-        this.position = position;
+        this.arcLengthPosition = arcLengthPosition;
         this.raycastDistance = raycastDistance;
         this.groundCollider = groundCollider;
     }

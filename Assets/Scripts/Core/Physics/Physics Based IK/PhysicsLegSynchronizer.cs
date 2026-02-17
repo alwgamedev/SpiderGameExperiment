@@ -15,6 +15,7 @@ public class PhysicsLegSynchronizer : MonoBehaviour
     [SerializeField] float[] timeOffset;
     [SerializeField] int fabrikIterations;
     [SerializeField] float fabrikTolerance;
+    [SerializeField] float targetSmoothingRate;
     [SerializeField] float groundContactRadius;
 
     LegTimer[] timer;
@@ -86,11 +87,12 @@ public class PhysicsLegSynchronizer : MonoBehaviour
 
             if (t.Stepping)
             {
-                l.UpdateTargetStepping(map, dt, stepHeightSpeedMultiplier, stepHeightFraction, reachFraction, t.StateProgress, strideMultiplier * t.StepTime, strideMultiplier * t.RestTime);
+                l.UpdateTargetStepping(map, dt, stepHeightSpeedMultiplier, stepHeightFraction, reachFraction, t.StateProgress, 
+                    strideMultiplier * t.StepTime, strideMultiplier * t.RestTime, targetSmoothingRate);
             }
             else
             {
-                l.UpdateTargetResting(map, dt, reachFraction, t.StateProgress, strideMultiplier * t.RestTime);
+                l.UpdateTargetResting(map, dt, reachFraction, t.StateProgress, strideMultiplier * t.RestTime, targetSmoothingRate);
             }
 
             l.UpdateJoints(map, fabrikIterations, fabrikTolerance, groundContactRadiusSqrd, dt, simulateContactWeight);
