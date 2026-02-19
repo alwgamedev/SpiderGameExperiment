@@ -29,12 +29,12 @@ public class PhysicsBasedIKLeg
 {
     public PhysicsLegSettings contactSettings;
     public PhysicsLegSettings noContactSettings;
+    public bool useGroundMapClosestPoint;
     public UnityEvent HitGround;
 
     [SerializeField] Transform orientingTransform;
     [SerializeField] Transform[] chain;
     [SerializeField] Transform target;
-    //[SerializeField] float targetSmoothingRate;
     [SerializeField] float stepMax;
 
     Vector2[] defaultPose;
@@ -75,9 +75,9 @@ public class PhysicsBasedIKLeg
     }
 
     public void UpdateJoints(GroundMap groundMap, int fabrikIterations, float fabrikTolerance,
-        float groundContactRadiusSqrd, float dt, float simulateContactWeight = 0)
+        float groundContactRadius, float collisionResponse, float dt, float simulateContactWeight = 0)
     {
-        var settings = EffectorIsTouchingGround ? contactSettings 
+        var settings = EffectorIsTouchingGround ? contactSettings
             : simulateContactWeight > 0 ? PhysicsLegSettings.Lerp(noContactSettings, contactSettings, simulateContactWeight)
             : noContactSettings;
         if (settings.limpness > 0 && (chain[0].position.x != positionBuffer[0].x || chain[0].position.y != positionBuffer[0].y))
@@ -105,17 +105,17 @@ public class PhysicsBasedIKLeg
             positionBuffer[i] = chain[i].position;
         }
 
-        UpdateGroundContact(groundMap, groundContactRadiusSqrd);
+        UpdateGroundContact(groundMap, groundContactRadius, collisionResponse, dt);
     }
 
-    public void UpdateTargetStepping(GroundMap map, float dt, float stepHeightSpeedMultiplier, float stepHeightFraction, float reachFraction, float stepProgress, float stepDistance,
+    public void UpdateTargetStepping(GroundMap map, float dt, float stepHeightSpeedMultiplier, float stepHeightFraction, float stepProgress, float stepDistance,
         float restDistance, float targetSmoothingRate)
     {
         ref var settings = ref EffectorIsTouchingGround ? ref contactSettings : ref noContactSettings;
         var stepHeight = settings.stepHeight;
         var bodyFacingRight = orientingTransform.localScale.x > 0;
-        var stepStart = GetStepStart(map, bodyFacingRight, stepProgress, stepDistance, restDistance, reachFraction);
-        var stepGoal = GetStepGoal(map, bodyFacingRight, 0, restDistance, reachFraction);
+        var stepStart = GetStepStart(map, bodyFacingRight, stepProgress, stepDistance, restDistance, out var h);
+        var stepGoal = GetStepGoal(map, h, bodyFacingRight, 0, restDistance);
         var stepRight = stepGoal - stepStart;
         var stepUp = bodyFacingRight ? 0.5f * stepRight.CCWPerp() : 0.5f * stepRight.CWPerp();
 
@@ -124,7 +124,7 @@ public class PhysicsBasedIKLeg
 
         if (stepHeightSpeedMultiplier < 1)
         {
-            var g = map.ProjectOntoGroundByArcLength(newTargetPos, out _, out _, reachFraction, true);
+            var g = map.ProjectOntoGroundByArcLength(newTargetPos, out _, out _);
             newTargetPos = Vector2.Lerp(g, newTargetPos, stepHeightSpeedMultiplier);
         }
 
@@ -133,7 +133,7 @@ public class PhysicsBasedIKLeg
 
     public void UpdateTargetResting(GroundMap map, float dt, float reachFraction, float restProgress, float restDistance, float targetSmoothingRate)
     {
-        target.position = Vector2.Lerp(target.position, GetStepGoal(map, orientingTransform.localScale.x > 0, restProgress, restDistance, reachFraction), targetSmoothingRate * dt);
+        target.position = Vector2.Lerp(target.position, GetStepGoal(map, orientingTransform.localScale.x > 0, restProgress, restDistance, out _), targetSmoothingRate * dt);
     }
 
     public void OnBodyChangedDirection(Vector2 position0, Vector2 position1, Vector2 flipNormal)
@@ -184,38 +184,71 @@ public class PhysicsBasedIKLeg
         }
     }
 
-    private void UpdateGroundContact(GroundMap groundMap, float groundContactRadiusSqrd)
+    private void UpdateGroundContact(GroundMap groundMap, float groundContactRadius, float collisionResponse, float dt)
     {
         var wasTouchingGround = EffectorIsTouchingGround;
 
         Vector2 q = chain[^1].position;
-        q -= groundMap.FastClosestPoint(q, out var n, out var hitGround);
-        EffectorIsTouchingGround = hitGround && (Vector2.SqrMagnitude(q) < groundContactRadiusSqrd || Vector2.Dot(q, n) < 0);
-
-        if (!wasTouchingGround && EffectorIsTouchingGround)
+        var p = groundMap.TrueClosestPoint(q, out _, out var n, out var hitGround);
+        var l = Vector2.Dot(q - p, n);
+        EffectorIsTouchingGround = hitGround && l < groundContactRadius/*(Vector2.SqrMagnitude(d) < groundContactRadiusSqrd || Vector2.Dot(d, n) < 0)*/;
+        if (EffectorIsTouchingGround)
         {
-            HitGround.Invoke();
+            if (l < 0)
+            {
+                var a = -collisionResponse * dt * l * n;
+                PhysicsBasedIK.ApplyForceToJoint(chain, inverseLength, angularVelocity, a, chain.Length - 1);
+            }
+
+            if (!wasTouchingGround)
+            {
+                HitGround.Invoke();
+            }
         }
     }
 
-    private Vector2 GetStepStart(GroundMap map, bool bodyFacingRight, float stepProgress, float stepDistance, float restDistance, float reachFraction = 1)
+    private Vector2 GetStepStart(GroundMap map, bool bodyFacingRight, float stepProgress, float stepDistance, float restDistance, out float hipPosition)
     {
-        var h = Vector2.Dot((Vector2)chain[0].position - map.LastOrigin, map.LastOriginRight);
-        //map.TrueClosestPoint(chain[0].position, out var h);
+        if (useGroundMapClosestPoint)
+        {
+            map.TrueClosestPoint(chain[0].position, out hipPosition, out _, out _);
+        }
+        else
+        {
+            hipPosition = Vector2.Dot((Vector2)chain[0].position - map.LastOrigin, map.LastOriginRight);
+        }
+
+        return GetStepStart(map, hipPosition, bodyFacingRight, stepProgress, stepDistance, restDistance);
+    }
+
+    private Vector2 GetStepStart(GroundMap map, float h, bool bodyFacingRight, float stepProgress, float stepDistance, float restDistance)
+    {
         h = bodyFacingRight ? h + StepStartHorizontalOffset(stepProgress, stepDistance, restDistance)
             : h - StepStartHorizontalOffset(stepProgress, stepDistance, restDistance);
         //return map.PointFromCenterByArcLength(h, out _, out _, reachFraction, true);
         return map.PointFromCenterByIntervalWidth(h);
     }
 
-    private Vector2 GetStepGoal(GroundMap map, bool bodyFacingRight, float restProgress, float restDistance, float reachFraction = 1)
+    private Vector2 GetStepGoal(GroundMap map, bool bodyFacingRight, float restProgress, float restDistance, out float hipPosition)
     {
-        var h = Vector2.Dot((Vector2)chain[0].position - map.LastOrigin, map.LastOriginRight);
-        //map.TrueClosestPoint(chain[0].position, out var h);
+        if (useGroundMapClosestPoint)
+        {
+            map.TrueClosestPoint(chain[0].position, out hipPosition, out _, out _);
+        }
+        else
+        {
+            hipPosition = Vector2.Dot((Vector2)chain[0].position - map.LastOrigin, map.LastOriginRight);
+        }
+
+        return GetStepGoal(map, hipPosition, bodyFacingRight, restProgress, restDistance);
+        //return map.PointFromCenterByArcLength(h, out _, out _, reachFraction, true);
+    }
+
+    private Vector2 GetStepGoal(GroundMap map, float h, bool bodyFacingRight, float restProgress, float restDistance)
+    {
         h = bodyFacingRight ? h + StepGoalHorizontalOffset(restProgress, restDistance)
             : h - StepGoalHorizontalOffset(restProgress, restDistance);
         return map.PointFromCenterByIntervalWidth(h);
-        //return map.PointFromCenterByArcLength(h, out _, out _, reachFraction, true);
     }
 
     private float StepGoalHorizontalOffset(float restProgress, float restDistance)

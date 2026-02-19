@@ -12,7 +12,7 @@ public class JumpPreviewArrow : MonoBehaviour
     [SerializeField] Color colorMax0;//max = crouchProgress == 1
     [SerializeField] Color colorMax1;
 
-    SpiderMovementController player;
+    SpiderMovementControl player;
     Transform arrowHeadAnchor;
     Material neckMaterial;
 

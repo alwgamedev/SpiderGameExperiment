@@ -41,6 +41,7 @@ public class GrabberArm : MonoBehaviour
         ShowSprites();
         anchor.BeginTargetingTransform(deployedAnchorPosition);
         mouth.Open();
+        grabberClaw.EnableColliders();
 
         onArmTargetReached = null;
         onAnchorTargetReached = GoIdle;

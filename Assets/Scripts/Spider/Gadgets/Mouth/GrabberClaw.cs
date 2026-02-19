@@ -75,11 +75,19 @@ public class GrabberClaw : MonoBehaviour
         hasInvokedTargetReached = false;
     }
 
+    public void EnableColliders()
+    {
+        upperArmCollider.enabled = true;
+        lowerArmCollider.enabled = true;
+    }
+
     public void TurnOff()
     {
         mode = Mode.off;
         grabTarget = null;
         hasInvokedTargetReached = false;
+        upperArmCollider.enabled = false;
+        lowerArmCollider.enabled = false;
     }
 
     private void FixedUpdate()

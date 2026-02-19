@@ -9,17 +9,24 @@ public static class MathTools
 
     public const float cos15 = 0.9659258f;
     public const float sin15 = 0.2588190f;
+    //public const float sec15 = 1 / cos15;
+    //public const float csc15 = 1 / sin15;
     public const float cos22pt5 = 0.9238795f;
     public const float sin22pt5 = 0.3826834f;
+    //public const float sec22pt5 = 1 / cos22pt5;
+    //public const float csc22pt5 = 1 / sin22pt5;
     public const float cos30 = 0.8660254f;//sqrt(3)/2
     public const float sin30 = 0.5f;
-    public const float tan30 = 0.5773502f;// 1/sqrt(3)
+    //public const float sec30 = 1 / cos30;
+    //public const float csc30 = 1 / sin30;
+    //public const float tan30 = 0.5773502f;// 1/sqrt(3)
     public const float cos45 = 0.7071067f;// 1/sqrt(2)
     public const float sin45 = cos45;
-    public const float tan45 = 1;
-    public const float cos60 = sin30;
-    public const float sin60 = cos30;
-    public const float tan60 = 1.732051f;//sqrt(3)
+    //public const float sec45 = 1 / cos45;
+    //public const float csc45 = 1 / sin45;
+    //public const float cos60 = sin30;
+    //public const float sin60 = cos30;
+    //public const float tan60 = 1.732051f;//sqrt(3)
 
     public enum OrientationXZ
     {

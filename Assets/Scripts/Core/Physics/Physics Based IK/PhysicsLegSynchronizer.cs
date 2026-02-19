@@ -17,11 +17,11 @@ public class PhysicsLegSynchronizer : MonoBehaviour
     [SerializeField] float fabrikTolerance;
     [SerializeField] float targetSmoothingRate;
     [SerializeField] float groundContactRadius;
+    [SerializeField] float collisionResponse;
 
     LegTimer[] timer;
     LegState state;
     float legCountInverse;
-    float groundContactRadiusSqrd;
 
     public float bodyGroundSpeedSign;
     public float absoluteBodyGroundSpeed;
@@ -87,7 +87,7 @@ public class PhysicsLegSynchronizer : MonoBehaviour
 
             if (t.Stepping)
             {
-                l.UpdateTargetStepping(map, dt, stepHeightSpeedMultiplier, stepHeightFraction, reachFraction, t.StateProgress, 
+                l.UpdateTargetStepping(map, dt, stepHeightSpeedMultiplier, stepHeightFraction, /*reachFraction,*/ t.StateProgress, 
                     strideMultiplier * t.StepTime, strideMultiplier * t.RestTime, targetSmoothingRate);
             }
             else
@@ -95,7 +95,7 @@ public class PhysicsLegSynchronizer : MonoBehaviour
                 l.UpdateTargetResting(map, dt, reachFraction, t.StateProgress, strideMultiplier * t.RestTime, targetSmoothingRate);
             }
 
-            l.UpdateJoints(map, fabrikIterations, fabrikTolerance, groundContactRadiusSqrd, dt, simulateContactWeight);
+            l.UpdateJoints(map, fabrikIterations, fabrikTolerance, groundContactRadius, collisionResponse, dt, simulateContactWeight);
 
             if (l.EffectorIsTouchingGround)
             {
@@ -117,7 +117,6 @@ public class PhysicsLegSynchronizer : MonoBehaviour
     public void Initialize()
     {
         legCountInverse = 1f / leg.Length;
-        groundContactRadiusSqrd = groundContactRadius * groundContactRadius;
         InitializeTimers();
         InitializeLegs();
         UpdateSettings();

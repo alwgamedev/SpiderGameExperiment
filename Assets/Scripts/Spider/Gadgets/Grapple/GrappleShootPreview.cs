@@ -10,7 +10,7 @@ public class GrappleShootPreview : MonoBehaviour
     //[SerializeField] float extensionRate;
     [SerializeField] LayerMask terminationMask;
 
-    SpiderMovementController player;
+    SpiderMovementControl player;
     GrappleCannon grapple;
     Vector3[] positions;
     Vector3 lastShootPosition;
