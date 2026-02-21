@@ -11,7 +11,7 @@ public class ThrusterChargeUI : MonoBehaviour
 
     private void Start()
     {
-        thruster = Spider.Player.MovementController.Thruster;
+        thruster = Spider.Player.MovementControl.Thruster;
     }
 
     private void Update()

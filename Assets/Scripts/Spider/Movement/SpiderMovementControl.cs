@@ -7,6 +7,7 @@ public class SpiderMovementControl : MonoBehaviour
     [SerializeField] Transform abdomenBone;
     [SerializeField] Transform abdomenBonePivot;
     [SerializeField] Transform headBone;
+    [SerializeField] Transform headBoneHeightRefPoint;
     [SerializeField] Transform heightReferencePoint;
     [SerializeField] GrappleCannon grapple;
 
@@ -18,8 +19,8 @@ public class SpiderMovementControl : MonoBehaviour
     [SerializeField] float groundednessInitialContactValue;
     [SerializeField] float groundDirectionSampleWidth;
     [SerializeField] float backupGroundPtRaycastLengthFactor;
-    [SerializeField] float upcomingGroundDirectionMinPos;
-    [SerializeField] float upcomingGroundDirectionMaxPos;
+    //[SerializeField] float upcomingGroundDirectionMinPos;
+    //[SerializeField] float upcomingGroundDirectionMaxPos;
     [SerializeField] float failedGroundDirectionSmoothingRate;
     [SerializeField] GroundMap groundMap;
 
@@ -41,11 +42,14 @@ public class SpiderMovementControl : MonoBehaviour
     [SerializeField] float heightSpringDamping;
     [SerializeField] float heightSpringBreakThreshold;
     [SerializeField] float grappleSquatReduction;
-    [SerializeField] float heightSampleWidth;
+    [SerializeField] float heightSampleMin;
+    [SerializeField] float heightSampleMax;
 
     [Header("Balance & Rotation")]
     [SerializeField] float abdomenRotationSpeed;
     [SerializeField] float headRotationSpeed;
+    [SerializeField] float headRotationMinPos;
+    [SerializeField] float headRotationMaxPos;
     [SerializeField] float balanceSpringForce;
     [SerializeField] float airborneBalanceSpringForce;
     [SerializeField] float balanceSpringDamping;
@@ -76,7 +80,7 @@ public class SpiderMovementControl : MonoBehaviour
     [SerializeField] float freeHangHeadAngle;
     [SerializeField] float freeHangStepHeightReductionMax;
     [SerializeField] float freeHangStrideMultiplier;
-    [SerializeField] float freeHangLegReachFraction;
+    //[SerializeField] float freeHangLegReachFraction;
     [SerializeField] float freeHangSimulateContactMax;
 
     [Header("Thrusters")]
@@ -110,7 +114,7 @@ public class SpiderMovementControl : MonoBehaviour
     float groundednessRating;
     float groundmapRaycastLength;
     Vector2 groundDirection = Vector2.right;
-    Vector2 upcomingGroundDirection = Vector2.right;
+    //Vector2 upcomingGroundDirection = Vector2.right;
     Vector2 groundAnchorPt;
     Vector2 balanceDirection;
     float balanceSettleTimer;
@@ -194,7 +198,7 @@ public class SpiderMovementControl : MonoBehaviour
         rb.centerOfMass = heightReferencePoint.position - transform.position;
 
         InitializeGroundData();
-        legSynch.Initialize();
+        legSynch.Initialize(heightReferencePoint.position - preferredRideHeight * transform.up, transform.up);
         bodyCollisionFilter = ContactFilter2D.noFilter;
         bodyCollisionFilter.useTriggers = false;
         bodyCollisionFilter.SetLayerMask(groundLayer);
@@ -205,11 +209,11 @@ public class SpiderMovementControl : MonoBehaviour
         UpdateState();
     }
 
-    private void LateUpdate()
-    {
-        RotateAbdomen(Time.deltaTime);
-        RotateHead(Time.deltaTime);
-    }
+    //private void LateUpdate()
+    //{
+    //    RotateAbdomen(Time.deltaTime);
+    //    RotateHead(Time.deltaTime);
+    //}
 
     private void FixedUpdate()
     {
@@ -218,6 +222,8 @@ public class SpiderMovementControl : MonoBehaviour
             jumpVerificationTimer -= Time.deltaTime;
         }
 
+        RotateAbdomen(Time.deltaTime);
+        RotateHead(Time.deltaTime);
         UpdateLegSynch();
         UpdateGroundData();
         UpdateThruster();
@@ -590,7 +596,25 @@ public class SpiderMovementControl : MonoBehaviour
 
     private void RotateHead(float dt)
     {
-        var g = grounded ? upcomingGroundDirection : (grapple.FreeHanging ? FreeHangingHeadRight() : (Vector2)transform.right);
+        Vector2 g;
+        if (grounded)
+        {
+            if (!(balanceSettleTimer > 0))
+            {
+                return;
+            }
+            var p = groundMap.TrueClosestPoint(headBoneHeightRefPoint.position, out var t, out _, out _);
+            var n = FacingRight ?
+                groundMap.AverageNormalFromCenter(t + headRotationMinPos, t + headRotationMaxPos)
+                : groundMap.AverageNormalFromCenter(t - headRotationMaxPos, t - headRotationMinPos);
+            g = n.CWPerp();
+        }
+        else
+        {
+            g = grapple.FreeHanging ? FreeHangingHeadRight() : (Vector2)transform.right;
+        }
+    
+        //var g = grounded ? upcomingGroundDirection : (grapple.FreeHanging ? FreeHangingHeadRight() : (Vector2)transform.right);
         headBone.ApplyCheapRotationalLerpClamped(g, headRotationSpeed * dt, out _);//if rotate at constant speed, it starts to flicker when rotation is small
     }
 
@@ -649,7 +673,7 @@ public class SpiderMovementControl : MonoBehaviour
 
     private void UpdateHeightSpring()
     {
-        var p = groundMap.AveragePointFromCenter(-heightSampleWidth, heightSampleWidth);
+        var p = groundMap.AveragePointFromCenter(heightSampleMin, heightSampleMax);
         //^average point so that body sinks a little as it rounds a sharp peak (keeping leg extension natural)
         //--note you only want to do this when strongly grounded
 
@@ -726,6 +750,7 @@ public class SpiderMovementControl : MonoBehaviour
         if (MoveInput != 0 || !grounded)
         {
             groundAnchorPt = GetGroundAnchorPoint(ref pt, isCentralIndex);
+            //groundAnchorPt = groundMap.TrueClosestPoint(pt.point, out _, out _, out _);
             balanceDirection = groundDirection;
             //groundAnchorPtRight = n.CWPerp();
         }
@@ -733,12 +758,13 @@ public class SpiderMovementControl : MonoBehaviour
         {
             var t = 1 - 0.5f * balanceSettleTimer / balanceSettleTime;
             balanceDirection = MathTools.CheapRotationalLerpClamped(balanceDirection, groundDirection, t, out _);
+            //groundAnchorPt = groundMap.TrueClosestPoint(heightReferencePoint.position, out _, out _, out _);
         }
 
         groundDirection = grounded ? goalGroundDirection : MathTools.CheapRotationBySpeed(groundDirection, Vector2.right, failedGroundDirectionSmoothingRate, Time.deltaTime, out _);
-        upcomingGroundDirection = FacingRight ? groundMap.AverageNormalFromCenter(upcomingGroundDirectionMinPos, upcomingGroundDirectionMaxPos)
-            : groundMap.AverageNormalFromCenter(-upcomingGroundDirectionMaxPos, -upcomingGroundDirectionMinPos);
-        upcomingGroundDirection = upcomingGroundDirection.CWPerp();
+        //upcomingGroundDirection = FacingRight ? groundMap.AverageNormalFromCenter(upcomingGroundDirectionMinPos, upcomingGroundDirectionMaxPos)
+        //    : groundMap.AverageNormalFromCenter(-upcomingGroundDirectionMaxPos, -upcomingGroundDirectionMinPos);
+        //upcomingGroundDirection = upcomingGroundDirection.CWPerp();
 
         if (!VerifyingJump())
         {
@@ -829,7 +855,7 @@ public class SpiderMovementControl : MonoBehaviour
         legSynch.absoluteBodyGroundSpeed = grounded ? Mathf.Abs(v) : Mathf.Min(thruster.Engaged ? Mathf.Abs(v) : rb.linearVelocity.magnitude, airborneLegSpeedMax);
         legSynch.stepHeightFraction = 1 - crouchProgress * crouchHeightFraction;
         legSynch.timeScale = grounded || thruster.Engaged ? 1 : airborneLegAnimationTimeScale;
-        legSynch.reachFraction = grapple.FreeHanging ? freeHangLegReachFraction : 1;
+        //legSynch.reachFraction = grapple.FreeHanging ? freeHangLegReachFraction : 1;
 
         var simulateContactWeight = 0f;
 
@@ -860,6 +886,6 @@ public class SpiderMovementControl : MonoBehaviour
                 break;
         }
 
-        legSynch.UpdateAllLegs(Time.deltaTime, groundMap, simulateContactWeight);
+        legSynch.UpdateAllLegs(Time.deltaTime, groundMap, rb, simulateContactWeight);
     }
 }

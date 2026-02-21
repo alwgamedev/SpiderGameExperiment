@@ -301,7 +301,7 @@ public class PhysicsBasedIKArm : MonoBehaviour
         err = Mathf.Sqrt(err);
         var clampedErr = Mathf.Max(err, targetingErrorMin);//this keeps it from slowing down too much as it gets close to the target
         var accel = effectorSpringConstant * dt * Mathf.Min(clampedErr, maxTargetPursuitSpeed) / err * error;
-        PhysicsBasedIK.ApplyForceToJoint(chain, inverseLength, angularVelocity, accel, chain.Length - 1, poseWeight);
+        PhysicsBasedIK.ApplyForceUpChain(chain, inverseLength, angularVelocity, accel, chain.Length - 1, poseWeight);
     }
 
     private Vector2 PoseToWorldDirection(Vector2[] pose, int i)

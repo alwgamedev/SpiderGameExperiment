@@ -169,14 +169,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 174235699028576439}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.99909514, w: 0.042531554}
+  m_LocalRotation: {x: -0, y: -0, z: 0.9990695, w: 0.043128084}
   m_LocalPosition: {x: 2.1244352, y: -0.7018983, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7560421742473523346}
   m_Father: {fileID: 4257679111386862312}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 174.696}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 175.056}
 --- !u!1 &225004367435876655
 GameObject:
   m_ObjectHideFlags: 0
@@ -494,9 +494,9 @@ MonoBehaviour:
   m_ComponentVersion: 2
   m_LightType: 3
   m_BlendStyleIndex: 0
-  m_FalloffIntensity: 0.498
+  m_FalloffIntensity: 0.5
   m_Color: {r: 0.6472694, g: 0.70138234, b: 0.97735846, a: 1}
-  m_Intensity: 2.32
+  m_Intensity: 5
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
   m_ApplyToSortingLayers: c32964b5
@@ -519,7 +519,7 @@ MonoBehaviour:
     m_Extent: {x: 0.9985302, y: 0.99853027, z: 0}
   m_PointLightInnerAngle: 360
   m_PointLightOuterAngle: 360
-  m_PointLightInnerRadius: 0.07
+  m_PointLightInnerRadius: 0
   m_PointLightOuterRadius: 0.26
   m_ShapeLightParametricSides: 5
   m_ShapeLightParametricAngleOffset: 0
@@ -850,14 +850,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 362057468865663677}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.23273818, w: 0.9725395}
+  m_LocalRotation: {x: -0, y: -0, z: -0.43750346, w: 0.8992168}
   m_LocalPosition: {x: 1.9402691, y: 0.0000001244033, z: 0}
   m_LocalScale: {x: 0.9999999, y: 0.9999999, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8378328544454571262}
   m_Father: {fileID: 3204698491393591131}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -51.889}
 --- !u!1 &459194793244736794
 GameObject:
   m_ObjectHideFlags: 0
@@ -1592,14 +1592,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 690683997197348463}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.22617352, w: 0.97408706}
+  m_LocalRotation: {x: -0, y: -0, z: 0.5392943, w: 0.84211737}
   m_LocalPosition: {x: 2.0067244, y: -0.00000025206538, z: 0}
   m_LocalScale: {x: 1.0000004, y: 1.0000004, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7261066662746368589}
   m_Father: {fileID: 7560421742473523346}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 65.271}
 --- !u!1 &839944467269662652
 GameObject:
   m_ObjectHideFlags: 0
@@ -3132,7 +3132,7 @@ Transform:
   m_GameObject: {fileID: 2031487528006588093}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0.72702587, w: 0.68661016}
-  m_LocalPosition: {x: 0.47, y: 0.008, z: 0}
+  m_LocalPosition: {x: 0.294, y: 0.004, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3340,7 +3340,7 @@ Transform:
   m_GameObject: {fileID: 2150763637009040213}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: -0.6773413, w: -0.7356689}
-  m_LocalPosition: {x: 0.48, y: 0, z: 0}
+  m_LocalPosition: {x: 0.22, y: 0.009, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3370,14 +3370,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2184748555949781941}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.22102262, w: 0.97526866}
+  m_LocalRotation: {x: -0, y: -0, z: 0.5087692, w: 0.860903}
   m_LocalPosition: {x: 2.1272702, y: -0.00000041273677, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3912250904285809636}
   m_Father: {fileID: 8906266846264039690}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 61.164}
 --- !u!1 &2233476197617059428
 GameObject:
   m_ObjectHideFlags: 0
@@ -3548,14 +3548,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2360843779812381518}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.9987202, w: 0.050576746}
+  m_LocalRotation: {x: -0, y: -0, z: 0.9986156, w: 0.05260192}
   m_LocalPosition: {x: 2.1429734, y: -0.743691, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 9157492295160507004}
   m_Father: {fileID: 4257679111386862312}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 168.134}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 173.969}
 --- !u!1 &2393711380005563463
 GameObject:
   m_ObjectHideFlags: 0
@@ -3580,14 +3580,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2393711380005563463}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.5467607, w: 0.8372889}
+  m_LocalRotation: {x: -0, y: -0, z: -0.49831367, w: 0.8669969}
   m_LocalPosition: {x: 1.7624054, y: -0.00000026069657, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7306302368925994026}
   m_Father: {fileID: 2680305816034372725}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -59.777}
 --- !u!1 &2526220690464828382
 GameObject:
   m_ObjectHideFlags: 0
@@ -3794,7 +3794,7 @@ Transform:
   m_GameObject: {fileID: 2658186893213490051}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0.68003947, w: 0.7331756}
-  m_LocalPosition: {x: 0.5, y: -0.001, z: 0}
+  m_LocalPosition: {x: 0.227, y: 0.008, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3840,6 +3840,7 @@ Transform:
   - {fileID: 4115723342658878765}
   - {fileID: 532426165555903642}
   - {fileID: 1252001189993320232}
+  - {fileID: 7114306677029804556}
   m_Father: {fileID: 4257679111386862312}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 21.102}
 --- !u!70 &4161556469149567743
@@ -3903,14 +3904,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2735900413683898725}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.59811914, w: 0.8014073}
+  m_LocalRotation: {x: -0, y: -0, z: 0.6093899, w: 0.7928707}
   m_LocalPosition: {x: 2.4063306, y: -0.00000006278918, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5738242297855828304}
   m_Father: {fileID: 596364321759533591}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 75.091}
 --- !u!1 &2736435694255886797
 GameObject:
   m_ObjectHideFlags: 0
@@ -4000,14 +4001,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2834881589465346965}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.22152154, w: 0.9751555}
+  m_LocalRotation: {x: -0, y: -0, z: 0.54164124, w: 0.8406098}
   m_LocalPosition: {x: 2.038006, y: -0.00000019863813, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7203260424078161818}
   m_Father: {fileID: 9157492295160507004}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 65.591}
 --- !u!1 &2972413698428545500
 GameObject:
   m_ObjectHideFlags: 0
@@ -4095,7 +4096,7 @@ Transform:
   m_GameObject: {fileID: 3161798817042704260}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: -0.6615541, w: -0.7498975}
-  m_LocalPosition: {x: 0.72, y: -0, z: 0}
+  m_LocalPosition: {x: 0.36, y: 0.018, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4773,14 +4774,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3716491933581912858}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.22710952, w: 0.97386926}
+  m_LocalRotation: {x: -0, y: -0, z: -0.4363677, w: 0.89976853}
   m_LocalPosition: {x: 1.9515746, y: 0.00000070054267, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 871183515759155505}
   m_Father: {fileID: 822636868363825723}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -51.745}
 --- !u!1 &3824376880245498785
 GameObject:
   m_ObjectHideFlags: 0
@@ -5451,14 +5452,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4187706972372940199}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.6093016, w: 0.7929386}
+  m_LocalRotation: {x: -0, y: -0, z: 0.62238127, w: 0.78271425}
   m_LocalPosition: {x: 2.4391904, y: 0.0000000069014097, z: 0}
   m_LocalScale: {x: 1.0000001, y: 1.0000001, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8134172703908562749}
   m_Father: {fileID: 1671441735390870653}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 76.98}
 --- !u!1 &4256320658433803893
 GameObject:
   m_ObjectHideFlags: 0
@@ -5483,14 +5484,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4256320658433803893}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.13885124, w: 0.9903133}
+  m_LocalRotation: {x: -0, y: -0, z: 0.08789787, w: 0.9961296}
   m_LocalPosition: {x: 1.0860984, y: -0.00000008524226, z: 0}
   m_LocalScale: {x: 0.4, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4109640117689536782}
   m_Father: {fileID: 752940509849597149}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 10.085}
 --- !u!1 &4397359159708987378
 GameObject:
   m_ObjectHideFlags: 0
@@ -5701,7 +5702,7 @@ Transform:
   m_GameObject: {fileID: 4648109211383792129}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: -0.6727389, w: -0.73987997}
-  m_LocalPosition: {x: 0.457, y: -0.009, z: 0}
+  m_LocalPosition: {x: 0.27, y: -0.002, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5883,9 +5884,9 @@ MonoBehaviour:
   m_ComponentVersion: 2
   m_LightType: 3
   m_BlendStyleIndex: 0
-  m_FalloffIntensity: 0.809
+  m_FalloffIntensity: 0.9
   m_Color: {r: 0.6472694, g: 0.70138234, b: 0.97735846, a: 1}
-  m_Intensity: 5.3
+  m_Intensity: 9.31
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
   m_ApplyToSortingLayers: c32964b5
@@ -5908,7 +5909,7 @@ MonoBehaviour:
     m_Extent: {x: 0.9985302, y: 0.99853027, z: 0}
   m_PointLightInnerAngle: 360
   m_PointLightOuterAngle: 360
-  m_PointLightInnerRadius: 0.07
+  m_PointLightInnerRadius: 0
   m_PointLightOuterRadius: 1.41
   m_ShapeLightParametricSides: 5
   m_ShapeLightParametricAngleOffset: 0
@@ -5944,14 +5945,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4744702835880208751}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.23593058, w: 0.9717699}
+  m_LocalRotation: {x: -0, y: -0, z: 0.21643917, w: 0.97629607}
   m_LocalPosition: {x: 0.8475363, y: -0.4789573, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3204698491393591131}
   m_Father: {fileID: 1796735932416995084}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -43.672}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 25}
 --- !u!1 &4794559226346589072
 GameObject:
   m_ObjectHideFlags: 0
@@ -5976,14 +5977,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4794559226346589072}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.5468112, w: 0.83725595}
+  m_LocalRotation: {x: -0, y: -0, z: -0.4957748, w: 0.8684512}
   m_LocalPosition: {x: 1.7701721, y: -0.00000007134644, z: 0}
   m_LocalScale: {x: 1.0000001, y: 1.0000001, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3602990434774389934}
   m_Father: {fileID: 2399890710218574748}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -59.442}
 --- !u!1 &4801443516212247964
 GameObject:
   m_ObjectHideFlags: 0
@@ -6390,14 +6391,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5402962238274146728}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.75387996, w: 0.65701216}
+  m_LocalRotation: {x: -0, y: -0, z: 0.71289045, w: 0.7012754}
   m_LocalPosition: {x: 1.775366, y: 0.00000011558021, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3001778642298697474}
   m_Father: {fileID: 6932109180140675545}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90.941}
 --- !u!1 &5509401913209774970
 GameObject:
   m_ObjectHideFlags: 0
@@ -6422,14 +6423,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5509401913209774970}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.2003551, w: 0.97972333}
+  m_LocalRotation: {x: -0, y: -0, z: -0.4084901, w: 0.9127628}
   m_LocalPosition: {x: 1.8382739, y: 0.00000070850564, z: 0}
   m_LocalScale: {x: 0.9999999, y: 0.9999999, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2034791752815395644}
   m_Father: {fileID: 4114279246918961293}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -48.22}
 --- !u!1 &5555185981846932118
 GameObject:
   m_ObjectHideFlags: 0
@@ -6454,14 +6455,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5555185981846932118}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.98438567, w: 0.1760252}
+  m_LocalRotation: {x: -0, y: -0, z: 0.9942469, w: 0.10711327}
   m_LocalPosition: {x: 2.5405912, y: -0.5548077, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3580165909359640762}
   m_Father: {fileID: 4257679111386862312}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 156.947}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 167.702}
 --- !u!1 &5557610354430342084
 GameObject:
   m_ObjectHideFlags: 0
@@ -6540,14 +6541,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5814272727016347195}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.7041517, w: 0.7100496}
+  m_LocalRotation: {x: -0, y: -0, z: -0.52749103, w: 0.84956056}
   m_LocalPosition: {x: 1.4802186, y: -0.0000003059697, z: 0}
   m_LocalScale: {x: 0.9999999, y: 0.9999999, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1208839048729888145}
   m_Father: {fileID: 6996931359358265962}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -63.672}
 --- !u!1 &6016693261962413811
 GameObject:
   m_ObjectHideFlags: 0
@@ -6847,14 +6848,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6081748104377677409}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.985807, w: 0.16788262}
+  m_LocalRotation: {x: -0, y: -0, z: 0.9951087, w: 0.09878664}
   m_LocalPosition: {x: 2.5516284, y: -0.5374078, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8906266846264039690}
   m_Father: {fileID: 4257679111386862312}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 172.365}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 168.661}
 --- !u!1 &6127275030434282118
 GameObject:
   m_ObjectHideFlags: 0
@@ -7171,14 +7172,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6177052866903249966}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.3057082, w: 0.9521253}
+  m_LocalRotation: {x: -0, y: -0, z: 0.20134588, w: 0.97952026}
   m_LocalPosition: {x: 0.2102034, y: -0.55039406, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5581961485169521177}
   m_Father: {fileID: 1796735932416995084}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -25.962}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 23.231}
 --- !u!1 &6229138575272074973
 GameObject:
   m_ObjectHideFlags: 0
@@ -7495,14 +7496,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6259604372759008763}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.20000966, w: 0.97979397}
+  m_LocalRotation: {x: -0, y: -0, z: -0.4235237, w: 0.905885}
   m_LocalPosition: {x: 1.8882043, y: 0.0000006880398, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3033994015570042515}
   m_Father: {fileID: 5581961485169521177}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -50.114}
 --- !u!1 &6289338611581681098
 GameObject:
   m_ObjectHideFlags: 0
@@ -8209,7 +8210,7 @@ Transform:
   m_GameObject: {fileID: 6858911009439342665}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0.73185056, w: 0.6814652}
-  m_LocalPosition: {x: 0.427, y: -0.001, z: 0}
+  m_LocalPosition: {x: 0.264, y: -0.006, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -8493,14 +8494,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7402302345158306404}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.7678242, w: 0.6406607}
+  m_LocalRotation: {x: -0, y: -0, z: 0.72757775, w: 0.6860253}
   m_LocalPosition: {x: 1.8087547, y: -0.00000012099964, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 752940509849597149}
   m_Father: {fileID: 4593715000520413280}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 93.367}
 --- !u!1 &7413566729365570708
 GameObject:
   m_ObjectHideFlags: 0
@@ -8525,14 +8526,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7413566729365570708}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.23278719, w: 0.97252774}
+  m_LocalRotation: {x: -0, y: -0, z: 0.21617055, w: 0.9763557}
   m_LocalPosition: {x: 0.84697473, y: -0.46754074, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 822636868363825723}
   m_Father: {fileID: 1796735932416995084}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -24.281}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 24.968}
 --- !u!1 &7493680828052448664
 GameObject:
   m_ObjectHideFlags: 0
@@ -8557,14 +8558,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7493680828052448664}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.129897, w: 0.9915275}
+  m_LocalRotation: {x: -0, y: -0, z: 0.1547302, w: 0.98795676}
   m_LocalPosition: {x: 1.1028842, y: -0.00000011999286, z: 0}
   m_LocalScale: {x: 0.4, y: 1.0000001, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4327750774746436712}
   m_Father: {fileID: 3001778642298697474}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 17.802}
 --- !u!1 &7510525530624609443
 GameObject:
   m_ObjectHideFlags: 0
@@ -8589,14 +8590,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7510525530624609443}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.30514959, w: 0.9523044}
+  m_LocalRotation: {x: -0, y: -0, z: 0.20254205, w: 0.97927356}
   m_LocalPosition: {x: 0.22732681, y: -0.549551, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4114279246918961293}
   m_Father: {fileID: 1796735932416995084}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -34.316}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 23.371}
 --- !u!1 &7544975949659689791
 GameObject:
   m_ObjectHideFlags: 0
@@ -8622,7 +8623,7 @@ Transform:
   m_GameObject: {fileID: 7544975949659689791}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: -0.67390764, w: -0.73881567}
-  m_LocalPosition: {x: 0.733, y: -0.003, z: 0}
+  m_LocalPosition: {x: 0.32, y: 0.012, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -8692,6 +8693,37 @@ Transform:
   m_Children:
   - {fileID: 4199633852037162369}
   m_Father: {fileID: 8134172703908562749}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7886510674611031863
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7114306677029804556}
+  m_Layer: 3
+  m_Name: Head Height Ref Pt
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7114306677029804556
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7886510674611031863}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.42, y: -0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1796735932416995084}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7990186364218670115
 GameObject:
@@ -8783,7 +8815,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8327435080637754190}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.0029801163, w: 0.9999956}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.25, y: 0.25, z: 1}
   m_ConstrainProportionsScale: 0
@@ -8816,14 +8848,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8406567198824328484}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.7005278, w: 0.71362513}
+  m_LocalRotation: {x: -0, y: -0, z: -0.52577, w: 0.8506268}
   m_LocalPosition: {x: 1.4611212, y: -0.000000029713847, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 74713977280612927}
   m_Father: {fileID: 2749387138667642994}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -63.44}
 --- !u!1 &8459196700872151742
 GameObject:
   m_ObjectHideFlags: 0
@@ -9075,7 +9107,7 @@ Transform:
   m_GameObject: {fileID: 8707036530917231661}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0.67018884, w: 0.74219066}
-  m_LocalPosition: {x: 0.519, y: 0.006, z: 0}
+  m_LocalPosition: {x: 0.311, y: 0.015, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9105,14 +9137,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8772371884197178333}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.20536758, w: 0.97868496}
+  m_LocalRotation: {x: -0, y: -0, z: 0.50995934, w: 0.86019856}
   m_LocalPosition: {x: 2.1605256, y: -0.00000031140746, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1262494296321640506}
   m_Father: {fileID: 3580165909359640762}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 61.322}
 --- !u!1 &8773133144574097762
 GameObject:
   m_ObjectHideFlags: 0
@@ -9442,7 +9474,7 @@ Rigidbody2D:
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDamping: 0.25
-  m_AngularDamping: 0.2
+  m_AngularDamping: 0.6
   m_GravityScale: 1
   m_Material: {fileID: 6200000, guid: 7840060c153c38e4e858577886f135f4, type: 2}
   m_IncludeLayers:
@@ -9592,6 +9624,7 @@ MonoBehaviour:
   abdomenBone: {fileID: 4257679111386862312}
   abdomenBonePivot: {fileID: 4636016392783388535}
   headBone: {fileID: 1796735932416995084}
+  headBoneHeightRefPoint: {fileID: 7114306677029804556}
   heightReferencePoint: {fileID: 3708315842584664218}
   grapple: {fileID: 1051379001623071205}
   groundLayer:
@@ -9603,12 +9636,10 @@ MonoBehaviour:
   groundednessInitialContactValue: 1
   groundDirectionSampleWidth: 0.5
   backupGroundPtRaycastLengthFactor: 1.1
-  upcomingGroundDirectionMinPos: 0
-  upcomingGroundDirectionMaxPos: 0.6
   failedGroundDirectionSmoothingRate: 45
   groundMap:
-    numFwdIntervals: 50
-    intervalWidth: 0.03
+    numFwdIntervals: 60
+    intervalWidth: 0.05
     map:
     - arcLengthPosition: -1.6500734
       raycastDistance: 0.9199808
@@ -10276,25 +10307,28 @@ MonoBehaviour:
       normal: {x: 0.9132198, y: -0.40746734}
       right: {x: -0.40746734, y: -0.9132198}
       groundCollider: {fileID: 0}
-  accelFactor: 35
+  accelFactor: 50
   accelFactorFreeHanging: 15.5
   deadThrusterAccelFactor: 4
   thrustingAccelFactor: 25
-  accelCap: 3
+  accelCap: 7.5
   gripStrength: 1500
   gripDamping: 375
   grapplePullGripReduction: 0.95
   maxSpeed: 5
   maxSpeedAirborne: 9
-  preferredRideHeight: 0.92
-  heightSpringForce: 500
-  heightSpringDamping: 30
+  preferredRideHeight: 0.95
+  heightSpringForce: 600
+  heightSpringDamping: 20
   heightSpringBreakThreshold: 0.01
   grappleSquatReduction: 0.4
-  heightSampleWidth: 1
+  heightSampleMin: -0.4
+  heightSampleMax: 0.6
   abdomenRotationSpeed: 6
-  headRotationSpeed: 10
-  balanceSpringForce: 225
+  headRotationSpeed: 15
+  headRotationMinPos: -0.2
+  headRotationMaxPos: 0.4
+  balanceSpringForce: 210
   airborneBalanceSpringForce: 100
   balanceSpringDamping: 0.25
   airborneBalanceSpringDamping: 0.04
@@ -10320,7 +10354,6 @@ MonoBehaviour:
   freeHangHeadAngle: 0.2094395
   freeHangStepHeightReductionMax: 0.9
   freeHangStrideMultiplier: 0.7
-  freeHangLegReachFraction: 1
   freeHangSimulateContactMax: 0.1
   thruster:
     secondsToDrain: 5
@@ -10430,17 +10463,20 @@ MonoBehaviour:
   leg:
   - contactSettings:
       gravityStrength: 0
-      poseForce: 600
-      limpness: 0.7
-      jointDamping: 20
+      poseForce: 0
+      reachForce: 1000
+      limpness: 0
+      jointDamping: 30
       stepHeight: 0.8
+      nonSimulatedPose: 0
     noContactSettings:
       gravityStrength: 0
-      poseForce: 800
-      limpness: 0.5
-      jointDamping: 15
+      poseForce: 0
+      reachForce: 1000
+      limpness: 0
+      jointDamping: 30
       stepHeight: 0.8
-    useGroundMapClosestPoint: 0
+      nonSimulatedPose: 0
     HitGround:
       m_PersistentCalls:
         m_Calls: []
@@ -10453,19 +10489,23 @@ MonoBehaviour:
     - {fileID: 8270222540382114309}
     target: {fileID: 2278123347475011000}
     stepMax: 0.9
+    defaultPoseDeviationMax: 0.2617994
   - contactSettings:
       gravityStrength: 0
-      poseForce: 600
-      limpness: 0.7
-      jointDamping: 20
+      poseForce: 0
+      reachForce: 1000
+      limpness: 0
+      jointDamping: 30
       stepHeight: 0.8
+      nonSimulatedPose: 0
     noContactSettings:
       gravityStrength: 0
-      poseForce: 800
-      limpness: 0.5
-      jointDamping: 15
+      poseForce: 0
+      reachForce: 1000
+      limpness: 0
+      jointDamping: 30
       stepHeight: 0.8
-    useGroundMapClosestPoint: 0
+      nonSimulatedPose: 0
     HitGround:
       m_PersistentCalls:
         m_Calls: []
@@ -10478,19 +10518,23 @@ MonoBehaviour:
     - {fileID: 3120058777622577783}
     target: {fileID: 4380958847150461223}
     stepMax: 0.9
+    defaultPoseDeviationMax: 0.2617994
   - contactSettings:
       gravityStrength: 0
-      poseForce: 600
-      limpness: 0.7
-      jointDamping: 20
+      poseForce: 0
+      reachForce: 1000
+      limpness: 0
+      jointDamping: 30
       stepHeight: 0.8
+      nonSimulatedPose: 0
     noContactSettings:
       gravityStrength: 0
-      poseForce: 800
-      limpness: 0.5
-      jointDamping: 15
+      poseForce: 0
+      reachForce: 1000
+      limpness: 0
+      jointDamping: 30
       stepHeight: 0.8
-    useGroundMapClosestPoint: 0
+      nonSimulatedPose: 0
     HitGround:
       m_PersistentCalls:
         m_Calls: []
@@ -10503,19 +10547,23 @@ MonoBehaviour:
     - {fileID: 8714597820655926901}
     target: {fileID: 1238561792403655595}
     stepMax: 0.825
+    defaultPoseDeviationMax: 0.2617994
   - contactSettings:
       gravityStrength: 0
-      poseForce: 600
-      limpness: 0.7
-      jointDamping: 20
+      poseForce: 0
+      reachForce: 1000
+      limpness: 0
+      jointDamping: 30
       stepHeight: 0.8
+      nonSimulatedPose: 0
     noContactSettings:
       gravityStrength: 0
-      poseForce: 800
-      limpness: 0.5
-      jointDamping: 15
+      poseForce: 0
+      reachForce: 1000
+      limpness: 0
+      jointDamping: 30
       stepHeight: 0.8
-    useGroundMapClosestPoint: 0
+      nonSimulatedPose: 0
     HitGround:
       m_PersistentCalls:
         m_Calls: []
@@ -10528,19 +10576,23 @@ MonoBehaviour:
     - {fileID: 7669166903120010156}
     target: {fileID: 1137408330521889720}
     stepMax: 0.825
+    defaultPoseDeviationMax: 0.2617994
   - contactSettings:
       gravityStrength: 0
-      poseForce: 600
-      limpness: 0.7
-      jointDamping: 20
+      poseForce: 0
+      reachForce: 1400
+      limpness: 0
+      jointDamping: 30
       stepHeight: 0.8
+      nonSimulatedPose: 0
     noContactSettings:
       gravityStrength: 0
-      poseForce: 800
-      limpness: 0.5
-      jointDamping: 15
+      poseForce: 0
+      reachForce: 1400
+      limpness: 0
+      jointDamping: 30
       stepHeight: 0.8
-    useGroundMapClosestPoint: 0
+      nonSimulatedPose: 0
     HitGround:
       m_PersistentCalls:
         m_Calls: []
@@ -10552,20 +10604,24 @@ MonoBehaviour:
     - {fileID: 3912250904285809636}
     - {fileID: 4327750774746436712}
     target: {fileID: 6915238945053128507}
-    stepMax: -0.05
+    stepMax: -0.25
+    defaultPoseDeviationMax: 0.45
   - contactSettings:
       gravityStrength: 0
-      poseForce: 600
-      limpness: 0.7
-      jointDamping: 20
+      poseForce: 0
+      reachForce: 1400
+      limpness: 0
+      jointDamping: 30
       stepHeight: 0.8
+      nonSimulatedPose: 0
     noContactSettings:
       gravityStrength: 0
-      poseForce: 800
-      limpness: 0.5
-      jointDamping: 15
+      poseForce: 0
+      reachForce: 1400
+      limpness: 0
+      jointDamping: 30
       stepHeight: 0.8
-    useGroundMapClosestPoint: 0
+      nonSimulatedPose: 0
     HitGround:
       m_PersistentCalls:
         m_Calls: []
@@ -10577,20 +10633,24 @@ MonoBehaviour:
     - {fileID: 1262494296321640506}
     - {fileID: 4109640117689536782}
     target: {fileID: 8327284446163506453}
-    stepMax: -0.05
+    stepMax: -0.25
+    defaultPoseDeviationMax: 0.45
   - contactSettings:
       gravityStrength: 0
-      poseForce: 600
-      limpness: 0.7
-      jointDamping: 20
+      poseForce: 0
+      reachForce: 1400
+      limpness: 0
+      jointDamping: 30
       stepHeight: 0.8
+      nonSimulatedPose: 0
     noContactSettings:
       gravityStrength: 0
-      poseForce: 800
-      limpness: 0.5
-      jointDamping: 15
+      poseForce: 0
+      reachForce: 1400
+      limpness: 0
+      jointDamping: 30
       stepHeight: 0.8
-    useGroundMapClosestPoint: 0
+      nonSimulatedPose: 0
     HitGround:
       m_PersistentCalls:
         m_Calls: []
@@ -10602,20 +10662,24 @@ MonoBehaviour:
     - {fileID: 7203260424078161818}
     - {fileID: 4199633852037162369}
     target: {fileID: 7491916336825498184}
-    stepMax: -0.2
+    stepMax: -0.3
+    defaultPoseDeviationMax: 0.45
   - contactSettings:
       gravityStrength: 0
-      poseForce: 600
-      limpness: 0.7
-      jointDamping: 20
+      poseForce: 0
+      reachForce: 1400
+      limpness: 0
+      jointDamping: 30
       stepHeight: 0.8
+      nonSimulatedPose: 0
     noContactSettings:
       gravityStrength: 0
-      poseForce: 800
-      limpness: 0.5
-      jointDamping: 15
+      poseForce: 0
+      reachForce: 1400
+      limpness: 0
+      jointDamping: 30
       stepHeight: 0.8
-    useGroundMapClosestPoint: 0
+      nonSimulatedPose: 0
     HitGround:
       m_PersistentCalls:
         m_Calls: []
@@ -10627,171 +10691,240 @@ MonoBehaviour:
     - {fileID: 7261066662746368589}
     - {fileID: 1884732402649843420}
     target: {fileID: 5994156311465296893}
-    stepMax: -0.2
+    stepMax: -0.3
+    defaultPoseDeviationMax: 0.45
+  orientingTransform:
+  - {fileID: 1796735932416995084}
+  - {fileID: 8910507805382992582}
+  orientingTransformIndex: 0000000000000000000000000000000001000000010000000100000001000000
   stdSettings:
   - gravityStrength: 0
-    poseForce: 750
+    poseForce: 0
+    reachForce: 600
     limpness: 0
-    jointDamping: 20
+    jointDamping: 25
     stepHeight: 0.8
+    nonSimulatedPose: 0
   - gravityStrength: 0
-    poseForce: 750
+    poseForce: 0
+    reachForce: 600
     limpness: 0
-    jointDamping: 20
+    jointDamping: 25
     stepHeight: 0.8
+    nonSimulatedPose: 0
   - gravityStrength: 0
-    poseForce: 750
+    poseForce: 0
+    reachForce: 600
     limpness: 0
-    jointDamping: 20
+    jointDamping: 25
     stepHeight: 0.8
+    nonSimulatedPose: 0
   - gravityStrength: 0
-    poseForce: 750
+    poseForce: 0
+    reachForce: 600
     limpness: 0
-    jointDamping: 20
+    jointDamping: 25
     stepHeight: 0.8
+    nonSimulatedPose: 0
   - gravityStrength: 0
-    poseForce: 750
+    poseForce: 0
+    reachForce: 600
     limpness: 0
-    jointDamping: 20
+    jointDamping: 25
     stepHeight: 0.8
+    nonSimulatedPose: 0
   - gravityStrength: 0
-    poseForce: 750
+    poseForce: 0
+    reachForce: 600
     limpness: 0
-    jointDamping: 20
+    jointDamping: 25
     stepHeight: 0.8
+    nonSimulatedPose: 0
   - gravityStrength: 0
-    poseForce: 750
+    poseForce: 0
+    reachForce: 600
     limpness: 0
-    jointDamping: 20
+    jointDamping: 25
     stepHeight: 0.8
+    nonSimulatedPose: 0
   - gravityStrength: 0
-    poseForce: 750
+    poseForce: 0
+    reachForce: 600
     limpness: 0
-    jointDamping: 20
+    jointDamping: 25
     stepHeight: 0.8
+    nonSimulatedPose: 0
   jumpSettings:
   - gravityStrength: 0
     poseForce: 2000
+    reachForce: 0
     limpness: 0
     jointDamping: 15
     stepHeight: 0.85
+    nonSimulatedPose: 0
   - gravityStrength: 0
     poseForce: 2000
+    reachForce: 0
     limpness: 0
     jointDamping: 15
     stepHeight: 0.85
+    nonSimulatedPose: 0
   - gravityStrength: 0
     poseForce: 2000
+    reachForce: 0
     limpness: 0
     jointDamping: 15
     stepHeight: 0.85
+    nonSimulatedPose: 0
   - gravityStrength: 0
     poseForce: 2000
+    reachForce: 0
     limpness: 0
     jointDamping: 15
     stepHeight: 0.85
+    nonSimulatedPose: 0
   - gravityStrength: 0
     poseForce: 2000
+    reachForce: 0
     limpness: 0
     jointDamping: 15
     stepHeight: 0.85
+    nonSimulatedPose: 0
   - gravityStrength: 0
     poseForce: 2000
+    reachForce: 0
     limpness: 0
     jointDamping: 15
     stepHeight: 0.85
+    nonSimulatedPose: 0
   - gravityStrength: 0
     poseForce: 2000
+    reachForce: 0
     limpness: 0
     jointDamping: 15
     stepHeight: 0.85
+    nonSimulatedPose: 0
   - gravityStrength: 0
     poseForce: 2000
+    reachForce: 0
     limpness: 0
     jointDamping: 15
     stepHeight: 0.85
+    nonSimulatedPose: 0
   freefallSettings:
   - gravityStrength: 0.8
     poseForce: 600
+    reachForce: 0
     limpness: 0.05
     jointDamping: 15
     stepHeight: 0.8
+    nonSimulatedPose: 0
   - gravityStrength: 0.8
     poseForce: 600
+    reachForce: 0
     limpness: 0.05
     jointDamping: 15
     stepHeight: 0.8
+    nonSimulatedPose: 0
   - gravityStrength: 0.8
     poseForce: 600
+    reachForce: 0
     limpness: 0.05
     jointDamping: 15
     stepHeight: 0.8
+    nonSimulatedPose: 0
   - gravityStrength: 0.8
     poseForce: 600
+    reachForce: 0
     limpness: 0.05
     jointDamping: 15
     stepHeight: 0.8
+    nonSimulatedPose: 0
   - gravityStrength: 0.8
     poseForce: 600
+    reachForce: 0
     limpness: 0.05
     jointDamping: 15
     stepHeight: 0.8
+    nonSimulatedPose: 0
   - gravityStrength: 0.8
     poseForce: 600
+    reachForce: 0
     limpness: 0.05
     jointDamping: 15
     stepHeight: 0.8
+    nonSimulatedPose: 0
   - gravityStrength: 0.8
     poseForce: 600
+    reachForce: 0
     limpness: 0.05
     jointDamping: 15
     stepHeight: 0.8
+    nonSimulatedPose: 0
   - gravityStrength: 0.8
     poseForce: 600
+    reachForce: 0
     limpness: 0.05
     jointDamping: 15
     stepHeight: 0.8
+    nonSimulatedPose: 0
   limpSettings:
   - gravityStrength: 1
     poseForce: 25
+    reachForce: 0
     limpness: 0.035
     jointDamping: 16
     stepHeight: 0.1
+    nonSimulatedPose: 0
   - gravityStrength: 1
     poseForce: 25
+    reachForce: 0
     limpness: 0.035
     jointDamping: 16
     stepHeight: 0.1
+    nonSimulatedPose: 0
   - gravityStrength: 1
     poseForce: 25
+    reachForce: 0
     limpness: 0.035
     jointDamping: 16
     stepHeight: 0.1
+    nonSimulatedPose: 0
   - gravityStrength: 1
     poseForce: 25
+    reachForce: 0
     limpness: 0.035
     jointDamping: 16
     stepHeight: 0.1
+    nonSimulatedPose: 0
   - gravityStrength: 0.75
     poseForce: 375
+    reachForce: 0
     limpness: 0.015
     jointDamping: 12.5
     stepHeight: 0.5
+    nonSimulatedPose: 0
   - gravityStrength: 0.75
     poseForce: 375
+    reachForce: 0
     limpness: 0.015
     jointDamping: 12.5
     stepHeight: 0.5
+    nonSimulatedPose: 0
   - gravityStrength: 0.75
     poseForce: 375
+    reachForce: 0
     limpness: 0.015
     jointDamping: 12.5
     stepHeight: 0.5
+    nonSimulatedPose: 0
   - gravityStrength: 0.75
     poseForce: 375
+    reachForce: 0
     limpness: 0.015
     jointDamping: 12.5
     stepHeight: 0.5
+    nonSimulatedPose: 0
   timeOffset:
   - 0
   - 0.4
@@ -10803,14 +10936,14 @@ MonoBehaviour:
   - 0.775
   fabrikIterations: 10
   fabrikTolerance: 0.01
-  targetSmoothingRate: 50
   groundContactRadius: 0.085
-  collisionResponse: 2500
+  collisionResponse: 750
+  bodyCollisionForceMultiplier: 0.0125
+  angleBoundsForce: 1000
   bodyGroundSpeedSign: 0
   absoluteBodyGroundSpeed: 0
   timeScale: 0
   stepHeightFraction: 0
-  reachFraction: 0
   strideMultiplier: 0
 --- !u!114 &4682192678046888787
 MonoBehaviour:

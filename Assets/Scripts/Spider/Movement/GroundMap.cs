@@ -265,30 +265,78 @@ public class GroundMap
         return LeftEndPt.point + u * LeftEndPt.normal.CWPerp();
     }
 
-    public void SetToPointFromCenterByPositionClamped(float x, ref GroundMapPt pt)
+    //public void SetToPointFromCenterByPositionClamped(float x, ref GroundMapPt pt)
+    //{
+    //    if (x > 0)
+    //    {
+    //        for (int i = numFwdIntervals; i < map.Length - 1; i++)
+    //        {
+    //            if (map[i + 1].arcLengthPosition > x)
+    //            {
+    //                var s = map[i + 1].arcLengthPosition - map[i].arcLengthPosition;
+    //                pt.Set(Vector2.Lerp(map[i].point, map[i + 1].point, (x - map[i].arcLengthPosition) / s), map[i].normal, map[i].right, 0, 0, map[i].groundCollider);
+    //            }
+    //        }
+    //        pt = RightEndPt;
+    //    }
+
+    //    for (int i = numFwdIntervals; i > 0; i--)
+    //    {
+    //        if (map[i - 1].arcLengthPosition < x)
+    //        {
+    //            var s = map[i - 1].arcLengthPosition - map[i].arcLengthPosition;
+    //            pt.Set(Vector2.Lerp(map[i].point, map[i - 1].point, (x - map[i].arcLengthPosition) / s), map[i].normal, map[i].right, 0, 0, map[i].groundCollider);
+    //        }
+    //    }
+    //    pt = LeftEndPt;
+    //}
+
+    //find point q on the ground such that p - q parallel to line cast direction
+    public bool LineCastToGround(Vector2 p, Vector2 dir, out Vector2 position, out float arcLengthPosition, out Vector2 normal, out bool hitGround)
     {
-        if (x > 0)
+        var a1 = MathTools.Cross2D(p - map[0].point, dir);
+        if (a1 == 0)
         {
-            for (int i = numFwdIntervals; i < map.Length - 1; i++)
+            hitGround = map[0].HitGround;
+            normal = map[0].normal;
+            arcLengthPosition = map[0].arcLengthPosition;
+            position = map[0].point;
+            return true;
+        }
+        for (int i = 1; i < NumPts; i++)
+        {
+            var a2 = MathTools.Cross2D(p - map[i].point, dir);
+            if (a2 == 0)
             {
-                if (map[i + 1].arcLengthPosition > x)
+                normal = map[i].normal;
+                if (Vector2.Dot(normal, dir) < 0)
                 {
-                    var s = map[i + 1].arcLengthPosition - map[i].arcLengthPosition;
-                    pt.Set(Vector2.Lerp(map[i].point, map[i + 1].point, (x - map[i].arcLengthPosition) / s), map[i].normal, map[i].right, 0, 0, map[i].groundCollider);
+                    hitGround = map[i].HitGround;
+                    arcLengthPosition = map[i].arcLengthPosition;
+                    position = map[i].point;
+                    return true;
                 }
             }
-            pt = RightEndPt;
+            else if (MathTools.OppositeSigns(a1, a2))
+            {
+                var t = Mathf.Abs(a1 / (a2 - a1));
+                normal = MathTools.CheapRotationalLerp(map[i - 1].normal, map[i].normal, t, out _);
+                if (Vector2.Dot(normal, dir) < 0)
+                {
+                    hitGround = t < 0.5f ? map[i - 1].HitGround : map[i].HitGround;
+                    arcLengthPosition = Mathf.Lerp(map[i - 1].arcLengthPosition, map[i].arcLengthPosition, t);
+                    position = Vector2.Lerp(map[i - 1].point, map[i].point, t);
+                    return true;
+                }
+            }
+            a1 = a2;
         }
 
-        for (int i = numFwdIntervals; i > 0; i--)
-        {
-            if (map[i - 1].arcLengthPosition < x)
-            {
-                var s = map[i - 1].arcLengthPosition - map[i].arcLengthPosition;
-                pt.Set(Vector2.Lerp(map[i].point, map[i - 1].point, (x - map[i].arcLengthPosition) / s), map[i].normal, map[i].right, 0, 0, map[i].groundCollider);
-            }
-        }
-        pt = LeftEndPt;
+        hitGround = false;
+        normal = Vector2.zero;
+        arcLengthPosition = 0;
+        position = Vector2.zero;
+        return false;
     }
 
     public Vector2 TrueClosestPoint(Vector2 p, out float arcLengthPosition, out Vector2 normal, out bool hitGround)

@@ -60,7 +60,7 @@ public class JumpPreviewArrow : MonoBehaviour
         //    player.JumpChargeEnded.AddListener(HideArrow);
         //}
 
-        player = Spider.Player.MovementController;
+        player = Spider.Player.MovementControl;
 
         arrowHeadAnchor = new GameObject("Arrow Head Anchor").transform;
         arrowHeadAnchor.position = new(arrowNeck.bounds.center.x, arrowNeck.bounds.max.y, 0);//need to make sure it's right on the edge of bounding box, otherwise scales poorly

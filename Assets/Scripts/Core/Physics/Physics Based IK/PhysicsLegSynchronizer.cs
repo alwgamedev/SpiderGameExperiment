@@ -8,6 +8,8 @@ public class PhysicsLegSynchronizer : MonoBehaviour
     [SerializeField] float stepHeightSpeed0;//at or below this speed, stepHeight is zero
     [SerializeField] float stepHeightSpeed1;//at or above this speed, use full stepHeight
     [SerializeField] PhysicsBasedIKLeg[] leg;
+    [SerializeField] Transform[] orientingTransform;
+    [SerializeField] int[] orientingTransformIndex;
     [SerializeField] PhysicsLegSettings[] stdSettings;
     [SerializeField] PhysicsLegSettings[] jumpSettings;
     [SerializeField] PhysicsLegSettings[] freefallSettings;
@@ -15,9 +17,10 @@ public class PhysicsLegSynchronizer : MonoBehaviour
     [SerializeField] float[] timeOffset;
     [SerializeField] int fabrikIterations;
     [SerializeField] float fabrikTolerance;
-    [SerializeField] float targetSmoothingRate;
     [SerializeField] float groundContactRadius;
     [SerializeField] float collisionResponse;
+    [SerializeField] float bodyCollisionForceMultiplier;
+    [SerializeField] float angleBoundsForce;
 
     LegTimer[] timer;
     LegState state;
@@ -27,7 +30,6 @@ public class PhysicsLegSynchronizer : MonoBehaviour
     public float absoluteBodyGroundSpeed;
     public float timeScale = 1;
     public float stepHeightFraction;
-    public float reachFraction;
     public float strideMultiplier = 1;
 
     public enum LegState
@@ -70,12 +72,11 @@ public class PhysicsLegSynchronizer : MonoBehaviour
         return false;
     }
 
-    public void UpdateAllLegs(float dt, GroundMap map, float simulateContactWeight = 0)
+    public void UpdateAllLegs(float dt, GroundMap map, Rigidbody2D rb, float simulateContactWeight = 0)
     {
         var speedFraction = absoluteBodyGroundSpeed < stepHeightSpeed0 ? 0 : absoluteBodyGroundSpeed / stepHeightSpeed1;
         var speedScaledDt = timeScale * speedFraction * dt;
         var stepHeightSpeedMultiplier = Mathf.Min(speedFraction, 1);
-        var reachFraction = Mathf.Lerp(this.reachFraction, 1, simulateContactWeight);
         var count = 0;
 
         for (int i = 0; i < leg.Length; i++)
@@ -87,15 +88,18 @@ public class PhysicsLegSynchronizer : MonoBehaviour
 
             if (t.Stepping)
             {
-                l.UpdateTargetStepping(map, dt, stepHeightSpeedMultiplier, stepHeightFraction, /*reachFraction,*/ t.StateProgress, 
-                    strideMultiplier * t.StepTime, strideMultiplier * t.RestTime, targetSmoothingRate);
+                l.UpdateTargetStepping(map, -orientingTransform[orientingTransformIndex[i]].up,
+                    stepHeightSpeedMultiplier, stepHeightFraction, t.StateProgress, 
+                    strideMultiplier * t.StepTime, strideMultiplier * t.RestTime);
             }
             else
             {
-                l.UpdateTargetResting(map, dt, reachFraction, t.StateProgress, strideMultiplier * t.RestTime, targetSmoothingRate);
+                l.UpdateTargetResting(map, -orientingTransform[orientingTransformIndex[i]].up,
+                    t.StateProgress, strideMultiplier * t.RestTime);
             }
 
-            l.UpdateJoints(map, fabrikIterations, fabrikTolerance, groundContactRadius, collisionResponse, dt, simulateContactWeight);
+            var a = l.UpdateJoints(map, fabrikIterations, fabrikTolerance, groundContactRadius, collisionResponse, angleBoundsForce, dt, simulateContactWeight);
+            rb.AddForce(rb.mass * bodyCollisionForceMultiplier * a);
 
             if (l.EffectorIsTouchingGround)
             {
@@ -114,11 +118,11 @@ public class PhysicsLegSynchronizer : MonoBehaviour
         }
     }
 
-    public void Initialize()
+    public void Initialize(Vector2 groundPosition, Vector2 groundNormal)
     {
         legCountInverse = 1f / leg.Length;
         InitializeTimers();
-        InitializeLegs();
+        InitializeLegs(groundPosition, groundNormal);
         UpdateSettings();
     }
 
@@ -128,11 +132,11 @@ public class PhysicsLegSynchronizer : MonoBehaviour
         timer = timeOffset.Select(o => new LegTimer(o + randomOffset, stepDistance, restDistance)).ToArray();
     }
 
-    private void InitializeLegs()
+    private void InitializeLegs(Vector2 groundPosition, Vector2 groundNormal)
     {
         for (int i = 0; i < leg.Length; i++)
         {
-            leg[i].Initialize();
+            leg[i].Initialize(groundPosition, groundNormal);
             leg[i].contactSettings = stdSettings[i];
         }
     }

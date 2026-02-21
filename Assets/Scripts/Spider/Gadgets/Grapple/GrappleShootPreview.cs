@@ -23,7 +23,7 @@ public class GrappleShootPreview : MonoBehaviour
 
     private void Start()
     {
-        player = Spider.Player.MovementController;
+        player = Spider.Player.MovementControl;
         grapple = player.Grapple;
         positions = new Vector3[lineRenderer.positionCount];
         lineRenderer.enabled = false;
