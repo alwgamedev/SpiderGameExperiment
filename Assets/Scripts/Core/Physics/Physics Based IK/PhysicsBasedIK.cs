@@ -58,6 +58,7 @@ public static class PhysicsBasedIK
             }
         }
     }
+
     public static void ApplyGravity(Transform[] chain, float[] inverseLength, float[] angularVelocity, float gravityScale, float dt)
     {
         var g = gravityScale * dt * Physics2D.gravity;
@@ -90,6 +91,63 @@ public static class PhysicsBasedIK
             }
         }
     }
+
+    //public static void IntegrateJointsWithAngleBounds(Transform[] chain, float[] angularVelocity,
+    //    float[] minAngle, float[] maxAngle, float orientation, float angleboundsBuffer, float damping, float dt)
+    //{
+    //    var q0 = chain[0].rotation;
+    //    var q1 = q0;
+    //    float lastAngleCheckResult = 0;//1 if over max, -1 if under min
+    //    for (int i = 0; i < angularVelocity.Length; i++)
+    //    {
+    //        angularVelocity[i] -= damping * angularVelocity[i] * dt;
+    //        var dAngle = dt * angularVelocity[i];
+    //        var prevAngleFailed = false;
+
+    //        //check angle with previous arm
+    //        if ((dAngle > 0 && lastAngleCheckResult > 0) || (dAngle < 0 && lastAngleCheckResult < 0))
+    //        {
+    //            prevAngleFailed = true;
+    //            //still need to check angle with next arm to be ready for next iteration,
+    //            //so don't continue yet
+    //        }
+
+    //        //check angle with next arm
+    //        if (i < angularVelocity.Length - 1)
+    //        {
+    //            q1 = chain[i + 1].rotation;
+    //            q0 = q1 * MathTools.InverseOfUnitQuaternion(q0);
+    //            var z = Mathf.Sign(orientation * q0.w) * q0.z;
+
+    //            lastAngleCheckResult = z > maxAngle[i + 1] + angleboundsBuffer ? 1 : z < minAngle[i + 1] - angleboundsBuffer ? -1 : 0;
+
+    //            if ((dAngle > 0 && lastAngleCheckResult < 0) || (dAngle < 0 && lastAngleCheckResult > 0))
+    //            {
+    //                q0 = q1;
+    //                continue;
+    //            }
+    //        }
+
+    //        if (prevAngleFailed)
+    //        {
+    //            q0 = q1;
+    //            continue;
+    //        }
+
+    //        var u = MathTools.CheapRotationalLerp(Vector2.right, Vector2.left, dAngle * PIInverse, out _);
+    //        var q = MathTools.QuaternionFrom2DUnitVector(u);
+    //        chain[i].rotation *= q;
+    //        if (i < chain.Length - 2)
+    //        {
+    //            chain[i + 1].rotation *= MathTools.InverseOfUnitQuaternion(q);
+    //            //chain transforms assumed to be nested, so this allows joints to rotate independently
+    //            //(i.e. when joint i rotates, all later joints maintain their world rotation)
+    //            //this gives better tracking movement and more reliable collision
+    //        }
+
+    //        q0 = q1;
+    //    }
+    //}
 
     public static void ApplyCollisionForces(Transform[] chain, float[] length, float[] inverseLength, float[] armHalfWidth, float[] angularVelocity,
         LayerMask collisionMask, float collisionResponse, float horizontalRaycastSpacing, float tunnelInterval, float tunnelMax)

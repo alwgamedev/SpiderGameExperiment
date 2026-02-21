@@ -19,7 +19,6 @@ public class PhysicsLegSynchronizer : MonoBehaviour
     [SerializeField] float fabrikTolerance;
     [SerializeField] float groundContactRadius;
     [SerializeField] float collisionResponse;
-    [SerializeField] float bodyCollisionForceMultiplier;
     [SerializeField] float angleBoundsForce;
 
     LegTimer[] timer;
@@ -72,7 +71,7 @@ public class PhysicsLegSynchronizer : MonoBehaviour
         return false;
     }
 
-    public void UpdateAllLegs(float dt, GroundMap map, Rigidbody2D rb, float simulateContactWeight = 0)
+    public void UpdateAllLegs(float dt, GroundMap map, float simulateContactWeight = 0)
     {
         var speedFraction = absoluteBodyGroundSpeed < stepHeightSpeed0 ? 0 : absoluteBodyGroundSpeed / stepHeightSpeed1;
         var speedScaledDt = timeScale * speedFraction * dt;
@@ -98,8 +97,7 @@ public class PhysicsLegSynchronizer : MonoBehaviour
                     t.StateProgress, strideMultiplier * t.RestTime);
             }
 
-            var a = l.UpdateJoints(map, fabrikIterations, fabrikTolerance, groundContactRadius, collisionResponse, angleBoundsForce, dt, simulateContactWeight);
-            rb.AddForce(rb.mass * bodyCollisionForceMultiplier * a);
+            l.UpdateJoints(map, fabrikIterations, fabrikTolerance, groundContactRadius, collisionResponse, dt, simulateContactWeight);
 
             if (l.EffectorIsTouchingGround)
             {
@@ -122,7 +120,7 @@ public class PhysicsLegSynchronizer : MonoBehaviour
     {
         legCountInverse = 1f / leg.Length;
         InitializeTimers();
-        InitializeLegs(groundPosition, groundNormal);
+        InitializeLegs();
         UpdateSettings();
     }
 
@@ -132,11 +130,11 @@ public class PhysicsLegSynchronizer : MonoBehaviour
         timer = timeOffset.Select(o => new LegTimer(o + randomOffset, stepDistance, restDistance)).ToArray();
     }
 
-    private void InitializeLegs(Vector2 groundPosition, Vector2 groundNormal)
+    private void InitializeLegs()
     {
         for (int i = 0; i < leg.Length; i++)
         {
-            leg[i].Initialize(groundPosition, groundNormal);
+            leg[i].Initialize();
             leg[i].contactSettings = stdSettings[i];
         }
     }

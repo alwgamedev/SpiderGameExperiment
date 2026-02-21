@@ -11,6 +11,7 @@ public struct PhysicsLegSettings
     public float limpness;
     public float jointDamping;
     public float stepHeight;
+    public float angleBoundsForce;
     public bool nonSimulatedPose;
 
     public static PhysicsLegSettings Lerp(PhysicsLegSettings s1, PhysicsLegSettings s2, float t)
@@ -19,9 +20,11 @@ public struct PhysicsLegSettings
         {
             gravityStrength = Mathf.Lerp(s1.gravityStrength, s2.gravityStrength, t),
             poseForce = Mathf.Lerp(s1.poseForce, s2.poseForce, t),
+            reachForce = Mathf.Lerp(s1.reachForce, s2.reachForce, t),
             limpness = Mathf.Lerp(s1.limpness, s2.limpness, t),
             jointDamping = Mathf.Lerp(s1.jointDamping, s2.jointDamping, t),
             stepHeight = Mathf.Lerp(s1.stepHeight, s2.stepHeight, t),
+            angleBoundsForce = Mathf.Lerp(s1.angleBoundsForce, s2.angleBoundsForce, t),
             nonSimulatedPose = s1.nonSimulatedPose
         };
     }
@@ -49,14 +52,13 @@ public class PhysicsBasedIKLeg
     float[] inverseLength;
     float totalLength;
     float totalLengthInverse;
-    float smoothedHipPosition;
 
     public bool EffectorIsTouchingGround { get; private set; }
     public Vector2 EffectorPosition => chain[^1].position;
     public Vector2 LegExtensionVector => chain[^1].position - chain[0].position;
     public float LegExtensionFraction => LegExtensionVector.magnitude * totalLengthInverse;
 
-    public void Initialize(Vector2 groundPosition, Vector2 groundNormal)
+    public void Initialize()
     {
         totalLength = 0f;
         length = new float[chain.Length - 1];
@@ -96,12 +98,10 @@ public class PhysicsBasedIKLeg
 
             q0 = q1;
         }
-
-        smoothedHipPosition = sign * Vector2.Dot((Vector2)chain[0].position - groundPosition, groundNormal.CWPerp());
     }
 
-    public Vector2 UpdateJoints(GroundMap groundMap, int fabrikIterations, float fabrikTolerance,
-        float groundContactRadius, float collisionResponse, float angleBoundsForce, float dt, float simulateContactWeight = 0)
+    public void UpdateJoints(GroundMap groundMap, int fabrikIterations, float fabrikTolerance,
+        float groundContactRadius, float collisionResponse, float dt, float simulateContactWeight = 0)
     {
         var settings = EffectorIsTouchingGround ? contactSettings
             : simulateContactWeight > 0 ? PhysicsLegSettings.Lerp(noContactSettings, contactSettings, simulateContactWeight)
@@ -141,15 +141,18 @@ public class PhysicsBasedIKLeg
             PhysicsBasedIK.ApplyGravity(chain, inverseLength, angularVelocity, settings.gravityStrength, dt);
         }
 
-        PushAwayFromAngleBounds(dt, angleBoundsForce);
+        if (settings.angleBoundsForce != 0)
+        {
+            PushAwayFromAngleBounds(dt, settings.angleBoundsForce);
+        }
+
+        UpdateGroundContact(groundMap, groundContactRadius, collisionResponse, dt, !settings.nonSimulatedPose);
 
         for (int i = 0; i < positionBuffer.Length; i++)
         {
             //put current positions into buffer (for limpness to use next update)
             positionBuffer[i] = chain[i].position;
         }
-
-        return UpdateGroundContact(groundMap, groundContactRadius, collisionResponse, dt, !settings.nonSimulatedPose);
     }
 
     public void UpdateTargetStepping(GroundMap map, Vector2 castDir,
@@ -271,7 +274,7 @@ public class PhysicsBasedIKLeg
             if (applyContactForces && l < 0)
             {
                 a = -collisionResponse * l * n;
-                PhysicsBasedIK.ApplyForceUpChain(chain, inverseLength, angularVelocity, dt * a, chain.Length - 1);
+                PhysicsBasedIK.ApplyForceUpChain(chain, inverseLength, angularVelocity, dt * a, chain.Length - 1, null, true);
             }
 
             if (!wasTouchingGround)
