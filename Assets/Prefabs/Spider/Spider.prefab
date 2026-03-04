@@ -169,14 +169,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 174235699028576439}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.9990695, w: 0.043128084}
+  m_LocalRotation: {x: -0, y: -0, z: 0.9912358, w: 0.13210484}
   m_LocalPosition: {x: 2.1244352, y: -0.7018983, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7560421742473523346}
   m_Father: {fileID: 4257679111386862312}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 175.056}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 164.818}
 --- !u!1 &225004367435876655
 GameObject:
   m_ObjectHideFlags: 0
@@ -850,14 +850,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 362057468865663677}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0.43750346, w: 0.8992168}
+  m_LocalRotation: {x: -0, y: -0, z: -0.26524884, w: 0.96418005}
   m_LocalPosition: {x: 1.9402691, y: 0.0000001244033, z: 0}
-  m_LocalScale: {x: 0.9999999, y: 0.9999999, z: 1}
+  m_LocalScale: {x: 1.2, y: 0.9999999, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8378328544454571262}
   m_Father: {fileID: 3204698491393591131}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -51.889}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -30.764}
 --- !u!1 &459194793244736794
 GameObject:
   m_ObjectHideFlags: 0
@@ -1592,14 +1592,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 690683997197348463}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.5392943, w: 0.84211737}
+  m_LocalRotation: {x: -0, y: -0, z: 0.36743176, w: 0.9300505}
   m_LocalPosition: {x: 2.0067244, y: -0.00000025206538, z: 0}
-  m_LocalScale: {x: 1.0000004, y: 1.0000004, z: 1}
+  m_LocalScale: {x: 1.25, y: 1.0000004, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7261066662746368589}
   m_Father: {fileID: 7560421742473523346}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 65.271}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 43.115}
 --- !u!1 &839944467269662652
 GameObject:
   m_ObjectHideFlags: 0
@@ -3370,14 +3370,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2184748555949781941}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.5087692, w: 0.860903}
+  m_LocalRotation: {x: -0, y: -0, z: 0.43665636, w: 0.89962846}
   m_LocalPosition: {x: 2.1272702, y: -0.00000041273677, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.4, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3912250904285809636}
   m_Father: {fileID: 8906266846264039690}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 61.164}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 51.781}
 --- !u!1 &2233476197617059428
 GameObject:
   m_ObjectHideFlags: 0
@@ -3548,14 +3548,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2360843779812381518}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.9986156, w: 0.05260192}
+  m_LocalRotation: {x: -0, y: -0, z: 0.9899208, w: 0.1416224}
   m_LocalPosition: {x: 2.1429734, y: -0.743691, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 9157492295160507004}
   m_Father: {fileID: 4257679111386862312}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 173.969}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 163.717}
 --- !u!1 &2393711380005563463
 GameObject:
   m_ObjectHideFlags: 0
@@ -3580,14 +3580,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2393711380005563463}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0.49831367, w: 0.8669969}
+  m_LocalRotation: {x: -0, y: -0, z: -0.50894815, w: 0.8607972}
   m_LocalPosition: {x: 1.7624054, y: -0.00000026069657, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.9, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7306302368925994026}
   m_Father: {fileID: 2680305816034372725}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -59.777}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -61.188}
 --- !u!1 &2526220690464828382
 GameObject:
   m_ObjectHideFlags: 0
@@ -3904,14 +3904,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2735900413683898725}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.6093899, w: 0.7928707}
+  m_LocalRotation: {x: -0, y: -0, z: 0.7549403, w: 0.6557936}
   m_LocalPosition: {x: 2.4063306, y: -0.00000006278918, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5738242297855828304}
   m_Father: {fileID: 596364321759533591}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 75.091}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 98.04}
 --- !u!1 &2736435694255886797
 GameObject:
   m_ObjectHideFlags: 0
@@ -4001,14 +4001,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2834881589465346965}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.54164124, w: 0.8406098}
+  m_LocalRotation: {x: -0, y: -0, z: 0.36122498, w: 0.9324787}
   m_LocalPosition: {x: 2.038006, y: -0.00000019863813, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.25, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7203260424078161818}
   m_Father: {fileID: 9157492295160507004}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 65.591}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 42.351}
 --- !u!1 &2972413698428545500
 GameObject:
   m_ObjectHideFlags: 0
@@ -4774,14 +4774,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3716491933581912858}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0.4363677, w: 0.89976853}
+  m_LocalRotation: {x: -0, y: -0, z: -0.26394752, w: 0.964537}
   m_LocalPosition: {x: 1.9515746, y: 0.00000070054267, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.2, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 871183515759155505}
   m_Father: {fileID: 822636868363825723}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -51.745}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -30.609}
 --- !u!1 &3824376880245498785
 GameObject:
   m_ObjectHideFlags: 0
@@ -5452,14 +5452,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4187706972372940199}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.62238127, w: 0.78271425}
+  m_LocalRotation: {x: -0, y: -0, z: 0.763573, w: 0.6457215}
   m_LocalPosition: {x: 2.4391904, y: 0.0000000069014097, z: 0}
   m_LocalScale: {x: 1.0000001, y: 1.0000001, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8134172703908562749}
   m_Father: {fileID: 1671441735390870653}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 76.98}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 99.56}
 --- !u!1 &4256320658433803893
 GameObject:
   m_ObjectHideFlags: 0
@@ -5945,14 +5945,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4744702835880208751}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.21643917, w: 0.97629607}
+  m_LocalRotation: {x: -0, y: -0, z: 0.2135944, w: 0.9769224}
   m_LocalPosition: {x: 0.8475363, y: -0.4789573, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3204698491393591131}
   m_Father: {fileID: 1796735932416995084}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 25}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 24.666}
 --- !u!1 &4794559226346589072
 GameObject:
   m_ObjectHideFlags: 0
@@ -5977,14 +5977,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4794559226346589072}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0.4957748, w: 0.8684512}
+  m_LocalRotation: {x: -0, y: -0, z: -0.5129941, w: 0.85839206}
   m_LocalPosition: {x: 1.7701721, y: -0.00000007134644, z: 0}
-  m_LocalScale: {x: 1.0000001, y: 1.0000001, z: 1}
+  m_LocalScale: {x: 0.9, y: 1.0000001, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3602990434774389934}
   m_Father: {fileID: 2399890710218574748}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -59.442}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -61.727}
 --- !u!1 &4801443516212247964
 GameObject:
   m_ObjectHideFlags: 0
@@ -6391,14 +6391,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5402962238274146728}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.71289045, w: 0.7012754}
+  m_LocalRotation: {x: -0, y: -0, z: 0.77355236, w: 0.63373244}
   m_LocalPosition: {x: 1.775366, y: 0.00000011558021, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3001778642298697474}
   m_Father: {fileID: 6932109180140675545}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90.941}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 101.348}
 --- !u!1 &5509401913209774970
 GameObject:
   m_ObjectHideFlags: 0
@@ -6423,14 +6423,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5509401913209774970}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0.4084901, w: 0.9127628}
+  m_LocalRotation: {x: -0, y: -0, z: -0.2283605, w: 0.97357666}
   m_LocalPosition: {x: 1.8382739, y: 0.00000070850564, z: 0}
-  m_LocalScale: {x: 0.9999999, y: 0.9999999, z: 1}
+  m_LocalScale: {x: 1.2, y: 0.9999999, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2034791752815395644}
   m_Father: {fileID: 4114279246918961293}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -48.22}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -26.401}
 --- !u!1 &5555185981846932118
 GameObject:
   m_ObjectHideFlags: 0
@@ -6455,14 +6455,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5555185981846932118}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.9942469, w: 0.10711327}
+  m_LocalRotation: {x: -0, y: -0, z: 0.9872939, w: 0.15890491}
   m_LocalPosition: {x: 2.5405912, y: -0.5548077, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3580165909359640762}
   m_Father: {fileID: 4257679111386862312}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 167.702}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 161.713}
 --- !u!1 &5557610354430342084
 GameObject:
   m_ObjectHideFlags: 0
@@ -6541,14 +6541,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5814272727016347195}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0.52749103, w: 0.84956056}
+  m_LocalRotation: {x: -0, y: -0, z: -0.6038544, w: 0.79709464}
   m_LocalPosition: {x: 1.4802186, y: -0.0000003059697, z: 0}
   m_LocalScale: {x: 0.9999999, y: 0.9999999, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1208839048729888145}
   m_Father: {fileID: 6996931359358265962}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -63.672}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -74.293}
 --- !u!1 &6016693261962413811
 GameObject:
   m_ObjectHideFlags: 0
@@ -6848,14 +6848,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6081748104377677409}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.9951087, w: 0.09878664}
+  m_LocalRotation: {x: -0, y: -0, z: 0.9878322, w: 0.15552409}
   m_LocalPosition: {x: 2.5516284, y: -0.5374078, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8906266846264039690}
   m_Father: {fileID: 4257679111386862312}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 168.661}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 162.106}
 --- !u!1 &6127275030434282118
 GameObject:
   m_ObjectHideFlags: 0
@@ -7172,14 +7172,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6177052866903249966}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.20134588, w: 0.97952026}
+  m_LocalRotation: {x: -0, y: -0, z: 0.24885415, w: 0.968541}
   m_LocalPosition: {x: 0.2102034, y: -0.55039406, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5581961485169521177}
   m_Father: {fileID: 1796735932416995084}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 23.231}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 28.819}
 --- !u!1 &6229138575272074973
 GameObject:
   m_ObjectHideFlags: 0
@@ -7496,14 +7496,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6259604372759008763}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0.4235237, w: 0.905885}
+  m_LocalRotation: {x: -0, y: -0, z: -0.25369182, w: 0.96728516}
   m_LocalPosition: {x: 1.8882043, y: 0.0000006880398, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.2, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3033994015570042515}
   m_Father: {fileID: 5581961485169521177}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -50.114}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -29.392}
 --- !u!1 &6289338611581681098
 GameObject:
   m_ObjectHideFlags: 0
@@ -8494,14 +8494,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7402302345158306404}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.72757775, w: 0.6860253}
+  m_LocalRotation: {x: -0, y: -0, z: 0.78370756, w: 0.62112993}
   m_LocalPosition: {x: 1.8087547, y: -0.00000012099964, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 752940509849597149}
   m_Father: {fileID: 4593715000520413280}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 93.367}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 103.203}
 --- !u!1 &7413566729365570708
 GameObject:
   m_ObjectHideFlags: 0
@@ -8526,14 +8526,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7413566729365570708}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.21617055, w: 0.9763557}
+  m_LocalRotation: {x: -0, y: -0, z: 0.20911212, w: 0.97789174}
   m_LocalPosition: {x: 0.84697473, y: -0.46754074, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 822636868363825723}
   m_Father: {fileID: 1796735932416995084}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 24.968}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 24.141}
 --- !u!1 &7493680828052448664
 GameObject:
   m_ObjectHideFlags: 0
@@ -8590,14 +8590,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7510525530624609443}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.20254205, w: 0.97927356}
+  m_LocalRotation: {x: -0, y: -0, z: 0.25271228, w: 0.96754146}
   m_LocalPosition: {x: 0.22732681, y: -0.549551, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4114279246918961293}
   m_Father: {fileID: 1796735932416995084}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 23.371}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 29.276}
 --- !u!1 &7544975949659689791
 GameObject:
   m_ObjectHideFlags: 0
@@ -8848,14 +8848,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8406567198824328484}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0.52577, w: 0.8506268}
+  m_LocalRotation: {x: -0, y: -0, z: -0.6078596, w: 0.7940445}
   m_LocalPosition: {x: 1.4611212, y: -0.000000029713847, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 74713977280612927}
   m_Father: {fileID: 2749387138667642994}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -63.44}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -74.87}
 --- !u!1 &8459196700872151742
 GameObject:
   m_ObjectHideFlags: 0
@@ -9137,14 +9137,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8772371884197178333}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.50995934, w: 0.86019856}
+  m_LocalRotation: {x: -0, y: -0, z: 0.42000973, w: 0.9075196}
   m_LocalPosition: {x: 2.1605256, y: -0.00000031140746, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.4, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1262494296321640506}
   m_Father: {fileID: 3580165909359640762}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 61.322}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 49.67}
 --- !u!1 &8773133144574097762
 GameObject:
   m_ObjectHideFlags: 0
@@ -9621,6 +9621,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6991b23e83679b446a54da09b65f082f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  timeScale: 1
+  drawGizmos: 0
   abdomenBone: {fileID: 4257679111386862312}
   abdomenBonePivot: {fileID: 4636016392783388535}
   headBone: {fileID: 1796735932416995084}
@@ -10307,7 +10309,7 @@ MonoBehaviour:
       normal: {x: 0.9132198, y: -0.40746734}
       right: {x: -0.40746734, y: -0.9132198}
       groundCollider: {fileID: 0}
-  accelFactor: 40
+  accelFactor: 70
   accelFactorFreeHanging: 15.5
   deadThrusterAccelFactor: 4
   thrustingAccelFactor: 25
@@ -10317,7 +10319,7 @@ MonoBehaviour:
   maxSpeed: 5
   maxSpeedAirborne: 9
   settleTime: 0.35
-  preferredRideHeight: 0.95
+  preferredRideHeight: 0.9
   heightSpringForce: 600
   heightSpringDamping: 20
   heightSpringBreakThreshold: 0.01
@@ -10326,8 +10328,8 @@ MonoBehaviour:
   heightSampleMax: 0.6
   abdomenRotationSpeed: 6
   headRotationSpeed: 15
-  headRotationMinPos: -0.2
-  headRotationMaxPos: 0.4
+  headRotationMinPos: -0.25
+  headRotationMaxPos: 0.45
   balanceSpringForce: 210
   airborneBalanceSpringForce: 100
   balanceSpringDamping: 0.25
@@ -10345,8 +10347,8 @@ MonoBehaviour:
   crouchBoostMinProgress: 0.4
   crouchReleaseSpeedMultiplier: 2.5
   airborneLegAnimationTimeScale: 0.15
-  airborneLegSpeedMax: 14
-  airborneStrideMultiplier: 1.4
+  airborneLegSpeedMax: 12
+  airborneStrideMultiplier: 1.1
   strideMultiplierSmoothingRate: 1
   freeHangGroundedEntryLegExtensionThreshold: 0.95
   freeHangLegAngleMin: 1.047198
@@ -10467,16 +10469,18 @@ MonoBehaviour:
       limpness: 0
       jointDamping: 30
       stepHeight: 0.8
-      angleBoundsForce: 0
+      targetErrorPower: 0
+      enforceAngleBounds: 0
       nonSimulatedPose: 0
     noContactSettings:
       gravityStrength: 0
       poseForce: 0
-      reachForce: 1000
+      reachForce: 450
       limpness: 0
-      jointDamping: 30
+      jointDamping: 23.5
       stepHeight: 0.8
-      angleBoundsForce: 0
+      targetErrorPower: 0
+      enforceAngleBounds: 1
       nonSimulatedPose: 0
     HitGround:
       m_PersistentCalls:
@@ -10487,10 +10491,17 @@ MonoBehaviour:
     - {fileID: 822636868363825723}
     - {fileID: 7306302368925994026}
     - {fileID: 871183515759155505}
-    - {fileID: 8270222540382114309}
     target: {fileID: 2278123347475011000}
     stepMax: 0.9
-    defaultPoseDeviationMax: 0.4
+    minAngle:
+    - -0.70710677
+    - -0.9238795
+    - -0.38268343
+    maxAngle:
+    - 0.5
+    - -0.13052619
+    - -0.104528464
+    angleBranch: 000000
   - contactSettings:
       gravityStrength: 0
       poseForce: 0
@@ -10498,16 +10509,18 @@ MonoBehaviour:
       limpness: 0
       jointDamping: 30
       stepHeight: 0.8
-      angleBoundsForce: 0
+      targetErrorPower: 0
+      enforceAngleBounds: 0
       nonSimulatedPose: 0
     noContactSettings:
       gravityStrength: 0
       poseForce: 0
-      reachForce: 1000
+      reachForce: 450
       limpness: 0
-      jointDamping: 30
+      jointDamping: 23.5
       stepHeight: 0.8
-      angleBoundsForce: 0
+      targetErrorPower: 0
+      enforceAngleBounds: 1
       nonSimulatedPose: 0
     HitGround:
       m_PersistentCalls:
@@ -10518,10 +10531,17 @@ MonoBehaviour:
     - {fileID: 3204698491393591131}
     - {fileID: 3602990434774389934}
     - {fileID: 8378328544454571262}
-    - {fileID: 3120058777622577783}
     target: {fileID: 4380958847150461223}
     stepMax: 0.9
-    defaultPoseDeviationMax: 0.4
+    minAngle:
+    - -0.70710677
+    - -0.9238795
+    - -0.3826834
+    maxAngle:
+    - 0.5
+    - -0.13052619
+    - -0.1045285
+    angleBranch: 000000
   - contactSettings:
       gravityStrength: 0
       poseForce: 0
@@ -10529,16 +10549,18 @@ MonoBehaviour:
       limpness: 0
       jointDamping: 30
       stepHeight: 0.8
-      angleBoundsForce: 0
+      targetErrorPower: 0
+      enforceAngleBounds: 0
       nonSimulatedPose: 0
     noContactSettings:
       gravityStrength: 0
       poseForce: 0
-      reachForce: 1000
+      reachForce: 450
       limpness: 0
-      jointDamping: 30
+      jointDamping: 23.5
       stepHeight: 0.8
-      angleBoundsForce: 0
+      targetErrorPower: 0
+      enforceAngleBounds: 1
       nonSimulatedPose: 0
     HitGround:
       m_PersistentCalls:
@@ -10549,10 +10571,17 @@ MonoBehaviour:
     - {fileID: 5581961485169521177}
     - {fileID: 1208839048729888145}
     - {fileID: 3033994015570042515}
-    - {fileID: 8714597820655926901}
     target: {fileID: 1238561792403655595}
     stepMax: 0.825
-    defaultPoseDeviationMax: 0.4
+    minAngle:
+    - -0.70710677
+    - -0.9238795
+    - -0.3826834
+    maxAngle:
+    - 0.5
+    - -0.13052619
+    - -0.1045285
+    angleBranch: 000000
   - contactSettings:
       gravityStrength: 0
       poseForce: 0
@@ -10560,16 +10589,18 @@ MonoBehaviour:
       limpness: 0
       jointDamping: 30
       stepHeight: 0.8
-      angleBoundsForce: 0
+      targetErrorPower: 0
+      enforceAngleBounds: 0
       nonSimulatedPose: 0
     noContactSettings:
       gravityStrength: 0
       poseForce: 0
-      reachForce: 1000
+      reachForce: 450
       limpness: 0
-      jointDamping: 30
+      jointDamping: 23.5
       stepHeight: 0.8
-      angleBoundsForce: 0
+      targetErrorPower: 0
+      enforceAngleBounds: 1
       nonSimulatedPose: 0
     HitGround:
       m_PersistentCalls:
@@ -10580,10 +10611,17 @@ MonoBehaviour:
     - {fileID: 4114279246918961293}
     - {fileID: 74713977280612927}
     - {fileID: 2034791752815395644}
-    - {fileID: 7669166903120010156}
     target: {fileID: 1137408330521889720}
     stepMax: 0.825
-    defaultPoseDeviationMax: 0.4
+    minAngle:
+    - -0.70710677
+    - -0.9238795
+    - -0.3826834
+    maxAngle:
+    - 0.5
+    - -0.13052619
+    - -0.1045285
+    angleBranch: 000000
   - contactSettings:
       gravityStrength: 0
       poseForce: 0
@@ -10591,16 +10629,18 @@ MonoBehaviour:
       limpness: 0
       jointDamping: 30
       stepHeight: 0.8
-      angleBoundsForce: 0
+      targetErrorPower: 0
+      enforceAngleBounds: 0
       nonSimulatedPose: 0
     noContactSettings:
       gravityStrength: 0
       poseForce: 0
-      reachForce: 1400
+      reachForce: 450
       limpness: 0
-      jointDamping: 30
+      jointDamping: 23.5
       stepHeight: 0.8
-      angleBoundsForce: 0
+      targetErrorPower: 0
+      enforceAngleBounds: 1
       nonSimulatedPose: 0
     HitGround:
       m_PersistentCalls:
@@ -10611,10 +10651,17 @@ MonoBehaviour:
     - {fileID: 8906266846264039690}
     - {fileID: 3001778642298697474}
     - {fileID: 3912250904285809636}
-    - {fileID: 4327750774746436712}
     target: {fileID: 6915238945053128507}
-    stepMax: -0.1
-    defaultPoseDeviationMax: 0.5
+    stepMax: -0.4
+    minAngle:
+    - -0.70710677
+    - 0
+    - 0.19509032
+    maxAngle:
+    - 0.70710677
+    - 0.9951847
+    - 0.5
+    angleBranch: 010000
   - contactSettings:
       gravityStrength: 0
       poseForce: 0
@@ -10622,16 +10669,18 @@ MonoBehaviour:
       limpness: 0
       jointDamping: 30
       stepHeight: 0.8
-      angleBoundsForce: 0
+      targetErrorPower: 0
+      enforceAngleBounds: 0
       nonSimulatedPose: 0
     noContactSettings:
       gravityStrength: 0
       poseForce: 0
-      reachForce: 1400
+      reachForce: 450
       limpness: 0
-      jointDamping: 30
+      jointDamping: 23.5
       stepHeight: 0.8
-      angleBoundsForce: 0
+      targetErrorPower: 0
+      enforceAngleBounds: 1
       nonSimulatedPose: 0
     HitGround:
       m_PersistentCalls:
@@ -10642,10 +10691,17 @@ MonoBehaviour:
     - {fileID: 3580165909359640762}
     - {fileID: 752940509849597149}
     - {fileID: 1262494296321640506}
-    - {fileID: 4109640117689536782}
     target: {fileID: 8327284446163506453}
-    stepMax: -0.1
-    defaultPoseDeviationMax: 0.5
+    stepMax: -0.4
+    minAngle:
+    - -0.7071068
+    - 0
+    - 0.1950903
+    maxAngle:
+    - 0.70710677
+    - 0.9951847
+    - 0.5
+    angleBranch: 010000
   - contactSettings:
       gravityStrength: 0
       poseForce: 0
@@ -10653,16 +10709,18 @@ MonoBehaviour:
       limpness: 0
       jointDamping: 30
       stepHeight: 0.8
-      angleBoundsForce: 0
+      targetErrorPower: 0
+      enforceAngleBounds: 0
       nonSimulatedPose: 0
     noContactSettings:
       gravityStrength: 0
       poseForce: 0
-      reachForce: 1400
+      reachForce: 450
       limpness: 0
-      jointDamping: 30
+      jointDamping: 23.5
       stepHeight: 0.8
-      angleBoundsForce: 0
+      targetErrorPower: 0
+      enforceAngleBounds: 1
       nonSimulatedPose: 0
     HitGround:
       m_PersistentCalls:
@@ -10673,10 +10731,17 @@ MonoBehaviour:
     - {fileID: 9157492295160507004}
     - {fileID: 8134172703908562749}
     - {fileID: 7203260424078161818}
-    - {fileID: 4199633852037162369}
     target: {fileID: 7491916336825498184}
-    stepMax: -0.3
-    defaultPoseDeviationMax: 0.5
+    stepMax: -0.4
+    minAngle:
+    - -0.7071068
+    - 0
+    - 0.258819
+    maxAngle:
+    - 0.70710677
+    - 0.9951847
+    - 0.5
+    angleBranch: 010000
   - contactSettings:
       gravityStrength: 0
       poseForce: 0
@@ -10684,16 +10749,18 @@ MonoBehaviour:
       limpness: 0
       jointDamping: 30
       stepHeight: 0.8
-      angleBoundsForce: 0
+      targetErrorPower: 0
+      enforceAngleBounds: 0
       nonSimulatedPose: 0
     noContactSettings:
       gravityStrength: 0
       poseForce: 0
-      reachForce: 1400
+      reachForce: 450
       limpness: 0
-      jointDamping: 30
+      jointDamping: 23.5
       stepHeight: 0.8
-      angleBoundsForce: 0
+      targetErrorPower: 0
+      enforceAngleBounds: 1
       nonSimulatedPose: 0
     HitGround:
       m_PersistentCalls:
@@ -10704,208 +10771,239 @@ MonoBehaviour:
     - {fileID: 7560421742473523346}
     - {fileID: 5738242297855828304}
     - {fileID: 7261066662746368589}
-    - {fileID: 1884732402649843420}
     target: {fileID: 5994156311465296893}
-    stepMax: -0.3
-    defaultPoseDeviationMax: 0.5
-  orientingTransform:
+    stepMax: -0.4
+    minAngle:
+    - -0.7071068
+    - 0
+    - 0.25881904
+    maxAngle:
+    - 0.70710677
+    - 0.9951847
+    - 0.5
+    angleBranch: 010000
+  castDirectionSource:
   - {fileID: 1796735932416995084}
   - {fileID: 8910507805382992582}
-  orientingTransformIndex: 0000000000000000000000000000000001000000010000000100000001000000
+  castDirectionSourceIndex: 0000000000000000000000000000000001000000010000000100000001000000
   stdSettings:
   - gravityStrength: 0
     poseForce: 0
-    reachForce: 450
+    reachForce: 400
     limpness: 0
-    jointDamping: 23.5
-    stepHeight: 0.8
-    angleBoundsForce: 650
+    jointDamping: 22
+    stepHeight: 0.85
+    targetErrorPower: 0.25
+    enforceAngleBounds: 1
     nonSimulatedPose: 0
   - gravityStrength: 0
     poseForce: 0
-    reachForce: 450
+    reachForce: 400
     limpness: 0
-    jointDamping: 23.5
-    stepHeight: 0.8
-    angleBoundsForce: 650
+    jointDamping: 22
+    stepHeight: 0.85
+    targetErrorPower: 0.25
+    enforceAngleBounds: 1
     nonSimulatedPose: 0
   - gravityStrength: 0
     poseForce: 0
-    reachForce: 450
+    reachForce: 400
     limpness: 0
-    jointDamping: 23.5
-    stepHeight: 0.8
-    angleBoundsForce: 650
+    jointDamping: 22
+    stepHeight: 0.85
+    targetErrorPower: 0.25
+    enforceAngleBounds: 1
     nonSimulatedPose: 0
   - gravityStrength: 0
     poseForce: 0
-    reachForce: 450
+    reachForce: 400
     limpness: 0
-    jointDamping: 23.5
-    stepHeight: 0.8
-    angleBoundsForce: 650
+    jointDamping: 22
+    stepHeight: 0.85
+    targetErrorPower: 0.25
+    enforceAngleBounds: 1
     nonSimulatedPose: 0
   - gravityStrength: 0
     poseForce: 0
-    reachForce: 450
+    reachForce: 400
     limpness: 0
-    jointDamping: 23.5
-    stepHeight: 0.8
-    angleBoundsForce: 650
+    jointDamping: 22
+    stepHeight: 0.85
+    targetErrorPower: 0.25
+    enforceAngleBounds: 1
     nonSimulatedPose: 0
   - gravityStrength: 0
     poseForce: 0
-    reachForce: 450
+    reachForce: 400
     limpness: 0
-    jointDamping: 23.5
-    stepHeight: 0.8
-    angleBoundsForce: 650
+    jointDamping: 22
+    stepHeight: 0.85
+    targetErrorPower: 0.25
+    enforceAngleBounds: 1
     nonSimulatedPose: 0
   - gravityStrength: 0
     poseForce: 0
-    reachForce: 450
+    reachForce: 400
     limpness: 0
-    jointDamping: 23.5
-    stepHeight: 0.8
-    angleBoundsForce: 650
+    jointDamping: 22
+    stepHeight: 0.85
+    targetErrorPower: 0.25
+    enforceAngleBounds: 1
     nonSimulatedPose: 0
   - gravityStrength: 0
     poseForce: 0
-    reachForce: 450
+    reachForce: 400
     limpness: 0
-    jointDamping: 23.5
-    stepHeight: 0.8
-    angleBoundsForce: 650
+    jointDamping: 22
+    stepHeight: 0.85
+    targetErrorPower: 0.25
+    enforceAngleBounds: 1
     nonSimulatedPose: 0
   jumpSettings:
   - gravityStrength: 0
-    poseForce: 2000
-    reachForce: 0
+    poseForce: 0
+    reachForce: 1250
     limpness: 0
     jointDamping: 15
     stepHeight: 0.85
-    angleBoundsForce: 0
+    targetErrorPower: 1
+    enforceAngleBounds: 1
     nonSimulatedPose: 0
   - gravityStrength: 0
-    poseForce: 2000
-    reachForce: 0
+    poseForce: 0
+    reachForce: 1250
     limpness: 0
     jointDamping: 15
     stepHeight: 0.85
-    angleBoundsForce: 0
+    targetErrorPower: 1
+    enforceAngleBounds: 1
     nonSimulatedPose: 0
   - gravityStrength: 0
-    poseForce: 2000
-    reachForce: 0
+    poseForce: 0
+    reachForce: 1250
     limpness: 0
     jointDamping: 15
     stepHeight: 0.85
-    angleBoundsForce: 0
+    targetErrorPower: 1
+    enforceAngleBounds: 1
     nonSimulatedPose: 0
   - gravityStrength: 0
-    poseForce: 2000
-    reachForce: 0
+    poseForce: 0
+    reachForce: 1250
     limpness: 0
     jointDamping: 15
     stepHeight: 0.85
-    angleBoundsForce: 0
+    targetErrorPower: 1
+    enforceAngleBounds: 1
     nonSimulatedPose: 0
   - gravityStrength: 0
-    poseForce: 2000
-    reachForce: 0
+    poseForce: 0
+    reachForce: 1250
     limpness: 0
     jointDamping: 15
     stepHeight: 0.85
-    angleBoundsForce: 0
+    targetErrorPower: 1
+    enforceAngleBounds: 1
     nonSimulatedPose: 0
   - gravityStrength: 0
-    poseForce: 2000
-    reachForce: 0
+    poseForce: 0
+    reachForce: 1250
     limpness: 0
     jointDamping: 15
     stepHeight: 0.85
-    angleBoundsForce: 0
+    targetErrorPower: 1
+    enforceAngleBounds: 1
     nonSimulatedPose: 0
   - gravityStrength: 0
-    poseForce: 2000
-    reachForce: 0
+    poseForce: 0
+    reachForce: 1250
     limpness: 0
     jointDamping: 15
     stepHeight: 0.85
-    angleBoundsForce: 0
+    targetErrorPower: 1
+    enforceAngleBounds: 1
     nonSimulatedPose: 0
   - gravityStrength: 0
-    poseForce: 2000
-    reachForce: 0
+    poseForce: 0
+    reachForce: 1250
     limpness: 0
     jointDamping: 15
     stepHeight: 0.85
-    angleBoundsForce: 0
+    targetErrorPower: 1
+    enforceAngleBounds: 1
     nonSimulatedPose: 0
   freefallSettings:
-  - gravityStrength: 0.8
-    poseForce: 600
-    reachForce: 0
-    limpness: 0.05
+  - gravityStrength: 1
+    poseForce: 0
+    reachForce: 750
+    limpness: 0.1
     jointDamping: 15
     stepHeight: 0.8
-    angleBoundsForce: 0
+    targetErrorPower: 1
+    enforceAngleBounds: 1
     nonSimulatedPose: 0
-  - gravityStrength: 0.8
-    poseForce: 600
-    reachForce: 0
-    limpness: 0.05
+  - gravityStrength: 1
+    poseForce: 0
+    reachForce: 750
+    limpness: 0.1
     jointDamping: 15
     stepHeight: 0.8
-    angleBoundsForce: 0
+    targetErrorPower: 1
+    enforceAngleBounds: 1
     nonSimulatedPose: 0
-  - gravityStrength: 0.8
-    poseForce: 600
-    reachForce: 0
-    limpness: 0.05
+  - gravityStrength: 1
+    poseForce: 0
+    reachForce: 750
+    limpness: 0.1
     jointDamping: 15
     stepHeight: 0.8
-    angleBoundsForce: 0
+    targetErrorPower: 1
+    enforceAngleBounds: 1
     nonSimulatedPose: 0
-  - gravityStrength: 0.8
-    poseForce: 600
-    reachForce: 0
-    limpness: 0.05
+  - gravityStrength: 1
+    poseForce: 0
+    reachForce: 750
+    limpness: 0.1
     jointDamping: 15
     stepHeight: 0.8
-    angleBoundsForce: 0
+    targetErrorPower: 1
+    enforceAngleBounds: 1
     nonSimulatedPose: 0
-  - gravityStrength: 0.8
-    poseForce: 600
-    reachForce: 0
-    limpness: 0.05
+  - gravityStrength: 1
+    poseForce: 0
+    reachForce: 750
+    limpness: 0.1
     jointDamping: 15
     stepHeight: 0.8
-    angleBoundsForce: 0
+    targetErrorPower: 1
+    enforceAngleBounds: 1
     nonSimulatedPose: 0
-  - gravityStrength: 0.8
-    poseForce: 600
-    reachForce: 0
-    limpness: 0.05
+  - gravityStrength: 1
+    poseForce: 0
+    reachForce: 750
+    limpness: 0.1
     jointDamping: 15
     stepHeight: 0.8
-    angleBoundsForce: 0
+    targetErrorPower: 1
+    enforceAngleBounds: 1
     nonSimulatedPose: 0
-  - gravityStrength: 0.8
-    poseForce: 600
-    reachForce: 0
-    limpness: 0.05
+  - gravityStrength: 1
+    poseForce: 0
+    reachForce: 750
+    limpness: 0.1
     jointDamping: 15
     stepHeight: 0.8
-    angleBoundsForce: 0
+    targetErrorPower: 1
+    enforceAngleBounds: 1
     nonSimulatedPose: 0
-  - gravityStrength: 0.8
-    poseForce: 600
-    reachForce: 0
-    limpness: 0.05
+  - gravityStrength: 1
+    poseForce: 0
+    reachForce: 750
+    limpness: 0.1
     jointDamping: 15
     stepHeight: 0.8
-    angleBoundsForce: 0
+    targetErrorPower: 1
+    enforceAngleBounds: 1
     nonSimulatedPose: 0
   limpSettings:
   - gravityStrength: 1
@@ -10914,7 +11012,8 @@ MonoBehaviour:
     limpness: 0.05
     jointDamping: 9
     stepHeight: 0.25
-    angleBoundsForce: 10
+    targetErrorPower: 0
+    enforceAngleBounds: 0
     nonSimulatedPose: 0
   - gravityStrength: 1
     poseForce: 0
@@ -10922,7 +11021,8 @@ MonoBehaviour:
     limpness: 0.05
     jointDamping: 9
     stepHeight: 0.25
-    angleBoundsForce: 10
+    targetErrorPower: 0
+    enforceAngleBounds: 0
     nonSimulatedPose: 0
   - gravityStrength: 1
     poseForce: 0
@@ -10930,7 +11030,8 @@ MonoBehaviour:
     limpness: 0.05
     jointDamping: 9
     stepHeight: 0.25
-    angleBoundsForce: 10
+    targetErrorPower: 0
+    enforceAngleBounds: 0
     nonSimulatedPose: 0
   - gravityStrength: 1
     poseForce: 0
@@ -10938,7 +11039,8 @@ MonoBehaviour:
     limpness: 0.05
     jointDamping: 9
     stepHeight: 0.25
-    angleBoundsForce: 10
+    targetErrorPower: 0
+    enforceAngleBounds: 0
     nonSimulatedPose: 0
   - gravityStrength: 0.75
     poseForce: 375
@@ -10946,7 +11048,8 @@ MonoBehaviour:
     limpness: 0.015
     jointDamping: 12.5
     stepHeight: 0.5
-    angleBoundsForce: 0
+    targetErrorPower: 0
+    enforceAngleBounds: 0
     nonSimulatedPose: 0
   - gravityStrength: 0.75
     poseForce: 375
@@ -10954,7 +11057,8 @@ MonoBehaviour:
     limpness: 0.015
     jointDamping: 12.5
     stepHeight: 0.5
-    angleBoundsForce: 0
+    targetErrorPower: 0
+    enforceAngleBounds: 0
     nonSimulatedPose: 0
   - gravityStrength: 0.75
     poseForce: 375
@@ -10962,7 +11066,8 @@ MonoBehaviour:
     limpness: 0.015
     jointDamping: 12.5
     stepHeight: 0.5
-    angleBoundsForce: 0
+    targetErrorPower: 0
+    enforceAngleBounds: 0
     nonSimulatedPose: 0
   - gravityStrength: 0.75
     poseForce: 375
@@ -10970,7 +11075,8 @@ MonoBehaviour:
     limpness: 0.015
     jointDamping: 12.5
     stepHeight: 0.5
-    angleBoundsForce: 0
+    targetErrorPower: 0
+    enforceAngleBounds: 0
     nonSimulatedPose: 0
   timeOffset:
   - 0
@@ -10984,8 +11090,9 @@ MonoBehaviour:
   fabrikIterations: 10
   fabrikTolerance: 0.01
   groundContactRadius: 0.085
-  collisionResponse: 850
-  angleBoundsForce: 650
+  collisionResponse: 1000
+  maxAngularVelocity: 40
+  maxExtensionFraction: 0.95
   bodyGroundSpeedSign: 0
   absoluteBodyGroundSpeed: 0
   timeScale: 0
@@ -12715,7 +12822,7 @@ PrefabInstance:
       objectReference: {fileID: 1003766163350873646}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: carrySpringForce
-      value: 350
+      value: 500
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: retractMaxTension
@@ -12764,6 +12871,10 @@ PrefabInstance:
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: consecutiveFailuresBeforeBreaking
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: cannonFulcrum.kinematicRotationSpeed
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: constraintIterationsPerCollisionCheck

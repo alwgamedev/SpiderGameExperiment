@@ -2,14 +2,14 @@
 
 public static class FABRIKSolver
 {
-    public static bool RunFABRIKIteration(Vector2[] position, float[] length, float maxLength, Vector2 target, float tolerance)
+    public static bool RunFABRIKIteration(Vector2[] position, float[] length, float maxLength, Vector2 target, float toleranceSqrd)
     {
         if (Vector2.SqrMagnitude(target - position[0]) > maxLength * maxLength)
         {
             target = position[0] + maxLength * (target - position[0]).normalized;
         }
 
-        if (Vector2.SqrMagnitude(target - position[^1]) < tolerance * tolerance)
+        if (Vector2.SqrMagnitude(target - position[^1]) < toleranceSqrd)
         {
             return false;
         }

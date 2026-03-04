@@ -5,16 +5,11 @@ public static class PhysicsBasedIK
     const float PIInverse = 1 / Mathf.PI;
 
     //apply force to join and disappate parallel component up the chain (towards "hip")
-    public static void ApplyForceUpChain(Transform[] chain, float[] inverseLength, float[] angularVelocity, Vector2 acceleration, int joint, 
+    public static void ApplyForceUpChain(Transform[] chain, float[] inverseLength, float[] angularVelocity, Vector2 acceleration, int joint,
         float[] poseWeight = null, bool applyUniformly = false)
     {
         for (int i = joint - 1; i > -1; i--)
         {
-            if (acceleration == Vector2.zero)
-            {
-                break;
-            }
-
             Vector2 u = chain[i + 1].position - chain[i].position;
             u *= inverseLength[i];
             var n = u.CCWPerp();
@@ -33,16 +28,11 @@ public static class PhysicsBasedIK
     }
 
     //apply force to joint and disappate parallel component down the chain (towards "foot")
-    public static void ApplyForceDownChain(Transform[] chain, float[] inverseLength, float[] angularVelocity, Vector2 acceleration, int joint, 
+    public static void ApplyForceDownChain(Transform[] chain, float[] inverseLength, float[] angularVelocity, Vector2 acceleration, int joint,
         float[] poseWeight = null, bool applyUniformly = false)
     {
         for (int i = joint - 1; i < chain.Length - 1; i++)
         {
-            if (acceleration == Vector2.zero)
-            {
-                break;
-            }
-
             Vector2 u = chain[i + 1].position - chain[i].position;
             u *= inverseLength[i];
             var n = u.CCWPerp();
@@ -51,10 +41,113 @@ public static class PhysicsBasedIK
             {
                 aPerp *= 1 - poseWeight[i];
             }
-            angularVelocity[i] += aPerp * inverseLength[i];
+            angularVelocity[i] += aPerp;// * inverseLength[i];
             if (!applyUniformly)
             {
                 acceleration -= aPerp * n;//component of acceleration parallel to that arm will get transferred to next joint
+            }
+        }
+    }
+
+    public static void ApplyForceDownChain(Transform[] chain, float[] inverseLength, float[] angularVelocity, Vector2 acceleration, int joint,
+        int maxIterations, float tolerance2)
+    {
+        var a0 = acceleration;
+        tolerance2 *= acceleration.sqrMagnitude;//good, so we will go to a fraction of the original magnitude (meaning small forces don't get ignored)
+        for (int j = 0; j < maxIterations; j++)
+        {
+            for (int i = joint - 1; i < chain.Length - 1; i++)
+            {
+                if (Vector2.Dot(acceleration, a0) < 0 || acceleration.sqrMagnitude < tolerance2)
+                {
+                    return;
+                }
+
+                Vector2 u = chain[i + 1].position - chain[i].position;
+                u *= inverseLength[i];
+                var n = u.CCWPerp();
+                var aPerp = Vector2.Dot(acceleration, n);
+                angularVelocity[i] += aPerp * inverseLength[i];
+                acceleration -= aPerp * n;//component of acceleration parallel to that arm will get transferred to next joint
+            }
+        }
+    }
+
+    public static void ApplyForceDownChain(Transform[] chain, float dt, float[] length, float[] inverseLength, float[] angularVelocity,
+        float[] minAngle, float[] maxAngle, bool[] angleBranch,
+        float orientation, Vector2 acceleration, int joint, int maxIterations, float toleranceSqrd)
+    {
+        var c0 = 0.5f * orientation * dt;
+        toleranceSqrd *= acceleration.sqrMagnitude;//go to a fraction of the original magnitude
+        for (int j = 0; j < maxIterations; j++)
+        {
+            var lastDv = 0f;
+
+            for (int i = joint - 1; i < chain.Length - 1; i++)
+            {
+                if (acceleration.sqrMagnitude < toleranceSqrd)
+                {
+                    return;
+                }
+
+                Vector2 u = chain[i + 1].position - chain[i].position;
+                u *= inverseLength[i];
+                var n = u.CCWPerp();
+                var aPerp = Vector2.Dot(acceleration, n);
+
+                if (angleBranch[i])
+                {
+                    var z0 = Mathf.Sign(chain[i].localRotation.z) * chain[i].localRotation.w;
+                    if ((orientation * aPerp > 0 && z0 > maxAngle[i]) || (orientation * aPerp < 0 && z0 < minAngle[i]))
+                    {
+                        continue;
+                    }
+
+                    var c = -c0 * Mathf.Abs(chain[i].localRotation.z);
+
+                    if (c == 0)
+                    {
+                        lastDv = inverseLength[i] * aPerp;
+                        angularVelocity[i] += lastDv;
+                        acceleration -= aPerp * n;
+                        continue;
+                    }
+
+                    var z1 = z0 + c * (inverseLength[i] * aPerp - lastDv);
+                    z1 = Mathf.Clamp(z1, minAngle[i], maxAngle[i]);
+                    aPerp = ((z1 - z0) / c + lastDv) * length[i];
+
+                    lastDv = inverseLength[i] * aPerp;
+                    angularVelocity[i] += lastDv;
+                    acceleration -= aPerp * n;//component of acceleration parallel to that arm will get transferred to next joint
+                }
+                else
+                {
+                    var z0 = Mathf.Sign(chain[i].localRotation.w) * chain[i].localRotation.z;
+                    if ((orientation * aPerp > 0 && z0 > maxAngle[i]) || (orientation * aPerp < 0 && z0 < minAngle[i]))
+                    {
+                        continue;
+                    }
+
+                    var c = c0 * Mathf.Abs(chain[i].localRotation.w);
+
+                    if (c == 0)
+                    {
+                        lastDv = inverseLength[i] * aPerp;
+                        angularVelocity[i] += lastDv;
+                        acceleration -= aPerp * n;
+                        continue;
+                    }
+
+                    var z1 = z0 + c * (inverseLength[i] * aPerp - lastDv);
+                    z1 = Mathf.Clamp(z1, minAngle[i], maxAngle[i]);
+                    aPerp = ((z1 - z0) / c + lastDv) * length[i];
+                    //Debug.Log($"iteration {j}, joint {i}, aPerp {aPerp}");
+
+                    lastDv = inverseLength[i] * aPerp;
+                    angularVelocity[i] += lastDv;
+                    acceleration -= aPerp * n;//component of acceleration parallel to that arm will get transferred to next joint
+                }
             }
         }
     }
@@ -75,79 +168,38 @@ public static class PhysicsBasedIK
 
     public static void IntegrateJoints(Transform[] chain, float[] angularVelocity, float damping, float dt, bool rotateJointsIndependently = true)
     {
-        for (int i = 0; i < angularVelocity.Length; i++)
+        if (rotateJointsIndependently)
         {
-            angularVelocity[i] -= damping * angularVelocity[i] * dt;
-            var dAngle = dt * angularVelocity[i];
-            var u = MathTools.CheapRotationalLerp(Vector2.right, Vector2.left, dAngle * PIInverse, out _);
-            var q = MathTools.QuaternionFrom2DUnitVector(u);
-            chain[i].rotation *= q;
-            if (rotateJointsIndependently && i < chain.Length - 2)
+            var lastV = 0f;
+            for (int i = 0; i < angularVelocity.Length; i++)
             {
-                chain[i + 1].rotation *= MathTools.InverseOfUnitQuaternion(q);
-                //chain transforms assumed to be nested, so this allows joints to rotate independently
-                //(i.e. when joint i rotates, all later joints maintain their world rotation)
-                //this gives better tracking movement and more reliable collision
+                angularVelocity[i] -= damping * angularVelocity[i] * dt;
+                var dAngle = dt * (angularVelocity[i] - lastV);
+                var u = MathTools.CheapRotationalLerp(Vector2.right, Vector2.left, dAngle * PIInverse, out _);
+                var q = MathTools.QuaternionFrom2DUnitVector(u);
+                chain[i].rotation *= q;
+                lastV = angularVelocity[i];
+                //if (rotateJointsIndependently && i < chain.Length - 2)
+                //{
+                //    chain[i + 1].rotation *= MathTools.InverseOfUnitQuaternion(q);
+                //    //chain transforms assumed to be nested, so this allows joints to rotate independently
+                //    //(i.e. when joint i rotates, all later joints maintain their world rotation)
+                //    //this gives better tracking movement and more reliable collision
+                //}
+            }
+        }
+        else
+        {
+            for (int i = 0; i < angularVelocity.Length; i++)
+            {
+                angularVelocity[i] -= damping * angularVelocity[i] * dt;
+                var dAngle = dt * angularVelocity[i];
+                var u = MathTools.CheapRotationalLerp(Vector2.right, Vector2.left, dAngle * PIInverse, out _);
+                var q = MathTools.QuaternionFrom2DUnitVector(u);
+                chain[i].rotation *= q;
             }
         }
     }
-
-    //public static void IntegrateJointsWithAngleBounds(Transform[] chain, float[] angularVelocity,
-    //    float[] minAngle, float[] maxAngle, float orientation, float angleboundsBuffer, float damping, float dt)
-    //{
-    //    var q0 = chain[0].rotation;
-    //    var q1 = q0;
-    //    float lastAngleCheckResult = 0;//1 if over max, -1 if under min
-    //    for (int i = 0; i < angularVelocity.Length; i++)
-    //    {
-    //        angularVelocity[i] -= damping * angularVelocity[i] * dt;
-    //        var dAngle = dt * angularVelocity[i];
-    //        var prevAngleFailed = false;
-
-    //        //check angle with previous arm
-    //        if ((dAngle > 0 && lastAngleCheckResult > 0) || (dAngle < 0 && lastAngleCheckResult < 0))
-    //        {
-    //            prevAngleFailed = true;
-    //            //still need to check angle with next arm to be ready for next iteration,
-    //            //so don't continue yet
-    //        }
-
-    //        //check angle with next arm
-    //        if (i < angularVelocity.Length - 1)
-    //        {
-    //            q1 = chain[i + 1].rotation;
-    //            q0 = q1 * MathTools.InverseOfUnitQuaternion(q0);
-    //            var z = Mathf.Sign(orientation * q0.w) * q0.z;
-
-    //            lastAngleCheckResult = z > maxAngle[i + 1] + angleboundsBuffer ? 1 : z < minAngle[i + 1] - angleboundsBuffer ? -1 : 0;
-
-    //            if ((dAngle > 0 && lastAngleCheckResult < 0) || (dAngle < 0 && lastAngleCheckResult > 0))
-    //            {
-    //                q0 = q1;
-    //                continue;
-    //            }
-    //        }
-
-    //        if (prevAngleFailed)
-    //        {
-    //            q0 = q1;
-    //            continue;
-    //        }
-
-    //        var u = MathTools.CheapRotationalLerp(Vector2.right, Vector2.left, dAngle * PIInverse, out _);
-    //        var q = MathTools.QuaternionFrom2DUnitVector(u);
-    //        chain[i].rotation *= q;
-    //        if (i < chain.Length - 2)
-    //        {
-    //            chain[i + 1].rotation *= MathTools.InverseOfUnitQuaternion(q);
-    //            //chain transforms assumed to be nested, so this allows joints to rotate independently
-    //            //(i.e. when joint i rotates, all later joints maintain their world rotation)
-    //            //this gives better tracking movement and more reliable collision
-    //        }
-
-    //        q0 = q1;
-    //    }
-    //}
 
     public static void ApplyCollisionForces(Transform[] chain, float[] length, float[] inverseLength, float[] armHalfWidth, float[] angularVelocity,
         LayerMask collisionMask, float collisionResponse, float horizontalRaycastSpacing, float tunnelInterval, float tunnelMax)

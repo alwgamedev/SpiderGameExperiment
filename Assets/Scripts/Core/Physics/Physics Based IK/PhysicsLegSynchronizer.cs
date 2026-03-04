@@ -8,8 +8,8 @@ public class PhysicsLegSynchronizer : MonoBehaviour
     [SerializeField] float stepHeightSpeed0;//at or below this speed, stepHeight is zero
     [SerializeField] float stepHeightSpeed1;//at or above this speed, use full stepHeight
     [SerializeField] PhysicsBasedIKLeg[] leg;
-    [SerializeField] Transform[] orientingTransform;
-    [SerializeField] int[] orientingTransformIndex;
+    [SerializeField] Transform[] castDirectionSource;
+    [SerializeField] int[] castDirectionSourceIndex;
     [SerializeField] PhysicsLegSettings[] stdSettings;
     [SerializeField] PhysicsLegSettings[] jumpSettings;
     [SerializeField] PhysicsLegSettings[] freefallSettings;
@@ -19,7 +19,8 @@ public class PhysicsLegSynchronizer : MonoBehaviour
     [SerializeField] float fabrikTolerance;
     [SerializeField] float groundContactRadius;
     [SerializeField] float collisionResponse;
-    [SerializeField] float angleBoundsForce;
+    [SerializeField] float maxAngularVelocity;
+    [SerializeField] float maxExtensionFraction;
 
     LegTimer[] timer;
     LegState state;
@@ -30,6 +31,8 @@ public class PhysicsLegSynchronizer : MonoBehaviour
     public float timeScale = 1;
     public float stepHeightFraction;
     public float strideMultiplier = 1;
+
+    float fabrikToleranceSqrd;
 
     public enum LegState
     {
@@ -51,6 +54,15 @@ public class PhysicsLegSynchronizer : MonoBehaviour
 
     public float FractionTouchingGround { get; private set; }
     public bool AnyTouchingGround => FractionTouchingGround > 0;
+
+    private void OnValidate()
+    {
+        if (Application.isPlaying)
+        {
+            fabrikToleranceSqrd = fabrikTolerance * fabrikTolerance;
+            UpdateSettings();
+        }
+    }
 
     public bool AnyGroundedLegsUnderextended(float threshold)
     {
@@ -87,17 +99,23 @@ public class PhysicsLegSynchronizer : MonoBehaviour
 
             if (t.Stepping)
             {
-                l.UpdateTargetStepping(map, -orientingTransform[orientingTransformIndex[i]].up,
+                l.UpdateTargetStepping(map, -castDirectionSource[castDirectionSourceIndex[i]].up,
                     stepHeightSpeedMultiplier, stepHeightFraction, t.StateProgress, 
                     strideMultiplier * t.StepTime, strideMultiplier * t.RestTime);
             }
             else
             {
-                l.UpdateTargetResting(map, -orientingTransform[orientingTransformIndex[i]].up,
+                l.UpdateTargetResting(map, -castDirectionSource[castDirectionSourceIndex[i]].up,
                     t.StateProgress, strideMultiplier * t.RestTime);
             }
 
-            l.UpdateJoints(map, fabrikIterations, fabrikTolerance, groundContactRadius, collisionResponse, dt, simulateContactWeight);
+            if (speedFraction == 0)
+            {
+                l.ClampTargetPosition(map, maxExtensionFraction);
+            }
+
+            l.UpdateJoints(map, dt, fabrikIterations, fabrikToleranceSqrd, /*reachForceIterations, reachToleranceSqrd, */
+                groundContactRadius, collisionResponse, maxAngularVelocity, simulateContactWeight);
 
             if (l.EffectorIsTouchingGround)
             {
@@ -116,12 +134,12 @@ public class PhysicsLegSynchronizer : MonoBehaviour
         }
     }
 
-    public void Initialize(Vector2 groundPosition, Vector2 groundNormal)
+    public void Initialize()
     {
         legCountInverse = 1f / leg.Length;
+        fabrikToleranceSqrd = fabrikTolerance * fabrikTolerance;
         InitializeTimers();
         InitializeLegs();
-        UpdateSettings();
     }
 
     private void InitializeTimers()
@@ -132,23 +150,25 @@ public class PhysicsLegSynchronizer : MonoBehaviour
 
     private void InitializeLegs()
     {
+        var settings = NoContactSettings(state);
         for (int i = 0; i < leg.Length; i++)
         {
             leg[i].Initialize();
-            leg[i].contactSettings = stdSettings[i];
+            leg[i].contactSettings = stdSettings[i];//this is the only time contact settings get set! do not delete! (update settings only does noContactSettings)
+            leg[i].noContactSettings = settings[i];
         }
     }
 
     private void UpdateSettings()
     {
-        var settings = Settings(state);
+        var settings = NoContactSettings(state);
         for (int i = 0; i < leg.Length; i++)
         {
             leg[i].noContactSettings = settings[i];
         }
     }
 
-    PhysicsLegSettings[] Settings(LegState state)
+    PhysicsLegSettings[] NoContactSettings(LegState state)
     {
         switch(state)
         {

@@ -3,6 +3,11 @@ using UnityEngine.Events;
 
 public class SpiderMovementControl : MonoBehaviour
 {
+#if UNITY_EDITOR
+    [SerializeField] float timeScale;
+    [SerializeField] bool drawGizmos;
+#endif
+
     [Header("Body")]
     [SerializeField] Transform abdomenBone;
     [SerializeField] Transform abdomenBonePivot;
@@ -152,12 +157,17 @@ public class SpiderMovementControl : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (Application.isPlaying)
+        if (Application.isPlaying && drawGizmos)
         {
             groundMap.DrawGizmos();
             Gizmos.color = Color.magenta;
             Gizmos.DrawSphere(groundAnchorPt, 0.1f);
         }
+    }
+
+    private void OnValidate()
+    {
+        Time.timeScale = timeScale;
     }
 
     private void Awake()
@@ -183,8 +193,6 @@ public class SpiderMovementControl : MonoBehaviour
         thrusterFlame.Initialize();
 
         spiderInput = GetComponent<SpiderInput>();
-
-        //Time.timeScale = 0.25f;//useful for spotting issues
     }
 
     private void Start()
@@ -195,7 +203,7 @@ public class SpiderMovementControl : MonoBehaviour
         rb.centerOfMass = heightReferencePoint.position - transform.position;
 
         InitializeGroundData();
-        legSynch.Initialize(heightReferencePoint.position - preferredRideHeight * transform.up, transform.up);
+        legSynch.Initialize();
         bodyCollisionFilter = ContactFilter2D.noFilter;
         bodyCollisionFilter.useTriggers = false;
         bodyCollisionFilter.SetLayerMask(groundLayer);

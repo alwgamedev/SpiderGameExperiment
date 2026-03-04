@@ -11,7 +11,8 @@ public struct PhysicsLegSettings
     public float limpness;
     public float jointDamping;
     public float stepHeight;
-    public float angleBoundsForce;
+    public float targetErrorPower;
+    public bool enforceAngleBounds;
     public bool nonSimulatedPose;
 
     public static PhysicsLegSettings Lerp(PhysicsLegSettings s1, PhysicsLegSettings s2, float t)
@@ -24,7 +25,9 @@ public struct PhysicsLegSettings
             limpness = Mathf.Lerp(s1.limpness, s2.limpness, t),
             jointDamping = Mathf.Lerp(s1.jointDamping, s2.jointDamping, t),
             stepHeight = Mathf.Lerp(s1.stepHeight, s2.stepHeight, t),
-            angleBoundsForce = Mathf.Lerp(s1.angleBoundsForce, s2.angleBoundsForce, t),
+            targetErrorPower = Mathf.Lerp(s1.targetErrorPower, s2.targetErrorPower, t),
+            //angleBoundsForce = Mathf.Lerp(s1.angleBoundsForce, s2.angleBoundsForce, t),
+            enforceAngleBounds = s1.enforceAngleBounds,
             nonSimulatedPose = s1.nonSimulatedPose
         };
     }
@@ -41,13 +44,19 @@ public class PhysicsBasedIKLeg
     [SerializeField] Transform[] chain;
     [SerializeField] Transform target;
     [SerializeField] float stepMax;
-    [SerializeField] float defaultPoseDeviationMax;
+    [SerializeField] float[] minAngle;
+    [SerializeField] float[] maxAngle;
+    [SerializeField] bool[] angleBranch;
+    //angle branch:
+    //false = (-pi, pi), true = (0, 2pi)
+    //for (-pi,pi) branch, the angle bounds are bounds for the z-coordinate of the local rotation (sin(t/2), and we need to assume q.w > 0)
+    //for (0,2pi) branch, the angle bounds are bounds for the w-coordinate of the local rotation (cos(t/2), and we need to assume q.z > 0)
 
     Vector2[] defaultPose;
     Vector2[] positionBuffer;
     float[] angularVelocity;
-    float[] minAngle;//really should be sin(t/2) (the z-coordinate of the quaternion with q.w > 0)
-    float[] maxAngle;
+    //float[] minAngle;//really should be sin(t/2) (the z-coordinate of the quaternion with q.w > 0)
+    //float[] maxAngle;
     float[] length;
     float[] inverseLength;
     float totalLength;
@@ -83,25 +92,10 @@ public class PhysicsBasedIKLeg
 
         totalLengthInverse = 1 / totalLength;
         target.position = chain[^1].position;
-
-        minAngle = new float[chain.Length - 1];
-        maxAngle = new float[chain.Length - 1];
-        Quaternion q0 = chain[0].rotation;
-        for (int i = 1; i < minAngle.Length; i++)
-        {
-            Quaternion q1 = chain[i].rotation;
-            q0 = q1 * MathTools.InverseOfUnitQuaternion(q0);
-            var t = Mathf.Sign(sign * q0.w) * q0.z;
-            t = 2 * Mathf.Asin(t);
-            minAngle[i] = Mathf.Sin(0.5f * Mathf.Clamp(t - defaultPoseDeviationMax, -Mathf.PI, Mathf.PI));
-            maxAngle[i] = Mathf.Sin(0.5f * Mathf.Clamp(t + defaultPoseDeviationMax, -Mathf.PI, Mathf.PI));
-
-            q0 = q1;
-        }
     }
 
-    public void UpdateJoints(GroundMap groundMap, int fabrikIterations, float fabrikTolerance,
-        float groundContactRadius, float collisionResponse, float dt, float simulateContactWeight = 0)
+    public void UpdateJoints(GroundMap groundMap, float dt, int fabrikIterations, float fabrikToleranceSqrd, /*int reachForceIterations, float reachForceToleranceSqrd,*/
+        float groundContactRadius, float collisionResponse, float maxAngularVelocity, float simulateContactWeight)
     {
         var settings = EffectorIsTouchingGround ? contactSettings
             : simulateContactWeight > 0 ? PhysicsLegSettings.Lerp(noContactSettings, contactSettings, simulateContactWeight)
@@ -117,10 +111,11 @@ public class PhysicsBasedIKLeg
         }
 
         PhysicsBasedIK.IntegrateJoints(chain, angularVelocity, settings.jointDamping, dt);
+        UpdateGroundContact(groundMap, groundContactRadius, collisionResponse, dt, !settings.nonSimulatedPose);
 
         if (settings.poseForce != 0)
         {
-            SolveForTargetPose(target.position, fabrikIterations, fabrikTolerance);
+            SolveForTargetPose(target.position, fabrikIterations, fabrikToleranceSqrd);
             if (settings.nonSimulatedPose)
             {
                 LerpTowardsTargetPose(settings.poseForce, dt);
@@ -133,7 +128,7 @@ public class PhysicsBasedIKLeg
 
         if (settings.reachForce != 0)
         {
-            PushTowardsTarget(target.position, settings.reachForce, dt);
+            ReachForTarget(target.position, settings.reachForce, fabrikToleranceSqrd, settings.targetErrorPower, dt);
         }
 
         if (!EffectorIsTouchingGround && settings.gravityStrength != 0)
@@ -141,12 +136,12 @@ public class PhysicsBasedIKLeg
             PhysicsBasedIK.ApplyGravity(chain, inverseLength, angularVelocity, settings.gravityStrength, dt);
         }
 
-        if (settings.angleBoundsForce != 0)
+        //if (settings.enforceAngleBounds)
+        if (settings.enforceAngleBounds)
         {
-            PushAwayFromAngleBounds(dt, settings.angleBoundsForce);
+            //PushAwayFromAngleBounds(dt, 650f);
+            EnforceAngleBounds(dt, maxAngularVelocity);
         }
-
-        UpdateGroundContact(groundMap, groundContactRadius, collisionResponse, dt, !settings.nonSimulatedPose);
 
         for (int i = 0; i < positionBuffer.Length; i++)
         {
@@ -170,7 +165,7 @@ public class PhysicsBasedIKLeg
         }
 
         var stepStart = GetStepStart(map, h, bodyFacingRight, stepProgress, stepDistance, restDistance/*, stepMax*/);
-        var stepGoal = GetStepGoal(map, h, bodyFacingRight, 0, restDistance/*, stepMax*/);
+        var stepGoal = GetStepGoal(map, h, bodyFacingRight, 0, restDistance);
         var stepRight = stepGoal - stepStart;
         var stepUp = bodyFacingRight ? 0.5f * stepRight.CCWPerp() : 0.5f * stepRight.CWPerp();
 
@@ -195,7 +190,18 @@ public class PhysicsBasedIKLeg
             h = dot;
         }
 
-        target.position = GetStepGoal(map, h, orientingTransform.localScale.x > 0, restProgress, restDistance/*, stepMax*/);
+        target.position = GetStepGoal(map, h, orientingTransform.localScale.x > 0, restProgress, restDistance);
+    }
+
+    public void ClampTargetPosition(GroundMap map, float maxExtensionFraction)
+    {
+        var d = target.position - chain[0].position;
+        var f = d.sqrMagnitude * totalLengthInverse * totalLengthInverse;
+        if (f > maxExtensionFraction * maxExtensionFraction)
+        {
+            var p = chain[0].position + maxExtensionFraction / Mathf.Sqrt(f) * d;
+            target.position = map.TrueClosestPoint(p, out _, out _, out _);
+        }
     }
 
     public void OnBodyChangedDirection(Vector2 position0, Vector2 position1, Vector2 flipNormal)
@@ -211,7 +217,7 @@ public class PhysicsBasedIKLeg
         positionBuffer[^1] = position1 + MathTools.ReflectAcrossHyperplane(w, flipNormal);
     }
 
-    private void SolveForTargetPose(Vector2 targetPosition, int fabrikIterations, float fabrikTolerance)
+    private void SolveForTargetPose(Vector2 targetPosition, int fabrikIterations, float fabrikToleranceSqrd)
     {
         Vector2 right = orientingTransform.localScale.x * orientingTransform.right;//localScale should only be +/- 1 for this to work
         Vector2 up = orientingTransform.localScale.y * orientingTransform.up;
@@ -223,7 +229,7 @@ public class PhysicsBasedIKLeg
 
         for (int i = 0; i < fabrikIterations; i++)
         {
-            if (!FABRIKSolver.RunFABRIKIteration(positionBuffer, length, totalLength, targetPosition, fabrikTolerance))
+            if (!FABRIKSolver.RunFABRIKIteration(positionBuffer, length, totalLength, targetPosition, fabrikToleranceSqrd))
             {
                 break;
             }
@@ -241,10 +247,24 @@ public class PhysicsBasedIKLeg
         }
     }
 
-    private void PushTowardsTarget(Vector2 targetPosition, float accelFactor, float dt)
+    private void ReachForTarget(Vector2 targetPosition, float accelFactor, float targetToleranceSqrd, float targetErrorPower, float dt)
     {
         var d = targetPosition - (Vector2)chain[^1].position;
-        PhysicsBasedIK.ApplyForceDownChain(chain, inverseLength, angularVelocity, dt * accelFactor * d, 1, null, true);
+        var l = d.sqrMagnitude;
+        if (l > targetToleranceSqrd)
+        {
+            l = Mathf.Sqrt(l);
+            PhysicsBasedIK.ApplyForceDownChain(chain, inverseLength, angularVelocity, dt * accelFactor * Mathf.Pow(l, targetErrorPower - 1) * d, 1, null, true);
+        }
+        //PhysicsBasedIK.ApplyForceDownChain(chain, inverseLength, angularVelocity, dt * accelFactor * d, 1, maxIterations, toleranceSqrd);
+        //PhysicsBasedIK.ApplyForceDownChain(chain, dt, length, inverseLength, angularVelocity, minAngle, maxAngle, angleBranch, orientingTransform.localScale.x,
+        //    dt * accelFactor * d, 1, maxIterations, toleranceSqrd);
+
+        //d *= dt * accelFactor;
+        //for (int i = 1; i < chain.Length; i++)
+        //{
+        //    PhysicsBasedIK.ApplyForceDownChain(chain, inverseLength, angularVelocity, d, i);
+        //}
     }
 
     private void PushTowardsTargetPose(float accelFactor, float dt)
@@ -260,10 +280,9 @@ public class PhysicsBasedIKLeg
         }
     }
 
-    private Vector2 UpdateGroundContact(GroundMap groundMap, float groundContactRadius, float collisionResponse, float dt, bool applyContactForces)
+    private void UpdateGroundContact(GroundMap groundMap, float groundContactRadius, float collisionResponse, float dt, bool applyContactForces)
     {
         var wasTouchingGround = EffectorIsTouchingGround;
-        Vector2 a = Vector2.zero;
         Vector2 q = chain[^1].position;
         q -= groundMap.TrueClosestPoint(q, out _, out var n, out var hitGround);
 
@@ -273,8 +292,8 @@ public class PhysicsBasedIKLeg
         {
             if (applyContactForces && l < 0)
             {
-                a = -collisionResponse * l * n;
-                PhysicsBasedIK.ApplyForceUpChain(chain, inverseLength, angularVelocity, dt * a, chain.Length - 1, null, true);
+                var a = -dt * collisionResponse * l * n;
+                PhysicsBasedIK.ApplyForceUpChain(chain, inverseLength, angularVelocity, a, chain.Length - 1, null, true);
             }
 
             if (!wasTouchingGround)
@@ -282,8 +301,6 @@ public class PhysicsBasedIKLeg
                 HitGround.Invoke();
             }
         }
-
-        return a;
     }
 
     private Vector2 GetStepStart(GroundMap map, bool bodyFacingRight, float stepProgress, float stepDistance, float restDistance/*, float stepMax*/)
@@ -312,12 +329,10 @@ public class PhysicsBasedIKLeg
         //return map.PointFromCenterByIntervalWidth(h);
     }
 
-    private Vector2 GetStepGoal(GroundMap map, float h, bool bodyFacingRight, float restProgress, float restDistance/*, float stepMax*/)
+    private Vector2 GetStepGoal(GroundMap map, float h, bool bodyFacingRight, float restProgress, float restDistance)
     {
-        h = bodyFacingRight ? h + StepGoalHorizontalOffset(restProgress, restDistance/*, stepMax*/)
-            : h - StepGoalHorizontalOffset(restProgress, restDistance/*, stepMax*/);
-        return map.PointFromCenterByArcLength(h, out _, out _);
-        //return map.PointFromCenterByIntervalWidth(h);
+        h += bodyFacingRight ? StepGoalHorizontalOffset(restProgress, restDistance) : -StepGoalHorizontalOffset(restProgress, restDistance);
+        return map.PointFromCenterByArcLength(h, out var n, out _);
     }
 
     private float StepGoalHorizontalOffset(float restProgress, float restDistance/*, float stepMax*/)
@@ -333,13 +348,10 @@ public class PhysicsBasedIKLeg
     private void PushAwayFromAngleBounds(float dt, float accel)
     {
         accel *= dt;
-        Quaternion q0 = chain[0].rotation;
         var sign = Mathf.Sign(orientingTransform.localScale.x);
         for (int i = 1; i < minAngle.Length; i++)
         {
-            Quaternion q1 = chain[i].rotation;
-            q0 = q1 * MathTools.InverseOfUnitQuaternion(q0);
-            var z = Mathf.Sign(sign * q0.w) * q0.z;
+            var z = Mathf.Sign(chain[i].localRotation.w) * chain[i].localRotation.z;
 
             if (z < minAngle[i])
             {
@@ -349,8 +361,49 @@ public class PhysicsBasedIKLeg
             {
                 angularVelocity[i] -= sign * accel * (z - maxAngle[i]);
             }
+        }
+    }
 
-            q0 = q1;
+    private void EnforceAngleBounds(float dt, float maxAngularVelocity)
+    {
+        var sign = Mathf.Sign(orientingTransform.localScale.x);
+        var c0 = 0.5f * sign * dt;
+
+        float z0;
+        float c;
+        float prevV;
+        float z1;
+
+        for (int i = 0; i < minAngle.Length; i++)
+        {
+            if (angleBranch[i])
+            {
+                z0 = Mathf.Sign(chain[i].localRotation.z) * chain[i].localRotation.w;
+                c = -c0 * Mathf.Abs(chain[i].localRotation.w);
+                if (c == 0)
+                {
+                    angularVelocity[i] = Mathf.Clamp(angularVelocity[i], -maxAngularVelocity, maxAngularVelocity);
+                    continue;
+                }
+                prevV = i > 0 ? angularVelocity[i - 1] : 0;
+                z1 = z0 + c * (angularVelocity[i] - prevV);
+                z1 = Mathf.Clamp(z1, minAngle[i], maxAngle[i]);
+                angularVelocity[i] = Mathf.Clamp((z1 - z0) / c + prevV, -maxAngularVelocity, maxAngularVelocity);
+            }
+            else
+            {
+                z0 = Mathf.Sign(chain[i].localRotation.w) * chain[i].localRotation.z;
+                c = c0 * Mathf.Abs(chain[i].localRotation.w);
+                if (c == 0)
+                {
+                    angularVelocity[i] = Mathf.Clamp(angularVelocity[i], -maxAngularVelocity, maxAngularVelocity);
+                    continue;
+                }
+                prevV = i > 0 ? angularVelocity[i - 1] : 0;
+                z1 = z0 + c * (angularVelocity[i] - prevV);
+                z1 = Mathf.Clamp(z1, minAngle[i], maxAngle[i]);
+                angularVelocity[i] = Mathf.Clamp((z1 - z0) / c + prevV, -maxAngularVelocity, maxAngularVelocity);
+            }
         }
     }
 }
