@@ -33,7 +33,6 @@ public class GrabberClaw : MonoBehaviour
 
     public void Open()
     {
-        Debug.Log("opening");
         upperGoal = upperArmOpen;
         lowerGoal = lowerArmOpen;
         mode = Mode.standard;
@@ -48,7 +47,6 @@ public class GrabberClaw : MonoBehaviour
 
     public void Close()
     {
-        Debug.Log("closing");
         upperGoal = upperArmClosed;
         lowerGoal = lowerArmClosed;
         mode = Mode.standard;

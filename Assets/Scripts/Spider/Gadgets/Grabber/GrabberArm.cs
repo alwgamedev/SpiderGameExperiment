@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 
 public class GrabberArm : MonoBehaviour
 {
+    [SerializeField] SpiderInput input;
     [SerializeField] PhysicsBasedIKArm arm;
     [SerializeField] ArmAnchor anchor;
     [SerializeField] GrabberClaw grabberClaw;
@@ -12,7 +13,7 @@ public class GrabberArm : MonoBehaviour
     [SerializeField] SpriteRenderer[] armSprites;
     [SerializeField] LayerMask grabMask;
     [SerializeField] float grabAttemptRadius;
-    [SerializeField] Transform testTarget;
+    //[SerializeField] Transform testTarget;
     [SerializeField] Transform depositTarget;
     [SerializeField] Transform offAnchorPosition;
     [SerializeField] Transform deployedAnchorPosition;
@@ -35,7 +36,6 @@ public class GrabberArm : MonoBehaviour
     //pull out of the garage
     private void Deploy()
     {
-        Debug.Log("deploying");
         actionInProgress = true;
         arm.SnapToPose(foldedPose);
         ShowSprites();
@@ -152,10 +152,10 @@ public class GrabberArm : MonoBehaviour
             onAnchorTargetReached = null;
             onGrabberTargetReached = null;
         }
-        else
-        {
-            Debug.Log("no grabbable target in range.");//replace with ui message in future
-        }
+        //else
+        //{
+        //    Debug.Log("no grabbable target in range.");//replace with ui message in future
+        //}
     }
 
     private void CompleteGrab()
@@ -209,7 +209,6 @@ public class GrabberArm : MonoBehaviour
     {
         if (grabTarget)
         {
-            Debug.Log($"deposited {grabTarget.name}");
             grabTarget = null;
             GoIdle();
         }
@@ -250,13 +249,13 @@ public class GrabberArm : MonoBehaviour
         //handle input
         if (!actionInProgress)
         {
-            if (Keyboard.current.qKey.wasPressedThisFrame)
+            if (input.QAction.WasPressedThisFrame())
             {
                 if (arm.IsOff)
                 {
                     Deploy();
                 }
-                else if (Keyboard.current.shiftKey.isPressed)//shift+Q to close arm
+                else if (input.ShiftAction.IsPressed())//shift+Q to close arm
                 {
                     ParkPhase1();
                 }
@@ -264,10 +263,6 @@ public class GrabberArm : MonoBehaviour
                 {
                     TryBeginGrab();
                 }
-            }
-            else if (Keyboard.current.rKey.wasPressedThisFrame && !arm.IsOff)
-            {
-                arm.BeginTargetingTransform(testTarget);
             }
         }
         else if (grabTimer > 0)
@@ -313,7 +308,6 @@ public class GrabberArm : MonoBehaviour
 
     private void OnGrabFailed()
     {
-        Debug.Log("grab failed");
         grabTarget = null;
         GoIdle();
     }

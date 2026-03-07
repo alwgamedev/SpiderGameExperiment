@@ -10309,10 +10309,10 @@ MonoBehaviour:
       normal: {x: 0.9132198, y: -0.40746734}
       right: {x: -0.40746734, y: -0.9132198}
       groundCollider: {fileID: 0}
-  accelFactor: 70
+  accelFactor: 40
   accelFactorFreeHanging: 15.5
   deadThrusterAccelFactor: 4
-  thrustingAccelFactor: 75
+  thrustingAccelFactor: 50
   accelCap: 10
   gripStrength: 1500
   gripDamping: 50
@@ -10334,6 +10334,7 @@ MonoBehaviour:
   airborneBalanceSpringForce: 100
   balanceSpringDamping: 0.25
   airborneBalanceSpringDamping: 0.04
+  flipForce: 30
   grappleScurryResistanceMax: 175
   grappleScurryAngleMin: -0.5235988
   jumpForce: 10
@@ -10773,7 +10774,7 @@ MonoBehaviour:
   stdSettings:
   - gravityStrength: 0
     poseForce: 0
-    reachForce: 800
+    reachForce: 600
     limpness: 0
     jointDamping: 21
     stepHeight: 0.85
@@ -10781,7 +10782,7 @@ MonoBehaviour:
     nonSimulatedPose: 0
   - gravityStrength: 0
     poseForce: 0
-    reachForce: 800
+    reachForce: 600
     limpness: 0
     jointDamping: 21
     stepHeight: 0.85
@@ -10789,7 +10790,7 @@ MonoBehaviour:
     nonSimulatedPose: 0
   - gravityStrength: 0
     poseForce: 0
-    reachForce: 800
+    reachForce: 600
     limpness: 0
     jointDamping: 21
     stepHeight: 0.85
@@ -10797,7 +10798,7 @@ MonoBehaviour:
     nonSimulatedPose: 0
   - gravityStrength: 0
     poseForce: 0
-    reachForce: 800
+    reachForce: 600
     limpness: 0
     jointDamping: 21
     stepHeight: 0.85
@@ -10805,7 +10806,7 @@ MonoBehaviour:
     nonSimulatedPose: 0
   - gravityStrength: 0
     poseForce: 0
-    reachForce: 800
+    reachForce: 600
     limpness: 0
     jointDamping: 21
     stepHeight: 0.85
@@ -10813,7 +10814,7 @@ MonoBehaviour:
     nonSimulatedPose: 0
   - gravityStrength: 0
     poseForce: 0
-    reachForce: 800
+    reachForce: 600
     limpness: 0
     jointDamping: 21
     stepHeight: 0.85
@@ -10821,7 +10822,7 @@ MonoBehaviour:
     nonSimulatedPose: 0
   - gravityStrength: 0
     poseForce: 0
-    reachForce: 800
+    reachForce: 600
     limpness: 0
     jointDamping: 21
     stepHeight: 0.85
@@ -10829,7 +10830,7 @@ MonoBehaviour:
     nonSimulatedPose: 0
   - gravityStrength: 0
     poseForce: 0
-    reachForce: 800
+    reachForce: 600
     limpness: 0
     jointDamping: 21
     stepHeight: 0.85
@@ -11390,6 +11391,10 @@ PrefabInstance:
       propertyPath: m_SortingLayerID
       value: -1251726909
       objectReference: {fileID: 0}
+    - target: {fileID: 1712633781287781073, guid: c48c2c27835040c4583bc8b1bcda90c6, type: 3}
+      propertyPath: input
+      value: 
+      objectReference: {fileID: 6855416177888466356}
     - target: {fileID: 1712633781287781073, guid: c48c2c27835040c4583bc8b1bcda90c6, type: 3}
       propertyPath: mouth
       value: 

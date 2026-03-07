@@ -9,18 +9,16 @@ public class SpiderInput : MonoBehaviour
     public InputAction WASDAction { get; private set; }
     public InputAction SpaceAction { get; private set; }
     public InputAction ControlAction { get; private set; }
-    public InputAction ShiftAction { get; private set; }  
+    public InputAction ShiftAction { get; private set; }
     public InputAction QAction { get; private set; }
     public InputAction ZAction { get; private set; }
+    public InputAction FAction { get; private set; }
 
     public Vector2 MoveInput => ArrowsAction.ReadValue<Vector2>();
     public Vector2 SecondaryInput => WASDAction.ReadValue<Vector2>();
     
-    //I thought it would be good to have these all in one central place
-    //-- e.g. you can disable all player input here, instead of disabling input handling in every script
-
-    //we can enable/disable input *capturing* here
-    //we can also enable/disable input *handling* on individual dependent scripts
+    //yes, you can get still get key presses through Keyboard.current, but
+    //this allows you to disable all player input at once, instead of disabling input handling in every script
 
     private void Awake()
     {
@@ -32,5 +30,6 @@ public class SpiderInput : MonoBehaviour
         ShiftAction = playerInput.actions["ShiftAction"];
         QAction = playerInput.actions["QAction"];
         ZAction = playerInput.actions["ZAction"];
+        FAction = playerInput.actions["FAction"];
     }
 }

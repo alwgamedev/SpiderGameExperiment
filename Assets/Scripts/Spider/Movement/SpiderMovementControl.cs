@@ -57,6 +57,7 @@ public class SpiderMovementControl : MonoBehaviour
     [SerializeField] float airborneBalanceSpringForce;
     [SerializeField] float balanceSpringDamping;
     [SerializeField] float airborneBalanceSpringDamping;
+    [SerializeField] float flipForce;
     [SerializeField] float grappleScurryResistanceMax;
     [SerializeField] float grappleScurryAngleMin;
 
@@ -82,7 +83,6 @@ public class SpiderMovementControl : MonoBehaviour
     [SerializeField] float freeHangHeadAngle;
     [SerializeField] float freeHangStepHeightReductionMax;
     [SerializeField] float freeHangStrideMultiplier;
-    //[SerializeField] float freeHangLegReachFraction;
     [SerializeField] float freeHangSimulateContactMax;
 
     [Header("Thrusters")]
@@ -116,7 +116,6 @@ public class SpiderMovementControl : MonoBehaviour
     float groundednessRating;
     float groundmapRaycastLength;
     Vector2 groundDirection = Vector2.right;
-    //Vector2 upcomingGroundDirection = Vector2.right;
     Vector2 groundAnchorPt;
     Vector2 balanceDirection;
     float settleTimer;
@@ -511,9 +510,20 @@ public class SpiderMovementControl : MonoBehaviour
     {
         var f = -(grounded ? balanceSpringDamping : airborneBalanceSpringDamping) * rb.angularVelocity;
 
-        if (!grapple.FreeHanging)
+        if (!grounded && spiderInput.FAction.IsPressed())
         {
-            var a = MathTools.PseudoAngle(transform.right, balanceDirection/*groundDirection*/);
+            if (spiderInput.ShiftAction.IsPressed())
+            {
+                f -= flipForce * Orientation;
+            }
+            else
+            {
+                f += flipForce * Orientation;
+            }
+        }
+        else if (!grapple.FreeHanging)
+        {
+            var a = MathTools.PseudoAngle(transform.right, balanceDirection);
             f += a * (grounded ? balanceSpringForce : airborneBalanceSpringForce);
         }
 
@@ -600,8 +610,7 @@ public class SpiderMovementControl : MonoBehaviour
         {
             g = grapple.FreeHanging ? FreeHangingHeadRight() : (Vector2)transform.right;
         }
-    
-        //var g = grounded ? upcomingGroundDirection : (grapple.FreeHanging ? FreeHangingHeadRight() : (Vector2)transform.right);
+
         headBone.ApplyCheapRotationalLerpClamped(g, headRotationSpeed * dt, out _);//if rotate at constant speed, it starts to flicker when rotation is small
     }
 
@@ -665,7 +674,6 @@ public class SpiderMovementControl : MonoBehaviour
         //--note you only want to do this when strongly grounded
 
         Vector2 down = -transform.up;
-        //var down = groundDirection.CWPerp();
         var v = Vector2.Dot(rb.linearVelocity, down);
         var l = Vector2.Dot(p - (Vector2)heightReferencePoint.position, down) - preferredRideHeight;
         var f = l * heightSpringForce;
@@ -737,9 +745,7 @@ public class SpiderMovementControl : MonoBehaviour
         if (MoveInput != 0 || !grounded || (grapple.GrappleAnchored && grapple.GrappleReleaseInput < 0))
         {
             groundAnchorPt = GetGroundAnchorPoint(ref pt, isCentralIndex);
-            //groundAnchorPt = groundMap.TrueClosestPoint(pt.point, out _, out _, out _);
             balanceDirection = groundDirection;
-            //groundAnchorPtRight = n.CWPerp();
         }
         else if (settleTimer > 0)
         {
