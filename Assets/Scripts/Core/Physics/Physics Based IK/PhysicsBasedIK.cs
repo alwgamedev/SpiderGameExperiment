@@ -4,7 +4,7 @@ public static class PhysicsBasedIK
 {
     const float PIInverse = 1 / Mathf.PI;
 
-    //apply force to join and disappate parallel component up the chain (towards "hip")
+    //apply force to joint and disappate parallel component up the chain (towards "hip")
     public static void ApplyForceUpChain(Transform[] chain, float[] inverseLength, float[] angularVelocity, Vector2 acceleration, int joint,
         float[] poseWeight = null, bool applyUniformly = false)
     {
@@ -41,7 +41,7 @@ public static class PhysicsBasedIK
             {
                 aPerp *= 1 - poseWeight[i];
             }
-            angularVelocity[i] += aPerp;// * inverseLength[i];
+            angularVelocity[i] += aPerp * inverseLength[i];
             if (!applyUniformly)
             {
                 acceleration -= aPerp * n;//component of acceleration parallel to that arm will get transferred to next joint
@@ -73,81 +73,73 @@ public static class PhysicsBasedIK
         }
     }
 
-    public static void ApplyForceDownChain(Transform[] chain, float dt, float[] length, float[] inverseLength, float[] angularVelocity,
+    public static void ReachForTargetWithAngleBounds(Transform[] chain, float[] length, float[] inverseLength, float[] angularVelocity,
         float[] minAngle, float[] maxAngle, bool[] angleBranch,
-        float orientation, Vector2 acceleration, int joint, int maxIterations, float toleranceSqrd)
+        float orientation, Vector2 target, float reachForce, float toleranceSqrd, float dt)
     {
+        target -= (Vector2)chain[^1].position;
+        reachForce *= dt;
         var c0 = 0.5f * orientation * dt;
-        toleranceSqrd *= acceleration.sqrMagnitude;//go to a fraction of the original magnitude
-        for (int j = 0; j < maxIterations; j++)
+        var lastDv = 0f;
+
+        for (int i = 0; i < angularVelocity.Length; i++)
         {
-            var lastDv = 0f;
-
-            for (int i = joint - 1; i < chain.Length - 1; i++)
+            if (target.sqrMagnitude < toleranceSqrd)
             {
-                if (acceleration.sqrMagnitude < toleranceSqrd)
+                return;
+            }
+
+            var a = reachForce * target;
+            Vector2 u = chain[i + 1].position - chain[i].position;
+            u *= inverseLength[i];
+            var n = u.CCWPerp();
+            var aPerp = Vector2.Dot(a, n);
+
+            if (angleBranch[i])
+            {
+                var z0 = Mathf.Sign(chain[i].localRotation.z) * chain[i].localRotation.w;
+
+                var c = -c0 * Mathf.Abs(chain[i].localRotation.z);
+
+                if (c == 0)
                 {
-                    return;
-                }
-
-                Vector2 u = chain[i + 1].position - chain[i].position;
-                u *= inverseLength[i];
-                var n = u.CCWPerp();
-                var aPerp = Vector2.Dot(acceleration, n);
-
-                if (angleBranch[i])
-                {
-                    var z0 = Mathf.Sign(chain[i].localRotation.z) * chain[i].localRotation.w;
-                    if ((orientation * aPerp > 0 && z0 > maxAngle[i]) || (orientation * aPerp < 0 && z0 < minAngle[i]))
-                    {
-                        continue;
-                    }
-
-                    var c = -c0 * Mathf.Abs(chain[i].localRotation.z);
-
-                    if (c == 0)
-                    {
-                        lastDv = inverseLength[i] * aPerp;
-                        angularVelocity[i] += lastDv;
-                        acceleration -= aPerp * n;
-                        continue;
-                    }
-
-                    var z1 = z0 + c * (inverseLength[i] * aPerp - lastDv);
-                    z1 = Mathf.Clamp(z1, minAngle[i], maxAngle[i]);
-                    aPerp = ((z1 - z0) / c + lastDv) * length[i];
 
                     lastDv = inverseLength[i] * aPerp;
                     angularVelocity[i] += lastDv;
-                    acceleration -= aPerp * n;//component of acceleration parallel to that arm will get transferred to next joint
+                    target += aPerp * dt * n;
+                    continue;
                 }
-                else
+
+                var z1 = z0 + c * (inverseLength[i] * aPerp - lastDv);
+                z1 = Mathf.Clamp(z1, minAngle[i], maxAngle[i]);
+                z1 = ((z1 - z0) / c + lastDv) * length[i];
+                aPerp = Mathf.Clamp(z1, -reachForce, reachForce);
+
+                lastDv = inverseLength[i] * aPerp;
+                angularVelocity[i] += lastDv;
+                target += aPerp * dt * n;
+            }
+            else
+            {
+                var z0 = Mathf.Sign(chain[i].localRotation.w) * chain[i].localRotation.z;
+                var c = c0 * Mathf.Abs(chain[i].localRotation.w);
+
+                if (c == 0)
                 {
-                    var z0 = Mathf.Sign(chain[i].localRotation.w) * chain[i].localRotation.z;
-                    if ((orientation * aPerp > 0 && z0 > maxAngle[i]) || (orientation * aPerp < 0 && z0 < minAngle[i]))
-                    {
-                        continue;
-                    }
-
-                    var c = c0 * Mathf.Abs(chain[i].localRotation.w);
-
-                    if (c == 0)
-                    {
-                        lastDv = inverseLength[i] * aPerp;
-                        angularVelocity[i] += lastDv;
-                        acceleration -= aPerp * n;
-                        continue;
-                    }
-
-                    var z1 = z0 + c * (inverseLength[i] * aPerp - lastDv);
-                    z1 = Mathf.Clamp(z1, minAngle[i], maxAngle[i]);
-                    aPerp = ((z1 - z0) / c + lastDv) * length[i];
-                    //Debug.Log($"iteration {j}, joint {i}, aPerp {aPerp}");
-
                     lastDv = inverseLength[i] * aPerp;
                     angularVelocity[i] += lastDv;
-                    acceleration -= aPerp * n;//component of acceleration parallel to that arm will get transferred to next joint
+                    target +=  aPerp * dt * n;
+                    continue;
                 }
+
+                var z1 = z0 + c * (inverseLength[i] * aPerp - lastDv);
+                z1 = Mathf.Clamp(z1, minAngle[i], maxAngle[i]);
+                z1 = ((z1 - z0) / c + lastDv) * length[i];
+                aPerp = Mathf.Clamp(z1, -reachForce, reachForce);
+
+                lastDv = inverseLength[i] * aPerp;
+                angularVelocity[i] += lastDv;
+                target += aPerp * dt * n;
             }
         }
     }
@@ -155,14 +147,10 @@ public static class PhysicsBasedIK
     public static void ApplyGravity(Transform[] chain, float[] inverseLength, float[] angularVelocity, float gravityScale, float dt)
     {
         var g = gravityScale * dt * Physics2D.gravity;
-        for (int i = 1 /*0*/; i < angularVelocity.Length; i++)
+        for (int i = 0; i < angularVelocity.Length; i++)
         {
-            ApplyForceUpChain(chain, inverseLength, angularVelocity, g, i);
-            //ApplyForceToJoint works well when you're trying to pull the joint towards a target,
-            //but this works a lot better for gravity (just gives a more natural feel)
-            //(i.e. don't transfer remaining acceleration to the next joint like we do in ApplyForceToJoint)
-            //Vector2 v = chain[i + 1].position - chain[i].position;
-            //angularVelocity[i] += Vector2.Dot(g, v.CCWPerp()) * inverseLength[i] * inverseLength[i];
+            Vector2 u = chain[i + 1].position - chain[i].position;
+            angularVelocity[i] += inverseLength[i] * inverseLength[i] * Vector2.Dot(g, u.CCWPerp());
         }
     }
 
@@ -170,22 +158,18 @@ public static class PhysicsBasedIK
     {
         if (rotateJointsIndependently)
         {
-            var lastV = 0f;
             for (int i = 0; i < angularVelocity.Length; i++)
             {
                 angularVelocity[i] -= damping * angularVelocity[i] * dt;
-                var dAngle = dt * (angularVelocity[i] - lastV);
-                var u = MathTools.CheapRotationalLerp(Vector2.right, Vector2.left, dAngle * PIInverse, out _);
+                var u = MathTools.CheapRotationalLerp(Vector2.right, Vector2.left, dt * angularVelocity[i] * PIInverse, out _);
                 var q = MathTools.QuaternionFrom2DUnitVector(u);
                 chain[i].rotation *= q;
-                lastV = angularVelocity[i];
-                //if (rotateJointsIndependently && i < chain.Length - 2)
-                //{
-                //    chain[i + 1].rotation *= MathTools.InverseOfUnitQuaternion(q);
-                //    //chain transforms assumed to be nested, so this allows joints to rotate independently
-                //    //(i.e. when joint i rotates, all later joints maintain their world rotation)
-                //    //this gives better tracking movement and more reliable collision
-                //}
+                if (i < chain.Length - 2)
+                {
+                    chain[i + 1].rotation *= MathTools.InverseOfUnitQuaternion(q);
+                    //if chain transforms nested, this allows joints to rotate independently
+                    //(i.e. when joint i rotates, all later joints maintain their world rotation)
+                }
             }
         }
         else
@@ -193,8 +177,7 @@ public static class PhysicsBasedIK
             for (int i = 0; i < angularVelocity.Length; i++)
             {
                 angularVelocity[i] -= damping * angularVelocity[i] * dt;
-                var dAngle = dt * angularVelocity[i];
-                var u = MathTools.CheapRotationalLerp(Vector2.right, Vector2.left, dAngle * PIInverse, out _);
+                var u = MathTools.CheapRotationalLerp(Vector2.right, Vector2.left, dt * angularVelocity[i] * PIInverse, out _);
                 var q = MathTools.QuaternionFrom2DUnitVector(u);
                 chain[i].rotation *= q;
             }
@@ -206,7 +189,6 @@ public static class PhysicsBasedIK
     {
         for (int i = chain.Length - 2; i > -1; i--)
         {
-            //var cMask = collisionMask[i];
             Vector2 p0 = chain[i].position;
             Vector2 p1 = chain[i + 1].position;
             Vector2 u = (p1 - p0) * inverseLength[i];
@@ -255,8 +237,8 @@ public static class PhysicsBasedIK
 
 
                 var a = correction * collisionResponse * inverseLength[i] * n;
-                ApplyForceUpChain(chain, inverseLength, angularVelocity, a, i/*, collisionDamping*/);
-                ApplyForceUpChain(chain, inverseLength, angularVelocity, a, i + 1/*, collisionDamping*/);
+                ApplyForceUpChain(chain, inverseLength, angularVelocity, a, i);
+                ApplyForceUpChain(chain, inverseLength, angularVelocity, a, i + 1);
 
                 float EscapeYValue(bool escapingUp)
                 {
@@ -301,7 +283,6 @@ public static class PhysicsBasedIK
                     }
 
                     var q1 = qMid + x * u;
-                    //var q2 = q1 + (escapingUp ? -armHalfWidth[i] : armHalfWidth[i]) * n;
 
                     while (YInBounds())
                     {

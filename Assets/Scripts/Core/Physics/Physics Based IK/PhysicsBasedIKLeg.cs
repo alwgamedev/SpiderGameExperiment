@@ -11,7 +11,6 @@ public struct PhysicsLegSettings
     public float limpness;
     public float jointDamping;
     public float stepHeight;
-    public float targetErrorPower;
     public bool enforceAngleBounds;
     public bool nonSimulatedPose;
 
@@ -25,8 +24,6 @@ public struct PhysicsLegSettings
             limpness = Mathf.Lerp(s1.limpness, s2.limpness, t),
             jointDamping = Mathf.Lerp(s1.jointDamping, s2.jointDamping, t),
             stepHeight = Mathf.Lerp(s1.stepHeight, s2.stepHeight, t),
-            targetErrorPower = Mathf.Lerp(s1.targetErrorPower, s2.targetErrorPower, t),
-            //angleBoundsForce = Mathf.Lerp(s1.angleBoundsForce, s2.angleBoundsForce, t),
             enforceAngleBounds = s1.enforceAngleBounds,
             nonSimulatedPose = s1.nonSimulatedPose
         };
@@ -55,8 +52,6 @@ public class PhysicsBasedIKLeg
     Vector2[] defaultPose;
     Vector2[] positionBuffer;
     float[] angularVelocity;
-    //float[] minAngle;//really should be sin(t/2) (the z-coordinate of the quaternion with q.w > 0)
-    //float[] maxAngle;
     float[] length;
     float[] inverseLength;
     float totalLength;
@@ -94,24 +89,26 @@ public class PhysicsBasedIKLeg
         target.position = chain[^1].position;
     }
 
-    public void UpdateJoints(GroundMap groundMap, float dt, int fabrikIterations, float fabrikToleranceSqrd, /*int reachForceIterations, float reachForceToleranceSqrd,*/
+    public void UpdateJoints(GroundMap groundMap, float dt, int fabrikIterations, float fabrikToleranceSqrd, float reachToleranceSqrd,
         float groundContactRadius, float collisionResponse, float maxAngularVelocity, float simulateContactWeight)
     {
         var settings = EffectorIsTouchingGround ? contactSettings
             : simulateContactWeight > 0 ? PhysicsLegSettings.Lerp(noContactSettings, contactSettings, simulateContactWeight)
             : noContactSettings;
-        if (settings.limpness > 0 && (chain[0].position.x != positionBuffer[0].x || chain[0].position.y != positionBuffer[0].y))
-        {
-            for (int i = 1; i < positionBuffer.Length; i++)
-            {
-                var p = Vector2.Lerp(chain[i].position, positionBuffer[i], settings.limpness);
-                Vector2 u = orientingTransform.localScale.x * (p - (Vector2)chain[i - 1].position).normalized;
-                chain[i - 1].rotation = MathTools.QuaternionFrom2DUnitVector(u);
-            }
-        }
 
         PhysicsBasedIK.IntegrateJoints(chain, angularVelocity, settings.jointDamping, dt);
+
+        if (settings.limpness != 0)
+        {
+            Limp(settings.limpness, dt);
+        }
+
         UpdateGroundContact(groundMap, groundContactRadius, collisionResponse, dt, !settings.nonSimulatedPose);
+
+        if (!EffectorIsTouchingGround && settings.gravityStrength != 0)
+        {
+            PhysicsBasedIK.ApplyGravity(chain, inverseLength, angularVelocity, settings.gravityStrength, dt);
+        }
 
         if (settings.poseForce != 0)
         {
@@ -128,19 +125,17 @@ public class PhysicsBasedIKLeg
 
         if (settings.reachForce != 0)
         {
-            ReachForTarget(target.position, settings.reachForce, fabrikToleranceSqrd, settings.targetErrorPower, dt);
+            PhysicsBasedIK.ReachForTargetWithAngleBounds(chain, length, inverseLength, angularVelocity, minAngle, maxAngle, angleBranch, orientingTransform.localScale.x,
+                    target.position, settings.reachForce, reachToleranceSqrd, dt);
         }
 
-        if (!EffectorIsTouchingGround && settings.gravityStrength != 0)
-        {
-            PhysicsBasedIK.ApplyGravity(chain, inverseLength, angularVelocity, settings.gravityStrength, dt);
-        }
-
-        //if (settings.enforceAngleBounds)
         if (settings.enforceAngleBounds)
         {
-            //PushAwayFromAngleBounds(dt, 650f);
             EnforceAngleBounds(dt, maxAngularVelocity);
+        }
+        else
+        {
+            EnforceAngleBranch(dt, maxAngularVelocity);
         }
 
         for (int i = 0; i < positionBuffer.Length; i++)
@@ -247,36 +242,24 @@ public class PhysicsBasedIKLeg
         }
     }
 
-    private void ReachForTarget(Vector2 targetPosition, float accelFactor, float targetToleranceSqrd, float targetErrorPower, float dt)
-    {
-        var d = targetPosition - (Vector2)chain[^1].position;
-        var l = d.sqrMagnitude;
-        if (l > targetToleranceSqrd)
-        {
-            l = Mathf.Sqrt(l);
-            PhysicsBasedIK.ApplyForceDownChain(chain, inverseLength, angularVelocity, dt * accelFactor * Mathf.Pow(l, targetErrorPower - 1) * d, 1, null, true);
-        }
-        //PhysicsBasedIK.ApplyForceDownChain(chain, inverseLength, angularVelocity, dt * accelFactor * d, 1, maxIterations, toleranceSqrd);
-        //PhysicsBasedIK.ApplyForceDownChain(chain, dt, length, inverseLength, angularVelocity, minAngle, maxAngle, angleBranch, orientingTransform.localScale.x,
-        //    dt * accelFactor * d, 1, maxIterations, toleranceSqrd);
-
-        //d *= dt * accelFactor;
-        //for (int i = 1; i < chain.Length; i++)
-        //{
-        //    PhysicsBasedIK.ApplyForceDownChain(chain, inverseLength, angularVelocity, d, i);
-        //}
-    }
-
     private void PushTowardsTargetPose(float accelFactor, float dt)
     {
         accelFactor *= dt;
         for (int i = 0; i < angularVelocity.Length; i++)
         {
-            //Debug.DrawLine(positionBuffer[i], positionBuffer[i + 1], Color.red);
             var v = orientingTransform.localScale.x * inverseLength[i] * (positionBuffer[i + 1] - positionBuffer[i]);
             var q = MathTools.QuaternionFrom2DUnitVector(v);
             q *= MathTools.InverseOfUnitQuaternion(chain[i].rotation);
             angularVelocity[i] += accelFactor * Mathf.Sin(q.w) * q.z;//note q.z = sin(t/2) gives a nice angle function on (-pi,pi)
+        }
+    }
+
+    private void Limp(float limpness, float dt)
+    {
+        limpness *= dt;
+        for (int i = 1; i < positionBuffer.Length; i++)
+        {
+            chain[i - 1].ApplyCheapRotationalLerp(orientingTransform.localScale.x * (positionBuffer[i] - (Vector2)chain[i - 1].position).normalized, limpness, out _);
         }
     }
 
@@ -369,41 +352,40 @@ public class PhysicsBasedIKLeg
         var sign = Mathf.Sign(orientingTransform.localScale.x);
         var c0 = 0.5f * sign * dt;
 
-        float z0;
-        float c;
-        float prevV;
-        float z1;
+        for (int i = 0; i < minAngle.Length; i++)
+        {
+            var z0 = angleBranch[i] ? Mathf.Sign(chain[i].localRotation.z) * chain[i].localRotation.w : Mathf.Sign(chain[i].localRotation.w) * chain[i].localRotation.z;
+            var c = angleBranch[i] ? -c0 * Mathf.Abs(chain[i].localRotation.w) : c0 * Mathf.Abs(chain[i].localRotation.z);
+            if (c == 0)
+            {
+                continue;
+            }
+            var prevV = i > 0 ? angularVelocity[i - 1] : 0;
+            var z1 = z0 + c * (angularVelocity[i] - prevV);
+            z1 = Mathf.Clamp(z1, minAngle[i], maxAngle[i]);
+            angularVelocity[i] = Mathf.Clamp((z1 - z0) / c + prevV, -maxAngularVelocity, maxAngularVelocity);
+        }
+    }
+
+    private void EnforceAngleBranch(float dt, float maxAngularVelocity)
+    {
+        var sign = Mathf.Sign(orientingTransform.localScale.x);
+        var c0 = 0.5f * sign * dt;
+        //var max = 1 - Mathf.Epsilon;
+        //var min = -max;
 
         for (int i = 0; i < minAngle.Length; i++)
         {
-            if (angleBranch[i])
+            var z0 = angleBranch[i] ? Mathf.Sign(chain[i].localRotation.z) * chain[i].localRotation.w : Mathf.Sign(chain[i].localRotation.w) * chain[i].localRotation.z;
+            var c = angleBranch[i] ? -c0 * Mathf.Abs(chain[i].localRotation.w) : c0 * Mathf.Abs(chain[i].localRotation.z);
+            if (c == 0)
             {
-                z0 = Mathf.Sign(chain[i].localRotation.z) * chain[i].localRotation.w;
-                c = -c0 * Mathf.Abs(chain[i].localRotation.w);
-                if (c == 0)
-                {
-                    angularVelocity[i] = Mathf.Clamp(angularVelocity[i], -maxAngularVelocity, maxAngularVelocity);
-                    continue;
-                }
-                prevV = i > 0 ? angularVelocity[i - 1] : 0;
-                z1 = z0 + c * (angularVelocity[i] - prevV);
-                z1 = Mathf.Clamp(z1, minAngle[i], maxAngle[i]);
-                angularVelocity[i] = Mathf.Clamp((z1 - z0) / c + prevV, -maxAngularVelocity, maxAngularVelocity);
+                continue;
             }
-            else
-            {
-                z0 = Mathf.Sign(chain[i].localRotation.w) * chain[i].localRotation.z;
-                c = c0 * Mathf.Abs(chain[i].localRotation.w);
-                if (c == 0)
-                {
-                    angularVelocity[i] = Mathf.Clamp(angularVelocity[i], -maxAngularVelocity, maxAngularVelocity);
-                    continue;
-                }
-                prevV = i > 0 ? angularVelocity[i - 1] : 0;
-                z1 = z0 + c * (angularVelocity[i] - prevV);
-                z1 = Mathf.Clamp(z1, minAngle[i], maxAngle[i]);
-                angularVelocity[i] = Mathf.Clamp((z1 - z0) / c + prevV, -maxAngularVelocity, maxAngularVelocity);
-            }
+            var prevV = i > 0 ? angularVelocity[i - 1] : 0;
+            var z1 = z0 + c * (angularVelocity[i] - prevV);
+            z1 = Mathf.Clamp(z1, -1, 1);
+            angularVelocity[i] = Mathf.Clamp((z1 - z0) / c + prevV, -maxAngularVelocity, maxAngularVelocity);
         }
     }
 }

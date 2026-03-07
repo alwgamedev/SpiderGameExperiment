@@ -53,14 +53,14 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _BorderFadeRate: 0.1
+    - _BorderFadeRate: 0.05
     - _ColorNoiseDensity: 0.5
     - _ColorNoiseScale: 4
     - _ConcaveShadowContrast: 1
-    - _ConcaveShadowStrength: 2
+    - _ConcaveShadowStrength: 1
     - _ConvexHighlightContrast: 1
     - _ConvexHighlightStrength: 1
-    - _DensityPower: 0.5
+    - _DensityPower: 0.1
     - _DistortionDensity: 1
     - _DistortionMax: 1
     - _DistortionMin: 0.5
@@ -70,17 +70,17 @@ Material:
     - _HighlightOverNoisePower: 0.71
     - _NoiseBlendMax: 1
     - _NoiseBlendMin: 0.5
-    - _NoiseDensity: 2
+    - _NoiseDensity: 1
     - _NoiseMax: 1
     - _NoiseMin: 0
     - _NoiseScale: 35
     - _ShadowColor: 0
-    - _UV1OutputMax: 1.5
+    - _UV1OutputMax: 0.9
     - _UV1OutputMin: 0
     - _UV2OutputContrast: 1
     - _UV2OutputMax: 2
     - _UV2OutputMin: 0
-    - _UndersideShadowContrast: 0.9
+    - _UndersideShadowContrast: 1
     - _UndersideShadowStrength: 1
     - _UpsideHighlightContrast: 1
     - _UpsideHighlightStrength: 1
@@ -89,10 +89,10 @@ Material:
     - White: {r: 1, g: 1, b: 1, a: 1}
     - _BorderShadow: {r: 0.5320754, g: 0.5320754, b: 0.5320754, a: 1}
     - _Color: {r: 0.81886786, g: 0.62264854, b: 0.6962143, a: 1}
-    - _Color1: {r: 0.4756624, g: 0.3882353, b: 0.6392157, a: 1}
-    - _Color2: {r: 0.7604495, g: 0.6666667, b: 0.81960785, a: 1}
+    - _Color1: {r: 0.43390596, g: 0.2520256, b: 0.78113204, a: 1}
+    - _Color2: {r: 0.89644897, g: 0.8043076, b: 0.9622642, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
-    - _ShadowColorMultiplier: {r: 0.41799128, g: 0.39953718, b: 0.5471698, a: 1}
+    - _ShadowColorMultiplier: {r: 0.14056304, g: 0.123552874, b: 0.2528302, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &8220188078833339901

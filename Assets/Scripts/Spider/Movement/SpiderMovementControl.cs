@@ -869,6 +869,6 @@ public class SpiderMovementControl : MonoBehaviour
                 break;
         }
 
-        legSynch.UpdateAllLegs(Time.deltaTime, groundMap, simulateContactWeight);
+        legSynch.UpdateAllLegs(Time.deltaTime, groundMap, grounded, simulateContactWeight);
     }
 }

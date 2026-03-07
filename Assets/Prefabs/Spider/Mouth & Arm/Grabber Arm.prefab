@@ -1384,6 +1384,8 @@ MonoBehaviour:
   arm: {fileID: 1472496846458269233}
   anchor: {fileID: 6721185391477429269}
   grabberClaw: {fileID: 5995575784789208824}
+  inventoryDoor: {fileID: 0}
+  mouth: {fileID: 0}
   armSprites:
   - {fileID: 3395330695753744097}
   - {fileID: 4773659117919509220}
@@ -1423,7 +1425,7 @@ MonoBehaviour:
   - {x: -1, y: 0}
   - {x: -0.8660254, y: -0.5}
   - {x: 0, y: -1}
-  depositPoseStartIndex: 0
+  depositPoseWeight: []
   grabTimeOut: 0
 --- !u!114 &1472496846458269233
 MonoBehaviour:
@@ -1452,16 +1454,8 @@ MonoBehaviour:
   - 0.0525
   - 0.1125
   collisionMask:
-  - serializedVersion: 2
-    m_Bits: 64
-  - serializedVersion: 2
-    m_Bits: 72
-  - serializedVersion: 2
-    m_Bits: 72
-  - serializedVersion: 2
-    m_Bits: 72
-  - serializedVersion: 2
-    m_Bits: 72
+    serializedVersion: 2
+    m_Bits: 0
   collisionResponse: 15
   horizontalRaycastSpacing: 0.075
   tunnelInterval: 0.225
@@ -1471,9 +1465,10 @@ MonoBehaviour:
   jointDamping: 8
   targetTolerance: 0.01
   targetingErrorMin: 0.4
-  poseSpringConstant: 45
+  poseSpringConstant: 80
   maxPosePursuitSpeed: 10
   poseTolerance: 0.01
+  gravityScale: 0
 --- !u!114 &6721185391477429269
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1507,19 +1502,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 235fe5e65cbfc1a40b0071037fe843d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GrabberClaw
-  orientingTransform: {fileID: 0}
-  grabberBase: {fileID: 5485431387252796140}
-  grabberRayEndPt: {fileID: 3541387447881304545}
   upperGrabArm: {fileID: 2648576817369858537}
-  upperGrabArmMidPt: {fileID: 4441328826201566813}
-  upperGrabArmEndPt: {fileID: 522510104467320482}
   lowerGrabArm: {fileID: 219750284902355839}
   upperArmCollider: {fileID: 3301777758548608377}
   lowerArmCollider: {fileID: 2937749974650434540}
-  grabTolerance: 0
+  upperArmOpen: {x: 0, y: 0, z: 0, w: 0}
+  upperArmClosed: {x: 0, y: 0, z: 0, w: 0}
+  lowerArmOpen: {x: 0, y: 0, z: 0, w: 0}
+  lowerArmClosed: {x: 0, y: 0, z: 0, w: 0}
   grabArmRotationSpeed: 6
-  grabArmMaxRotationRad: 0.9
   rotationTolerance: 0.9999
+  grabTolerance: 0
+  dropTolerance: 0
 --- !u!1 &7064115709004238814
 GameObject:
   m_ObjectHideFlags: 0

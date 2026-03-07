@@ -17,10 +17,11 @@ public class PhysicsLegSynchronizer : MonoBehaviour
     [SerializeField] float[] timeOffset;
     [SerializeField] int fabrikIterations;
     [SerializeField] float fabrikTolerance;
+    [SerializeField] float reachTolerance;
     [SerializeField] float groundContactRadius;
     [SerializeField] float collisionResponse;
-    [SerializeField] float maxAngularVelocity;
     [SerializeField] float maxExtensionFraction;
+    [SerializeField] float maxAngularVelocity;
 
     LegTimer[] timer;
     LegState state;
@@ -33,6 +34,7 @@ public class PhysicsLegSynchronizer : MonoBehaviour
     public float strideMultiplier = 1;
 
     float fabrikToleranceSqrd;
+    float reachToleranceSqrd;
 
     public enum LegState
     {
@@ -60,6 +62,7 @@ public class PhysicsLegSynchronizer : MonoBehaviour
         if (Application.isPlaying)
         {
             fabrikToleranceSqrd = fabrikTolerance * fabrikTolerance;
+            reachToleranceSqrd = reachToleranceSqrd * reachTolerance;
             UpdateSettings();
         }
     }
@@ -83,11 +86,11 @@ public class PhysicsLegSynchronizer : MonoBehaviour
         return false;
     }
 
-    public void UpdateAllLegs(float dt, GroundMap map, float simulateContactWeight = 0)
+    public void UpdateAllLegs(float dt, GroundMap map, bool grounded, float simulateContactWeight = 0)
     {
         var speedFraction = absoluteBodyGroundSpeed < stepHeightSpeed0 ? 0 : absoluteBodyGroundSpeed / stepHeightSpeed1;
         var speedScaledDt = timeScale * speedFraction * dt;
-        var stepHeightSpeedMultiplier = Mathf.Min(speedFraction, 1);
+        var stepHeightSpeedMultiplier = grounded ? Mathf.Min(speedFraction, 1) : 1;
         var count = 0;
 
         for (int i = 0; i < leg.Length; i++)
@@ -109,12 +112,12 @@ public class PhysicsLegSynchronizer : MonoBehaviour
                     t.StateProgress, strideMultiplier * t.RestTime);
             }
 
-            if (speedFraction == 0)
+            if (grounded && speedFraction == 0)
             {
                 l.ClampTargetPosition(map, maxExtensionFraction);
             }
 
-            l.UpdateJoints(map, dt, fabrikIterations, fabrikToleranceSqrd, /*reachForceIterations, reachToleranceSqrd, */
+            l.UpdateJoints(map, dt, fabrikIterations, fabrikToleranceSqrd, reachToleranceSqrd,
                 groundContactRadius, collisionResponse, maxAngularVelocity, simulateContactWeight);
 
             if (l.EffectorIsTouchingGround)
@@ -138,6 +141,7 @@ public class PhysicsLegSynchronizer : MonoBehaviour
     {
         legCountInverse = 1f / leg.Length;
         fabrikToleranceSqrd = fabrikTolerance * fabrikTolerance;
+        reachToleranceSqrd = reachTolerance * reachTolerance;
         InitializeTimers();
         InitializeLegs();
     }
@@ -172,8 +176,6 @@ public class PhysicsLegSynchronizer : MonoBehaviour
     {
         switch(state)
         {
-            //case LegState.airborne:
-            //    return airborneSettings;
             case LegState.jumping:
                 return jumpSettings;
             case LegState.freefall:
