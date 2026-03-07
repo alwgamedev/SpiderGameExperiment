@@ -14,7 +14,7 @@ public static class FABRIKSolver
             return false;
         }
 
-        Vector2 anchor = position[0];
+        var anchor = position[0];//needs to be cached before running forward
         Forward(position, length, target);
         Backward(position, length, anchor);
         return true;

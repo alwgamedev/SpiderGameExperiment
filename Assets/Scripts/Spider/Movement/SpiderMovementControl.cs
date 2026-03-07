@@ -3,10 +3,8 @@ using UnityEngine.Events;
 
 public class SpiderMovementControl : MonoBehaviour
 {
-#if UNITY_EDITOR
     [SerializeField] float timeScale;
     [SerializeField] bool drawGizmos;
-#endif
 
     [Header("Body")]
     [SerializeField] Transform abdomenBone;
@@ -129,6 +127,12 @@ public class SpiderMovementControl : MonoBehaviour
     bool grappleScurrying;
     bool thrusterCooldownWarningSent;
     bool grappleFreeHangPrerequisites;
+
+    FlipInput flipInput;
+    enum FlipInput
+    {
+        none, flip, hold
+    }
 
     float MoveInput => spiderInput.MoveInput.x;
     float LeanInput => spiderInput.SecondaryInput.x;
@@ -400,6 +404,8 @@ public class SpiderMovementControl : MonoBehaviour
         grapple.aimInput = chargingJump ? 0 : LeanInput;
         UpdateGrappleScurrying();//needs to be updated before changing direction
 
+        flipInput = spiderInput.FAction.IsPressed() ? spiderInput.ShiftAction.IsPressed() ? FlipInput.hold : FlipInput.flip : FlipInput.none;
+
         //make sure you update freeHanging before changing direction
         if (grapple.GrappleAnchored)
         {
@@ -470,10 +476,10 @@ public class SpiderMovementControl : MonoBehaviour
         {
             if (grounded || !grapple.GrappleAnchored || (!ForceFreeHang && thruster.Engaged))
             {
-                Vector2 d = OrientedGroundDirection;
+                Vector2 d = grounded || flipInput != FlipInput.hold ? OrientedGroundDirection : OrientedRight;
                 var spd = Vector2.Dot(rb.linearVelocity, d);
                 var maxSpd = MaxSpeed;
-                var accFactor = grounded ? accelFactor : (thruster.Engaged ? thrustingAccelFactor : deadThrusterAccelFactor);
+                var accFactor = grounded ? accelFactor : (thruster.Engaged ? thrustingAccelFactor : deadThrusterAccelFactor * Mathf.Clamp(1 - d.y, 0, 1));
 
                 var s = Mathf.Min(maxSpd - spd, accelCap * maxSpd);
                 if (grounded || s > 0)
@@ -510,13 +516,9 @@ public class SpiderMovementControl : MonoBehaviour
     {
         var f = -(grounded ? balanceSpringDamping : airborneBalanceSpringDamping) * rb.angularVelocity;
 
-        if (!grounded && spiderInput.FAction.IsPressed())
+        if (!grounded && flipInput != FlipInput.none)
         {
-            if (spiderInput.ShiftAction.IsPressed())
-            {
-                f -= flipForce * Orientation;
-            }
-            else
+            if (flipInput == FlipInput.flip)
             {
                 f += flipForce * Orientation;
             }

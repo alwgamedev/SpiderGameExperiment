@@ -17,8 +17,10 @@ public class SpiderInput : MonoBehaviour
     public Vector2 MoveInput => ArrowsAction.ReadValue<Vector2>();
     public Vector2 SecondaryInput => WASDAction.ReadValue<Vector2>();
     
-    //yes, you can get still get key presses through Keyboard.current, but
-    //this allows you to disable all player input at once, instead of disabling input handling in every script
+    //yes, we're basically still using the input system legacy style (just reading values in update rather than subscribing to actions),
+    //which you can just do through Keyboard.current,
+    //but the nice thing about having all the input in one central place is you can disable all player input here, instead of disabling input handling in every script
+    //(also allows us to set up input for console or other systems, like smart fridge)
 
     private void Awake()
     {
