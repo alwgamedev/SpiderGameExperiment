@@ -6513,10 +6513,10 @@ MonoBehaviour:
   arrowNeckAnchor: {fileID: 2781243994741956508}
   stretchMin: 0.25
   stretchMax: 3
-  colorMin0: {r: 1, g: 1, b: 0.5, a: 1}
-  colorMin1: {r: 1, g: 1, b: 0, a: 1}
-  colorMax0: {r: 1, g: 1, b: 0.5019608, a: 1}
-  colorMax1: {r: 1, g: 0, b: 0, a: 1}
+  colorMin0: {r: 0.5019608, g: 1, b: 0.9137255, a: 0}
+  colorMin1: {r: 0, g: 1, b: 0.7869272, a: 0}
+  colorMax0: {r: 0.5019608, g: 1, b: 0.9137255, a: 0}
+  colorMax1: {r: 0, g: 1, b: 0.57336473, a: 1}
 --- !u!1 &5814272727016347195
 GameObject:
   m_ObjectHideFlags: 0
@@ -10312,7 +10312,7 @@ MonoBehaviour:
   accelFactor: 40
   accelFactorFreeHanging: 15.5
   deadThrusterAccelFactor: 4
-  thrustingAccelFactor: 50
+  thrustingAccelFactor: 60
   accelCap: 10
   gripStrength: 1500
   gripDamping: 50
@@ -10334,7 +10334,6 @@ MonoBehaviour:
   airborneBalanceSpringForce: 100
   balanceSpringDamping: 0.25
   airborneBalanceSpringDamping: 0.04
-  flipForce: 30
   grappleScurryResistanceMax: 175
   grappleScurryAngleMin: -0.5235988
   jumpForce: 10
@@ -10475,10 +10474,10 @@ MonoBehaviour:
     noContactSettings:
       gravityStrength: 0
       poseForce: 0
-      reachForce: 450
+      reachForce: 600
       limpness: 0
-      jointDamping: 23.5
-      stepHeight: 0.8
+      jointDamping: 21
+      stepHeight: 0.85
       enforceAngleBounds: 1
       nonSimulatedPose: 0
     HitGround:
@@ -10513,10 +10512,10 @@ MonoBehaviour:
     noContactSettings:
       gravityStrength: 0
       poseForce: 0
-      reachForce: 450
+      reachForce: 600
       limpness: 0
-      jointDamping: 23.5
-      stepHeight: 0.8
+      jointDamping: 21
+      stepHeight: 0.85
       enforceAngleBounds: 1
       nonSimulatedPose: 0
     HitGround:
@@ -10551,10 +10550,10 @@ MonoBehaviour:
     noContactSettings:
       gravityStrength: 0
       poseForce: 0
-      reachForce: 450
+      reachForce: 600
       limpness: 0
-      jointDamping: 23.5
-      stepHeight: 0.8
+      jointDamping: 21
+      stepHeight: 0.85
       enforceAngleBounds: 1
       nonSimulatedPose: 0
     HitGround:
@@ -10589,10 +10588,10 @@ MonoBehaviour:
     noContactSettings:
       gravityStrength: 0
       poseForce: 0
-      reachForce: 450
+      reachForce: 600
       limpness: 0
-      jointDamping: 23.5
-      stepHeight: 0.8
+      jointDamping: 21
+      stepHeight: 0.85
       enforceAngleBounds: 1
       nonSimulatedPose: 0
     HitGround:
@@ -10627,10 +10626,10 @@ MonoBehaviour:
     noContactSettings:
       gravityStrength: 0
       poseForce: 0
-      reachForce: 450
+      reachForce: 600
       limpness: 0
-      jointDamping: 23.5
-      stepHeight: 0.8
+      jointDamping: 21
+      stepHeight: 0.85
       enforceAngleBounds: 1
       nonSimulatedPose: 0
     HitGround:
@@ -10665,10 +10664,10 @@ MonoBehaviour:
     noContactSettings:
       gravityStrength: 0
       poseForce: 0
-      reachForce: 450
+      reachForce: 600
       limpness: 0
-      jointDamping: 23.5
-      stepHeight: 0.8
+      jointDamping: 21
+      stepHeight: 0.85
       enforceAngleBounds: 1
       nonSimulatedPose: 0
     HitGround:
@@ -10703,10 +10702,10 @@ MonoBehaviour:
     noContactSettings:
       gravityStrength: 0
       poseForce: 0
-      reachForce: 450
+      reachForce: 600
       limpness: 0
-      jointDamping: 23.5
-      stepHeight: 0.8
+      jointDamping: 21
+      stepHeight: 0.85
       enforceAngleBounds: 1
       nonSimulatedPose: 0
     HitGround:
@@ -10741,10 +10740,10 @@ MonoBehaviour:
     noContactSettings:
       gravityStrength: 0
       poseForce: 0
-      reachForce: 450
+      reachForce: 600
       limpness: 0
-      jointDamping: 23.5
-      stepHeight: 0.8
+      jointDamping: 21
+      stepHeight: 0.85
       enforceAngleBounds: 1
       nonSimulatedPose: 0
     HitGround:
@@ -12755,6 +12754,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 6855416177888466356}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: baseShootSpeed
+      value: 18
+      objectReference: {fileID: 0}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: breakThreshold
       value: 0.3
       objectReference: {fileID: 0}
@@ -12776,7 +12779,7 @@ PrefabInstance:
       objectReference: {fileID: 1003766163350873646}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: carrySpringForce
-      value: 500
+      value: 625
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: retractMaxTension
@@ -12927,19 +12930,59 @@ PrefabInstance:
       value: -1000
       objectReference: {fileID: 0}
     - target: {fileID: 7127481960608768322, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_Parameters.textureMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7127481960608768322, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 496c799955e836042beca7628c38318a, type: 2}
+    - target: {fileID: 7127481960608768322, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_Parameters.textureScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7127481960608768322, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_Parameters.textureScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7127481960608768322, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_Parameters.widthMultiplier
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 7127481960608768322, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: m_Parameters.colorGradient.key0.a
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7127481960608768322, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_Parameters.colorGradient.key0.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7127481960608768322, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: m_Parameters.colorGradient.key0.g
-      value: 0.6392157
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7127481960608768322, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: m_Parameters.colorGradient.key0.r
-      value: 0.03137255
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7127481960608768322, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: m_Parameters.colorGradient.key1.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7127481960608768322, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_Parameters.colorGradient.key1.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7127481960608768322, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_Parameters.colorGradient.key1.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7127481960608768322, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_Parameters.colorGradient.key1.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7127481960608768322, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: m_Parameters.colorGradient.m_Mode
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7337905512642426967, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}

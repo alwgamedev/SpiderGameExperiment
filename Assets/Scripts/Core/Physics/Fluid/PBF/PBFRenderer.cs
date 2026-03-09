@@ -203,6 +203,7 @@ public class PBFRenderer : MonoBehaviour
             pbFluid.UpdateDensityTexture();
 
             Graphics.DrawMesh(densityMesh, pbFluid.transform.position, Quaternion.identity, densityMaterial, 0);
+
             var renderParams = new RenderParams(particleMaterial)
             {
                 worldBounds = new(Vector3.zero, new(10000, 10000, 10000))//better options?

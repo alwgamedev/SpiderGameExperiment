@@ -22,44 +22,8 @@ public class JumpPreviewArrow : MonoBehaviour
     const string Color0Property = "_Color0";
     const string Color1Property = "_Color1";
 
-    //SpiderMovementController Player => SpiderMovementController.Player;
-
-    //private void OnEnable()
-    //{
-    //    if (player == null)
-    //    {
-    //        player = SpiderMovementController.Player;
-    //    }
-    //    if (player != null)
-    //    {
-    //        player.JumpChargeBegan.AddListener(OnBeginJumpCharge);
-    //        player.JumpChargeEnded.AddListener(HideArrow);
-    //    }
-    //}
-
-    //private void OnDrawGizmos()
-    //{
-    //    if (arrowHeadAnchor)
-    //    {
-    //        Gizmos.color = Color.blue;
-    //        Gizmos.DrawSphere(arrowHeadAnchor.position, 0.1f);
-    //    }
-    //    if (arrowNeckAnchor)
-    //    {
-    //        Gizmos.color = Color.red;
-    //        Gizmos.DrawSphere(arrowNeckAnchor.position, 0.1f);
-    //    }
-    //}
-
     private void Start()
     {
-        //if (player == null)//if our OnEnable was before player's, then we need to try this again
-        //{
-        //    player = SpiderMovementController.Player;
-        //    player.JumpChargeBegan.AddListener(OnBeginJumpCharge);
-        //    player.JumpChargeEnded.AddListener(HideArrow);
-        //}
-
         player = Spider.Player.MovementControl;
 
         arrowHeadAnchor = new GameObject("Arrow Head Anchor").transform;
@@ -82,7 +46,6 @@ public class JumpPreviewArrow : MonoBehaviour
 
     public void OnBeginJumpCharge()
     {
-        //we could just disable the sprite renderer components, but then transforms still getting updated
         arrowNeckAnchor.gameObject.SetActive(true);
         arrowNeck.gameObject.SetActive(true);
         arrowHead.gameObject.SetActive(true);
@@ -139,10 +102,4 @@ public class JumpPreviewArrow : MonoBehaviour
         arrowHead.color = colorMin1;
         hasReachedMax = false;
     }
-
-    //private void OnDisable()
-    //{
-    //    player.JumpChargeBegan.RemoveListener(OnBeginJumpCharge);
-    //    player.JumpChargeEnded.AddListener(HideArrow);
-    //}
 }

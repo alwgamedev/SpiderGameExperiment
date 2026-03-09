@@ -64,10 +64,6 @@ uniform uint numObstacles;
 StructuredBuffer<ObstacleData> obstacleData;
 RWStructuredBuffer<uint> obstacleDisplacement;
 
-//StructuredBuffer<float4> speedScaledObstacleBounds;
-//StructuredBuffer<float4> obstacleBounds;
-//RWStructuredBuffer<uint> obstacleDisplacement;
-
 //foam particles
 struct FoamParticle//combining into struct bc we're running up against the per-kernel UAV limit (max 8 buffers bound to a kernel)
 {

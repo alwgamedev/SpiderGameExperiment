@@ -1,13 +1,11 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
+using System.Collections.Generic;
 
 public class GrappleShootPreview : MonoBehaviour
 {
     [SerializeField] LineRenderer lineRenderer;
-    [SerializeField] SpriteRenderer terminus;
-    [SerializeField] double arcLengthStep;
+    [SerializeField] float arcLengthStep;
     [SerializeField] float velocitySmoothingRate;
-    //[SerializeField] float extensionRate;
     [SerializeField] LayerMask terminationMask;
 
     SpiderMovementControl player;
@@ -18,7 +16,10 @@ public class GrappleShootPreview : MonoBehaviour
     Vector3 lastTerminusPosition;
     bool playerFacingRight;
 
-    //SpiderMovementController Player => Spider.Player.MovementController;
+    Material material;
+    float length;
+
+    int lengthProperty;
  
 
     private void Start()
@@ -27,6 +28,9 @@ public class GrappleShootPreview : MonoBehaviour
         grapple = player.Grapple;
         positions = new Vector3[lineRenderer.positionCount];
         lineRenderer.enabled = false;
+        lengthProperty = Shader.PropertyToID("_Length");
+        material = lineRenderer.material;
+        lineRenderer.SetMaterials(new List<Material>() { material });
     }
 
     private void LateUpdate()
@@ -72,9 +76,9 @@ public class GrappleShootPreview : MonoBehaviour
 
             positions[0] = p;
             bool hitGround = false;
-            double a = arcLengthStep;
-            double t = 0;
-            //need double precision to prevent line renderer from quivering
+            float a = arcLengthStep;
+            float t = 0;
+            length = 0f;
 
             for (int i = 1; i < positions.Length; i++)
             {
@@ -84,17 +88,18 @@ public class GrappleShootPreview : MonoBehaviour
                 }
                 else
                 {
-                    double vx = t * g.x + v.x;
-                    double vy = t * g.y + v.y;
-                    double dt = a / Math.Sqrt(vx * vx + vy * vy);//time to increase arc length by fixed amount (results in better rendering than fixed time step)
+                    float vx = t * g.x + v.x;
+                    float vy = t * g.y + v.y;
+                    float dt = a / Mathf.Sqrt(vx * vx + vy * vy);//time to increase arc length by fixed amount (results in better rendering than fixed time step)
                     t += dt;
-                    positions[i] = new Vector3((float)(p.x + t * v.x + t * t * l.x), (float)(p.y + t * v.y + t * t * l.y), 0);
+                    positions[i] = new Vector3(p.x + t * v.x + t * t * l.x, p.y + t * v.y + t * t * l.y, 0);
                     var r = Physics2D.Linecast(positions[i - 1], positions[i], terminationMask);
                     if (r)
                     {
                         hitGround = true;
                         lastTerminusPosition = r.point;
                         positions[i] = lastTerminusPosition;
+                        length = i * arcLengthStep;
                     }
                 }
             }
@@ -102,7 +107,10 @@ public class GrappleShootPreview : MonoBehaviour
             if (!hitGround)
             {
                 lastTerminusPosition = positions[^1];
+                length = arcLengthStep * (positions.Length - 1);
             }
+
+            material.SetFloat(lengthProperty, length);
         }
 
         lastShootPosition = p;

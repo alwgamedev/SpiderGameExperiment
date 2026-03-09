@@ -13,12 +13,13 @@ public class RopeRenderer : MonoBehaviour
 
     Vector4[] nodePositions;
 
-    const string positionsProperty = "_NodePositions";
+    int positionsProperty;
 
     private void Awake()
     {
         meshRenderer = GetComponent<MeshRenderer>();
         meshFilter = GetComponent<MeshFilter>();
+        positionsProperty = Shader.PropertyToID("_NodePositions");
     }
 
     public void Start()
