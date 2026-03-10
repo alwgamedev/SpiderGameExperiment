@@ -111,7 +111,6 @@ MonoBehaviour:
     foamSmoothingRadius: 1
   computeShader: {fileID: 0}
   densityTexture: {fileID: 0}
-  velocityTexture: {fileID: 0}
 --- !u!114 &6766266259801090171
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -128,8 +127,8 @@ MonoBehaviour:
   densityShader: {fileID: 4800000, guid: 3a14e080b4604144b9b809e70d65c0b7, type: 3}
   colorMin: {r: 0, g: 0.0022601862, b: 0.7509433, a: 0.7490196}
   colorMax: {r: 0, g: 0.03658533, b: 1, a: 0.7490196}
-  foamColor: {r: 0.25471687, g: 0.46371153, b: 1, a: 0.7490196}
-  smoothStepIterations: 2
+  foamColor: {r: 0.390566, g: 0.560566, b: 1, a: 0.8509804}
+  smoothStepIterations: 3
   densityNormalizer: 0.06
   densityThreshold: 0.03
   noiseNormalizer: 0.25
@@ -146,9 +145,9 @@ MonoBehaviour:
     c1: {r: 0.83584905, g: 0.9260164, b: 1, a: 0.011764706}
   particleColorSpray:
     c0: {r: 0.42830187, g: 0.73782, b: 1, a: 0.050980393}
-    c1: {r: 0.53396225, g: 0.79150933, b: 1, a: 0.050980393}
+    c1: {r: 0.53396225, g: 0.79150933, b: 1, a: 0.101960786}
   particleColorFoam:
-    c0: {r: 0.2471698, g: 0.6543611, b: 1, a: 0.050980393}
+    c0: {r: 0.25490198, g: 0.4627451, b: 1, a: 0.101960786}
     c1: {r: 0.40566033, g: 0.7298456, b: 1, a: 0.050980393}
   particleColorBubble:
     c0: {r: 0.51886785, g: 0.6523432, b: 1, a: 0.2}
@@ -157,7 +156,7 @@ MonoBehaviour:
     c0: {r: 0.28415084, g: 0.46411315, b: 0.94716984, a: 0.101960786}
     c1: {r: 0.09803922, g: 0.3254902, b: 0.9411765, a: 0.2}
   particleRadiusMin: {x: 0.2, y: 0.4}
-  particleRadiusSpray: {x: 0.1, y: 0.3}
-  particleRadiusFoam: {x: 0, y: 0.3}
-  particleRadiusBubble: {x: 0.05, y: 0.2}
+  particleRadiusSpray: {x: 0.05, y: 0.2}
+  particleRadiusFoam: {x: 0.1, y: 0.2}
+  particleRadiusBubble: {x: 0.01, y: 0.1}
   particleRadiusMax: {x: 0.05, y: 0.2}

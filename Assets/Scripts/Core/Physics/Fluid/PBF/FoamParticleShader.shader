@@ -154,8 +154,8 @@
             {
                 float s = i.uv.x - 0.5;
                 float t = i.uv.y - 0.5;
-                s = 1 - 4 * (s * s + t * t);
-                if (s < 0)
+                s = 4 * (s * s + t * t);
+                if (s > 1)
                 {
                     return 0;
                 }
@@ -203,7 +203,7 @@
                 }
 
                 half4 color = ParticleColor(i.colorNoise, t, colorMin0, colorMin1, colorMax0, colorMax1);
-                color.w *= s *  i.life;
+                color.w *= /* s * */ i.life;
                 return color;
             }
             ENDHLSL

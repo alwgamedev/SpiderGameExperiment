@@ -6,7 +6,7 @@ using UnityEngine.Rendering;
 public class PBFluid : MonoBehaviour
 {
     const int THREADS_PER_GROUP = 256;
-    const int MAX_NUM_OBSTACLES = 1;//we'll make it more when we need to
+    const int MAX_NUM_OBSTACLES = 16;//we'll make it more when we need to (but for now still need more than 1, because picks up other colliders on the spider)
 
     //kernel indices in compute shader
     public const int recalculateAntiClusterCoefficient = 0;
@@ -344,22 +344,22 @@ public class PBFluid : MonoBehaviour
             }
         }
 
-        //if (!displacementReadbackInProgress)
-        //{
-        //    //a readback just finished, so copy snapshot data to use until next readback is ready
-        //    //numObstaclesLastReadback = numObstaclesSnapshot;
-        //    //Array.Copy(obstacleSnapshot, obstacleLastReadback, obstacleSnapshot.Length);
+        if (!displacementReadbackInProgress)
+        {
+            //a readback just finished, so copy snapshot data to use until next readback is ready
+            //numObstaclesLastReadback = numObstaclesSnapshot;
+            //Array.Copy(obstacleSnapshot, obstacleLastReadback, obstacleSnapshot.Length);
 
-        //    ApplyBuoyanceForces(Mathf.Min(Time.time - lastReadbackTime, 4 * Time.deltaTime));
-        //    lastReadbackTime = Time.time;
+            ApplyBuoyanceForces(Mathf.Min(Time.time - lastReadbackTime, 4 * Time.deltaTime));
+            lastReadbackTime = Time.time;
 
-        //    //take new snapshot to get ready for next readback
-        //    numObstaclesSnapshot = numObstacles;
-        //    Array.Copy(obstacle, obstacleSnapshot, obstacle.Length);
+            //take new snapshot to get ready for next readback
+            numObstaclesSnapshot = numObstacles;
+            Array.Copy(obstacle, obstacleSnapshot, obstacle.Length);
 
-        //    //send new readback
-        //    SendDisplacementReadbackRequest();
-        //}
+            //send new readback
+            SendDisplacementReadbackRequest();
+        }
     }
 
     private void RunSimulationStep()
