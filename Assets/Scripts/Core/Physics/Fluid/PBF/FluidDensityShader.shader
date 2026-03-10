@@ -1,18 +1,23 @@
 ﻿Shader "Custom/FluidDensityShader"
-{   
+{
+    Properties
+    {
+        //need this for instancing to work properly
+        densityTex("Density Texture", 2D) = "white" {}
+    }
     SubShader {
         Tags { "RenderType" = "Transparent" "RenderPipeline" = "UniversalPipeline"}
 
         Pass {
             Blend SrcAlpha OneMinusSrcAlpha
             
-            CGPROGRAM
+            HLSLPROGRAM
             
-            #include "UnityCG.cginc"
-            
-            #pragma target 3.5
+            #pragma target 4.5
             #pragma vertex vert
             #pragma fragment frag
+
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             
             struct appdata {
                 float4 vertex : POSITION;
@@ -23,11 +28,10 @@
                 float4 clipPos : SV_POSITION;
                 float2 uv : TEXCOORD0;
             };
-            
+
             half4 colorMin;
             half4 colorMax;
             half4 foamColor;
-
             int smoothStepIterations;
             half densityNormalizer;
             half densityThreshold;
@@ -35,8 +39,9 @@
             half noiseThreshold;
             half foaminessNormalizer;
             half foaminessThreshold;
-            
-            sampler2D densityTex;
+
+            TEXTURE2D(densityTex);
+            SAMPLER(sampler_densityTex);
 
             half NormalizeFloat(half z, half normalizer, half threshold)
             {
@@ -48,13 +53,13 @@
             {
                 v2f o;
                 o.uv = v.uv;
-                o.clipPos = UnityObjectToClipPos(v.vertex);
+                o.clipPos = TransformObjectToHClip(v.vertex.xyz);
                 return o;
             }
 
-            fixed4 frag (v2f o) : SV_Target
+            half4 frag (v2f o) : SV_Target
             {
-                half4 densitySample = tex2D(densityTex, o.uv);
+                half4 densitySample = SAMPLE_TEXTURE2D(densityTex, sampler_densityTex, o.uv);
 
                 half density = NormalizeFloat(densitySample.x, densityNormalizer, densityThreshold);
                 if (!(density > 0))
@@ -84,7 +89,7 @@
                 return color1;
             }
             
-            ENDCG
+            ENDHLSL
         }
     }
 }

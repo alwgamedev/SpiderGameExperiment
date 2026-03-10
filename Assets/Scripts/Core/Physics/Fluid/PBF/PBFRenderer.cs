@@ -46,7 +46,7 @@ public class PBFRenderer : MonoBehaviour
     Material densityMaterial;
 
     Mesh particleMesh;
-    Material particleMaterial; 
+    Material particleMaterial;
     GraphicsBuffer commandBuffer;
     GraphicsBuffer.IndirectDrawIndexedArgs[] commandData;
 
@@ -132,13 +132,13 @@ public class PBFRenderer : MonoBehaviour
 
     private void OnEnable()
     {
-        pbFluid.Initialized += OnPBFInitialized;
-        pbFluid.SettingsChanged += OnPBFSettingsChanged;
-
         if (pbFluid.enabled)
         {
             OnPBFInitialized();
         }
+
+        pbFluid.Initialized += OnPBFInitialized;
+        pbFluid.SettingsChanged += OnPBFSettingsChanged;
     }
 
     private void Start()
@@ -168,7 +168,7 @@ public class PBFRenderer : MonoBehaviour
 
     private void OnPBFInitialized()
     {
-        densityMaterial = new Material(Instantiate(densityShader));
+        densityMaterial = new Material(densityShader);
         densityMaterial.SetTexture("densityTex", pbFluid.densityTexture);
 
         particleMaterial = new Material(particleShader);
@@ -201,17 +201,20 @@ public class PBFRenderer : MonoBehaviour
             particleMaterial.SetFloat(dtProperty, Time.deltaTime);
 
             pbFluid.UpdateDensityTexture();
+            var rpDensity = new RenderParams(densityMaterial);
 
-            Graphics.DrawMesh(densityMesh, pbFluid.transform.position, Quaternion.identity, densityMaterial, 0);
+            //Graphics.DrawMesh(densityMesh, pbFluid.transform.position, Quaternion.identity, densityMaterial, 0);
+            Graphics.RenderMesh(in rpDensity, densityMesh, 0, Matrix4x4.TRS(transform.position, transform.rotation, transform.lossyScale));
 
-            var renderParams = new RenderParams(particleMaterial)
+            var rpParticle = new RenderParams(particleMaterial)
             {
                 worldBounds = new(Vector3.zero, new(10000, 10000, 10000))//better options?
-            };
+            }
+            ;
             commandData[0].indexCountPerInstance = particleMesh.GetIndexCount(0);
             commandData[0].instanceCount = (uint)pbFluid.configuration.numFoamParticles;//it would be nice if we could set this from the foamParticleCounter but idk how bad it would be to get data from GPU
             commandBuffer.SetData(commandData);
-            Graphics.RenderMeshIndirect(in renderParams, particleMesh, commandBuffer);
+            Graphics.RenderMeshIndirect(in rpParticle, particleMesh, commandBuffer);
         }
     }
 
@@ -252,7 +255,7 @@ public class PBFRenderer : MonoBehaviour
         particleMaterial.SetVector(particleRadiusSprayProperty, particleRadiusSpray);
         particleMaterial.SetVector(particleRadiusFoamProperty, particleRadiusFoam);
         particleMaterial.SetVector(particleRadiusBubbleProperty, particleRadiusBubble);
-        particleMaterial.SetVector(particleRadiusMaxProperty, particleRadiusMax); 
+        particleMaterial.SetVector(particleRadiusMaxProperty, particleRadiusMax);
 
         updateProperties = false;
     }

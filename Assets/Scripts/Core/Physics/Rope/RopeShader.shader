@@ -7,25 +7,23 @@ Shader "Custom/RopeShader"
     }
     
     SubShader {
-        Tags { "RenderType" = "Transparent" }
+        Tags { "RenderType" = "Transparent" "RenderPipeline" = "UniversalPipeline"}
 
         Pass {
             Cull Off//o/w rope goes invisible when you turn left
             
-            CGPROGRAM
+            HLSLPROGRAM
             
-            #include "UnityCG.cginc"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             
-            #pragma target 3.5
+            #pragma target 4.5
             #pragma vertex vert
             #pragma fragment frag
 
             static const uint MAX_NUM_NODES = 256;
-            static const float PI = 3.14169420;
             
             struct appdata {
                 float4 vertex : POSITION;
-                // float3 normal : NORMAL;
                 float2 uv : TEXCOORD0;
                 uint id : SV_VertexID;
             };
@@ -52,7 +50,7 @@ Shader "Custom/RopeShader"
                     int nodeIndex = v.id / 2;
                     int displacement = v.id % 2 == 0 ? -1 : 1;
                     float4 nodeData = _NodePositions[nodeIndex];
-                    float2 segmentDirection = nodeIndex < _NumNodes - 1 ?
+                    float2 segmentDirection = nodeIndex < (uint)(_NumNodes - 1) ?
                         _NodePositions[nodeIndex + 1].xy - nodeData.xy : nodeData.xy - _NodePositions[nodeIndex - 1].xy;
                     if (segmentDirection.x == 0 && segmentDirection.y == 0)
                     {
@@ -64,8 +62,7 @@ Shader "Custom/RopeShader"
                     }
                     segmentDirection = normalize(segmentDirection);
                     float a = displacement * _HalfWidth * nodeData.z;
-                    o.clipPos = mul(UNITY_MATRIX_VP, 
-                        float4(nodeData.x - a * segmentDirection.y, nodeData.y + a * segmentDirection.x, 0, 1));
+                    o.clipPos = TransformWorldToHClip(float3(nodeData.x - a * segmentDirection.y, nodeData.y + a * segmentDirection.x, 0));
                 }
                 else//we're on an endcap vertex
                 {
@@ -81,19 +78,19 @@ Shader "Custom/RopeShader"
                         }
                     }
                     int i = v.id - (_NumNodes << 1) + 1;//which endcap triangle are we on? (not zero indexed)
-                    float t =  (PI * i) / (_EndcapTriangles + 1);
+                    float t =  (3.14 * i) / (_EndcapTriangles + 1);
                     float2 p = center + _HalfWidth * (cos(t) * down + sin(t) * right);
-                    o.clipPos = mul(UNITY_MATRIX_VP, float4(p, 0, 1));
+                    o.clipPos = TransformWorldToHClip(float3(p, 0));
                 }
 
                 return o;
             }
 
-            fixed4 frag (v2f o) : SV_Target {
+            half4 frag (v2f o) : SV_Target {
                 return lerp(_MiddleColor, _EdgeColor, abs(2 * o.uv.y - 1));
             }
             
-            ENDCG
+            ENDHLSL
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿Shader "Instanced/FoamParticleShader"
-{
+{   
     SubShader
     {
         Tags { "RenderType" = "Transparent" "RenderPipeline" = "UniversalPipeline"}
@@ -8,14 +8,15 @@
         {
             Blend SrcAlpha OneMinusSrcAlpha
 
-            CGPROGRAM
+            HLSLPROGRAM
 
             #pragma vertex vert
             #pragma fragment frag
             #pragma target 4.5
-            #define UNITY_INDIRECT_DRAW_ARGS IndirectDrawIndexedArgs//just following the example in unity docs for RenderMeshIndirect
+
+            #define UNITY_INDIRECT_DRAW_ARGS IndirectDrawIndexedArgs
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "UnityIndirect.cginc"
-            #include "UnityCG.cginc"
 
             struct FoamParticle
             {
@@ -64,10 +65,10 @@
                 return f > min ? f < max ? (f - min) / (max - min) : 1 : 0;
             }
 
-            fixed4 ParticleColor(fixed colorNoise, fixed stateProgress, fixed4 colorMin0, fixed4 colorMin1, fixed4 colorMax0, fixed4 colorMax1)
+            half4 ParticleColor(half colorNoise, half stateProgress, half4 colorMin0, half4 colorMin1, half4 colorMax0, half4 colorMax1)
             {
-                fixed4 color0 = lerp(colorMin0, colorMax0, stateProgress);
-                fixed4 color1 = lerp(colorMin1, colorMax1, stateProgress);
+                half4 color0 = lerp(colorMin0, colorMax0, stateProgress);
+                half4 color1 = lerp(colorMin1, colorMax1, stateProgress);
                 color1 = lerp(color0, color1, colorNoise);
                 return color1;
             }
@@ -138,14 +139,18 @@
                 }
 
                 float r = i < particleCounter[0] ? life * lerp(radius.x, radius.y, particle[i].sizeNoise) : 0;
-                float3 particlePos = float3(pivotPosition.x + particle[i].position.x, pivotPosition.y + particle[i].position.y, pivotPosition.z);
-                float3 vertexWorldPos = particlePos + r * mul(unity_ObjectToWorld, v.position);
-                o.clipPos = mul(UNITY_MATRIX_VP, float4(vertexWorldPos, 1));
+                // float3 particlePos = float3(pivotPosition.x + particle[i].position.x, pivotPosition.y + particle[i].position.y, pivotPosition.z);
+                // float3 vertexWorldPos = particlePos + r * mul(unity_ObjectToWorld, v.position);
+                // o.clipPos = mul(UNITY_MATRIX_VP, float4(vertexWorldPos, 1));
+
+                float3 particleWorldPos = pivotPosition + float3(particle[i].position, 0);
+                float3 vertexWorldPos = particleWorldPos + r * mul((float3x3)GetObjectToWorldMatrix(), v.position.xyz);
+                o.clipPos = TransformWorldToHClip(vertexWorldPos);
 
                 return o;
             }
 
-            fixed4 frag (v2f i) : SV_Target
+            half4 frag (v2f i) : SV_Target
             {
                 float s = i.uv.x - 0.5;
                 float t = i.uv.y - 0.5;
@@ -155,10 +160,10 @@
                     return 0;
                 }
 
-                fixed4 colorMin0;
-                fixed4 colorMin1;
-                fixed4 colorMax0;
-                fixed4 colorMax1;
+                half4 colorMin0;
+                half4 colorMin1;
+                half4 colorMax0;
+                half4 colorMax1;
 
                 //probably can do this without cases if vertex carries normalizedDensity (0-1) and a *float* state
                 //we'll do this in a sec
@@ -197,11 +202,11 @@
                     t = i.density / sprayThreshold;
                 }
 
-                fixed4 color = ParticleColor(i.colorNoise, t, colorMin0, colorMin1, colorMax0, colorMax1);
+                half4 color = ParticleColor(i.colorNoise, t, colorMin0, colorMin1, colorMax0, colorMax1);
                 color.w *= s *  i.life;
                 return color;
             }
-            ENDCG
+            ENDHLSL
         }
     }
 }

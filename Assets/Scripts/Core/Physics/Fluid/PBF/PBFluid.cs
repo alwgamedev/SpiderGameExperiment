@@ -78,8 +78,6 @@ public class PBFluid : MonoBehaviour
     NativeArray<int> obstacleDisplacementNA;
     PBFDynamicObstacle[] obstacleSnapshot;//snapshots taken when we send a readback request (so we have the correct collider lookup to go with the displacements)
     int numObstaclesSnapshot;
-    //PBFDynamicObstacle[] obstacleLastReadback;//copied from the snapshot when readback comes in, to be used for physics updates until the next readback comes in
-    //int numObstaclesLastReadback;
     float lastReadbackTime;
 
     public ComputeBuffer foamParticleCounter;
@@ -290,6 +288,7 @@ public class PBFluid : MonoBehaviour
 
     private void OnDestroy()
     {
+        //2DO: if we get destroyed while a readback is in progress, the NA never gets disposed! (happening frequently in build)
         if (!displacementReadbackInProgress && obstacleDisplacementNA.IsCreated)
         {
             obstacleDisplacementNA.Dispose();
@@ -345,22 +344,22 @@ public class PBFluid : MonoBehaviour
             }
         }
 
-        if (!displacementReadbackInProgress)
-        {
-            //a readback just finished, so copy snapshot data to use until next readback is ready
-            //numObstaclesLastReadback = numObstaclesSnapshot;
-            //Array.Copy(obstacleSnapshot, obstacleLastReadback, obstacleSnapshot.Length);
+        //if (!displacementReadbackInProgress)
+        //{
+        //    //a readback just finished, so copy snapshot data to use until next readback is ready
+        //    //numObstaclesLastReadback = numObstaclesSnapshot;
+        //    //Array.Copy(obstacleSnapshot, obstacleLastReadback, obstacleSnapshot.Length);
 
-            ApplyBuoyanceForces(Mathf.Min(Time.time - lastReadbackTime, 4 * Time.deltaTime));
-            lastReadbackTime = Time.time;
+        //    ApplyBuoyanceForces(Mathf.Min(Time.time - lastReadbackTime, 4 * Time.deltaTime));
+        //    lastReadbackTime = Time.time;
 
-            //take new snapshot to get ready for next readback
-            numObstaclesSnapshot = numObstacles;
-            Array.Copy(obstacle, obstacleSnapshot, obstacle.Length);
+        //    //take new snapshot to get ready for next readback
+        //    numObstaclesSnapshot = numObstacles;
+        //    Array.Copy(obstacle, obstacleSnapshot, obstacle.Length);
 
-            //send new readback
-            SendDisplacementReadbackRequest();
-        }
+        //    //send new readback
+        //    SendDisplacementReadbackRequest();
+        //}
     }
 
     private void RunSimulationStep()
@@ -483,8 +482,8 @@ public class PBFluid : MonoBehaviour
             var o = obstacleSnapshot[i];
             if (o)
             {
-                Debug.Log(obstacleDisplacementNA[i]);
-                Debug.Log(o.Collider.bounds.extents);
+                //Debug.Log(obstacleDisplacementNA[i]);
+                //Debug.Log(o.Collider.bounds.extents);
                 var v = o.Rigidbody.linearVelocity;
                 var f = obstacleDisplacementNA[i] * b - o.Collider.bounds.size.x * simSettings.obstacleDrag * v.magnitude * v;
                 o.Rigidbody.linearVelocity += dt * f;

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-//not in use?
+//just renders the fluid particles for testing (not currently in use, but don't delete)
 public class PBFParticleRenderer : MonoBehaviour
 {
     [SerializeField] PBFluid pbFluid;
