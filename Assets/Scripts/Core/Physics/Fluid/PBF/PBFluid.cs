@@ -74,7 +74,8 @@ public class PBFluid : MonoBehaviour
     int numObstacles;
 
     ComputeBuffer obstacleDisplacement;
-    bool displacementReadbackInProgress;
+    //bool displacementReadbackInProgress;
+    AsyncGPUReadbackRequest displacementReadbackRequest;
     NativeArray<int> obstacleDisplacementNA;
     PBFDynamicObstacle[] obstacleSnapshot;//snapshots taken when we send a readback request (so we have the correct collider lookup to go with the displacements)
     int numObstaclesSnapshot;
@@ -168,7 +169,10 @@ public class PBFluid : MonoBehaviour
         colliderQueryBuffer = new Collider2D[MAX_NUM_OBSTACLES];
         obstacle = new PBFDynamicObstacle[MAX_NUM_OBSTACLES];
         obstacleSnapshot = new PBFDynamicObstacle[MAX_NUM_OBSTACLES];
-        //obstacleLastReadback = new PBFDynamicObstacle[MAX_NUM_OBSTACLES];
+        if (!obstacleDisplacementNA.IsCreated)
+        {
+            obstacleDisplacementNA = new(MAX_NUM_OBSTACLES, Allocator.Persistent);
+        }
         lastReadbackTime = Time.time;
 
         colliderFilter = ContactFilter2D.noFilter;
@@ -270,11 +274,6 @@ public class PBFluid : MonoBehaviour
 
         obstacleData.Release();
         obstacleDisplacement.Release();
-        //obstacleDisplacementNA.Dispose();
-        //if (displacementRequest.done)
-        //{
-        //    obstacleDisplacementTransfer.Dispose();
-        //}
 
         foamParticle.Release();
         foamParticleBuffer.Release();
@@ -288,10 +287,19 @@ public class PBFluid : MonoBehaviour
 
     private void OnDestroy()
     {
-        //2DO: if we get destroyed while a readback is in progress, the NA never gets disposed! (happening frequently in build)
-        if (!displacementReadbackInProgress && obstacleDisplacementNA.IsCreated)
+        if (displacementReadbackRequest.done && obstacleDisplacementNA.IsCreated)
         {
             obstacleDisplacementNA.Dispose();
+        }
+    }
+
+    private void OnApplicationQuit()
+    {
+        //because when you quit the readback request may never complete, meaning the callback that disposes the NA never happens.
+        //in this case we can just WaitForCompletion, since we don't mind the stall when quitting
+        if (!displacementReadbackRequest.done)
+        {
+            displacementReadbackRequest.WaitForCompletion();
         }
     }
 
@@ -344,12 +352,8 @@ public class PBFluid : MonoBehaviour
             }
         }
 
-        if (!displacementReadbackInProgress)
+        if (displacementReadbackRequest.done/*!displacementReadbackInProgress*/)
         {
-            //a readback just finished, so copy snapshot data to use until next readback is ready
-            //numObstaclesLastReadback = numObstaclesSnapshot;
-            //Array.Copy(obstacleSnapshot, obstacleLastReadback, obstacleSnapshot.Length);
-
             ApplyBuoyanceForces(Mathf.Min(Time.time - lastReadbackTime, 4 * Time.deltaTime));
             lastReadbackTime = Time.time;
 
@@ -442,9 +446,7 @@ public class PBFluid : MonoBehaviour
 
     private void SendDisplacementReadbackRequest()
     {
-        displacementReadbackInProgress = true;
-        AsyncGPUReadback.Request(obstacleDisplacement, OnDisplacementReadbackComplete);
-        //^RequestIntoNativeArray keeps disposing of my native array or something. no clue. so just this for now
+        displacementReadbackRequest = AsyncGPUReadback.RequestIntoNativeArray(ref obstacleDisplacementNA, obstacleDisplacement, OnDisplacementReadbackComplete);
     }
 
     private void OnDisplacementReadbackComplete(AsyncGPUReadbackRequest req)
@@ -455,18 +457,7 @@ public class PBFluid : MonoBehaviour
             {
                 obstacleDisplacementNA.Dispose();
             }
-            return;
         }
-
-        if (!obstacleDisplacementNA.IsCreated)
-        {
-            obstacleDisplacementNA = new(req.GetData<int>(), Allocator.Persistent);
-        }
-        else
-        {
-            obstacleDisplacementNA.CopyFrom(req.GetData<int>());
-        }
-        displacementReadbackInProgress = false;
     }
 
     private void ApplyBuoyanceForces(float dt)
@@ -482,8 +473,6 @@ public class PBFluid : MonoBehaviour
             var o = obstacleSnapshot[i];
             if (o)
             {
-                //Debug.Log(obstacleDisplacementNA[i]);
-                //Debug.Log(o.Collider.bounds.extents);
                 var v = o.Rigidbody.linearVelocity;
                 var f = obstacleDisplacementNA[i] * b - o.Collider.bounds.size.x * simSettings.obstacleDrag * v.magnitude * v;
                 o.Rigidbody.linearVelocity += dt * f;
