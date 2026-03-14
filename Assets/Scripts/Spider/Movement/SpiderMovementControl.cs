@@ -459,6 +459,8 @@ public class SpiderMovementControl : MonoBehaviour
             transform.position += d;
             legSynch.OnBodyChangedDirection(p, transform.position, n);
         }
+
+        grapple.SetRendererOrientation();
     }
 
     private void HandleMoveInput()

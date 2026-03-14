@@ -2,6 +2,7 @@
 
 public class RopeRenderer : MonoBehaviour
 {
+    [SerializeField] Transform spider;
     [Min(2)][SerializeField] int endCapTriangles;
     [SerializeField] float taperLength;//measured in number of rope segments, just to keep things simple
     [SerializeField] float taperBaseScale;
@@ -38,6 +39,7 @@ public class RopeRenderer : MonoBehaviour
         }
         meshRenderer.enabled = true;
         SetRenderWidth(rope);
+        SetOrientation();
         UpdateRenderPositions(rope);
     }
 
@@ -49,6 +51,11 @@ public class RopeRenderer : MonoBehaviour
     public void SetRenderWidth(float ropeWidth)
     {
         material.SetFloat("_HalfWidth", 0.5f * ropeWidth);
+    }
+
+    public void SetOrientation()
+    {
+        material.SetFloat("_Orientation", spider.transform.localScale.x);
     }
 
     public void OnRopeDestroyed()
@@ -75,11 +82,11 @@ public class RopeRenderer : MonoBehaviour
     {
         //with 3 nodes and 2 endcap triangles, the vertices would be ordered like this
         //               1 ---------------- 3 ---------------- 5
-        //              /|                  |                  |\
-        //             7 |                  |                  | 9
-        //             | |                  |                  | |
-        //             6 |                  |                  | 8
-        //              \|                  |                  |/
+        //               |                  |                  |\
+        //               |                  |                  | 7
+        //               |                  |                  | |
+        //               |                  |                  | 6
+        //               |                  |                  |/
         //               0 ---------------- 2 ---------------- 4
 
         mesh = new();
@@ -110,7 +117,7 @@ public class RopeRenderer : MonoBehaviour
 
         var dv = 1 / (float)(endCapTriangles + 1);
 
-        //endcap at beginning of rope
+        //endcap at end of rope
         int bottom = 2 * (numNodes - 1);
         int top = bottom + 1;
         int l = top + 1;

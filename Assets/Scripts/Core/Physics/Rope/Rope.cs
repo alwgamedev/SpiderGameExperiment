@@ -176,7 +176,7 @@ public class Rope
 
         if (terminusAnchorMode != TerminusAnchorMode.notAnchored)
         {
-            //check every frame in case someday we have an anchor that could get destroyed or change rigidbody type... for now sort of a waste
+            //check every update in case someday we have an anchor that could get destroyed or change rigidbody type... for now sort of a waste
             if (terminusAnchor)
             {
                 terminusAnchorMode = terminusAnchor.attachedRigidbody && terminusAnchor.attachedRigidbody.bodyType == RigidbodyType2D.Dynamic ?
@@ -230,14 +230,27 @@ public class Rope
             ResolveCollisions();
             for (int i = 0; i < constraintIterations; i++)
             {
-                SpacingConstraintIteration();
+                SpacingConstraintIteration();//terminus will move during constraints as normal, and each time terminus gets pulled we apply a little force to anchor body
                 if (stopwatch.Elapsed.TotalMilliseconds > MAX_UPDATE_TIME)
                 {
                     return;
                 }
             }
 
-            PullDynamicAnchor();
+            //set terminus back to anchored position
+            position[TerminusIndex] = p;
+        }
+    }
+
+    //need to call before rendering when you have a moving anchor
+    public void SetTerminusToAnchorPosition()
+    {
+        if (terminusAnchor)
+        {
+            var dp = position[TerminusIndex] - lastPosition[TerminusIndex];
+            Vector2 p = terminusAnchor.transform.TransformPoint(terminusAnchorLocalPos);
+            position[TerminusIndex] = p;
+            lastPosition[TerminusIndex] = p - dp;//keep velocity the same
         }
     }
 
@@ -259,6 +272,14 @@ public class Rope
 
             //check if node is fully tunneled inside one collider
             var c = Physics2D.OverlapPoint(position[i], collisionMask);
+            if (terminusAnchorMode == TerminusAnchorMode.dynamicAnchor && c == terminusAnchor)
+            {
+                //we don't really want rope to break when we're hauling something,
+                //so we'll exclude dynamic anchor from failure checks and allow rope to pass through dynamic anchor when it needs to
+                chaining = false;
+                distance = 0;
+                continue;
+            }
             if (c && Physics2D.OverlapPoint(position[i] + collisionThreshold * Vector2.up, collisionMask) == c
                 && Physics2D.OverlapPoint(position[i] - collisionThreshold * Vector2.up, collisionMask) == c
                 && Physics2D.OverlapPoint(position[i] + collisionThreshold * Vector2.right, collisionMask) == c
@@ -277,6 +298,7 @@ public class Rope
             else
             {
                 chaining = false;
+                distance = 0;
             }
         }
 
@@ -288,8 +310,8 @@ public class Rope
         FirstConstraint();
         for (int i = startIndex + 2; i < TerminusIndex; i++)
         {
+            //doing the paired constraints (i & i - 1) gives it a nice bouncy but stable feel and can get away with ~1/3 of the iterations (for twice the work per iteration)
             ApplySpacingConstraint(i);
-            //gives it a nice bouncy but stable feel (and can get away with ~1/3 of the iterations (for twice the work per iteration))
             if (i > startIndex + 2)
             {
                 ApplySpacingConstraint(i - 1);
@@ -373,9 +395,14 @@ public class Rope
                         break;
                     case TerminusAnchorMode.dynamicAnchor:
                         {
-                            var tMass = terminusAnchor.attachedRigidbody.mass /*+ terminusMass*/;
+                            //idea: run the spacing constraints as normal, updating terminus position to determine the forces that need to be applied to anchor,
+                            //then we'll set terminus back to anchored position after finishing constraint iterations
+                            //(this works the best of what I tried)
+                            var tMass = terminusAnchor.attachedRigidbody.mass;//terminus is usually very heavy to get arching motion when shoot, so use anchor mass
                             var c = 1 / (nodeMass + tMass) * error / l * d;
                             position[TerminusIndex - 1] += tMass * c;
+                            PullDynamicAnchor();
+                            position[TerminusIndex] -= nodeMass * c;
                             ResolveCollision(TerminusIndex - 1);
                             break;
                         }
@@ -428,8 +455,7 @@ public class Rope
         {
             float goalSpacing = nodeSpacing < minNodeSpacing ? minNodeSpacing : maxNodeSpacing;
             int newStartIndex = TerminusIndex - Mathf.Clamp((int)(Length / goalSpacing), 1, TerminusIndex);
-            //clamps anchor pointer to btwn 0 and lastIndex - 1
-            //note: length / nodeSpacing = num nodes PAST anchor pointer
+            //note: length / nodeSpacing = num nodes past start index
 
             if (startIndex != newStartIndex)
             {
@@ -513,16 +539,6 @@ public class Rope
         lastPosition[i] = p;
     }
 
-    //private void ApplyForceToDynamicAnchor(float dt, float dt2)
-    //{
-    //    var p = position[TerminusIndex];
-    //    var d = p - lastPosition[TerminusIndex];
-    //    d = (1 - drag * d.magnitude) * d + dt2 * Physics2D.gravity;
-    //    position[TerminusIndex] += d;
-    //    lastPosition[TerminusIndex] = p;
-    //    terminusAnchor.attachedRigidbody.AddForce((terminusAnchor.attachedRigidbody.mass /*+ terminusMass*/) * (1 / dt2 * (d - dt * terminusAnchor.attachedRigidbody.linearVelocity)));
-    //}
-
     private void ResolveCollision(int i)
     {
         if (i == TerminusIndex)
@@ -533,11 +549,10 @@ public class Rope
                 ResolveCollisionInternal(TerminusIndex);
 
                 //check if terminus made contact and should become anchored
-                //unnecessary layer check -- the "terminusAnchorMask" and nearestCollider layers should both just be the collisionMask
-                if (nearCollision[TerminusIndex]/*nearestCollider[terminusIndex] && (1 << nearestCollider[terminusIndex].gameObject.layer & terminusAnchorMask) != 0*/)
+                if (nearCollision[TerminusIndex])
                 {
                     var v = p - position[TerminusIndex];
-                    var r = Physics2D.CircleCast(position[TerminusIndex], collisionThreshold, v, v.magnitude, collisionMask/*terminusAnchorMask*/);
+                    var r = Physics2D.CircleCast(position[TerminusIndex], collisionThreshold, v, v.magnitude, collisionMask);
                     if (r)
                     {
                         //anchor just outside collider, so that nodes near lastIndex don't get caught in perpetual collision
@@ -552,8 +567,8 @@ public class Rope
                         else
                         {
                             terminusAnchorMode = TerminusAnchorMode.staticAnchor;
-                            Anchor(TerminusIndex);
                         }
+                        Anchor(TerminusIndex);//kills terminus velocity
                         TerminusBecameAnchored.Invoke();
                     }
                 }

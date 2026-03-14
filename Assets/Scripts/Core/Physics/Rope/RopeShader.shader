@@ -1,3 +1,4 @@
+//no longer in use (now using shader graph with custom vertex position)
 Shader "Custom/RopeShader"
 {
     Properties {
@@ -10,7 +11,7 @@ Shader "Custom/RopeShader"
         Tags { "RenderType" = "Transparent" "RenderPipeline" = "UniversalPipeline"}
 
         Pass {
-            Cull Off//o/w rope goes invisible when you turn left
+            // Tags { "LightMode" = "Universal2D" }
             
             HLSLPROGRAM
             
@@ -36,6 +37,7 @@ Shader "Custom/RopeShader"
             uint _NumNodes;
             uint _EndcapTriangles;
             float _HalfWidth;
+            float _Orientation;
             float4 _EdgeColor;
             float4 _MiddleColor;
             float4 _NodePositions[MAX_NUM_NODES];
@@ -45,10 +47,10 @@ Shader "Custom/RopeShader"
                 v2f o;
                 o.uv = v.uv;
 
-                if (v.id < _NumNodes << 1)
+                if (v.id < 2 * _NumNodes)
                 {
                     int nodeIndex = v.id / 2;
-                    int displacement = v.id % 2 == 0 ? -1 : 1;
+                    int displacement = v.id % 2 == 0 ? -_Orientation : _Orientation;
                     float4 nodeData = _NodePositions[nodeIndex];
                     float2 segmentDirection = nodeIndex < (uint)(_NumNodes - 1) ?
                         _NodePositions[nodeIndex + 1].xy - nodeData.xy : nodeData.xy - _NodePositions[nodeIndex - 1].xy;
@@ -66,9 +68,9 @@ Shader "Custom/RopeShader"
                 }
                 else//we're on an endcap vertex
                 {
-                    float2 center = _NodePositions[_NumNodes - 1].xy;
-                    float2 right = normalize(center - _NodePositions[_NumNodes - 2].xy);
-                    float2 down = half2(right.y, -right.x);
+                    half2 center = _NodePositions[_NumNodes - 1].xy;
+                    half2 right = normalize(center - _NodePositions[_NumNodes - 2].xy);
+                    half2 down = _Orientation > 0 ? half2(right.y, -right.x) : half2(-right.y, right.x);
                     if (right.x == 0 && right.y == 0)
                     {
                         int k = _NumNodes - 2;
@@ -77,16 +79,17 @@ Shader "Custom/RopeShader"
                             right = normalize(center - _NodePositions[k]);
                         }
                     }
-                    int i = v.id - (_NumNodes << 1) + 1;//which endcap triangle are we on? (not zero indexed)
-                    float t =  (3.14 * i) / (_EndcapTriangles + 1);
-                    float2 p = center + _HalfWidth * (cos(t) * down + sin(t) * right);
-                    o.clipPos = TransformWorldToHClip(float3(p, 0));
+                    int i = v.id - (2 * _NumNodes) + 1;//which endcap triangle are we on? (not zero indexed)
+                    half t =  (3.14 * i) / (_EndcapTriangles + 1);
+                    half2 p = center + _HalfWidth * (cos(t) * down + sin(t) * right);
+                    o.clipPos = TransformWorldToHClip(half3(p, 0));
                 }
 
                 return o;
             }
 
             half4 frag (v2f o) : SV_Target {
+
                 return lerp(_MiddleColor, _EdgeColor, abs(2 * o.uv.y - 1));
             }
             

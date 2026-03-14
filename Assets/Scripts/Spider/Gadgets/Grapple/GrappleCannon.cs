@@ -48,8 +48,6 @@ public class GrappleCannon : MonoBehaviour
 
     bool freeHanging;
 
-    //float AimInput => spiderInput.SpaceHeld ? 0 : spiderInput.SecondaryInput.x;
-
     public bool GrappleEnabled => grapple != null && grapple.Enabled;
     public bool GrappleAnchored => GrappleEnabled && grapple.TerminusAnchored;
     public float GrappleReleaseInput => GrappleAnchored ? spiderInput.SecondaryInput.y : 0;
@@ -141,15 +139,13 @@ public class GrappleCannon : MonoBehaviour
                         failCounter = 0;
                         DestroyGrapple();
                     }
-                    //in the future i'd like to have a cool snap effect or something other than the grapple just disappearing instantly
+                    //in the future i'd like to have a cool snap effect or something other than the grapple just disappearing instantly.
                     //that could be easy just stop enforcing constraints for the tunneled nodes and stop rendering them
                     //so the rope appears to split in two halves that drift apart
                 }
                 else
                 {
                     failCounter = 0;
-                    //grappleReleaseInput = (Input.GetKey(KeyCode.W) && grapple.Length < maxLength ? 1 : 0)
-                    //+ (Input.GetKey(KeyCode.S) && grapple.Length > minLength ? -1 : 0);
                 }
             }
         }
@@ -160,6 +156,10 @@ public class GrappleCannon : MonoBehaviour
         if (GrappleEnabled)
         {
             UpdateAnchorPosition();
+            if (grapple.TerminusAnchored)
+            {
+                grapple.SetTerminusToAnchorPosition();
+            }
             grappleRenderer.UpdateRenderPositions(grapple);
         }
     }
@@ -332,6 +332,11 @@ public class GrappleCannon : MonoBehaviour
     public float NormalizedStrictTension() => StrictTension() / grapple.Length;
     public float NormalizedStrictTension(int lastIndex, float threshold) 
         => StrictTension(lastIndex, threshold, out var length) / (length == 0 ? 1 : length);
+
+    public void SetRendererOrientation()
+    {
+        grappleRenderer.SetOrientation();
+    }
 
     //FIXED UPDATE FUNCTIONS
 
