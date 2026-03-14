@@ -7,7 +7,7 @@ using UnityEngine.Events;
 public class Rope
 {
     const float CONSTRAINTS_TOLERANCE = MathTools.o41;
-    const float MAX_UPDATE_TIME = 2.5f;
+    const float MAX_UPDATE_TIME = 2f;
 
     //Rope Data
     public float width;//really the width of the rope (not half of it)
@@ -19,11 +19,19 @@ public class Rope
     public float drag;
     public float nodeMass;
     public float terminusMass;
+    public float dynamicAnchorPullForce;
 
     public float constraintIterations;
 
-    int anchorIndex;
-    bool terminusAnchored;
+    int startIndex;//effective beginning of rope (we set some nodes at beginning of rope to sleep to maintain reasonable node spacing)
+    TerminusAnchorMode terminusAnchorMode;
+    Collider2D terminusAnchor;
+    Vector2 terminusAnchorLocalPos;
+
+    enum TerminusAnchorMode
+    {
+        notAnchored, staticAnchor, dynamicAnchor
+    }
 
     //Node Data
     public Vector2[] position;
@@ -46,22 +54,25 @@ public class Rope
     Stopwatch stopwatch = new();
 
     public bool Enabled { get; private set; }
-    public int AnchorIndex => anchorIndex;
+    public int StartIndex => startIndex;
     public int TerminusIndex => position.Length - 1;
     public float NodeSpacing => nodeSpacing;
-    public float Length => nodeSpacing * (TerminusIndex - anchorIndex);
-    public bool TerminusAnchored => terminusAnchored;
+    public float Length => nodeSpacing * (TerminusIndex - startIndex);
+    public bool TerminusAnchored => terminusAnchorMode != TerminusAnchorMode.notAnchored;//terminusAnchored;
 
     public UnityEvent TerminusBecameAnchored;
 
     public Rope(Vector2 position, float width, float length, int numNodes, float minNodeSpacing, float maxNodeSpacing,
     float nodeMass, float terminusMass, float nodeDrag, int collisionMask, float collisionSearchRadius, float tunnelEscapeRadius, float collisionBounciness,
-    int constraintIterations)
+    int constraintIterations, float dynamicAnchorPullForce)
     {
         int terminusIndex = numNodes - 1;
+        terminusAnchorMode = TerminusAnchorMode.notAnchored;
+        this.dynamicAnchorPullForce = dynamicAnchorPullForce;
+
         this.width = width;
         nodeSpacing = Mathf.Clamp(length / terminusIndex, minNodeSpacing, maxNodeSpacing);
-        anchorIndex = terminusIndex - Mathf.Clamp((int)(length / nodeSpacing), 1, terminusIndex);
+        startIndex = terminusIndex - Mathf.Clamp((int)(length / nodeSpacing), 1, terminusIndex);
         this.minNodeSpacing = minNodeSpacing;
         this.maxNodeSpacing = maxNodeSpacing;
         this.constraintIterations = constraintIterations;
@@ -99,8 +110,9 @@ public class Rope
     {
         int terminusIndex = numNodes - 1;
         nodeSpacing = Mathf.Clamp(length / terminusIndex, minNodeSpacing, maxNodeSpacing);
-        anchorIndex = terminusIndex - Mathf.Clamp((int)(length / nodeSpacing), 1, terminusIndex);
-        terminusAnchored = false;
+        startIndex = terminusIndex - Mathf.Clamp((int)(length / nodeSpacing), 1, terminusIndex);
+        terminusAnchorMode = TerminusAnchorMode.notAnchored;
+        terminusAnchor = null;
 
         if (this.position.Length != numNodes)
         {
@@ -129,6 +141,8 @@ public class Rope
     public void Disable()
     {
         Enabled = false;
+        terminusAnchorMode = TerminusAnchorMode.notAnchored;
+        terminusAnchor = null;
     }
 
     //ROPE FUNCTIONS
@@ -144,13 +158,13 @@ public class Rope
 
     public void SetLength(float length)
     {
-        nodeSpacing = length / (TerminusIndex - anchorIndex);
+        nodeSpacing = length / (TerminusIndex - startIndex);
         Rescale();
     }
 
     public void SetAnchorPosition(Vector2 position)
     {
-        for (int i = 0; i < anchorIndex + 1; i++)
+        for (int i = 0; i < startIndex + 1; i++)
         {
             this.position[i] = position;
         }
@@ -159,17 +173,71 @@ public class Rope
     public void Update(float dt, float dt2)
     {
         stopwatch.Restart();
-        UpdateVerletSimulation(dt, dt2);
 
-        ResolveCollisions();
-
-        for (int i = 0; i < constraintIterations; i++)
+        if (terminusAnchorMode != TerminusAnchorMode.notAnchored)
         {
-            SpacingConstraintIteration();
-            if (stopwatch.Elapsed.TotalMilliseconds > MAX_UPDATE_TIME)
+            //check every frame in case someday we have an anchor that could get destroyed or change rigidbody type... for now sort of a waste
+            if (terminusAnchor)
             {
-                return;//no more dry meat!!!
+                terminusAnchorMode = terminusAnchor.attachedRigidbody && terminusAnchor.attachedRigidbody.bodyType == RigidbodyType2D.Dynamic ?
+                    TerminusAnchorMode.dynamicAnchor : TerminusAnchorMode.staticAnchor;
             }
+            else
+            {
+                terminusAnchorMode = TerminusAnchorMode.notAnchored;
+                terminusAnchor = null;
+            }
+        }
+
+        switch (terminusAnchorMode)
+        {
+            case TerminusAnchorMode.notAnchored:
+                UpdateInternal();
+                break;
+            case TerminusAnchorMode.staticAnchor:
+                UpdateInternal();
+                Vector2 p = terminusAnchor.transform.TransformPoint(terminusAnchorLocalPos);
+                position[TerminusIndex] = p;
+                lastPosition[TerminusIndex] = p;
+                break;
+            case TerminusAnchorMode.dynamicAnchor:
+                UpdateWithDynamicAnchor();
+                break;
+        }
+
+        void UpdateInternal()
+        {
+            UpdateVerletSimulation(dt2);
+            ResolveCollisions();
+            for (int i = 0; i < constraintIterations; i++)
+            {
+                SpacingConstraintIteration();
+                if (stopwatch.Elapsed.TotalMilliseconds > MAX_UPDATE_TIME)
+                {
+                    return;
+                }
+            }
+        }
+
+        void UpdateWithDynamicAnchor()
+        {
+            UpdateVerletSimulation(dt2);
+
+            Vector2 p = terminusAnchor.transform.TransformPoint(terminusAnchorLocalPos);
+            position[TerminusIndex] = p;
+            lastPosition[TerminusIndex] = p - dt * terminusAnchor.attachedRigidbody.linearVelocity;
+
+            ResolveCollisions();
+            for (int i = 0; i < constraintIterations; i++)
+            {
+                SpacingConstraintIteration();
+                if (stopwatch.Elapsed.TotalMilliseconds > MAX_UPDATE_TIME)
+                {
+                    return;
+                }
+            }
+
+            PullDynamicAnchor();
         }
     }
 
@@ -177,8 +245,8 @@ public class Rope
     {
         float distance = 0;
         bool chaining = false;
-
-        for (int i = anchorIndex + 1; i < TerminusIndex; i++)
+        
+        for (int i = startIndex + 1; i < TerminusIndex; i++)
         {
             if (chaining)
             {
@@ -189,11 +257,12 @@ public class Rope
                 }
             }
 
-            if (Physics2D.OverlapPoint(position[i], collisionMask)
-                && Physics2D.OverlapPoint(position[i] + collisionThreshold * Vector2.up, collisionMask)
-                && Physics2D.OverlapPoint(position[i] - collisionThreshold * Vector2.up, collisionMask)
-                && Physics2D.OverlapPoint(position[i] + collisionThreshold * Vector2.right, collisionMask)
-                && Physics2D.OverlapPoint(position[i] - collisionThreshold * Vector2.right, collisionMask))
+            //check if node is fully tunneled inside one collider
+            var c = Physics2D.OverlapPoint(position[i], collisionMask);
+            if (c && Physics2D.OverlapPoint(position[i] + collisionThreshold * Vector2.up, collisionMask) == c
+                && Physics2D.OverlapPoint(position[i] - collisionThreshold * Vector2.up, collisionMask) == c
+                && Physics2D.OverlapPoint(position[i] + collisionThreshold * Vector2.right, collisionMask) == c
+                && Physics2D.OverlapPoint(position[i] - collisionThreshold * Vector2.right, collisionMask) == c)
             {
                 if (!chaining)
                 {
@@ -217,11 +286,11 @@ public class Rope
     private void SpacingConstraintIteration()
     {
         FirstConstraint();
-        for (int i = anchorIndex + 2; i < TerminusIndex; i++)
+        for (int i = startIndex + 2; i < TerminusIndex; i++)
         {
             ApplySpacingConstraint(i);
             //gives it a nice bouncy but stable feel (and can get away with ~1/3 of the iterations (for twice the work per iteration))
-            if (i > anchorIndex + 2)
+            if (i > startIndex + 2)
             {
                 ApplySpacingConstraint(i - 1);
             }
@@ -275,15 +344,15 @@ public class Rope
 
         void FirstConstraint()
         {
-            var d = position[anchorIndex + 1] - position[anchorIndex];
+            var d = position[startIndex + 1] - position[startIndex];
             var l = d.magnitude;
 
             var error = l - nodeSpacing;
 
             if (error > CONSTRAINTS_TOLERANCE)
             {
-                position[anchorIndex + 1] -= error / l * d;
-                ResolveCollision(anchorIndex + 1);
+                position[startIndex + 1] -= error / l * d;
+                ResolveCollision(startIndex + 1);
             }
         }
 
@@ -296,34 +365,58 @@ public class Rope
 
             if (error > CONSTRAINTS_TOLERANCE)
             {
-                if (terminusAnchored)
+                switch (terminusAnchorMode)
                 {
-                    position[TerminusIndex - 1] += error / l * d;
-                    ResolveCollision(TerminusIndex - 1);
-                }
-                else
-                {
-                    var c = 1 / (nodeMass + terminusMass) * error / l * d;
-                    position[TerminusIndex - 1] += terminusMass * c;
-                    position[TerminusIndex] -= nodeMass * c;
-                    ResolveCollision(TerminusIndex - 1);
-                    ResolveCollision(TerminusIndex);
+                    case TerminusAnchorMode.staticAnchor:
+                        position[TerminusIndex - 1] += error / l * d;
+                        ResolveCollision(TerminusIndex - 1);
+                        break;
+                    case TerminusAnchorMode.dynamicAnchor:
+                        {
+                            var tMass = terminusAnchor.attachedRigidbody.mass /*+ terminusMass*/;
+                            var c = 1 / (nodeMass + tMass) * error / l * d;
+                            position[TerminusIndex - 1] += tMass * c;
+                            ResolveCollision(TerminusIndex - 1);
+                            break;
+                        }
+                    case TerminusAnchorMode.notAnchored:
+                        {
+                            var c = 1 / (nodeMass + terminusMass) * error / l * d;
+                            position[TerminusIndex - 1] += terminusMass * c;
+                            position[TerminusIndex] -= nodeMass * c;
+                            ResolveCollision(TerminusIndex - 1);
+                            ResolveCollision(TerminusIndex);
+                            break;
+                        }
                 }
             }
         }
     }
 
-    private void UpdateVerletSimulation(float dt, float dt2)
+    private void PullDynamicAnchor()
     {
-        for (int i = anchorIndex + 1; i < (terminusAnchored ? TerminusIndex : position.Length); i++)
+        var d = position[TerminusIndex] - position[TerminusIndex - 1];
+        var l = d.magnitude;
+
+        var error = l - nodeSpacing;
+
+        if (error > CONSTRAINTS_TOLERANCE)
         {
-            UpdateVerletSimulation(i, dt, dt2);
+            terminusAnchor.attachedRigidbody.AddForceAtPosition(-dynamicAnchorPullForce / l * error * d, position[TerminusIndex]);
+        }
+    }
+
+    private void UpdateVerletSimulation(float dt2)
+    {
+        for (int i = startIndex + 1; i < (terminusAnchorMode == TerminusAnchorMode.notAnchored ? position.Length : TerminusIndex); i++)
+        {
+            UpdateVerletSimulation(i, dt2);
         }
     }
 
     private void ResolveCollisions()
     {
-        for (int i = anchorIndex + 1; i < position.Length; i++)
+        for (int i = startIndex + 1; i < position.Length; i++)
         {
             ResolveCollision(i);
         }
@@ -334,22 +427,22 @@ public class Rope
         if (nodeSpacing < minNodeSpacing || nodeSpacing > maxNodeSpacing)
         {
             float goalSpacing = nodeSpacing < minNodeSpacing ? minNodeSpacing : maxNodeSpacing;
-            int newAnchorIndex = TerminusIndex - Mathf.Clamp((int)(Length / goalSpacing), 1, TerminusIndex);
+            int newStartIndex = TerminusIndex - Mathf.Clamp((int)(Length / goalSpacing), 1, TerminusIndex);
             //clamps anchor pointer to btwn 0 and lastIndex - 1
             //note: length / nodeSpacing = num nodes PAST anchor pointer
 
-            if (anchorIndex != newAnchorIndex)
+            if (startIndex != newStartIndex)
             {
-                Reparametrize(newAnchorIndex);
+                Reparametrize(newStartIndex);
             }
         }
     }
 
-    private void Reparametrize(int newAnchorIndex)
+    private void Reparametrize(int newStartIndex)
     {
-        float newNodeSpacing = Length / (TerminusIndex - newAnchorIndex);
-        int i = anchorIndex;//start index of current segment we're copying from
-        int j = newAnchorIndex + 1;//index in rescaleBuffer that we're copying to
+        float newNodeSpacing = Length / (TerminusIndex - newStartIndex);
+        int i = startIndex;//start index of current segment we're copying from
+        int j = newStartIndex + 1;//index in rescaleBuffer that we're copying to
         float dt = newNodeSpacing / nodeSpacing;//when we move one segment forward in new path, this is how many segments we cover in old path
         float t = dt;//time along current segment we're copying from (0 = nodes[i], 1 = nodes[i + 1])
         while (t > 1)
@@ -372,26 +465,26 @@ public class Rope
             }
         }
 
-        if (newAnchorIndex > anchorIndex)
+        if (newStartIndex > startIndex)
         {
-            for (int k = anchorIndex + 1; k < newAnchorIndex + 1; k++)
+            for (int k = startIndex + 1; k < newStartIndex + 1; k++)
             {
-                position[k] = position[anchorIndex];
+                position[k] = position[startIndex];
                 Anchor(k);
             }
         }
         else
         {
-            for (int k = newAnchorIndex + 1; k < anchorIndex + 1; k++)
+            for (int k = newStartIndex + 1; k < startIndex + 1; k++)
             {
                 DeAnchor(k, 0, Vector2.zero);
             }
         }
 
-        anchorIndex = newAnchorIndex;
+        startIndex = newStartIndex;
         nodeSpacing = newNodeSpacing;
-        int start = anchorIndex + 1;
-        int count = TerminusIndex - anchorIndex - 1;
+        int start = startIndex + 1;
+        int count = TerminusIndex - startIndex - 1;
         Array.Copy(positionBuffer, start, position, start, count);
         Array.Copy(lastPositionBuffer, start, lastPosition, start, count);
     }
@@ -412,20 +505,29 @@ public class Rope
         lastPosition[i] = position[i] - initialVelocity * dt;
     }
 
-    private void UpdateVerletSimulation(int i, float dt, float dt2)
+    private void UpdateVerletSimulation(int i, float dt2)
     {
         var p = position[i];
         var d = p - lastPosition[i];
-        var v = d / dt;
-        position[i] += d + dt2 * (Physics2D.gravity - drag * v.magnitude * v);
+        position[i] += (1 - drag * d.magnitude) * d + dt2 * Physics2D.gravity;//d + dt2 * (Physics2D.gravity - drag * v.magnitude * v);
         lastPosition[i] = p;
     }
+
+    //private void ApplyForceToDynamicAnchor(float dt, float dt2)
+    //{
+    //    var p = position[TerminusIndex];
+    //    var d = p - lastPosition[TerminusIndex];
+    //    d = (1 - drag * d.magnitude) * d + dt2 * Physics2D.gravity;
+    //    position[TerminusIndex] += d;
+    //    lastPosition[TerminusIndex] = p;
+    //    terminusAnchor.attachedRigidbody.AddForce((terminusAnchor.attachedRigidbody.mass /*+ terminusMass*/) * (1 / dt2 * (d - dt * terminusAnchor.attachedRigidbody.linearVelocity)));
+    //}
 
     private void ResolveCollision(int i)
     {
         if (i == TerminusIndex)
         {
-            if (!terminusAnchored)
+            if (!TerminusAnchored)
             {
                 var p = position[TerminusIndex];
                 ResolveCollisionInternal(TerminusIndex);
@@ -439,9 +541,19 @@ public class Rope
                     if (r)
                     {
                         //anchor just outside collider, so that nodes near lastIndex don't get caught in perpetual collision
-                        position[TerminusIndex] = r.point + collisionThreshold * r.normal;
-                        Anchor(TerminusIndex);
-                        terminusAnchored = true;
+                        p = r.point + collisionThreshold * r.normal;
+                        position[TerminusIndex] = p;
+                        terminusAnchor = r.collider;
+                        terminusAnchorLocalPos = terminusAnchor.transform.InverseTransformPoint(p);
+                        if (terminusAnchor.attachedRigidbody && terminusAnchor.attachedRigidbody.bodyType == RigidbodyType2D.Dynamic)
+                        {
+                            terminusAnchorMode = TerminusAnchorMode.dynamicAnchor;
+                        }
+                        else
+                        {
+                            terminusAnchorMode = TerminusAnchorMode.staticAnchor;
+                            Anchor(TerminusIndex);
+                        }
                         TerminusBecameAnchored.Invoke();
                     }
                 }

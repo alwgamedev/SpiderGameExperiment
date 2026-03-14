@@ -1,0 +1,126 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: SkyMat
+  m_Shader: {fileID: -6465566751694194690, guid: b223858ddbe7703458f0f970d50227b5, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _AlphaTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MaskTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _BackgroundNoiseDensity: 1.66
+    - _BackgroundNoiseMax: 1
+    - _BackgroundNoiseMin: 0
+    - _BackgroundNoiseScale: 1.22
+    - _BackgroundNoiseThreshold: 0.42
+    - _BackgroundScrollSpeed: 0.5
+    - _CloudColorBlendRate: 0.25
+    - _CloudHeightFadeRate: 1
+    - _CloudHeightMax: 0.85
+    - _CloudHeightMin: 0
+    - _CloudNoiseDensity: 3
+    - _CloudNoiseDensity2: 1.11
+    - _CloudNoiseMax: 1
+    - _CloudNoiseMax2: 5
+    - _CloudNoiseMin: 0
+    - _CloudNoiseMin2: 0
+    - _CloudNoiseScale: 1
+    - _CloudNoiseScale2: 4.3
+    - _CloudNoiseThreshold: 0.2
+    - _CloudNoiseThreshold2: 0
+    - _CloudScrollSpeed: 0.2
+    - _CloudScrollSpeed2: 0.2
+    - _EnableExternalAlpha: 0
+    - _HeightFadeRate: 2.69
+    - _HeightMax: 1
+    - _HeightMin: 0.25
+    - _HeightPower: 1.5
+    - _NoiseDensity: 1.97
+    - _NoiseMax: 1.5
+    - _NoiseMin: 0
+    - _NoiseScale: 0.88
+    - _NoiseThreshold: 0.2
+    - _ScrollSpeed: 0
+    - _ZWrite: 0
+    m_Colors:
+    - White: {r: 1, g: 1, b: 1, a: 1}
+    - _BackgroundColor: {r: 0.074909195, g: 0.20853558, b: 0.23773581, a: 1}
+    - _BackgroundColor1: {r: 0.13181199, g: 0.19449383, b: 0.3735848, a: 1}
+    - _BackgroundColor1Bottom: {r: 0.32941177, g: 0.62352943, b: 0.3791553, a: 1}
+    - _BackgroundColor1Top: {r: 0.015001759, g: 0.098409094, b: 0.18490559, a: 1}
+    - _BackgroundColor2: {r: 0.12549022, g: 0.40392157, b: 0.39825583, a: 1}
+    - _BackgroundColor2Bottom: {r: 0.7132075, g: 0.46791023, b: 0.28393728, a: 1}
+    - _BackgroundColor2Top: {r: 0.45586985, g: 0.5698112, b: 0.2655535, a: 1}
+    - _BackgroundScrollDirection: {r: -1, g: -0.1, b: 0, a: 0}
+    - _BackgroundStretch: {r: 0.29, g: 1, b: 0, a: 0}
+    - _CloudColor1: {r: 0.50980395, g: 0.45317167, b: 0.19215685, a: 1}
+    - _CloudColor2: {r: 1, g: 0.9478536, b: 0.7830188, a: 1}
+    - _CloudColor3: {r: 0.9924528, g: 0.9924528, b: 0.9924528, a: 1}
+    - _CloudScrollDirection: {r: 1, g: 0.1, b: 0, a: 0}
+    - _CloudScrollDirection2: {r: 1, g: 0.1, b: 0, a: 0}
+    - _CloudStretch: {r: 0.47, g: 1, b: 0, a: 0}
+    - _CloudStretch2: {r: 0.5, g: 1, b: 0, a: 0}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
+    - _ScrollDirection: {r: 0, g: 0, b: 0, a: 0}
+    - _Stretch: {r: 0.44, g: 1, b: 0, a: 0}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
+--- !u!114 &3424753013072436167
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Editor::UnityEditor.Rendering.Universal.AssetVersion
+  version: 10

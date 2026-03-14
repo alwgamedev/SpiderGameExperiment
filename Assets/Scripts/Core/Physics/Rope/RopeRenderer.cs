@@ -62,7 +62,7 @@ public class RopeRenderer : MonoBehaviour
         var taperRate = (1 - taperBaseScale) / taperLength;
         for (int i = 0; i < nodePositions.Length; i++)
         {
-            if (taperMult < 1 && i > rope.AnchorIndex)
+            if (taperMult < 1 && i > rope.StartIndex)
             {
                 taperMult += Mathf.Min(taperRate * Vector2.Distance(nodePositions[i - 1], nodePositions[i]), 1);
             }

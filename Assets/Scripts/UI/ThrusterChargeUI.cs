@@ -5,7 +5,6 @@ using UnityEngine.UI;
 public class ThrusterChargeUI : MonoBehaviour
 {
     [SerializeField] Image fillBar;
-    [SerializeField] TextMeshProUGUI tmp;
     [SerializeField] Color cooldownColor;
     [SerializeField] Color defaultColor;
 
@@ -20,6 +19,5 @@ public class ThrusterChargeUI : MonoBehaviour
     {
         fillBar.fillAmount = thruster.Charge;
         fillBar.color = thruster.Cooldown ? cooldownColor : defaultColor;
-        tmp.color = thruster.Cooldown ? cooldownColor: defaultColor;
     }
 }
