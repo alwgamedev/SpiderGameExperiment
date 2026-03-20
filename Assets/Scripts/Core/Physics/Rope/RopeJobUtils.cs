@@ -1,7 +1,6 @@
 ﻿using Unity.Collections;
 using Unity.U2D.Physics;
 using Unity.Mathematics;
-using UnityEngine;
 
 public static class RopeJobUtils
 {

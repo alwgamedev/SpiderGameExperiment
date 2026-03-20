@@ -3,8 +3,6 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.U2D.Physics;
-using Unity.VectorGraphics;
-using UnityEngine;
 
 [BurstCompile]
 public struct IntegrateRope : IJobParallelFor
@@ -378,7 +376,7 @@ public struct CalculateRopeCarryForceMagnitude : IJob
             }
 
             //can't get reliable tension around corners -- works better if you just ignore them
-            if (nearCollision[i] && nearCollision[j]/*grapple.nearestCollider[i] && grapple.nearestCollider[j]*/)
+            if (nearCollision[i] && nearCollision[j])
             {
                 i = j;
                 continue;
@@ -407,7 +405,7 @@ public struct CalculateRopeCarryForceMagnitude : IJob
 public struct CheckForRopeCollisionFailure : IJob
 {
     [ReadOnly] public NativeArray<float2> position;
-    [ReadOnly] public NativeReference<PhysicsShape> terminusAnchor;
+    public NativeReference<PhysicsShape> terminusAnchor;
     [ReadOnly] public PhysicsWorld world;
     public NativeReference<bool> collisionIsFailing;
     public PhysicsQuery.QueryFilter filter;
@@ -434,7 +432,6 @@ public struct CheckForRopeCollisionFailure : IJob
         float distance = 0;
         bool chaining = false;
         bool dynamicAnchor = terminusAnchor.Value.isValid && terminusAnchor.Value.body.isValid && terminusAnchor.Value.body.type == PhysicsBody.BodyType.Dynamic;
-        var anchorBody = terminusAnchor.Value.body;
 
         collisionIsFailing.Value = false;
 
@@ -451,10 +448,10 @@ public struct CheckForRopeCollisionFailure : IJob
             }
 
             //check if node is fully tunneled inside one collider
-            var c = world.OverlapPoint(position[i], filter);//Physics2D.OverlapPoint(position[i], collisionMask);
+            var c = world.OverlapPoint(position[i], filter);
             if (c.Length > 0)
             {
-                if (!c[0].shape.isValid || !c[0].shape.body.isValid || (dynamicAnchor && c[0].shape.body == anchorBody))
+                if (!c[0].shape.isValid || !c[0].shape.body.isValid || (dynamicAnchor && c[0].shape.body == terminusAnchor.Value.body))
                 {
                     //we don't really want rope to break when we're hauling something,
                     //so we'll exclude dynamic anchor from failure checks and allow rope to pass through dynamic anchor when it needs to

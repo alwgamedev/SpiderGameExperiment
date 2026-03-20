@@ -421,7 +421,7 @@ public class BurstRope
         CalculateMaxTension().Run();
         CalculateCarryForceDirection().Run();
         CalculateCarryForceMagnitude().Run();
-        //CheckForCollisionFailure().Run();
+        CheckForCollisionFailure().Run();
 
         RecomputeStats();
 

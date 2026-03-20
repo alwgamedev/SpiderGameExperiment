@@ -443,17 +443,28 @@ public class SpiderMover : MonoBehaviour
         }
         else
         {
-            Vector2 o = grapple.FreeHangLeveragePoint;
-            var p = transform.position;
+            Vector2 o = grapple.FreeHangLeveragePoint + PhysBody.position - (Vector2)transform.position;
+            //where leverage point would be if transform was correctly synced to physbody
+            //(there is a tiny discrepancy that really does cause issues/erratic behavior)
+            Vector2 p = PhysBody.position;
+            Vector2 u = PhysBody.rotation.direction.CCWPerp();
+
             var s = transform.localScale;
             transform.localScale = new Vector3(-s.x, s.y, s.z);
-            Vector2 n = transform.up;//normal to the hyperplane we're reflecting over
-            transform.rotation = MathTools.QuaternionFrom2DUnitVector(n.CCWPerp());
-            //^really the direction is ReflectAcrossHyperplane(transform.up, n).CWPerp() (the new right), but since our n = transform.up, we can take a shortcut
-            //(leaving this note in case you change n)
-            var d = (Vector3)(o - grapple.FreeHangLeveragePoint);
-            transform.position += d;
-            legSynch.OnBodyChangedDirection(p, transform.position, n);
+
+            PhysBody.rotation = new PhysicsRotate(-PhysBody.rotation.direction);
+            SyncTransform();
+            PhysBody.position += o - grapple.FreeHangLeveragePoint;
+            //translate so grapple.FreeHangeLeveragePoint stays in same place
+            //(it's where move forces are applied while freeHanging, and we want to keep movement smooth)
+
+            legSynch.OnBodyChangedDirection(p, PhysBody.position, u);
+
+            void SyncTransform()//so we have accurate position of grapple.FreeHangLeveragePoint -- inefficient, but reliable
+            {
+                PhysBody.GetPositionAndRotation3D(transform, PhysicsWorld.defaultWorld.transformWriteMode, PhysicsWorld.TransformPlane.XY, out var pos, out var rot);
+                transform.SetPositionAndRotation(pos, rot);
+            }
         }
 
         grapple.SetOrientation(FacingRight);
