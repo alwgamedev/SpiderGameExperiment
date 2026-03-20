@@ -1,4 +1,5 @@
 ﻿using System;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -153,10 +154,15 @@ public class PhysicsBasedIKLeg
         var stepHeight = settings.stepHeight;
         var bodyFacingRight = orientingTransform.localScale.x > 0;
 
-        var dot = Vector2.Dot((Vector2)chain[0].position - map.LastOrigin, map.LastOriginRight);
-        if (!map.LineCastToGround(chain[0].position, castDir, out var p, out var h, out _, out _) || Mathf.Abs(h) < Mathf.Abs(dot))
+        var dot = Vector2.Dot((Vector2)chain[0].position - (Vector2)map.Origin, map.OriginRight);
+        float h;
+        if (!map.LineCastToGround((Vector2)chain[0].position, castDir, out var p) || Mathf.Abs(p.arcLengthPosition) < Mathf.Abs(dot))
         {
             h = dot;
+        }
+        else
+        {
+            h = p.arcLengthPosition;
         }
 
         var stepStart = GetStepStart(map, h, bodyFacingRight, stepProgress, stepDistance, restDistance/*, stepMax*/);
@@ -179,10 +185,16 @@ public class PhysicsBasedIKLeg
     public void UpdateTargetResting(GroundMap map, Vector2 castDir,
         float restProgress, float restDistance)
     {
-        var dot = Vector2.Dot((Vector2)chain[0].position - map.LastOrigin, map.LastOriginRight);
-        if (!map.LineCastToGround(chain[0].position, castDir, out var p, out var h, out _, out _) || Mathf.Abs(h) < Mathf.Abs(dot))
+        var dot = Vector2.Dot((Vector2)chain[0].position - (Vector2)map.Origin, map.OriginRight);
+
+        float h;
+        if (!map.LineCastToGround((Vector2)chain[0].position, castDir, out var p) || Mathf.Abs(p.arcLengthPosition) < Mathf.Abs(dot))
         {
             h = dot;
+        }
+        else
+        {
+            h = p.arcLengthPosition;
         }
 
         target.position = GetStepGoal(map, h, orientingTransform.localScale.x > 0, restProgress, restDistance);
@@ -195,7 +207,7 @@ public class PhysicsBasedIKLeg
         if (f > maxExtensionFraction * maxExtensionFraction)
         {
             var p = chain[0].position + maxExtensionFraction / Mathf.Sqrt(f) * d;
-            target.position = map.TrueClosestPoint(p, out _, out _, out _);
+            target.position = (Vector2)map.TrueClosestPoint(new float2(p.x, p.y), out _, out _, out _);
         }
     }
 
@@ -267,7 +279,7 @@ public class PhysicsBasedIKLeg
     {
         var wasTouchingGround = EffectorIsTouchingGround;
         Vector2 q = chain[^1].position;
-        q -= groundMap.TrueClosestPoint(q, out _, out var n, out var hitGround);
+        q -= (Vector2)groundMap.TrueClosestPoint(q, out _, out var n, out var hitGround);
 
         var l = Vector2.Dot(q, n);
         EffectorIsTouchingGround = hitGround && l < groundContactRadius;
@@ -288,7 +300,7 @@ public class PhysicsBasedIKLeg
 
     private Vector2 GetStepStart(GroundMap map, bool bodyFacingRight, float stepProgress, float stepDistance, float restDistance/*, float stepMax*/)
     {
-        var h = Vector2.Dot((Vector2)chain[0].position - map.LastOrigin, map.LastOriginRight);
+        var h = Vector2.Dot((Vector2)chain[0].position - (Vector2)map.Origin, map.OriginRight);
         h = bodyFacingRight ? h + StepStartHorizontalOffset(stepProgress, stepDistance, restDistance/*, stepMax*/)
             : h - StepStartHorizontalOffset(stepProgress, stepDistance, restDistance/*, stepMax*/);
         return map.PointFromCenterByArcLength(h, out _, out _);
@@ -305,7 +317,7 @@ public class PhysicsBasedIKLeg
 
     private Vector2 GetStepGoal(GroundMap map, bool bodyFacingRight, float restProgress, float restDistance/*, float stepMax*/)
     {
-        var h = Vector2.Dot((Vector2)chain[0].position - map.LastOrigin, map.LastOriginRight);
+        var h = Vector2.Dot((Vector2)chain[0].position - (Vector2)map.Origin, map.OriginRight);
         h = bodyFacingRight ? h + StepGoalHorizontalOffset(restProgress, restDistance/*, stepMax*/)
             : h - StepGoalHorizontalOffset(restProgress, restDistance/*, stepMax*/);
         return map.PointFromCenterByArcLength(h, out _, out _);

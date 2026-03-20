@@ -13,15 +13,7 @@ public class SpriteShapeMeshGeneratorEditor : Editor
         {
             foreach (var t in targets)
             {
-                ((SpriteShapeMeshGenerator)t).GenerateMesh(false);
-            }
-        }
-
-        if (GUILayout.Button("Generate Mesh and Collider"))
-        {
-            foreach (var t in targets)
-            {
-                ((SpriteShapeMeshGenerator)t).GenerateMesh(true);
+                ((SpriteShapeMeshGenerator)t).GenerateMesh();
             }
         }
 
@@ -35,7 +27,7 @@ public class SpriteShapeMeshGeneratorEditor : Editor
 
         if (GUILayout.Button("Save Mesh"))
         {
-            SaveMesh();
+            SaveMesh();//only one target at a time (not multi-edit compatible)
         }
     }
 

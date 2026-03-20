@@ -1,28 +1,27 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
+using Unity.U2D.Physics;
 
-public class SpiderMovementControl : MonoBehaviour
+
+public class SpiderMover : MonoBehaviour
 {
     [SerializeField] float timeScale;
     [SerializeField] bool drawGizmos;
 
-    [Header("Body")]
+    [Header("Body Parts")]
     [SerializeField] Transform abdomenBone;
     [SerializeField] Transform abdomenBonePivot;
     [SerializeField] Transform headBone;
     [SerializeField] Transform headBoneHeightRefPoint;
-    [SerializeField] Transform heightReferencePoint;
     [SerializeField] GrappleCannon grapple;
 
     [Header("Ground Data")]
-    [SerializeField] LayerMask groundLayer;
     [SerializeField] float groundedExitToleranceFactor;
     [SerializeField] float groundedEntryToleranceFactor;
     [SerializeField] float groundednessSmoothingRate;
     [SerializeField] float groundednessInitialContactValue;
     [SerializeField] float groundDirectionSampleWidth;
     [SerializeField] float backupGroundPtRaycastLengthFactor;
-    [SerializeField] float failedGroundDirectionSmoothingRate;
     [SerializeField] GroundMap groundMap;
 
     [Header("Movement")]
@@ -86,11 +85,8 @@ public class SpiderMovementControl : MonoBehaviour
     [SerializeField] Thruster thruster;
     [SerializeField] ThrusterFlame thrusterFlame;
 
-    Rigidbody2D rb;
-    Collider2D headCollider;
-    Collider2D abdomenCollider;
-    Collider2D[] bodyCollisionBuffer = new Collider2D[1];
-    ContactFilter2D bodyCollisionFilter;
+    [SerializeField] SpiderPhysics spiderPhysics;
+
     PhysicsLegSynchronizer legSynch;
 
     SpiderInput spiderInput;
@@ -135,8 +131,8 @@ public class SpiderMovementControl : MonoBehaviour
     int Orientation => FacingRight ? 1 : -1;
     Vector2 OrientedRight => FacingRight ? transform.right : -transform.right;
     Vector2 OrientedGroundDirection => FacingRight ? groundDirection : -groundDirection;
+    Vector2 HeightReferencePt => PhysBody.worldCenterOfMass;
     float MaxSpeed => grounded ? maxSpeed : maxSpeedAirborne;
-    float GroundVelocity => Vector2.Dot(rb.linearVelocity, OrientedGroundDirection);
     float GrappleScurryResistance => Vector2.Dot(grapple.LastCarryForce, -OrientedGroundDirection);
     float GrappleScurryResistanceFraction => Mathf.Clamp(GrappleScurryResistance / grappleScurryResistanceMax, 0, 1);
 
@@ -144,6 +140,7 @@ public class SpiderMovementControl : MonoBehaviour
     public float CrouchProgress => crouchProgress;
     public Thruster Thruster => thruster;
     public GrappleCannon Grapple => grapple;
+    public ref PhysicsBody PhysBody => ref spiderPhysics.physicsBody;
 
     //mainly to hook up audio (later maybe also ui stuff)
     public UnityEvent JumpChargeBegan;
@@ -164,12 +161,16 @@ public class SpiderMovementControl : MonoBehaviour
 
     private void OnValidate()
     {
-        Time.timeScale = timeScale;
+        if (Application.isPlaying)
+        {
+            Time.timeScale = timeScale;
+        }
+
+        spiderPhysics?.OnValidate();
     }
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
         legSynch = GetComponent<PhysicsLegSynchronizer>();
 
         abdomenBoneBaseRight = abdomenBone.right.InFrameV2(transform.right, transform.up);
@@ -194,28 +195,23 @@ public class SpiderMovementControl : MonoBehaviour
 
     private void Start()
     {
-        headCollider = headBone.GetComponent<Collider2D>();
-        abdomenCollider = abdomenBone.GetComponent<Collider2D>();
-
-        rb.centerOfMass = heightReferencePoint.position - transform.position;
-
+        spiderPhysics.CreatePhysicsBody();
         InitializeGroundData();
         legSynch.Initialize();
-        bodyCollisionFilter = ContactFilter2D.noFilter;
-        bodyCollisionFilter.useTriggers = false;
-        bodyCollisionFilter.SetLayerMask(groundLayer);
+        grapple.spiderBody = PhysBody;
+        grapple.spiderInput = spiderInput;
+        grapple.SetOrientation(FacingRight);
+    }
+
+    private void OnDestroy()
+    {
+        groundMap.Dispose();
     }
 
     private void Update()
     {
         UpdateState();
     }
-
-    //private void LateUpdate()
-    //{
-    //    RotateAbdomen(Time.deltaTime);
-    //    RotateHead(Time.deltaTime);
-    //}
 
     private void FixedUpdate()
     {
@@ -271,7 +267,7 @@ public class SpiderMovementControl : MonoBehaviour
     //do before you handle any move input
     private void UpdateThruster()
     {
-        switch (thruster.FixedUpdate(rb))
+        switch (thruster.FixedUpdate(ref PhysBody))
         {
             case Thruster.ThrustersUpdateResult.ChargeRanOut:
                 OnThrusterRanOutOfCharge();
@@ -460,7 +456,7 @@ public class SpiderMovementControl : MonoBehaviour
             legSynch.OnBodyChangedDirection(p, transform.position, n);
         }
 
-        grapple.SetRendererOrientation();
+        grapple.SetOrientation(FacingRight);
     }
 
     private void HandleMoveInput()
@@ -470,33 +466,32 @@ public class SpiderMovementControl : MonoBehaviour
         //-- so you can limit maxSpd - spd to being e.g. double the maxSpeed or w/e)
         if (HorizontalMoveInput != 0)
         {
-            if (grounded || !grapple.GrappleAnchored || (!ForceFreeHang && thruster.Engaged))
+            if (grapple.FreeHanging)
+            {
+                PhysBody.ApplyForce(PhysBody.mass * (accelFactorFreeHanging * FreeHangingMoveDirection()), grapple.FreeHangLeveragePoint);
+            }
+            else
             {
                 Vector2 d = flipInput && !grounded ? -OrientedGroundDirection : OrientedGroundDirection;
-                var spd = Vector2.Dot(rb.linearVelocity, d);
+                var spd = Vector2.Dot(PhysBody.linearVelocity, d);
                 var maxSpd = MaxSpeed;
                 var accFactor = grounded ? accelFactor : (thruster.Engaged ? thrustingAccelFactor : deadThrusterAccelFactor * Mathf.Clamp(1 - d.y, 0, 1));
 
                 var s = Mathf.Min(maxSpd - spd, accelCap * maxSpd);
                 if (grounded || s > 0)
                 {
-                    rb.AddForce(accFactor * s * rb.mass * d);
+                    PhysBody.ApplyForceToCenter(accFactor * s * PhysBody.mass * d);
                 }
-            }
-            else
-            {
-                //may add max speed and spring like acceleration?
-                rb.AddForceAtPosition(rb.mass * (accelFactorFreeHanging * FreeHangingMoveDirection()), grapple.FreeHangLeveragePoint);
             }
         }
         //apply grip and drag
         else if (grounded)
         {
             var d = OrientedRight;
-            var vel = Vector2.Dot(rb.linearVelocity, d);
-            var l = Vector2.Dot(groundAnchorPt - (Vector2)heightReferencePoint.position, d);
+            var vel = Vector2.Dot(PhysBody.linearVelocity, d);
+            var l = Vector2.Dot(groundAnchorPt - HeightReferencePt, d);
             var grip = gripStrength * l - gripDamping * vel;
-            rb.AddForce(rb.mass * grip * d);//grip to steep slope
+            PhysBody.ApplyForceToCenter(PhysBody.mass * grip * d);//grip to steep slope
         }
     }
 
@@ -510,7 +505,7 @@ public class SpiderMovementControl : MonoBehaviour
 
     private void Balance()
     {
-        var f = -(grounded ? balanceSpringDamping : airborneBalanceSpringDamping) * rb.angularVelocity;
+        var f = -(grounded ? balanceSpringDamping : airborneBalanceSpringDamping) * PhysBody.angularVelocity;
 
         if (!grapple.FreeHanging)
         {
@@ -518,7 +513,7 @@ public class SpiderMovementControl : MonoBehaviour
             f += a * (grounded ? balanceSpringForce : airborneBalanceSpringForce);
         }
 
-        rb.AddTorque(rb.mass * f);
+        PhysBody.ApplyTorque(PhysBody.mass * f);
     }
 
     private void RotateAbdomen(float dt)
@@ -591,7 +586,7 @@ public class SpiderMovementControl : MonoBehaviour
             {
                 return;
             }
-            var p = groundMap.TrueClosestPoint(headBoneHeightRefPoint.position, out var t, out _, out _);
+            var p = groundMap.TrueClosestPoint((Vector2)headBoneHeightRefPoint.position, out var t, out _, out _);
             var n = FacingRight ?
                 groundMap.AverageNormalFromCenter(t + headRotationMinPos, t + headRotationMaxPos)
                 : groundMap.AverageNormalFromCenter(t - headRotationMaxPos, t - headRotationMinPos);
@@ -630,7 +625,7 @@ public class SpiderMovementControl : MonoBehaviour
             groundednessRating = 0;
             SetGrounded(false);
             var jumpDir = JumpDirection();
-            rb.AddForce(rb.mass * JumpForce() * jumpDir, ForceMode2D.Impulse);
+            PhysBody.ApplyLinearImpulseToCenter(PhysBody.mass * JumpForce() * jumpDir);
             Jumped.Invoke();
         }
     }
@@ -639,14 +634,14 @@ public class SpiderMovementControl : MonoBehaviour
     {
         if (crouchProgress * crouchTime < tapJumpVerificationTime)
         {
-            return rb.gravityScale * jumpForce;
+            return jumpForce;
         }
-        return rb.gravityScale * (jumpForce + crouchProgress * jumpForceCrouchBoostRate);
+        return jumpForce + crouchProgress * jumpForceCrouchBoostRate;
     }
 
     private Vector2 JumpDirection()
     {
-        var u = AbdomenBoneUpInBaseLocalCoords();//quaternion version would compute a lot of extra trivial products (0 * x)
+        var u = AbdomenBoneUpInBaseLocalCoords();//quaternion version would compute a lot of extra trivial products
         return u.x * transform.right + u.y * transform.up;
     }
 
@@ -660,13 +655,13 @@ public class SpiderMovementControl : MonoBehaviour
 
     private void UpdateHeightSpring()
     {
-        var p = groundMap.AveragePointFromCenter(heightSampleMin, heightSampleMax);
+        Vector2 p = groundMap.AveragePointFromCenter(heightSampleMin, heightSampleMax);
         //^average point so that body sinks a little as it rounds a sharp peak (keeping leg extension natural)
         //--note you only want to do this when strongly grounded
 
         Vector2 down = -transform.up;
-        var v = Vector2.Dot(rb.linearVelocity, down);
-        var l = Vector2.Dot(p - (Vector2)heightReferencePoint.position, down) - preferredRideHeight;
+        var v = Vector2.Dot(PhysBody.linearVelocity, down);
+        var l = Vector2.Dot(p - HeightReferencePt, down) - preferredRideHeight;
         var f = l * heightSpringForce;
         if (grapple.GrappleAnchored)
         {
@@ -681,7 +676,7 @@ public class SpiderMovementControl : MonoBehaviour
             }
         }
 
-        rb.AddForce(rb.mass * (f - heightSpringDamping * v - Vector2.Dot(Physics2D.gravity, down)) * down);
+        PhysBody.ApplyForceToCenter(PhysBody.mass * (f - heightSpringDamping * v - Vector2.Dot(Physics2D.gravity, down)) * down);
         //remove affect of gravity while height spring engaged, otherwise you will settle at a height which is off by -Vector2.Dot(Physics2D.gravity, down) / heightSpringForce
         //(meaning you will be under height when upright, and over height when upside down (which was causing feet to not reach ground while upside down))
         //(e.g. before ride height on flat ground was always off by +- 32/400 = 0.08)
@@ -727,13 +722,14 @@ public class SpiderMovementControl : MonoBehaviour
     private void UpdateGroundData()
     {
         UpdateGroundMap();
-        var i = groundMap.IndexOfFirstGroundHitFromCenter(FacingRight, out var isCentralIndex);
-        ref var pt = ref groundMap.map[i];
-        var goalGroundDirection = pt.HitGround && isCentralIndex ?
+        var i = groundMap.IndexOfFirstGroundHitFromCenter;
+        bool isCentralIndex = i == groundMap.CentralIndex;
+        var pt = groundMap.MapPoint(i);
+        var goalGroundDirection = pt.hitGround && isCentralIndex ?
             groundMap.AverageNormalFromCenter(-groundDirectionSampleWidth, groundDirectionSampleWidth).CWPerp()
             : pt.normal.CWPerp();
 
-        groundDirection = grounded ? goalGroundDirection : Vector2.right;//MathTools.CheapRotationBySpeed(groundDirection, Vector2.right, failedGroundDirectionSmoothingRate, Time.deltaTime, out _);
+        groundDirection = grounded ? goalGroundDirection : Vector2.right;
 
         if (HorizontalMoveInput != 0 || !grounded || (grapple.GrappleAnchored && grapple.GrappleReleaseInput < 0))
         {
@@ -757,12 +753,12 @@ public class SpiderMovementControl : MonoBehaviour
 
         Vector2 GetGroundAnchorPoint(ref GroundMapPt pt, bool isCentralIndex)
         {
-            if (pt.HitGround && !isCentralIndex)
+            if (pt.hitGround && !isCentralIndex)
             {
-                var r = Physics2D.Raycast(heightReferencePoint.position, -pt.normal, backupGroundPtRaycastLengthFactor * groundmapRaycastLength, groundLayer);
-                if (r)
+                var castResult = PhysBody.world.CastRay(HeightReferencePt, -backupGroundPtRaycastLengthFactor * groundmapRaycastLength * pt.normal, spiderPhysics.queryFilter);
+                if (castResult.Length > 0)
                 {
-                    return r.point;
+                    return castResult[0].point;
                 }
             }
 
@@ -773,8 +769,8 @@ public class SpiderMovementControl : MonoBehaviour
     private bool GroundedCondition()
     {
         return ((!grapple.FreeHanging || grounded || legSynch.AnyGroundedLegsUnderextended(freeHangGroundedEntryLegExtensionThreshold))
-            && groundednessRating > 0) || IsTouchingGroundLayer(headCollider) || IsTouchingGroundLayer(abdomenCollider);
-        //keep the IsTouchingGroundLayer(coll) out of parentheses; these on their own automatically qualify you as grounded!
+            && groundednessRating > 0) || spiderPhysics.HasContact();
+        //keep the HasContact() out of parentheses; that on its own automatically qualifies you as grounded!
     }
 
     private void UpdateGroundednessRating()
@@ -786,27 +782,36 @@ public class SpiderMovementControl : MonoBehaviour
 
     private void UpdateGroundMap()
     {
-        groundMap.UpdateMap(heightReferencePoint.position,
+        groundMap.UpdateMap(PhysBody.world, spiderPhysics.queryFilter,
+            HeightReferencePt,
             -transform.up,
             transform.right,
             groundmapRaycastLength,
-            groundLayer);
+            FacingRight);
+        //groundMap.UpdateMap(PhysBody.world, spiderPhysics.queryFilter,
+        //    HeightReferencePt,
+        //    -transform.up,
+        //    transform.right,
+        //    groundmapRaycastLength,
+        //    FacingRight);
     }
 
-    //only used for releasing freeHang state, but we'll put it in this section I guess
-    private bool IsTouchingGroundLayer(Collider2D c)
+    private void InitializeGroundMap()
     {
-        c.GetContacts(bodyCollisionFilter, bodyCollisionBuffer);
-        var contact = bodyCollisionBuffer[0] && (1 << bodyCollisionBuffer[0].gameObject.layer & groundLayer) != 0;
-        bodyCollisionBuffer[0] = null;
-        return contact;
+        groundMap.Initialize();
+        UpdateGroundMap();
+        //groundMap.UpdateMapImmediate(PhysBody.world, spiderPhysics.queryFilter,
+        //    HeightReferencePt,
+        //    -transform.up,
+        //    transform.right,
+        //    groundmapRaycastLength,
+        //    FacingRight);
     }
 
     private void InitializeGroundData()
     {
         RecomputeGroundMapRaycastLength();
-        groundMap.Initialize();
-        UpdateGroundMap();
+        InitializeGroundMap();
         UpdateGroundednessRating();
         groundAnchorPt = groundMap.Center.point;
     }
@@ -831,9 +836,9 @@ public class SpiderMovementControl : MonoBehaviour
             : grapple.FreeHanging ? PhysicsLegSynchronizer.LegState.limp
             : PhysicsLegSynchronizer.LegState.freefall;
 
-        var v = GroundVelocity;
-        legSynch.bodyGroundSpeedSign = (grounded && grapple.GrappleAnchored) || grapple.FreeHanging ? 1 : Mathf.Sign(v);
-        legSynch.absoluteBodyGroundSpeed = grounded ? Mathf.Abs(v) : Mathf.Min(/*thruster.Engaged ? Mathf.Abs(v) :*/ rb.linearVelocity.magnitude, airborneLegSpeedMax);
+        var groundVelocity = Vector2.Dot(PhysBody.linearVelocity, OrientedGroundDirection);
+        legSynch.bodyGroundSpeedSign = (grounded && grapple.GrappleAnchored) || grapple.FreeHanging ? 1 : Mathf.Sign(groundVelocity);
+        legSynch.absoluteBodyGroundSpeed = grounded ? Mathf.Abs(groundVelocity) : Mathf.Min(PhysBody.linearVelocity.magnitude, airborneLegSpeedMax);
         legSynch.stepHeightFraction = 1 - crouchProgress * crouchHeightFraction;
         legSynch.timeScale = grounded || thruster.Engaged ? 1 : airborneLegAnimationTimeScale;
 

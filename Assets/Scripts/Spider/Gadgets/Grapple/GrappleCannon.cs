@@ -1,17 +1,21 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
+using Unity.U2D.Physics;
 
 public class GrappleCannon : MonoBehaviour
 {
-    [SerializeField] SpiderInput spiderInput;
-    [SerializeField] Rigidbody2D shooterRb;
+    public PhysicsBody spiderBody;
+    //[System.NonSerialized]public Transform spiderTransform;
+    [System.NonSerialized] public SpiderInput spiderInput;
+
+    //[SerializeField] SpiderInput spiderInput;
     [SerializeField] int numNodes;
     [SerializeField] float width;
     [SerializeField] float minNodeSpacing;
     [SerializeField] float maxNodeSpacing;
     [SerializeField] float drag;
     [SerializeField] float bounciness;
-    [SerializeField] LayerMask collisionMask;
+    [SerializeField] PhysicsMask collisionMask;
     [SerializeField] float collisionSearchRadius;
     [SerializeField] float tunnelEscapeRadius;
     [SerializeField] float minLength;
@@ -39,13 +43,13 @@ public class GrappleCannon : MonoBehaviour
     float shootTimer;
     Vector2 lastShootDirection;
 
-    Rope grapple;
+    BurstRope grapple;
 
     //float fixedDt;
     //float fixedDt2;
 
     int failCounter;
-
+    bool facingRight;
     bool freeHanging;
 
     public bool GrappleEnabled => grapple != null && grapple.Enabled;
@@ -53,8 +57,8 @@ public class GrappleCannon : MonoBehaviour
     public float GrappleReleaseInput => GrappleAnchored ? spiderInput.SecondaryInput.y : 0;
     public Vector2 LastCarryForce { get; private set; }
     public Vector2 LastCarryForceDirection { get; private set; }
-    public Vector2 GrappleExtent => GrappleTerminusPosition - SourcePosition;
-    public Vector2 GrappleTerminusPosition => grapple.position[^1];
+    public Vector2 GrappleExtent => grapple.GrappleExtent; //GrappleTerminusPosition - SourcePosition;
+    //public Vector2 GrappleTerminusPosition => grapple.position[^1];
     public bool PoweringUp => poweringUp;
     public float PowerUpFraction => shootSpeedPowerUp / shootSpeedPowerUpMax;
     public float ShootSpeed => (1 + shootSpeedPowerUp) * baseShootSpeed;
@@ -131,7 +135,7 @@ public class GrappleCannon : MonoBehaviour
             }
             else if (GrappleAnchored)
             {
-                if (grapple.CollisionIsFailing(breakThreshold))
+                if (grapple.CollisionIsFailing)
                 {
                     failCounter++;
                     if (failCounter > consecutiveFailuresBeforeBreaking)
@@ -155,7 +159,7 @@ public class GrappleCannon : MonoBehaviour
     {
         if (GrappleEnabled)
         {
-            UpdateAnchorPosition();
+            UpdateGrappleStartPosition();
             if (grapple.TerminusAnchored)
             {
                 grapple.SetTerminusToAnchorPosition();
@@ -171,7 +175,7 @@ public class GrappleCannon : MonoBehaviour
         if (GrappleEnabled)
         {
             UpdateGrappleLength();
-            UpdateAnchorPosition();
+            UpdateGrappleStartPosition();
             grapple.Update(Time.deltaTime, Time.deltaTime * Time.deltaTime);
             if (GrappleAnchored)
             {
@@ -187,155 +191,15 @@ public class GrappleCannon : MonoBehaviour
         }
     }
 
-    private Vector2 GrappleExtentFromFirstCollision(out int firstCollisionIndex)
+    private void OnDestroy()
     {
-        firstCollisionIndex = grapple.StartIndex + 1;
-        while (firstCollisionIndex < grapple.TerminusIndex && !grapple.nearCollision[firstCollisionIndex] /*!grapple.nearestCollider[firstCollisionIndex]*/)
-        {
-            firstCollisionIndex++;
-        }
-
-        return grapple.position[firstCollisionIndex] - SourcePosition;
+        grapple?.Dispose();
     }
 
-    public float Tension()
+    public void SetOrientation(bool facingRight)
     {
-        int nodesPerSeg = (int)Mathf.Ceil(tensionCalculationInterval / grapple.NodeSpacing);
-        float total = 0;
-        int i = grapple.StartIndex;
-        int j = grapple.StartIndex;
-        var d = nodesPerSeg * grapple.NodeSpacing;
-        while (i < grapple.TerminusIndex)
-        {
-            j += nodesPerSeg;
-            if (j > grapple.TerminusIndex)
-            {
-                j = grapple.TerminusIndex;
-                d = (j - i) * grapple.NodeSpacing;
-            }
-            total += (grapple.position[j] - grapple.position[i]).magnitude - d;
-            i = j;
-        }
-
-        return total;
-    }
-
-    public float Tension(int lastIndex, out float length)
-    {
-        int nodesPerSeg = (int)Mathf.Ceil(tensionCalculationInterval / grapple.NodeSpacing);
-        float total = 0;
-        int i = grapple.StartIndex;
-        int j = grapple.StartIndex;
-        var d = nodesPerSeg * grapple.NodeSpacing;
-        length = 0;
-        while (i < lastIndex)
-        {
-            j += nodesPerSeg;
-            if (j > lastIndex)
-            {
-                j = lastIndex;
-                d = (j - i) * grapple.NodeSpacing;
-            }
-            length += d;
-            total += (grapple.position[j] - grapple.position[i]).magnitude - d;
-            i = j;
-        }
-
-        return total;
-    }
-
-    public float StrictTension()
-    {
-        int nodesPerSeg = (int)Mathf.Ceil(tensionCalculationInterval / grapple.NodeSpacing);
-        float total = 0;
-        int i = grapple.StartIndex;
-        int j = grapple.StartIndex;
-        var d = nodesPerSeg * grapple.NodeSpacing;
-        while (i < grapple.TerminusIndex)
-        {
-            j += nodesPerSeg;
-            if (j > grapple.TerminusIndex)
-            {
-                j = grapple.TerminusIndex;
-                d = (j - i) * grapple.NodeSpacing;
-            }
-            total += (grapple.position[j] - grapple.position[i]).magnitude - d;
-            if (total < 0)
-            {
-                return total;
-            }
-            i = j;
-        }
-
-        return total;
-    }
-
-    public float StrictTension(int lastIndex, float slackThreshold, out float length)
-    {
-        int nodesPerSeg = (int)Mathf.Ceil(tensionCalculationInterval / grapple.NodeSpacing);
-        float total = 0;
-        int i = grapple.StartIndex;
-        int j = grapple.StartIndex;
-        var d = nodesPerSeg * grapple.NodeSpacing;
-        length = 0;
-        while (i < lastIndex)
-        {
-            j += nodesPerSeg;
-            if (j > lastIndex)
-            {
-                j = lastIndex;
-                d = (j - i) * grapple.NodeSpacing;
-            }
-
-            //can't get reliable tension around corners -- works better if you just ignore them
-            if (grapple.nearCollision[i] && grapple.nearCollision[j]/*grapple.nearestCollider[i] && grapple.nearestCollider[j]*/)
-            {
-                i = j;
-                continue;
-            }
-            
-            var err = (grapple.position[j] - grapple.position[i]).magnitude - d;
-            if (err > -slackThreshold * d)
-            {
-                total += err;
-                length += d;
-            }
-            else
-            {
-                return 0;
-            }
-
-            i = j;
-        }
-
-        return total;
-    }
-
-    public float MaxTension()
-    {
-        float max = -Mathf.Infinity;
-        for (int i = grapple.StartIndex + 1; i < grapple.position.Length; i++)
-        {
-            var t = (grapple.position[i] - grapple.position[i - 1]).magnitude - grapple.NodeSpacing;
-            if (t > max)
-            {
-                max = t;
-            }
-        }
-
-        return max;
-    }
-
-    public float NormalizedTension() => Tension() / grapple.Length;
-    public float NormalizedTension(int lastIndex) => Tension(lastIndex, out var length) / length;
-
-    public float NormalizedStrictTension() => StrictTension() / grapple.Length;
-    public float NormalizedStrictTension(int lastIndex, float threshold) 
-        => StrictTension(lastIndex, threshold, out var length) / (length == 0 ? 1 : length);
-
-    public void SetRendererOrientation()
-    {
-        grappleRenderer.SetOrientation();
+        this.facingRight = facingRight;
+        grappleRenderer.SetOrientation(facingRight);
     }
 
     //FIXED UPDATE FUNCTIONS
@@ -348,23 +212,23 @@ public class GrappleCannon : MonoBehaviour
         }
         else
         {
-            cannonFulcrum.UpdateKinematic(Time.deltaTime, aimInput, shooterRb.transform);
+            cannonFulcrum.UpdateKinematic(Time.deltaTime, aimInput, spiderBody.transform, facingRight);
         }
     }
 
-    private void UpdateAnchorPosition()
+    private void UpdateGrappleStartPosition()
     {
-        grapple.SetAnchorPosition(SourcePosition);
+        grapple.SetStartPosition(SourcePosition);
     }
 
     private void UpdateCarrySpring()
     {
-        LastCarryForceDirection = GrappleExtentFromFirstCollision(out _).normalized;
-        var t = NormalizedStrictTension(grapple.TerminusIndex, carryTensionSlackThreshold);
+        LastCarryForceDirection = grapple.CarryForceDirection;//GrappleExtentFromFirstCollision(out _).normalized;
+        var t = grapple.CarryForceMagnitude;//NormalizedStrictTension(grapple.TerminusIndex, carryTensionSlackThreshold);
         if (t > 0)
         {
             LastCarryForce = carrySpringForce * Mathf.Min(t, carryTensionMax) * LastCarryForceDirection;
-            cannonFulcrum.ApplyForce(LastCarryForce, LastCarryForceDirection, shooterRb, FreeHanging);
+            cannonFulcrum.ApplyForce(LastCarryForce, LastCarryForceDirection, spiderBody, FreeHanging);
         }
         else
         {
@@ -376,7 +240,7 @@ public class GrappleCannon : MonoBehaviour
     {
         if (GrappleAnchored)
         {
-            if (GrappleReleaseInput < 0 && MaxTension() > retractMaxTension)
+            if (GrappleReleaseInput < 0 && grapple.MaxTension > retractMaxTension)
             {
                 return;
             }
@@ -409,22 +273,24 @@ public class GrappleCannon : MonoBehaviour
     {
         if (grapple == null)
         {
-            grapple = new Rope(SourcePosition, width, minLength, numNodes, minNodeSpacing, maxNodeSpacing,
-                1, grappleMass, drag, collisionMask, collisionSearchRadius, tunnelEscapeRadius, bounciness, constraintIterations, dynamicAnchorPullForce);
+            grapple = new BurstRope(SourcePosition, width, minLength, numNodes, minNodeSpacing, maxNodeSpacing,
+                1, grappleMass, drag, collisionMask, collisionSearchRadius, tunnelEscapeRadius, bounciness, constraintIterations, dynamicAnchorPullForce,
+                breakThreshold, carryTensionSlackThreshold, tensionCalculationInterval,
+                GrappleBecameAnchored);
         }
         else
         {
             UpdateGrappleSettings();
             grapple.Respawn(SourcePosition, minLength, numNodes);
         }
-        
+
         var shootSpeed = ShootSpeed;
         lastShootDirection = ShootDirection;
         Vector2 shootVelocity = shootSpeed * lastShootDirection;
-        grapple.lastPosition[^1] -= Time.deltaTime * shootVelocity;
+        grapple.Shoot(shootVelocity, Time.deltaTime);
         shootTimer = -minLength / shootSpeed;
         grappleRenderer.OnRopeSpawned(grapple);
-        
+
         grapple.TerminusBecameAnchored = GrappleBecameAnchored;
         GrappleShot.Invoke();
     }
@@ -438,13 +304,15 @@ public class GrappleCannon : MonoBehaviour
         grapple.drag = drag;
         grapple.terminusMass = grappleMass;
         grapple.constraintIterations = constraintIterations;
-        grapple.collisionMask = collisionMask;
+        grapple.SetCollisionMask(collisionMask);
         grapple.collisionSearchRadius = collisionSearchRadius;
         grapple.tunnelEscapeRadius = tunnelEscapeRadius;
         grapple.collisionThreshold = 0.5f * width;
         grapple.collisionBounciness = bounciness;
         grapple.dynamicAnchorPullForce = dynamicAnchorPullForce;
-        grapple.SetLength(grapple.Length);//to rescale based on possibly new min/max node spacing
+        grapple.breakThreshold = breakThreshold;
+        grapple.carryForceSlackThreshold = carryTensionSlackThreshold;
+        grapple.carryForceInterval = tensionCalculationInterval;
     }
 
     private void DestroyGrapple()

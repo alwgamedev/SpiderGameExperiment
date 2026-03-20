@@ -8,7 +8,7 @@ public class GrappleShootPreview : MonoBehaviour
     [SerializeField] float velocitySmoothingRate;
     [SerializeField] LayerMask terminationMask;
 
-    SpiderMovementControl player;
+    SpiderMover player;
     GrappleCannon grapple;
     Vector3[] positions;
     Vector3 lastShootPosition;
@@ -24,7 +24,7 @@ public class GrappleShootPreview : MonoBehaviour
 
     private void Start()
     {
-        player = Spider.Player.MovementControl;
+        player = Spider.Player.Mover;
         grapple = player.Grapple;
         positions = new Vector3[lineRenderer.positionCount];
         lineRenderer.enabled = false;

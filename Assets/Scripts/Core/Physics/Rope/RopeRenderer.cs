@@ -2,7 +2,7 @@
 
 public class RopeRenderer : MonoBehaviour
 {
-    [SerializeField] Transform spider;
+    //[SerializeField] Transform spider;
     [Min(2)][SerializeField] int endCapTriangles;
     [SerializeField] float taperLength;//measured in number of rope segments, just to keep things simple
     [SerializeField] float taperBaseScale;
@@ -13,7 +13,6 @@ public class RopeRenderer : MonoBehaviour
     Material material;
 
     Vector4[] nodePositions;
-
     int positionsProperty;
 
     private void Awake()
@@ -30,22 +29,17 @@ public class RopeRenderer : MonoBehaviour
         meshRenderer.enabled = false;
     }
 
-    public void OnRopeSpawned(Rope rope)
+    public void OnRopeSpawned(BurstRope rope)
     {
-        if (nodePositions == null || nodePositions.Length != rope.position.Length)
+        if (nodePositions == null || nodePositions.Length != rope.NumNodes)
         {
-            nodePositions = new Vector4[rope.position.Length];
+            nodePositions = new Vector4[rope.NumNodes];
             CreateMesh(nodePositions.Length);
         }
         meshRenderer.enabled = true;
-        SetRenderWidth(rope);
-        SetOrientation();
-        UpdateRenderPositions(rope);
-    }
-
-    public void SetRenderWidth(Rope rope)
-    {
         SetRenderWidth(rope.width);
+        //SetOrientation();
+        rope.SetRenderPositions(nodePositions, taperBaseScale, taperLength);
     }
 
     public void SetRenderWidth(float ropeWidth)
@@ -53,9 +47,9 @@ public class RopeRenderer : MonoBehaviour
         material.SetFloat("_HalfWidth", 0.5f * ropeWidth);
     }
 
-    public void SetOrientation()
+    public void SetOrientation(bool facingRight)
     {
-        material.SetFloat("_Orientation", spider.transform.localScale.x);
+        material.SetFloat("_Orientation", facingRight ? 1 : -1);
     }
 
     public void OnRopeDestroyed()
@@ -63,18 +57,9 @@ public class RopeRenderer : MonoBehaviour
         meshRenderer.enabled = false;
     }
 
-    public void UpdateRenderPositions(Rope rope)
+    public void UpdateRenderPositions(BurstRope rope)
     {
-        float taperMult = taperBaseScale;
-        var taperRate = (1 - taperBaseScale) / taperLength;
-        for (int i = 0; i < nodePositions.Length; i++)
-        {
-            if (taperMult < 1 && i > rope.StartIndex)
-            {
-                taperMult += Mathf.Min(taperRate * Vector2.Distance(nodePositions[i - 1], nodePositions[i]), 1);
-            }
-            nodePositions[i] = new(rope.position[i].x, rope.position[i].y, taperMult, 0);
-        }
+        rope.SetRenderPositions(nodePositions, taperBaseScale, taperLength);
         material.SetVectorArray(positionsProperty, nodePositions);
     }
 

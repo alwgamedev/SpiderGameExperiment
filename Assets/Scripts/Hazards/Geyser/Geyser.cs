@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Geyser : MonoBehaviour
 {
@@ -37,7 +38,7 @@ public class Geyser : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.P))
+        if (Keyboard.current.pKey.isPressed/*Input.GetKeyDown(KeyCode.P)*/)
         {
             stateTransitionRequested = true;
             //will be processed after any ongoing transition completes (so e.g. if in the middle of erupt, wait until that completes then dissolve)

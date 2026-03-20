@@ -28,7 +28,7 @@ public class Rope
     Collider2D terminusAnchor;
     Vector2 terminusAnchorLocalPos;
 
-    enum TerminusAnchorMode
+    public enum TerminusAnchorMode
     {
         notAnchored, staticAnchor, dynamicAnchor
     }
@@ -162,7 +162,7 @@ public class Rope
         Rescale();
     }
 
-    public void SetAnchorPosition(Vector2 position)
+    public void SetStartPosition(Vector2 position)
     {
         for (int i = 0; i < startIndex + 1; i++)
         {
@@ -358,7 +358,6 @@ public class Rope
                 //RELIABLE COLLISION IS THE #1 PRIORITY!
                 //constraints pulling nodes through obstacles was the biggest problem with collision,
                 //and it's much, MUCH better when you resolve collisions immediately after each constraint
-                ResolveCollision(i - 2);
                 ResolveCollision(i - 1);
                 ResolveCollision(i);
             }
@@ -628,7 +627,7 @@ public class Rope
 
         if (r)
         {
-            HandlePotentialCollision(i, r.collider, r.distance, r.normal, tunneling ? tunnelEscapeRadius : collisionThreshold, collisionBounciness);
+            HandlePotentialCollision(i, r.distance, r.normal, tunneling ? tunnelEscapeRadius : collisionThreshold, collisionBounciness);
         }
         else
         {
@@ -637,7 +636,7 @@ public class Rope
         }
     }
 
-    private void HandlePotentialCollision(int i, Collider2D collider, float distance, Vector2 normal, float collisionThreshold, float collisionBounciness)
+    private void HandlePotentialCollision(int i, float distance, Vector2 normal, float collisionThreshold, float collisionBounciness)
     {
         if (distance != 0)
         {

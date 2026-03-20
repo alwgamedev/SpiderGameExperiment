@@ -74,7 +74,6 @@ public class PBFluid : MonoBehaviour
     int numObstacles;
 
     ComputeBuffer obstacleDisplacement;
-    //bool displacementReadbackInProgress;
     AsyncGPUReadbackRequest displacementReadbackRequest;
     NativeArray<int> obstacleDisplacementNA;
     PBFDynamicObstacle[] obstacleSnapshot;//snapshots taken when we send a readback request (so we have the correct collider lookup to go with the displacements)
@@ -201,7 +200,7 @@ public class PBFluid : MonoBehaviour
         densityTexture = new(densityTexSettings.texWidth, densityTexSettings.texHeight, 0)
         {
             graphicsFormat = UnityEngine.Experimental.Rendering.GraphicsFormat.R16G16B16A16_SFloat,
-            dimension = UnityEngine.Rendering.TextureDimension.Tex2D,
+            dimension = TextureDimension.Tex2D,
             enableRandomWrite = true
         };
 

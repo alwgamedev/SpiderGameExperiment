@@ -3,7 +3,7 @@
 public class Spider : MonoBehaviour
 {
     public Health Health { get; private set; }
-    public SpiderMovementControl MovementControl { get; private set; }
+    public SpiderMover Mover { get; private set; }
     public Collider2D TriggerCollider { get; private set; }
 
     public static Spider Player { get; private set; }
@@ -11,7 +11,7 @@ public class Spider : MonoBehaviour
     private void Awake()
     {
         Health = GetComponent<Health>();
-        MovementControl = GetComponent<SpiderMovementControl>();
+        Mover = GetComponent<SpiderMover>();
         TriggerCollider = GetComponent<Collider2D>();
         Player = this;
     }

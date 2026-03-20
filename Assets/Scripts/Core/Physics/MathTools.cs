@@ -1,3 +1,4 @@
+using Unity.Mathematics;
 using UnityEngine;
 
 public static class MathTools
@@ -155,12 +156,22 @@ public static class MathTools
 
     public static Vector2 CCWPerp(this Vector2 v)
     {
-        return new Vector2(-v.y, v.x);
+        return new(-v.y, v.x);
     }
 
     public static Vector2 CWPerp(this Vector2 v)
     {
-        return new Vector2(v.y, -v.x);
+        return new(v.y, -v.x);
+    }
+
+    public static float2 CCWPerp(this float2 v)
+    {
+        return new(-v.y, v.x);
+    }
+
+    public static float2 CWPerp(this float2 v)
+    {
+        return new(v.y, -v.x);
     }
     
     //when v1, v2 are unit vectors, this equals the sine of the CCW angle from v1 to v2 (being dot(v1, v2.CWPerp()) = cos(theta-90))

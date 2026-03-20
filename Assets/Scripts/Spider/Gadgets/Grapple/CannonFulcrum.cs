@@ -1,4 +1,5 @@
 ﻿using System;
+using Unity.U2D.Physics;
 using UnityEngine;
 
 [Serializable]
@@ -50,14 +51,15 @@ public class CannonFulcrum
     }
 
     //aimInput > 0 is clockwise
-    public void UpdateKinematic(float dt, float aimInput, Transform shooterTransform)
+    public void UpdateKinematic(float dt, float aimInput, PhysicsTransform shooterTransform, bool facingRight)
     {
         if (aimInput != 0)
         {
             kinematicRotation = Mathf.Clamp(kinematicRotation - aimInput * kinematicRotationSpeed * dt, kinematicRotationMin, kinematicRotationMax);
         }
         var a = kinematicRotation0 + kinematicRotation;
-        var g = Mathf.Cos(a) * shooterTransform.right + (shooterTransform.localScale.x > 0 ? Mathf.Sin(a) : -Mathf.Sin(a)) * shooterTransform.transform.up;
+        var right = shooterTransform.rotation.direction;
+        var g = Mathf.Cos(a) * right + Mathf.Sin(a) * (facingRight ? right.CCWPerp() : right.CWPerp());
         lever.ApplyCheapRotationalLerpClamped(g, kinematicRotationCatchUpMultiplier * kinematicRotationSpeed * dt, out var changed);
         if (changed)
         {
@@ -65,21 +67,21 @@ public class CannonFulcrum
         }
     }
 
-    public void ApplyForce(Vector2 force, Vector2 forceDirection, Rigidbody2D shooterRb, bool freeHanging)
+    public void ApplyForce(Vector2 force, Vector2 forceDirection, PhysicsBody shooterBody, bool freeHanging)
     {
         Vector2 u = LeverDirection;
         var fNormal = floppiness * Vector2.Dot(force, u.CCWPerp());
-        angularAcceleration += inverseLeverLength * fNormal / shooterRb.mass;
+        angularAcceleration += inverseLeverLength * fNormal / shooterBody.mass;
         //^yes, dividing by leverLength is correct (as checked by computing theta'' from theta = arctan(y/x)) -- we're dealing with accelerations instead of force/torque
         if (freeHanging)
         {
-            shooterRb.AddForceAtPosition(force - fNormal * u - 
-                shooterRb.mass * linearDamping * Vector2.Dot(shooterRb.linearVelocity, forceDirection) * forceDirection, baseAnchor.position);
+            shooterBody.ApplyForce(force - fNormal * u - 
+                shooterBody.mass * linearDamping * Vector2.Dot(shooterBody.linearVelocity, forceDirection) * forceDirection, baseAnchor.position);
         }
         else
         {
-            shooterRb.AddForce(force - fNormal * u - 
-                shooterRb.mass * linearDamping * Vector2.Dot(shooterRb.linearVelocity, forceDirection) * forceDirection);
+            shooterBody.ApplyForceToCenter(force - fNormal * u - 
+                shooterBody.mass * linearDamping * Vector2.Dot(shooterBody.linearVelocity, forceDirection) * forceDirection);
         }
     }
 

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class FLIPFluidManager : MonoBehaviour
 {
@@ -69,9 +70,10 @@ public class FLIPFluidManager : MonoBehaviour
 
     private void Update()
     {
-        if (simulator != null && Input.GetKey(KeyCode.Mouse0))
+        if (simulator != null && Mouse.current.leftButton.isPressed/* Input.GetKey(KeyCode.Mouse0)*/)
         {
-            var p = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+            var p = Mouse.current.position.value;
+            p = Camera.main.ScreenToWorldPoint(new Vector3(p.x, p.y, 100)) - transform.position;
             if (p.x > 0 && p.x < simulator.worldWidth && p.y > 0 && p.y < simulator.worldHeight)
             {
                 var n = (int)Mathf.Ceil(spawnRate * Time.deltaTime);

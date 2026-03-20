@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
+
 [Serializable]
 public class Thruster
 {
@@ -27,6 +28,43 @@ public class Thruster
         Charge = 1;
         drainPerUpdate = (1 / secondsToDrain) * Time.fixedDeltaTime;
         rechargePerUpdate = (1 / secondsToRecharge) * Time.fixedDeltaTime;
+    }
+
+    public ThrustersUpdateResult FixedUpdate(ref Unity.U2D.Physics.PhysicsBody pb)
+    {
+        if (Engaged)
+        {
+            Charge -= drainPerUpdate;
+            if (!(pb.linearVelocity.y > 0))
+            {
+                pb.ApplyForceToCenter(-gravityReduction * pb.mass * Physics2D.gravity);
+            }
+            if (Charge <= 0)
+            {
+                Charge = 0;
+                Disengage();
+                return ThrustersUpdateResult.ChargeRanOut;
+            }
+            return ThrustersUpdateResult.None;
+        }
+        else if (Charge < 1)
+        {
+            Charge += rechargePerUpdate;
+            if (Charge > 1)
+            {
+                Charge = 1;
+            }
+            if (Cooldown && Charge > rechargeThreshold)
+            //use > rechargeThreshold so that we can set rechargeThreshold = 0;(if we end up doing that tho, we can get rid of cooldown)
+            //but I think we want a (small) positive threshold, otherwise you basically never run out of charge (well when at zero charge you alternate on and off every update)
+            {
+                Cooldown = false;
+                return ThrustersUpdateResult.CooldownEnded;
+            }
+            return ThrustersUpdateResult.None;
+        }
+
+        return ThrustersUpdateResult.None;
     }
 
     public ThrustersUpdateResult FixedUpdate(Rigidbody2D rb)

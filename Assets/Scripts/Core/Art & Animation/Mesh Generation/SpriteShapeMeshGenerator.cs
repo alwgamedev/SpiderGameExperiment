@@ -10,9 +10,8 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
 
     [SerializeField] SpriteShapeController spriteShapeController;
     [SerializeField] MeshFilter meshFilter;
-    [SerializeField] PolygonCollider2D polygonCollider;
     [SerializeField] int arcLengthSamples;
-    [SerializeField] float splineSampleRate;//number of sample points per unit of distance between sprite shape vertices
+    [SerializeField] float splineSampleRate;//number of sample points per unit arc length
 
     [Header("Refinement Settings")]
     [SerializeField] float minAngleRad;
@@ -27,44 +26,19 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
     [SerializeField] int geomSmoothingIterations;
     [SerializeField] float geomSmoothingRate;
 
-    public void GenerateMesh(bool updateCollider)
+    [Header("Perimeter")]
+    [SerializeField] Vector2[] perimeter;
+    [SerializeField] bool drawPerimeterGizmo;
+
+    public ReadOnlySpan<Vector2> GetPerimeter() => perimeter;
+
+    public void GenerateMesh()
     {
         var spline = spriteShapeController.spline;
 
         //VERTICES
 
-        var vertices = new List<Vector3>();//use list bc we don't know how many vertices yet, since we're subdividing sprite shape vertices
-
-        var numPoints = spline.GetPointCount();
-        for (int i = 0; i < numPoints; i++)
-        {
-            var i1 = (i + 1) % numPoints;
-            var p = spline.GetPosition(i);//already local position
-            var pRightTangent = p + spline.GetRightTangent(i);
-            var q = spline.GetPosition(i1);
-            var qLeftTangent = q + spline.GetLeftTangent(i1);
-
-            var arcLength = 0f;
-            var p0 = p;
-            for (int j = 1; j < arcLengthSamples + 1; j++)
-            {
-                var p1 = BezierUtility.BezierPoint(pRightTangent, p, q, qLeftTangent, (float)j / arcLengthSamples);
-                arcLength += Vector2.Distance(p0, p1);
-                p0 = p1;
-            }
-
-            int numSubPoints = (int)Mathf.Ceil(arcLength * splineSampleRate);
-
-            for (int j = 0; j < numSubPoints; j++)
-            {
-                var s = (float)j / numSubPoints;
-                var pj = BezierUtility.BezierPoint(pRightTangent, p, q, qLeftTangent, s);
-                pj = spriteShapeController.transform.TransformPoint(pj);
-                pj += transform.position - spriteShapeController.transform.position;
-                pj = transform.InverseTransformPoint(pj);
-                vertices.Add(pj);
-            }
-        }
+        var vertices = SplineSampler.SampleSpline(spline, arcLengthSamples, splineSampleRate).ToList();
 
         //TRIANGLES
 
@@ -113,8 +87,8 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             //Debug.DrawLine(transform.TransformPoint(vertices[e.Item1]), transform.TransformPoint(vertices[e.Item2]), color, 60);
         }
 
-        var uv1 = GenerateUV1(vertices, refinedPolygon, polygonVertices, neighbors, borderWidth);
-        var uv2 = GenerateUV2(vertices, refinedPolygon, polygonVertices);
+        var uv1 = GenerateUV1(vertices, polygonVertices, neighbors, borderWidth);
+        var uv2 = GenerateUV2(vertices, refinedPolygon);
         SpreadGeomData(uv2, neighbors, geomSpreadIterations, highlightSpreadRate, shadowSpreadRate);
         SmoothData(uv2, neighbors, geomSmoothingIterations, geomSmoothingRate);
 
@@ -127,11 +101,13 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         mesh.SetUVs(2, uv2);
         mesh.RecalculateNormals();
 
-        if (updateCollider && polygonCollider)
-        {
-            polygonCollider.points = refinedPolygon.Select(e => (Vector2)vertices[e.Item1]).ToArray();
-        }
+        //if (updateCollider && polygonCollider)
+        //{
+        //    polygonCollider.points = refinedPolygon.Select(e => (Vector2)vertices[e.Item1]).ToArray();
+        //}
+        perimeter = refinedPolygon.Select(e => (Vector2)vertices[e.Item1]).ToArray();
     }
+    
 
     public void ApplyMesh()
     {
@@ -143,7 +119,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
 
     //uv1.x = "neighbor density" (sum over neighbors of 1 / distance)
     //uv1.y = distance to border
-    private Vector2[] GenerateUV1(IList<Vector3> vertices, IList<(int, int)> polygon, HashSet<int> polygonVertices, List<int>[] neighbors, float borderWidth)
+    private Vector2[] GenerateUV1(IList<Vector3> vertices, HashSet<int> polygonVertices, List<int>[] neighbors, float borderWidth)
     {
         var uv1 = new Vector2[vertices.Count];
         HashSet<int> seen = new();
@@ -211,7 +187,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
     //uv2.x = convexity wrt polygon interior (-1 = concave in toward interior, 1 = convex)    
     //uv2.y = top-side highlight/underside shadow (-1 = shadow, 1 = highlight)
     //we'll start with border vertices, then spread to neighbors within certain distance
-    private Vector2[] GenerateUV2(IList<Vector3> vertices, IList<(int, int)> polygon, HashSet<int> polygonVertices)
+    private Vector2[] GenerateUV2(IList<Vector3> vertices, IList<(int, int)> polygon)
     {
         //polygon is CW oriented (sprite shape spline  always cw oriented)
 
@@ -241,9 +217,6 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         return uv2;
     }
 
-    //rewrite to smooth only from vertices have values above a threshold
-    //and only to neighbors within a certain distance
-    //(and you may want to use a copy of the data for checking the thresholds, so it always checks the starting values)
     private void SmoothData(Vector2[] data, List<int>[] neighbors, int smoothingIterations, float smoothingWeight)
     {
         var dataCopy = new Vector2[data.Length];
@@ -301,6 +274,19 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
                 Debug.Log($"Finished spread after {i} iterations");
                 break;
             }
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (drawPerimeterGizmo && perimeter != null && perimeter.Length > 0)
+        {
+            Gizmos.color = Color.blue;
+            for (int i = 0; i < perimeter.Length - 1; i++)
+            {
+                Gizmos.DrawLine(transform.TransformPoint(perimeter[i]), transform.TransformPoint(perimeter[i + 1]));
+            }
+            Gizmos.DrawLine(transform.TransformPoint(perimeter[^1]), transform.TransformPoint(perimeter[0]));//this is why we check length > 0 (just avoid one more annoying error in the editor)
         }
     }
 }

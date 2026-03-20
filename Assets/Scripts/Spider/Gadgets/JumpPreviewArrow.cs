@@ -12,7 +12,7 @@ public class JumpPreviewArrow : MonoBehaviour
     [SerializeField] Color colorMax0;//max = crouchProgress == 1
     [SerializeField] Color colorMax1;
 
-    SpiderMovementControl player;
+    SpiderMover player;
     Transform arrowHeadAnchor;
     Material neckMaterial;
 
@@ -24,7 +24,7 @@ public class JumpPreviewArrow : MonoBehaviour
 
     private void Start()
     {
-        player = Spider.Player.MovementControl;
+        player = Spider.Player.Mover;
 
         arrowHeadAnchor = new GameObject("Arrow Head Anchor").transform;
         arrowHeadAnchor.position = new(arrowNeck.bounds.center.x, arrowNeck.bounds.max.y, 0);//need to make sure it's right on the edge of bounding box, otherwise scales poorly
