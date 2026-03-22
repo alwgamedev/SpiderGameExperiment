@@ -1,15 +1,14 @@
 ﻿using UnityEngine;
-//using UnityEngine.Events;
 using System.Collections.Generic;
 
-public static class MiscTools
+public static partial class MiscTools
 {
-    public static GameObjectPathComparer GOPathComparer = new();
-
     public static int Stride<T>()
     {
         return System.Runtime.InteropServices.Marshal.SizeOf<T>();
     }
+
+    public static GameObjectPathComparer GOPathComparer = new();
 
     public static int ComponentPathCompare(Component x, Component y)
     {

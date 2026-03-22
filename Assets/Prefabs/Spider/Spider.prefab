@@ -1537,11 +1537,6 @@ MonoBehaviour:
   collisionResponse: 1000
   maxExtensionFraction: 0.95
   maxAngularVelocity: 30
-  bodyGroundSpeedSign: 0
-  absoluteBodyGroundSpeed: 0
-  timeScale: 0
-  stepHeightFraction: 0
-  strideMultiplier: 0
 --- !u!114 &8477651183600270903
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1619,22 +1614,17 @@ MonoBehaviour:
   headBone: {fileID: 1544918830229533694}
   headBoneHeightRefPoint: {fileID: 3597460655033676372}
   grapple: {fileID: 355219833064382220}
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 64
   groundedExitToleranceFactor: 1.35
   groundedEntryToleranceFactor: 0.9
   groundednessSmoothingRate: 2.5
   groundednessInitialContactValue: 1
   groundDirectionSampleWidth: 0.5
   backupGroundPtRaycastLengthFactor: 1.1
-  failedGroundDirectionSmoothingRate: 45
   groundMap:
-    numFwdIntervals: 30
-    intervalWidth: 0.1
-    map: []
+    numFwdIntervals: 40
+    intervalWidth: 0.06
   accelFactor: 40
-  accelFactorFreeHanging: 15.5
+  accelFactorFreeHanging: 14
   deadThrusterAccelFactor: 4
   thrustingAccelFactor: 60
   accelCap: 10
@@ -1758,13 +1748,13 @@ MonoBehaviour:
     headBone: {fileID: 1544918830229533694}
     headBoneEndpt: {fileID: 751872102488819706}
     heightReferencePoint: {fileID: 8270157252145170821}
-  JumpChargeBegan:
+  jumpChargeBegan:
     m_PersistentCalls:
       m_Calls: []
-  JumpChargeEnded:
+  jumpChargeEnded:
     m_PersistentCalls:
       m_Calls: []
-  Jumped:
+  jumped:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2290889871136229131}
@@ -1779,7 +1769,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  ThrustersEngaged:
+  thrustersEngaged:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 5023897089517341320}
@@ -1794,7 +1784,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  ThrustersDisengaged:
+  thrustersDisengaged:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 5023897089517341320}
@@ -5797,7 +5787,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d72f96512435c2342be1b064f572c593, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spider: {fileID: 9149063515827151626}
   endCapTriangles: 12
   taperLength: 0.2
   taperBaseScale: 0.6
@@ -10677,7 +10666,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: numNodes
-      value: 101
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: m_Enabled
@@ -10689,7 +10678,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: minLength
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: shooterRb
@@ -10733,7 +10722,7 @@ PrefabInstance:
       objectReference: {fileID: 5333562299232230829}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: carrySpringForce
-      value: 625
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: retractMaxTension
@@ -10746,6 +10735,10 @@ PrefabInstance:
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: constraintIterations
       value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: grappleSettings.drag
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: collisionSearchRadius
@@ -10764,6 +10757,10 @@ PrefabInstance:
       value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: grappleSettings.nodeMass
+      value: 0.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: nodesPerRendererPosition
       value: 1
       objectReference: {fileID: 0}
@@ -10777,11 +10774,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: cannonFulcrum.linearDamping
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: cannonFulcrum.angularDamping
       value: 1.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: grappleSettings.terminusMass
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: grappleSettings.maxNodeSpacing
+      value: 0.155
+      objectReference: {fileID: 0}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: grappleSettings.minNodeSpacing
+      value: 0.145
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: consecutiveFailuresBeforeBreaking
@@ -10792,8 +10801,16 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: grappleSettings.constraintIterations
+      value: 35
+      objectReference: {fileID: 0}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: constraintIterationsPerCollisionCheck
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
+      propertyPath: grappleSettings.carryForceSlackThreshold
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: GrappleShot.m_PersistentCalls.m_Calls.Array.size
@@ -10961,7 +10978,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7337905512642426967, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8656116072042997637, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: m_LocalPosition.x

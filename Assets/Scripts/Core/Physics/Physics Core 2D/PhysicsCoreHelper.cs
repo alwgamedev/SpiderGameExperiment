@@ -22,6 +22,12 @@ public static class PhysicsCoreHelper
 
     //PHYSICS BODIES
 
+    public static void SyncTransform(this PhysicsBody body)
+    {
+        body.GetPositionAndRotation3D(body.transformObject, body.world.transformWriteMode, body.world.transformPlane, out var p, out var q);
+        body.transformObject.SetPositionAndRotation(p, q);
+    }
+
     //don't set things like position, velocity, etc.
     public static void SetBodyDefLive(this PhysicsBody body, PhysicsBodyDefinition bodyDef)
     {

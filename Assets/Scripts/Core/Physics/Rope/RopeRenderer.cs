@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unity.Mathematics;
+using UnityEngine;
 
 public class RopeRenderer : MonoBehaviour
 {
@@ -29,7 +30,7 @@ public class RopeRenderer : MonoBehaviour
         meshRenderer.enabled = false;
     }
 
-    public void OnRopeSpawned(BurstRope rope)
+    public void OnRopeSpawned(FastRope rope, float2 sourcePosition)
     {
         if (nodePositions == null || nodePositions.Length != rope.NumNodes)
         {
@@ -37,9 +38,8 @@ public class RopeRenderer : MonoBehaviour
             CreateMesh(nodePositions.Length);
         }
         meshRenderer.enabled = true;
-        SetRenderWidth(rope.width);
-        //SetOrientation();
-        rope.SetRenderPositions(nodePositions, taperBaseScale, taperLength);
+        SetRenderWidth(rope.settings.width);
+        rope.SetRenderPositions(nodePositions, sourcePosition, taperBaseScale, taperLength);
     }
 
     public void SetRenderWidth(float ropeWidth)
@@ -57,9 +57,9 @@ public class RopeRenderer : MonoBehaviour
         meshRenderer.enabled = false;
     }
 
-    public void UpdateRenderPositions(BurstRope rope)
+    public void UpdateRenderPositions(FastRope rope, float2 startPosition)
     {
-        rope.SetRenderPositions(nodePositions, taperBaseScale, taperLength);
+        rope.SetRenderPositions(nodePositions, startPosition, taperBaseScale, taperLength);
         material.SetVectorArray(positionsProperty, nodePositions);
     }
 

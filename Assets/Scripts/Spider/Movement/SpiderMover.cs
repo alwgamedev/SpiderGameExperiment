@@ -143,11 +143,11 @@ public class SpiderMover : MonoBehaviour
     public ref PhysicsBody PhysBody => ref spiderPhysics.physicsBody;
 
     //mainly to hook up audio (later maybe also ui stuff)
-    public UnityEvent JumpChargeBegan;
-    public UnityEvent JumpChargeEnded;
-    public UnityEvent Jumped;
-    public UnityEvent ThrustersEngaged;
-    public UnityEvent ThrustersDisengaged;
+    public UnityEvent jumpChargeBegan;
+    public UnityEvent jumpChargeEnded;
+    public UnityEvent jumped;
+    public UnityEvent thrustersEngaged;
+    public UnityEvent thrustersDisengaged;
 
     private void OnDrawGizmos()
     {
@@ -337,7 +337,7 @@ public class SpiderMover : MonoBehaviour
     private void OnThrusterEngaged()
     {
         //rb.gravityScale = thrustingGravityScale;
-        ThrustersEngaged.Invoke();
+        thrustersEngaged.Invoke();
     }
 
     private void OnThrusterEngageFailed()
@@ -352,7 +352,7 @@ public class SpiderMover : MonoBehaviour
     private void OnThrusterDisengaged()
     {
         //Debug.Log("disengaging thrusters.");
-        ThrustersDisengaged.Invoke();
+        thrustersDisengaged.Invoke();
     }
 
     //INPUT
@@ -365,13 +365,13 @@ public class SpiderMover : MonoBehaviour
             if (!grounded)
             {
                 chargingJump = false;
-                JumpChargeEnded.Invoke();
+                jumpChargeEnded.Invoke();
             }
             else if (!spiderInput.SpaceAction.IsPressed())
             {
                 chargingJump = false;
                 waitingToHandleJump = !spiderInput.ControlAction.IsPressed();
-                JumpChargeEnded.Invoke();
+                jumpChargeEnded.Invoke();
             }
             else if (crouchProgress < 1)
             {
@@ -383,7 +383,7 @@ public class SpiderMover : MonoBehaviour
             if (grounded && spiderInput.SpaceAction.IsPressed())
             {
                 chargingJump = true;
-                JumpChargeBegan.Invoke();
+                jumpChargeBegan.Invoke();
             }
             if (crouchProgress > 0)
             {
@@ -443,9 +443,8 @@ public class SpiderMover : MonoBehaviour
         }
         else
         {
-            Vector2 o = grapple.FreeHangLeveragePoint + PhysBody.position - (Vector2)transform.position;
-            //where leverage point would be if transform was correctly synced to physbody
-            //(there is a tiny discrepancy that really does cause issues/erratic behavior)
+            PhysBody.SyncTransform();
+            Vector2 o = grapple.FreeHangLeveragePoint;
             Vector2 p = PhysBody.position;
             Vector2 u = PhysBody.rotation.direction.CCWPerp();
 
@@ -453,18 +452,19 @@ public class SpiderMover : MonoBehaviour
             transform.localScale = new Vector3(-s.x, s.y, s.z);
 
             PhysBody.rotation = new PhysicsRotate(-PhysBody.rotation.direction);
-            SyncTransform();
+            PhysBody.SyncTransform();
             PhysBody.position += o - grapple.FreeHangLeveragePoint;
+            //SyncTransform();
             //translate so grapple.FreeHangeLeveragePoint stays in same place
             //(it's where move forces are applied while freeHanging, and we want to keep movement smooth)
 
             legSynch.OnBodyChangedDirection(p, PhysBody.position, u);
 
-            void SyncTransform()//so we have accurate position of grapple.FreeHangLeveragePoint -- inefficient, but reliable
-            {
-                PhysBody.GetPositionAndRotation3D(transform, PhysicsWorld.defaultWorld.transformWriteMode, PhysicsWorld.TransformPlane.XY, out var pos, out var rot);
-                transform.SetPositionAndRotation(pos, rot);
-            }
+            //void SyncTransform()//so we have accurate position of grapple.FreeHangLeveragePoint -- inefficient, but reliable
+            //{
+            //    PhysBody.GetPositionAndRotation3D(transform, PhysicsWorld.defaultWorld.transformWriteMode, PhysicsWorld.TransformPlane.XY, out var pos, out var rot);
+            //    transform.SetPositionAndRotation(pos, rot);
+            //}
         }
 
         grapple.SetOrientation(FacingRight);
@@ -637,7 +637,7 @@ public class SpiderMover : MonoBehaviour
             SetGrounded(false);
             var jumpDir = JumpDirection();
             PhysBody.ApplyLinearImpulseToCenter(PhysBody.mass * JumpForce() * jumpDir);
-            Jumped.Invoke();
+            jumped.Invoke();
         }
     }
 
@@ -720,7 +720,7 @@ public class SpiderMover : MonoBehaviour
         if (chargingJump)
         {
             chargingJump = false;
-            JumpChargeEnded.Invoke();
+            jumpChargeEnded.Invoke();
         }
         RecomputeGroundMapRaycastLength();
     }

@@ -5,48 +5,30 @@ using Unity.U2D.Physics;
 public class GrappleCannon : MonoBehaviour
 {
     public PhysicsBody spiderBody;
-    //[System.NonSerialized]public Transform spiderTransform;
     [System.NonSerialized] public SpiderInput spiderInput;
 
-    //[SerializeField] SpiderInput spiderInput;
     [SerializeField] int numNodes;
-    [SerializeField] float width;
-    [SerializeField] float minNodeSpacing;
-    [SerializeField] float maxNodeSpacing;
-    [SerializeField] float drag;
-    [SerializeField] float bounciness;
-    [SerializeField] PhysicsMask collisionMask;
-    [SerializeField] float collisionSearchRadius;
-    [SerializeField] float tunnelEscapeRadius;
     [SerializeField] float minLength;
     [SerializeField] float maxLength;
     [SerializeField] float baseShootSpeed;
     [SerializeField] float shootSpeedPowerUpRate;
     [SerializeField] float shootSpeedPowerUpMax;
-    [SerializeField] float grappleMass;
     [SerializeField] float releaseRate;
-    [SerializeField] float tensionCalculationInterval;
     [SerializeField] float retractMaxTension;
-    [SerializeField] int constraintIterations;
     [SerializeField] float carrySpringForce;
     [SerializeField] float carryTensionMax;
-    [SerializeField] float carryTensionSlackThreshold;
-    [SerializeField] float breakThreshold;
     [SerializeField] float consecutiveFailuresBeforeBreaking;
-    [SerializeField] float dynamicAnchorPullForce;
+    [SerializeField] RopeSettings grappleSettings;
     [SerializeField] CannonFulcrum cannonFulcrum;
     [SerializeField] RopeRenderer grappleRenderer;
 
-    public float aimInput;
+    [System.NonSerialized]public float aimInput;
     bool poweringUp;
     float shootSpeedPowerUp;
     float shootTimer;
     Vector2 lastShootDirection;
 
-    BurstRope grapple;
-
-    //float fixedDt;
-    //float fixedDt2;
+    FastRope grapple;
 
     int failCounter;
     bool facingRight;
@@ -83,7 +65,7 @@ public class GrappleCannon : MonoBehaviour
     }
 
     public UnityEvent GrappleShot;
-    public UnityEvent GrappleBecameAnchored;
+    public UnityEvent grappleBecameAnchored;
 
     //private void Awake()
     //{
@@ -110,6 +92,9 @@ public class GrappleCannon : MonoBehaviour
     private void Start()
     {
         cannonFulcrum.Initialize();
+
+        grapple = new FastRope(grappleSettings, SourcePosition, minLength, numNodes);
+        grapple.Disable();
     }
 
     private void Update()
@@ -159,12 +144,12 @@ public class GrappleCannon : MonoBehaviour
     {
         if (GrappleEnabled)
         {
-            UpdateGrappleStartPosition();
-            if (grapple.TerminusAnchored)
-            {
-                grapple.SetTerminusToAnchorPosition();
-            }
-            grappleRenderer.UpdateRenderPositions(grapple);
+            //UpdateGrappleStartPosition();
+            //if (grapple.TerminusAnchored)
+            //{
+            //    grapple.SetTerminusToAnchorPosition();
+            //}
+            grappleRenderer.UpdateRenderPositions(grapple, SourcePosition);
         }
     }
 
@@ -174,12 +159,16 @@ public class GrappleCannon : MonoBehaviour
 
         if (GrappleEnabled)
         {
+            var grappleWasAnchored = grapple.TerminusAnchored;
             UpdateGrappleLength();
-            UpdateGrappleStartPosition();
-            grapple.Update(Time.deltaTime, Time.deltaTime * Time.deltaTime);
+            grapple.Update(SourcePosition);
             if (GrappleAnchored)
             {
                 UpdateCarrySpring();
+                if (!grappleWasAnchored)
+                {
+                    grappleBecameAnchored.Invoke();
+                }
             }
         }
         else
@@ -216,18 +205,17 @@ public class GrappleCannon : MonoBehaviour
         }
     }
 
-    private void UpdateGrappleStartPosition()
-    {
-        grapple.SetStartPosition(SourcePosition);
-    }
+    //private void UpdateGrappleStartPosition()
+    //{
+    //    grapple.SetStartPosition(SourcePosition);
+    //}
 
     private void UpdateCarrySpring()
     {
-        LastCarryForceDirection = grapple.CarryForceDirection;//GrappleExtentFromFirstCollision(out _).normalized;
-        var t = grapple.CarryForceMagnitude;//NormalizedStrictTension(grapple.TerminusIndex, carryTensionSlackThreshold);
-        if (t > 0)
+        LastCarryForceDirection = grapple.CarryForceDirection;
+        if (grapple.CarryForceMagnitude > 0)
         {
-            LastCarryForce = carrySpringForce * Mathf.Min(t, carryTensionMax) * LastCarryForceDirection;
+            LastCarryForce = carrySpringForce * Mathf.Min(grapple.CarryForceMagnitude, carryTensionMax) * LastCarryForceDirection;
             cannonFulcrum.ApplyForce(LastCarryForce, LastCarryForceDirection, spiderBody, FreeHanging);
         }
         else
@@ -246,7 +234,8 @@ public class GrappleCannon : MonoBehaviour
             }
             if (GrappleReleaseInput != 0)
             {
-                AddGrappleLength(GrappleReleaseInput * releaseRate * Time.deltaTime);
+                var l = GrappleReleaseInput * releaseRate * Time.deltaTime;
+                grapple.RequestLengthChange(Mathf.Clamp(grapple.Length + l, minLength, maxLength));
             }
         }
         else if (grapple.Length < maxLength)
@@ -255,15 +244,10 @@ public class GrappleCannon : MonoBehaviour
             if (shootTimer > 0 && GrappleExtent.magnitude > grapple.Length)
             {
                 var p = (0.5f * shootTimer * Physics2D.gravity + ShootSpeed * lastShootDirection) * shootTimer + minLength * lastShootDirection;
-                grapple.SetLength(Mathf.Clamp(p.magnitude, grapple.Length, maxLength));
+                grapple.RequestLengthChange(Mathf.Clamp(p.magnitude, grapple.Length, maxLength));
             }
             //2do: if grapple length stagnant for certain amount of time (i.e. we have reached max length or the dot > length fails for number of updates), then enable release input)
         }
-    }
-
-    private void AddGrappleLength(float l)
-    {
-        grapple.SetLength(Mathf.Clamp(grapple.Length + l, minLength, maxLength));
     }
 
 
@@ -271,54 +255,36 @@ public class GrappleCannon : MonoBehaviour
 
     private void ShootGrapple()
     {
-        if (grapple == null)
-        {
-            grapple = new BurstRope(SourcePosition, width, minLength, numNodes, minNodeSpacing, maxNodeSpacing,
-                1, grappleMass, drag, collisionMask, collisionSearchRadius, tunnelEscapeRadius, bounciness, constraintIterations, dynamicAnchorPullForce,
-                breakThreshold, carryTensionSlackThreshold, tensionCalculationInterval,
-                GrappleBecameAnchored);
-        }
-        else
-        {
-            UpdateGrappleSettings();
-            grapple.Respawn(SourcePosition, minLength, numNodes);
-        }
+        //if (grapple == null)
+        //{
+        //    grapple = new FastRope(grappleSettings, SourcePosition, minLength, numNodes);
+        //}
+        //else
+        //{
+        //    UpdateGrappleSettings();
+        //    grapple.Respawn(SourcePosition, minLength, numNodes);
+        //}
+
+        grapple.Respawn(SourcePosition, minLength, numNodes);
 
         var shootSpeed = ShootSpeed;
         lastShootDirection = ShootDirection;
         Vector2 shootVelocity = shootSpeed * lastShootDirection;
         grapple.Shoot(shootVelocity, Time.deltaTime);
         shootTimer = -minLength / shootSpeed;
-        grappleRenderer.OnRopeSpawned(grapple);
+        grappleRenderer.OnRopeSpawned(grapple, SourcePosition);
 
-        grapple.TerminusBecameAnchored = GrappleBecameAnchored;
         GrappleShot.Invoke();
     }
 
     private void UpdateGrappleSettings()
     {
-        grapple.width = width;
-        grappleRenderer.SetRenderWidth(width);
-        grapple.minNodeSpacing = minNodeSpacing;
-        grapple.maxNodeSpacing = maxNodeSpacing;
-        grapple.drag = drag;
-        grapple.terminusMass = grappleMass;
-        grapple.constraintIterations = constraintIterations;
-        grapple.SetCollisionMask(collisionMask);
-        grapple.collisionSearchRadius = collisionSearchRadius;
-        grapple.tunnelEscapeRadius = tunnelEscapeRadius;
-        grapple.collisionThreshold = 0.5f * width;
-        grapple.collisionBounciness = bounciness;
-        grapple.dynamicAnchorPullForce = dynamicAnchorPullForce;
-        grapple.breakThreshold = breakThreshold;
-        grapple.carryForceSlackThreshold = carryTensionSlackThreshold;
-        grapple.carryForceInterval = tensionCalculationInterval;
+        grapple.settings = grappleSettings;
+        grappleRenderer.SetRenderWidth(grappleSettings.width);
     }
 
     private void DestroyGrapple()
     {
-        //grapple = null;//whoops
-        //grappleReleaseInput = 0;
         grapple.Disable();
         shootSpeedPowerUp = 0;
         LastCarryForce = Vector2.zero;

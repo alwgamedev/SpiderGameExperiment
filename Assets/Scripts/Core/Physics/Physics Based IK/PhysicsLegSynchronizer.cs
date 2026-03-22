@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Linq;
+using System;
 
 public class PhysicsLegSynchronizer : MonoBehaviour
 {
@@ -27,11 +28,11 @@ public class PhysicsLegSynchronizer : MonoBehaviour
     LegState state;
     float legCountInverse;
 
-    public float bodyGroundSpeedSign;
-    public float absoluteBodyGroundSpeed;
-    public float timeScale = 1;
-    public float stepHeightFraction;
-    public float strideMultiplier = 1;
+    [NonSerialized] public float bodyGroundSpeedSign;
+    [NonSerialized] public float absoluteBodyGroundSpeed;
+    [NonSerialized] public float timeScale = 1;
+    [NonSerialized] public float stepHeightFraction;
+    [NonSerialized] public float strideMultiplier = 1;
 
     float fabrikToleranceSqrd;
     float reachToleranceSqrd;
