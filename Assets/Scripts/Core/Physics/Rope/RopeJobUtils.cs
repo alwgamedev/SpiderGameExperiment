@@ -169,21 +169,23 @@ public static class RopeJobUtils
 
     public static void CoverAllSpacingConstraint(int i, NativeArray<float2> position, NativeArray<float2> lastPosition, NativeArray<float2> lastCollisionNormal,
         NativeArray<bool> nearCollision, NativeArray<bool> hadCollision, NativeArray<float2> raycastDirections,
-        NativeReference<PhysicsShape> terminusAnchor, NativeReference<float2> terminusAnchorLocalPos, NativeReference<float2> forceToApplyToDynamicAnchor,
+        NativeReference<PhysicsShape> terminusAnchor, NativeReference<float2> terminusAnchorLocalPos, /*NativeReference<float2> forceToApplyToDynamicAnchor,*/
         NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode,
         PhysicsWorld world, PhysicsQuery.QueryFilter filter, float collisionSearchRadius, float collisionThreshold, float tunnelEscapeRadius,
-        float collisionBounciness, float nodeSpacing, float nodeMass, float terminusMass, float dynamicAnchorPullForce,
+        float collisionBounciness, float nodeSpacing, float nodeMass, float ownerMass, float terminusMass, 
+        float dynamicAnchorPullForce,
         int startIndex)
     {
         if (i == startIndex + 1)
         {
             FirstConstraint(startIndex, position, lastPosition, lastCollisionNormal, nearCollision, hadCollision,
-                raycastDirections, world, filter, collisionSearchRadius, collisionThreshold, tunnelEscapeRadius, collisionBounciness, nodeSpacing);
+                raycastDirections, world, filter, collisionSearchRadius, collisionThreshold, tunnelEscapeRadius, collisionBounciness, nodeSpacing,
+                nodeMass, ownerMass);
         }
         else if (i == position.Length - 1)
         {
             LastConstraint(i, position, lastPosition, lastCollisionNormal, nearCollision, hadCollision, raycastDirections,
-                terminusAnchor, terminusAnchorLocalPos, forceToApplyToDynamicAnchor, terminusAnchorMode,
+                terminusAnchor, terminusAnchorLocalPos, /*forceToApplyToDynamicAnchor,*/ terminusAnchorMode,
                 world, filter, collisionSearchRadius, collisionThreshold, tunnelEscapeRadius, collisionBounciness,
                 nodeSpacing, nodeMass, terminusMass, dynamicAnchorPullForce);
         }
@@ -247,8 +249,9 @@ public static class RopeJobUtils
     //accesses 2 nodes: startIndex, startIndex + 1
     public static void FirstConstraint(int startIndex, NativeArray<float2> position, NativeArray<float2> lastPosition, NativeArray<float2> lastCollisionNormal,
         NativeArray<bool> nearCollision, NativeArray<bool> hadCollision, NativeArray<float2> raycastDirections,
-        PhysicsWorld world, PhysicsQuery.QueryFilter filter, float collisionSearchRadius, float collisionThreshold, float tunnelEscapeRadius,
-        float collisionBounciness, float nodeSpacing)
+        PhysicsWorld world, PhysicsQuery.QueryFilter filter,
+        float collisionSearchRadius, float collisionThreshold, float tunnelEscapeRadius, float collisionBounciness, float nodeSpacing,
+        float nodeMass, float ownerMass)
     {
         var d = position[startIndex + 1] - position[startIndex];
         var l = math.length(d);
@@ -257,7 +260,18 @@ public static class RopeJobUtils
 
         if (error > CONSTRAINTS_TOLERANCE)
         {
-            position[startIndex + 1] -= error / l * d;
+            if (math.isinf(ownerMass))
+            {
+                position[startIndex + 1] -= error / l * d;
+            }
+            else
+            {
+                d *= error / l;
+                var c = ownerMass / (nodeMass + ownerMass) * d;
+                position[startIndex + 1] -= c;
+                position[startIndex] += d - c;
+            }
+
             ResolveCollision(startIndex + 1, position, lastPosition, lastCollisionNormal, nearCollision, hadCollision, raycastDirections,
                     world, filter, collisionSearchRadius, collisionThreshold, tunnelEscapeRadius, collisionBounciness);
         }
@@ -266,7 +280,7 @@ public static class RopeJobUtils
     //accesses nodes terminusIndex - 1 and terminusIndex
     public static void LastConstraint(int terminusIndex, NativeArray<float2> position, NativeArray<float2> lastPosition, NativeArray<float2> lastCollisionNormal,
         NativeArray<bool> nearCollision, NativeArray<bool> hadCollision, NativeArray<float2> raycastDirections,
-        NativeReference<PhysicsShape> terminusAnchor, NativeReference<float2> terminusAnchorLocalPos, NativeReference<float2> forceToApplyToDynamicAnchor,
+        NativeReference<PhysicsShape> terminusAnchor, NativeReference<float2> terminusAnchorLocalPos, /*NativeReference<float2> forceToApplyToDynamicAnchor,*/
         NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode,
         PhysicsWorld world, PhysicsQuery.QueryFilter filter, float collisionSearchRadius, float collisionThreshold, float tunnelEscapeRadius,
         float collisionBounciness, float nodeSpacing, float nodeMass, float terminusMass, float dynamicAnchorPullForce)
@@ -292,20 +306,24 @@ public static class RopeJobUtils
                         //(this works the best of what I tried)
                         var tMass = terminusAnchor.Value.body.mass;//terminus is usually very heavy to get arching motion when shoot, so use anchor mass
                         d *= error / l;
-                        var c = 1 / (nodeMass + tMass) * d;
-                        var c1 = tMass * c;
-                        position[terminusIndex - 1] += c1;
-                        forceToApplyToDynamicAnchor.Value -= dynamicAnchorPullForce * (d - c1);
-                        position[terminusIndex] -= nodeMass * c;
+                        var c = tMass / (nodeMass + tMass) * d;
+                        var c2 = d - c;
+                        position[terminusIndex - 1] += c;
+                        if (terminusAnchor.Value.isValid)
+                        {
+                            terminusAnchor.Value.body.ApplyForce(-dynamicAnchorPullForce * c2, position[terminusIndex]);
+                        }
+                        position[terminusIndex] -= c2;
                         ResolveCollision(terminusIndex - 1, position, lastPosition, lastCollisionNormal, nearCollision, hadCollision, raycastDirections,
                             world, filter, collisionSearchRadius, collisionThreshold, tunnelEscapeRadius, collisionBounciness);
                         break;
                     }
                 case FastRope.TerminusAnchorMode.notAnchored:
                     {
-                        var c = 1 / (nodeMass + terminusMass) * error / l * d;
-                        position[terminusIndex - 1] += terminusMass * c;
-                        position[terminusIndex] -= nodeMass * c;
+                        d *= error / l;
+                        var c = terminusMass / (nodeMass + terminusMass) * d;
+                        position[terminusIndex - 1] += c;
+                        position[terminusIndex] -= d - c;
                         ResolveCollision(terminusIndex - 1, position, lastPosition, lastCollisionNormal, nearCollision, hadCollision, raycastDirections,
                             world, filter, collisionSearchRadius, collisionThreshold, tunnelEscapeRadius, collisionBounciness);
                         ResolveTerminusCollision(terminusIndex, position, lastPosition, lastCollisionNormal, nearCollision, hadCollision, raycastDirections,

@@ -67,9 +67,10 @@ public class CannonFulcrum
         }
     }
 
-    public void ApplyForce(Vector2 force, Vector2 forceDirection, PhysicsBody shooterBody, bool freeHanging)
+    public void ApplyForce(Vector2 force, /*Vector2 forceDirection,*/ PhysicsBody shooterBody, bool freeHanging)
     {
         Vector2 u = LeverDirection;
+        var forceDirection = force.normalized;
         var fNormal = floppiness * Vector2.Dot(force, u.CCWPerp());
         angularAcceleration += inverseLeverLength * fNormal / shooterBody.mass;
         //^yes, dividing by leverLength is correct (as checked by computing theta'' from theta = arctan(y/x)) -- we're dealing with accelerations instead of force/torque

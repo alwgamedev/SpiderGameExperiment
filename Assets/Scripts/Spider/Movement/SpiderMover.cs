@@ -198,9 +198,7 @@ public class SpiderMover : MonoBehaviour
         spiderPhysics.CreatePhysicsBody();
         InitializeGroundData();
         legSynch.Initialize();
-        grapple.spiderBody = PhysBody;
-        grapple.spiderInput = spiderInput;
-        grapple.SetOrientation(FacingRight);
+        grapple.Initialize(spiderInput, PhysBody, FacingRight);
     }
 
     private void OnDestroy()
@@ -473,8 +471,7 @@ public class SpiderMover : MonoBehaviour
     private void HandleMoveInput()
     {
         //accelCap bc otherwise if speed is highly negative, we get ungodly rates of acceleration
-        //(and note that we are doing it in a way that scales with max speed
-        //-- so you can limit maxSpd - spd to being e.g. double the maxSpeed or w/e)
+        //(and note that we are doing it in a way that scales with max speed)
         if (HorizontalMoveInput != 0)
         {
             if (grapple.FreeHanging)

@@ -114,7 +114,6 @@ public struct RopeConstraintIteration : IJobParallelFor
     [NativeDisableParallelForRestriction][ReadOnly] public NativeArray<float2> raycastDirections;
     [NativeDisableParallelForRestriction] public NativeReference<PhysicsShape> terminusAnchor;
     [NativeDisableParallelForRestriction] public NativeReference<float2> terminusAnchorLocalPos;
-    [NativeDisableParallelForRestriction] public NativeReference<float2> forceToApplyToDynamicAnchor;
     [NativeDisableParallelForRestriction] public NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode;
     [ReadOnly] public PhysicsWorld world;
     public readonly PhysicsQuery.QueryFilter filter;
@@ -124,6 +123,7 @@ public struct RopeConstraintIteration : IJobParallelFor
     public readonly float collisionBounciness;
     public readonly float nodeSpacing;
     public readonly float nodeMass;
+    public readonly float ownerMass;
     public readonly float terminusMass;
     public readonly float dynamicAnchorPullForce;
     public readonly int startIndex;
@@ -131,9 +131,9 @@ public struct RopeConstraintIteration : IJobParallelFor
 
     public RopeConstraintIteration(NativeArray<float2> position, NativeArray<float2> lastPosition, NativeArray<float2> lastCollisionNormal, 
         NativeArray<bool> nearCollision, NativeArray<bool> hadCollision, NativeArray<float2> raycastDirections, NativeReference<PhysicsShape> terminusAnchor, 
-        NativeReference<float2> terminusAnchorLocalPos, NativeReference<float2> forceToApplyToDynamicAnchor, NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode, 
+        NativeReference<float2> terminusAnchorLocalPos, NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode, 
         PhysicsWorld world, PhysicsQuery.QueryFilter filter, float collisionSearchRadius, float collisionThreshold, float tunnelEscapeRadius, 
-        float collisionBounciness, float nodeSpacing, float nodeMass, float terminusMass, float dynamicAnchorPullForce, int startIndex, int batch)
+        float collisionBounciness, float nodeSpacing, float nodeMass, float ownerMass, float terminusMass, float dynamicAnchorPullForce, int startIndex, int batch)
     {
         this.position = position;
         this.lastPosition = lastPosition;
@@ -143,7 +143,6 @@ public struct RopeConstraintIteration : IJobParallelFor
         this.raycastDirections = raycastDirections;
         this.terminusAnchor = terminusAnchor;
         this.terminusAnchorLocalPos = terminusAnchorLocalPos;
-        this.forceToApplyToDynamicAnchor = forceToApplyToDynamicAnchor;
         this.terminusAnchorMode = terminusAnchorMode;
         this.world = world;
         this.filter = filter;
@@ -153,6 +152,7 @@ public struct RopeConstraintIteration : IJobParallelFor
         this.collisionBounciness = collisionBounciness;
         this.nodeSpacing = nodeSpacing;
         this.nodeMass = nodeMass;
+        this.ownerMass = ownerMass;
         this.terminusMass = terminusMass;
         this.dynamicAnchorPullForce = dynamicAnchorPullForce;
         this.startIndex = startIndex;
@@ -163,9 +163,32 @@ public struct RopeConstraintIteration : IJobParallelFor
     {
         i = 2 * i + offset;
         RopeJobUtils.CoverAllSpacingConstraint(i, position, lastPosition, lastCollisionNormal, nearCollision, hadCollision, raycastDirections,
-                terminusAnchor, terminusAnchorLocalPos, forceToApplyToDynamicAnchor, terminusAnchorMode,
+                terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode,
                 world, filter, collisionSearchRadius, collisionThreshold, tunnelEscapeRadius,
-                collisionBounciness, nodeSpacing, nodeMass, terminusMass, dynamicAnchorPullForce, startIndex);
+                collisionBounciness, nodeSpacing, nodeMass, ownerMass, terminusMass, dynamicAnchorPullForce, startIndex);
+    }
+}
+
+[BurstCompile]
+public struct CorrectRopeSourcePosition : IJob
+{
+    public NativeArray<float2> position;
+    public NativeReference<float2> carryForce;
+    public readonly int sourceIndex;
+    public readonly float2 sourcePosition;
+
+    public CorrectRopeSourcePosition(NativeArray<float2> position, NativeReference<float2> carryForce, int sourceIndex, float2 sourcePosition)
+    {
+        this.position = position;
+        this.carryForce = carryForce;
+        this.sourceIndex = sourceIndex;
+        this.sourcePosition = sourcePosition;
+    }
+
+    public void Execute()
+    {
+        carryForce.Value = position[sourceIndex] - sourcePosition;
+        position[sourceIndex] = sourcePosition;
     }
 }
 
@@ -205,7 +228,7 @@ public struct PrepareForRopeConstraintsWithDynamicAnchor : IJob
     public NativeArray<float2> lastPosition;
     [ReadOnly] public NativeReference<PhysicsShape> terminusAnchor;
     [ReadOnly] public NativeReference<float2> terminusAnchorLocalPos;
-    public float dt;
+    public readonly float dt;
 
     public PrepareForRopeConstraintsWithDynamicAnchor(NativeArray<float2> position, NativeArray<float2> positionBuffer, NativeArray<float2> lastPosition, 
         NativeReference<PhysicsShape> terminusAnchor, NativeReference<float2> terminusAnchorLocalPos, float dt)
@@ -265,8 +288,8 @@ public struct RopeReparametrization : IJob
     public NativeArray<bool> hadCollision;
     public NativeReference<float> nodeSpacing;//not parallel job; we don't need the [NativeDisableParallelForRestriction]
     public NativeReference<int> startIndex;
-    public float length;//recompute before job
-    public int newStartIndex;
+    public readonly float length;//recompute before job
+    public readonly int newStartIndex;
 
     public RopeReparametrization(NativeArray<float2> position, NativeArray<float2> lastPosition, NativeArray<float2> positionBuffer, NativeArray<float2> lastPositionBuffer, 
         NativeArray<float2> lastCollisionNormal, NativeArray<bool> nearCollision, NativeArray<bool> hadCollision, 
@@ -342,8 +365,8 @@ public struct CalculateRopeMaxTension : IJob
 {
     [ReadOnly] public NativeArray<float2> position;
     public NativeReference<float> maxTension;
-    public float nodeSpacing;
-    public int start;
+    public readonly float nodeSpacing;
+    public readonly int start;
 
     public CalculateRopeMaxTension(NativeArray<float2> position, NativeReference<float> maxTension, float nodeSpacing, int start)
     {
