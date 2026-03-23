@@ -170,6 +170,80 @@ public struct RopeConstraintIteration : IJobParallelFor
 }
 
 [BurstCompile]
+public struct RopeGroupedConstraintIteration : IJobParallelFor
+{
+    [NativeDisableParallelForRestriction] public NativeArray<float2> position;
+    [NativeDisableParallelForRestriction] public NativeArray<float2> lastPosition;
+    [NativeDisableParallelForRestriction] public NativeArray<float2> lastCollisionNormal;
+    [NativeDisableParallelForRestriction] public NativeArray<bool> nearCollision;
+    [NativeDisableParallelForRestriction] public NativeArray<bool> hadCollision;
+    [NativeDisableParallelForRestriction][ReadOnly] public NativeArray<float2> raycastDirections;
+    [NativeDisableParallelForRestriction] public NativeReference<PhysicsShape> terminusAnchor;
+    [NativeDisableParallelForRestriction] public NativeReference<float2> terminusAnchorLocalPos;
+    [NativeDisableParallelForRestriction] public NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode;
+    [ReadOnly] public PhysicsWorld world;
+    public readonly PhysicsQuery.QueryFilter filter;
+    public readonly float collisionSearchRadius;
+    public readonly float collisionThreshold;
+    public readonly float tunnelEscapeRadius;
+    public readonly float collisionBounciness;
+    public readonly float nodeSpacing;
+    public readonly float nodeMass;
+    public readonly float ownerMass;
+    public readonly float terminusMass;
+    public readonly float dynamicAnchorPullForce;
+    public readonly int startIndex;
+    public readonly int groupSize;
+    public readonly int offset;
+
+    public RopeGroupedConstraintIteration(NativeArray<float2> position, NativeArray<float2> lastPosition, NativeArray<float2> lastCollisionNormal,
+        NativeArray<bool> nearCollision, NativeArray<bool> hadCollision, NativeArray<float2> raycastDirections, NativeReference<PhysicsShape> terminusAnchor,
+        NativeReference<float2> terminusAnchorLocalPos, NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode,
+        PhysicsWorld world, PhysicsQuery.QueryFilter filter, float collisionSearchRadius, float collisionThreshold, float tunnelEscapeRadius,
+        float collisionBounciness, float nodeSpacing, float nodeMass, float ownerMass, float terminusMass, float dynamicAnchorPullForce, int startIndex, 
+        int groupSize, int batch)
+    {
+        this.position = position;
+        this.lastPosition = lastPosition;
+        this.lastCollisionNormal = lastCollisionNormal;
+        this.nearCollision = nearCollision;
+        this.hadCollision = hadCollision;
+        this.raycastDirections = raycastDirections;
+        this.terminusAnchor = terminusAnchor;
+        this.terminusAnchorLocalPos = terminusAnchorLocalPos;
+        this.terminusAnchorMode = terminusAnchorMode;
+        this.world = world;
+        this.filter = filter;
+        this.collisionSearchRadius = collisionSearchRadius;
+        this.collisionThreshold = collisionThreshold;
+        this.tunnelEscapeRadius = tunnelEscapeRadius;
+        this.collisionBounciness = collisionBounciness;
+        this.nodeSpacing = nodeSpacing;
+        this.nodeMass = nodeMass;
+        this.ownerMass = ownerMass;
+        this.terminusMass = terminusMass;
+        this.dynamicAnchorPullForce = dynamicAnchorPullForce;
+        this.startIndex = startIndex;
+        this.groupSize = groupSize;
+        offset = startIndex + 1 + batch;
+    }
+
+    public readonly void Execute(int i)
+    {
+        i = groupSize * i + offset;
+        int min = math.max(i - groupSize + 1, startIndex); 
+        while (i > min)
+        {
+            RopeJobUtils.CoverAllSpacingConstraint(i, position, lastPosition, lastCollisionNormal, nearCollision, hadCollision, raycastDirections,
+                terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode,
+                world, filter, collisionSearchRadius, collisionThreshold, tunnelEscapeRadius,
+                collisionBounciness, nodeSpacing, nodeMass, ownerMass, terminusMass, dynamicAnchorPullForce, startIndex);
+            i--;
+        }
+    }
+}
+
+[BurstCompile]
 public struct CorrectRopeSourcePosition : IJob
 {
     public NativeArray<float2> position;

@@ -16385,6 +16385,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 355219833064382220, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
+      propertyPath: releaseRate
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 355219833064382220, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
+      propertyPath: carrySpringForce
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 355219833064382220, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
+      propertyPath: grappleSettings.constraintGroupSize
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 355219833064382220, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
+      propertyPath: grappleSettings.constraintIterationsPullingOwner
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 355219833064382220, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
+      propertyPath: grappleSettings.constraintIterationsPulledByOwner
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 1231387903212816449, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
       propertyPath: m_Name
       value: Spider

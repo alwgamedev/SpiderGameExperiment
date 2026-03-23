@@ -20,6 +20,7 @@ public struct RopeSettings
     public float breakThreshold;
     public float carryForceSlackThreshold;
     public float carryForceInterval;
+    public int constraintGroupSize;
     public int constraintIterationsPullingOwner;
     public int constraintIterationsPulledByOwner;
 
@@ -390,20 +391,30 @@ public class FastRope
         void Constraints()
         {
             int numActive = TerminusIndex - sourceIndex.Value;
-            jobHandle = ResolveCollision().Schedule(TerminusAnchored ? numActive : numActive - 1, 8, jobHandle);
+            int g = settings.constraintGroupSize;
+            int q = numActive / g;
+            int r = numActive % g;
+
+            int ArrLength(int b) => b < r ? q + 1 : q;
+
+            jobHandle = ResolveCollision().Schedule(TerminusAnchored ? numActive : numActive - 1, 16, jobHandle);
 
             for (int i = 0; i < settings.constraintIterationsPullingOwner; i++)
             {
-                jobHandle = ConstraintIteration(0, true).Schedule((numActive + 1) / 2, 16, jobHandle);
-                jobHandle = ConstraintIteration(1, true).Schedule(numActive / 2, 16, jobHandle);
+                for (int b = 0; b < g; b++)
+                {
+                    jobHandle = GroupedConstraintIteration(g, b, true).Schedule(ArrLength(b), 16, jobHandle);
+                }
             }
 
             jobHandle = CorrectSourcePosition(sourcePosition).Schedule(jobHandle);
 
             for (int i = 0; i < settings.constraintIterationsPulledByOwner; i++)
             {
-                jobHandle = ConstraintIteration(0, false).Schedule((numActive + 1) / 2, 16, jobHandle);
-                jobHandle = ConstraintIteration(1, false).Schedule(numActive / 2, 16, jobHandle);
+                for (int b = 0; b < g; b++)
+                {
+                    jobHandle = GroupedConstraintIteration(g, b, false).Schedule(ArrLength(b), 16, jobHandle);
+                }
             }
         }
     }
@@ -461,6 +472,9 @@ public class FastRope
         Length = nodeSpacing.Value * (TerminusIndex - sourceIndex.Value);
     }
 
+
+    //JOBS
+
     private IntegrateRope IntegrateRope(float dt2, float timeScale)
     {
         return new(position, lastPosition, PhysicsWorld.defaultWorld.gravity, settings.drag, dt2, timeScale, sourceIndex.Value);
@@ -481,6 +495,15 @@ public class FastRope
             PhysicsWorld.defaultWorld, settings.CollisionFilter, settings.collisionSearchRadius, settings.CollisionThreshold, settings.tunnelEscapeRadius,
             settings.collisionBounciness, nodeSpacing.Value, settings.nodeMass, pullOwner ? owner.mass : math.INFINITY, settings.terminusMass, settings.dynamicAnchorPullForce,
             sourceIndex.Value, batch);
+    }
+
+    private RopeGroupedConstraintIteration GroupedConstraintIteration(int groupSize, int batch, bool pullOwner)
+    {
+        return new(position, lastPosition, lastCollisionNormal, nearCollision, hadCollision, raycastDirections,
+            terminusAnchor, terminusAnchorLocalPos, /*carryForce.native,*/ terminusAnchorMode.native,
+            PhysicsWorld.defaultWorld, settings.CollisionFilter, settings.collisionSearchRadius, settings.CollisionThreshold, settings.tunnelEscapeRadius,
+            settings.collisionBounciness, nodeSpacing.Value, settings.nodeMass, pullOwner ? owner.mass : math.INFINITY, settings.terminusMass, settings.dynamicAnchorPullForce,
+            sourceIndex.Value, groupSize, batch);
     }
 
     private CorrectRopeSourcePosition CorrectSourcePosition(float2 sourcePosition)
