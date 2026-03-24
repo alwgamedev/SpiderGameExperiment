@@ -173,6 +173,26 @@ public static class MathTools
     {
         return new(v.y, -v.x);
     }
+
+    public static float2 Normalized(this float2 v)
+    {
+        var r = math.rsqrt(math.lengthsq(v));
+        return math.isinf(r) ? NormalizeSmallVector(v) : r * v;
+
+        static float2 NormalizeSmallVector(float2 v)//just to get somethin' (in the unlikely event that result point is extremely close to node position)
+        {
+            return v.x != 0 ? v.y != 0 ?
+                new float2(cos45 * math.sign(v.x), cos45 * math.sign(v.y))
+                : new float2(math.sign(v.x), 0)
+                : new float2(0, math.sign(v.y));
+        }
+    }
+
+    public static float2 NormalizedOrZero(this float2 v)
+    {
+        var r = math.rsqrt(math.lengthsq(v));
+        return math.isinf(r) ? 0 : r * v;
+    }
     
     //when v1, v2 are unit vectors, this equals the sine of the CCW angle from v1 to v2 (being dot(v1, v2.CWPerp()) = cos(theta-90))
     public static float Cross2D(Vector2 v1, Vector2 v2)

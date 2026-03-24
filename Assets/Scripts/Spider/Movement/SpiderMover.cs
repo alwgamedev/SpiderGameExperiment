@@ -164,9 +164,9 @@ public class SpiderMover : MonoBehaviour
         if (Application.isPlaying)
         {
             Time.timeScale = timeScale;
-        }
 
-        spiderPhysics?.OnValidate();
+            spiderPhysics?.OnValidate();
+        }
     }
 
     private void Awake()
@@ -199,6 +199,8 @@ public class SpiderMover : MonoBehaviour
         InitializeGroundData();
         legSynch.Initialize();
         grapple.Initialize(spiderInput, PhysBody, FacingRight);
+
+        Time.timeScale = timeScale;
     }
 
     private void OnDestroy()
@@ -674,7 +676,9 @@ public class SpiderMover : MonoBehaviour
         if (grapple.GrappleAnchored)
         {
             var dot = Vector2.Dot(grapple.LastCarryForce, down);
-            if (dot < 0 && l > 0 && grapple.GrappleReleaseInput < 0)
+            if (down.y < 0 && dot < 0 && l > 0 && grapple.GrappleReleaseInput < 0)
+                //allow the grapple to pull you away from ground unless you're clinging upside down
+                //(in which case that effect could make you fall when you don't want to)
             {
                 return;
             }

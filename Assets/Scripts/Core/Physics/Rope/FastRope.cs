@@ -9,6 +9,7 @@ using UnityEngine.Rendering;
 public struct RopeSettings
 {
     public PhysicsMask collisionMask;
+    public float collisionBounciness;
 
     public float width;//full width of the rope (not half of it)
     public float minNodeSpacing;
@@ -24,8 +25,6 @@ public struct RopeSettings
     public int constraintGroupSize;
     public int constraintIterationsPullingOwner;
     public int constraintIterationsPulledByOwner;
-
-    public float collisionBounciness;
 
     public readonly float NodeRadius => 0.5f * width;
     public readonly PhysicsQuery.QueryFilter CollisionFilter => new(PhysicsMask.All, collisionMask, PhysicsWorld.IgnoreFilter.IgnoreTriggerShapes);
@@ -337,8 +336,8 @@ public class FastRope
         lastJobStartTime = Time.time;
         lastDt = dt;
 
-        CalculateMaxTension().Run();
-        CheckForCollisionFailure().Run();
+        CalculateMaxTension().Run();//btw can probably combine these now
+        //CheckForCollisionFailure().Run();
 
         HandleLengthRequest();
         positionBuffer.CopyFrom(position);
@@ -482,7 +481,8 @@ public class FastRope
         return new(position, lastPosition, lastCollisionNormal, collisionStatus,
             terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode.native,
             PhysicsWorld.defaultWorld, settings.CollisionFilter,
-            settings.collisionBounciness, nodeSpacing.Value, settings.NodeRadius, settings.nodeMass, pullOwner ? owner.mass : math.INFINITY, settings.terminusMass, settings.dynamicAnchorPullForce,
+            settings.collisionBounciness, nodeSpacing.Value, settings.NodeRadius,
+            settings.nodeMass, pullOwner ? owner.mass : math.INFINITY, settings.terminusMass, settings.dynamicAnchorPullForce,
             sourceIndex.Value, batch);
     }
 
@@ -491,7 +491,8 @@ public class FastRope
         return new(position, lastPosition, lastCollisionNormal, collisionStatus,
             terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode.native,
             PhysicsWorld.defaultWorld, settings.CollisionFilter,
-            settings.collisionBounciness, nodeSpacing.Value, settings.NodeRadius, settings.nodeMass, pullOwner ? owner.mass : math.INFINITY, 
+            settings.collisionBounciness, nodeSpacing.Value, settings.NodeRadius,
+            settings.nodeMass, pullOwner ? owner.mass : math.INFINITY, 
             settings.terminusMass, settings.dynamicAnchorPullForce,
             sourceIndex.Value, groupSize, batch);
     }

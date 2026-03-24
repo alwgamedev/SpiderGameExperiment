@@ -96,8 +96,8 @@ public struct RopeConstraintIteration : IJobParallelFor
     public RopeConstraintIteration(NativeArray<float2> position, NativeArray<float2> lastPosition, NativeArray<float2> lastCollisionNormal, 
         NativeArray<bool> collisionStatus, NativeReference<PhysicsShape> terminusAnchor, NativeReference<float2> terminusAnchorLocalPos, 
         NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode, PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter,
-        float collisionBounciness, float nodeSpacing, float nodeRadius, float nodeMass, float ownerMass, float terminusMass, float dynamicAnchorPullForce, 
-        int sourceIndex, int batch)
+        float collisionBounciness, float nodeSpacing, float nodeRadius, float nodeMass, float ownerMass, float terminusMass, 
+        float dynamicAnchorPullForce, int sourceIndex, int batch)
     {
         this.position = position;
         this.lastPosition = lastPosition;
