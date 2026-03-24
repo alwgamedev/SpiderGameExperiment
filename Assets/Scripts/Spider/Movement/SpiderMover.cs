@@ -492,7 +492,7 @@ public class SpiderMover : MonoBehaviour
                 }
             }
         }
-        //apply grip and drag
+        ////apply grip and drag
         else if (grounded)
         {
             var d = OrientedRight;

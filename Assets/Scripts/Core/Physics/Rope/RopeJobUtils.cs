@@ -1,6 +1,7 @@
-﻿using Unity.Collections;
-using Unity.U2D.Physics;
+﻿using Unity.Burst;
+using Unity.Collections;
 using Unity.Mathematics;
+using Unity.U2D.Physics;
 
 public static class RopeJobUtils
 {
@@ -17,8 +18,58 @@ public static class RopeJobUtils
         lastCollisionNormal[i] = 0;
     }
 
+    [BurstCompile]
+    public static void MoveNodeWithCollisionResolution(int i, NativeArray<float2> position, NativeArray<float2> lastPosition,
+        NativeArray<float2> lastCollisionNormal, NativeArray<bool> collisionStatus,
+        PhysicsQuery.QueryFilter filter, float2 targetPosition, float nodeRadius, float collisionBounciness, bool stepVelocity)
+    {
+        var dp = targetPosition - position[i];
+        var circle = new CircleGeometry()
+        {
+            center = position[i],
+            radius = nodeRadius
+        };
 
-    //COLLISION
+        var castResults = PhysicsWorld.defaultWorld.CastGeometry(circle, dp, filter);
+
+        if (castResults.Length > 0)
+        {
+            collisionStatus[i] = true;
+            var result = castResults[0];
+            var positionAtTimeOfImpact = position[i] + result.fraction * dp;
+
+            float2 normal;
+            if (result.normal.x == 0 && result.normal.y == 0)
+            {
+                normal = lastCollisionNormal[i];
+            }
+            else
+            {
+                lastCollisionNormal[i] = result.normal;
+                normal = result.normal;
+            }
+
+            if (math.dot(dp, normal) < 0)
+            {
+                dp = -collisionBounciness * (dp - 2 * (-dp.x * normal.y + dp.y * normal.x) * new float2(-normal.y, normal.x));
+            }
+
+            position[i] = positionAtTimeOfImpact + (1 - result.fraction) * dp;
+            lastPosition[i] = position[i] - dp;
+        }
+        else
+        {
+            collisionStatus[i] = false;
+            if (stepVelocity)
+            {
+                lastPosition[i] = position[i];
+            }
+            position[i] = targetPosition;
+        }
+    }
+
+
+    //COLLISION -- can get rid of this now, we'll just use "MoveWithCollisionResolution" everywhere
 
     public static void ResolveTerminusCollision(int terminusIndex, NativeArray<float2> position, NativeArray<float2> lastPosition, NativeArray<float2> lastCollisionNormal,
         NativeArray<bool> nearCollision, NativeArray<bool> hadCollision, NativeArray<float2> raycastDirections,
@@ -62,6 +113,27 @@ public static class RopeJobUtils
                 //TerminusBecameAnchored.Invoke();
             }
         }
+    }
+
+    public static void SolveNodeMovement(int i, NativeArray<float2> position, NativeArray<float2> lastPosition,
+        PhysicsWorld world, PhysicsQuery.QueryFilter filter, float collisionThreshold, float dtInverse, float dt, int maxIterations, float moveTolerance, float2 targetPosition)
+    {
+        var mover = new PhysicsQuery.WorldMoverInput()
+        {
+            geometry = new CapsuleGeometry() { center1 = position[i], center2 = position[i], radius = collisionThreshold },
+            transform = PhysicsTransform.identity,
+            targetPosition = targetPosition,
+            velocity = dtInverse * (position[i] - lastPosition[i]),
+            maxIterations = maxIterations,
+            moveTolerance = moveTolerance,
+            overlapFilter = filter,
+            castFilter = filter
+            //there is also a "collisionResults" bool if you want to get back an array of all the collision results collected while solving
+        };
+
+        var moverResult = world.CastMover(mover);
+        position[i] = moverResult.transform.position;
+        lastPosition[i] = position[i] - dt * (float2)moverResult.velocity;
     }
 
     public static void ResolveCollision(int i, NativeArray<float2> position, NativeArray<float2> lastPosition, NativeArray<float2> lastCollisionNormal,
