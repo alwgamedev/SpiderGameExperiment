@@ -2,7 +2,6 @@
 using Unity.Collections;
 using Unity.Mathematics;
 using Unity.U2D.Physics;
-using UnityEngine;
 
 public static class RopeJobUtils
 {
@@ -11,24 +10,20 @@ public static class RopeJobUtils
     //MOVEMENT
 
     [BurstCompile]//i don't think we need [BurstCompile] on these if they are called from within a Burst compiled job
-    public static void Anchor(int i, NativeArray<float2> position, NativeArray<float2> lastPosition,
-        NativeArray<bool> collisionStatus, NativeArray<float2> lastCollisionNormal)
+    public static void Anchor(int i, NativeArray<float2> position, NativeArray<float2> lastPosition)
     {
         lastPosition[i] = position[i];
-        collisionStatus[i] = false;
-        lastCollisionNormal[i] = 0;
     }
 
     [BurstCompile]
     public static void MoveAndAnchorTerminus(float2 deltaPosition, NativeArray<float2> position, NativeArray<float2> lastPosition,
-        NativeArray<float2> lastCollisionNormal, NativeArray<bool> collisionStatus,
         NativeReference<PhysicsShape> terminusAnchor, NativeReference<float2> terminusAnchorLocalPos, NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode,
         PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter, float nodeRadius, float collisionBounciness, bool stepVelocity)
     {
-        MoveNode(position.Length - 1, deltaPosition, position, lastPosition, lastCollisionNormal, collisionStatus,
+        MoveNode(position.Length - 1, deltaPosition, position, lastPosition,
             world, collisionFilter, nodeRadius, collisionBounciness, stepVelocity, out var castResults);
 
-        if (collisionStatus[^1] && castResults.Length > 0)
+        if (castResults.Length > 0)
         {
             var result = castResults[0];
             var p = result.point + nodeRadius * result.normal;
@@ -51,7 +46,6 @@ public static class RopeJobUtils
 
     [BurstCompile]
     public static void MoveNode(int i, float2 deltaPosition, NativeArray<float2> position, NativeArray<float2> lastPosition,
-        NativeArray<float2> lastCollisionNormal, NativeArray<bool> collisionStatus,
         PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter, float nodeRadius, float collisionBounciness, bool stepVelocity,
         out NativeArray<PhysicsQuery.WorldCastResult> castResults)
     {
@@ -64,25 +58,24 @@ public static class RopeJobUtils
         castResults = world.CastGeometry(circle, deltaPosition, collisionFilter);
 
         //discovery: i think cast result always has a (valid) unit normal, unless there was initial overlap, in which case we can use position - result.point as the normal
-        //(+/- depending on whether center of node is submerged) 
-        //(or lastCollisionNormal if that fails, which i hope it actually wont, ever?)
+        //(+/- depending on whether center of node is submerged)
         if (castResults.Length > 0)
         {
-            collisionStatus[i] = true;
             var result = castResults[0];
             var positionAtTimeOfImpact = position[i] + result.fraction * deltaPosition;
 
             float2 normal = result.normal;
             if (normal.Equals(float2.zero))//there was initial overlap in the world cast
             {
-                //2do: the result.point is (according to comments in WorldCastResult source) an "arbitrary point" in the overlap,
-                //so when TestOverlapPoint(node position) returns true, we don't know whether result.point above or below the node position and normal is unreliable.
-                //you could try to find a different point on the circle perimeter that's not in overlap to use instead of node position.
-                //let's do some tests instead of guessing (use your "MoverCastTest" bubble since can't debug from here -- or better, figure out how to set up debugging for jobs)
                 normal = world.TestOverlapPoint(positionAtTimeOfImpact, collisionFilter) ?
                     (float2)result.point - positionAtTimeOfImpact
                     : positionAtTimeOfImpact - (float2)result.point;
                 normal = normal.Normalized();
+
+                //2do: when result.normal = 0, the result.point is an "arbitrary point" in the overlap (according to source comments),
+                //so when TestOverlapPoint(node position) returns true, we don't know whether result.point is above or below the node position and normal is unreliable.
+                //you could try to find a different point on the circle perimeter that's not in overlap to use instead of node position.
+                //let's do some tests instead of guessing (use your "MoverCastTest" bubble since can't debug from here -- or better, figure out how to set up debugging for jobs)
             }
 
             if (math.dot(deltaPosition, normal) < 0)
@@ -95,35 +88,9 @@ public static class RopeJobUtils
             {
                 lastPosition[i] = position[i] - deltaPosition;
             }
-
-            //if (stepVelocity)
-            //{
-            //    SetPosition();
-            //    lastPosition[i] = position[i] - deltaPosition;
-            //}
-            //else
-            //{
-            //    var u = deltaPosition.NormalizedOrZero();
-            //    if (!u.Equals(0))
-            //    {
-            //        var s = math.length(position[i] - lastPosition[i]);
-            //        SetPosition();
-            //        lastPosition[i] = position[i] - s * u;
-            //    }
-            //    else
-            //    {
-            //        SetPosition();
-            //    }
-            //}
-
-            //void SetPosition()//to avoid copy-pasting if changes are made in future
-            //{
-            //    position[i] = positionAtTimeOfImpact + (1 - result.fraction) * deltaPosition;
-            //}
         }
         else
         {
-            collisionStatus[i] = false;
             if (stepVelocity)
             {
                 lastPosition[i] = position[i];
@@ -136,7 +103,6 @@ public static class RopeJobUtils
     //CONSTRAINTS
 
     public static void CoverAllSpacingConstraint(int i, NativeArray<float2> position, NativeArray<float2> lastPosition,
-        NativeArray<float2> lastCollisionNormal, NativeArray<bool> collisionStatus,
         NativeReference<PhysicsShape> terminusAnchor, NativeReference<float2> terminusAnchorLocalPos,
         NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode,
         PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter,
@@ -145,26 +111,26 @@ public static class RopeJobUtils
     {
         if (i == sourceIndex + 1)
         {
-            FirstConstraint(sourceIndex, position, lastPosition, lastCollisionNormal, collisionStatus,
+            FirstConstraint(sourceIndex, position, lastPosition,
                 world, collisionFilter, collisionBounciness, nodeSpacing, nodeRadius, nodeMass, ownerMass);
         }
         else if (i == position.Length - 1)
         {
-            LastConstraint(i, position, lastPosition, lastCollisionNormal, collisionStatus,
+            LastConstraint(i, position, lastPosition,
                 terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode,
                 world, collisionFilter, collisionBounciness,
                 nodeSpacing, nodeRadius, nodeMass, terminusMass, dynamicAnchorPullForce);
         }
         else
         {
-            SpacingConstraint(i, position, lastPosition, lastCollisionNormal, collisionStatus,
+            SpacingConstraint(i, position, lastPosition,
                 world, collisionFilter, collisionBounciness, nodeSpacing, nodeRadius);
         }
     }
 
     //accesses 2 nodes: i, i - 1
     public static void SpacingConstraint(int i, NativeArray<float2> position, NativeArray<float2> lastPosition,
-        NativeArray<float2> lastCollisionNormal, NativeArray<bool> collisionStatus, PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter,
+        PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter,
         float collisionBounciness, float nodeSpacing, float nodeRadius)
     {
         var d = position[i] - position[i - 1];
@@ -175,77 +141,16 @@ public static class RopeJobUtils
         if (error > CONSTRAINTS_TOLERANCE)
         {
             var c = 0.5f * error / l * d;
-            MoveNode(i - 1, c, position, lastPosition, lastCollisionNormal, collisionStatus,
+            MoveNode(i - 1, c, position, lastPosition,
                 world, collisionFilter, nodeRadius, collisionBounciness, false, out _);
-            MoveNode(i, -c, position, lastPosition, lastCollisionNormal, collisionStatus,
+            MoveNode(i, -c, position, lastPosition,
                 world, collisionFilter, nodeRadius, collisionBounciness, false, out _);
-
-            //CircleGeometry Circle(int i) => new() { center = position[i], radius = nearCollisionRadius };
-            //bool NearCollision(int i) => /*collisionStatus[i] || */world.TestOverlapGeometry(Circle(i), collisionFilter);
-
-            //var t = 0.5f * error / l;
-            //var c = t * d;
-
-            //var overlapResult0 = world.CastGeometry(Circle(i - 1), c, collisionFilter);
-            //var overlapResult1 = world.CastGeometry(Circle(i), c, collisionFilter);
-
-            //if (NearCollision(i - 1) && NearCollision(i))
-            //{
-            //    float2 normal0;
-            //    float2 normal1;
-
-            //    var overlapResult0 = world.CastGeometry(Circle(i - 1), c, collisionFilter);
-            //    if (overlapResult0.Length > 0 && overlapResult0[0].)
-            //    {
-
-            //    }
-
-            //    var v0 = lastCollisionNormal[i - 1].CCWPerp();
-            //    var v1 = lastCollisionNormal[i].CCWPerp();
-            //    //if (math.dot(v0, d) < 0)
-            //    //{
-            //    //    v0 = -v0;
-            //    //}
-            //    //if (math.dot(v1, d) < 0)
-            //    //{
-            //    //    v1 = -v1;
-            //    //}
-
-            //    var t = 0.5f * error / l;
-            //    //var tangentScale = 0.25f * l;
-            //    //v0 *= tangentScale;
-            //    //v1 *= tangentScale;
-            //    //float2 p0 = MathTools.CubicInterpolation(position[i - 1], v0, position[i], v1, t);
-            //    //float2 p1 = MathTools.CubicInterpolation(position[i - 1], v0, position[i], v1, 1 - t);
-            //    var z = l / math.dot(v0, d);
-            //    if (!math.isinf(z) && !math.isnan(z))
-            //    {
-            //        MoveNode(i - 1, t * z * v0/*p0 - position[i - 1]*/, position, lastPosition, lastCollisionNormal, collisionStatus,
-            //        world, collisionFilter, nodeRadius, collisionBounciness, false, out _);
-            //    }
-            //    z = l / math.dot(v1, d);
-            //    if (!math.isinf(z) && !math.isnan(z))
-            //    {
-            //        MoveNode(i, -t * z * v1, position, lastPosition, lastCollisionNormal, collisionStatus,
-            //        world, collisionFilter, nodeRadius, collisionBounciness, false, out _);
-            //    }
-            //}
-            //else
-            //{
-            //    //var c = 0.5f * error / l * d;
-            //    //position[i - 1] += c;
-            //    //position[i] -= c;
-            //    MoveNode(i - 1, c, position, lastPosition, lastCollisionNormal, collisionStatus,
-            //        world, collisionFilter, nodeRadius, collisionBounciness, false, out _);
-            //    MoveNode(i, -c, position, lastPosition, lastCollisionNormal, collisionStatus,
-            //        world, collisionFilter, nodeRadius, collisionBounciness, false, out _);
-            //}
         }
     }
 
     //accesses 2 nodes: startIndex, startIndex + 1
     public static void FirstConstraint(int startIndex, NativeArray<float2> position, NativeArray<float2> lastPosition,
-        NativeArray<float2> lastCollisionNormal, NativeArray<bool> collisionStatus, PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter,
+        PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter,
         float collisionBounciness, float nodeSpacing, float nodeRadius, float nodeMass, float ownerMass)
     {
         var d = position[startIndex + 1] - position[startIndex];
@@ -258,7 +163,7 @@ public static class RopeJobUtils
             if (math.isinf(ownerMass))
             {
                 //position[startIndex + 1] -= error / l * d;
-                MoveNode(startIndex + 1, -error / l * d, position, lastPosition, lastCollisionNormal, collisionStatus,
+                MoveNode(startIndex + 1, -error / l * d, position, lastPosition,
                     world, collisionFilter, nodeRadius, collisionBounciness, false, out _);
             }
             else
@@ -267,9 +172,9 @@ public static class RopeJobUtils
                 var c = ownerMass / (nodeMass + ownerMass) * d;
                 //position[startIndex + 1] -= c;
                 //position[startIndex] += d - c;
-                MoveNode(startIndex + 1, -c, position, lastPosition, lastCollisionNormal, collisionStatus,
+                MoveNode(startIndex + 1, -c, position, lastPosition,
                     world, collisionFilter, nodeRadius, collisionBounciness, false, out _);
-                MoveNode(startIndex, d - c, position, lastPosition, lastCollisionNormal, collisionStatus,
+                MoveNode(startIndex, d - c, position, lastPosition,
                     world, collisionFilter, nodeRadius, collisionBounciness, false, out _);
             }
         }
@@ -277,7 +182,6 @@ public static class RopeJobUtils
 
     //accesses nodes terminusIndex - 1 and terminusIndex
     public static void LastConstraint(int terminusIndex, NativeArray<float2> position, NativeArray<float2> lastPosition,
-        NativeArray<float2> lastCollisionNormal, NativeArray<bool> collisionStatus,
         NativeReference<PhysicsShape> terminusAnchor, NativeReference<float2> terminusAnchorLocalPos,
         NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode,
         PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter,
@@ -293,7 +197,7 @@ public static class RopeJobUtils
             switch (terminusAnchorMode.Value)
             {
                 case FastRope.TerminusAnchorMode.staticAnchor:
-                    MoveNode(terminusIndex - 1, error / l * d, position, lastPosition, lastCollisionNormal, collisionStatus,
+                    MoveNode(terminusIndex - 1, error / l * d, position, lastPosition,
                         world, collisionFilter, nodeRadius, collisionBounciness, false, out _);
                     break;
 
@@ -311,7 +215,7 @@ public static class RopeJobUtils
                         var c = tMass / (nodeMass + tMass) * d;
                         var c2 = d - c;
                         //position[terminusIndex - 1] += c;
-                        MoveNode(terminusIndex - 1, c, position, lastPosition, lastCollisionNormal, collisionStatus,
+                        MoveNode(terminusIndex - 1, c, position, lastPosition,
                             world, collisionFilter, nodeRadius, collisionBounciness, false, out _);
                         if (terminusAnchor.Value.isValid)
                         {
@@ -327,9 +231,9 @@ public static class RopeJobUtils
                     {
                         d *= error / l;
                         var c = terminusMass / (nodeMass + terminusMass) * d;
-                        MoveNode(terminusIndex - 1, c, position, lastPosition, lastCollisionNormal, collisionStatus,
+                        MoveNode(terminusIndex - 1, c, position, lastPosition,
                             world, collisionFilter, nodeRadius, collisionBounciness, false, out _);
-                        MoveAndAnchorTerminus(c - d, position, lastPosition, lastCollisionNormal, collisionStatus,
+                        MoveAndAnchorTerminus(c - d, position, lastPosition,
                             terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode,
                             world, collisionFilter, nodeRadius, collisionBounciness, false);
                         //position[terminusIndex - 1] += c;

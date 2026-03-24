@@ -677,8 +677,7 @@ public class SpiderMover : MonoBehaviour
         {
             var dot = Vector2.Dot(grapple.LastCarryForce, down);
             if (down.y < 0 && dot < 0 && l > 0 && grapple.GrappleReleaseInput < 0)
-                //allow the grapple to pull you away from ground unless you're clinging upside down
-                //(in which case that effect could make you fall when you don't want to)
+                //allow the grapple to pull you away from ground, except when you're clinging upside down (so you don't fall unintentionally from rope bobbling)
             {
                 return;
             }

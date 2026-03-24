@@ -14,12 +14,11 @@ public class GrappleCannon : MonoBehaviour
     [SerializeField] float releaseRate;
     [SerializeField] float retractMaxTension;
     [SerializeField] float carrySpringForce;
-    [SerializeField] float consecutiveFailuresBeforeBreaking;
     [SerializeField] RopeSettings grappleSettings;
     [SerializeField] CannonFulcrum cannonFulcrum;
     [SerializeField] RopeRenderer grappleRenderer;
 
-    [System.NonSerialized]public float aimInput;
+    [System.NonSerialized] public float aimInput;
     bool poweringUp;
     float shootSpeedPowerUp;
     float shootTimer;
@@ -120,31 +119,9 @@ public class GrappleCannon : MonoBehaviour
             }
             poweringUp = spiderInput.SecondaryInput.y > 0;
         }
-        else
+        else if (spiderInput.ZAction.IsPressed())
         {
-            if (spiderInput.ZAction.IsPressed())
-            {
-                DestroyGrapple();
-            }
-            else if (GrappleAnchored)
-            {
-                if (grapple.CollisionIsFailing)
-                {
-                    failCounter++;
-                    if (failCounter > consecutiveFailuresBeforeBreaking)
-                    {
-                        failCounter = 0;
-                        DestroyGrapple();
-                    }
-                    //in the future i'd like to have a cool snap effect or something other than the grapple just disappearing instantly.
-                    //that could be easy just stop enforcing constraints for the tunneled nodes and stop rendering them
-                    //so the rope appears to split in two halves that drift apart
-                }
-                else
-                {
-                    failCounter = 0;
-                }
-            }
+            DestroyGrapple();
         }
     }
 

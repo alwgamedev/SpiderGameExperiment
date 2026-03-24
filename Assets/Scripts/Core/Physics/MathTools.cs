@@ -174,12 +174,15 @@ public static class MathTools
         return new(v.y, -v.x);
     }
 
+    /// <summary>
+    /// Use this if you always want to get a nonzero direction.
+    /// </summary>
     public static float2 Normalized(this float2 v)
     {
         var r = math.rsqrt(math.lengthsq(v));
         return math.isinf(r) ? NormalizeSmallVector(v) : r * v;
 
-        static float2 NormalizeSmallVector(float2 v)//just to get somethin' (in the unlikely event that result point is extremely close to node position)
+        static float2 NormalizeSmallVector(float2 v)//just to get somethin'
         {
             return v.x != 0 ? v.y != 0 ?
                 new float2(cos45 * math.sign(v.x), cos45 * math.sign(v.y))

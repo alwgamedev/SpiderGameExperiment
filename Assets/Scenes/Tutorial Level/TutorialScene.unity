@@ -6708,7 +6708,7 @@ MonoBehaviour:
     m_PreSolveCallbacks: 0
     m_StartStaticContacts: 0
     m_StartMassUpdate: 1
-    m_WorldDrawing: 1
+    m_WorldDrawing: 0
     moverData:
       m_PushLimit: 0
       m_ClipVelocity: 0
