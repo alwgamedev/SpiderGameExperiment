@@ -66,6 +66,7 @@ public struct PBFFoamParticleSettings
 [Serializable]
 public struct PBFDensityTexSettings
 {
+    public Vector2 noiseStretch;
     public int texWidth;
     public int texHeight;
     public float timeBlur;
@@ -73,7 +74,6 @@ public struct PBFDensityTexSettings
     public float noiseSmoothingRadius;
     public float noiseVelocityRadius;
     public float noiseScrollRate;
-    public Vector2 noiseStretch;
     public float noiseTimeBlur;
     public float noiseVelocityInfluence;
     public float noiseVelocityInfluenceMax;
@@ -100,6 +100,9 @@ public struct PBFComputeConfig
 
 public struct PBFComputeVariables
 {
+    public Vector2 gravity;
+    public Vector2 noiseStretch;//density tex setting
+
     public int kernelDeg;
     public float dt;
     public float dtInverse;
@@ -108,7 +111,6 @@ public struct PBFComputeVariables
     public float worldHeight;
     public float smoothingRadius;
     public float smoothingRadiusSqrd;
-    public Vector2 gravity;
     public float antiClusterK;
     public float antiClusterDQ;
     public int antiClusterN;
@@ -139,7 +141,7 @@ public struct PBFComputeVariables
     public float kineticEnergyNormalizer;
     public float kineticEnergyThreshold;
 
-    //DENSITY TEX
+    //DENSITY TEX (also noiseStretch at top)
     public int texWidth;
     public int texHeight;
     public float texelSizeX;//world width of texel = worldWidth / texWidth
@@ -152,7 +154,6 @@ public struct PBFComputeVariables
     public float noiseVelocityRadius;
     public float noiseVelocityRadiusSqrd;
     public float noiseScrollRate;
-    public Vector2 noiseStretch;
     public float noiseTimeBlur;
     public float noiseVelocityInfluence;
     public float noiseVelocityInfluenceMax;

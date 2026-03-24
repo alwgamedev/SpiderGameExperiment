@@ -25,17 +25,10 @@
 
 static const int NUM_THREADS_PER_GROUP = 256;
 
-StructuredBuffer<PBFConfig> configBuffer; //so the macro can have the short name
-StructuredBuffer<PBFVariables> varsBuffer;
+//density texture
+RWTexture2D<half4> densityTex;
 
-#define config configBuffer[0]
-#define vars varsBuffer[0]
-
-float antiClusterCoefficient;
-
-
-//SIM DATA
-
+//sim data
 RWStructuredBuffer<float2> velocity;
 RWStructuredBuffer<float2> position;
 RWStructuredBuffer<float2> lastPosition; //stores initial position before pressure solving (during which position is really predicted position)
@@ -49,20 +42,6 @@ RWStructuredBuffer<uint> cellContainingParticle;
 RWStructuredBuffer<uint> particlesByCell;
 RWStructuredBuffer<uint> cellStart;
 RWStructuredBuffer<uint> cellParticleCount;
-
-//obstacles
-struct ObstacleData
-{
-    float2 center;
-    float2 extents;
-    float speedScaledRadius;
-    float repulsionMultiplier;
-    int displacement;
-};
-
-uniform uint numObstacles;
-StructuredBuffer<ObstacleData> obstacleData;
-RWStructuredBuffer<uint> obstacleDisplacement;
 
 //foam particles
 struct FoamParticle//combining into struct bc we're running up against the per-kernel UAV limit (max 8 buffers bound to a kernel)
@@ -79,9 +58,27 @@ RWStructuredBuffer<FoamParticle> foamParticle;
 RWStructuredBuffer<FoamParticle> foamParticleBuffer;
 RWStructuredBuffer<uint> foamParticleCounter; //[0] = num active, [1] = num surviving after update
 
-//density texture
-RWTexture2D<half4> densityTex;
+StructuredBuffer<PBFVariables> varsBuffer;
+StructuredBuffer<PBFConfig> configBuffer; //so the macro can have the short name
 
+//obstacles
+struct ObstacleData
+{
+    float2 center;
+    float2 extents;
+    float speedScaledRadius;
+    float repulsionMultiplier;
+    int displacement;
+};
+
+StructuredBuffer<ObstacleData> obstacleData;
+RWStructuredBuffer<uint> obstacleDisplacement;
+uniform uint numObstacles;
+
+float antiClusterCoefficient;
+
+#define config configBuffer[0]
+#define vars varsBuffer[0]
 #define Index(i, j) i * config.width + j
 
 void SearchCellFloat(RWStructuredBuffer<float> particleData, float2 pos, uint cell, float r2, int kernelDeg, inout float sum)

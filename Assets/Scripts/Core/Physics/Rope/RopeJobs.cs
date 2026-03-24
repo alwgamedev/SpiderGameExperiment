@@ -14,91 +14,59 @@ public struct IntegrateRope : IJobParallelFor
 {
     [NativeDisableParallelForRestriction] public NativeArray<float2> position;
     [NativeDisableParallelForRestriction] public NativeArray<float2> lastPosition;
-    public float2 gravity;
-    public readonly float drag;
-    public readonly float dt2;
-    public readonly float timeScale;
-    public readonly int offset;
-
-    public IntegrateRope(NativeArray<float2> position, NativeArray<float2> lastPosition, float2 gravity, 
-        float drag, float dt2, float timeScale, int startIndex)
-    {
-        this.position = position;
-        this.lastPosition = lastPosition;
-        this.gravity = gravity;
-        this.drag = drag;
-        this.dt2 = dt2;
-        this.timeScale = timeScale;
-        offset = startIndex + 1;
-    }
-
-    public void Execute(int i)
-    {
-        i += offset;
-        var p = position[i];
-        var d = p - lastPosition[i];
-        position[i] += (timeScale - drag * math.length(d)) * d + dt2 * gravity;
-        lastPosition[i] = p;
-    }
-}
-
-[BurstCompile]
-public struct ResolveRopeCollision : IJobParallelFor
-{
-    [NativeDisableParallelForRestriction] public NativeArray<float2> position;
-    [NativeDisableParallelForRestriction] public NativeArray<float2> lastPosition;
     [NativeDisableParallelForRestriction] public NativeArray<float2> lastCollisionNormal;
-    [NativeDisableParallelForRestriction] public NativeArray<bool> nearCollision;
-    [NativeDisableParallelForRestriction] public NativeArray<bool> hadCollision;
-    [NativeDisableParallelForRestriction][ReadOnly] public NativeArray<float2> raycastDirections;
+    [NativeDisableParallelForRestriction] public NativeArray<bool> collisionStatus;
     [NativeDisableParallelForRestriction] public NativeReference<PhysicsShape> terminusAnchor;
     [NativeDisableParallelForRestriction] public NativeReference<float2> terminusAnchorLocalPos;
     [NativeDisableParallelForRestriction] public NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode;
     [ReadOnly] public PhysicsWorld world;
-    public readonly PhysicsQuery.QueryFilter filter;
-    public readonly float collisionSearchRadius;
-    public readonly float collisionThreshold;
-    public readonly float tunnelEscapeRadius;
+    public readonly PhysicsQuery.QueryFilter collisionFilter;
+    public readonly float2 gravity;
+    public readonly float drag;
+    public readonly float nodeRadius;
     public readonly float collisionBounciness;
+    public readonly float dt2;
+    public readonly float timeScale;
     public readonly int offset;
 
-    public ResolveRopeCollision(NativeArray<float2> position, NativeArray<float2> lastPosition, NativeArray<float2> lastCollisionNormal, 
-        NativeArray<bool> nearCollision, NativeArray<bool> hadCollision, NativeArray<float2> raycastDirections, NativeReference<PhysicsShape> terminusAnchor, 
-        NativeReference<float2> terminusAnchorLocalPos, NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode, PhysicsWorld world, PhysicsQuery.QueryFilter filter, 
-        float collisionSearchRadius, float collisionThreshold, float tunnelEscapeRadius, float collisionBounciness, int startIndex)
+    public IntegrateRope(NativeArray<float2> position, NativeArray<float2> lastPosition, NativeArray<float2> lastCollisionNormal, NativeArray<bool> collisionStatus, 
+        NativeReference<PhysicsShape> terminusAnchor, NativeReference<float2> terminusAnchorLocalPos, NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode, 
+        PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter, float2 gravity, float drag, float nodeRadius, float collisionBounciness, float dt2, float timeScale, 
+        int offset)
     {
         this.position = position;
         this.lastPosition = lastPosition;
         this.lastCollisionNormal = lastCollisionNormal;
-        this.nearCollision = nearCollision;
-        this.hadCollision = hadCollision;
-        this.raycastDirections = raycastDirections;
+        this.collisionStatus = collisionStatus;
         this.terminusAnchor = terminusAnchor;
         this.terminusAnchorLocalPos = terminusAnchorLocalPos;
         this.terminusAnchorMode = terminusAnchorMode;
         this.world = world;
-        this.filter = filter;
-        this.collisionSearchRadius = collisionSearchRadius;
-        this.collisionThreshold = collisionThreshold;
-        this.tunnelEscapeRadius = tunnelEscapeRadius;
+        this.collisionFilter = collisionFilter;
+        this.gravity = gravity;
+        this.drag = drag;
+        this.nodeRadius = nodeRadius;
         this.collisionBounciness = collisionBounciness;
-        offset = startIndex + 1;
+        this.dt2 = dt2;
+        this.timeScale = timeScale;
+        this.offset = offset;
     }
 
-    //readonly for method means cpu doesn't have to create defensive copies of the struct data
-    public readonly void Execute(int i)
+    public void Execute(int i)
     {
-        i += offset;
+        i += offset; 
+        var dp = position[i] - lastPosition[i];
+        dp = (timeScale - drag * math.length(dp)) * dp + dt2 * gravity;
         if (i == position.Length - 1)
         {
-            RopeJobUtils.ResolveTerminusCollision(i, position, lastPosition, lastCollisionNormal, nearCollision, hadCollision, raycastDirections,
+            RopeJobUtils.MoveAndAnchorTerminus(dp, position, lastPosition, lastCollisionNormal, collisionStatus,
                 terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode,
-                world, filter, collisionSearchRadius, collisionThreshold, tunnelEscapeRadius, collisionBounciness);
+                world, collisionFilter, nodeRadius, collisionBounciness, true);
         }
         else
         {
-            RopeJobUtils.ResolveCollision(i, position, lastPosition, lastCollisionNormal, nearCollision, hadCollision, raycastDirections,
-                world, filter, collisionSearchRadius, collisionThreshold, tunnelEscapeRadius, collisionBounciness);
+            RopeJobUtils.MoveNode(i, dp, position, lastPosition, lastCollisionNormal, collisionStatus,
+                world, collisionFilter, nodeRadius, collisionBounciness, true, out _);
         }
     }
 }
@@ -109,63 +77,55 @@ public struct RopeConstraintIteration : IJobParallelFor
     [NativeDisableParallelForRestriction] public NativeArray<float2> position;
     [NativeDisableParallelForRestriction] public NativeArray<float2> lastPosition;
     [NativeDisableParallelForRestriction] public NativeArray<float2> lastCollisionNormal;
-    [NativeDisableParallelForRestriction] public NativeArray<bool> nearCollision;
-    [NativeDisableParallelForRestriction] public NativeArray<bool> hadCollision;
-    [NativeDisableParallelForRestriction][ReadOnly] public NativeArray<float2> raycastDirections;
+    [NativeDisableParallelForRestriction] public NativeArray<bool> collisionStatus;
     [NativeDisableParallelForRestriction] public NativeReference<PhysicsShape> terminusAnchor;
     [NativeDisableParallelForRestriction] public NativeReference<float2> terminusAnchorLocalPos;
     [NativeDisableParallelForRestriction] public NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode;
     [ReadOnly] public PhysicsWorld world;
-    public readonly PhysicsQuery.QueryFilter filter;
-    public readonly float collisionSearchRadius;
-    public readonly float collisionThreshold;
-    public readonly float tunnelEscapeRadius;
+    public readonly PhysicsQuery.QueryFilter collisionFilter;
     public readonly float collisionBounciness;
     public readonly float nodeSpacing;
+    public readonly float nodeRadius;
     public readonly float nodeMass;
     public readonly float ownerMass;
     public readonly float terminusMass;
     public readonly float dynamicAnchorPullForce;
-    public readonly int startIndex;
+    public readonly int sourceIndex;
     public readonly int offset;
 
     public RopeConstraintIteration(NativeArray<float2> position, NativeArray<float2> lastPosition, NativeArray<float2> lastCollisionNormal, 
-        NativeArray<bool> nearCollision, NativeArray<bool> hadCollision, NativeArray<float2> raycastDirections, NativeReference<PhysicsShape> terminusAnchor, 
-        NativeReference<float2> terminusAnchorLocalPos, NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode, 
-        PhysicsWorld world, PhysicsQuery.QueryFilter filter, float collisionSearchRadius, float collisionThreshold, float tunnelEscapeRadius, 
-        float collisionBounciness, float nodeSpacing, float nodeMass, float ownerMass, float terminusMass, float dynamicAnchorPullForce, int startIndex, int batch)
+        NativeArray<bool> collisionStatus, NativeReference<PhysicsShape> terminusAnchor, NativeReference<float2> terminusAnchorLocalPos, 
+        NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode, PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter,
+        float collisionBounciness, float nodeSpacing, float nodeRadius, float nodeMass, float ownerMass, float terminusMass, float dynamicAnchorPullForce, 
+        int sourceIndex, int batch)
     {
         this.position = position;
         this.lastPosition = lastPosition;
         this.lastCollisionNormal = lastCollisionNormal;
-        this.nearCollision = nearCollision;
-        this.hadCollision = hadCollision;
-        this.raycastDirections = raycastDirections;
+        this.collisionStatus = collisionStatus;
         this.terminusAnchor = terminusAnchor;
         this.terminusAnchorLocalPos = terminusAnchorLocalPos;
         this.terminusAnchorMode = terminusAnchorMode;
         this.world = world;
-        this.filter = filter;
-        this.collisionSearchRadius = collisionSearchRadius;
-        this.collisionThreshold = collisionThreshold;
-        this.tunnelEscapeRadius = tunnelEscapeRadius;
+        this.collisionFilter = collisionFilter;
         this.collisionBounciness = collisionBounciness;
         this.nodeSpacing = nodeSpacing;
+        this.nodeRadius = nodeRadius;
         this.nodeMass = nodeMass;
         this.ownerMass = ownerMass;
         this.terminusMass = terminusMass;
         this.dynamicAnchorPullForce = dynamicAnchorPullForce;
-        this.startIndex = startIndex;
-        offset = startIndex + 1 + batch;
+        this.sourceIndex = sourceIndex;
+        offset = sourceIndex + 1 + batch;
     }
 
     public readonly void Execute(int i)
     {
         i = 2 * i + offset;
-        RopeJobUtils.CoverAllSpacingConstraint(i, position, lastPosition, lastCollisionNormal, nearCollision, hadCollision, raycastDirections,
+        RopeJobUtils.CoverAllSpacingConstraint(i, position, lastPosition, lastCollisionNormal, collisionStatus,
                 terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode,
-                world, filter, collisionSearchRadius, collisionThreshold, tunnelEscapeRadius,
-                collisionBounciness, nodeSpacing, nodeMass, ownerMass, terminusMass, dynamicAnchorPullForce, startIndex);
+                world, collisionFilter,  collisionBounciness, nodeSpacing, nodeRadius, nodeMass, ownerMass, terminusMass, dynamicAnchorPullForce, 
+                sourceIndex);
     }
 }
 
@@ -175,69 +135,60 @@ public struct RopeGroupedConstraintIteration : IJobParallelFor
     [NativeDisableParallelForRestriction] public NativeArray<float2> position;
     [NativeDisableParallelForRestriction] public NativeArray<float2> lastPosition;
     [NativeDisableParallelForRestriction] public NativeArray<float2> lastCollisionNormal;
-    [NativeDisableParallelForRestriction] public NativeArray<bool> nearCollision;
-    [NativeDisableParallelForRestriction] public NativeArray<bool> hadCollision;
-    [NativeDisableParallelForRestriction][ReadOnly] public NativeArray<float2> raycastDirections;
+    [NativeDisableParallelForRestriction] public NativeArray<bool> collisionStatus;
     [NativeDisableParallelForRestriction] public NativeReference<PhysicsShape> terminusAnchor;
     [NativeDisableParallelForRestriction] public NativeReference<float2> terminusAnchorLocalPos;
     [NativeDisableParallelForRestriction] public NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode;
     [ReadOnly] public PhysicsWorld world;
     public readonly PhysicsQuery.QueryFilter filter;
-    public readonly float collisionSearchRadius;
-    public readonly float collisionThreshold;
-    public readonly float tunnelEscapeRadius;
     public readonly float collisionBounciness;
     public readonly float nodeSpacing;
+    public readonly float nodeRadius;
     public readonly float nodeMass;
     public readonly float ownerMass;
     public readonly float terminusMass;
     public readonly float dynamicAnchorPullForce;
-    public readonly int startIndex;
+    public readonly int sourceIndex;
     public readonly int groupSize;
     public readonly int offset;
 
-    public RopeGroupedConstraintIteration(NativeArray<float2> position, NativeArray<float2> lastPosition, NativeArray<float2> lastCollisionNormal,
-        NativeArray<bool> nearCollision, NativeArray<bool> hadCollision, NativeArray<float2> raycastDirections, NativeReference<PhysicsShape> terminusAnchor,
-        NativeReference<float2> terminusAnchorLocalPos, NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode,
-        PhysicsWorld world, PhysicsQuery.QueryFilter filter, float collisionSearchRadius, float collisionThreshold, float tunnelEscapeRadius,
-        float collisionBounciness, float nodeSpacing, float nodeMass, float ownerMass, float terminusMass, float dynamicAnchorPullForce, int startIndex, 
-        int groupSize, int batch)
+    public RopeGroupedConstraintIteration(NativeArray<float2> position, NativeArray<float2> lastPosition, NativeArray<float2> lastCollisionNormal, NativeArray<bool> collisionStatus, 
+        NativeReference<PhysicsShape> terminusAnchor, NativeReference<float2> terminusAnchorLocalPos, NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode, 
+        PhysicsWorld world, PhysicsQuery.QueryFilter filter, float collisionBounciness, float nodeSpacing, 
+        float nodeRadius, float nodeMass, float ownerMass, float terminusMass, float dynamicAnchorPullForce, 
+        int sourceIndex, int groupSize, int batch)
     {
         this.position = position;
         this.lastPosition = lastPosition;
         this.lastCollisionNormal = lastCollisionNormal;
-        this.nearCollision = nearCollision;
-        this.hadCollision = hadCollision;
-        this.raycastDirections = raycastDirections;
+        this.collisionStatus = collisionStatus;
         this.terminusAnchor = terminusAnchor;
         this.terminusAnchorLocalPos = terminusAnchorLocalPos;
         this.terminusAnchorMode = terminusAnchorMode;
         this.world = world;
         this.filter = filter;
-        this.collisionSearchRadius = collisionSearchRadius;
-        this.collisionThreshold = collisionThreshold;
-        this.tunnelEscapeRadius = tunnelEscapeRadius;
         this.collisionBounciness = collisionBounciness;
         this.nodeSpacing = nodeSpacing;
+        this.nodeRadius = nodeRadius;
         this.nodeMass = nodeMass;
         this.ownerMass = ownerMass;
         this.terminusMass = terminusMass;
         this.dynamicAnchorPullForce = dynamicAnchorPullForce;
-        this.startIndex = startIndex;
+        this.sourceIndex = sourceIndex;
         this.groupSize = groupSize;
-        offset = startIndex + 1 + batch;
+        offset = sourceIndex + 1 + batch;
     }
 
     public readonly void Execute(int i)
     {
         i = groupSize * i + offset;
-        int min = math.max(i - groupSize + 1, startIndex); 
+        int min = math.max(i - groupSize + 1, sourceIndex); 
         while (i > min)
         {
-            RopeJobUtils.CoverAllSpacingConstraint(i, position, lastPosition, lastCollisionNormal, nearCollision, hadCollision, raycastDirections,
-                terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode,
-                world, filter, collisionSearchRadius, collisionThreshold, tunnelEscapeRadius,
-                collisionBounciness, nodeSpacing, nodeMass, ownerMass, terminusMass, dynamicAnchorPullForce, startIndex);
+            RopeJobUtils.CoverAllSpacingConstraint(i, position, lastPosition, lastCollisionNormal, collisionStatus, 
+                terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode, world, filter,
+                collisionBounciness, nodeSpacing, nodeRadius, nodeMass, ownerMass, terminusMass, dynamicAnchorPullForce,
+                sourceIndex);
             i--;
         }
     }
@@ -274,7 +225,7 @@ public struct CompleteRopeConstraintsWithStaticAnchor : IJob
     [ReadOnly] public NativeReference<PhysicsShape> terminusAnchor;
     [ReadOnly] public NativeReference<float2> terminusAnchorLocalPos;
 
-    public CompleteRopeConstraintsWithStaticAnchor(NativeArray<float2> position, NativeArray<float2> lastPosition, 
+    public CompleteRopeConstraintsWithStaticAnchor(NativeArray<float2> position, NativeArray<float2> lastPosition,
         NativeReference<PhysicsShape> terminusAnchor, NativeReference<float2> terminusAnchorLocalPos)
     {
         this.position = position;
@@ -358,36 +309,34 @@ public struct RopeReparametrization : IJob
     public NativeArray<float2> positionBuffer;
     public NativeArray<float2> lastPositionBuffer;
     public NativeArray<float2> lastCollisionNormal;
-    public NativeArray<bool> nearCollision;
-    public NativeArray<bool> hadCollision;
+    public NativeArray<bool> collisionStatus;
     public NativeReference<float> nodeSpacing;//not parallel job; we don't need the [NativeDisableParallelForRestriction]
-    public NativeReference<int> startIndex;
+    public NativeReference<int> sourceIndex;
     public readonly float length;//recompute before job
-    public readonly int newStartIndex;
+    public readonly int newSourceIndex;
 
     public RopeReparametrization(NativeArray<float2> position, NativeArray<float2> lastPosition, NativeArray<float2> positionBuffer, NativeArray<float2> lastPositionBuffer, 
-        NativeArray<float2> lastCollisionNormal, NativeArray<bool> nearCollision, NativeArray<bool> hadCollision, 
-        NativeReference<float> nodeSpacing, NativeReference<int> startIndex, float length, int newStartIndex)
+        NativeArray<float2> lastCollisionNormal, NativeArray<bool> collisionStatus, NativeReference<float> nodeSpacing, NativeReference<int> sourceIndex, 
+        float length, int newSourceIndex)
     {
         this.position = position;
         this.lastPosition = lastPosition;
         this.positionBuffer = positionBuffer;
         this.lastPositionBuffer = lastPositionBuffer;
         this.lastCollisionNormal = lastCollisionNormal;
-        this.nearCollision = nearCollision;
-        this.hadCollision = hadCollision;
+        this.collisionStatus = collisionStatus;
         this.nodeSpacing = nodeSpacing;
-        this.startIndex = startIndex;
+        this.sourceIndex = sourceIndex;
         this.length = length;
-        this.newStartIndex = newStartIndex;
+        this.newSourceIndex = newSourceIndex;
     }
 
     public void Execute()
     {
         int terminusIndex = position.Length - 1;
-        float newNodeSpacing = length / (terminusIndex - newStartIndex);
-        int i = startIndex.Value;//start index of current segment we're copying from
-        int j = newStartIndex + 1;//index in rescaleBuffer that we're copying to
+        float newNodeSpacing = length / (terminusIndex - newSourceIndex);
+        int i = sourceIndex.Value;//start index of current segment we're copying from
+        int j = newSourceIndex + 1;//index in rescaleBuffer that we're copying to
         float dt = newNodeSpacing / nodeSpacing.Value;//when we move one segment forward in new path, this is how many segments we cover in old path
         float t = dt;//time along current segment we're copying from (0 = nodes[i], 1 = nodes[i + 1])
         while (t > 1)
@@ -410,18 +359,18 @@ public struct RopeReparametrization : IJob
             }
         }
 
-        if (newStartIndex > startIndex.Value)
+        if (newSourceIndex > sourceIndex.Value)
         {
-            for (int k = startIndex.Value + 1; k < newStartIndex + 1; k++)
+            for (int k = sourceIndex.Value + 1; k < newSourceIndex + 1; k++)
             {
-                position[k] = position[startIndex.Value];
-                RopeJobUtils.Anchor(k, position, lastPosition, nearCollision, hadCollision, lastCollisionNormal);
+                position[k] = position[sourceIndex.Value];
+                RopeJobUtils.Anchor(k, position, lastPosition, collisionStatus, lastCollisionNormal);
             }
         }
 
-        startIndex.Value = newStartIndex;
+        sourceIndex.Value = newSourceIndex;
         nodeSpacing.Value = newNodeSpacing;
-        int copyStart = newStartIndex + 1;
+        int copyStart = newSourceIndex + 1;
         int copyCount = terminusIndex - copyStart;//don't need to copy at the last index; no change.
 
         var positionBufferSlice = new NativeSlice<float2>(positionBuffer, copyStart, copyCount);
@@ -440,20 +389,20 @@ public struct CalculateRopeMaxTension : IJob
     [ReadOnly] public NativeArray<float2> position;
     public NativeReference<float> maxTension;
     public readonly float nodeSpacing;
-    public readonly int start;
+    public readonly int sourceIndex;
 
-    public CalculateRopeMaxTension(NativeArray<float2> position, NativeReference<float> maxTension, float nodeSpacing, int start)
+    public CalculateRopeMaxTension(NativeArray<float2> position, NativeReference<float> maxTension, float nodeSpacing, int sourceIndex)
     {
         this.position = position;
         this.maxTension = maxTension;
         this.nodeSpacing = nodeSpacing;
-        this.start = start;
+        this.sourceIndex = sourceIndex;
     }
 
     public void Execute()
     {
         float max = -math.INFINITY;
-        for (int i = start + 1;  i < position.Length; i++)
+        for (int i = sourceIndex + 1;  i < position.Length; i++)
         {
             var t = math.length(position[i] - position[i - 1]) - nodeSpacing;
             if (t > max)
@@ -467,104 +416,6 @@ public struct CalculateRopeMaxTension : IJob
 }
 
 [BurstCompile]
-public struct CalculateRopeCarryForceDirection : IJob
-{
-    [ReadOnly] public NativeArray<float2> position;
-    [ReadOnly] public NativeArray<bool> nearCollision;
-    public NativeReference<float2> carryForceDirection;
-    public int start;
-
-    public CalculateRopeCarryForceDirection(NativeArray<float2> position, NativeArray<bool> nearCollision, 
-        NativeReference<float2> carryForceDirection, int start)
-    {
-        this.position = position;
-        this.nearCollision = nearCollision;
-        this.carryForceDirection = carryForceDirection;
-        this.start = start;
-    }
-
-    public void Execute()
-    {
-        int firstCollisionIndex = start + 1;
-        while (firstCollisionIndex < position.Length - 1 && !nearCollision[firstCollisionIndex])
-        {
-            firstCollisionIndex++;
-        }
-
-        carryForceDirection.Value = math.normalize(position[firstCollisionIndex] - position[0]);
-    }
-}
-
-[BurstCompile]
-public struct CalculateRopeCarryForceMagnitude : IJob
-{
-    [ReadOnly] public NativeArray<float2> position;
-    [ReadOnly] public NativeArray<bool> nearCollision;
-    public NativeReference<float> carryForceMagnitude;
-    public float nodeSpacing;
-    public float slackThreshold;
-    public float calculationInterval;
-    public int start;
-
-    public CalculateRopeCarryForceMagnitude(NativeArray<float2> position, NativeArray<bool> nearCollision, 
-        NativeReference<float> carryForceMagnitude, float nodeSpacing, float slackThreshold, float calculationInterval,
-        int start)
-    {
-        this.position = position;
-        this.nearCollision = nearCollision;
-        this.carryForceMagnitude = carryForceMagnitude;
-        this.nodeSpacing = nodeSpacing;
-        this.slackThreshold = slackThreshold;
-        this.calculationInterval = calculationInterval;
-        this.start = start;
-    }
-
-    public void Execute()
-    {
-        int nodesPerSeg = (int)math.ceil(calculationInterval / nodeSpacing);
-        int terminusIndex = position.Length - 1;
-        float total = 0;
-        int i = start;
-        int j = start;
-        var d = nodesPerSeg * nodeSpacing;
-        var length = 0f;
-        while (i < terminusIndex)
-        {
-            j += nodesPerSeg;
-            if (j > terminusIndex)
-            {
-                j = terminusIndex;
-                d = (j - i) * nodeSpacing;
-            }
-
-            //can't get reliable tension around corners -- works better if you just ignore them
-            if (nearCollision[i] && nearCollision[j])
-            {
-                i = j;
-                continue;
-            }
-
-            var err = math.length(position[j] - position[i]) - d;
-
-            if (err > -slackThreshold * d)
-            {
-                total += err;
-                length += d;
-            }
-            else
-            {
-                carryForceMagnitude.Value = 0;
-                return;
-            }
-
-            i = j;
-        }
-
-        carryForceMagnitude.Value = total > 0 ? total / length: 0;
-    }
-}
-
-[BurstCompile]
 public struct CheckForRopeCollisionFailure : IJob
 {
     [ReadOnly] public NativeArray<float2> position;
@@ -574,11 +425,11 @@ public struct CheckForRopeCollisionFailure : IJob
     public PhysicsQuery.QueryFilter filter;
     public float collisionThreshold;
     public float breakThreshold;
-    public int start;
+    public int sourceIndex;
 
     public CheckForRopeCollisionFailure(NativeArray<float2> position, NativeReference<PhysicsShape> terminusAnchor, 
         PhysicsWorld world, NativeReference<bool> collisionIsFailing, PhysicsQuery.QueryFilter filter, 
-        float collisionThreshold, float breakThreshold, int start)
+        float collisionThreshold, float breakThreshold, int sourceIndex)
     {
         this.position = position;
         this.terminusAnchor = terminusAnchor;
@@ -587,7 +438,7 @@ public struct CheckForRopeCollisionFailure : IJob
         this.filter = filter;
         this.collisionThreshold = collisionThreshold;
         this.breakThreshold = breakThreshold;
-        this.start = start;
+        this.sourceIndex = sourceIndex;
     }
 
     public void Execute()
@@ -598,7 +449,7 @@ public struct CheckForRopeCollisionFailure : IJob
 
         collisionIsFailing.Value = false;
 
-        for (int i = start + 1; i < position.Length - 1; i++)
+        for (int i = sourceIndex + 1; i < position.Length - 1; i++)
         {
             if (chaining)
             {

@@ -29,6 +29,10 @@
                 float2 uv : TEXCOORD0;
             };
 
+            TEXTURE2D(densityTex);
+            SAMPLER(sampler_densityTex);
+
+            CBUFFER_START(UnityPerMaterial)
             half4 colorMin;
             half4 colorMax;
             half4 foamColor;
@@ -39,9 +43,7 @@
             half noiseThreshold;
             half foaminessNormalizer;
             half foaminessThreshold;
-
-            TEXTURE2D(densityTex);
-            SAMPLER(sampler_densityTex);
+            CBUFFER_END
 
             half NormalizeFloat(half z, half normalizer, half threshold)
             {

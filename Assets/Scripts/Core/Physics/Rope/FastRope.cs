@@ -4,11 +4,12 @@ using Unity.Mathematics;
 using Unity.U2D.Physics;
 using UnityEngine;
 using UnityEngine.Rendering;
-using static MiscTools;
 
 [System.Serializable]
 public struct RopeSettings
 {
+    public PhysicsMask collisionMask;
+
     public float width;//full width of the rope (not half of it)
     public float minNodeSpacing;
     public float maxNodeSpacing;
@@ -24,12 +25,9 @@ public struct RopeSettings
     public int constraintIterationsPullingOwner;
     public int constraintIterationsPulledByOwner;
 
-    public float collisionSearchRadius;
-    public float tunnelEscapeRadius;
     public float collisionBounciness;
-    public PhysicsMask collisionMask;
 
-    public readonly float CollisionThreshold => 0.5f * width;
+    public readonly float NodeRadius => 0.5f * width;
     public readonly PhysicsQuery.QueryFilter CollisionFilter => new(PhysicsMask.All, collisionMask, PhysicsWorld.IgnoreFilter.IgnoreTriggerShapes);
 }
 
@@ -63,8 +61,7 @@ public class FastRope
     //NODE DATA
 
     NativeArray<float2> lastCollisionNormal;
-    NativeArray<bool> nearCollision;
-    NativeArray<bool> hadCollision;
+    NativeArray<bool> collisionStatus;
     AlwaysAccessibleNativeReference<bool> collisionIsFailing;
 
     NativeArray<float2> position;
@@ -106,7 +103,6 @@ public class FastRope
         Enabled = true;
     }
 
-    //to do: only allow changing num nodes in editor
     public void Respawn(float2 position, float length, int numNodes)
     {
         terminusAnchorMode.Value = TerminusAnchorMode.notAnchored;
@@ -122,8 +118,7 @@ public class FastRope
             nodeSpacing.Value = math.clamp(length / TerminusIndex, settings.minNodeSpacing, settings.maxNodeSpacing);
             this.position.FillArray(position, 0, numNodes);
             lastPosition.CopyFrom(this.position);
-            nearCollision.FillArray(false, 0, numNodes);
-            hadCollision.CopyFrom(nearCollision);
+            collisionStatus.FillArray(false, 0, numNodes);
             lastCollisionNormal.FillArray(0, 0, numNodes);
         }
 
@@ -192,13 +187,9 @@ public class FastRope
         {
             lastCollisionNormal.Dispose();
         }
-        if (nearCollision.IsCreated)
+        if (collisionStatus.IsCreated)
         {
-            nearCollision.Dispose();
-        }
-        if (hadCollision.IsCreated)
-        {
-            hadCollision.Dispose();
+            collisionStatus.Dispose();
         }
 
         if (raycastDirections.IsCreated)
@@ -232,8 +223,7 @@ public class FastRope
         carryForce = new(Allocator.Persistent);
 
         lastCollisionNormal = new(numNodes, Allocator.Persistent);
-        nearCollision = new(numNodes, Allocator.Persistent);
-        hadCollision = new(numNodes, Allocator.Persistent);
+        collisionStatus = new(numNodes, Allocator.Persistent);
         collisionIsFailing = new(Allocator.Persistent);
 
         raycastDirections = new(8, Allocator.Persistent);
@@ -366,6 +356,12 @@ public class FastRope
             terminusAnchorMode.Value = terminusAnchor.Value.isValid ? terminusAnchor.Value.body.type == PhysicsBody.BodyType.Dynamic ?
                 TerminusAnchorMode.dynamicAnchor : TerminusAnchorMode.staticAnchor : TerminusAnchorMode.notAnchored;
         }
+        if (terminusAnchorMode.Value == TerminusAnchorMode.staticAnchor)
+        {
+            var p = terminusAnchor.Value.transform.TransformPoint(terminusAnchorLocalPos.Value);
+            position[TerminusIndex] = p;
+            lastPosition[TerminusIndex] = p;
+        }
 
         LockWrappers();
 
@@ -378,7 +374,7 @@ public class FastRope
             case TerminusAnchorMode.staticAnchor:
                 jobHandle = IntegrateRope(dt * dt, timeScale).Schedule(TerminusIndex - sourceIndex.Value, 32, jobHandle);
                 Constraints();
-                jobHandle = CompleteConstraintsWithStaticAnchor().Schedule(jobHandle);
+                //jobHandle = CompleteConstraintsWithStaticAnchor().Schedule(jobHandle);
                 break;
             case TerminusAnchorMode.dynamicAnchor:
                 jobHandle = IntegrateRope(dt * dt, timeScale).Schedule(TerminusIndex - sourceIndex.Value, 32, jobHandle);
@@ -390,14 +386,12 @@ public class FastRope
 
         void Constraints()
         {
-            int numActive = TerminusIndex - sourceIndex.Value;
-            int g = settings.constraintGroupSize;
-            int q = numActive / g;
-            int r = numActive % g;
+            var numActive = TerminusIndex - sourceIndex.Value;
+            var g = settings.constraintGroupSize;
+            var q = numActive / g;
+            var r = numActive % g;
 
             int ArrLength(int b) => b < r ? q + 1 : q;
-
-            jobHandle = ResolveCollision().Schedule(TerminusAnchored ? numActive : numActive - 1, 16, jobHandle);
 
             for (int i = 0; i < settings.constraintIterationsPullingOwner; i++)
             {
@@ -477,32 +471,28 @@ public class FastRope
 
     private IntegrateRope IntegrateRope(float dt2, float timeScale)
     {
-        return new(position, lastPosition, PhysicsWorld.defaultWorld.gravity, settings.drag, dt2, timeScale, sourceIndex.Value);
-    }
-
-    private ResolveRopeCollision ResolveCollision()
-    {
-        return new(position, lastPosition, lastCollisionNormal, nearCollision, hadCollision, raycastDirections, 
+        return new(position, lastPosition, lastCollisionNormal, collisionStatus,
             terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode.native,
-            PhysicsWorld.defaultWorld, settings.CollisionFilter, settings.collisionSearchRadius, settings.CollisionThreshold, settings.tunnelEscapeRadius, settings.collisionBounciness,
-            sourceIndex.Value);
+            PhysicsWorld.defaultWorld, settings.CollisionFilter, PhysicsWorld.defaultWorld.gravity, settings.drag, settings.NodeRadius, settings.collisionBounciness,
+            dt2, timeScale, sourceIndex.Value + 1);
     }
 
     private RopeConstraintIteration ConstraintIteration(int batch, bool pullOwner)
     {
-        return new(position, lastPosition, lastCollisionNormal, nearCollision, hadCollision, raycastDirections,
-            terminusAnchor, terminusAnchorLocalPos, /*carryForce.native,*/ terminusAnchorMode.native,
-            PhysicsWorld.defaultWorld, settings.CollisionFilter, settings.collisionSearchRadius, settings.CollisionThreshold, settings.tunnelEscapeRadius,
-            settings.collisionBounciness, nodeSpacing.Value, settings.nodeMass, pullOwner ? owner.mass : math.INFINITY, settings.terminusMass, settings.dynamicAnchorPullForce,
+        return new(position, lastPosition, lastCollisionNormal, collisionStatus,
+            terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode.native,
+            PhysicsWorld.defaultWorld, settings.CollisionFilter,
+            settings.collisionBounciness, nodeSpacing.Value, settings.NodeRadius, settings.nodeMass, pullOwner ? owner.mass : math.INFINITY, settings.terminusMass, settings.dynamicAnchorPullForce,
             sourceIndex.Value, batch);
     }
 
     private RopeGroupedConstraintIteration GroupedConstraintIteration(int groupSize, int batch, bool pullOwner)
     {
-        return new(position, lastPosition, lastCollisionNormal, nearCollision, hadCollision, raycastDirections,
-            terminusAnchor, terminusAnchorLocalPos, /*carryForce.native,*/ terminusAnchorMode.native,
-            PhysicsWorld.defaultWorld, settings.CollisionFilter, settings.collisionSearchRadius, settings.CollisionThreshold, settings.tunnelEscapeRadius,
-            settings.collisionBounciness, nodeSpacing.Value, settings.nodeMass, pullOwner ? owner.mass : math.INFINITY, settings.terminusMass, settings.dynamicAnchorPullForce,
+        return new(position, lastPosition, lastCollisionNormal, collisionStatus,
+            terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode.native,
+            PhysicsWorld.defaultWorld, settings.CollisionFilter,
+            settings.collisionBounciness, nodeSpacing.Value, settings.NodeRadius, settings.nodeMass, pullOwner ? owner.mass : math.INFINITY, 
+            settings.terminusMass, settings.dynamicAnchorPullForce,
             sourceIndex.Value, groupSize, batch);
     }
 
@@ -528,7 +518,7 @@ public class FastRope
 
     private RopeReparametrization ReparametrizationJob(int newSourceIndex)
     {
-        return new(position, lastPosition, positionBuffer, lastPositionBuffer, lastCollisionNormal, nearCollision, hadCollision, nodeSpacing,
+        return new(position, lastPosition, positionBuffer, lastPositionBuffer, lastCollisionNormal, collisionStatus, nodeSpacing,
             sourceIndex.native, Length, newSourceIndex);
     }
 
@@ -540,6 +530,6 @@ public class FastRope
     private CheckForRopeCollisionFailure CheckForCollisionFailure()
     {
         return new(position, terminusAnchor, PhysicsWorld.defaultWorld, collisionIsFailing.native, settings.CollisionFilter, 
-            settings.CollisionThreshold, settings.breakThreshold, sourceIndex.Value);
+            settings.NodeRadius, settings.breakThreshold, sourceIndex.Value);
     }
 }

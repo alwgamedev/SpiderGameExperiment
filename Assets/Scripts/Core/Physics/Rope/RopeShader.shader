@@ -1,4 +1,4 @@
-//no longer in use (now using shader graph with custom vertex position)
+//NO LONGER IN USE (now using shader graph with custom vertex position)
 Shader "Custom/RopeShader"
 {
     Properties {
@@ -33,14 +33,18 @@ Shader "Custom/RopeShader"
                 float4 clipPos : SV_POSITION;
                 float2 uv : TEXCOORD0;
             };
+
             
+            float4 _NodePositions[MAX_NUM_NODES];
+            
+            CBUFFER_START(UnityPerMaterial)
+            float4 _EdgeColor;
+            float4 _MiddleColor;
             uint _NumNodes;
             uint _EndcapTriangles;
             float _HalfWidth;
             float _Orientation;
-            float4 _EdgeColor;
-            float4 _MiddleColor;
-            float4 _NodePositions[MAX_NUM_NODES];
+            CBUFFER_END
 
             v2f vert (appdata v) {
 

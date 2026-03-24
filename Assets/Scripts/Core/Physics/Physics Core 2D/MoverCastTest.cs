@@ -44,7 +44,7 @@ public class MoverCastTest : MonoBehaviour
     private void FixedUpdate()
     {
         var dp = position - lastPosition;
-        Vector2 targetPosition = position + (1 - drag) * dp + Time.deltaTime * Time.deltaTime * acceleration * moveInput;
+        Vector2 targetPosition = position + (1 - drag * dp.magnitude) * dp + Time.deltaTime * Time.deltaTime * acceleration * moveInput;
 
         var circle = new CircleGeometry()
         {

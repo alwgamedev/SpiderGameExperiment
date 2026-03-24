@@ -9,6 +9,9 @@
 
 struct PBFVariables
 {
+    float2 gravity;
+    float2 noiseStretch;//density tex setting
+    
     uint kernelDeg;
     float dt;
     float dtInverse;
@@ -17,7 +20,6 @@ struct PBFVariables
     float worldHeight;
     float smoothingRadius;
     float smoothingRadiusSqrd;
-    float2 gravity;
     float antiClusterK;
     float antiClusterDQ;
     uint antiClusterN;
@@ -61,7 +63,6 @@ struct PBFVariables
     float noiseVelocityRadius;
     float noiseVelocityRadiusSqrd;
     float noiseScrollRate;
-    float2 noiseStretch;
     float noiseTimeBlur;
     float noiseVelocityInfluence;
     float noiseVelocityInfluenceMax;

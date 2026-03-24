@@ -27,18 +27,8 @@
                 float sizeNoise;
                 float density;
             };
-            
-            float3 pivotPosition;
-            float dt;
-            float velocityStretchFactor;
-            float velocityStretchMax;
-            float sprayThreshold;
-            float foamThreshold;
-            float bubbleThreshold;
-            float densityMax;
 
-            float lifeFadeTime;
-
+            CBUFFER_START(UnityPerMaterial)
             //idea: density will interpolate from one state to the next (e.g. particleColorSpray to particleColorFoam) and noise will interpolate from color0 to color1
             float4 particleColorMin0;
             float4 particleColorMin1;
@@ -56,6 +46,18 @@
             float2 particleRadiusFoam;
             float2 particleRadiusBubble;
             float2 particleRadiusMax;
+            
+            float lifeFadeTime;
+            float dt;
+
+            float3 pivotPosition;
+            float velocityStretchFactor;
+            float velocityStretchMax;
+            float sprayThreshold;
+            float foamThreshold;
+            float bubbleThreshold;
+            float densityMax;//sad
+            CBUFFER_END
 
             StructuredBuffer<FoamParticle> particle;
             StructuredBuffer<uint> particleCounter;
