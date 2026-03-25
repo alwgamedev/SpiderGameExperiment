@@ -71,5 +71,7 @@ public class SpiderPhysics
         return physicsBody.GetContacts().Length > 0;
         //never includes triggers (triggers do not generate contacts)
         //+ temp allocated native array doesn't need disposal
+
+        //if you wanted to only include ground BELOW you, you could loop through contacts and see if any has dot(contactPoint - bodyPosition, downDirection) > 0 (or even spider shape's frame)
     }
 }

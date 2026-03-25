@@ -1536,7 +1536,6 @@ MonoBehaviour:
   groundContactRadius: 0.085
   collisionResponse: 1000
   maxExtensionFraction: 0.95
-  maxAngularVelocity: 30
 --- !u!114 &8477651183600270903
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1669,7 +1668,7 @@ MonoBehaviour:
   freeHangHeadAngle: 0.2094395
   freeHangStepHeightReductionMax: 0.9
   freeHangStrideMultiplier: 1
-  freeHangSimulateContactMax: 0.15
+  freeHangSimulateContactMax: 0.025
   thruster:
     secondsToDrain: 5
     secondsToRecharge: 10
@@ -1700,7 +1699,7 @@ MonoBehaviour:
         direction: {x: 1, y: 0}
       m_LinearVelocity: {x: 0, y: 0}
       m_AngularVelocity: 0
-      m_LinearDamping: 0.25
+      m_LinearDamping: 0.35
       m_AngularDamping: 0.6
       m_GravityScale: 1
       m_SleepThreshold: 0.01
@@ -10666,7 +10665,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: numNodes
-      value: 120
+      value: 135
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: m_Enabled
@@ -10726,7 +10725,7 @@ PrefabInstance:
       objectReference: {fileID: 5333562299232230829}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: carrySpringForce
-      value: 150
+      value: 140
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: retractMaxTension
@@ -10762,7 +10761,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: cannonFulcrum.floppiness
-      value: 0.1
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: grappleSettings.nodeMass
@@ -10794,11 +10793,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: grappleSettings.maxNodeSpacing
-      value: 0.13
+      value: 0.115
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: grappleSettings.minNodeSpacing
-      value: 0.12
+      value: 0.105
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: consecutiveFailuresBeforeBreaking
@@ -10838,7 +10837,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: grappleSettings.constraintIterationsPullingOwner
-      value: 15
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 5398457387206224563, guid: 968deeef87941f44bad6b3dbbe8230f5, type: 3}
       propertyPath: grappleSettings.constraintIterationsPulledByOwner

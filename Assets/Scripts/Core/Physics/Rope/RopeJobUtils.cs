@@ -23,7 +23,7 @@ public static class RopeJobUtils
         MoveNode(position.Length - 1, deltaPosition, position, lastPosition,
             world, collisionFilter, nodeRadius, collisionBounciness, stepVelocity, out var castResults);
 
-        if (castResults.Length > 0)
+        if (castResults.IsCreated && castResults.Length > 0)
         {
             var result = castResults[0];
             var p = result.point + nodeRadius * result.normal;
@@ -49,6 +49,12 @@ public static class RopeJobUtils
         PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter, float nodeRadius, float collisionBounciness, bool stepVelocity,
         out NativeArray<PhysicsQuery.WorldCastResult> castResults)
     {
+        if (math.lengthsq(deltaPosition) < MathTools.o91)
+        {
+            castResults = default;
+            return;
+        }
+
         var circle = new CircleGeometry()
         {
             center = position[i],
@@ -67,9 +73,9 @@ public static class RopeJobUtils
             float2 normal = result.normal;
             if (normal.Equals(float2.zero))//there was initial overlap in the world cast
             {
-                normal = world.TestOverlapPoint(positionAtTimeOfImpact, collisionFilter) ?
-                    (float2)result.point - positionAtTimeOfImpact
-                    : positionAtTimeOfImpact - (float2)result.point;
+                normal = math.select(positionAtTimeOfImpact - (float2)result.point,
+                    (float2)result.point - positionAtTimeOfImpact,
+                    world.TestOverlapPoint(positionAtTimeOfImpact, collisionFilter));
                 normal = normal.Normalized();
 
                 //2do: when result.normal = 0, the result.point is an "arbitrary point" in the overlap (according to source comments),
@@ -162,7 +168,6 @@ public static class RopeJobUtils
         {
             if (math.isinf(ownerMass))
             {
-                //position[startIndex + 1] -= error / l * d;
                 MoveNode(startIndex + 1, -error / l * d, position, lastPosition,
                     world, collisionFilter, nodeRadius, collisionBounciness, false, out _);
             }
@@ -170,8 +175,6 @@ public static class RopeJobUtils
             {
                 d *= error / l;
                 var c = ownerMass / (nodeMass + ownerMass) * d;
-                //position[startIndex + 1] -= c;
-                //position[startIndex] += d - c;
                 MoveNode(startIndex + 1, -c, position, lastPosition,
                     world, collisionFilter, nodeRadius, collisionBounciness, false, out _);
                 MoveNode(startIndex, d - c, position, lastPosition,
@@ -200,11 +203,6 @@ public static class RopeJobUtils
                     MoveNode(terminusIndex - 1, error / l * d, position, lastPosition,
                         world, collisionFilter, nodeRadius, collisionBounciness, false, out _);
                     break;
-
-                //position[terminusIndex - 1] += error / l * d;
-                //ResolveCollision(terminusIndex - 1, position, lastPosition, lastCollisionNormal, nearCollision, hadCollision, raycastDirections,
-                //world, filter, collisionSearchRadius, collisionThreshold, tunnelEscapeRadius, collisionBounciness);
-                //break;
                 case FastRope.TerminusAnchorMode.dynamicAnchor:
                     {
                         //idea: run the spacing constraints as normal, updating terminus position to determine the forces that need to be applied to anchor,
@@ -214,17 +212,13 @@ public static class RopeJobUtils
                         d *= error / l;
                         var c = tMass / (nodeMass + tMass) * d;
                         var c2 = d - c;
-                        //position[terminusIndex - 1] += c;
                         MoveNode(terminusIndex - 1, c, position, lastPosition,
                             world, collisionFilter, nodeRadius, collisionBounciness, false, out _);
                         if (terminusAnchor.Value.isValid)
                         {
                             terminusAnchor.Value.body.ApplyForce(-dynamicAnchorPullForce * c2, position[terminusIndex]);
                         }
-                        position[terminusIndex] -= c2;//no collision so don't use MoveNode
-                        //position[terminusIndex] -= c2;
-                        //ResolveCollision(terminusIndex - 1, position, lastPosition, lastCollisionNormal, nearCollision, hadCollision, raycastDirections,
-                        //    world, filter, collisionSearchRadius, collisionThreshold, tunnelEscapeRadius, collisionBounciness);
+                        position[terminusIndex] -= c2;//no collision so don't use MoveNode (we're just pulling on the anchor)
                         break;
                     }
                 case FastRope.TerminusAnchorMode.notAnchored:
@@ -236,13 +230,6 @@ public static class RopeJobUtils
                         MoveAndAnchorTerminus(c - d, position, lastPosition,
                             terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode,
                             world, collisionFilter, nodeRadius, collisionBounciness, false);
-                        //position[terminusIndex - 1] += c;
-                        //position[terminusIndex] -= d - c;
-                        //ResolveCollision(terminusIndex - 1, position, lastPosition, lastCollisionNormal, nearCollision, hadCollision, raycastDirections,
-                        //    world, filter, collisionSearchRadius, collisionThreshold, tunnelEscapeRadius, collisionBounciness);
-                        //ResolveTerminusCollision(terminusIndex, position, lastPosition, lastCollisionNormal, nearCollision, hadCollision, raycastDirections,
-                        //    terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode,
-                        //    world, filter, collisionSearchRadius, collisionThreshold, tunnelEscapeRadius, collisionBounciness);
                         break;
                     }
             }

@@ -363,7 +363,7 @@ public class FastRope
             var q = numActive / g;
             var r = numActive % g;
 
-            int ArrLength(int b) => b < r ? q + 1 : q;
+            int ArrLength(int b) => math.select(q, q + 1, b < r);//b < r ? q + 1 : q;
 
             for (int i = 0; i < settings.constraintIterationsPullingOwner; i++)
             {
@@ -420,7 +420,8 @@ public class FastRope
 
         if (nodeSpacing.Value < settings.minNodeSpacing || nodeSpacing.Value > settings.maxNodeSpacing)
         {
-            float goalSpacing = nodeSpacing.Value < settings.minNodeSpacing ? settings.minNodeSpacing : settings.maxNodeSpacing;
+            float goalSpacing = math.select(settings.minNodeSpacing, settings.maxNodeSpacing, nodeSpacing.Value > settings.maxNodeSpacing);
+                //nodeSpacing.Value < settings.minNodeSpacing ? settings.minNodeSpacing : settings.maxNodeSpacing;
             int newSourceIndex = TerminusIndex - Mathf.Clamp((int)(Length / goalSpacing), 1, TerminusIndex);
             //note: length / nodeSpacing = num nodes past source index
 

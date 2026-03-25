@@ -91,7 +91,7 @@ public class PhysicsBasedIKLeg
     }
 
     public void UpdateJoints(GroundMap groundMap, float dt, int fabrikIterations, float fabrikToleranceSqrd, float reachToleranceSqrd,
-        float groundContactRadius, float collisionResponse, float maxAngularVelocity, float simulateContactWeight)
+        float groundContactRadius, float collisionResponse, /*float maxAngularVelocity,*/ float simulateContactWeight)
     {
         var settings = EffectorIsTouchingGround ? contactSettings
             : simulateContactWeight > 0 ? PhysicsLegSettings.Lerp(noContactSettings, contactSettings, simulateContactWeight)
@@ -130,14 +130,14 @@ public class PhysicsBasedIKLeg
                     target.position, settings.reachForce, reachToleranceSqrd, dt);
         }
 
-        if (settings.enforceAngleBounds)
-        {
-            EnforceAngleBounds(dt, maxAngularVelocity);
-        }
-        else
-        {
-            EnforceAngleBranch(dt, maxAngularVelocity);
-        }
+        //if (settings.enforceAngleBounds)
+        //{
+        //    EnforceAngleBounds(dt, maxAngularVelocity);
+        //}
+        //else
+        //{
+        //    EnforceAngleBranch(dt, maxAngularVelocity);
+        //}
 
         for (int i = 0; i < positionBuffer.Length; i++)
         {

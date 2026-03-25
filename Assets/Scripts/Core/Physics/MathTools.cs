@@ -6,6 +6,7 @@ public static class MathTools
     static System.Random rng;
 
     public const float o41 = 10E-05f;
+    public const float o91 = 10E-10f;
     //public const float o31 = 10E-4f;
 
     public const float cos15 = 0.9659258f;
@@ -179,22 +180,21 @@ public static class MathTools
     /// </summary>
     public static float2 Normalized(this float2 v)
     {
-        var r = math.rsqrt(math.lengthsq(v));
-        return math.isinf(r) ? NormalizeSmallVector(v) : r * v;
+        var l2 = math.lengthsq(v);
+        return math.select(NormalizeSmallVector(v), math.normalize(v), l2 > o91);
 
         static float2 NormalizeSmallVector(float2 v)//just to get somethin'
         {
-            return v.x != 0 ? v.y != 0 ?
-                new float2(cos45 * math.sign(v.x), cos45 * math.sign(v.y))
-                : new float2(math.sign(v.x), 0)
-                : new float2(0, math.sign(v.y));
+            var x = math.select(1, math.sign(v.x), v.x != 0 || v.y != 0);
+            var y = math.sign(v.y);
+            return math.select(new float2(x, y), new float2(cos45 * x, sin45 * y), v.x != 0 && v.y != 0);
         }
     }
 
     public static float2 NormalizedOrZero(this float2 v)
     {
-        var r = math.rsqrt(math.lengthsq(v));
-        return math.isinf(r) ? 0 : r * v;
+        var l2 = math.lengthsq(v);
+        return math.select(0, math.normalize(v), l2 > o91);
     }
     
     //when v1, v2 are unit vectors, this equals the sine of the CCW angle from v1 to v2 (being dot(v1, v2.CWPerp()) = cos(theta-90))

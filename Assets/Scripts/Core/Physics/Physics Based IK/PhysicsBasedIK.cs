@@ -154,35 +154,53 @@ public static class PhysicsBasedIK
         }
     }
 
-    public static void IntegrateJoints(Transform[] chain, float[] angularVelocity, float damping, float dt, bool rotateJointsIndependently = true)
+    public static void IntegrateJoints(Transform[] chain, float[] angularVelocity, float damping, float dt,
+    bool rotateJointsIndependently = true)
     {
-        if (rotateJointsIndependently)
+        for (int i = 0; i < angularVelocity.Length; i++)
         {
-            for (int i = 0; i < angularVelocity.Length; i++)
+            angularVelocity[i] -= damping * angularVelocity[i] * dt;
+            var u = MathTools.CheapRotationalLerp(Vector2.right, Vector2.left, dt * angularVelocity[i] * PIInverse, out _);
+            var q = MathTools.QuaternionFrom2DUnitVector(u);
+            chain[i].rotation *= q;
+            if (rotateJointsIndependently && i < chain.Length - 2)
             {
-                angularVelocity[i] -= damping * angularVelocity[i] * dt;
-                var u = MathTools.CheapRotationalLerp(Vector2.right, Vector2.left, dt * angularVelocity[i] * PIInverse, out _);
-                var q = MathTools.QuaternionFrom2DUnitVector(u);
-                chain[i].rotation *= q;
-                if (i < chain.Length - 2)
-                {
-                    chain[i + 1].rotation *= MathTools.InverseOfUnitQuaternion(q);
-                    //if chain transforms nested, this allows joints to rotate independently
-                    //(i.e. when joint i rotates, all later joints maintain their world rotation)
-                }
-            }
-        }
-        else
-        {
-            for (int i = 0; i < angularVelocity.Length; i++)
-            {
-                angularVelocity[i] -= damping * angularVelocity[i] * dt;
-                var u = MathTools.CheapRotationalLerp(Vector2.right, Vector2.left, dt * angularVelocity[i] * PIInverse, out _);
-                var q = MathTools.QuaternionFrom2DUnitVector(u);
-                chain[i].rotation *= q;
+                chain[i + 1].rotation *= MathTools.InverseOfUnitQuaternion(q);
+                //if chain transforms nested, this allows joints to rotate independently
+                //(i.e. when joint i rotates, all later joints maintain their world rotation)
             }
         }
     }
+
+    //public static void IntegrateJoints(Transform[] chain, float[] angularVelocity, float damping, float dt, bool rotateJointsIndependently = true)
+    //{
+    //    if (rotateJointsIndependently)
+    //    {
+    //        for (int i = 0; i < angularVelocity.Length; i++)
+    //        {
+    //            angularVelocity[i] -= damping * angularVelocity[i] * dt;
+    //            var u = MathTools.CheapRotationalLerp(Vector2.right, Vector2.left, dt * angularVelocity[i] * PIInverse, out _);
+    //            var q = MathTools.QuaternionFrom2DUnitVector(u);
+    //            chain[i].rotation *= q;
+    //            if (i < chain.Length - 2)
+    //            {
+    //                chain[i + 1].rotation *= MathTools.InverseOfUnitQuaternion(q);
+    //                //if chain transforms nested, this allows joints to rotate independently
+    //                //(i.e. when joint i rotates, all later joints maintain their world rotation)
+    //            }
+    //        }
+    //    }
+    //    else
+    //    {
+    //        for (int i = 0; i < angularVelocity.Length; i++)
+    //        {
+    //            angularVelocity[i] -= damping * angularVelocity[i] * dt;
+    //            var u = MathTools.CheapRotationalLerp(Vector2.right, Vector2.left, dt * angularVelocity[i] * PIInverse, out _);
+    //            var q = MathTools.QuaternionFrom2DUnitVector(u);
+    //            chain[i].rotation *= q;
+    //        }
+    //    }
+    //}
 
     public static void ApplyCollisionForces(Transform[] chain, float[] length, float[] inverseLength, float[] armHalfWidth, float[] angularVelocity,
         LayerMask collisionMask, float collisionResponse, float horizontalRaycastSpacing, float tunnelInterval, float tunnelMax)

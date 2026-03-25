@@ -22,7 +22,7 @@ public class PhysicsLegSynchronizer : MonoBehaviour
     [SerializeField] float groundContactRadius;
     [SerializeField] float collisionResponse;
     [SerializeField] float maxExtensionFraction;
-    [SerializeField] float maxAngularVelocity;
+    //[SerializeField] float maxAngularVelocity;
 
     LegTimer[] timer;
     LegState state;
@@ -119,7 +119,7 @@ public class PhysicsLegSynchronizer : MonoBehaviour
             }
 
             l.UpdateJoints(map, dt, fabrikIterations, fabrikToleranceSqrd, reachToleranceSqrd,
-                groundContactRadius, collisionResponse, maxAngularVelocity, simulateContactWeight);
+                groundContactRadius, collisionResponse, /*maxAngularVelocity,*/ simulateContactWeight);
 
             if (l.EffectorIsTouchingGround)
             {
