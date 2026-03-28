@@ -1,13 +1,14 @@
 ﻿using System;
 using UnityEngine;
 
-public class Health : MonoBehaviour
+[Serializable]
+public class Health
 {
     [SerializeField] int maxHealth;
 
     int health;
 
-    private void Start()
+    public void Start()
     {
         health = maxHealth;
     }

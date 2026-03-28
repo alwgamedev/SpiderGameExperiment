@@ -18,12 +18,10 @@ public struct RopeSettings
     public float drag;//all nodes have same drag, and all nodes have same mass except terminus
     public float nodeMass;
     public float terminusMass;
+    public float constraintForce;
+    public int substeps;
+    public int constraintIterations;
     public float dynamicAnchorPullForce;
-    public float carryForceSlackThreshold;
-    public float carryForceInterval;
-    public int constraintGroupSize;
-    public int constraintIterationsPullingOwner;
-    public int constraintIterationsPulledByOwner;
 
     public readonly float NodeRadius => 0.5f * width;
     public readonly PhysicsQuery.QueryFilter CollisionFilter => new(PhysicsMask.All, collisionMask, PhysicsWorld.IgnoreFilter.IgnoreTriggerShapes);
@@ -62,6 +60,7 @@ public class FastRope
     NativeArray<float2> lastPosition;
     NativeArray<float2> positionBuffer;//for reparametrizing & rendering
     NativeArray<float2> lastPositionBuffer;
+    NativeReference<float2> dynamicAnchorTerminusPositionStorage;
 
     NativeArray<float2> raycastDirections;
 
@@ -70,7 +69,7 @@ public class FastRope
 
     public bool Enabled { get; private set; }
     public int NumNodes { get; private set; }
-    public int TerminusIndex { get; private set;}
+    public int TerminusIndex { get; private set; }
     public float Length { get; private set; }//recompute whenever length gets set via SetLength
 
     public float MaxTension => maxTension.Value;
@@ -89,8 +88,9 @@ public class FastRope
         InitializeNAs(position, numNodes, settings.minNodeSpacing, settings.maxNodeSpacing, length);
         RecomputeLength();
 
-        lastJobStartTime = Time.time;
-        lastDt = Time.fixedDeltaTime;
+        //lastJobStartTime = Time.time;
+        //lastDt = Time.fixedDeltaTime;
+        lastDt = 0f;
         requestedNodeSpacing = nodeSpacing.Value;
 
         Enabled = true;
@@ -123,8 +123,7 @@ public class FastRope
         carryForce.Value = 0;
         GrappleExtent = 0;
 
-        lastJobStartTime = Time.time;
-        lastDt = Time.fixedDeltaTime;
+        lastDt = 0;//Time.fixedDeltaTime;
 
         Enabled = true;
     }
@@ -172,6 +171,10 @@ public class FastRope
         {
             lastPositionBuffer.Dispose();
         }
+        if (dynamicAnchorTerminusPositionStorage.IsCreated)
+        {
+            dynamicAnchorTerminusPositionStorage.Dispose();
+        }
 
         if (raycastDirections.IsCreated)
         {
@@ -199,6 +202,7 @@ public class FastRope
         positionBuffer.CopyFrom(this.position);
         lastPositionBuffer = new(numNodes, Allocator.Persistent);
         lastPositionBuffer.CopyFrom(this.position);
+        dynamicAnchorTerminusPositionStorage = new(Allocator.Persistent);
 
         maxTension = new(Allocator.Persistent);
         carryForce = new(Allocator.Persistent);
@@ -244,9 +248,9 @@ public class FastRope
     public void DrawGizmos()
     {
         Gizmos.color = Color.red;
-        for (int i = 0; i < position.Length; i++)
+        for (int i = sourceIndex.Value; i < positionBuffer.Length; i++)
         {
-            Gizmos.DrawSphere((Vector2)position[i], 0.5f * settings.width);
+            Gizmos.DrawSphere((Vector2)positionBuffer[i], settings.NodeRadius);
         }
     }
 
@@ -254,6 +258,8 @@ public class FastRope
     {
         float taperMult = taperBaseScale;
         var taperRate = (1 - taperBaseScale) / taperLength;
+
+        var dSourcePos = sourcePosition - positionBuffer[sourceIndex.Value];
 
         for (int i = 0; i < positionBuffer.Length; i++)
         {
@@ -264,11 +270,14 @@ public class FastRope
             }
             else
             {
+                p = positionBuffer[i];
+
                 if (taperMult < 1)
                 {
-                    taperMult += Mathf.Min(taperRate * Vector2.Distance(positionBuffer[i - 1], positionBuffer[i]), 1);
+                    p += (1 - taperMult) * dSourcePos;
+                    taperMult += taperRate * Vector2.Distance(renderData[i - 1], p);
+                    taperMult = Mathf.Min(taperMult, 1);
                 }
-                p = positionBuffer[i];
             }
 
             renderData[i] = new(p.x, p.y, taperMult, 0);
@@ -277,7 +286,7 @@ public class FastRope
 
     public void Shoot(float2 shootVelocity, float dt)
     {
-        shootVelocity *= dt;
+        shootVelocity *= dt / settings.substeps;
         lastPosition[TerminusIndex] -= shootVelocity;
 
         var denom = 1f / (TerminusIndex - sourceIndex.Value);
@@ -295,21 +304,72 @@ public class FastRope
 
     public void Update(float2 sourcePosition)
     {
-        if (!jobHandle.IsCompleted)
-        {
-            return;
-        }
+        //if (!jobHandle.IsCompleted)
+        //{
+        //    return;
+        //}
 
-        jobHandle.Complete();
-        UnlockWrappers();
+        //jobHandle.Complete();
+        //UnlockWrappers();
 
 
         //PROCESS LAST JOB'S RESULTS
+        //float dt;
+        //float timeScale;
+        //if (lastDt == 0)
+        //{
+        //    dt = Time.fixedDeltaTime;
+        //    timeScale = 1;
+        //    lastJobStartTime = Time.time;
+        //    lastDt = Time.fixedDeltaTime;
+        //}
+        //else
+        //{
+        //    dt = Time.time - lastJobStartTime;
+        //    timeScale = dt / lastDt;
+        //    lastJobStartTime = Time.time;
+        //    lastDt = dt;
+        //}
 
-        var dt = Time.time - lastJobStartTime;
-        var timeScale = dt / lastDt;
-        lastJobStartTime = Time.time;
-        lastDt = dt;
+        if (TerminusAnchored)
+        {
+            //in case someday we have an anchor that could get destroyed or change rigidbody type...
+            terminusAnchorMode.Value = terminusAnchor.Value.isValid ? terminusAnchor.Value.body.type == PhysicsBody.BodyType.Dynamic ?
+                TerminusAnchorMode.dynamicAnchor : TerminusAnchorMode.staticAnchor : TerminusAnchorMode.notAnchored;
+        }
+        if (TerminusAnchored)
+        {
+            var p = terminusAnchor.Value.transform.TransformPoint(terminusAnchorLocalPos.Value);
+            position[TerminusIndex] = p;
+            if (terminusAnchorMode.Value == TerminusAnchorMode.staticAnchor)
+            {
+                lastPosition[TerminusIndex] = p;
+            }
+        }
+
+        var dt = Time.fixedDeltaTime / settings.substeps;
+        var timeScale = 1;
+        var terminusMass = terminusAnchorMode.Value == TerminusAnchorMode.staticAnchor ? math.INFINITY : settings.terminusMass;
+
+        SetSourcePosition(position, sourcePosition);
+        lastPosition[sourceIndex.Value] = position[sourceIndex.Value] - dt * (float2)owner.linearVelocity;
+
+        var integrateJob = IntegrateRope(dt * dt, timeScale);
+        var simpleConstraintJob = new SimpleConstraint(position, lastPosition, positionBuffer, terminusAnchor, terminusAnchorLocalPos,
+            terminusAnchorMode.native, owner.world, settings.CollisionFilter, settings.constraintForce, settings.NodeRadius, nodeSpacing.Value, settings.nodeMass,
+            owner.mass, terminusMass, settings.collisionBounciness, sourceIndex.Value);
+
+        for (int i = 0; i < settings.substeps; i++)
+        {
+            integrateJob.Run(TerminusIndex - sourceIndex.Value);
+            for (int j = 0; j < settings.constraintIterations; j++)
+            {
+                simpleConstraintJob.Run();
+            }
+        }
+
+        carryForce.Value = position[sourceIndex.Value] - sourcePosition;
+        position[sourceIndex.Value] = sourcePosition;
 
         CalculateMaxTension().Run();
         HandleLengthRequest();
@@ -319,70 +379,97 @@ public class FastRope
 
 
         //PREPARE NEXT JOB
+        //SetSourcePosition(position, sourcePosition);
 
-        SetSourcePosition(position, sourcePosition);
+        //if (TerminusAnchored)
+        //{
+        //    //in case someday we have an anchor that could get destroyed or change rigidbody type...
+        //    terminusAnchorMode.Value = terminusAnchor.Value.isValid ? terminusAnchor.Value.body.type == PhysicsBody.BodyType.Dynamic ?
+        //        TerminusAnchorMode.dynamicAnchor : TerminusAnchorMode.staticAnchor : TerminusAnchorMode.notAnchored;
+        //}
+        //if (terminusAnchorMode.Value == TerminusAnchorMode.staticAnchor)
+        //{
+        //    var p = terminusAnchor.Value.transform.TransformPoint(terminusAnchorLocalPos.Value);
+        //    position[TerminusIndex] = p;
+        //    lastPosition[TerminusIndex] = p;
+        //}
 
-        if (TerminusAnchored)
-        {
-            //in case someday we have an anchor that could get destroyed or change rigidbody type...
-            terminusAnchorMode.Value = terminusAnchor.Value.isValid ? terminusAnchor.Value.body.type == PhysicsBody.BodyType.Dynamic ?
-                TerminusAnchorMode.dynamicAnchor : TerminusAnchorMode.staticAnchor : TerminusAnchorMode.notAnchored;
-        }
-        if (terminusAnchorMode.Value == TerminusAnchorMode.staticAnchor)
-        {
-            var p = terminusAnchor.Value.transform.TransformPoint(terminusAnchorLocalPos.Value);
-            position[TerminusIndex] = p;
-            lastPosition[TerminusIndex] = p;
-        }
+        //LockWrappers();
 
-        LockWrappers();
+        //switch (terminusAnchorMode.Value)
+        //{
+        //    case TerminusAnchorMode.notAnchored:
+        //        Integrate();//Schedule(TerminusIndex - sourceIndex.Value, 32, jobHandle);
+        //        Constraints();
+        //        break;
+        //    case TerminusAnchorMode.staticAnchor:
+        //        //jobHandle = IntegrateRope(dt * dt, timeScale).Schedule(TerminusIndex - sourceIndex.Value, 32, jobHandle);
+        //        Integrate();
+        //        Constraints();
+        //        //jobHandle = CompleteConstraintsWithStaticAnchor().Schedule(jobHandle);//idk just so final positions for rendering are as current as possible
+        //        break;
+        //    case TerminusAnchorMode.dynamicAnchor:
+        //        jobHandle = IntegrateRope(dt * dt, timeScale).Schedule(TerminusIndex - sourceIndex.Value, 32, jobHandle);
+        //        jobHandle = PrepareForConstraintsWithDynamicAnchor(dt).Schedule(jobHandle);
+        //        Constraints();
+        //        jobHandle = CompleteConstraintsWithDynamicAnchor().Schedule(jobHandle);
+        //        break;
+        //}
 
-        switch (terminusAnchorMode.Value)
-        {
-            case TerminusAnchorMode.notAnchored:
-                jobHandle = IntegrateRope(dt * dt, timeScale).Schedule(TerminusIndex - sourceIndex.Value, 32, jobHandle);
-                Constraints();
-                break;
-            case TerminusAnchorMode.staticAnchor:
-                jobHandle = IntegrateRope(dt * dt, timeScale).Schedule(TerminusIndex - sourceIndex.Value, 32, jobHandle);
-                Constraints();
-                //jobHandle = CompleteConstraintsWithStaticAnchor().Schedule(jobHandle);//idk just so final positions for rendering are as current as possible
-                break;
-            case TerminusAnchorMode.dynamicAnchor:
-                jobHandle = IntegrateRope(dt * dt, timeScale).Schedule(TerminusIndex - sourceIndex.Value, 32, jobHandle);
-                jobHandle = PrepareForConstraintsWithDynamicAnchor(dt).Schedule(jobHandle);
-                Constraints();
-                jobHandle = CompleteConstraintsWithDynamicAnchor().Schedule(jobHandle);
-                break;
-        }
+        //void Integrate()
+        //{
+        //    IntegrateRope(dt * dt, timeScale).Run(TerminusIndex - sourceIndex.Value);
+        //}
 
-        void Constraints()
-        {
-            var numActive = TerminusIndex - sourceIndex.Value;
-            var g = settings.constraintGroupSize;
-            var q = numActive / g;
-            var r = numActive % g;
+        //void Constraints()
+        //{
+        //    for (int i = 0; i < settings.constraintIterationsPullingOwner; i++)
+        //    {
+        //        SingleThreadedConstraints(true).Run();
+        //    }
+        //    carryForce.Value = position[sourceIndex.Value] - sourcePosition;//do both (see below)
+        //    position[sourceIndex.Value] = sourcePosition;
+        //    for (int i = 0; i < settings.constraintIterationsPulledByOwner; i++)
+        //    {
+        //        SingleThreadedConstraints(false).Run();
+        //    }
 
-            int ArrLength(int b) => math.select(q, q + 1, b < r);//b < r ? q + 1 : q;
+        //    var d = position[sourceIndex.Value + 1] - position[sourceIndex.Value];//do both (see above)
+        //    var l = math.length(d);
+        //    if (l > nodeSpacing.Value)
+        //    {
+        //        carryForce.Value += (l - nodeSpacing.Value) / l * d;
+        //    }
+        //    //jobHandle = CorrectSourcePosition(sourcePosition).Schedule(jobHandle);
+        //    //for (int i = 0; i < settings.constraintIterationsPulledByOwner; i++)
+        //    //{
+        //    //    jobHandle = SingleThreadedConstraints(false).Schedule(jobHandle);
+        //    //}
+        //    //var numActive = TerminusIndex - sourceIndex.Value;
+        //    //var g = settings.constraintGroupSize;
+        //    //var q = numActive / g;
+        //    //var r = numActive % g;
 
-            for (int i = 0; i < settings.constraintIterationsPullingOwner; i++)
-            {
-                for (int b = 0; b < g; b++)
-                {
-                    jobHandle = GroupedConstraintIteration(g, b, true).Schedule(ArrLength(b), 16, jobHandle);
-                }
-            }
+        //    //int ArrLength(int b) => math.select(q, q + 1, b < r);
 
-            jobHandle = CorrectSourcePosition(sourcePosition).Schedule(jobHandle);
+        //    //for (int i = 0; i < settings.constraintIterationsPullingOwner; i++)
+        //    //{
+        //    //    for (int b = 0; b < g; b++)
+        //    //    {
+        //    //        jobHandle = GroupedConstraintIteration(g, b, true).Schedule(ArrLength(b), 16, jobHandle);
+        //    //    }
+        //    //}
 
-            for (int i = 0; i < settings.constraintIterationsPulledByOwner; i++)
-            {
-                for (int b = 0; b < g; b++)
-                {
-                    jobHandle = GroupedConstraintIteration(g, b, false).Schedule(ArrLength(b), 16, jobHandle);
-                }
-            }
-        }
+        //    //jobHandle = CorrectSourcePosition(sourcePosition).Schedule(jobHandle);
+
+        //    //for (int i = 0; i < settings.constraintIterationsPulledByOwner; i++)
+        //    //{
+        //    //    for (int b = 0; b < g; b++)
+        //    //    {
+        //    //        jobHandle = GroupedConstraintIteration(g, b, false).Schedule(ArrLength(b), 16, jobHandle);
+        //    //    }
+        //    //}
+        //}
     }
 
     private void SetSourcePosition(NativeArray<float2> position, float2 sourcePosition)
@@ -421,7 +508,7 @@ public class FastRope
         if (nodeSpacing.Value < settings.minNodeSpacing || nodeSpacing.Value > settings.maxNodeSpacing)
         {
             float goalSpacing = math.select(settings.minNodeSpacing, settings.maxNodeSpacing, nodeSpacing.Value > settings.maxNodeSpacing);
-                //nodeSpacing.Value < settings.minNodeSpacing ? settings.minNodeSpacing : settings.maxNodeSpacing;
+            //nodeSpacing.Value < settings.minNodeSpacing ? settings.minNodeSpacing : settings.maxNodeSpacing;
             int newSourceIndex = TerminusIndex - Mathf.Clamp((int)(Length / goalSpacing), 1, TerminusIndex);
             //note: length / nodeSpacing = num nodes past source index
 
@@ -450,13 +537,25 @@ public class FastRope
             dt2, timeScale, sourceIndex.Value + 1);
     }
 
+    private SingleThreadedRopeConstraints SingleThreadedConstraints(bool pullOwner)
+    {
+        return new(position, lastPosition,
+            terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode.native,
+            PhysicsWorld.defaultWorld, settings.CollisionFilter,
+            settings.collisionBounciness, nodeSpacing.Value, settings.NodeRadius,
+            settings.nodeMass, pullOwner ? owner.mass : math.INFINITY,
+            settings.terminusMass, settings.dynamicAnchorPullForce,
+            sourceIndex.Value);
+    }
+
     private RopeConstraintIteration ConstraintIteration(int batch, bool pullOwner)
     {
         return new(position, lastPosition,
             terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode.native,
             PhysicsWorld.defaultWorld, settings.CollisionFilter,
             settings.collisionBounciness, nodeSpacing.Value, settings.NodeRadius,
-            settings.nodeMass, pullOwner ? owner.mass : math.INFINITY, settings.terminusMass, settings.dynamicAnchorPullForce,
+            settings.nodeMass, pullOwner ? owner.mass : math.INFINITY,
+            settings.terminusMass, settings.dynamicAnchorPullForce,
             sourceIndex.Value, batch);
     }
 
@@ -466,7 +565,7 @@ public class FastRope
             terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode.native,
             PhysicsWorld.defaultWorld, settings.CollisionFilter,
             settings.collisionBounciness, nodeSpacing.Value, settings.NodeRadius,
-            settings.nodeMass, pullOwner ? owner.mass : math.INFINITY, 
+            settings.nodeMass, pullOwner ? owner.mass : math.INFINITY,
             settings.terminusMass, settings.dynamicAnchorPullForce,
             sourceIndex.Value, groupSize, batch);
     }
@@ -483,12 +582,13 @@ public class FastRope
 
     private PrepareForRopeConstraintsWithDynamicAnchor PrepareForConstraintsWithDynamicAnchor(float dt)
     {
-        return new(position, positionBuffer, lastPosition, terminusAnchor, terminusAnchorLocalPos, dt);
+        return new(position, lastPosition, terminusAnchor, terminusAnchorLocalPos,
+            dynamicAnchorTerminusPositionStorage, dt);
     }
 
     private CompleteRopeConstraintsWithDynamicAnchor CompleteConstraintsWithDynamicAnchor()
     {
-        return new(position, lastPositionBuffer, lastPosition);//use lastPositionBuffer here and we'll use positionBuffer for render positions
+        return new(position, lastPosition, dynamicAnchorTerminusPositionStorage);//use lastPositionBuffer here and we'll use positionBuffer for render positions
     }
 
     private RopeReparametrization ReparametrizationJob(int newSourceIndex)

@@ -71,17 +71,49 @@ public static class RopeJobUtils
             var positionAtTimeOfImpact = position[i] + result.fraction * deltaPosition;
 
             float2 normal = result.normal;
-            if (normal.Equals(float2.zero))//there was initial overlap in the world cast
+            if (normal.Equals(0))//there was initial overlap in the world cast
             {
                 normal = math.select(positionAtTimeOfImpact - (float2)result.point,
                     (float2)result.point - positionAtTimeOfImpact,
                     world.TestOverlapPoint(positionAtTimeOfImpact, collisionFilter));
                 normal = normal.Normalized();
+                //if (world.TestOverlapPoint(positionAtTimeOfImpact, collisionFilter))
+                //{
+                //    normal = ((float2)result.point - positionAtTimeOfImpact).Normalized();
 
-                //2do: when result.normal = 0, the result.point is an "arbitrary point" in the overlap (according to source comments),
-                //so when TestOverlapPoint(node position) returns true, we don't know whether result.point is above or below the node position and normal is unreliable.
-                //you could try to find a different point on the circle perimeter that's not in overlap to use instead of node position.
-                //let's do some tests instead of guessing (use your "MoverCastTest" bubble since can't debug from here -- or better, figure out how to set up debugging for jobs)
+                //    //according to comment in WorldCastResult source, when there is initial overlap the result.point
+                //    //is an "arbitrary point in the overlap," so if node position is also submerged, we don't know if normal is actually pointing towards an escape route
+                //    //(we should actually test this, since this seemed to have no affect on the functionality of the rope)
+                //    int j = 0;
+                //    while (j < 8)
+                //    {
+                //        var p = EdgePoint(j);
+                //        if (!world.TestOverlapPoint(p, collisionFilter))
+                //        {
+                //            normal = (p - (float2)result.point).Normalized();
+                //            break;
+                //        }
+
+                //        j++;
+                //    }
+
+                //    float2 EdgePoint(int j)
+                //    {
+                //        int stretch = j / 4 + 1;
+                //        j %= 4;
+                //        return j switch
+                //        {
+                //            0 => positionAtTimeOfImpact + stretch * nodeRadius * normal,
+                //            1 => positionAtTimeOfImpact - stretch * nodeRadius * normal,
+                //            2 => positionAtTimeOfImpact + stretch * nodeRadius * normal.CCWPerp(),
+                //            _ => positionAtTimeOfImpact + stretch * nodeRadius * normal.CWPerp(),
+                //        };
+                //    }
+                //}
+                //else
+                //{
+                //    normal = (positionAtTimeOfImpact - (float2)result.point).Normalized();
+                //}
             }
 
             if (math.dot(deltaPosition, normal) < 0)

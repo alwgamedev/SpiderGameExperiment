@@ -9,11 +9,11 @@ public class HealthBarUI : MonoBehaviour
 
     private void OnEnable()
     {
-        if (!health && Spider.Player)
+        if (Spider.Player)
         {
             health = Spider.Player.Health;
         }
-        if (health)
+        if (health != null)
         {
             health.HealthChanged += UpdateHealthBar;
         }
@@ -21,10 +21,10 @@ public class HealthBarUI : MonoBehaviour
 
     private void Start()
     {
-        if (!health)
+        if (health == null)//in case we didn't get subscribed in OnEnable
         {
             health = Spider.Player.Health;
-            if (health)
+            if (health != null)
             {
                 health.HealthChanged += UpdateHealthBar;
             }
@@ -38,7 +38,7 @@ public class HealthBarUI : MonoBehaviour
 
     private void OnDisable()
     {
-        if (health)
+        if (health != null)
         {
             health.HealthChanged -= UpdateHealthBar;
         }

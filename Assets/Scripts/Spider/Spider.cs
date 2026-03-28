@@ -2,17 +2,24 @@
 
 public class Spider : MonoBehaviour
 {
-    public Health Health { get; private set; }
-    public SpiderMover Mover { get; private set; }
-    public Collider2D TriggerCollider { get; private set; }
+    [SerializeField] Health health;
+    [SerializeField] SpiderMover mover;
+    [SerializeField] GrappleCannon grapple;
+
+    public Health Health => health;
+    public SpiderMover Mover => mover;
+    public GrappleCannon Grapple => grapple;
+    public Collider2D TriggerCollider { get; private set; }//was for fluid interaction; needs to be updated to new physics system
 
     public static Spider Player { get; private set; }
 
     private void Awake()
     {
-        Health = GetComponent<Health>();
-        Mover = GetComponent<SpiderMover>();
-        TriggerCollider = GetComponent<Collider2D>();
         Player = this;
+    }
+
+    private void Start()
+    {
+        health.Start();
     }
 }

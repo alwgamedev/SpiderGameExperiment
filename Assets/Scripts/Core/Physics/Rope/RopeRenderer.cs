@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class RopeRenderer : MonoBehaviour
 {
-    //[SerializeField] Transform spider;
     [Min(2)][SerializeField] int endCapTriangles;
     [SerializeField] float taperLength;//measured in number of rope segments, just to keep things simple
     [SerializeField] float taperBaseScale;

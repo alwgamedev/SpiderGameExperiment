@@ -780,7 +780,7 @@ public class SpiderMover : MonoBehaviour
     private bool GroundedCondition()
     {
         return ((!grapple.FreeHanging || grounded || legSynch.AnyGroundedLegsUnderextended(freeHangGroundedEntryLegExtensionThreshold))
-            && groundednessRating > 0) || spiderPhysics.HasContact();
+            && groundednessRating > 0) /*|| spiderPhysics.HasContact()*/;
         //keep the HasContact() out of parentheses; that on its own automatically qualifies you as grounded!
     }
 
