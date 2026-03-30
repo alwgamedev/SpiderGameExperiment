@@ -53,17 +53,14 @@ public struct SimpleConstraint : IJob
         this.sourceIndex = sourceIndex;
     }
 
-    //this can be parallelized
-    //(can turn parts A, B into jobs where position & lastPosition are [ReadOnly], and part B needs to be done checkerboard style across two jobs;
-    //but we won't get the unevenness we had before since we're applying spring forces based on old positions)
-    //(and the MoveNode is straightforward to parallelize since we only touch one index at a time)
     public void Execute()
     {
+        //run constraints based on current positions and store the delta positions in positionBuffer (allows for parallelization without clumping)
         positionBuffer.FillArray(0, 0, positionBuffer.Length);
 
         var ns2 = nodeSpacing * nodeSpacing;
 
-        //first spring
+        //first constraint
         var d = position[sourceIndex + 1] - position[sourceIndex];
         var l = math.lengthsq(d);
 
@@ -84,7 +81,7 @@ public struct SimpleConstraint : IJob
             }
         }
 
-        //middle springs
+        //middle constraints
         for (int i = sourceIndex + 2; i < position.Length - 1; i++)
         {
             d = position[i] - position[i - 1];
@@ -99,7 +96,7 @@ public struct SimpleConstraint : IJob
             }
         }
 
-        //last spring
+        //last constraint
         d = position[^1] - position[^2];
         l = math.lengthsq(d);
 
@@ -120,8 +117,7 @@ public struct SimpleConstraint : IJob
             }
         }
 
-        //C) now positionBuffer stores the goal positions, and we MoveNode each node towards its goal position (i.e. move with collision resolution)
-
+        //now move to new positions
         for (int i = sourceIndex; i < position.Length - 1; i++)
         {
             RopeJobUtils.MoveNode(i, positionBuffer[i], position, lastPosition, world, collisionFilter, nodeRadius, collisionBounciness, false, out _);
@@ -301,60 +297,6 @@ public struct RopeGroupedConstraintIteration : IJobParallelFor
                 collisionBounciness, nodeSpacing, nodeRadius, nodeMass, ownerMass, terminusMass, dynamicAnchorPullForce,
                 sourceIndex);
             i--;
-        }
-    }
-}
-
-[BurstCompile]
-public struct SingleThreadedRopeConstraints : IJob
-{
-    [NativeDisableParallelForRestriction] public NativeArray<float2> position;
-    [NativeDisableParallelForRestriction] public NativeArray<float2> lastPosition;
-    [NativeDisableParallelForRestriction] public NativeReference<PhysicsShape> terminusAnchor;
-    [NativeDisableParallelForRestriction] public NativeReference<float2> terminusAnchorLocalPos;
-    [NativeDisableParallelForRestriction] public NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode;
-    [ReadOnly] public PhysicsWorld world;
-    public readonly PhysicsQuery.QueryFilter filter;
-    public readonly float collisionBounciness;
-    public readonly float nodeSpacing;
-    public readonly float nodeRadius;
-    public readonly float nodeMass;
-    public readonly float ownerMass;
-    public readonly float terminusMass;
-    public readonly float dynamicAnchorPullForce;
-    public readonly int sourceIndex;
-
-    public SingleThreadedRopeConstraints(NativeArray<float2> position, NativeArray<float2> lastPosition,
-        NativeReference<PhysicsShape> terminusAnchor, NativeReference<float2> terminusAnchorLocalPos, NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode,
-        PhysicsWorld world, PhysicsQuery.QueryFilter filter, float collisionBounciness, float nodeSpacing,
-        float nodeRadius, float nodeMass, float ownerMass, float terminusMass, float dynamicAnchorPullForce,
-        int sourceIndex)
-    {
-        this.position = position;
-        this.lastPosition = lastPosition;
-        this.terminusAnchor = terminusAnchor;
-        this.terminusAnchorLocalPos = terminusAnchorLocalPos;
-        this.terminusAnchorMode = terminusAnchorMode;
-        this.world = world;
-        this.filter = filter;
-        this.collisionBounciness = collisionBounciness;
-        this.nodeSpacing = nodeSpacing;
-        this.nodeRadius = nodeRadius;
-        this.nodeMass = nodeMass;
-        this.ownerMass = ownerMass;
-        this.terminusMass = terminusMass;
-        this.dynamicAnchorPullForce = dynamicAnchorPullForce;
-        this.sourceIndex = sourceIndex;
-    }
-
-    public readonly void Execute()
-    {
-        for (int i = sourceIndex + 1; i < position.Length; i++)
-        {
-            RopeJobUtils.CoverAllSpacingConstraint(i, position, lastPosition,
-                terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode, world, filter,
-                collisionBounciness, nodeSpacing, nodeRadius, nodeMass, ownerMass, terminusMass, dynamicAnchorPullForce,
-                sourceIndex);
         }
     }
 }

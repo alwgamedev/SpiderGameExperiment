@@ -166,6 +166,7 @@ public class SpiderMover : MonoBehaviour
             Time.timeScale = timeScale;
 
             spiderPhysics?.OnValidate();
+            thruster.Initialize();
         }
     }
 
@@ -472,7 +473,7 @@ public class SpiderMover : MonoBehaviour
 
     private void HandleMoveInput()
     {
-        //accelCap bc otherwise if speed is highly negative, we get ungodly rates of acceleration
+        //accelCap bc otherwise if velocity along movement direction is highly negative, we get ungodly rates of acceleration
         //(and note that we are doing it in a way that scales with max speed)
         if (HorizontalMoveInput != 0)
         {

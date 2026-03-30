@@ -55,8 +55,6 @@ public class Thruster
                 Charge = 1;
             }
             if (Cooldown && Charge > rechargeThreshold)
-            //use > rechargeThreshold so that we can set rechargeThreshold = 0;(if we end up doing that tho, we can get rid of cooldown)
-            //but I think we want a (small) positive threshold, otherwise you basically never run out of charge (well when at zero charge you alternate on and off every update)
             {
                 Cooldown = false;
                 return ThrustersUpdateResult.CooldownEnded;

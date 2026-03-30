@@ -18,9 +18,9 @@ public struct RopeSettings
     public float drag;//all nodes have same drag, and all nodes have same mass except terminus
     public float nodeMass;
     public float terminusMass;
-    public float constraintForce;
-    public int substeps;
+    public float constraintStiffness;
     public int constraintIterations;
+    public int itersPulledByOwner;
     public float dynamicAnchorPullForce;
 
     public readonly float NodeRadius => 0.5f * width;
@@ -286,7 +286,7 @@ public class FastRope
 
     public void Shoot(float2 shootVelocity, float dt)
     {
-        shootVelocity *= dt / settings.substeps;
+        shootVelocity *= dt;
         lastPosition[TerminusIndex] -= shootVelocity;
 
         var denom = 1f / (TerminusIndex - sourceIndex.Value);
@@ -347,29 +347,34 @@ public class FastRope
             }
         }
 
-        var dt = Time.fixedDeltaTime / settings.substeps;
+        var dt = Time.fixedDeltaTime;
         var timeScale = 1;
         var terminusMass = terminusAnchorMode.Value == TerminusAnchorMode.staticAnchor ? math.INFINITY : settings.terminusMass;
 
         SetSourcePosition(position, sourcePosition);
-        lastPosition[sourceIndex.Value] = position[sourceIndex.Value] - dt * (float2)owner.linearVelocity;
 
         var integrateJob = IntegrateRope(dt * dt, timeScale);
-        var simpleConstraintJob = new SimpleConstraint(position, lastPosition, positionBuffer, terminusAnchor, terminusAnchorLocalPos,
-            terminusAnchorMode.native, owner.world, settings.CollisionFilter, settings.constraintForce, settings.NodeRadius, nodeSpacing.Value, settings.nodeMass,
+        var constraintIter = new SimpleConstraint(position, lastPosition, positionBuffer, terminusAnchor, terminusAnchorLocalPos,
+            terminusAnchorMode.native, owner.world, settings.CollisionFilter, settings.constraintStiffness, settings.NodeRadius, nodeSpacing.Value, settings.nodeMass,
             owner.mass, terminusMass, settings.collisionBounciness, sourceIndex.Value);
 
-        for (int i = 0; i < settings.substeps; i++)
+        integrateJob.Run(TerminusIndex - sourceIndex.Value);
+        for (int j = 0; j < settings.constraintIterations; j++)
         {
-            integrateJob.Run(TerminusIndex - sourceIndex.Value);
-            for (int j = 0; j < settings.constraintIterations; j++)
-            {
-                simpleConstraintJob.Run();
-            }
+            constraintIter.Run();
         }
 
         carryForce.Value = position[sourceIndex.Value] - sourcePosition;
         position[sourceIndex.Value] = sourcePosition;
+
+        constraintIter = new SimpleConstraint(position, lastPosition, positionBuffer, terminusAnchor, terminusAnchorLocalPos,
+            terminusAnchorMode.native, owner.world, settings.CollisionFilter, settings.constraintStiffness, settings.NodeRadius, nodeSpacing.Value, settings.nodeMass,
+            math.INFINITY, terminusMass, settings.collisionBounciness, sourceIndex.Value);
+
+        for (int j = 0; j < settings.itersPulledByOwner; j++)
+        {
+            constraintIter.Run();
+        }
 
         CalculateMaxTension().Run();
         HandleLengthRequest();
@@ -474,10 +479,7 @@ public class FastRope
 
     private void SetSourcePosition(NativeArray<float2> position, float2 sourcePosition)
     {
-        for (int i = 0; i < sourceIndex.Value + 1; i++)
-        {
-            position[i] = sourcePosition;
-        }
+        position.FillArray(sourcePosition, 0, sourceIndex.Value + 1);
     }
 
     public void SetTerminusPosition()
@@ -535,17 +537,6 @@ public class FastRope
             terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode.native,
             PhysicsWorld.defaultWorld, settings.CollisionFilter, PhysicsWorld.defaultWorld.gravity, settings.drag, settings.NodeRadius, settings.collisionBounciness,
             dt2, timeScale, sourceIndex.Value + 1);
-    }
-
-    private SingleThreadedRopeConstraints SingleThreadedConstraints(bool pullOwner)
-    {
-        return new(position, lastPosition,
-            terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode.native,
-            PhysicsWorld.defaultWorld, settings.CollisionFilter,
-            settings.collisionBounciness, nodeSpacing.Value, settings.NodeRadius,
-            settings.nodeMass, pullOwner ? owner.mass : math.INFINITY,
-            settings.terminusMass, settings.dynamicAnchorPullForce,
-            sourceIndex.Value);
     }
 
     private RopeConstraintIteration ConstraintIteration(int batch, bool pullOwner)

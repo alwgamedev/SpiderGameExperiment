@@ -11,12 +11,12 @@ public class PhysicsBodyStarter : MonoBehaviour
 
     [SerializeField] PhysicsBodyDefinition bodyDef;
     [SerializeField] PhysicsShapeDefinition shapeDef;
-    [SerializeField] PhysicsGeometryType geometryType;
+    [SerializeField] ShapeType geometryType;
     [SerializeField] Vector2 geometryVectorParam;
     [SerializeField] float geometryFloatParam;
     [SerializeField] bool unscaledGeometry;
 
-    enum PhysicsGeometryType { Circle, Capsule, Box, Polygon };
+    enum ShapeType { Circle, Capsule, Box, Polygon };
 
     private void OnValidate()
     {
@@ -37,11 +37,11 @@ public class PhysicsBodyStarter : MonoBehaviour
 
         switch (geometryType)
         {
-            case PhysicsGeometryType.Circle:
+            case ShapeType.Circle:
                 body = PhysicsCoreHelper.CreateCirceBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef, 
                     unscaledGeometry ? geometryFloatParam : transform.localScale.x * geometryFloatParam, out shape);
                 break;
-            case PhysicsGeometryType.Capsule:
+            case ShapeType.Capsule:
                 Vector2 center = geometryVectorParam;
                 float radius = geometryFloatParam;
                 if (unscaledGeometry)
@@ -58,25 +58,19 @@ public class PhysicsBodyStarter : MonoBehaviour
                 }
                 body = PhysicsCoreHelper.CreateCapsuleBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef, center, -center, radius, out shape);
                 break;
-            case PhysicsGeometryType.Box:
+            case ShapeType.Box:
                 body = PhysicsCoreHelper.CreateBoxBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef, 
                     unscaledGeometry ? geometryVectorParam : transform.localScale * geometryVectorParam, out shape);
                 break;
-            case PhysicsGeometryType.Polygon:
+            case ShapeType.Polygon:
                 body = PhysicsCoreHelper.CreatePolygonBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef,
                     unscaledGeometry ? Vector2.one : transform.localScale, GetComponent<PolygonPhysicsShape>().GetSubdividedPolygon());
                 //2do: PolygonGeometry.CreatePolygons has to do some work to split up the polygon, so ideally we can cache that data in edit mode
                 break;
         }
 
-        if (!body.isValid)
-        {
-            Debug.Log($"Physics body not valid on {gameObject.name} (check the correct geometry type is selected).");
-        }
-        else
-        {
-            body.transformObject = transform;
-        }
+        //if body not valid error, check correct geometry type selected
+        body.transformObject = transform;
 
 #if UNITY_EDITOR
         SceneView.duringSceneGui += OnSceneGUI;
