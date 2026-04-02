@@ -4,74 +4,113 @@ using Unity.U2D.Physics;
 
 
 [Serializable]
-public class SpiderPhysics
+public struct SpiderPhysics
 {
-    public PhysicsBody physicsBody;
-    public PhysicsShape physicsShape;
+    public PhysicsBody abdomen;
+    public PhysicsBody head;
+    public PhysicsBody grappleArm;
+    public PhysicsFixedJoint headJoint;
+    public PhysicsFixedJoint grappleArmJoint;
     public PhysicsQuery.QueryFilter queryFilter;
 
     [SerializeField] PhysicsBodyDefinition bodyDef;
     [SerializeField] PhysicsShapeDefinition shapeDef;
-    [Range(0,0.5f)][SerializeField] float capsuleCenter;//0 - 0.5 for where first center is positioned
+    [SerializeField] PhysicsFixedJointDefinition headJointDef;
+    [SerializeField] PhysicsFixedJointDefinition grappleArmJointDef;
     [SerializeField] Transform spiderTransform;
+    [SerializeField] Transform grappleArmRoot;
+    [SerializeField] Transform grappleArmBone;
+    [SerializeField] Transform abdomenRoot;
     [SerializeField] Transform abdomenBone;
+    [SerializeField] Transform headRoot;
     [SerializeField] Transform headBone;
-    [SerializeField] Transform headBoneEndpt;
     [SerializeField] Transform heightReferencePoint;//just for initialization; cache position in local space
+    [SerializeField] Vector2 abdomenCapsuleSize;//(width, height) -- full width and height
+    [SerializeField] Vector2 abdomenCapsuleOffset;
+    [SerializeField] Vector2 headCapsuleSize;
+    [SerializeField] Vector2 headCapsuleOffset;
+
     
 
     public void OnValidate()
     {
-        if (physicsBody.isValid)
+        if (abdomen.isValid)
         {
-            physicsBody.SetBodyDefLive(bodyDef);
-            physicsBody.SetShapeDef(shapeDef);
+            abdomen.SetBodyDefLive(bodyDef);
+            abdomen.SetShapeDef(shapeDef);
+
+            head.SetBodyDefLive(bodyDef);
+            head.SetShapeDef(shapeDef);
+            
+            grappleArm.SetBodyDefLive(bodyDef);
+            grappleArm.SetShapeDef(shapeDef);
+
+            headJoint.UpdateSettings(headJointDef);
+            grappleArmJoint.UpdateSettings(grappleArmJointDef);
+
             queryFilter = shapeDef.contactFilter.ToQueryFilter(queryFilter.ignoreFilter);
+        }
+    }
+
+    public void DrawGizmos()
+    {
+        if (abdomenBone)
+        {
+            PhysicsCoreHelper.DrawCapsule(Color.orange, abdomenCapsuleSize, abdomenCapsuleOffset, abdomenBone);
+        }
+
+        if (headBone)
+        {
+            PhysicsCoreHelper.DrawCapsule(Color.orange, headCapsuleSize, headCapsuleOffset, headBone);
         }
     }
 
     public void CreatePhysicsBody()
     {
-        if (physicsBody.isValid)
+        if (abdomen.isValid)
         {
-            physicsBody.Destroy();
+            abdomen.Destroy();
+            headJoint.Destroy();
+            grappleArmJoint.Destroy();
+            head.Destroy();
+            grappleArm.Destroy();
         }
-
-        bodyDef.position = spiderTransform.position;
-        bodyDef.rotation = new PhysicsRotate(spiderTransform.rotation, PhysicsWorld.TransformPlane.XY);
 
         queryFilter = shapeDef.contactFilter.ToQueryFilter(queryFilter.ignoreFilter);
 
-        physicsBody = PhysicsWorld.defaultWorld.CreateBody(bodyDef);
+        var defaultWorld = PhysicsWorld.defaultWorld;
 
-        var centerOfMass = physicsBody.transform.InverseTransformPoint(heightReferencePoint.position);
-        var e0 = physicsBody.transform.InverseTransformPoint(abdomenBone.position);
-        var e1 = physicsBody.transform.InverseTransformPoint(headBoneEndpt.position);
-        var r = capsuleCenter * (e1.x - e0.x);
-        var c1 = new Vector2(e0.x + r, centerOfMass.y);
-        var c2 = new Vector2(e1.x - r, centerOfMass.y);
-        var capsule = new CapsuleGeometry()
-        {
-            center1 = c1,
-            center2 = c2,
-            radius = r
-        };
+        var bodyDefCopy = bodyDef;
+        bodyDefCopy.position = abdomenRoot.position;
+        bodyDefCopy.rotation = new PhysicsRotate(abdomenRoot.rotation, PhysicsWorld.TransformPlane.XY);
+        abdomen = PhysicsCoreHelper.CreateCapsuleBody(defaultWorld, bodyDefCopy, shapeDef, abdomenCapsuleSize, abdomenCapsuleOffset, abdomenBone.localToWorldMatrix);
+        abdomen.transformObject = abdomenRoot;
 
-        physicsShape = physicsBody.CreateShape(capsule, shapeDef);
+        var com = abdomen.transform.InverseTransformPoint(heightReferencePoint.position);
+        var mass = abdomen.massConfiguration;
+        mass.center = com;
+        abdomen.massConfiguration = mass;
 
-        var massConfig = physicsBody.massConfiguration;
-        massConfig.center = centerOfMass;
-        physicsBody.massConfiguration = massConfig;
+        bodyDefCopy.position = headRoot.position;
+        bodyDefCopy.rotation = new PhysicsRotate(headRoot.rotation, PhysicsWorld.TransformPlane.XY);
+        head = PhysicsCoreHelper.CreateCapsuleBody(defaultWorld, bodyDefCopy, shapeDef, headCapsuleSize, headCapsuleOffset, headBone.localToWorldMatrix);
+        head.transformObject = headRoot;
 
-        physicsBody.transformObject = spiderTransform;
-    }
+        bodyDefCopy.position = grappleArmRoot.position;
+        bodyDefCopy.rotation = new PhysicsRotate(grappleArmRoot.rotation, PhysicsWorld.TransformPlane.XY);
+        grappleArm = PhysicsCoreHelper.CreateBoxBody(defaultWorld, bodyDefCopy, shapeDef, Vector2.one, grappleArmBone.localToWorldMatrix);
+        grappleArm.transformObject = grappleArmRoot;
 
-    public bool HasContact()
-    {
-        return physicsBody.GetContacts().Length > 0;
-        //never includes triggers (triggers do not generate contacts)
-        //+ temp allocated native array doesn't need disposal
+        headJointDef.bodyA = abdomen;
+        headJointDef.bodyB = head;
+        headJointDef.localAnchorA = new(abdomen.transform.InverseTransformPoint(head.position));
+        headJointDef.localAnchorB = PhysicsTransform.identity;
+        headJoint = PhysicsFixedJoint.Create(defaultWorld, headJointDef);
 
-        //if you wanted to only include ground BELOW you, you could loop through contacts and see if any has dot(contactPoint - bodyPosition, downDirection) > 0 (or even spider shape's frame)
+        grappleArmJointDef.bodyA = abdomen;
+        grappleArmJointDef.bodyB = grappleArm;
+        grappleArmJointDef.localAnchorA = new(abdomen.transform.InverseTransformPoint(grappleArm.position));
+        grappleArmJointDef.localAnchorB = PhysicsTransform.identity;
+        grappleArmJoint = PhysicsFixedJoint.Create(defaultWorld, grappleArmJointDef);
     }
 }

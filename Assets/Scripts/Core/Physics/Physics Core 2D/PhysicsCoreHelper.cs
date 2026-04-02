@@ -1,6 +1,6 @@
-﻿using System;
-using Unity.Collections;
+﻿using Unity.Collections;
 using Unity.U2D.Physics;
+using UnityEditor;
 using UnityEngine;
 
 
@@ -55,26 +55,14 @@ public static class PhysicsCoreHelper
         }
     }
 
-    public static PhysicsBody CreatePolygonBody(PhysicsWorld world, PhysicsBodyDefinition bodyDef, PhysicsShapeDefinition shapeDef, 
-        Vector2 scale, ReadOnlySpan<Vector2> polygon)
-    {
-        var body = world.CreateBody(bodyDef);
-
-        var geoms = PolygonGeometry.CreatePolygons(polygon, PhysicsTransform.identity, scale);
-        body.CreateShapeBatch(geoms, shapeDef);
-
-        return body;
-    }
-
     public static PhysicsBody CreatePolygonBody(PhysicsWorld world, PhysicsBodyDefinition bodyDef, PhysicsShapeDefinition shapeDef,
-        Vector2 scale, PolygonGeometry[] subdividedPolygon)
+        Matrix4x4 shapeInputSpace, PolygonGeometry[] subdividedPolygon)
     {
         var body = world.CreateBody(bodyDef);
 
-        var scaleMatrix = Matrix4x4.Scale(new Vector3(scale.x, scale.y, 1));
         for (int i = 0; i < subdividedPolygon.Length; i++)
         {
-            subdividedPolygon[i] = PolygonGeometry.Create(subdividedPolygon[i].AsReadOnlySpan(), 0f, scaleMatrix);
+            subdividedPolygon[i] = subdividedPolygon[i].Transform(shapeInputSpace, true).InverseTransform(body.transform);
         }
 
         body.CreateShapeBatch(subdividedPolygon, shapeDef);
@@ -82,40 +70,107 @@ public static class PhysicsCoreHelper
         return body;
     }
 
-    public static PhysicsBody CreateCirceBody(PhysicsWorld world, PhysicsBodyDefinition bodyDef, PhysicsShapeDefinition shapeDef,
-        float radius, out PhysicsShape shape)
+    public static PhysicsBody CreateCircleBody(PhysicsWorld world, PhysicsBodyDefinition bodyDef, PhysicsShapeDefinition shapeDef,
+        float radius, Matrix4x4 shapeInputSpace)
     {
         var body = world.CreateBody(bodyDef);
 
-        CircleGeometry circleGeom = new() { radius = radius };
-        shape = body.CreateShape(circleGeom, shapeDef);
+        var circleGeom = CircleGeometry.Create(radius).Transform(shapeInputSpace, true).InverseTransform(body.transform);
+        body.CreateShape(circleGeom, shapeDef);
 
         return body;
     }
 
     public static PhysicsBody CreateCapsuleBody(PhysicsWorld world, PhysicsBodyDefinition bodyDef, PhysicsShapeDefinition shapeDef,
-        Vector2 capCenter1, Vector2 capCenter2, float capRadius, out PhysicsShape shape)
+        Vector2 capCenter1, Vector2 capCenter2, float capRadius, Matrix4x4 shapeInputSpace)
     {
         var body = world.CreateBody(bodyDef);
 
-        CapsuleGeometry capsuleGeom = new()
-        {
-            center1 = capCenter1,
-            center2 = capCenter2,
-            radius = capRadius
-        };
-        shape = body.CreateShape(capsuleGeom, shapeDef);
+        var capsuleGeom = CapsuleGeometry.Create(capCenter1, capCenter2, capRadius).Transform(shapeInputSpace, true).InverseTransform(body.transform);
+        body.CreateShape(capsuleGeom, shapeDef);
 
         return body;
     }
 
-    public static PhysicsBody CreateBoxBody(PhysicsWorld world, PhysicsBodyDefinition bodyDef, PhysicsShapeDefinition shapeDef, Vector2 fullSize, out PhysicsShape shape)
+    public static PhysicsBody CreateCapsuleBody(PhysicsWorld world, PhysicsBodyDefinition bodyDef, PhysicsShapeDefinition shapeDef,
+        Vector2 capsuleSize, Vector2 capsuleOffset, Matrix4x4 shapeInputSpace)
     {
         var body = world.CreateBody(bodyDef);
 
-        PolygonGeometry boxGeom = PolygonGeometry.CreateBox(fullSize);
-        shape = body.CreateShape(boxGeom, shapeDef);
+        var capsuleGeom = CreateCapsule(capsuleSize, capsuleOffset).Transform(shapeInputSpace, true).InverseTransform(body.transform);
+        body.CreateShape(capsuleGeom, shapeDef);
 
         return body;
+    }
+
+    public static PhysicsBody CreateBoxBody(PhysicsWorld world, PhysicsBodyDefinition bodyDef, PhysicsShapeDefinition shapeDef, 
+        Vector2 fullSize, Matrix4x4 shapeInputSpace)
+    {
+        var body = world.CreateBody(bodyDef);
+
+        PolygonGeometry boxGeom = PolygonGeometry.CreateBox(fullSize).Transform(shapeInputSpace, true).InverseTransform(body.transform);
+        body.CreateShape(boxGeom, shapeDef);
+
+        return body;
+    }
+
+    /// <summary>
+    /// capsuleSize is the full (width, height) of the capsule. Provide an inputTransform if capsuleSize and capsuleOffset are in the local space of some Transform.
+    /// </summary>
+    public static CapsuleGeometry CreateCapsule(Vector2 capsuleSize, Vector2 capsuleOffset)
+    {
+        var midPt = capsuleOffset;
+        var c1 = midPt + new Vector2(-0.5f * (capsuleSize.x - capsuleSize.y), 0);
+        var c2 = midPt + new Vector2(0.5f * (capsuleSize.x - capsuleSize.y), 0);
+
+        return new CapsuleGeometry()
+        {
+            center1 = c1,
+            center2 = c2,
+            radius = 0.5f * capsuleSize.y
+        };
+    }
+
+
+    public static void DrawCapsule(Color color, Vector2 capsuleSize, Vector2 capsuleOffset, Transform inputSpace = null)
+    {
+        var midPt = capsuleOffset;
+        var leftEndpt = midPt + new Vector2(-0.5f * capsuleSize.x, 0);
+        var c1 = leftEndpt + new Vector2(0.5f * capsuleSize.y, 0);
+        var c2 = midPt + new Vector2(0.5f * (capsuleSize.x - capsuleSize.y), 0);
+        var topLeft = c1 + new Vector2(0, 0.5f * capsuleSize.y);
+        var topRight = c2 + new Vector2(0, 0.5f * capsuleSize.y);
+        var bottomLeft = c1 + new Vector2(0, -0.5f * capsuleSize.y);
+        var bottomRight = c2 + new Vector2(0, -0.5f * capsuleSize.y);
+        var r = 0.5f * capsuleSize.y;
+
+        var transformMat = inputSpace ? inputSpace.localToWorldMatrix : Matrix4x4.identity;
+
+        using (new Handles.DrawingScope(color, transformMat))
+        {
+            Handles.DrawWireArc(c1, Vector3.forward, topLeft - c1, 180, r);
+            Handles.DrawWireArc(c2, Vector3.forward, bottomRight - c2, 180, r);
+            Handles.DrawLine(topLeft, topRight);
+            Handles.DrawLine(bottomLeft, bottomRight);
+        }
+    }
+
+    //JOINTS
+
+    public static void UpdateSettings(this PhysicsFixedJoint joint, PhysicsFixedJointDefinition def)
+    {
+        joint.localAnchorA = def.localAnchorA;
+        joint.localAnchorB = def.localAnchorB;
+        joint.linearFrequency = def.linearFrequency;
+        joint.linearDamping = def.linearDamping;
+        joint.angularFrequency = def.angularFrequency;
+        joint.angularDamping = def.angularDamping;
+        joint.forceThreshold = def.forceThreshold;
+        joint.torqueThreshold = def.torqueThreshold;
+        joint.tuningFrequency = def.tuningFrequency;
+        joint.tuningDamping = def.tuningDamping;
+        joint.drawScale = def.drawScale;
+        joint.worldDrawing = def.worldDrawing;
+        joint.collideConnected = def.collideConnected;
     }
 }

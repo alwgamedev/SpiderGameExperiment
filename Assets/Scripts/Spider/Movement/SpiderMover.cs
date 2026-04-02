@@ -86,10 +86,8 @@ public class SpiderMover : MonoBehaviour
     [SerializeField] ThrusterFlame thrusterFlame;
 
     [SerializeField] SpiderPhysics spiderPhysics;
-
-    PhysicsLegSynchronizer legSynch;
-
-    SpiderInput spiderInput;
+    [SerializeField] PhysicsLegSynchronizer legSynch;
+    [SerializeField] SpiderInput spiderInput;
 
     bool chargingJump;
     bool waitingToHandleJump;
@@ -129,9 +127,11 @@ public class SpiderMover : MonoBehaviour
     float LeanInput => spiderInput.SecondaryInput.x;
     bool ForceFreeHang => grapple.GrappleAnchored && spiderInput.ShiftAction.IsPressed();
     int Orientation => FacingRight ? 1 : -1;
-    Vector2 OrientedRight => FacingRight ? transform.right : -transform.right;
+    Vector2 Right => Abdomen.rotation.direction;
+    Vector2 Up => Abdomen.rotation.direction.CCWPerp();
+    Vector2 OrientedRight => FacingRight ? Right : -Right;//transform.right : -transform.right;
     Vector2 OrientedGroundDirection => FacingRight ? groundDirection : -groundDirection;
-    Vector2 HeightReferencePt => PhysBody.worldCenterOfMass;
+    Vector2 HeightReferencePt => spiderPhysics.abdomen.worldCenterOfMass;
     float MaxSpeed => grounded ? maxSpeed : maxSpeedAirborne;
     float GrappleScurryResistance => Vector2.Dot(grapple.LastCarryForce, -OrientedGroundDirection);
     float GrappleScurryResistanceFraction => Mathf.Clamp(GrappleScurryResistance / grappleScurryResistanceMax, 0, 1);
@@ -140,7 +140,8 @@ public class SpiderMover : MonoBehaviour
     public float CrouchProgress => crouchProgress;
     public Thruster Thruster => thruster;
     public GrappleCannon Grapple => grapple;
-    public ref PhysicsBody PhysBody => ref spiderPhysics.physicsBody;
+    public ref SpiderPhysics Physics => ref spiderPhysics;
+    public ref PhysicsBody Abdomen => ref Physics.abdomen;
 
     //mainly to hook up audio (later maybe also ui stuff)
     public UnityEvent jumpChargeBegan;
@@ -151,11 +152,15 @@ public class SpiderMover : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (Application.isPlaying && drawGizmos)
+        if (drawGizmos)
         {
-            groundMap.DrawGizmos();
-            Gizmos.color = Color.magenta;
-            Gizmos.DrawSphere(groundAnchorPt, 0.1f);
+            if (Application.isPlaying)
+            {
+                groundMap.DrawGizmos();
+                Gizmos.color = Color.magenta;
+                Gizmos.DrawSphere(groundAnchorPt, 0.1f);
+            }
+            spiderPhysics.DrawGizmos();
         }
     }
 
@@ -165,15 +170,13 @@ public class SpiderMover : MonoBehaviour
         {
             Time.timeScale = timeScale;
 
-            spiderPhysics?.OnValidate();
+            spiderPhysics.OnValidate();
             thruster.Initialize();
         }
     }
 
     private void Awake()
     {
-        legSynch = GetComponent<PhysicsLegSynchronizer>();
-
         abdomenBoneBaseRight = abdomenBone.right.InFrameV2(transform.right, transform.up);
         abdomenBoneBaseRightL = new(abdomenBoneBaseRight.x, -abdomenBoneBaseRight.y);
         abdomenBoneBaseUp = abdomenBoneBaseRight.CCWPerp();
@@ -190,8 +193,6 @@ public class SpiderMover : MonoBehaviour
 
         thruster.Initialize();
         thrusterFlame.Initialize();
-
-        spiderInput = GetComponent<SpiderInput>();
     }
 
     private void Start()
@@ -199,7 +200,7 @@ public class SpiderMover : MonoBehaviour
         spiderPhysics.CreatePhysicsBody();
         InitializeGroundData();
         legSynch.Initialize();
-        grapple.Initialize(spiderInput, PhysBody, FacingRight);
+        grapple.Initialize(spiderInput, Abdomen, FacingRight);
 
         Time.timeScale = timeScale;
     }
@@ -268,7 +269,7 @@ public class SpiderMover : MonoBehaviour
     //do before you handle any move input
     private void UpdateThruster()
     {
-        switch (thruster.FixedUpdate(ref PhysBody))
+        switch (thruster.FixedUpdate(ref Abdomen))
         {
             case Thruster.ThrustersUpdateResult.ChargeRanOut:
                 OnThrusterRanOutOfCharge();
@@ -426,7 +427,7 @@ public class SpiderMover : MonoBehaviour
         var progressDelta = dt / crouchTime;
         progressDelta = Mathf.Clamp(progressDelta, -crouchProgress, 1 - crouchProgress);
         crouchProgress += progressDelta;
-        abdomenBone.position -= progressDelta * crouchHeightFraction * preferredRideHeight * transform.up;
+        abdomenBone.position -= (Vector3)(progressDelta * crouchHeightFraction * preferredRideHeight * Up);
     }
 
     private void UpdateGrappleScurrying()
@@ -436,39 +437,39 @@ public class SpiderMover : MonoBehaviour
 
     private void ChangeDirection()
     {
-        if (!grapple.FreeHanging)
-        {
-            var s = transform.localScale;
-            transform.localScale = new Vector3(-s.x, s.y, s.z);
-            legSynch.OnBodyChangedDirection(transform.position, transform.position, transform.right);
-        }
-        else
-        {
-            PhysBody.SyncTransform();
-            Vector2 o = grapple.FreeHangLeveragePoint;
-            Vector2 p = PhysBody.position;
-            Vector2 u = PhysBody.rotation.direction.CCWPerp();
+        //if (!grapple.FreeHanging)
+        //{
+        //    var s = transform.localScale;
+        //    transform.localScale = new Vector3(-s.x, s.y, s.z);
+        //    legSynch.OnBodyChangedDirection(transform.position, transform.position, transform.right);
+        //}
+        //else
+        //{
+        //    spiderPhysics.abdomen.SyncTransform();
+        //    Vector2 o = grapple.FreeHangLeveragePoint;
+        //    Vector2 p = spiderPhysics.abdomen.position;
+        //    Vector2 u = PhysBody.rotation.direction.CCWPerp();
 
-            var s = transform.localScale;
-            transform.localScale = new Vector3(-s.x, s.y, s.z);
+        //    var s = transform.localScale;
+        //    transform.localScale = new Vector3(-s.x, s.y, s.z);
 
-            PhysBody.rotation = new PhysicsRotate(-PhysBody.rotation.direction);
-            PhysBody.SyncTransform();
-            PhysBody.position += o - grapple.FreeHangLeveragePoint;
-            //SyncTransform();
-            //translate so grapple.FreeHangeLeveragePoint stays in same place
-            //(it's where move forces are applied while freeHanging, and we want to keep movement smooth)
+        //    PhysBody.rotation = new PhysicsRotate(-PhysBody.rotation.direction);
+        //    PhysBody.SyncTransform();
+        //    PhysBody.position += o - grapple.FreeHangLeveragePoint;
+        //    //SyncTransform();
+        //    //translate so grapple.FreeHangeLeveragePoint stays in same place
+        //    //(it's where move forces are applied while freeHanging, and we want to keep movement smooth)
 
-            legSynch.OnBodyChangedDirection(p, PhysBody.position, u);
+        //    legSynch.OnBodyChangedDirection(p, PhysBody.position, u);
 
-            //void SyncTransform()//so we have accurate position of grapple.FreeHangLeveragePoint -- inefficient, but reliable
-            //{
-            //    PhysBody.GetPositionAndRotation3D(transform, PhysicsWorld.defaultWorld.transformWriteMode, PhysicsWorld.TransformPlane.XY, out var pos, out var rot);
-            //    transform.SetPositionAndRotation(pos, rot);
-            //}
-        }
+        //    //void SyncTransform()//so we have accurate position of grapple.FreeHangLeveragePoint -- inefficient, but reliable
+        //    //{
+        //    //    PhysBody.GetPositionAndRotation3D(transform, PhysicsWorld.defaultWorld.transformWriteMode, PhysicsWorld.TransformPlane.XY, out var pos, out var rot);
+        //    //    transform.SetPositionAndRotation(pos, rot);
+        //    //}
+        //}
 
-        grapple.SetOrientation(FacingRight);
+        //grapple.SetOrientation(FacingRight);
     }
 
     private void HandleMoveInput()
@@ -479,19 +480,19 @@ public class SpiderMover : MonoBehaviour
         {
             if (grapple.FreeHanging)
             {
-                PhysBody.ApplyForce(PhysBody.mass * (accelFactorFreeHanging * FreeHangingMoveDirection()), grapple.FreeHangLeveragePoint);
+                Abdomen.ApplyForce(Abdomen.mass * (accelFactorFreeHanging * FreeHangingMoveDirection()), grapple.FreeHangLeveragePoint);
             }
             else
             {
                 Vector2 d = flipInput && !grounded ? -OrientedGroundDirection : OrientedGroundDirection;
-                var spd = Vector2.Dot(PhysBody.linearVelocity, d);
+                var spd = Vector2.Dot(Abdomen.linearVelocity, d);
                 var maxSpd = MaxSpeed;
                 var accFactor = grounded ? accelFactor : (thruster.Engaged ? thrustingAccelFactor : deadThrusterAccelFactor * Mathf.Clamp(1 - d.y, 0, 1));
 
                 var s = Mathf.Min(maxSpd - spd, accelCap * maxSpd);
                 if (grounded || s > 0)
                 {
-                    PhysBody.ApplyForceToCenter(accFactor * s * PhysBody.mass * d);
+                    Abdomen.ApplyForceToCenter(accFactor * s * Abdomen.mass * d);
                 }
             }
         }
@@ -499,10 +500,10 @@ public class SpiderMover : MonoBehaviour
         else if (grounded)
         {
             var d = OrientedRight;
-            var vel = Vector2.Dot(PhysBody.linearVelocity, d);
+            var vel = Vector2.Dot(Abdomen.linearVelocity, d);
             var l = Vector2.Dot(groundAnchorPt - HeightReferencePt, d);
             var grip = gripStrength * l - gripDamping * vel;
-            PhysBody.ApplyForceToCenter(PhysBody.mass * grip * d);//grip to steep slope
+            Abdomen.ApplyForceToCenter(Abdomen.mass * grip * d);//grip to steep slope
         }
     }
 
@@ -516,15 +517,15 @@ public class SpiderMover : MonoBehaviour
 
     private void Balance()
     {
-        var f = -(grounded ? balanceSpringDamping : airborneBalanceSpringDamping) * PhysBody.angularVelocity;
+        var f = -(grounded ? balanceSpringDamping : airborneBalanceSpringDamping) * Abdomen.angularVelocity;
 
         if (!grapple.FreeHanging)
         {
-            var a = MathTools.PseudoAngle(transform.right, flipInput && !grounded ? -balanceDirection : balanceDirection);
+            var a = MathTools.PseudoAngle(Right, flipInput && !grounded ? -balanceDirection : balanceDirection);
             f += a * (grounded ? balanceSpringForce : airborneBalanceSpringForce);
         }
 
-        PhysBody.ApplyTorque(PhysBody.mass * f);
+        Abdomen.ApplyTorque(Abdomen.mass * f);
     }
 
     private void RotateAbdomen(float dt)
@@ -605,7 +606,7 @@ public class SpiderMover : MonoBehaviour
         }
         else
         {
-            g = grapple.FreeHanging ? FreeHangingHeadRight() : (Vector2)transform.right;
+            g = grapple.FreeHanging ? FreeHangingHeadRight() : Right;
         }
 
         headBone.ApplyCheapRotationalLerpClamped(g, headRotationSpeed * dt, out _);//if rotate at constant speed, it starts to flicker when rotation is small
@@ -636,7 +637,7 @@ public class SpiderMover : MonoBehaviour
             groundednessRating = 0;
             SetGrounded(false);
             var jumpDir = JumpDirection();
-            PhysBody.ApplyLinearImpulseToCenter(PhysBody.mass * JumpForce() * jumpDir);
+            Abdomen.ApplyLinearImpulseToCenter(Abdomen.mass * JumpForce() * jumpDir);
             jumped.Invoke();
         }
     }
@@ -653,7 +654,7 @@ public class SpiderMover : MonoBehaviour
     private Vector2 JumpDirection()
     {
         var u = AbdomenBoneUpInBaseLocalCoords();//quaternion version would compute a lot of extra trivial products
-        return u.x * transform.right + u.y * transform.up;
+        return u.x * Right + u.y * Up;
     }
 
     private bool VerifyingJump()
@@ -670,8 +671,8 @@ public class SpiderMover : MonoBehaviour
         //^average point so that body sinks a little as it rounds a sharp peak (keeping leg extension natural)
         //--note you only want to do this when strongly grounded
 
-        Vector2 down = -transform.up;
-        var v = Vector2.Dot(PhysBody.linearVelocity, down);
+        Vector2 down = -Up;
+        var v = Vector2.Dot(Abdomen.linearVelocity, down);
         var l = Vector2.Dot(p - HeightReferencePt, down) - preferredRideHeight;
         var f = l * heightSpringForce;
         if (grapple.GrappleAnchored)
@@ -688,7 +689,7 @@ public class SpiderMover : MonoBehaviour
             }
         }
 
-        PhysBody.ApplyForceToCenter(PhysBody.mass * (f - heightSpringDamping * v - Vector2.Dot(Physics2D.gravity, down)) * down);
+        Abdomen.ApplyForceToCenter(Abdomen.mass * (f - heightSpringDamping * v - Vector2.Dot(Physics2D.gravity, down)) * down);
         //remove affect of gravity while height spring engaged, otherwise you will settle at a height which is off by -Vector2.Dot(Physics2D.gravity, down) / heightSpringForce
         //(meaning you will be under height when upright, and over height when upside down (which was causing feet to not reach ground while upside down))
         //(e.g. before ride height on flat ground was always off by +- 32/400 = 0.08)
@@ -767,7 +768,7 @@ public class SpiderMover : MonoBehaviour
         {
             if (pt.hitGround && !isCentralIndex)
             {
-                var castResult = PhysBody.world.CastRay(HeightReferencePt, -backupGroundPtRaycastLengthFactor * groundmapRaycastLength * pt.normal, spiderPhysics.queryFilter);
+                var castResult = Abdomen.world.CastRay(HeightReferencePt, -backupGroundPtRaycastLengthFactor * groundmapRaycastLength * pt.normal, spiderPhysics.queryFilter);
                 if (castResult.Length > 0)
                 {
                     return castResult[0].point;
@@ -794,10 +795,10 @@ public class SpiderMover : MonoBehaviour
 
     private void UpdateGroundMap()
     {
-        groundMap.UpdateMap(PhysBody.world, spiderPhysics.queryFilter,
+        groundMap.UpdateMap(Abdomen.world, spiderPhysics.queryFilter,
             HeightReferencePt,
-            -transform.up,
-            transform.right,
+            -Up,
+            Right,
             groundmapRaycastLength,
             FacingRight);
         //groundMap.UpdateMap(PhysBody.world, spiderPhysics.queryFilter,
@@ -833,7 +834,7 @@ public class SpiderMover : MonoBehaviour
 
     private float FreeHangStrideMultiplier()
     {
-        var y = transform.right.y;
+        var y = Right.y;
         //using y > cosLegAngleMax b/c we really want sin(90 - legAngleMax)
         return y > cosFreeHangLegAngleMin ? 1 :
             y > 0 ? Mathf.Lerp(airborneStrideMultiplier, 1, y / cosFreeHangLegAngleMin)
@@ -848,9 +849,9 @@ public class SpiderMover : MonoBehaviour
             : grapple.FreeHanging ? PhysicsLegSynchronizer.LegState.limp
             : PhysicsLegSynchronizer.LegState.freefall;
 
-        var groundVelocity = Vector2.Dot(PhysBody.linearVelocity, OrientedGroundDirection);
+        var groundVelocity = Vector2.Dot(Abdomen.linearVelocity, OrientedGroundDirection);
         legSynch.bodyGroundSpeedSign = (grounded && grapple.GrappleAnchored) || grapple.FreeHanging ? 1 : Mathf.Sign(groundVelocity);
-        legSynch.absoluteBodyGroundSpeed = grounded ? Mathf.Abs(groundVelocity) : Mathf.Min(PhysBody.linearVelocity.magnitude, airborneLegSpeedMax);
+        legSynch.absoluteBodyGroundSpeed = grounded ? Mathf.Abs(groundVelocity) : Mathf.Min(Abdomen.linearVelocity.magnitude, airborneLegSpeedMax);
         legSynch.stepHeightFraction = 1 - crouchProgress * crouchHeightFraction;
         legSynch.timeScale = grounded || thruster.Engaged ? 1 : airborneLegAnimationTimeScale;
 

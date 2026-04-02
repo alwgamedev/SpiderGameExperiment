@@ -6,7 +6,6 @@ using Unity.U2D.Physics;
 public class PhysicsBodyStarter : MonoBehaviour
 {
     public PhysicsBody body;
-    public PhysicsShape shape;
     public PhysicsQuery.QueryFilter queryFilter;//set ignore filter in inspector; categories will be set automatically from shapeDef
 
     [SerializeField] PhysicsBodyDefinition bodyDef;
@@ -38,33 +37,19 @@ public class PhysicsBodyStarter : MonoBehaviour
         switch (geometryType)
         {
             case ShapeType.Circle:
-                body = PhysicsCoreHelper.CreateCirceBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef, 
-                    unscaledGeometry ? geometryFloatParam : transform.localScale.x * geometryFloatParam, out shape);
+                body = PhysicsCoreHelper.CreateCircleBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef, geometryFloatParam, transform.localToWorldMatrix);
                 break;
             case ShapeType.Capsule:
                 Vector2 center = geometryVectorParam;
                 float radius = geometryFloatParam;
-                if (unscaledGeometry)
-                {
-                    center = geometryVectorParam;//still will be used in body local space
-                    radius = geometryFloatParam;
-                }
-                else
-                {
-                    var edge = center + radius * center.normalized;
-                    center = body.transform.InverseTransformPoint(transform.TransformPoint(center));
-                    edge = body.transform.InverseTransformPoint(transform.TransformPoint(edge));
-                    radius = Vector2.Distance(center, edge);
-                }
-                body = PhysicsCoreHelper.CreateCapsuleBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef, center, -center, radius, out shape);
+                body = PhysicsCoreHelper.CreateCapsuleBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef, center, -center, radius, transform.localToWorldMatrix);
                 break;
             case ShapeType.Box:
-                body = PhysicsCoreHelper.CreateBoxBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef, 
-                    unscaledGeometry ? geometryVectorParam : transform.localScale * geometryVectorParam, out shape);
+                body = PhysicsCoreHelper.CreateBoxBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef, geometryVectorParam, transform.localToWorldMatrix);
                 break;
             case ShapeType.Polygon:
-                body = PhysicsCoreHelper.CreatePolygonBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef,
-                    unscaledGeometry ? Vector2.one : transform.localScale, GetComponent<PolygonPhysicsShape>().GetSubdividedPolygon());
+                body = PhysicsCoreHelper.CreatePolygonBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef, transform.localToWorldMatrix,
+                    GetComponent<PolygonPhysicsShape>().GetSubdividedPolygon());
                 //2do: PolygonGeometry.CreatePolygons has to do some work to split up the polygon, so ideally we can cache that data in edit mode
                 break;
         }
