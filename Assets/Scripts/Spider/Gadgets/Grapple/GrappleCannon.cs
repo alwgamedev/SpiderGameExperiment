@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
 using Unity.U2D.Physics;
+using System;
 
-public class GrappleCannon : MonoBehaviour
+[Serializable]
+public class GrappleCannon
 {
+    [NonSerialized] public float aimInput;
 
     [SerializeField] bool drawGizmos;
     [SerializeField] int numNodes;
@@ -14,32 +17,26 @@ public class GrappleCannon : MonoBehaviour
     [SerializeField] float shootSpeedPowerUpMax;
     [SerializeField] float releaseRate;
     [SerializeField] float retractMaxTension;
-    [SerializeField] float breakThreshold;
-    [SerializeField] int consecutiveFailuresToBreak;
     [SerializeField] float carrySpringForce;
     [SerializeField] RopeSettings grappleSettings;
     [SerializeField] CannonFulcrum cannonFulcrum;
     [SerializeField] RopeRenderer grappleRenderer;
-
-    [System.NonSerialized] public float aimInput;
     bool poweringUp;
     float shootSpeedPowerUp;
     float shootTimer;
     bool shootInProgress;
     Vector2 lastShootDirection;
 
-    PhysicsBody spiderBody;
+    //PhysicsBody spiderBody;
     SpiderInput spiderInput;
     FastRope grapple;
 
-    //int failCounter;
     bool facingRight;
     bool freeHanging;
 
     public bool GrappleEnabled => grapple.Enabled;
     public bool GrappleAnchored => GrappleEnabled && grapple.TerminusAnchored;
-    public float GrappleReleaseInput => spiderInput.SecondaryInput.y;// GrappleAnchored ? spiderInput.SecondaryInput.y : 0;
-    public float GrappleMaxTensionFraction => GrappleEnabled ? grapple.MaxTension / breakThreshold : 0;
+    public float GrappleReleaseInput => spiderInput.SecondaryInput.y;
     public Vector2 LastCarryForce { get; private set; }
     public Vector2 GrappleExtent => grapple.GrappleExtent;
     public bool PoweringUp => poweringUp;
@@ -69,13 +66,7 @@ public class GrappleCannon : MonoBehaviour
     public UnityEvent grappleBecameAnchored;
     public UnityEvent grappleDestroyed;
 
-    //private void Awake()
-    //{
-    //    fixedDt = Time.fixedDeltaTime;
-    //    fixedDt2 = fixedDt * fixedDt;
-    //}
-
-    private void OnDrawGizmos()
+    public void OnDrawGizmos()
     {
         if (drawGizmos && grapple != null && GrappleEnabled)
         {
@@ -83,12 +74,12 @@ public class GrappleCannon : MonoBehaviour
         }
     }
 
-    public void Initialize(SpiderInput spiderInput, PhysicsBody spiderBody, bool facingRight)
+    public void Initialize(SpiderInput spiderInput, PhysicsWorld ownerWorld, float ownerMass, bool facingRight)
     {
         this.spiderInput = spiderInput;
-        this.spiderBody = spiderBody;
+        //this.spiderBody = spiderBody;
 
-        grapple = new FastRope(spiderBody, grappleSettings, SourcePosition, minLength, numNodes);
+        grapple = new FastRope(grappleSettings, ownerWorld, ownerMass, SourcePosition, minLength, numNodes);
         grapple.Disable();
 
         cannonFulcrum.Initialize();
@@ -96,7 +87,7 @@ public class GrappleCannon : MonoBehaviour
         SetOrientation(facingRight);
     }
 
-    private void OnValidate()
+    public void OnValidate()
     {
         if (grapple != null)
         {
@@ -104,7 +95,7 @@ public class GrappleCannon : MonoBehaviour
         }
     }
 
-    private void Update()
+    public void Update()
     {
         if (!GrappleEnabled)
         {
@@ -123,21 +114,9 @@ public class GrappleCannon : MonoBehaviour
         {
             DestroyGrapple();
         }
-        //else if (grapple.MaxTension > breakThreshold)
-        //{
-        //    failCounter++;
-        //    if (failCounter > consecutiveFailuresToBreak)
-        //    {
-        //        DestroyGrapple();
-        //    }
-        //}
-        //else
-        //{
-        //    failCounter = 0;
-        //}
     }
 
-    private void LateUpdate()
+    public void LateUpdate()
     {
         if (GrappleEnabled)
         {
@@ -150,9 +129,9 @@ public class GrappleCannon : MonoBehaviour
         }
     }
 
-    private void FixedUpdate()
+    public void FixedUpdate(PhysicsTransform ownerTransform, PhysicsBody ownerBody)
     {
-        UpdateCannonFulcrum();
+        UpdateCannonFulcrum(ownerTransform);
 
         if (GrappleEnabled)
         {
@@ -161,7 +140,7 @@ public class GrappleCannon : MonoBehaviour
             grapple.Update(SourcePosition);
             if (GrappleAnchored)
             {
-                UpdateCarrySpring();
+                UpdateCarrySpring(ownerBody);
                 if (!grappleWasAnchored)
                 {
                     grappleBecameAnchored.Invoke();
@@ -177,7 +156,7 @@ public class GrappleCannon : MonoBehaviour
         }
     }
 
-    private void OnDestroy()
+    public void OnDestroy()
     {
         grapple?.Dispose();
     }
@@ -190,7 +169,7 @@ public class GrappleCannon : MonoBehaviour
 
     //FIXED UPDATE FUNCTIONS
 
-    private void UpdateCannonFulcrum()
+    private void UpdateCannonFulcrum(PhysicsTransform ownerTransform)
     {
         if (GrappleAnchored)
         {
@@ -198,16 +177,16 @@ public class GrappleCannon : MonoBehaviour
         }
         else
         {
-            cannonFulcrum.UpdateKinematic(Time.deltaTime, aimInput, spiderBody.transform, facingRight);
+            cannonFulcrum.UpdateKinematic(Time.deltaTime, aimInput, ownerTransform, facingRight);
         }
     }
 
-    private void UpdateCarrySpring()
+    private void UpdateCarrySpring(PhysicsBody ownerBody)
     {
         if (Vector2.SqrMagnitude(grapple.CarryForce) > 0)
         {
             LastCarryForce = carrySpringForce * grapple.CarryForce;
-            cannonFulcrum.ApplyForce(LastCarryForce, spiderBody, FreeHanging);
+            cannonFulcrum.ApplyForce(LastCarryForce, ownerBody, FreeHanging);
         }
         else
         {
@@ -261,9 +240,7 @@ public class GrappleCannon : MonoBehaviour
         grapple.Shoot(shootVelocity, Time.deltaTime);
         shootTimer = -minLength / shootSpeed;
         grappleRenderer.OnRopeSpawned(grapple, SourcePosition);
-
         shootInProgress = true;
-        //failCounter = 0;
 
         grappleShot.Invoke();
     }
@@ -277,7 +254,6 @@ public class GrappleCannon : MonoBehaviour
     private void DestroyGrapple()
     {
         grapple.Disable();
-        //failCounter = 0;
         shootSpeedPowerUp = 0;
         LastCarryForce = Vector2.zero;
         FreeHanging = false;

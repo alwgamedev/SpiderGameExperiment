@@ -2,7 +2,6 @@
 using UnityEngine;
 using Unity.U2D.Physics;
 using UnityEditor;
-using UnityEngine.UIElements;
 
 
 [Serializable]
@@ -12,9 +11,9 @@ public struct SpiderPhysics
     public PhysicsBody head;
     public PhysicsShape grappleArmShape;
     public PhysicsFixedJoint headJoint;
-    public PhysicsQuery.QueryFilter queryFilter;
+    [NonSerialized] public PhysicsQuery.QueryFilter queryFilter;
     /// <summary> (when facing right) </summary>
-    public PhysicsRotate abdomenRotationFromBase;
+    [NonSerialized] public PhysicsRotate abdomenRotationFromBase;
 
     [SerializeField] PhysicsBodyDefinition bodyDef;
     [SerializeField] PhysicsShapeDefinition shapeDef;
@@ -42,6 +41,7 @@ public struct SpiderPhysics
     /// <summary> (accurate when facing right; when facing left it is the inverse of this) </summary>
     public readonly PhysicsRotate AbdomenBaseRotationFromLevel => abdomenBaseRotationFromLevel;
     //The heightRefPos and levelRight make up the spider's "true" transform, now that spider is made up of three separate bodies
+    public readonly PhysicsTransform VirtualTransform => new PhysicsTransform(HeightReferencePosition, LevelRight);
     public readonly PhysicsRotate LevelRight
     {
         get
@@ -144,10 +144,11 @@ public struct SpiderPhysics
         headJoint = PhysicsFixedJoint.Create(defaultWorld, headJointDef);
 
         abdomenBaseRotationFromLevel = levelDirection.InverseMultiplyRotation(abdomen.rotation);
+        abdomenRotationFromBase = PhysicsRotate.identity;
         heightReferenceLocalPos = abdomen.transform.InverseTransformPoint(heightReferencePoint.position);
         abdomen.ApplyMassFromShapes();
         head.ApplyMassFromShapes();
-        totalMass = abdomen.mass + head.mass;// + grappleArm.mass;
+        totalMass = abdomen.mass + head.mass;
         facingRight = true;
     }
 
@@ -175,7 +176,7 @@ public struct SpiderPhysics
         abdomen.SyncTransform();
         head.SyncTransform();
 
-        abdomenBone.ReflectHorizontally(abdomen.transform);//grapple arm is childed to abdomenBone, so that gets covered here
+        abdomenBone.ReflectHorizontally(abdomen.transform);//grapple arm is childed to abdomenBone
         headBone.ReflectHorizontally(head.transform);
 
         grappleArmShape.polygonGeometry = GrappleArmWorldBox().InverseTransform(abdomen.transform);

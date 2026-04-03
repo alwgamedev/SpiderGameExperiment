@@ -67,7 +67,7 @@ public class CannonFulcrum
         }
     }
 
-    public void ApplyForce(Vector2 force, /*Vector2 forceDirection,*/ PhysicsBody shooterBody, bool freeHanging)
+    public void ApplyForce(Vector2 force, PhysicsBody shooterBody, bool freeHanging)
     {
         Vector2 u = LeverDirection;
         var forceDirection = force.normalized;

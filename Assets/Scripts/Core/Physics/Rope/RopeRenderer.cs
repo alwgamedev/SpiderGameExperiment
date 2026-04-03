@@ -3,17 +3,30 @@ using UnityEngine;
 
 public class RopeRenderer : MonoBehaviour
 {
+    [SerializeField] bool drawGizmos;
     [Min(2)][SerializeField] int endCapTriangles;
     [SerializeField] float taperLength;//measured in number of rope segments, just to keep things simple
     [SerializeField] float taperBaseScale;
 
-    Mesh mesh; 
+    Mesh mesh;
     MeshRenderer meshRenderer;
     MeshFilter meshFilter;
     Material material;
 
     Vector4[] nodePositions;
     int positionsProperty;
+
+    private void OnDrawGizmos()
+    {
+        if (drawGizmos && nodePositions != null)
+        {
+            Gizmos.color = Color.red;
+            for (int i = 0; i < nodePositions.Length; i++)
+            {
+                Gizmos.DrawSphere(nodePositions[i], 0.1f);
+            }
+        }
+    }
 
     private void Awake()
     {
@@ -38,7 +51,7 @@ public class RopeRenderer : MonoBehaviour
         }
         meshRenderer.enabled = true;
         SetRenderWidth(rope.settings.width);
-        rope.SetRenderPositions(nodePositions, sourcePosition, taperBaseScale, taperLength);
+        UpdateRenderPositions(rope, sourcePosition);
     }
 
     public void SetRenderWidth(float ropeWidth)
@@ -56,9 +69,9 @@ public class RopeRenderer : MonoBehaviour
         meshRenderer.enabled = false;
     }
 
-    public void UpdateRenderPositions(FastRope rope, float2 startPosition)
+    public void UpdateRenderPositions(FastRope rope, float2 sourcePosition)
     {
-        rope.SetRenderPositions(nodePositions, startPosition, taperBaseScale, taperLength);
+        rope.SetRenderPositions(nodePositions, sourcePosition, taperBaseScale, taperLength);
         material.SetVectorArray(positionsProperty, nodePositions);
     }
 

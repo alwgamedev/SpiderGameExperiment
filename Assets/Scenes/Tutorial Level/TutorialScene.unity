@@ -297,11 +297,6 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
---- !u!4 &69380424 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8393107135455579191, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-  m_PrefabInstance: {fileID: 328100115394418497}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &121216821
 GameObject:
   m_ObjectHideFlags: 0
@@ -15598,16 +15593,12 @@ PrefabInstance:
       value: Spider
       objectReference: {fileID: 0}
     - target: {fileID: 9070389282856877564, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: jumpAngleMin
-      value: -0.45
+      propertyPath: spiderPhysics.shapeDef.surfaceMaterial.m_Friction
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9070389282856877564, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: spiderPhysics.grappleArm
-      value: 
-      objectReference: {fileID: 69380424}
-    - target: {fileID: 9070389282856877564, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: spiderPhysics.shapeDef.m_WorldDrawing
-      value: 0
+      propertyPath: spiderPhysics.shapeDef.surfaceMaterial.m_Bounciness
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 9149063515827151626, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
       propertyPath: m_LocalPosition.x

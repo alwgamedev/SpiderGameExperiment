@@ -11,8 +11,6 @@ Shader "Custom/RopeShader"
         Tags { "RenderType" = "Transparent" "RenderPipeline" = "UniversalPipeline"}
 
         Pass {
-            // Tags { "LightMode" = "Universal2D" }
-            
             HLSLPROGRAM
             
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"

@@ -8,9 +8,14 @@ public class SpiderMover : MonoBehaviour
     [SerializeField] float timeScale;
     [SerializeField] bool drawGizmos;
 
-    [Header("Body Parts")]
+    [Header("Parts")]
     [SerializeField] Transform headBoneHeightRefPoint;
+    [SerializeField] PhysicsLegSynchronizer legSynch;
+    [SerializeField] SpiderPhysics spiderPhysics;
+    [SerializeField] SpiderInput spiderInput;
     [SerializeField] GrappleCannon grapple;
+    [SerializeField] Thruster thruster;
+    [SerializeField] ThrusterFlame thrusterFlame;
 
     [Header("Ground Data")]
     [SerializeField] float groundedExitToleranceFactor;
@@ -75,14 +80,6 @@ public class SpiderMover : MonoBehaviour
     [SerializeField] float freeHangStepHeightReductionMax;
     [SerializeField] float freeHangStrideMultiplier;
     [SerializeField] float freeHangSimulateContactMax;
-
-    [Header("Thrusters")]
-    [SerializeField] Thruster thruster;
-    [SerializeField] ThrusterFlame thrusterFlame;
-
-    [SerializeField] SpiderPhysics spiderPhysics;
-    [SerializeField] PhysicsLegSynchronizer legSynch;
-    [SerializeField] SpiderInput spiderInput;
 
     bool chargingJump;
     bool waitingToHandleJump;
@@ -151,6 +148,8 @@ public class SpiderMover : MonoBehaviour
             }
             spiderPhysics.DrawGizmos();
         }
+
+        grapple.OnDrawGizmos();
     }
 
     private void OnValidate()
@@ -161,6 +160,7 @@ public class SpiderMover : MonoBehaviour
 
             spiderPhysics.OnValidate();
             thruster.Initialize();
+            grapple.OnValidate();
         }
     }
 
@@ -181,7 +181,7 @@ public class SpiderMover : MonoBehaviour
         spiderPhysics.CreatePhysicsBody(new PhysicsRotate(transform.right));
         InitializeGroundData();
         legSynch.Initialize();
-        grapple.Initialize(spiderInput, Abdomen, FacingRight);
+        grapple.Initialize(spiderInput, Abdomen.world, SpideyPhysics.TotalMass, FacingRight);
 
         Time.timeScale = timeScale;
     }
@@ -189,11 +189,18 @@ public class SpiderMover : MonoBehaviour
     private void OnDestroy()
     {
         groundMap.Dispose();
+        grapple.OnDestroy();
     }
 
     private void Update()
     {
         UpdateState();
+        grapple.Update();
+    }
+
+    private void LateUpdate()
+    {
+        grapple.LateUpdate();
     }
 
     private void FixedUpdate()
@@ -253,6 +260,8 @@ public class SpiderMover : MonoBehaviour
         {
             settleTimer -= Time.deltaTime;
         }
+
+        grapple.FixedUpdate(SpideyPhysics.VirtualTransform, Abdomen);
     }
 
 
@@ -379,7 +388,7 @@ public class SpiderMover : MonoBehaviour
         grapple.aimInput = chargingJump ? 0 : LeanInput;
         UpdateGrappleScurrying();//needs to be updated before changing direction
 
-        //make sure you update freeHanging before changing direction
+        //update freeHanging (needs to be done before changing direction)
         if (grapple.GrappleAnchored)
         {
             //hold shift to enter freehang/swing mode (if it's the default state, then repelling and direction change gets annoying)
@@ -439,12 +448,6 @@ public class SpiderMover : MonoBehaviour
             ////(it's where move forces are applied while freeHanging, and we want to keep movement smooth)
 
             //legSynch.OnBodyChangedDirection(p, PhysBody.position, u);
-
-            ////void SyncTransform()//so we have accurate position of grapple.FreeHangLeveragePoint -- inefficient, but reliable
-            ////{
-            ////    PhysBody.GetPositionAndRotation3D(transform, PhysicsWorld.defaultWorld.transformWriteMode, PhysicsWorld.TransformPlane.XY, out var pos, out var rot);
-            ////    transform.SetPositionAndRotation(pos, rot);
-            ////}
         }
 
         grapple.SetOrientation(FacingRight);
@@ -474,7 +477,7 @@ public class SpiderMover : MonoBehaviour
                 }
             }
         }
-        ////apply grip and drag
+        //apply grip and drag
         else if (grounded)
         {
             var d = OrientedRight;
@@ -537,15 +540,11 @@ public class SpiderMover : MonoBehaviour
         return PhysicsRotate.identity;
     }
 
-    private void RotateHead(/*float dt*/)
+    private void RotateHead()
     {
         Vector2 g;
         if (grounded)
         {
-            //if (!(settleTimer > 0))
-            //{
-            //    return;
-            //}
             var p = groundMap.TrueClosestPoint((Vector2)headBoneHeightRefPoint.position, out var t, out _, out _);
             var n = FacingRight ?
                 groundMap.AverageNormalFromCenter(t + headRotationMinPos, t + headRotationMaxPos)
@@ -585,7 +584,7 @@ public class SpiderMover : MonoBehaviour
             groundednessRating = 0;
             SetGrounded(false);
             var jumpDir = JumpDirection();
-            Abdomen.ApplyLinearImpulseToCenter(SpideyPhysics.TotalMass * JumpForce() * jumpDir);
+            Abdomen.ApplyLinearImpulse(SpideyPhysics.TotalMass * JumpForce() * jumpDir, SpideyPhysics.HeightReferencePosition);
             jumped.Invoke();
         }
     }
@@ -658,20 +657,7 @@ public class SpiderMover : MonoBehaviour
         {
             OnTakeOff();
         }
-        //if (grounded)
-        //{
-        //    OnLanding();
-        //}
-        //else
-        //{
-        //    OnTakeOff();
-        //}
     }
-
-    //private void RecomputeGroundMapRaycastLength()
-    //{
-    //    groundmapRaycastLength = (grounded ? groundedExitToleranceFactor : groundedEntryToleranceFactor) * preferredRideHeight;
-    //}
 
     private void OnTakeOff()
     {
@@ -680,13 +666,7 @@ public class SpiderMover : MonoBehaviour
             chargingJump = false;
             jumpChargeEnded.Invoke();
         }
-        //RecomputeGroundMapRaycastLength();
     }
-
-    //private void OnLanding()
-    //{
-    //    RecomputeGroundMapRaycastLength();
-    //}
 
     private void UpdateGroundData()
     {
@@ -757,29 +737,16 @@ public class SpiderMover : MonoBehaviour
             Right,
             GroundMapRaycastLength,
             FacingRight);
-        //groundMap.UpdateMap(PhysBody.world, spiderPhysics.queryFilter,
-        //    HeightReferencePt,
-        //    -transform.up,
-        //    transform.right,
-        //    groundmapRaycastLength,
-        //    FacingRight);
     }
 
     private void InitializeGroundMap()
     {
         groundMap.Initialize();
         UpdateGroundMap();
-        //groundMap.UpdateMapImmediate(PhysBody.world, spiderPhysics.queryFilter,
-        //    HeightReferencePt,
-        //    -transform.up,
-        //    transform.right,
-        //    groundmapRaycastLength,
-        //    FacingRight);
     }
 
     private void InitializeGroundData()
     {
-        //RecomputeGroundMapRaycastLength();
         InitializeGroundMap();
         UpdateGroundednessRating();
         groundAnchorPt = groundMap.Center.point;

@@ -36,8 +36,10 @@ public class FastRope
 
     //ROPE DATA
 
-    public PhysicsBody owner;
+    //public PhysicsBody owner;
     public RopeSettings settings;
+    public PhysicsWorld ownerWorld;
+    public float ownerMass;
 
     JobHandle jobHandle;
     float lastJobStartTime;
@@ -80,10 +82,12 @@ public class FastRope
 
     //LIFE CYCLE
 
-    public FastRope(PhysicsBody owner, RopeSettings settings, float2 position, float length, int numNodes)
+    public FastRope(RopeSettings settings, PhysicsWorld ownerWorld, float ownerMass, float2 position, float length, int numNodes)
     {
-        this.owner = owner;
+        //this.owner = owner;
         this.settings = settings;
+        this.ownerWorld = ownerWorld;
+        this.ownerMass = ownerMass;
 
         InitializeNAs(position, numNodes, settings.minNodeSpacing, settings.maxNodeSpacing, length);
         RecomputeLength();
@@ -355,8 +359,8 @@ public class FastRope
 
         var integrateJob = IntegrateRope(dt * dt, timeScale);
         var constraintIter = new SimpleConstraint(position, lastPosition, positionBuffer, terminusAnchor, terminusAnchorLocalPos,
-            terminusAnchorMode.native, owner.world, settings.CollisionFilter, settings.constraintStiffness, settings.NodeRadius, nodeSpacing.Value, settings.nodeMass,
-            owner.mass, terminusMass, settings.collisionBounciness, sourceIndex.Value);
+            terminusAnchorMode.native, ownerWorld, settings.CollisionFilter, settings.constraintStiffness, settings.NodeRadius, nodeSpacing.Value, settings.nodeMass,
+            ownerMass, terminusMass, settings.collisionBounciness, sourceIndex.Value);
 
         integrateJob.Run(TerminusIndex - sourceIndex.Value);
         for (int j = 0; j < settings.constraintIterations; j++)
@@ -368,7 +372,7 @@ public class FastRope
         position[sourceIndex.Value] = sourcePosition;
 
         constraintIter = new SimpleConstraint(position, lastPosition, positionBuffer, terminusAnchor, terminusAnchorLocalPos,
-            terminusAnchorMode.native, owner.world, settings.CollisionFilter, settings.constraintStiffness, settings.NodeRadius, nodeSpacing.Value, settings.nodeMass,
+            terminusAnchorMode.native, ownerWorld, settings.CollisionFilter, settings.constraintStiffness, settings.NodeRadius, nodeSpacing.Value, settings.nodeMass,
             math.INFINITY, terminusMass, settings.collisionBounciness, sourceIndex.Value);
 
         for (int j = 0; j < settings.itersPulledByOwner; j++)
@@ -545,7 +549,7 @@ public class FastRope
             terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode.native,
             PhysicsWorld.defaultWorld, settings.CollisionFilter,
             settings.collisionBounciness, nodeSpacing.Value, settings.NodeRadius,
-            settings.nodeMass, pullOwner ? owner.mass : math.INFINITY,
+            settings.nodeMass, pullOwner ? ownerMass : math.INFINITY,
             settings.terminusMass, settings.dynamicAnchorPullForce,
             sourceIndex.Value, batch);
     }
@@ -556,7 +560,7 @@ public class FastRope
             terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode.native,
             PhysicsWorld.defaultWorld, settings.CollisionFilter,
             settings.collisionBounciness, nodeSpacing.Value, settings.NodeRadius,
-            settings.nodeMass, pullOwner ? owner.mass : math.INFINITY,
+            settings.nodeMass, pullOwner ? ownerMass : math.INFINITY,
             settings.terminusMass, settings.dynamicAnchorPullForce,
             sourceIndex.Value, groupSize, batch);
     }

@@ -1,16 +1,31 @@
 ﻿using UnityEditor;
-using UnityEngine;
+using UnityEditor.UIElements;
+using UnityEngine.UIElements;
 
 [CustomEditor(typeof(SpiderMover))]
 public class SpiderMoverEditor : Editor
 {
-    public override void OnInspectorGUI()
-    {
-        DrawDefaultInspector();
+    //public override void OnInspectorGUI()
+    //{
+    //    DrawDefaultInspector();
 
-        if (GUILayout.Button("Center Physics Bodies"))
+    //    if (GUILayout.Button("Center Physics Bodies"))
+    //    {
+    //        ((SpiderMover)target).SpideyPhysics.CenterRootTransforms();
+    //    }
+    //}
+
+    public override VisualElement CreateInspectorGUI()
+    {
+        var root = new VisualElement();
+
+        InspectorElement.FillDefaultInspector(root, serializedObject, this);
+
+        root.Add(new Button(() => ((SpiderMover)target).SpideyPhysics.CenterRootTransforms())
         {
-            ((SpiderMover)target).SpideyPhysics.CenterRootTransforms();
-        }
+            text = "Center Physics Bodies"
+        });
+
+        return root;
     }
 }
