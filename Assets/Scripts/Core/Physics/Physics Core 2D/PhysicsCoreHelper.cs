@@ -1,11 +1,48 @@
-﻿using Unity.Collections;
+﻿using System.Reflection.Metadata.Ecma335;
+using Unity.Collections;
 using Unity.U2D.Physics;
 using UnityEditor;
 using UnityEngine;
 
-
 public static class PhysicsCoreHelper
 {
+    //MISC
+
+    /// <summary>
+    /// Reflect transform A over transform B's y-axis, with transform B's position as the origin.
+    /// </summary>
+    public static PhysicsTransform ReflectHorizontally(this PhysicsTransform tA, PhysicsTransform tB)
+    {
+        var origin = tB.position;
+        var hyperplaneNormal = tB.rotation.direction;
+        tA.position = origin + (tA.position - origin).ReflectAcrossHyperplane(hyperplaneNormal);
+        tA.rotation = new PhysicsRotate(tA.rotation.direction.ReflectAcrossHyperplane(hyperplaneNormal.CCWPerp()));
+        return tA;
+    }
+
+    /// <summary>
+    /// Use in conjunction with reflect methods if reflected physics bodies are connected by joints.
+    /// </summary>
+    public static void SwitchAnchorSides(this PhysicsJoint joint)
+    {
+        joint.localAnchorA = joint.localAnchorA.ReflectHorizontally(PhysicsTransform.identity);
+        joint.localAnchorB = joint.localAnchorB.ReflectHorizontally(PhysicsTransform.identity);
+    }
+
+    /// <summary>
+    /// Use e.g. for a bone rig childed to a physics transform to make the rigged character change direction.
+    /// </summary>
+    public static void ReflectHorizontally(this Transform transform, PhysicsTransform reflection)
+    {
+        var s = transform.localScale;
+        s.x *= -1;
+        transform.localScale = s;
+        var q = MathTools.QuaternionFrom2DUnitVector(reflection.rotation.direction);
+        transform.rotation = q * MathTools.InverseOfUnitQuaternion(transform.rotation) * q;
+        transform.position = reflection.position + ((Vector2)transform.position - reflection.position).ReflectAcrossHyperplane(reflection.rotation.direction);
+    }
+
+
     //QUERIES
 
     public static PhysicsQuery.QueryFilter ToQueryFilter(this PhysicsShape.ContactFilter contactFilter, 

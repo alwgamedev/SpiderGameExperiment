@@ -32,11 +32,14 @@ public struct SpiderPhysics
     [SerializeField] Vector2 headCapsuleSize;
     [SerializeField] Vector2 headCapsuleOffset;
 
+    Vector2 heightReferenceLocalPos;
+
     bool facingRight;
 
     public readonly int Orientation => FacingRight ? 1 : -1;
     public readonly bool FacingRight => facingRight;
     public PhysicsRotate LevelRight => FacingRight ? abdomen.rotation.MultiplyRotation(abdomenAngle.Inverse()): abdomen.rotation.MultiplyRotation(abdomenAngle);
+    public Vector2 HeightReferencePosition => head.transform.TransformPoint(heightReferenceLocalPos);
 
     public void OnValidate()
     {
@@ -141,63 +144,43 @@ public struct SpiderPhysics
         grappleArmJoint = PhysicsFixedJoint.Create(defaultWorld, grappleArmJointDef);
 
         abdomenAngle = abdomen.rotation.MultiplyRotation(levelDirection.Inverse());
+        heightReferenceLocalPos = head.transform.InverseTransformPoint(heightReferencePoint.position);
         facingRight = true;
     }
 
     public void SetHeadRotation(PhysicsRotate worldRotation)
     {
-        var anchorA = headJoint.localAnchorA;
-        anchorA.rotation = abdomen.rotation.InverseMultiplyRotation(worldRotation);
-        headJoint.localAnchorA = anchorA;
+        if (worldRotation.isValid)
+        {
+            var anchorA = headJoint.localAnchorA;
+            anchorA.rotation = abdomen.rotation.InverseMultiplyRotation(worldRotation);
+            headJoint.localAnchorA = anchorA;
+        }
     }
 
     public void FlipHorizontally()
     {
-        var abdomenAnchorLocalPos = headJoint.localAnchorA.position;
-        var headAnchorLocalPos = headJoint.localAnchorB.position;
-        var headJointWorldAnchor = abdomen.transform.MultiplyTransform(headJoint.localAnchorA);
+        var reflection = new PhysicsTransform()
+        {
+            position = headJoint.bodyA.transform.TransformPoint(headJoint.localAnchorA.position),
+            rotation = LevelRight
+        };
 
-        //reverse bone directions
-        FlipBoneHorizontally(abdomen, abdomenBone);
-        FlipBoneHorizontally(head, headBone);
+        abdomen.transform = abdomen.transform.ReflectHorizontally(reflection);
+        head.transform = head.transform.ReflectHorizontally(reflection);
+        grappleArm.transform = grappleArm.transform.ReflectHorizontally(reflection);
 
-        //rotate physics bodies
-        var levelRight = LevelRight.direction;
-        var levelUp = levelRight.CCWPerp();
+        abdomen.SyncTransform();
+        head.SyncTransform();
+        grappleArm.SyncTransform();
 
-        var flippedAbdomenDir = abdomen.rotation.direction.ReflectAcrossHyperplane(levelUp);
-        abdomen.rotation = new(flippedAbdomenDir);
+        abdomenBone.ReflectHorizontally(abdomen.transform);
+        headBone.ReflectHorizontally(head.transform);
+        grappleArmBone.ReflectHorizontally(grappleArm.transform);
 
-        var flippedHeadDir = head.rotation.direction.ReflectAcrossHyperplane(levelUp);
-        head.rotation = new(flippedHeadDir);
-
-        headJointWorldAnchor.rotation = new(headJointWorldAnchor.rotation.direction.ReflectAcrossHyperplane(levelUp));
-
-        //reposition bodies to meet at joint anchor
-        abdomenAnchorLocalPos.x *= -1;
-        headAnchorLocalPos.x *= -1;
-
-        abdomen.position += headJointWorldAnchor.position - abdomen.transform.TransformPoint(abdomenAnchorLocalPos);
-        head.position += headJointWorldAnchor.position - head.transform.TransformPoint(headAnchorLocalPos);
-
-        headJoint.localAnchorA = new(abdomenAnchorLocalPos, headJointWorldAnchor.rotation);
-        headJoint.localAnchorB = new(headAnchorLocalPos);//head.transform.InverseMultiplyTransform(headJointWorldAnchor);
+        ((PhysicsJoint)headJoint).SwitchAnchorSides();
+        ((PhysicsJoint)grappleArmJoint).SwitchAnchorSides();
 
         facingRight = !facingRight;
-    }
-
-    //bone is assumed to have same rotation as physics body, but may have some position offset,
-    //and bone is immediate child of body
-    private static void FlipBoneHorizontally(PhysicsBody body, Transform bone)
-    {
-        var s = bone.localScale;
-        s.x *= -1;
-        bone.localScale = s;
-        bone.position = FlipPointHorizontally(body, bone.position);
-    }
-
-    private static Vector2 FlipPointHorizontally(PhysicsBody body, Vector2 point)
-    {
-        return body.position + MathTools.ReflectAcrossHyperplane(point - body.position, body.rotation.direction);
     }
 }

@@ -9,7 +9,6 @@ public class PhysicsLegSynchronizer : MonoBehaviour
     [SerializeField] float stepHeightSpeed0;//at or below this speed, stepHeight is zero
     [SerializeField] float stepHeightSpeed1;//at or above this speed, use full stepHeight
     [SerializeField] PhysicsBasedIKLeg[] leg;
-    [SerializeField] Transform[] castDirectionSource;
     [SerializeField] int[] castDirectionSourceIndex;
     [SerializeField] PhysicsLegSettings[] stdSettings;
     [SerializeField] PhysicsLegSettings[] jumpSettings;
@@ -20,7 +19,6 @@ public class PhysicsLegSynchronizer : MonoBehaviour
     [SerializeField] float groundContactRadius;
     [SerializeField] float collisionResponse;
     [SerializeField] float maxExtensionFraction;
-    //[SerializeField] float maxAngularVelocity;
 
     LegTimer[] timer;
     LegState state;
@@ -83,7 +81,7 @@ public class PhysicsLegSynchronizer : MonoBehaviour
         return false;
     }
 
-    public void UpdateAllLegs(float dt, GroundMap map, bool grounded, float simulateContactWeight = 0)
+    public void UpdateAllLegs(float dt, GroundMap map, bool grounded, Vector2[] castDirection, float simulateContactWeight = 0)
     {
         var speedFraction = absoluteBodyGroundSpeed < stepHeightSpeed0 ? 0 : absoluteBodyGroundSpeed / stepHeightSpeed1;
         var speedScaledDt = timeScale * speedFraction * dt;
@@ -99,13 +97,13 @@ public class PhysicsLegSynchronizer : MonoBehaviour
 
             if (t.Stepping)
             {
-                l.UpdateTargetStepping(map, -castDirectionSource[castDirectionSourceIndex[i]].up,
+                l.UpdateTargetStepping(map, castDirection[castDirectionSourceIndex[i]],
                     stepHeightSpeedMultiplier, stepHeightFraction, t.StateProgress, 
                     strideMultiplier * t.StepTime, strideMultiplier * t.RestTime);
             }
             else
             {
-                l.UpdateTargetResting(map, -castDirectionSource[castDirectionSourceIndex[i]].up,
+                l.UpdateTargetResting(map, castDirection[castDirectionSourceIndex[i]],
                     t.StateProgress, strideMultiplier * t.RestTime);
             }
 

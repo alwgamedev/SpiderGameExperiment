@@ -5226,11 +5226,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 996919159}
   m_CullTransparentMesh: 1
---- !u!4 &1029945342 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1544918830229533694, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-  m_PrefabInstance: {fileID: 328100115394418497}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1035750402
 GameObject:
   m_ObjectHideFlags: 0
@@ -11772,11 +11767,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1401753345}
   m_CullTransparentMesh: 1
---- !u!4 &1414357174 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6490454046939129288, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-  m_PrefabInstance: {fileID: 328100115394418497}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1499067876
 GameObject:
   m_ObjectHideFlags: 0
@@ -15602,42 +15592,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Spider
       objectReference: {fileID: 0}
-    - target: {fileID: 2322109891762347586, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: 'castDirectionSource.Array.data[1]'
-      value: 
-      objectReference: {fileID: 1414357174}
-    - target: {fileID: 2322109891762347586, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: leg.Array.data[0].orientingTransform
-      value: 
-      objectReference: {fileID: 1029945342}
-    - target: {fileID: 2322109891762347586, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: leg.Array.data[1].orientingTransform
-      value: 
-      objectReference: {fileID: 1029945342}
-    - target: {fileID: 2322109891762347586, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: leg.Array.data[2].orientingTransform
-      value: 
-      objectReference: {fileID: 1029945342}
-    - target: {fileID: 2322109891762347586, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: leg.Array.data[3].orientingTransform
-      value: 
-      objectReference: {fileID: 1029945342}
-    - target: {fileID: 2322109891762347586, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: leg.Array.data[4].orientingTransform
-      value: 
-      objectReference: {fileID: 1414357174}
-    - target: {fileID: 2322109891762347586, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: leg.Array.data[5].orientingTransform
-      value: 
-      objectReference: {fileID: 1414357174}
-    - target: {fileID: 2322109891762347586, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: leg.Array.data[6].orientingTransform
-      value: 
-      objectReference: {fileID: 1414357174}
-    - target: {fileID: 2322109891762347586, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: leg.Array.data[7].orientingTransform
-      value: 
-      objectReference: {fileID: 1414357174}
     - target: {fileID: 9149063515827151626, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
       propertyPath: m_LocalPosition.x
       value: -23.5

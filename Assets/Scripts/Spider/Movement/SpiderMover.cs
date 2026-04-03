@@ -111,6 +111,8 @@ public class SpiderMover : MonoBehaviour
     Vector2 balanceDirection;
     float settleTimer;
 
+    Vector2[] legCastDirection;
+
     float cosFreeHangLegAngleMin;
     float cosScurryAngleMin;
     float sinScurryAngleMin;
@@ -127,11 +129,11 @@ public class SpiderMover : MonoBehaviour
     float LeanInput => spiderInput.SecondaryInput.x;
     bool ForceFreeHang => grapple.GrappleAnchored && spiderInput.ShiftAction.IsPressed();
     int Orientation => FacingRight ? 1 : -1;
-    Vector2 Right => Abdomen.rotation.direction;
-    Vector2 Up => Abdomen.rotation.direction.CCWPerp();
+    Vector2 Right => SpideyPhysics.LevelRight.direction;
+    Vector2 Up => Right.CCWPerp();
     Vector2 OrientedRight => FacingRight ? Right : -Right;//transform.right : -transform.right;
     Vector2 OrientedGroundDirection => FacingRight ? groundDirection : -groundDirection;
-    Vector2 HeightReferencePt => spiderPhysics.abdomen.worldCenterOfMass;
+    Vector2 HeightReferencePt => SpideyPhysics.HeightReferencePosition;//spiderPhysics.abdomen.worldCenterOfMass;
     float MaxSpeed => grounded ? maxSpeed : maxSpeedAirborne;
     float GrappleScurryResistance => Vector2.Dot(grapple.LastCarryForce, -OrientedGroundDirection);
     float GrappleScurryResistanceFraction => Mathf.Clamp(GrappleScurryResistance / grappleScurryResistanceMax, 0, 1);
@@ -177,6 +179,8 @@ public class SpiderMover : MonoBehaviour
 
     private void Awake()
     {
+        legCastDirection = new Vector2[2];
+
         abdomenBoneBaseRight = abdomenBone.right.InFrameV2(transform.right, transform.up);
         abdomenBoneBaseRightL = new(abdomenBoneBaseRight.x, -abdomenBoneBaseRight.y);
         abdomenBoneBaseUp = abdomenBoneBaseRight.CCWPerp();
@@ -885,6 +889,9 @@ public class SpiderMover : MonoBehaviour
                 break;
         }
 
-        legSynch.UpdateAllLegs(Time.deltaTime, groundMap, grounded, simulateContactWeight);
+        legCastDirection[0] = spiderPhysics.head.rotation.direction.CWPerp();
+        legCastDirection[1] = spiderPhysics.LevelRight.direction.CWPerp();
+
+        legSynch.UpdateAllLegs(Time.deltaTime, groundMap, grounded, legCastDirection,  simulateContactWeight);
     }
 }
