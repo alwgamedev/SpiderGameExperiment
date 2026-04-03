@@ -96,7 +96,6 @@ public static class PhysicsCoreHelper
         Vector2 capsuleSize, Vector2 capsuleOffset, Matrix4x4 shapeInputSpace)
     {
         var body = world.CreateBody(bodyDef);
-
         var capsuleGeom = CreateCapsule(capsuleSize, capsuleOffset).Transform(shapeInputSpace, true).InverseTransform(body.transform);
         body.CreateShape(capsuleGeom, shapeDef);
 
@@ -159,8 +158,6 @@ public static class PhysicsCoreHelper
 
     public static void UpdateSettings(this PhysicsFixedJoint joint, PhysicsFixedJointDefinition def)
     {
-        joint.localAnchorA = def.localAnchorA;
-        joint.localAnchorB = def.localAnchorB;
         joint.linearFrequency = def.linearFrequency;
         joint.linearDamping = def.linearDamping;
         joint.angularFrequency = def.angularFrequency;

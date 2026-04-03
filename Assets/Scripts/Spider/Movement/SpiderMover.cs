@@ -136,12 +136,12 @@ public class SpiderMover : MonoBehaviour
     float GrappleScurryResistance => Vector2.Dot(grapple.LastCarryForce, -OrientedGroundDirection);
     float GrappleScurryResistanceFraction => Mathf.Clamp(GrappleScurryResistance / grappleScurryResistanceMax, 0, 1);
 
-    public bool FacingRight => transform.localScale.x > 0;
+    public bool FacingRight => SpideyPhysics.FacingRight;//transform.localScale.x > 0;
     public float CrouchProgress => crouchProgress;
     public Thruster Thruster => thruster;
     public GrappleCannon Grapple => grapple;
-    public ref SpiderPhysics Physics => ref spiderPhysics;
-    public ref PhysicsBody Abdomen => ref Physics.abdomen;
+    public ref SpiderPhysics SpideyPhysics => ref spiderPhysics;
+    public ref PhysicsBody Abdomen => ref SpideyPhysics.abdomen;
 
     //mainly to hook up audio (later maybe also ui stuff)
     public UnityEvent jumpChargeBegan;
@@ -197,7 +197,7 @@ public class SpiderMover : MonoBehaviour
 
     private void Start()
     {
-        spiderPhysics.CreatePhysicsBody();
+        spiderPhysics.CreatePhysicsBody(new PhysicsRotate(transform.right));
         InitializeGroundData();
         legSynch.Initialize();
         grapple.Initialize(spiderInput, Abdomen, FacingRight);
@@ -222,8 +222,8 @@ public class SpiderMover : MonoBehaviour
             jumpVerificationTimer -= Time.deltaTime;
         }
 
-        RotateAbdomen(Time.deltaTime);
-        RotateHead(Time.deltaTime);
+        //RotateAbdomen(Time.deltaTime);
+        RotateHead(/*Time.deltaTime*/);
         UpdateLegSynch();
         UpdateGroundData();
         UpdateThruster();
@@ -409,7 +409,7 @@ public class SpiderMover : MonoBehaviour
             grappleFreeHangPrerequisites = false;
         }
 
-        if (MathTools.OppositeSigns(HorizontalMoveInput, Orientation))
+        if (MathTools.OppositeSigns(HorizontalMoveInput, SpideyPhysics.Orientation))
         {
             needChangeDirection = true;
         }
@@ -437,39 +437,40 @@ public class SpiderMover : MonoBehaviour
 
     private void ChangeDirection()
     {
-        //if (!grapple.FreeHanging)
-        //{
-        //    var s = transform.localScale;
-        //    transform.localScale = new Vector3(-s.x, s.y, s.z);
-        //    legSynch.OnBodyChangedDirection(transform.position, transform.position, transform.right);
-        //}
-        //else
-        //{
-        //    spiderPhysics.abdomen.SyncTransform();
-        //    Vector2 o = grapple.FreeHangLeveragePoint;
-        //    Vector2 p = spiderPhysics.abdomen.position;
-        //    Vector2 u = PhysBody.rotation.direction.CCWPerp();
+        if (!grapple.FreeHanging)
+        {
+            SpideyPhysics.FlipHorizontally();
+            //var s = transform.localScale;
+            //transform.localScale = new Vector3(-s.x, s.y, s.z);
+            //legSynch.OnBodyChangedDirection(transform.position, transform.position, transform.right);
+        }
+        else
+        {
+            //spiderPhysics.abdomen.SyncTransform();
+            //Vector2 o = grapple.FreeHangLeveragePoint;
+            //Vector2 p = spiderPhysics.abdomen.position;
+            //Vector2 u = PhysBody.rotation.direction.CCWPerp();
 
-        //    var s = transform.localScale;
-        //    transform.localScale = new Vector3(-s.x, s.y, s.z);
+            //var s = transform.localScale;
+            //transform.localScale = new Vector3(-s.x, s.y, s.z);
 
-        //    PhysBody.rotation = new PhysicsRotate(-PhysBody.rotation.direction);
-        //    PhysBody.SyncTransform();
-        //    PhysBody.position += o - grapple.FreeHangLeveragePoint;
-        //    //SyncTransform();
-        //    //translate so grapple.FreeHangeLeveragePoint stays in same place
-        //    //(it's where move forces are applied while freeHanging, and we want to keep movement smooth)
+            //PhysBody.rotation = new PhysicsRotate(-PhysBody.rotation.direction);
+            //PhysBody.SyncTransform();
+            //PhysBody.position += o - grapple.FreeHangLeveragePoint;
+            ////SyncTransform();
+            ////translate so grapple.FreeHangeLeveragePoint stays in same place
+            ////(it's where move forces are applied while freeHanging, and we want to keep movement smooth)
 
-        //    legSynch.OnBodyChangedDirection(p, PhysBody.position, u);
+            //legSynch.OnBodyChangedDirection(p, PhysBody.position, u);
 
-        //    //void SyncTransform()//so we have accurate position of grapple.FreeHangLeveragePoint -- inefficient, but reliable
-        //    //{
-        //    //    PhysBody.GetPositionAndRotation3D(transform, PhysicsWorld.defaultWorld.transformWriteMode, PhysicsWorld.TransformPlane.XY, out var pos, out var rot);
-        //    //    transform.SetPositionAndRotation(pos, rot);
-        //    //}
-        //}
+            ////void SyncTransform()//so we have accurate position of grapple.FreeHangLeveragePoint -- inefficient, but reliable
+            ////{
+            ////    PhysBody.GetPositionAndRotation3D(transform, PhysicsWorld.defaultWorld.transformWriteMode, PhysicsWorld.TransformPlane.XY, out var pos, out var rot);
+            ////    transform.SetPositionAndRotation(pos, rot);
+            ////}
+        }
 
-        //grapple.SetOrientation(FacingRight);
+        grapple.SetOrientation(FacingRight);
     }
 
     private void HandleMoveInput()
@@ -521,7 +522,7 @@ public class SpiderMover : MonoBehaviour
 
         if (!grapple.FreeHanging)
         {
-            var a = MathTools.PseudoAngle(Right, flipInput && !grounded ? -balanceDirection : balanceDirection);
+            var a = MathTools.PseudoAngle(SpideyPhysics.LevelRight/*Right*/, flipInput && !grounded ? -balanceDirection : balanceDirection);
             f += a * (grounded ? balanceSpringForce : airborneBalanceSpringForce);
         }
 
@@ -589,7 +590,7 @@ public class SpiderMover : MonoBehaviour
         return new(cosScurryAngleMin, FacingRight ? sinScurryAngleMin : -sinScurryAngleMin);
     }
 
-    private void RotateHead(float dt)
+    private void RotateHead(/*float dt*/)
     {
         Vector2 g;
         if (grounded)
@@ -609,7 +610,9 @@ public class SpiderMover : MonoBehaviour
             g = grapple.FreeHanging ? FreeHangingHeadRight() : Right;
         }
 
-        headBone.ApplyCheapRotationalLerpClamped(g, headRotationSpeed * dt, out _);//if rotate at constant speed, it starts to flicker when rotation is small
+        SpideyPhysics.SetHeadRotation(new PhysicsRotate(g));
+
+        //headBone.ApplyCheapRotationalLerpClamped(g, headRotationSpeed * dt, out _);//if rotate at constant speed, it starts to flicker when rotation is small
     }
 
     private Vector2 FreeHangingHeadRight()

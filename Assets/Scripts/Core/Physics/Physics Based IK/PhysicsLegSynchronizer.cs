@@ -16,8 +16,6 @@ public class PhysicsLegSynchronizer : MonoBehaviour
     [SerializeField] PhysicsLegSettings[] freefallSettings;
     [SerializeField] PhysicsLegSettings[] limpSettings;
     [SerializeField] float[] timeOffset;
-    [SerializeField] int fabrikIterations;
-    [SerializeField] float fabrikTolerance;
     [SerializeField] float reachTolerance;
     [SerializeField] float groundContactRadius;
     [SerializeField] float collisionResponse;
@@ -34,7 +32,6 @@ public class PhysicsLegSynchronizer : MonoBehaviour
     [NonSerialized] public float stepHeightFraction;
     [NonSerialized] public float strideMultiplier = 1;
 
-    float fabrikToleranceSqrd;
     float reachToleranceSqrd;
 
     public enum LegState
@@ -62,7 +59,6 @@ public class PhysicsLegSynchronizer : MonoBehaviour
     {
         if (Application.isPlaying)
         {
-            fabrikToleranceSqrd = fabrikTolerance * fabrikTolerance;
             reachToleranceSqrd = reachToleranceSqrd * reachTolerance;
             UpdateSettings();
         }
@@ -118,7 +114,7 @@ public class PhysicsLegSynchronizer : MonoBehaviour
                 l.ClampTargetPosition(map, maxExtensionFraction);
             }
 
-            l.UpdateJoints(map, dt, fabrikIterations, fabrikToleranceSqrd, reachToleranceSqrd,
+            l.UpdateJoints(map, dt, reachToleranceSqrd,
                 groundContactRadius, collisionResponse, /*maxAngularVelocity,*/ simulateContactWeight);
 
             if (l.EffectorIsTouchingGround)
@@ -141,7 +137,6 @@ public class PhysicsLegSynchronizer : MonoBehaviour
     public void Initialize()
     {
         legCountInverse = 1f / leg.Length;
-        fabrikToleranceSqrd = fabrikTolerance * fabrikTolerance;
         reachToleranceSqrd = reachTolerance * reachTolerance;
         InitializeTimers();
         InitializeLegs();

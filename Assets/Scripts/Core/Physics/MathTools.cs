@@ -150,6 +150,8 @@ public static class MathTools
         return p - 2 * Vector3.Dot(p, planeNormal) * planeNormal;
     }
 
+    /// <param name="p">point to be reflected</param>
+    /// <param name="planeNormal">a unit normal to plane being reflected over</param>
     public static Vector2 ReflectAcrossHyperplane(this Vector2 p, Vector2 planeNormal)
     {
         return p - 2 * Vector2.Dot(p, planeNormal) * planeNormal;
