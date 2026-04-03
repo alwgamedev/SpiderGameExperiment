@@ -1903,7 +1903,7 @@ MonoBehaviour:
     m_PreSolveCallbacks: 0
     m_StartStaticContacts: 0
     m_StartMassUpdate: 1
-    m_WorldDrawing: 1
+    m_WorldDrawing: 0
     moverData:
       m_PushLimit: 0
       m_ClipVelocity: 0
@@ -6276,7 +6276,7 @@ MonoBehaviour:
     m_PreSolveCallbacks: 0
     m_StartStaticContacts: 0
     m_StartMassUpdate: 1
-    m_WorldDrawing: 1
+    m_WorldDrawing: 0
     moverData:
       m_PushLimit: 0
       m_ClipVelocity: 0
@@ -13919,7 +13919,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!212 &1910163372
 SpriteRenderer:
   serializedVersion: 3
@@ -15591,6 +15591,10 @@ PrefabInstance:
     - target: {fileID: 1231387903212816449, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
       propertyPath: m_Name
       value: Spider
+      objectReference: {fileID: 0}
+    - target: {fileID: 9070389282856877564, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
+      propertyPath: jumpAngleMin
+      value: -0.3926991
       objectReference: {fileID: 0}
     - target: {fileID: 9149063515827151626, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
       propertyPath: m_LocalPosition.x

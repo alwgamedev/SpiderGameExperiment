@@ -2,6 +2,7 @@
 using UnityEngine;
 using Unity.U2D.Physics;
 using UnityEditor;
+using UnityEngine.UIElements;
 
 
 [Serializable]
@@ -13,13 +14,13 @@ public struct SpiderPhysics
     public PhysicsFixedJoint headJoint;
     public PhysicsFixedJoint grappleArmJoint;
     public PhysicsQuery.QueryFilter queryFilter;
-    public PhysicsRotate abdomenAngle;//angle from "level" (usually ground direction) when facing right
+    ///<summary> (when facing right) </summary>
+    public PhysicsRotate abdomenRotationFromBase;
 
     [SerializeField] PhysicsBodyDefinition bodyDef;
     [SerializeField] PhysicsShapeDefinition shapeDef;
     [SerializeField] PhysicsFixedJointDefinition headJointDef;
     [SerializeField] PhysicsFixedJointDefinition grappleArmJointDef;
-    //[SerializeField] Transform spiderTransform;
     [SerializeField] Transform grappleArmRoot;
     [SerializeField] Transform grappleArmBone;
     [SerializeField] Transform abdomenRoot;
@@ -32,14 +33,34 @@ public struct SpiderPhysics
     [SerializeField] Vector2 headCapsuleSize;
     [SerializeField] Vector2 headCapsuleOffset;
 
+    ///<summary> (when facing right) </summary>
+    PhysicsRotate abdomenBaseRotationFromLevel;
     Vector2 heightReferenceLocalPos;
-
+    float totalMass;
     bool facingRight;
 
-    public readonly int Orientation => FacingRight ? 1 : -1;
     public readonly bool FacingRight => facingRight;
-    public PhysicsRotate LevelRight => FacingRight ? abdomen.rotation.MultiplyRotation(abdomenAngle.Inverse()): abdomen.rotation.MultiplyRotation(abdomenAngle);
-    public Vector2 HeightReferencePosition => head.transform.TransformPoint(heightReferenceLocalPos);
+    public readonly int Orientation => FacingRight ? 1 : -1;
+    public readonly float TotalMass => totalMass;
+    /// <summary> (accurate when facing right; when facing left it is the inverse of this) </summary>
+    public readonly PhysicsRotate AbdomenBaseRotationFromLevel => abdomenBaseRotationFromLevel;
+    //The heightRefPos and levelRight make up the spider's "true" transform, now that spider is made up of three separate bodies
+    public readonly PhysicsRotate LevelRight
+    {
+        get
+        {
+            var abdomenAngleFromLevel = abdomenRotationFromBase.MultiplyRotation(abdomenBaseRotationFromLevel);//(when facing right; inverse of this when facing left)
+            return FacingRight ? abdomenAngleFromLevel.InverseMultiplyRotation(abdomen.rotation) : abdomenAngleFromLevel.MultiplyRotation(abdomen.rotation);
+        }
+    }
+    public readonly Vector2 HeightReferencePosition
+    {
+        get
+        {
+            var localPos = FacingRight ? heightReferenceLocalPos : new(-heightReferenceLocalPos.x, heightReferenceLocalPos.y);
+            return abdomen.transform.TransformPoint(localPos);
+        }
+    }
 
     public void OnValidate()
     {
@@ -113,11 +134,6 @@ public struct SpiderPhysics
             //(have written an editor function to do this)
         abdomen.transformObject = abdomenRoot;
 
-        //var com = abdomen.transform.InverseTransformPoint(heightReferencePoint.position);
-        //var mass = abdomen.massConfiguration;
-        //mass.center = com;
-        //abdomen.massConfiguration = mass;
-
         bodyDefCopy.position = headRoot.position;
         bodyDefCopy.rotation = new PhysicsRotate(headRoot.rotation, PhysicsWorld.TransformPlane.XY);
         head = PhysicsCoreHelper.CreateCapsuleBody(defaultWorld, bodyDefCopy, shapeDef, headCapsuleSize, Vector2.zero, headRoot.localToWorldMatrix);
@@ -128,23 +144,26 @@ public struct SpiderPhysics
         grappleArm = PhysicsCoreHelper.CreateBoxBody(defaultWorld, bodyDefCopy, shapeDef, Vector2.one, grappleArmBone.localToWorldMatrix);
         grappleArm.transformObject = grappleArmRoot;
 
-        //local anchors: localAnchorB on bodyB will hook up to localAnchorA on bodyA,
-        //i.e. the anchor position on bodyB will be pulled towards the anchor position on bodyA,
-        //and bodyB will rotate so that its anchor direction lines up with the anchor direction on bodyA
+        //fixed joints: anchorB on bodyB will be pulled towards anchorA on bodyA;
+        //for rotation that means bodyB will rotate so that its anchor direction lines up with the anchor direction on bodyA
         headJointDef.bodyA = abdomen;
         headJointDef.bodyB = head;
         headJointDef.localAnchorB = new(head.transform.InverseTransformPoint(headBone.position));
         headJointDef.localAnchorA = abdomen.transform.InverseMultiplyTransform(head.transform.MultiplyTransform(headJointDef.localAnchorB));//the anchors are the same in world space
         headJoint = PhysicsFixedJoint.Create(defaultWorld, headJointDef);
 
+        ///2do: grappleArm can just be a secondary shape on physics body (that will under go a local transformation when we change direction)
+        //no need for extra body and joint
+        //(with grapple arm childed to abdomen bone probably)
         grappleArmJointDef.bodyA = abdomen;
         grappleArmJointDef.bodyB = grappleArm;
         grappleArmJointDef.localAnchorA = abdomen.transform.InverseMultiplyTransform(grappleArm.transform);
         grappleArmJointDef.localAnchorB = PhysicsTransform.identity;
         grappleArmJoint = PhysicsFixedJoint.Create(defaultWorld, grappleArmJointDef);
 
-        abdomenAngle = abdomen.rotation.MultiplyRotation(levelDirection.Inverse());
-        heightReferenceLocalPos = head.transform.InverseTransformPoint(heightReferencePoint.position);
+        abdomenBaseRotationFromLevel = levelDirection.InverseMultiplyRotation(abdomen.rotation);
+        heightReferenceLocalPos = abdomen.transform.InverseTransformPoint(heightReferencePoint.position);
+        totalMass = abdomen.mass + head.mass + grappleArm.mass;
         facingRight = true;
     }
 
@@ -158,9 +177,9 @@ public struct SpiderPhysics
         }
     }
 
-    public void FlipHorizontally()
+    public void FlipHorizontally(out PhysicsTransform reflection)
     {
-        var reflection = new PhysicsTransform()
+        reflection = new PhysicsTransform()
         {
             position = headJoint.bodyA.transform.TransformPoint(headJoint.localAnchorA.position),
             rotation = LevelRight
