@@ -9,7 +9,7 @@ public class Spider : MonoBehaviour
     public Health Health => health;
     public SpiderMover Mover => mover;
     public GrappleCannon Grapple => grapple;
-    public Collider2D TriggerCollider { get; private set; }//was for fluid interaction; needs to be updated to new physics system
+    public Collider2D TriggerCollider { get; private set; }//was for fluid interaction; need to update fluid to new physics system
 
     public static Spider Player { get; private set; }
 
@@ -21,5 +21,10 @@ public class Spider : MonoBehaviour
     private void Start()
     {
         health.Start();
+    }
+
+    private void OnDestroy()
+    {
+        Player = null;
     }
 }

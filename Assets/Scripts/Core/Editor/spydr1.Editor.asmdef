@@ -1,0 +1,17 @@
+{
+    "name": "spydr1.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:f643e76d4a3e35745b88beaa043b92ea",
+        "GUID:41524c21c95e5fe4dbc5b48bd21995a4"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

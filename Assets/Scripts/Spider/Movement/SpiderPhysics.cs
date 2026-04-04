@@ -47,7 +47,7 @@ public struct SpiderPhysics
         get
         {
             var abdomenAngleFromLevel = abdomenRotationFromBase.MultiplyRotation(abdomenBaseRotationFromLevel);//(when facing right; inverse of this when facing left)
-            return FacingRight ? abdomenAngleFromLevel.InverseMultiplyRotation(abdomen.rotation) : abdomenAngleFromLevel.MultiplyRotation(abdomen.rotation);
+            return FacingRight? abdomenAngleFromLevel.InverseMultiplyRotation(abdomen.rotation) : abdomenAngleFromLevel.MultiplyRotation(abdomen.rotation);
         }
     }
     public readonly Vector2 HeightReferencePosition
@@ -162,14 +162,8 @@ public struct SpiderPhysics
         }
     }
 
-    public void FlipHorizontally(out PhysicsTransform reflection)
+    public void ChangeDirection(PhysicsTransform reflection)
     {
-        reflection = new PhysicsTransform()
-        {
-            position = headJoint.bodyA.transform.TransformPoint(headJoint.localAnchorA.position),
-            rotation = LevelRight
-        };
-
         abdomen.transform = abdomen.transform.ReflectHorizontally(reflection);
         head.transform = head.transform.ReflectHorizontally(reflection);
 
@@ -182,7 +176,7 @@ public struct SpiderPhysics
         grappleArmShape.polygonGeometry = GrappleArmWorldBox().InverseTransform(abdomen.transform);
         abdomen.ApplyMassFromShapes();
 
-        ((PhysicsJoint)headJoint).SwitchAnchorSides();
+        ((PhysicsJoint)headJoint).ReflectAnchorsHorizontallyWithinBodies();
 
         facingRight = !facingRight;
     }

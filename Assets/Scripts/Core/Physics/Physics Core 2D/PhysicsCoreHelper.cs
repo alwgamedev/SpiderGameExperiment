@@ -23,7 +23,7 @@ public static class PhysicsCoreHelper
     /// <summary>
     /// Use in conjunction with reflect methods if reflected physics bodies are connected by joints.
     /// </summary>
-    public static void SwitchAnchorSides(this PhysicsJoint joint)
+    public static void ReflectAnchorsHorizontallyWithinBodies(this PhysicsJoint joint)
     {
         joint.localAnchorA = joint.localAnchorA.ReflectHorizontally(PhysicsTransform.identity);
         joint.localAnchorB = joint.localAnchorB.ReflectHorizontally(PhysicsTransform.identity);
@@ -38,8 +38,12 @@ public static class PhysicsCoreHelper
         s.x *= -1;
         transform.localScale = s;
         var q = MathTools.QuaternionFrom2DUnitVector(reflection.rotation.direction);
-        transform.rotation = q * MathTools.InverseOfUnitQuaternion(transform.rotation) * q;
-        transform.position = reflection.position + ((Vector2)transform.position - reflection.position).ReflectAcrossHyperplane(reflection.rotation.direction);
+        q = q * MathTools.InverseOfUnitQuaternion(transform.rotation) * q;
+        var p = reflection.position + ((Vector2)transform.position - reflection.position).ReflectAcrossHyperplane(reflection.rotation.direction);
+        transform.SetPositionAndRotation(p, q);
+
+        //transform.rotation = q * MathTools.InverseOfUnitQuaternion(transform.rotation) * q;
+        //transform.position = reflection.position + ((Vector2)transform.position - reflection.position).ReflectAcrossHyperplane(reflection.rotation.direction);
     }
 
 

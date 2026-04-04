@@ -91,7 +91,7 @@ public class SpiderMover : MonoBehaviour
 
     bool grounded;
     float groundednessRating;
-    Vector2 groundDirection = Vector2.right;
+    Vector2 groundDirection;
     Vector2 groundAnchorPt;
     Vector2 balanceDirection;
     float settleTimer;
@@ -358,6 +358,7 @@ public class SpiderMover : MonoBehaviour
         thrustersDisengaged.Invoke();
     }
 
+
     //INPUT
 
     private void UpdateState()
@@ -427,27 +428,17 @@ public class SpiderMover : MonoBehaviour
     {
         if (!grapple.FreeHanging)
         {
-            SpideyPhysics.FlipHorizontally(out var reflection);
+            var reflection = SpideyPhysics.VirtualTransform;
+            SpideyPhysics.ChangeDirection(reflection);
             legSynch.OnBodyChangedDirection(reflection.position, reflection.position, reflection.rotation.direction);
         }
         else
         {
-            //spiderPhysics.abdomen.SyncTransform();
-            //Vector2 o = grapple.FreeHangLeveragePoint;
-            //Vector2 p = spiderPhysics.abdomen.position;
-            //Vector2 u = PhysBody.rotation.direction.CCWPerp();
-
-            //var s = transform.localScale;
-            //transform.localScale = new Vector3(-s.x, s.y, s.z);
-
-            //PhysBody.rotation = new PhysicsRotate(-PhysBody.rotation.direction);
-            //PhysBody.SyncTransform();
-            //PhysBody.position += o - grapple.FreeHangLeveragePoint;
-            ////SyncTransform();
-            ////translate so grapple.FreeHangeLeveragePoint stays in same place
-            ////(it's where move forces are applied while freeHanging, and we want to keep movement smooth)
-
-            //legSynch.OnBodyChangedDirection(p, PhysBody.position, u);
+            var p = SpideyPhysics.HeightReferencePosition;
+            var u = SpideyPhysics.LevelRight.direction.CCWPerp();
+            var reflection = new PhysicsTransform(grapple.FreeHangLeveragePoint, new PhysicsRotate(u));
+            SpideyPhysics.ChangeDirection(reflection);
+            legSynch.OnBodyChangedDirection(p, SpideyPhysics.HeightReferencePosition, u);
         }
 
         grapple.SetOrientation(FacingRight);
@@ -553,21 +544,22 @@ public class SpiderMover : MonoBehaviour
         }
         else
         {
-            g = grapple.FreeHanging ? FreeHangingHeadRight() : Right;
+            var right = Right;
+            g = grapple.FreeHanging ? FreeHangingHeadRight(right) : right;
         }
 
         SpideyPhysics.SetHeadRotation(new PhysicsRotate(g));
     }
 
-    private Vector2 FreeHangingHeadRight()
+    private Vector2 FreeHangingHeadRight(Vector2 bodyRight)
     {
-        var y = transform.right.y;
+        var y =  bodyRight.y;
         if (y < 0)
         {
             y = -y * freeHangHeadAngle;
-            return Mathf.Cos(y) * transform.right + Mathf.Sin(y) * (FacingRight ? transform.up : -transform.up);
+            return Mathf.Cos(y) * bodyRight + Mathf.Sin(y) * (FacingRight ? bodyRight.CCWPerp() : bodyRight.CWPerp());
         }
-        return transform.right;
+        return bodyRight;
     }
 
 

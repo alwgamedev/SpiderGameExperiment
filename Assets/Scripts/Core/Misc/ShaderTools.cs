@@ -1,7 +1,4 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using UnityEngine;
-using static UnityEngine.Rendering.DebugUI;
+﻿using UnityEngine;
 
 public static class ShaderTools
 {

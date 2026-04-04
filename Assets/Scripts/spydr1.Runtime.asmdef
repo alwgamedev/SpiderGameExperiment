@@ -1,0 +1,26 @@
+{
+    "name": "spydr1.Runtime",
+    "rootNamespace": "",
+    "references": [
+        "GUID:41524c21c95e5fe4dbc5b48bd21995a4",
+        "GUID:15fc0a57446b3144c949da3e2b9737a9",
+        "GUID:75469ad4d38634e559750d17036d5f7c",
+        "GUID:88f14d179e7c91c4eac28302d69f32e1",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:caccfbdb442cdc64fa722b4c5585521f",
+        "GUID:2665a8d13d1b3f18800f46e256720795",
+        "GUID:e0cd26848372d4e5c891c569017e11f1",
+        "GUID:d8b63aba1907145bea998dd612889d6b",
+        "GUID:516a5277b8c3b4f4c8cc86b77b1591ff",
+        "GUID:df380645f10b7bc4b97d4f5eb6303d95"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
