@@ -11,9 +11,9 @@ public struct SpiderPhysics
     public PhysicsBody head;
     public PhysicsShape grappleArmShape;
     public PhysicsFixedJoint headJoint;
-    [NonSerialized] public PhysicsQuery.QueryFilter queryFilter;
     /// <summary> (when facing right) </summary>
     [NonSerialized] public PhysicsRotate abdomenRotationFromBase;
+    public PhysicsQuery.QueryFilter queryFilter;
 
     [SerializeField] PhysicsBodyDefinition bodyDef;
     [SerializeField] PhysicsShapeDefinition shapeDef;
@@ -72,6 +72,7 @@ public struct SpiderPhysics
             headJoint.UpdateSettings(headJointDef);
 
             queryFilter = shapeDef.contactFilter.ToQueryFilter(queryFilter.ignoreFilter);
+            totalMass = abdomen.mass + head.mass;
         }
     }
 

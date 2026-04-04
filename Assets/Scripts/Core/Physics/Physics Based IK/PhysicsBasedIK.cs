@@ -77,19 +77,20 @@ public static class PhysicsBasedIK
         float[] minAngle, float[] maxAngle, bool[] angleBranch,
         float orientation, Vector2 target, float reachForce, float toleranceSqrd, float dt)
     {
-        target -= (Vector2)chain[^1].position;
+        var error = target - (Vector2)chain[^1].position;
         reachForce *= dt;
         var c0 = 0.5f * orientation * dt;
         var lastDv = 0f;
 
         for (int i = 0; i < angularVelocity.Length; i++)
         {
-            if (target.sqrMagnitude < toleranceSqrd)
+
+            if (error.sqrMagnitude < toleranceSqrd)
             {
                 return;
             }
 
-            var a = reachForce * target;
+            var a = reachForce * error;
             Vector2 u = chain[i + 1].position - chain[i].position;
             u *= inverseLength[i];
             var n = u.CCWPerp();
@@ -106,7 +107,7 @@ public static class PhysicsBasedIK
 
                     lastDv = inverseLength[i] * aPerp;
                     angularVelocity[i] += lastDv;
-                    target += aPerp * dt * n;
+                    error += aPerp * dt * n;
                     continue;
                 }
 
@@ -117,7 +118,7 @@ public static class PhysicsBasedIK
 
                 lastDv = inverseLength[i] * aPerp;
                 angularVelocity[i] += lastDv;
-                target += aPerp * dt * n;
+                error += aPerp * dt * n;
             }
             else
             {
@@ -128,7 +129,7 @@ public static class PhysicsBasedIK
                 {
                     lastDv = inverseLength[i] * aPerp;
                     angularVelocity[i] += lastDv;
-                    target +=  aPerp * dt * n;
+                    error += aPerp * dt * n;
                     continue;
                 }
 
@@ -139,7 +140,7 @@ public static class PhysicsBasedIK
 
                 lastDv = inverseLength[i] * aPerp;
                 angularVelocity[i] += lastDv;
-                target += aPerp * dt * n;
+                error += aPerp * dt * n;
             }
         }
     }

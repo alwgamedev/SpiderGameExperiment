@@ -1761,7 +1761,7 @@ MonoBehaviour:
         direction: {x: 1, y: 0}
       m_LinearVelocity: {x: 0, y: 0}
       m_AngularVelocity: 0
-      m_LinearDamping: 0.35
+      m_LinearDamping: 0.425
       m_AngularDamping: 0.6
       m_GravityScale: 1
       m_SleepThreshold: 0.01
@@ -1844,7 +1844,7 @@ MonoBehaviour:
     shootSpeedPowerUpMax: 3
     releaseRate: 6
     retractMaxTension: 2
-    carrySpringForce: 775
+    carrySpringForce: 450
     grappleSettings:
       collisionMask:
         bitMask: 64
@@ -1856,7 +1856,7 @@ MonoBehaviour:
       nodeMass: 0.1
       terminusMass: 50
       constraintStiffness: 0.95
-      constraintIterations: 40
+      constraintIterations: 45
       itersPulledByOwner: 5
       dynamicAnchorPullForce: 300
     cannonFulcrum:

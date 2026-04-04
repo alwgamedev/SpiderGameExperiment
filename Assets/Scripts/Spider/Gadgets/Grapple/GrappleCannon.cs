@@ -83,7 +83,7 @@ public class GrappleCannon
         grapple.Disable();
 
         cannonFulcrum.Initialize();
-
+        grappleRenderer.Initialize();
         SetOrientation(facingRight);
     }
 
@@ -131,13 +131,14 @@ public class GrappleCannon
 
     public void FixedUpdate(PhysicsTransform ownerTransform, PhysicsBody ownerBody)
     {
+        ownerBody.SyncTransform();
         UpdateCannonFulcrum(ownerTransform);
 
         if (GrappleEnabled)
         {
             var grappleWasAnchored = grapple.TerminusAnchored;
             UpdateGrappleLength();
-            grapple.Update(SourcePosition);
+            grapple.Update(SourcePosition, Time.deltaTime);
             if (GrappleAnchored)
             {
                 UpdateCarrySpring(ownerBody);
@@ -151,7 +152,7 @@ public class GrappleCannon
         {
             if (!poweringUp && shootSpeedPowerUp > 0)
             {
-                ShootGrapple();
+                ShootGrapple(Time.deltaTime);
             }
         }
     }
@@ -230,14 +231,14 @@ public class GrappleCannon
 
     //SPAWNING
 
-    private void ShootGrapple()
+    private void ShootGrapple(float dt)
     {
         grapple.Respawn(SourcePosition, minLength, numNodes);
 
         var shootSpeed = ShootSpeed;
         lastShootDirection = ShootDirection;
         Vector2 shootVelocity = shootSpeed * lastShootDirection;
-        grapple.Shoot(shootVelocity, Time.deltaTime);
+        grapple.Shoot(shootVelocity, dt);
         shootTimer = -minLength / shootSpeed;
         grappleRenderer.OnRopeSpawned(grapple, SourcePosition);
         shootInProgress = true;

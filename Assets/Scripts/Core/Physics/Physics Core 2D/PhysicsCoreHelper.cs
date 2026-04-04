@@ -94,6 +94,8 @@ public static class PhysicsCoreHelper
             s.definition = shapeDef;
             shapes[i] = s;
         }
+
+        body.ApplyMassFromShapes();
     }
 
     public static PhysicsBody CreatePolygonBody(PhysicsWorld world, PhysicsBodyDefinition bodyDef, PhysicsShapeDefinition shapeDef,

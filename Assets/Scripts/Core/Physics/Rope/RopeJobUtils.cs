@@ -1,21 +1,15 @@
-﻿using Unity.Burst;
-using Unity.Collections;
+﻿using Unity.Collections;
 using Unity.Mathematics;
 using Unity.U2D.Physics;
 
 public static class RopeJobUtils
 {
-    const float CONSTRAINTS_TOLERANCE = MathTools.o41;
-
     //MOVEMENT
-
-    [BurstCompile]//i don't think we need [BurstCompile] on these if they are called from within a Burst compiled job
     public static void Anchor(int i, NativeArray<float2> position, NativeArray<float2> lastPosition)
     {
         lastPosition[i] = position[i];
     }
 
-    [BurstCompile]
     public static void MoveAndAnchorTerminus(float2 deltaPosition, NativeArray<float2> position, NativeArray<float2> lastPosition,
         NativeReference<PhysicsShape> terminusAnchor, NativeReference<float2> terminusAnchorLocalPos, NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode,
         PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter, float nodeRadius, float collisionBounciness, bool stepVelocity)
@@ -44,7 +38,6 @@ public static class RopeJobUtils
         }
     }
 
-    [BurstCompile]
     public static void MoveNode(int i, float2 deltaPosition, NativeArray<float2> position, NativeArray<float2> lastPosition,
         PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter, float nodeRadius, float collisionBounciness, bool stepVelocity,
         out NativeArray<PhysicsQuery.WorldCastResult> castResults)
@@ -140,130 +133,64 @@ public static class RopeJobUtils
 
     //CONSTRAINTS
 
-    public static void CoverAllSpacingConstraint(int i, NativeArray<float2> position, NativeArray<float2> lastPosition,
-        NativeReference<PhysicsShape> terminusAnchor, NativeReference<float2> terminusAnchorLocalPos,
-        NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode,
-        PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter,
-        float collisionBounciness, float nodeSpacing, float nodeRadius, float nodeMass, float ownerMass, float terminusMass,
-        float dynamicAnchorPullForce, int sourceIndex)
-    {
-        if (i == sourceIndex + 1)
-        {
-            FirstConstraint(sourceIndex, position, lastPosition,
-                world, collisionFilter, collisionBounciness, nodeSpacing, nodeRadius, nodeMass, ownerMass);
-        }
-        else if (i == position.Length - 1)
-        {
-            LastConstraint(i, position, lastPosition,
-                terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode,
-                world, collisionFilter, collisionBounciness,
-                nodeSpacing, nodeRadius, nodeMass, terminusMass, dynamicAnchorPullForce);
-        }
-        else
-        {
-            SpacingConstraint(i, position, lastPosition,
-                world, collisionFilter, collisionBounciness, nodeSpacing, nodeRadius);
-        }
-    }
-
-    //accesses 2 nodes: i, i - 1
-    public static void SpacingConstraint(int i, NativeArray<float2> position, NativeArray<float2> lastPosition,
-        PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter,
-        float collisionBounciness, float nodeSpacing, float nodeRadius)
+    /// <summary> (where i = sourceIndex + 1) </summary>
+    public static void CalculateFirstConstraint(int i, NativeArray<float2> position, NativeArray<float2> lastPosition, NativeArray<float2> constraintDelta,
+        float nodeSpacing, float nodeSpacing2, float nodeMass, float sourceMass, float constraintStiffness)
     {
         var d = position[i] - position[i - 1];
-        var l = math.length(d);
+        var l = math.lengthsq(d);
 
-        var error = l - nodeSpacing;
-
-        if (error > CONSTRAINTS_TOLERANCE)
+        if (l > nodeSpacing2)
         {
-            var c = 0.5f * error / l * d;
-            MoveNode(i - 1, c, position, lastPosition,
-                world, collisionFilter, nodeRadius, collisionBounciness, false, out _);
-            MoveNode(i, -c, position, lastPosition,
-                world, collisionFilter, nodeRadius, collisionBounciness, false, out _);
-        }
-    }
+            var c = constraintStiffness * (1 - nodeSpacing * math.rsqrt(l)) * d;
 
-    //accesses 2 nodes: startIndex, startIndex + 1
-    public static void FirstConstraint(int startIndex, NativeArray<float2> position, NativeArray<float2> lastPosition,
-        PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter,
-        float collisionBounciness, float nodeSpacing, float nodeRadius, float nodeMass, float ownerMass)
-    {
-        var d = position[startIndex + 1] - position[startIndex];
-        var l = math.length(d);
-
-        var error = l - nodeSpacing;
-
-        if (error > CONSTRAINTS_TOLERANCE)
-        {
-            if (math.isinf(ownerMass))
+            if (math.isinf(sourceMass))
             {
-                MoveNode(startIndex + 1, -error / l * d, position, lastPosition,
-                    world, collisionFilter, nodeRadius, collisionBounciness, false, out _);
+                constraintDelta[i] -= c;
             }
             else
             {
-                d *= error / l;
-                var c = ownerMass / (nodeMass + ownerMass) * d;
-                MoveNode(startIndex + 1, -c, position, lastPosition,
-                    world, collisionFilter, nodeRadius, collisionBounciness, false, out _);
-                MoveNode(startIndex, d - c, position, lastPosition,
-                    world, collisionFilter, nodeRadius, collisionBounciness, false, out _);
+                var c1 = nodeMass / (nodeMass + sourceMass) * c;
+                constraintDelta[i - 1] += c1;
+                constraintDelta[i] += c1 - c;
             }
         }
     }
 
-    //accesses nodes terminusIndex - 1 and terminusIndex
-    public static void LastConstraint(int terminusIndex, NativeArray<float2> position, NativeArray<float2> lastPosition,
-        NativeReference<PhysicsShape> terminusAnchor, NativeReference<float2> terminusAnchorLocalPos,
-        NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode,
-        PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter,
-        float collisionBounciness, float nodeSpacing, float nodeRadius, float nodeMass, float terminusMass, float dynamicAnchorPullForce)
+    public static void CalculateConstraint(int i, NativeArray<float2> position, NativeArray<float2> lastPosition, NativeArray<float2> constraintDelta,
+        float nodeSpacing, float nodeSpacing2, float constraintStiffness)
     {
-        var d = position[terminusIndex] - position[terminusIndex - 1];
-        var l = math.length(d);
+        var d = position[i] - position[i - 1];
+        var l = math.lengthsq(d);
 
-        var error = l - nodeSpacing;
-
-        if (error > CONSTRAINTS_TOLERANCE)
+        if (l > nodeSpacing2)
         {
-            switch (terminusAnchorMode.Value)
+            var c = 0.5f * constraintStiffness * (1 - nodeSpacing * math.rsqrt(l)) * d;
+            constraintDelta[i - 1] += c;
+            constraintDelta[i] -= c;
+        }
+    }
+
+    /// <summary> (where i = terminusIndex) </summary>
+    public static void CalculateLastConstraint(int i, NativeArray<float2> position, NativeArray<float2> lastPosition, NativeArray<float2> constraintDelta,
+        float nodeSpacing, float nodeSpacing2, float nodeMass, float terminusMass, float constraintStiffness)
+    {
+        var d = position[i] - position[i - 1];
+        var l = math.lengthsq(d);
+
+        if (l > nodeSpacing2)
+        {
+            var c = constraintStiffness * (1 - nodeSpacing * math.rsqrt(l)) * d;
+
+            if (math.isinf(terminusMass))
             {
-                case FastRope.TerminusAnchorMode.staticAnchor:
-                    MoveNode(terminusIndex - 1, error / l * d, position, lastPosition,
-                        world, collisionFilter, nodeRadius, collisionBounciness, false, out _);
-                    break;
-                case FastRope.TerminusAnchorMode.dynamicAnchor:
-                    {
-                        //idea: run the spacing constraints as normal, updating terminus position to determine the forces that need to be applied to anchor,
-                        //then we'll set terminus back to anchored position after finishing constraint iterations
-                        //(this works the best of what I tried)
-                        var tMass = terminusAnchor.Value.body.mass;//terminus is usually very heavy to get arching motion when shoot, so use anchor mass
-                        d *= error / l;
-                        var c = tMass / (nodeMass + tMass) * d;
-                        var c2 = d - c;
-                        MoveNode(terminusIndex - 1, c, position, lastPosition,
-                            world, collisionFilter, nodeRadius, collisionBounciness, false, out _);
-                        if (terminusAnchor.Value.isValid)
-                        {
-                            terminusAnchor.Value.body.ApplyForce(-dynamicAnchorPullForce * c2, position[terminusIndex]);
-                        }
-                        position[terminusIndex] -= c2;//no collision so don't use MoveNode (we're just pulling on the anchor)
-                        break;
-                    }
-                case FastRope.TerminusAnchorMode.notAnchored:
-                    {
-                        d *= error / l;
-                        var c = terminusMass / (nodeMass + terminusMass) * d;
-                        MoveNode(terminusIndex - 1, c, position, lastPosition,
-                            world, collisionFilter, nodeRadius, collisionBounciness, false, out _);
-                        MoveAndAnchorTerminus(c - d, position, lastPosition,
-                            terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode,
-                            world, collisionFilter, nodeRadius, collisionBounciness, false);
-                        break;
-                    }
+                constraintDelta[i - 1] += c;
+            }
+            else
+            {
+                var c1 = terminusMass / (nodeMass + terminusMass) * c;
+                constraintDelta[i - 1] += c1;
+                constraintDelta[i] += c1 - c;
             }
         }
     }

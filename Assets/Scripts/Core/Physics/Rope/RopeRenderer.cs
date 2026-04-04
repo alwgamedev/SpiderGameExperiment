@@ -35,7 +35,7 @@ public class RopeRenderer : MonoBehaviour
         positionsProperty = Shader.PropertyToID("_NodePositions");
     }
 
-    public void Start()
+    public void Initialize()
     {
         material = new Material(meshRenderer.material);
         meshRenderer.material = material;
