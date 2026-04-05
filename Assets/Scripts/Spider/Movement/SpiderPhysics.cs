@@ -15,9 +15,9 @@ public struct SpiderPhysics
     [NonSerialized] public PhysicsRotate abdomenRotationFromBase;
     public PhysicsQuery.QueryFilter queryFilter;
 
-    [SerializeField] PhysicsBodyDefinition bodyDef;
-    [SerializeField] PhysicsShapeDefinition shapeDef;
+    [SerializeField] PhysicsShapeDefinition shapeDef; 
     [SerializeField] PhysicsFixedJointDefinition headJointDef;
+    [SerializeField] PhysicsBodyDefinition bodyDef;
     [SerializeField] Transform grappleArm;
     [SerializeField] Transform abdomenRoot;
     [SerializeField] Transform abdomenBone;

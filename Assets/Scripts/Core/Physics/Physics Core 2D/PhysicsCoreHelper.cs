@@ -213,4 +213,28 @@ public static class PhysicsCoreHelper
         joint.worldDrawing = def.worldDrawing;
         joint.collideConnected = def.collideConnected;
     }
+
+    public static void UpdateSettings(this PhysicsHingeJoint joint, PhysicsHingeJointDefinition def)
+    {
+        joint.enableSpring = def.enableSpring;
+        joint.springTargetAngle = def.springTargetAngle;
+        joint.springFrequency = def.springFrequency;
+        joint.springDamping = def.springDamping;
+
+        joint.enableMotor = def.enableMotor;
+        joint.motorSpeed = def.motorSpeed;
+        joint.maxMotorTorque = def.maxMotorTorque;
+
+        joint.enableLimit = def.enableLimit;
+        joint.lowerAngleLimit = def.lowerAngleLimit;
+        joint.upperAngleLimit = def.upperAngleLimit;
+
+        joint.forceThreshold = def.forceThreshold;
+        joint.torqueThreshold = def.torqueThreshold;
+        joint.tuningFrequency = def.tuningFrequency;
+        joint.tuningDamping= def.tuningDamping;
+        joint.drawScale = def.drawScale;
+        joint.worldDrawing = def.worldDrawing;
+        joint.collideConnected = def.collideConnected;
+    }
 }

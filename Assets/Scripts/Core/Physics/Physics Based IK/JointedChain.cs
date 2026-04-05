@@ -6,19 +6,29 @@ using Unity.U2D.Physics;
 public struct JointedChain
 {
     public PhysicsBody[] body;
-    public PhysicsFixedJoint[] joint;
+    public PhysicsHingeJoint[] joint;
 
-    [SerializeField] PhysicsFixedJointDefinition[] jointDef;
-    [SerializeField] Transform[] chain;//transforms must not be nested; chain[^1] is the "effector" (no body)
+    [SerializeField] PhysicsHingeJointDefinition[] jointDef;
+    [SerializeField] PhysicsShapeDefinition[] shapeDef;
+    [SerializeField] PhysicsBodyDefinition[] bodyDef;
+    [SerializeField] Transform[] chain;//transforms must not be nested, except for last transform which is the effector and should be childed to chain[^2]
     [SerializeField] float[] width;
-    [SerializeField] PhysicsBodyDefinition bodyDef;
-    [SerializeField] PhysicsShapeDefinition shapeDef;
+
+    public readonly Vector2 EffectorPosition => chain[^1].position;
 
     public void OnValidate()
     {
-        if (joint != null)
+        if (body != null)
         {
-            ApplyJointSettings(jointDef);
+            for (int i = 0; i < body.Length; i++)
+            {
+                body[i].SetBodyDefLive(bodyDef[i]);
+                body[i].SetShapeDef(shapeDef[i]);
+                if (joint[i].isValid)
+                {
+                    joint[i].UpdateSettings(jointDef[i]);
+                }
+            }
         }
     }
 
@@ -27,40 +37,34 @@ public struct JointedChain
         //visualize collider shapes + angle bounds
     }
 
-    /// <summary> Use if you want the chain to be anchored to another body. </summary>
-    public void CreateChain(PhysicsBody anchor)
+    public void Initialize(PhysicsBody anchorBody)
     {
-        CreateChain(anchor.world);
-
-        var jointDef = this.jointDef[0];
-        jointDef.bodyA = anchor;
-        jointDef.bodyB = body[0];
-        jointDef.localAnchorA = anchor.transform.InverseMultiplyTransform(body[0].transform);
-        jointDef.localAnchorB = PhysicsTransform.identity;
+        Initialize(anchorBody.world);
+        AnchorToBody(anchorBody);
     }
 
-    /// <summary> Use when chain does not need to be anchored to another body (does not create a joint 0). </summary>
-    public void CreateChain(PhysicsWorld world)
+    /// <summary> Does not create a joint 0. </summary>
+    public void Initialize(PhysicsWorld world)
     {
         body = new PhysicsBody[chain.Length - 1];
-        joint = new PhysicsFixedJoint[chain.Length - 1];
+        joint = new PhysicsHingeJoint[chain.Length - 1];
 
         //create bodies
-        var bodyDefCopy = bodyDef;
         for (int i = 0; i < body.Length; i++)
         {
+            var bodyDefCopy = bodyDef[i];
             bodyDefCopy.position = chain[i].position;
             bodyDefCopy.rotation = new PhysicsRotate(chain[i].rotation, PhysicsWorld.TransformPlane.XY);
-            var chainBody = world.CreateBody(bodyDef);
+            var chainBody = world.CreateBody(bodyDefCopy);
 
             Vector2 v = chain[i + 1].position - chain[i].position;
             var l = v.magnitude;
             Vector2 midpoint = 0.5f * (chain[i].position + chain[i + 1].position);
-            var boxGeometry = PolygonGeometry.CreateBox(new(width[i], l));
+            var boxGeometry = PolygonGeometry.CreateBox(new Vector2(l, width[i]));
             var worldTransform = new PhysicsTransform(midpoint, chainBody.rotation);
             boxGeometry = boxGeometry.Transform(worldTransform).InverseTransform(chainBody.transform);
 
-            chainBody.CreateShape(boxGeometry, shapeDef);
+            chainBody.CreateShape(boxGeometry, shapeDef[i]);
             chainBody.transformObject = chain[i];
             body[i] = chainBody;
         }
@@ -73,21 +77,51 @@ public struct JointedChain
             jointDefCopy.localAnchorA = body[i - 1].transform.InverseMultiplyTransform(body[i].transform);
             jointDefCopy.localAnchorB = PhysicsTransform.identity;
 
-            var chainJoint = world.CreateJoint(jointDef[i]);
+            joint[i] = PhysicsHingeJoint.Create(world, jointDefCopy);
+        }
+    }
+    public readonly void PullLink(int i, Vector2 force)
+    {
+        if (i == body.Length - 1)
+        {
+            body[i].SyncTransform();
+            body[i].ApplyForce(force, chain[i + 1].position);
+        }
+        else
+        {
+            body[i].ApplyForce(force, body[i + 1].position);
+        }
+    }
+
+    public readonly void PullEffector(Vector2 force)
+    {
+        PullLink(body.Length - 1, force);
+    }
+
+    public readonly void PullUniformly(Vector2 force)
+    {
+        for (int i = 0; i < body.Length; i++)
+        {
+            PullLink(i, force);
         }
     }
 
     //we'll see if this causes error when applied to an invalid joint
-    public void ApplyJointSettings(PhysicsFixedJointDefinition[] settings)
-    {
-        for (int i = 0; i < joint.Length; i++)
-        {
-            joint[i].UpdateSettings(settings[i]);
-        }
-    }
+    //public void ApplyJointSettings(PhysicsHingeJointDefinition[] settings)
+    //{
+    //    for (int i = 0; i < joint.Length; i++)
+    //    {
+    //        joint[i].UpdateSettings(settings[i]);
+    //    }
+    //}
 
-    public void PullLink(int i, Vector2 force)
+    private void AnchorToBody(PhysicsBody anchor)
     {
-        body[i].ApplyForce(force, chain[i + 1].position);
+        var jointDef = this.jointDef[0];
+        jointDef.bodyA = anchor;
+        jointDef.bodyB = body[0];
+        jointDef.localAnchorA = anchor.transform.InverseMultiplyTransform(body[0].transform);
+        jointDef.localAnchorB = PhysicsTransform.identity;
+        joint[0] = anchor.world.CreateJoint(jointDef);
     }
 }
