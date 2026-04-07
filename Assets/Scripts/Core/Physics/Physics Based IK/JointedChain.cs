@@ -5,16 +5,17 @@ using Unity.U2D.Physics;
 [Serializable]
 public struct JointedChain
 {
+    public PhysicsHingeJointDefinition[] jointDef;
+    public PhysicsShapeDefinition[] shapeDef;
+    public PhysicsBodyDefinition[] bodyDef;
     public PhysicsBody[] body;
     public PhysicsHingeJoint[] joint;
+    public Transform[] chain;//transforms must not be nested, except for last transform which is the effector and should be childed to chain[^2]
+    public float[] width;
 
-    [SerializeField] PhysicsHingeJointDefinition[] jointDef;
-    [SerializeField] PhysicsShapeDefinition[] shapeDef;
-    [SerializeField] PhysicsBodyDefinition[] bodyDef;
-    [SerializeField] Transform[] chain;//transforms must not be nested, except for last transform which is the effector and should be childed to chain[^2]
-    [SerializeField] float[] width;
+    float effectorDistance;
 
-    public readonly Vector2 EffectorPosition => chain[^1].position;
+    public readonly Vector2 EffectorPosition => body[^1].position + effectorDistance * body[^1].rotation.direction;
 
     public void OnValidate()
     {
@@ -48,6 +49,7 @@ public struct JointedChain
     {
         body = new PhysicsBody[chain.Length - 1];
         joint = new PhysicsHingeJoint[chain.Length - 1];
+        effectorDistance = Vector2.Distance(chain[^2].position, chain[^1].position);
 
         //create bodies
         for (int i = 0; i < body.Length; i++)
@@ -80,7 +82,8 @@ public struct JointedChain
             joint[i] = PhysicsHingeJoint.Create(world, jointDefCopy);
         }
     }
-    public readonly void PullLink(int i, Vector2 force)
+
+    public readonly void ApplyForceToLink(int i, Vector2 force)
     {
         if (i == body.Length - 1)
         {
@@ -93,27 +96,31 @@ public struct JointedChain
         }
     }
 
-    public readonly void PullEffector(Vector2 force)
+    public readonly void AccelerateEffector(Vector2 accel)
     {
-        PullLink(body.Length - 1, force);
+        ApplyForceToLink(body.Length - 1, body[^1].mass *  accel);
     }
 
-    public readonly void PullUniformly(Vector2 force)
+    public readonly void AccelerateUniformly(Vector2 accel)
     {
         for (int i = 0; i < body.Length; i++)
         {
-            PullLink(i, force);
+            ApplyForceToLink(i, body[i].mass * accel);
         }
     }
 
-    //we'll see if this causes error when applied to an invalid joint
-    //public void ApplyJointSettings(PhysicsHingeJointDefinition[] settings)
-    //{
-    //    for (int i = 0; i < joint.Length; i++)
-    //    {
-    //        joint[i].UpdateSettings(settings[i]);
-    //    }
-    //}
+    public readonly void AccelerateDissipating(Vector2 accel)
+    {
+        for (int i = body.Length - 1; i > - 1; i--)
+        {
+            Debug.Log($"accel {i}: {accel}");
+            ApplyForceToLink(i, body[i].mass * accel);
+            var nextPos = i == body.Length - 1 ? (Vector2)chain[i + 1].position : body[i + 1].position;
+            var w = (nextPos - body[i].position).CCWPerp();
+            var n = body[i].rotation.direction.CCWPerp();
+            accel -= Vector2.Dot(accel, w) * n;
+        }
+    }
 
     private void AnchorToBody(PhysicsBody anchor)
     {

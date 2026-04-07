@@ -1,4 +1,7 @@
-﻿public class LegTimer
+﻿using System;
+
+[Serializable]
+public struct LegTimer
 {
     readonly float stepTime;
     readonly float restTime;

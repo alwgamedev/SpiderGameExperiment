@@ -165,8 +165,8 @@ public struct SpiderPhysics
 
     public void ChangeDirection(PhysicsTransform reflection)
     {
-        abdomen.transform = abdomen.transform.ReflectHorizontally(reflection);
-        head.transform = head.transform.ReflectHorizontally(reflection);
+        abdomen.transform = abdomen.transform.ReflectHorizontally(reflection, true);
+        head.transform = head.transform.ReflectHorizontally(reflection, true);
 
         abdomen.SyncTransform();
         head.SyncTransform();
@@ -177,7 +177,7 @@ public struct SpiderPhysics
         grappleArmShape.polygonGeometry = GrappleArmWorldBox().InverseTransform(abdomen.transform);
         abdomen.ApplyMassFromShapes();
 
-        ((PhysicsJoint)headJoint).ReflectAnchorsHorizontallyWithinBodies();
+        ((PhysicsJoint)headJoint).ReflectAnchorsHorizontallyWithinBodies(true);
 
         facingRight = !facingRight;
     }

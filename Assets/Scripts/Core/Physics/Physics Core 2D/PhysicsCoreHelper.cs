@@ -10,23 +10,25 @@ public static class PhysicsCoreHelper
 
     /// <summary>
     /// Reflect transform A over transform B's y-axis, with transform B's position as the origin.
+    /// changeDirection = true means transform A does an additional 180 deg rotation in its local space after the reflection.
     /// </summary>
-    public static PhysicsTransform ReflectHorizontally(this PhysicsTransform tA, PhysicsTransform tB)
+    public static PhysicsTransform ReflectHorizontally(this PhysicsTransform tA, PhysicsTransform tB, bool changeDirection)
     {
         var origin = tB.position;
         var hyperplaneNormal = tB.rotation.direction;
+        var rotHyperplaneNormal = changeDirection ? hyperplaneNormal.CCWPerp() : hyperplaneNormal;
         tA.position = origin + (tA.position - origin).ReflectAcrossHyperplane(hyperplaneNormal);
-        tA.rotation = new PhysicsRotate(tA.rotation.direction.ReflectAcrossHyperplane(hyperplaneNormal.CCWPerp()));
+        tA.rotation = new PhysicsRotate(tA.rotation.direction.ReflectAcrossHyperplane(rotHyperplaneNormal));
         return tA;
     }
 
     /// <summary>
     /// Use in conjunction with reflect methods if reflected physics bodies are connected by joints.
     /// </summary>
-    public static void ReflectAnchorsHorizontallyWithinBodies(this PhysicsJoint joint)
+    public static void ReflectAnchorsHorizontallyWithinBodies(this PhysicsJoint joint, bool changeDirection)
     {
-        joint.localAnchorA = joint.localAnchorA.ReflectHorizontally(PhysicsTransform.identity);
-        joint.localAnchorB = joint.localAnchorB.ReflectHorizontally(PhysicsTransform.identity);
+        joint.localAnchorA = joint.localAnchorA.ReflectHorizontally(PhysicsTransform.identity, changeDirection);
+        joint.localAnchorB = joint.localAnchorB.ReflectHorizontally(PhysicsTransform.identity, changeDirection);
     }
 
     /// <summary>

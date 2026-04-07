@@ -90,7 +90,7 @@ public class PhysicsLegSynchronizer : MonoBehaviour
 
         for (int i = 0; i < leg.Length; i++)
         {
-            var t = timer[i];
+            ref var t = ref timer[i];
             var l = leg[i];
 
             t.Update(bodyGroundSpeedSign * speedScaledDt);
