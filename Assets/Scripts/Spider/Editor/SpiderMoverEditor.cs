@@ -21,7 +21,7 @@ public class SpiderMoverEditor : Editor
 
         InspectorElement.FillDefaultInspector(root, serializedObject, this);
 
-        root.Add(new Button(() => ((SpiderMover)target).SpideyPhysics.CenterRootTransforms())
+        root.Add(new Button(() => ((SpiderMover)target).CenterPhysicsBodies())
         {
             text = "Center Physics Bodies"
         });

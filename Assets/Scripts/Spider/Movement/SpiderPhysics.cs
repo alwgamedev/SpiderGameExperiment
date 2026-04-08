@@ -18,12 +18,12 @@ public struct SpiderPhysics
     [SerializeField] PhysicsShapeDefinition shapeDef; 
     [SerializeField] PhysicsFixedJointDefinition headJointDef;
     [SerializeField] PhysicsBodyDefinition bodyDef;
-    [SerializeField] Transform grappleArm;
-    [SerializeField] Transform abdomenRoot;
-    [SerializeField] Transform abdomenBone;
-    [SerializeField] Transform headRoot;
-    [SerializeField] Transform headBone;
-    [SerializeField] Transform heightReferencePoint;//just for initialization; cache position in local space
+    //[SerializeField] Transform grappleArm;
+    //[SerializeField] Transform abdomenRoot;
+    //[SerializeField] Transform abdomenBone;
+    //[SerializeField] Transform headRoot;
+    //[SerializeField] Transform headBone;
+    //[SerializeField] Transform heightReferencePoint;//just for initialization; cache position in local space
     [SerializeField] Vector2 abdomenCapsuleSize;//(width, height) -- full width and height
     [SerializeField] Vector2 abdomenCapsuleOffset;
     [SerializeField] Vector2 headCapsuleSize;
@@ -77,13 +77,13 @@ public struct SpiderPhysics
     }
 
 #if UNITY_EDITOR
-    public void CenterRootTransforms()
+    public void CenterRootTransforms(Transform abdomenRoot, Transform abdomenBone, Transform headRoot, Transform headBone)
     {
         CenterRootInCapsule(abdomenRoot, abdomenBone, abdomenCapsuleSize, abdomenCapsuleOffset);
         CenterRootInCapsule(headRoot, headBone, headCapsuleSize, headCapsuleOffset);
     }
 
-    private static void CenterRootInCapsule(Transform root, Transform bone, Vector2 capsuleSize, Vector2 capsuleOffset)
+    public static void CenterRootInCapsule(Transform root, Transform bone, Vector2 capsuleSize, Vector2 capsuleOffset)
     {
         var recordTargets = new UnityEngine.Object[] { root, bone };
         Undo.RecordObjects(recordTargets, "Center root in capsule");
@@ -101,7 +101,7 @@ public struct SpiderPhysics
     }
 #endif
 
-    public void DrawGizmos()
+    public void DrawGizmos(Transform abdomenBone, Transform headBone)
     {
         if (abdomenBone)
         {
@@ -114,7 +114,8 @@ public struct SpiderPhysics
         }
     }
 
-    public void CreatePhysicsBody(PhysicsRotate levelDirection)
+    public void CreatePhysicsBody(PhysicsRotate levelDirection, Transform abdomenRoot, Transform headRoot, Transform headBone, 
+        Transform grappleArmTransform, Transform heightReferencePoint)
     {
         queryFilter = shapeDef.contactFilter.ToQueryFilter(queryFilter.ignoreFilter);
 
@@ -133,7 +134,7 @@ public struct SpiderPhysics
         head = PhysicsCoreHelper.CreateCapsuleBody(defaultWorld, bodyDefCopy, shapeDef, headCapsuleSize, Vector2.zero, headRoot.localToWorldMatrix);
         head.transformObject = headRoot;
 
-        var grappleArmBox = GrappleArmWorldBox().InverseTransform(abdomen.transform);
+        var grappleArmBox = GrappleArmWorldBox(grappleArmTransform).InverseTransform(abdomen.transform);
         grappleArmShape = abdomen.CreateShape(grappleArmBox, shapeDef);
 
         //fixed joints: anchorB on bodyB will be pulled towards anchorA on bodyA;
@@ -147,8 +148,7 @@ public struct SpiderPhysics
         abdomenBaseRotationFromLevel = levelDirection.InverseMultiplyRotation(abdomen.rotation);
         abdomenRotationFromBase = PhysicsRotate.identity;
         heightReferenceLocalPos = abdomen.transform.InverseTransformPoint(heightReferencePoint.position);
-        abdomen.ApplyMassFromShapes();
-        head.ApplyMassFromShapes();
+
         totalMass = abdomen.mass + head.mass;
         facingRight = true;
     }
@@ -163,7 +163,7 @@ public struct SpiderPhysics
         }
     }
 
-    public void ChangeDirection(PhysicsTransform reflection)
+    public void ChangeDirection(PhysicsTransform reflection, Transform abdomenBone, Transform headBone, Transform grappleArmTransform)
     {
         abdomen.transform = abdomen.transform.ReflectHorizontally(reflection, true);
         head.transform = head.transform.ReflectHorizontally(reflection, true);
@@ -174,7 +174,7 @@ public struct SpiderPhysics
         abdomenBone.ReflectHorizontally(abdomen.transform);//grapple arm is childed to abdomenBone
         headBone.ReflectHorizontally(head.transform);
 
-        grappleArmShape.polygonGeometry = GrappleArmWorldBox().InverseTransform(abdomen.transform);
+        grappleArmShape.polygonGeometry = GrappleArmWorldBox(grappleArmTransform).InverseTransform(abdomen.transform);
         abdomen.ApplyMassFromShapes();
 
         ((PhysicsJoint)headJoint).ReflectAnchorsHorizontallyWithinBodies(true);
@@ -182,8 +182,8 @@ public struct SpiderPhysics
         facingRight = !facingRight;
     }
 
-    private readonly PolygonGeometry GrappleArmWorldBox()
+    private readonly PolygonGeometry GrappleArmWorldBox(Transform grappleArmTransform)
     {
-        return PolygonGeometry.CreateBox(Vector2.one).Transform(grappleArm.transform.localToWorldMatrix, true);
+        return PolygonGeometry.CreateBox(Vector2.one).Transform(grappleArmTransform.localToWorldMatrix, true);
     }
 }

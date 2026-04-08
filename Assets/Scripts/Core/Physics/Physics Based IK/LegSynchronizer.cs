@@ -5,17 +5,19 @@ using UnityEngine;
 using UnityEngine.Events;
 
 [Serializable]
-public struct LegSynchronizer
+public class LegSynchronizer
 {
     public UnityEvent[] footHitGround;
     public float[] reachForce;
-    [NonSerialized] public float bodyGroundSpeedSign;
-    [NonSerialized] public float absoluteBodyGroundSpeed;
-    [NonSerialized] public float timeScale;
-    [NonSerialized] public float stepHeightFraction;
-    [NonSerialized] public float strideMultiplier;
+    internal float bodyGroundSpeedSign;
+    internal float absoluteBodyGroundSpeed;
+    internal float timeScale;
+    internal float stepHeightFraction;
+    internal float strideMultiplier;
 
-    [SerializeField] JointedChain[] leg;
+    [SerializeField] JointedChainDefinition chainDef;
+    [SerializeField] JointedChainSettings[] chainSettings;
+    [SerializeField] ArrayContainer<Transform>[] chainTransform;
     [SerializeField] float[] stepMax;
     [SerializeField] float[] timeOffset;
     [SerializeField] int[] castDirectionIndex;
@@ -24,22 +26,25 @@ public struct LegSynchronizer
     [SerializeField] float speed0;
     [SerializeField] float speed1;
     [SerializeField] float stepHeight;
+    [SerializeField] bool drawEffectorGizmos;
+    [SerializeField] bool drawBodyGizmos;
 
+    JointedChain[] leg;
     LegTimer[] legTimer;
     Vector2[] target;//for now these are world position; we may want them to be local position (relative to hip anchor)
-    //float[] legLengthInverse;
-    bool[] footIsTouchingGround;
     float legCountInverse;
+    float totalMass;
     bool facingRight;
 
     public int LegCount => leg.Length;
+    public float TotalMass => totalMass;
 
-    public bool FootIsTouchingGround(int i) => footIsTouchingGround[i];
+    public bool FootIsTouchingGround(int i) => leg[i].body[^1].GetContacts().Length > 0;
     public bool AnyFootIsTouchingGround()
     {
-        for (int i = 0; i < footIsTouchingGround.Length; i++)
+        for (int i = 0; i < leg.Length; i++)
         {
-            if (footIsTouchingGround[i])
+            if (FootIsTouchingGround(i))
             {
                 return true;
             }
@@ -50,22 +55,66 @@ public struct LegSynchronizer
     public float FractionTouchingGround()
     {
         var ct = 0;
-        for (int i = 0; i < footIsTouchingGround.Length; i++)
+        for (int i = 0; i < leg.Length; i++)
         {
-            if (footIsTouchingGround[i])
+            if (FootIsTouchingGround(i))
             {
                 ct++;
             }
         }
 
-        return ((float)ct) / footIsTouchingGround.Length;
+        return ct * legCountInverse;
     }
 
-    //initialize individual legs just to get around having to pass an array of different bodies
-    public void Initialize()
+    public void RecalculateMass()
     {
-        legCountInverse = 1f / leg.Length;
-        footIsTouchingGround = new bool[leg.Length];
+        totalMass = 0;
+        for (int i = 0; i < leg.Length; i++)
+        {
+            totalMass += leg[i].Mass;
+        }
+    }
+
+    public void OnValidate()
+    {
+        if (leg != null)
+        {
+            for (int i = 0; i < leg.Length; i++)
+            {
+                if (leg[i].body != null)
+                {
+                    leg[i].UpdateDefAndSettings(chainDef, chainSettings[i]);
+                }
+            }
+        }
+    }
+
+    public void OnDrawGizmos()
+    {
+        if (drawEffectorGizmos && target != null)
+        {
+            for (int i = 0; i < target.Length; i++)
+            {
+                Gizmos.color = Color.yellow;
+                Gizmos.DrawSphere(leg[i].EffectorPosition, 0.05f);
+
+                Gizmos.color = Color.red;
+                Gizmos.DrawSphere(target[i], 0.05f);
+            }
+        }
+        if (drawBodyGizmos)
+        {
+            for (int i = 0; i < chainTransform.Length; i++)
+            {
+                JointedChain.DrawGizmos(chainTransform[i].array, chainDef.width);
+            }
+        }
+    }
+
+    public void Initialize(bool facingRight)
+    {
+        var numLegs = timeOffset.Length;
+        legCountInverse = 1f / numLegs;
 
         //initialize timers
         float randomOffset = MathTools.RandomFloat(0, stepTime + restTime);//add to all timers, to randomize initial position
@@ -73,22 +122,15 @@ public struct LegSynchronizer
         var r = restTime;
         legTimer = timeOffset.Select(o => new LegTimer(o + randomOffset, s, r)).ToArray();
 
-        //legLengthInverse = new float[leg.Length];
-        //for (int i = 0; i < leg.Length; i++)
-        //{
-        //    var l = 0f;
-        //    for (int j = 0; j < leg[i].body.Length - 1; j++)
-        //    {
-        //        l += Vector2.Distance(leg[i].body[j].position, leg[i].body[j + 1].position);
-        //    }
-        //    l += Vector2.Distance(leg[i].body[^1].position, leg[i].EffectorPosition);
-        //    legLengthInverse[i] = 1 / l;
-        //}
+        leg = new JointedChain[numLegs];
+        target = new Vector2[numLegs];
+
+        this.facingRight = facingRight;
     }
 
     public void InitializeLeg(int i, PhysicsBody body)
     {
-        leg[i].Initialize(body);
+        leg[i].Initialize(chainTransform[i].array, body, chainDef, chainSettings[i]);
         target[i] = leg[i].EffectorPosition;
     }
 
@@ -101,26 +143,6 @@ public struct LegSynchronizer
         this.facingRight = facingRight;
     }
 
-    public void EnableAngleLimit(int i, bool val)
-    {
-        for (int j = 0; j < leg[i].joint.Length; j++)
-        {
-            leg[i].joint[j].enableLimit = val;
-        }
-    }
-
-    //2do:
-    //public bool HasContact -- not sure if should be every link in the leg, just the last link, or just a circle around the foot?
-    //maybe if we make it the entire last link, then we can relax/make more natural the groundedness condition in spider
-    //e.g. we've got some weird "AnyGroundedLegsUnderextended" for free hanging -- we probably don't have to try so hard now
-    //(plus settings are much less complicated now, so spider state doesn't matter as much)
-    //then we just need three main things:
-    //a) update ik target
-    //b) pull leg towards target
-    //c) main legSynch update that updates all the legs & timers
-    //d) on change direction we will have to reflect the hip anchors and joint positions across body transform (maybe even reflect velocity & angular velocity)
-        //oof we'll also have to negate angle limits
-
     public void UpdateAllLegs(float dt, GroundMap map, Vector2[] castDirection, bool grounded)
     {
         var speedFraction = absoluteBodyGroundSpeed < speed0 ? 0 : absoluteBodyGroundSpeed / speed1;
@@ -129,12 +151,11 @@ public struct LegSynchronizer
 
         for (int i = 0; i < leg.Length; i++)
         {
-            UpdateLeg(i, dt, speedScaledDt, stepHeightSpeedMultiplier, map, castDirection[castDirectionIndex[i]]);
-            footIsTouchingGround[i] = leg[i].body[^1].GetContacts().Length > 0;
+            UpdateLeg(i, speedScaledDt, stepHeightSpeedMultiplier, map, castDirection[castDirectionIndex[i]]);
         }
     }
 
-    private void UpdateLeg(int i, float dt, float speedScaledDt, float stepHeightSpeedMultiplier, GroundMap map, Vector2 castDirection)
+    private void UpdateLeg(int i, float speedScaledDt, float stepHeightSpeedMultiplier, GroundMap map, Vector2 castDirection)
     {
         ref var t = ref legTimer[i];
         ref var l = ref leg[i];
@@ -153,9 +174,8 @@ public struct LegSynchronizer
                 t.StateProgress, strideMultiplier * t.RestTime);
         }
 
-        //then pull towards target
         var a = reachForce[i] * (target[i] - l.EffectorPosition);
-        l.AccelerateUniformly(a);
+        l.PullUniformly(a);
         //^2do: better method for pull leg (maybe only pull uniformly when pulling up and pull just effector when pulling down? or always just do effector... we can see how it looks and experiment)
     }
 
@@ -203,7 +223,7 @@ public struct LegSynchronizer
         var dot = Vector2.Dot(hipPosition - (Vector2)map.Origin, map.OriginRight);
 
         float h;
-        if (!map.LineCastToGround(hipPosition, castDir, out var p) || Mathf.Abs(p.arcLengthPosition) < Mathf.Abs(dot))
+        if (!map.LineCastToGround(hipPosition, castDir, out var p) /*|| Mathf.Abs(p.arcLengthPosition) < Mathf.Abs(dot)*/)
         {
             h = dot;
         }
@@ -262,7 +282,7 @@ public struct LegSynchronizer
     {
         h += bodyFacingRight ? StepGoalHorizontalOffset(i, restProgress, restDistance) 
             : -StepGoalHorizontalOffset(i, restProgress, restDistance);
-        return map.PointFromCenterByArcLength(h, out var n, out _);
+        return map.PointFromCenterByArcLength(h, out _, out _);
     }
 
     private float StepGoalHorizontalOffset(int i, float restProgress, float restDistance/*, float stepMax*/)

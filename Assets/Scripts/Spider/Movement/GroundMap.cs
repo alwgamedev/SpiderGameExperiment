@@ -100,7 +100,6 @@ public class GroundMap
     }
 
     //find point q on the ground such that p - q parallel to line cast direction
-    //previous variable "position" WAS INDEED the GroundMapPt.point
     public bool LineCastToGround(float2 p, float2 dir, out GroundMapPt hit)
     {
         var a1 = MathTools.Cross2D(p - MapPoint(0).point, dir);

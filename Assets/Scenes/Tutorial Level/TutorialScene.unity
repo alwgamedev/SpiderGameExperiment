@@ -6368,7 +6368,7 @@ MonoBehaviour:
     m_PreSolveCallbacks: 0
     m_StartStaticContacts: 0
     m_StartMassUpdate: 1
-    m_WorldDrawing: 0
+    m_WorldDrawing: 1
     moverData:
       m_PushLimit: 0
       m_ClipVelocity: 0
@@ -15637,30 +15637,6 @@ PrefabInstance:
     - target: {fileID: 1231387903212816449, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
       propertyPath: m_Name
       value: Spider
-      objectReference: {fileID: 0}
-    - target: {fileID: 1231387903212816449, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 9070389282856877564, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: accelCap
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 9070389282856877564, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: grapple.carrySpringForce
-      value: 450
-      objectReference: {fileID: 0}
-    - target: {fileID: 9070389282856877564, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: spiderPhysics.bodyDef.m_WorldDrawing
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9070389282856877564, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: spiderPhysics.shapeDef.m_WorldDrawing
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9070389282856877564, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: grapple.grappleSettings.constraintStiffness
-      value: 0.975
       objectReference: {fileID: 0}
     - target: {fileID: 9149063515827151626, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
       propertyPath: m_LocalPosition.x
