@@ -15715,6 +15715,34 @@ PrefabInstance:
       propertyPath: m_Name
       value: Spider
       objectReference: {fileID: 0}
+    - target: {fileID: 9070389282856877564, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
+      propertyPath: legSynch.stepDropPoint
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 9070389282856877564, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
+      propertyPath: legSynch.castDirectionIndex.Array.size
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 9070389282856877564, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
+      propertyPath: 'legSynch.castDirectionIndex.Array.data[4]'
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9070389282856877564, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
+      propertyPath: 'legSynch.castDirectionIndex.Array.data[5]'
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9070389282856877564, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
+      propertyPath: 'legSynch.castDirectionIndex.Array.data[6]'
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9070389282856877564, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
+      propertyPath: 'legSynch.castDirectionIndex.Array.data[7]'
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9070389282856877564, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
+      propertyPath: 'legSynch.drawAngleLimitGizmos.Array.data[4]'
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9149063515827151626, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
       propertyPath: m_LocalPosition.x
       value: -18.66

@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
 using Unity.U2D.Physics;
+using Unity.Collections;
+using System;
 
 
 public class SpiderMover : MonoBehaviour
@@ -103,7 +105,7 @@ public class SpiderMover : MonoBehaviour
     Vector2 balanceDirection;
     float settleTimer;
 
-    Vector2[] legBodyDirection;
+    Vector2[] legCastDirection;
     float cosFreeHangLegAngleMin;
 
     bool needChangeDirection;
@@ -183,7 +185,7 @@ public class SpiderMover : MonoBehaviour
 
     private void Awake()
     {
-        legBodyDirection = new Vector2[2];
+        legCastDirection = new Vector2[2];
 
         cosFreeHangLegAngleMin = Mathf.Cos(freeHangLegAngleMin);
         scurryRotateMin = new PhysicsRotate(new Vector2(Mathf.Cos(grappleScurryAngleMin), Mathf.Sin(grappleScurryAngleMin)));
@@ -816,27 +818,21 @@ public class SpiderMover : MonoBehaviour
         //        break;
         //}
 
-        legBodyDirection[0] = FrontLegBodyDirection();
-        legBodyDirection[1] = HindLegBodyDirection();
+        legCastDirection[0] = SpideyPhysics.head.rotation.direction.CWPerp();
+        legCastDirection[1] = SpideyPhysics.LevelRight.direction.CWPerp();
 
-        legSynch.UpdateAllLegs(groundMap, legBodyDirection, grounded, FacingRight);
+        legSynch.UpdateAllLegs(groundMap, legCastDirection, grounded, FacingRight);
     }
 
     private void InitializeLegSynch()
     {
-        legSynch.Initialize();
-
+        var anchorBody = new NativeArray<PhysicsBody>(8, Allocator.Temp);
         for (int i = 0; i < 4; i++)
         {
-            legSynch.InitializeLeg(i, SpideyPhysics.head, FrontLegBodyDirection(), EffectiveRideHeight, FacingRight);
+            anchorBody[i] = SpideyPhysics.head;
+            anchorBody[4 + i] = SpideyPhysics.abdomen;
         }
-        for (int i = 4; i < 8; i++)
-        {
-            legSynch.InitializeLeg(i, SpideyPhysics.abdomen, HindLegBodyDirection(), EffectiveRideHeight, FacingRight);
-        }
-        legSynch.RecalculateMass();
-    }
 
-    private Vector2 FrontLegBodyDirection() => FacingRight ? spiderPhysics.head.rotation.direction : -spiderPhysics.head.rotation.direction;
-    private Vector2 HindLegBodyDirection() => FacingRight ? spiderPhysics.LevelRight.direction : -spiderPhysics.LevelRight.direction;
+        legSynch.Initialize(anchorBody);
+    }
 }
