@@ -33,8 +33,8 @@ public struct JointedChain
     public readonly float Mass => mass;
     public readonly Vector2 BasePosition => body[0].position;
     public readonly Vector2 EffectorPosition => body[^1].position + effectorDistance * body[^1].rotation.direction;
-    public readonly Vector2 NextPosition(int i) => i == body.Length - 1 ? EffectorPosition : body[i + 1].position;
     public PhysicsBody AnchorBody => joint[0].bodyA;
+    public readonly Vector2 NextPosition(int i) => i == body.Length - 1 ? EffectorPosition : body[i + 1].position;
 
     public static void DrawBodyGizmos(Transform[] transform, float[] width)
     {

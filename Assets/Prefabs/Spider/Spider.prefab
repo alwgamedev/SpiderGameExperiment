@@ -1276,15 +1276,6 @@ MonoBehaviour:
     headCapsuleOffset: {x: 0.5, y: -0.035}
   legSynch:
     footHitGround: []
-    stepAccel:
-    - 100
-    - 100
-    - 100
-    - 100
-    - 100
-    - 100
-    - 100
-    - 100
     chainDef:
       jointDef:
         m_LocalAnchorA:
@@ -1297,8 +1288,8 @@ MonoBehaviour:
             direction: {x: 1, y: 0}
         m_EnableSpring: 1
         m_SpringTargetAngle: 0
-        m_SpringFrequency: 4
-        m_SpringDamping: 0.25
+        m_SpringFrequency: 7.5
+        m_SpringDamping: 2.5
         m_EnableMotor: 0
         m_MotorSpeed: 0
         m_MaxMotorTorque: 0
@@ -1307,8 +1298,8 @@ MonoBehaviour:
         m_UpperAngleLimit: 0
         m_ForceThreshold: 100000
         m_TorqueThreshold: 100000
-        m_TuningFrequency: 100
-        m_TuningDamping: 0.1
+        m_TuningFrequency: 500
+        m_TuningDamping: 1
         m_DrawScale: 0.001
         m_WorldDrawing: 0
         m_CollideConnected: 0
@@ -1320,7 +1311,7 @@ MonoBehaviour:
             bitMask: 64
           m_GroupIndex: 0
         surfaceMaterial:
-          m_Friction: 0.2
+          m_Friction: 0.025
           m_Bounciness: 0
           m_FrictionMixing: 0
           m_BouncinessMixing: 0
@@ -1331,7 +1322,7 @@ MonoBehaviour:
           m_CustomColor:
             serializedVersion: 2
             rgba: 0
-        m_Density: 0.025
+        m_Density: 0.01
         m_IsTrigger: 0
         m_TriggerEvents: 0
         m_ContactEvents: 0
@@ -1353,8 +1344,8 @@ MonoBehaviour:
           direction: {x: 1, y: 0}
         m_LinearVelocity: {x: 0, y: 0}
         m_AngularVelocity: 0
-        m_LinearDamping: 0.25
-        m_AngularDamping: 1
+        m_LinearDamping: 0
+        m_AngularDamping: 0.25
         m_GravityScale: 1
         m_SleepThreshold: 0.01
         m_FastRotationAllowed: 0
@@ -1370,47 +1361,47 @@ MonoBehaviour:
       - 0.025
     chainSettings:
     - lowerAngleLimit:
-      - -45
-      - -75
+      - -60
       - -30
+      - -22.5
       - -30
       upperAngleLimit:
       - 30
-      - 45
-      - 22.5
+      - 60
+      - 30
       - 30
       enableLimit: 01010101
     - lowerAngleLimit:
-      - -45
-      - -75
+      - -60
       - -30
+      - -22.5
       - -30
       upperAngleLimit:
       - 30
-      - 45
-      - 22.5
+      - 60
+      - 30
       - 30
       enableLimit: 01010101
     - lowerAngleLimit:
-      - -45
-      - -75
+      - -60
       - -30
+      - -22.5
       - -30
       upperAngleLimit:
       - 30
-      - 45
-      - 22.5
+      - 60
+      - 30
       - 30
       enableLimit: 01010101
     - lowerAngleLimit:
-      - -45
-      - -75
+      - -60
       - -30
+      - -22.5
       - -30
       upperAngleLimit:
       - 30
-      - 45
-      - 22.5
+      - 60
+      - 30
       - 30
       enableLimit: 01010101
     - lowerAngleLimit:
@@ -1506,24 +1497,42 @@ MonoBehaviour:
       - {fileID: 1963197130059215229}
       - {fileID: 3207324145476504997}
       - {fileID: 4614320631808763307}
+    stepAccel:
+    - {x: 150, y: 250}
+    - {x: 150, y: 250}
+    - {x: 150, y: 250}
+    - {x: 150, y: 250}
+    - {x: 150, y: 250}
+    - {x: 150, y: 250}
+    - {x: 150, y: 250}
+    - {x: 150, y: 250}
+    restAccel:
+    - {x: 75, y: 50}
+    - {x: 75, y: 50}
+    - {x: 75, y: 50}
+    - {x: 75, y: 50}
+    - {x: 75, y: 50}
+    - {x: 75, y: 50}
+    - {x: 75, y: 50}
+    - {x: 75, y: 50}
     stepMax:
-    - 0.7
-    - 0.7
-    - 0.65
-    - 0.65
-    - -0.35
-    - -0.35
-    - -0.35
-    - -0.35
+    - 0.75
+    - 0.75
+    - 0.75
+    - 0.75
+    - -0.3
+    - -0.3
+    - -0.3
+    - -0.3
     stepLength:
-    - 0.6
-    - 0.6
-    - 0.6
-    - 0.6
-    - 0.75
-    - 0.75
-    - 0.75
-    - 0.75
+    - 0.475
+    - 0.475
+    - 0.475
+    - 0.475
+    - 0.475
+    - 0.475
+    - 0.475
+    - 0.475
     stepSpeed:
     - 0.4
     - 0.4
@@ -1534,30 +1543,21 @@ MonoBehaviour:
     - 0.4
     - 0.4
     stepHeight:
-    - 0.8
-    - 0.8
-    - 0.8
-    - 0.8
+    - 0.7
+    - 0.7
+    - 0.7
+    - 0.7
     - 0.9
     - 0.9
     - 0.9
     - 0.9
-    timeOffset:
-    - 0
-    - 0.4
-    - 0.25
-    - 0.65
-    - 0.125
-    - 0.525
-    - 0.375
-    - 0.775
-    bodyDirectionIndex: 0000000000000000000000000000000001000000010000000100000001000000
-    stepContactPoint: 0.9
-    stepDamping: 0.1
+    castDirectionIndex: 0000000000000000000000000000000001000000010000000100000001000000
+    stepDropPoint: 0.8
+    stepDamping: 1
     speed0: 0.05
     speed1: 3
     drawBodyGizmos: 0
-    drawAngleLimitGizmos: 0000000001000000
+    drawAngleLimitGizmos: 0000000000000000
   headBoneHeightRefPoint: {fileID: 3597460655033676372}
   grappleArm: {fileID: 8393107135455579191}
   abdomenRoot: {fileID: 7095442034761804592}

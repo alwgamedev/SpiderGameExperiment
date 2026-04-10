@@ -17,7 +17,7 @@ public class LegSynchronizer
 
     [SerializeField] JointedChainDefinition chainDef;
     [SerializeField] JointedChainSettings[] chainSettings;
-    [SerializeField] ArrayContainer<Transform>[] chainTransform; 
+    [SerializeField] ArrayContainer<Transform>[] chainTransform;
     [SerializeField] Vector2[] stepAccel;
     [SerializeField] Vector2[] restAccel;
     [SerializeField] float[] stepMax;
@@ -179,7 +179,8 @@ public class LegSynchronizer
             int rester = stepper ^ 1;//flips first bit (so 2i => 2i + 1 and 2i + 1 => 2i)
 
             var castDir = castDirection[castDirectionIndex[stepper]];
-            var stepperX = EffectorRelativeX(stepper, castDirection[castDirectionIndex[stepper]]);
+            var bodyDir = facingRight ? castDir.CCWPerp() : castDir.CWPerp();
+            var stepperX = EffectorRelativeX(stepper, bodyDir);
             if (stepperX > stepMax[stepper])
             {
                 stepping ^= (3 << j);//flip bits j & j + 1
@@ -217,9 +218,9 @@ public class LegSynchronizer
     //+ clean up groundMap (move to job? (burst compile could do wonders for gdMap -- even if synchronous) + more efficient access (boxing?))
     //I) grabber arm with joints will be sweet
     //J) but keep an eye on performance -- I haven't been watching the impact of all these joints yet (we can always try multithreaded physics,
-        //or increasing time step now)
+    //or increasing time step now)
 
-    private void UpdateLegStepping(int i, float stepHeight, float hipSpeed, GroundMap map, 
+    private void UpdateLegStepping(int i, float stepHeight, float hipSpeed, GroundMap map,
         Vector2 castDir, bool facingRight, out float stepFraction)
     {
         var bodyDir = facingRight ? castDir.CCWPerp() : castDir.CWPerp();
@@ -237,15 +238,14 @@ public class LegSynchronizer
         var gdDir = facingRight ? gdUp.CWPerp() : gdUp.CCWPerp();
 
         //compute dX
-        var dX = hipSpeed * (stepSpeed[i] + 1) - Vector2.Dot(l.body[^1].linearVelocity, gdDir);
-        //this goal speed - cur speed, where goal speed = hipSpeed * stepSpeed[i] + hipSpeed
+        var goalRelSpd = stepFraction > stepDropPoint ? stepSpeed[i] * (0.1f + (1 - stepFraction) / (1 - stepDropPoint)) : stepSpeed[i];
+        var dX = hipSpeed * (goalRelSpd + 1) - Vector2.Dot(l.body[^1].linearVelocity, gdDir);
         //note that step speed is measured along ground!
         //(alternatively we could measure it along bodyDir, but still apply force along gdDirection to keep movement smooth
         //(scaling by a dot product to get desired speed along bodyDir))
 
         //compute dY
         stepHeight = 4 * stepHeight * stepFraction * (1 - stepFraction);
-
         var dY = stepHeight - Vector2.Dot(effectorPos - (Vector2)gdPt, gdUp);
         if (stepFraction > stepDropPoint && dY > 0)
         {
@@ -258,29 +258,29 @@ public class LegSynchronizer
         var aX = stepStrength[i] * stepAccel[i].x * dX;
         var aY = stepStrength[i] * stepAccel[i].y * dY;
 
+        var gX = Vector2.Dot(l.AnchorBody.world.gravity, gdDir);
+        var gY = Vector2.Dot(l.AnchorBody.world.gravity, gdUp);
+        if (MathTools.OppositeSigns(aX, gX))
+        {
+            aX -= gX;
+        }
+        if (MathTools.OppositeSigns(aY, gY))
+        {
+            aY -= gY;
+        }
+
 
         var dotX = Vector2.Dot(l.body[^1].linearVelocity, gdDir);
         aX -= stepDamping * Mathf.Abs(dotX) * dotX;
         var dotY = Vector2.Dot(l.body[^1].linearVelocity, gdUp);
         aY -= stepDamping * Mathf.Abs(dotY) * dotY;
 
-        //var gX = Vector2.Dot(l.AnchorBody.world.gravity, gdDir);
-        //var gY = Vector2.Dot(l.AnchorBody.world.gravity, gdUp);
-        //if (MathTools.OppositeSigns(aX, gX))
-        //{
-        //    aX -= gX;
-        //}
-        //if (MathTools.OppositeSigns(aY, gY))
-        //{
-        //    aY -= gY;
-        //}
-
         PullLeg(ref l, aX * gdDir + aY * gdUp);
     }
 
     //2do:
     //A) apply force along gdDir to keep movement smooth, but take direction between bodyDir and gdDir into account
-        //(bc goal is position along bodyDir -- you will have to be careful when angle gets close to 90 e.g. moving past a small ledge)
+    //(bc goal is position along bodyDir -- you will have to be careful when angle gets close to 90 e.g. moving past a small ledge)
     //B) we can extract the pull leg method that takes dX, dY and directions as parameters
     private void UpdateLegResting(int i, GroundMap map,
         Vector2 castDir, bool facingRight, float goalStepFraction)
@@ -299,12 +299,23 @@ public class LegSynchronizer
         var gdPt = CastToGroundPoint(map, effectorPos, castDir, out var gdUp);
         var gdDir = facingRight ? gdUp.CWPerp() : gdUp.CCWPerp();
 
-        var dX = goalStepFraction - stepFraction;
+        var dX = (goalStepFraction - stepFraction) * stepLength[i];
         var dY = Mathf.Min(Vector2.Dot((Vector2)gdPt - effectorPos, gdUp), 0);
         //^take min with 0, i.e. never apply upward forces (don't want to stack with collision forces)
 
         var aX = stepStrength[i] * restAccel[i].x * dX;
         var aY = stepStrength[i] * restAccel[i].y * dY;
+
+        var gX = Vector2.Dot(l.AnchorBody.world.gravity, gdDir);
+        var gY = Vector2.Dot(l.AnchorBody.world.gravity, gdUp);
+        if (MathTools.OppositeSigns(aX, gX))
+        {
+            aX -= gX;
+        }
+        if (MathTools.OppositeSigns(aY, gY))
+        {
+            aY -= gY;
+        }
 
         var dotX = Vector2.Dot(l.body[^1].linearVelocity, gdDir);
         aX -= stepDamping * Mathf.Abs(dotX) * dotX;
