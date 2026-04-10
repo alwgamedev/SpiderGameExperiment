@@ -1,10 +1,9 @@
 ﻿using System;
 using Unity.U2D.Physics;
-using Unity.VisualScripting.YamlDotNet.Core.Tokens;
 using UnityEditor;
 using UnityEngine;
 
-[Serializable] 
+[Serializable]
 public struct JointedChainDefinition
 {
     public PhysicsHingeJointDefinition jointDef;
@@ -32,11 +31,12 @@ public struct JointedChain
 
     public readonly int JointCount => joint.Length;
     public readonly float Mass => mass;
+    public readonly Vector2 BasePosition => body[0].position;
     public readonly Vector2 EffectorPosition => body[^1].position + effectorDistance * body[^1].rotation.direction;
     public readonly Vector2 NextPosition(int i) => i == body.Length - 1 ? EffectorPosition : body[i + 1].position;
     public PhysicsBody AnchorBody => joint[0].bodyA;
 
-    public static void DrawGizmos(Transform[] transform, float[] width)
+    public static void DrawBodyGizmos(Transform[] transform, float[] width)
     {
         if (transform != null && width != null && width.Length == transform.Length - 1)
         {
@@ -55,6 +55,29 @@ public struct JointedChain
                         Handles.DrawLine(center - l - w, center - l + w);
                         Handles.DrawLine(center + l - w, center + l + w);
                     }
+                }
+            }
+        }
+    }
+
+    public static void DrawAngleGizmos(Transform[] transform, JointedChainSettings settings)
+    {
+        if (transform != null && settings.lowerAngleLimit != null && settings.upperAngleLimit != null
+            && settings.lowerAngleLimit.Length == transform.Length - 1 && settings.upperAngleLimit.Length == transform.Length - 1)
+        {
+            using (new Handles.DrawingScope(Color.red))
+            {
+                for (int i = 0; i < transform.Length - 1; i++)
+                {
+                    var p = transform[i].position;
+                    var r = Vector2.Distance(transform[i].position, transform[i + 1].position);
+                    var qMin = Quaternion.Euler(0, 0, settings.lowerAngleLimit[i]) * transform[i].rotation;
+                    var qMax = Quaternion.Euler(0, 0, settings.upperAngleLimit[i]) * transform[i].rotation;
+                    var uMin = qMin * Vector2.right;
+                    var uMax = qMax * Vector2.right;
+                    Handles.DrawLine(p, p + r * uMin);
+                    Handles.DrawLine(p, p + r * uMax);
+                    Handles.DrawWireArc(p, Vector3.forward, uMin, settings.upperAngleLimit[i] - settings.lowerAngleLimit[i], r);
                 }
             }
         }
@@ -154,43 +177,19 @@ public struct JointedChain
         RecomputeMass();
     }
 
-    public readonly void PushLink(int i, Vector2 accel)
+    public readonly void AccelerateBase(int i, Vector2 accel)
     {
         body[i].ApplyForce(body[i].mass * accel, body[i].position);
     }
 
-    public readonly void PushUniformly(Vector2 accel)
-    {
-        for (int i = 0; i < body.Length; i++)
-        {
-            PushLink(i, accel);
-        }
-    }
-
-    public readonly void AccelerateLink(int i, Vector2 accel)
+    public readonly void AccelerateCenter(int i, Vector2 accel)
     {
         body[i].ApplyForceToCenter(body[i].mass * accel);
     }
 
-    public readonly void AccelerateUniformly(Vector2 accel)
-    {
-        for (int i = 0; i < body.Length; i++)
-        {
-            AccelerateLink(i, accel);
-        }
-    }
-
-    public readonly void PullLink(int i, Vector2 accel)
+    public readonly void AccelerateEnd(int i, Vector2 accel)
     {
         body[i].ApplyForce(body[i].mass * accel, NextPosition(i));
-    }
-
-    public readonly void PullUniformly(Vector2 accel)
-    {
-        for (int i = 0; i < body.Length; i++)
-        {
-            PullLink(i, accel);
-        }
     }
 
     private void RecomputeMass()

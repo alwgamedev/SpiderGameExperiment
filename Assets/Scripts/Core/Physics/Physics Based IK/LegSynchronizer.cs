@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Unity.U2D.Physics;
 using UnityEngine;
 using UnityEngine.Events;
@@ -8,7 +7,7 @@ using UnityEngine.Events;
 public class LegSynchronizer
 {
     public UnityEvent[] footHitGround;
-    public float[] reachForce;
+    public float[] stepAccel;
     internal float bodyGroundSpeedSign;
     internal float absoluteBodyGroundSpeed;
     internal float timeScale;
@@ -19,22 +18,28 @@ public class LegSynchronizer
     [SerializeField] JointedChainSettings[] chainSettings;
     [SerializeField] ArrayContainer<Transform>[] chainTransform;
     [SerializeField] float[] stepMax;
+    [SerializeField] float[] stepLength;
+    [SerializeField] float[] stepSpeed;
+    [SerializeField] float[] restSpeed;
+    [SerializeField] float[] stepHeight;
     [SerializeField] float[] timeOffset;
-    [SerializeField] int[] castDirectionIndex;
-    [SerializeField] float restTime;
-    [SerializeField] float stepTime;
+    [SerializeField] int[] bodyDirectionIndex;
+    [SerializeField] float stepContactPoint;
+    [SerializeField] float stepDamping;
     [SerializeField] float speed0;
     [SerializeField] float speed1;
-    [SerializeField] float stepHeight;
-    [SerializeField] bool drawEffectorGizmos;
     [SerializeField] bool drawBodyGizmos;
+    [SerializeField] bool[] drawAngleLimitGizmos;
 
     JointedChain[] leg;
-    LegTimer[] legTimer;
-    Vector2[] target;//for now these are world position; we may want them to be local position (relative to hip anchor)
+    //LegTimer[] legTimer;
+    //Vector2[] target;//for now these are world position; we may want them to be local position (relative to hip anchor)
+    //Vector2[] stepCache;
+    bool[] stepping;
+    Vector2[] restPosition;
     float legCountInverse;
     float totalMass;
-    bool facingRight;
+    //bool facingRight;
 
     public int LegCount => leg.Length;
     public float TotalMass => totalMass;
@@ -91,207 +96,220 @@ public class LegSynchronizer
 
     public void OnDrawGizmos()
     {
-        if (drawEffectorGizmos && target != null)
-        {
-            for (int i = 0; i < target.Length; i++)
-            {
-                Gizmos.color = Color.yellow;
-                Gizmos.DrawSphere(leg[i].EffectorPosition, 0.05f);
+        //if (drawEffectorGizmos && target != null)
+        //{
+        //    for (int i = 0; i < target.Length; i++)
+        //    {
+        //        Gizmos.color = Color.yellow;
+        //        Gizmos.DrawSphere(leg[i].EffectorPosition, 0.05f);
 
-                Gizmos.color = Color.red;
-                Gizmos.DrawSphere(target[i], 0.05f);
-            }
-        }
+        //        Gizmos.color = Color.red;
+        //        Gizmos.DrawSphere(target[i], 0.05f);
+        //    }
+        //}
+
         if (drawBodyGizmos)
         {
             for (int i = 0; i < chainTransform.Length; i++)
             {
-                JointedChain.DrawGizmos(chainTransform[i].array, chainDef.width);
+                JointedChain.DrawBodyGizmos(chainTransform[i].array, chainDef.width);
+            }
+        }
+
+        if (drawAngleLimitGizmos != null && chainTransform != null && drawAngleLimitGizmos.Length == chainTransform.Length)
+        {
+            for (int i = 0; i < chainTransform.Length; i++)
+            {
+                if (drawAngleLimitGizmos[i])
+                {
+                    JointedChain.DrawAngleGizmos(chainTransform[i].array, chainSettings[i]);
+                }
             }
         }
     }
 
-    public void Initialize(bool facingRight)
+    public void Initialize()
     {
         var numLegs = timeOffset.Length;
         legCountInverse = 1f / numLegs;
 
         //initialize timers
-        float randomOffset = MathTools.RandomFloat(0, stepTime + restTime);//add to all timers, to randomize initial position
-        var s = stepTime;
-        var r = restTime;
-        legTimer = timeOffset.Select(o => new LegTimer(o + randomOffset, s, r)).ToArray();
+        //float randomOffset = MathTools.RandomFloat(0, 2 * stepDistance/*stepTime + restTime*/);//add to all timers, to randomize initial position
+        ////var s = stepTime;
+        ////var r = restTime;
+        //var s = stepDistance;
+        //legTimer = timeOffset.Select(o => new LegTimer(o + randomOffset, s, s/*r*/)).ToArray();
 
         leg = new JointedChain[numLegs];
-        target = new Vector2[numLegs];
+        restPosition = new Vector2[numLegs];
+        stepping = new bool[numLegs];
+        //stepCache = new Vector2[numLegs];
+        //target = new Vector2[numLegs];
 
-        this.facingRight = facingRight;
+
+
+        //this.facingRight = facingRight;
     }
 
-    public void InitializeLeg(int i, PhysicsBody body)
+    public void InitializeLeg(int i, PhysicsBody body, Vector2 bodyDirection, float rideHeight, bool facingRight)
     {
         leg[i].Initialize(chainTransform[i].array, body, chainDef, chainSettings[i]);
-        target[i] = leg[i].EffectorPosition;
+        //target[i] = leg[i].EffectorPosition;
+
+        stepping[i] = false;
+        var bodyUp = facingRight ? bodyDirection.CCWPerp() : bodyDirection.CWPerp();
+        restPosition[i] = leg[i].BasePosition + StepMin(i) * bodyDirection - rideHeight * bodyUp;
     }
 
-    public void SetOrientation(bool facingRight)
+    public void OnDirectionChanged(bool facingRight)
     {
         //a) all bodies undergo same world reflection as main body, EXCEPT we use different convention for rotation (i.e. rotation reflects over same axis as position, keeping orientation)
         //b) reflect hip anchors to other side of their anchored bodies
         //c) negate joint angle limits
 
-        this.facingRight = facingRight;
+        //also reflect stepStart positions
+
+        //this.facingRight = facingRight;
     }
 
-    public void UpdateAllLegs(float dt, GroundMap map, Vector2[] castDirection, bool grounded)
+    public void UpdateAllLegs(GroundMap map, Vector2[] bodyDirection, bool grounded, bool facingRight)
     {
+        //var speedFraction = absoluteBodyGroundSpeed < speed0 ? 0 : absoluteBodyGroundSpeed / speed1;
+        //var timeScale = bodyGroundSpeedSign * this.timeScale * speedFraction;
+        //var speedScaledDt = timeScale * dt;
+        //var stepHeightSpeedMultiplier = grounded ? Mathf.Min(speedFraction, 1) : 1;
+
+        var hipSpeed = bodyGroundSpeedSign * timeScale * absoluteBodyGroundSpeed;
         var speedFraction = absoluteBodyGroundSpeed < speed0 ? 0 : absoluteBodyGroundSpeed / speed1;
-        var speedScaledDt = timeScale * speedFraction * dt;
-        var stepHeightSpeedMultiplier = grounded ? Mathf.Min(speedFraction, 1) : 1;
 
         for (int i = 0; i < leg.Length; i++)
         {
-            UpdateLeg(i, speedScaledDt, stepHeightSpeedMultiplier, map, castDirection[castDirectionIndex[i]]);
+            var ht = grounded ? Mathf.Min(speedFraction, 1) * stepHeight[i] : stepHeight[i];
+            UpdateLeg(i, ht, hipSpeed, map, bodyDirection[bodyDirectionIndex[i]], facingRight);
         }
     }
 
-    private void UpdateLeg(int i, float speedScaledDt, float stepHeightSpeedMultiplier, GroundMap map, Vector2 castDirection)
+    private void UpdateLeg(int i, float stepHeight, float hipSpeed, GroundMap map, Vector2 bodyDirection, bool facingRight)
     {
-        ref var t = ref legTimer[i];
         ref var l = ref leg[i];
+        var x = EffectorRelativeX(i, bodyDirection);
+        var effectorPos = l.EffectorPosition;
+        var bodyUp = facingRight ? bodyDirection.CCWPerp() : bodyDirection.CWPerp();
 
-        t.Update(bodyGroundSpeedSign * speedScaledDt);
-
-        if (t.Stepping)
+        if (stepping[i] && x > stepMax[i])
         {
-            UpdateTargetStepping(i, map, castDirection,
-                stepHeightSpeedMultiplier, stepHeightFraction, t.StateProgress,
-                strideMultiplier * t.StepTime, strideMultiplier * t.RestTime);
+            stepping[i] = false;
+            restPosition[i] = map.LineCastToGround(effectorPos, -bodyUp, out var hit) ? hit.point
+                : map.TrueClosestPoint(effectorPos, out _, out _, out _);
+        }
+        else if (!stepping[i] && x < stepMax[i] - stepLength[i])
+        {
+            stepping[i] = true;
+        }
+
+        //2DO:
+        //A) when resting, do the same thing as with stepping but with a negative x-speed (based on restSpeedArray), and with stepHt of 0
+        //B) since we do the same thing, turn it into a single method
+        //C) try doing both wrt ground frame?
+        //D) start offsets... 
+            //maybe what we can do is for each group (front legs, hind legs -- or even just pairs of legs) we have a "leader" who moves based on actual x,
+            //then rest of group uses a timer based on leader and initial offset
+            //probably best if we just have leader-follower pairs (not groups) and rule is that follower does not start step until it is properly synced
+            //with leader, based on its offset.
+            //and while it is waiting it just pulls towards stepMin point (or just let it continue to rest so it doesn't visibly drag)
+            //maybe most natural way to do it is to always have the stepping leg be the leader and the resting leg the follower (out of a pair)
+            //so resting leg will slide towards stepMin while stepping leg steps (i.e. when stepping leg is at x-position 0 < t < 1, the
+            //resting leg will pull towards 1 - t)
+            //this then eliminates need for rest speed -- although you may want separate restAccel
+            //^^ give this a try
+            //++ see if doing everything in ground frame makes the resting motion more natural (also probably will be more natural when slowed down
+        //E) do we properly handle negative hipSpeed and "scaled" hipSpeed?
+            //+ simplify the things that need to be passed in from mover now that system has changed
+        //F) changing direction lol
+        //G) jump and freehang
+        //H) clean up leg (get rid of unused fields, excess parameters, etc.)
+            //+ clean up groundMap (move to job? (burst compile could do wonders for gdMap -- even if synchronous) + more efficient access (boxing?))
+        //I) grabber arm with joints will be sweet
+        //J) but keep an eye on performance -- I haven't been watching the impact of all these joints yet (we can always try multithreaded physics,
+            //or reducing time step now)
+
+
+        if (stepping[i])
+        {
+            var t = Mathf.Clamp((x - StepMin(i)) / stepLength[i], 0, 1);
+
+            //compute dX
+            var dX = hipSpeed * (stepSpeed[i] + 1) - Vector2.Dot(l.body[^1].linearVelocity, bodyDirection);
+            //goal speed - cur speed, where goal speed = hipSpeed * stepSpeed[i] + hipSpeed
+
+            //compute dY
+            stepHeight = 4 * stepHeight * t * (stepContactPoint - t);
+            Vector2 gdPt = map.LineCastToGround(effectorPos, -bodyUp, out var hit) ? hit.point
+                : map.TrueClosestPoint(effectorPos, out _, out _, out _);
+            var dY = stepHeight - Vector2.Dot(effectorPos - gdPt, bodyUp);
+            if (t > 0.5f && dY > 0)
+            {
+                dY = 0;
+            }
+
+            //accelerate leg
+            var aX = stepAccel[i] * dX;
+            var aY = stepAccel[i] * dY;
+
+
+            var dotX = Vector2.Dot(l.body[^1].linearVelocity, bodyDirection);
+            aX -= stepDamping * Mathf.Abs(dotX) * dotX;
+            var dotY = Vector2.Dot(l.body[^1].linearVelocity, bodyUp);
+            aY -= stepDamping * Mathf.Abs(dotY) * dotY;
+
+            //var gX = Vector2.Dot(l.AnchorBody.world.gravity, bodyDirection);
+            //var gY = Vector2.Dot(l.AnchorBody.world.gravity, bodyUp);
+            //if (MathTools.OppositeSigns(aX, gX))
+            //{
+            //    aX -= gX;
+            //}
+            //if (MathTools.OppositeSigns(aY, gY))
+            //{
+            //    aY -= gY;
+            //}
+
+            //var aVecX = aX * bodyDirection;
+            //var aVecY = aY * bodyUp;
+            //l.AccelerateEnd(0, aVecY);
+            //l.AccelerateBase(l.JointCount - 1, aVecX);
+            PullLeg(ref l, aX * bodyDirection + aY * bodyUp);
         }
         else
         {
-            UpdateTargetResting(i, map, castDirection,
-                t.StateProgress, strideMultiplier * t.RestTime);
+            //2do: when resting we'll 
+            Vector2 gdPt = map.TrueClosestPoint(restPosition[i], out _, out _, out _);
+            var err = gdPt - effectorPos;
+            var a = stepAccel[i] * err;
+            var u = err.normalized;
+            if (u != Vector2.zero)
+            {
+                var dot = Vector2.Dot(l.body[^1].linearVelocity, u);
+                a -= stepDamping * Mathf.Abs(dot) * dot * u;
+            }
+            PullLeg(ref l, a);
+            //l.AccelerateEnd(l.JointCount - 1, stepAccel[i] * err);
         }
 
-        var a = reachForce[i] * (target[i] - l.EffectorPosition);
-        l.PullUniformly(a);
+        static void PullLeg(ref JointedChain l, Vector2 a)
+        {
+            for (int j = 0; j < l.JointCount; j++)
+            {
+                l.AccelerateEnd(j, a);
+            }
+        }
+
         //^2do: better method for pull leg (maybe only pull uniformly when pulling up and pull just effector when pulling down? or always just do effector... we can see how it looks and experiment)
     }
 
+    private float StepMin(int i) => stepMax[i] - stepLength[i];
 
-    //TARGETING
-
-    public void UpdateTargetStepping(int i, GroundMap map, Vector2 castDir,
-       float stepHeightSpeedMultiplier, float stepHeightFraction, float stepProgress, float stepDistance,
-       float restDistance)
+    private float EffectorRelativeX(int i, Vector2 bodyDirection)
     {
-        var hipPosition = leg[i].body[0].position;
-
-        var dot = Vector2.Dot(hipPosition - (Vector2)map.Origin, map.OriginRight);
-        float h;
-        if (!map.LineCastToGround(hipPosition, castDir, out var p) || Mathf.Abs(p.arcLengthPosition) < Mathf.Abs(dot))
-        {
-            h = dot;
-        }
-        else
-        {
-            h = p.arcLengthPosition;
-        }
-
-        var stepStart = GetStepStart(i, map, h, facingRight, stepProgress, stepDistance, restDistance);
-        var stepGoal = GetStepGoal(i, map, h, facingRight, 0, restDistance);
-        var stepRight = stepGoal - stepStart;
-        var stepUp = facingRight ? 0.5f * stepRight.CCWPerp() : 0.5f * stepRight.CWPerp();
-
-        //parabola instead of trig fcts
-        var newTargetPos = stepStart + stepProgress * stepRight + 4 * stepProgress * (1 - stepProgress) * stepHeightFraction * stepHeight * stepUp;
-
-        if (stepHeightSpeedMultiplier < 1)
-        {
-            var g = map.ProjectOntoGroundByArcLength(newTargetPos, out _, out _);
-            newTargetPos = Vector2.Lerp(g, newTargetPos, stepHeightSpeedMultiplier);
-        }
-
-        target[i] = newTargetPos;
-    }
-
-    public void UpdateTargetResting(int i, GroundMap map, Vector2 castDir,
-        float restProgress, float restDistance)
-    {
-        var hipPosition = leg[i].body[0].position;
-        var dot = Vector2.Dot(hipPosition - (Vector2)map.Origin, map.OriginRight);
-
-        float h;
-        if (!map.LineCastToGround(hipPosition, castDir, out var p) /*|| Mathf.Abs(p.arcLengthPosition) < Mathf.Abs(dot)*/)
-        {
-            h = dot;
-        }
-        else
-        {
-            h = p.arcLengthPosition;
-        }
-
-        target[i] = GetStepGoal(i,map, h, facingRight, restProgress, restDistance);
-    }
-
-    //public void ClampTargetPosition(int i, GroundMap map, float maxExtensionFraction)
-    //{
-    //    var hipPos = leg[i].body[0].position;
-    //    var d = target[i] - hipPos;
-    //    var f = d.sqrMagnitude * totalLengthInverse * totalLengthInverse;
-    //    if (f > maxExtensionFraction * maxExtensionFraction)
-    //    {
-    //        var p = hipPos + maxExtensionFraction / Mathf.Sqrt(f) * d;
-    //        target[i] = (Vector2)map.TrueClosestPoint(new float2(p.x, p.y), out _, out _, out _);
-    //    }
-    //}
-
-    //private void UpdateGroundContact(GroundMap groundMap, float groundContactRadius, float collisionResponse, float dt)
-    //{
-    //    var wasTouchingGround = EffectorIsTouchingGround;
-    //    Vector2 q = chain[^1].position;
-    //    q -= (Vector2)groundMap.TrueClosestPoint(q, out _, out var n, out var hitGround);
-
-    //    var l = Vector2.Dot(q, n);
-    //    EffectorIsTouchingGround = hitGround && l < groundContactRadius;
-    //    if (EffectorIsTouchingGround)
-    //    {
-    //        if (l < 0)
-    //        {
-    //            var a = -dt * collisionResponse * l * n;
-    //            PhysicsBasedIK.ApplyForceUpChain(chain, inverseLength, angularVelocity, a, chain.Length - 1, null, true);
-    //        }
-
-    //        if (!wasTouchingGround)
-    //        {
-    //            HitGround.Invoke();
-    //        }
-    //    }
-    //}
-
-    private Vector2 GetStepStart(int i, GroundMap map, float h, bool bodyFacingRight, float stepProgress, float stepDistance, float restDistance/*, float stepMax*/)
-    {
-        h = bodyFacingRight ? h + StepStartHorizontalOffset(i, stepProgress, stepDistance, restDistance/*, stepMax*/)
-            : h - StepStartHorizontalOffset(i, stepProgress, stepDistance, restDistance/*, stepMax*/);
-        return map.PointFromCenterByArcLength(h, out _, out _);
-        //return map.PointFromCenterByIntervalWidth(h);
-    }
-
-    private Vector2 GetStepGoal(int i, GroundMap map, float h, bool bodyFacingRight, float restProgress, float restDistance)
-    {
-        h += bodyFacingRight ? StepGoalHorizontalOffset(i, restProgress, restDistance) 
-            : -StepGoalHorizontalOffset(i, restProgress, restDistance);
-        return map.PointFromCenterByArcLength(h, out _, out _);
-    }
-
-    private float StepGoalHorizontalOffset(int i, float restProgress, float restDistance/*, float stepMax*/)
-    {
-        return stepMax[i] - restProgress * restDistance;
-    }
-
-    private float StepStartHorizontalOffset(int i, float stepProgress, float stepDistance, float restDistance/*, float stepMax*/)
-    {
-        return stepMax[i] - restDistance - stepProgress * stepDistance;
+        return Vector2.Dot(leg[i].EffectorPosition - leg[i].BasePosition, bodyDirection);
     }
 }

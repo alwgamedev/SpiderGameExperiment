@@ -933,7 +933,6 @@ GameObject:
   - component: {fileID: 9149063515827151626}
   - component: {fileID: 2290889871136229131}
   - component: {fileID: 170334193149612089}
-  - component: {fileID: 2322109891762347586}
   - component: {fileID: 8477651183600270903}
   - component: {fileID: 3362887635798995877}
   - component: {fileID: 534478759235766021}
@@ -1121,505 +1120,6 @@ MonoBehaviour:
     grappleDestroyed:
       m_PersistentCalls:
         m_Calls: []
---- !u!114 &2322109891762347586
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1231387903212816449}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c55e7ce0af6dc749bed6e59fb9dc242, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PhysicsLegSynchronizer
-  restDistance: 0.5
-  stepDistance: 0.55
-  stepHeightSpeed0: 0.05
-  stepHeightSpeed1: 3
-  leg:
-  - contactSettings:
-      gravityStrength: 0
-      reachForce: 1000
-      limpness: 0
-      jointDamping: 30
-      stepHeight: 0.8
-      enforceAngleBounds: 0
-    noContactSettings:
-      gravityStrength: 0
-      reachForce: 600
-      limpness: 0
-      jointDamping: 21
-      stepHeight: 0.85
-      enforceAngleBounds: 1
-    HitGround:
-      m_PersistentCalls:
-        m_Calls: []
-    orientingTransform: {fileID: 1544918830229533694}
-    chain:
-    - {fileID: 22272622812096587}
-    - {fileID: 8441832845829404896}
-    - {fileID: 5417361688116629949}
-    - {fileID: 5156781721996848529}
-    target: {fileID: 0}
-    stepMax: 0.9
-    minAngle:
-    - -0.70710677
-    - -0.9238795
-    - -0.38268343
-    maxAngle:
-    - 0.5
-    - -0.13052619
-    - -0.104528464
-    angleBranch: 000000
-  - contactSettings:
-      gravityStrength: 0
-      reachForce: 1000
-      limpness: 0
-      jointDamping: 30
-      stepHeight: 0.8
-      enforceAngleBounds: 0
-    noContactSettings:
-      gravityStrength: 0
-      reachForce: 600
-      limpness: 0
-      jointDamping: 21
-      stepHeight: 0.85
-      enforceAngleBounds: 1
-    HitGround:
-      m_PersistentCalls:
-        m_Calls: []
-    orientingTransform: {fileID: 1544918830229533694}
-    chain:
-    - {fileID: 392562895396955329}
-    - {fileID: 4774993986430394206}
-    - {fileID: 5545924089802491900}
-    - {fileID: 5080324851170624962}
-    target: {fileID: 0}
-    stepMax: 0.9
-    minAngle:
-    - -0.70710677
-    - -0.9238795
-    - -0.3826834
-    maxAngle:
-    - 0.5
-    - -0.13052619
-    - -0.1045285
-    angleBranch: 000000
-  - contactSettings:
-      gravityStrength: 0
-      reachForce: 1000
-      limpness: 0
-      jointDamping: 30
-      stepHeight: 0.8
-      enforceAngleBounds: 0
-    noContactSettings:
-      gravityStrength: 0
-      reachForce: 600
-      limpness: 0
-      jointDamping: 21
-      stepHeight: 0.85
-      enforceAngleBounds: 1
-    HitGround:
-      m_PersistentCalls:
-        m_Calls: []
-    orientingTransform: {fileID: 1544918830229533694}
-    chain:
-    - {fileID: 3375176604030035034}
-    - {fileID: 481651784299103877}
-    - {fileID: 8082015730857100818}
-    - {fileID: 4876095274293422944}
-    target: {fileID: 0}
-    stepMax: 0.775
-    minAngle:
-    - -0.70710677
-    - -0.9238795
-    - -0.3826834
-    maxAngle:
-    - 0.5
-    - -0.13052619
-    - -0.1045285
-    angleBranch: 000000
-  - contactSettings:
-      gravityStrength: 0
-      reachForce: 1000
-      limpness: 0
-      jointDamping: 30
-      stepHeight: 0.8
-      enforceAngleBounds: 0
-    noContactSettings:
-      gravityStrength: 0
-      reachForce: 600
-      limpness: 0
-      jointDamping: 21
-      stepHeight: 0.85
-      enforceAngleBounds: 1
-    HitGround:
-      m_PersistentCalls:
-        m_Calls: []
-    orientingTransform: {fileID: 1544918830229533694}
-    chain:
-    - {fileID: 1329707510189468019}
-    - {fileID: 3808130946259013042}
-    - {fileID: 5362888252177123281}
-    - {fileID: 354977928401432904}
-    target: {fileID: 0}
-    stepMax: 0.775
-    minAngle:
-    - -0.70710677
-    - -0.9238795
-    - -0.3826834
-    maxAngle:
-    - 0.5
-    - -0.13052619
-    - -0.1045285
-    angleBranch: 000000
-  - contactSettings:
-      gravityStrength: 0
-      reachForce: 1400
-      limpness: 0
-      jointDamping: 30
-      stepHeight: 0.8
-      enforceAngleBounds: 0
-    noContactSettings:
-      gravityStrength: 0
-      reachForce: 600
-      limpness: 0
-      jointDamping: 21
-      stepHeight: 0.85
-      enforceAngleBounds: 1
-    HitGround:
-      m_PersistentCalls:
-        m_Calls: []
-    orientingTransform: {fileID: 6490454046939129288}
-    chain:
-    - {fileID: 2585876819461345877}
-    - {fileID: 6893505030894218327}
-    - {fileID: 4769979956926427322}
-    - {fileID: 9211722957049143961}
-    target: {fileID: 0}
-    stepMax: -0.35
-    minAngle:
-    - -0.70710677
-    - 0
-    - 0.19509032
-    maxAngle:
-    - 0.70710677
-    - 0.999
-    - 0.5
-    angleBranch: 010000
-  - contactSettings:
-      gravityStrength: 0
-      reachForce: 1400
-      limpness: 0
-      jointDamping: 30
-      stepHeight: 0.8
-      enforceAngleBounds: 0
-    noContactSettings:
-      gravityStrength: 0
-      reachForce: 600
-      limpness: 0
-      jointDamping: 21
-      stepHeight: 0.85
-      enforceAngleBounds: 1
-    HitGround:
-      m_PersistentCalls:
-        m_Calls: []
-    orientingTransform: {fileID: 6490454046939129288}
-    chain:
-    - {fileID: 8432733846155491958}
-    - {fileID: 7004356620672790054}
-    - {fileID: 7233620997852398348}
-    - {fileID: 3734759025146115614}
-    target: {fileID: 0}
-    stepMax: -0.35
-    minAngle:
-    - -0.7071068
-    - 0
-    - 0.1950903
-    maxAngle:
-    - 0.70710677
-    - 0.999
-    - 0.5
-    angleBranch: 010000
-  - contactSettings:
-      gravityStrength: 0
-      reachForce: 1400
-      limpness: 0
-      jointDamping: 30
-      stepHeight: 0.8
-      enforceAngleBounds: 0
-    noContactSettings:
-      gravityStrength: 0
-      reachForce: 600
-      limpness: 0
-      jointDamping: 21
-      stepHeight: 0.85
-      enforceAngleBounds: 1
-    HitGround:
-      m_PersistentCalls:
-        m_Calls: []
-    orientingTransform: {fileID: 6490454046939129288}
-    chain:
-    - {fileID: 6352680355348902683}
-    - {fileID: 2497506978430973624}
-    - {fileID: 7209045866781297930}
-    - {fileID: 7943478544504156278}
-    target: {fileID: 0}
-    stepMax: -0.4
-    minAngle:
-    - -0.7071068
-    - 0
-    - 0.258819
-    maxAngle:
-    - 0.70710677
-    - 0.999
-    - 0.5
-    angleBranch: 010000
-  - contactSettings:
-      gravityStrength: 0
-      reachForce: 1400
-      limpness: 0
-      jointDamping: 30
-      stepHeight: 0.8
-      enforceAngleBounds: 0
-    noContactSettings:
-      gravityStrength: 0
-      reachForce: 600
-      limpness: 0
-      jointDamping: 21
-      stepHeight: 0.85
-      enforceAngleBounds: 1
-    HitGround:
-      m_PersistentCalls:
-        m_Calls: []
-    orientingTransform: {fileID: 6490454046939129288}
-    chain:
-    - {fileID: 7100841932218194387}
-    - {fileID: 346920434607627716}
-    - {fileID: 1963197130059215229}
-    - {fileID: 3207324145476504997}
-    target: {fileID: 0}
-    stepMax: -0.4
-    minAngle:
-    - -0.7071068
-    - 0
-    - 0.25881904
-    maxAngle:
-    - 0.70710677
-    - 0.999
-    - 0.5
-    angleBranch: 010000
-  castDirectionSourceIndex: 0000000000000000000000000000000001000000010000000100000001000000
-  stdSettings:
-  - gravityStrength: 0
-    reachForce: 600
-    limpness: 0
-    jointDamping: 21
-    stepHeight: 0.85
-    enforceAngleBounds: 1
-  - gravityStrength: 0
-    reachForce: 600
-    limpness: 0
-    jointDamping: 21
-    stepHeight: 0.85
-    enforceAngleBounds: 1
-  - gravityStrength: 0
-    reachForce: 600
-    limpness: 0
-    jointDamping: 21
-    stepHeight: 0.85
-    enforceAngleBounds: 1
-  - gravityStrength: 0
-    reachForce: 600
-    limpness: 0
-    jointDamping: 21
-    stepHeight: 0.85
-    enforceAngleBounds: 1
-  - gravityStrength: 0
-    reachForce: 600
-    limpness: 0
-    jointDamping: 21
-    stepHeight: 0.85
-    enforceAngleBounds: 1
-  - gravityStrength: 0
-    reachForce: 600
-    limpness: 0
-    jointDamping: 21
-    stepHeight: 0.85
-    enforceAngleBounds: 1
-  - gravityStrength: 0
-    reachForce: 600
-    limpness: 0
-    jointDamping: 21
-    stepHeight: 0.85
-    enforceAngleBounds: 1
-  - gravityStrength: 0
-    reachForce: 600
-    limpness: 0
-    jointDamping: 21
-    stepHeight: 0.85
-    enforceAngleBounds: 1
-  jumpSettings:
-  - gravityStrength: 0
-    reachForce: 1000
-    limpness: 0
-    jointDamping: 20
-    stepHeight: 0.8
-    enforceAngleBounds: 1
-  - gravityStrength: 0
-    reachForce: 1000
-    limpness: 0
-    jointDamping: 20
-    stepHeight: 0.8
-    enforceAngleBounds: 1
-  - gravityStrength: 0
-    reachForce: 1000
-    limpness: 0
-    jointDamping: 20
-    stepHeight: 0.8
-    enforceAngleBounds: 1
-  - gravityStrength: 0
-    reachForce: 1000
-    limpness: 0
-    jointDamping: 20
-    stepHeight: 0.8
-    enforceAngleBounds: 1
-  - gravityStrength: 0
-    reachForce: 1000
-    limpness: 0
-    jointDamping: 20
-    stepHeight: 0.8
-    enforceAngleBounds: 1
-  - gravityStrength: 0
-    reachForce: 1000
-    limpness: 0
-    jointDamping: 20
-    stepHeight: 0.8
-    enforceAngleBounds: 1
-  - gravityStrength: 0
-    reachForce: 1000
-    limpness: 0
-    jointDamping: 20
-    stepHeight: 0.8
-    enforceAngleBounds: 1
-  - gravityStrength: 0
-    reachForce: 1000
-    limpness: 0
-    jointDamping: 20
-    stepHeight: 0.8
-    enforceAngleBounds: 1
-  freefallSettings:
-  - gravityStrength: 1
-    reachForce: 300
-    limpness: 10
-    jointDamping: 20
-    stepHeight: 0.85
-    enforceAngleBounds: 1
-  - gravityStrength: 1
-    reachForce: 300
-    limpness: 10
-    jointDamping: 20
-    stepHeight: 0.85
-    enforceAngleBounds: 1
-  - gravityStrength: 1
-    reachForce: 300
-    limpness: 10
-    jointDamping: 20
-    stepHeight: 0.85
-    enforceAngleBounds: 1
-  - gravityStrength: 1
-    reachForce: 300
-    limpness: 10
-    jointDamping: 20
-    stepHeight: 0.85
-    enforceAngleBounds: 1
-  - gravityStrength: 1
-    reachForce: 300
-    limpness: 10
-    jointDamping: 20
-    stepHeight: 0.85
-    enforceAngleBounds: 1
-  - gravityStrength: 1
-    reachForce: 300
-    limpness: 10
-    jointDamping: 20
-    stepHeight: 0.85
-    enforceAngleBounds: 1
-  - gravityStrength: 1
-    reachForce: 300
-    limpness: 10
-    jointDamping: 20
-    stepHeight: 0.85
-    enforceAngleBounds: 1
-  - gravityStrength: 1
-    reachForce: 300
-    limpness: 10
-    jointDamping: 20
-    stepHeight: 0.85
-    enforceAngleBounds: 1
-  limpSettings:
-  - gravityStrength: 1
-    reachForce: 0
-    limpness: 0
-    jointDamping: 5
-    stepHeight: 0.25
-    enforceAngleBounds: 0
-  - gravityStrength: 1
-    reachForce: 0
-    limpness: 0
-    jointDamping: 5
-    stepHeight: 0.25
-    enforceAngleBounds: 0
-  - gravityStrength: 1
-    reachForce: 0
-    limpness: 0
-    jointDamping: 5
-    stepHeight: 0.25
-    enforceAngleBounds: 0
-  - gravityStrength: 1
-    reachForce: 0
-    limpness: 0
-    jointDamping: 5
-    stepHeight: 0.25
-    enforceAngleBounds: 0
-  - gravityStrength: 1
-    reachForce: 75
-    limpness: 15
-    jointDamping: 5
-    stepHeight: 0.5
-    enforceAngleBounds: 1
-  - gravityStrength: 1
-    reachForce: 75
-    limpness: 15
-    jointDamping: 5
-    stepHeight: 0.5
-    enforceAngleBounds: 1
-  - gravityStrength: 1
-    reachForce: 75
-    limpness: 15
-    jointDamping: 5
-    stepHeight: 0.5
-    enforceAngleBounds: 1
-  - gravityStrength: 1
-    reachForce: 75
-    limpness: 15
-    jointDamping: 5
-    stepHeight: 0.5
-    enforceAngleBounds: 1
-  timeOffset:
-  - 0
-  - 0.4
-  - 0.25
-  - 0.65
-  - 0.125
-  - 0.525
-  - 0.375
-  - 0.775
-  reachTolerance: 0.001
-  groundContactRadius: 0.085
-  collisionResponse: 1000
-  maxExtensionFraction: 0.95
 --- !u!114 &8477651183600270903
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1776,15 +1276,15 @@ MonoBehaviour:
     headCapsuleOffset: {x: 0.5, y: -0.035}
   legSynch:
     footHitGround: []
-    reachForce:
-    - 350
-    - 350
-    - 350
-    - 350
-    - 350
-    - 350
-    - 350
-    - 350
+    stepAccel:
+    - 100
+    - 100
+    - 100
+    - 100
+    - 100
+    - 100
+    - 100
+    - 100
     chainDef:
       jointDef:
         m_LocalAnchorA:
@@ -1795,10 +1295,10 @@ MonoBehaviour:
           position: {x: 0, y: 0}
           rotation:
             direction: {x: 1, y: 0}
-        m_EnableSpring: 0
+        m_EnableSpring: 1
         m_SpringTargetAngle: 0
-        m_SpringFrequency: 0
-        m_SpringDamping: 0
+        m_SpringFrequency: 4
+        m_SpringDamping: 0.25
         m_EnableMotor: 0
         m_MotorSpeed: 0
         m_MaxMotorTorque: 0
@@ -1808,7 +1308,7 @@ MonoBehaviour:
         m_ForceThreshold: 100000
         m_TorqueThreshold: 100000
         m_TuningFrequency: 100
-        m_TuningDamping: 1
+        m_TuningDamping: 0.1
         m_DrawScale: 0.001
         m_WorldDrawing: 0
         m_CollideConnected: 0
@@ -1820,7 +1320,7 @@ MonoBehaviour:
             bitMask: 64
           m_GroupIndex: 0
         surfaceMaterial:
-          m_Friction: 1
+          m_Friction: 0.2
           m_Bounciness: 0
           m_FrictionMixing: 0
           m_BouncinessMixing: 0
@@ -1853,8 +1353,8 @@ MonoBehaviour:
           direction: {x: 1, y: 0}
         m_LinearVelocity: {x: 0, y: 0}
         m_AngularVelocity: 0
-        m_LinearDamping: 1
-        m_AngularDamping: 500
+        m_LinearDamping: 0.25
+        m_AngularDamping: 1
         m_GravityScale: 1
         m_SleepThreshold: 0.01
         m_FastRotationAllowed: 0
@@ -1864,98 +1364,98 @@ MonoBehaviour:
         m_Enabled: 1
         m_WorldDrawing: 0
       width:
-      - 0.04
-      - 0.04
-      - 0.04
-      - 0.04
+      - 0.025
+      - 0.025
+      - 0.025
+      - 0.025
     chainSettings:
     - lowerAngleLimit:
-      - -30
-      - -45
-      - -45
-      - -45
-      upperAngleLimit:
-      - 30
-      - 60
-      - 60
-      - 60
-      enableLimit: 01010101
-    - lowerAngleLimit:
-      - -30
-      - -45
-      - -45
-      - -45
-      upperAngleLimit:
-      - 30
-      - 60
-      - 60
-      - 60
-      enableLimit: 01010101
-    - lowerAngleLimit:
-      - -30
-      - -45
-      - -45
-      - -45
-      upperAngleLimit:
-      - 30
-      - 60
-      - 60
-      - 60
-      enableLimit: 01010101
-    - lowerAngleLimit:
-      - -30
-      - -45
-      - -45
-      - -45
-      upperAngleLimit:
-      - 30
-      - 60
-      - 60
-      - 60
-      enableLimit: 01010101
-    - lowerAngleLimit:
-      - -30
-      - -45
       - -45
       - -75
+      - -30
+      - -30
       upperAngleLimit:
       - 30
-      - 60
       - 45
+      - 22.5
       - 30
       enableLimit: 01010101
     - lowerAngleLimit:
-      - -30
-      - -45
       - -45
       - -75
+      - -30
+      - -30
       upperAngleLimit:
       - 30
-      - 60
       - 45
+      - 22.5
       - 30
       enableLimit: 01010101
     - lowerAngleLimit:
-      - -30
-      - -45
       - -45
       - -75
+      - -30
+      - -30
       upperAngleLimit:
       - 30
-      - 60
       - 45
+      - 22.5
       - 30
       enableLimit: 01010101
     - lowerAngleLimit:
-      - -30
-      - -45
       - -45
       - -75
+      - -30
+      - -30
       upperAngleLimit:
       - 30
-      - 60
       - 45
+      - 22.5
       - 30
+      enableLimit: 01010101
+    - lowerAngleLimit:
+      - -22.5
+      - -75
+      - -45
+      - -15
+      upperAngleLimit:
+      - 90
+      - 45
+      - 7.5
+      - 0
+      enableLimit: 01010101
+    - lowerAngleLimit:
+      - -22.5
+      - -75
+      - -45
+      - -15
+      upperAngleLimit:
+      - 90
+      - 45
+      - 7.5
+      - 0
+      enableLimit: 01010101
+    - lowerAngleLimit:
+      - -22.5
+      - -75
+      - -45
+      - -15
+      upperAngleLimit:
+      - 90
+      - 45
+      - 7.5
+      - 0
+      enableLimit: 01010101
+    - lowerAngleLimit:
+      - -22.5
+      - -75
+      - -45
+      - -15
+      upperAngleLimit:
+      - 90
+      - 45
+      - 7.5
+      - 0
       enableLimit: 01010101
     chainTransform:
     - array:
@@ -2007,14 +1507,41 @@ MonoBehaviour:
       - {fileID: 3207324145476504997}
       - {fileID: 4614320631808763307}
     stepMax:
-    - 0.9
-    - 0.9
-    - 0.775
-    - 0.775
+    - 0.7
+    - 0.7
+    - 0.65
+    - 0.65
     - -0.35
     - -0.35
-    - -0.4
-    - -0.4
+    - -0.35
+    - -0.35
+    stepLength:
+    - 0.6
+    - 0.6
+    - 0.6
+    - 0.6
+    - 0.75
+    - 0.75
+    - 0.75
+    - 0.75
+    stepSpeed:
+    - 0.4
+    - 0.4
+    - 0.4
+    - 0.4
+    - 0.4
+    - 0.4
+    - 0.4
+    - 0.4
+    stepHeight:
+    - 0.8
+    - 0.8
+    - 0.8
+    - 0.8
+    - 0.9
+    - 0.9
+    - 0.9
+    - 0.9
     timeOffset:
     - 0
     - 0.4
@@ -2024,14 +1551,13 @@ MonoBehaviour:
     - 0.525
     - 0.375
     - 0.775
-    castDirectionIndex: 0000000000000000000000000000000001000000010000000100000001000000
-    restTime: 0.5
-    stepTime: 0.55
+    bodyDirectionIndex: 0000000000000000000000000000000001000000010000000100000001000000
+    stepContactPoint: 0.9
+    stepDamping: 0.1
     speed0: 0.05
     speed1: 3
-    stepHeight: 0.85
-    drawEffectorGizmos: 0
     drawBodyGizmos: 0
+    drawAngleLimitGizmos: 0000000001000000
   headBoneHeightRefPoint: {fileID: 3597460655033676372}
   grappleArm: {fileID: 8393107135455579191}
   abdomenRoot: {fileID: 7095442034761804592}

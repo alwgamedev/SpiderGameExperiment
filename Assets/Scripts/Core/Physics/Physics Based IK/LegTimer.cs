@@ -45,7 +45,7 @@ public struct LegTimer
         }
     }
 
-    public void Update(float dt)
+    public bool Update(float dt)
     {
         timer += dt;
         while (timer > goalTime)
@@ -53,12 +53,16 @@ public struct LegTimer
             timer -= goalTime;
             stepping = !stepping;
             goalTime = stepping ? stepTime : restTime;
+            return true;
         }
-        while (timer < 0)
+        while (timer < 0)//because we sometimes run timer backwards
         {
             stepping = !stepping;
             goalTime = stepping ? stepTime : restTime;
             timer += goalTime;
+            return true;
         }
+
+        return false;
     }
 }

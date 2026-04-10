@@ -103,7 +103,7 @@ public class SpiderMover : MonoBehaviour
     Vector2 balanceDirection;
     float settleTimer;
 
-    Vector2[] legCastDirection;
+    Vector2[] legBodyDirection;
     float cosFreeHangLegAngleMin;
 
     bool needChangeDirection;
@@ -183,7 +183,7 @@ public class SpiderMover : MonoBehaviour
 
     private void Awake()
     {
-        legCastDirection = new Vector2[2];
+        legBodyDirection = new Vector2[2];
 
         cosFreeHangLegAngleMin = Mathf.Cos(freeHangLegAngleMin);
         scurryRotateMin = new PhysicsRotate(new Vector2(Mathf.Cos(grappleScurryAngleMin), Mathf.Sin(grappleScurryAngleMin)));
@@ -278,7 +278,7 @@ public class SpiderMover : MonoBehaviour
         }
 
         grapple.FixedUpdate(SpideyPhysics.VirtualTransform, Abdomen);
-        UpdateLegSynch(Time.deltaTime);
+        UpdateLegSynch();
     }
 
 
@@ -458,7 +458,7 @@ public class SpiderMover : MonoBehaviour
             //legSynch.OnBodyChangedDirection(p, SpideyPhysics.HeightReferencePosition, u);
         }
 
-        legSynch.SetOrientation(FacingRight);
+        legSynch.OnDirectionChanged(FacingRight);
         grapple.SetOrientation(FacingRight);
     }
 
@@ -774,7 +774,7 @@ public class SpiderMover : MonoBehaviour
             : Mathf.Lerp(airborneStrideMultiplier, 1, -y);
     }
 
-    private void UpdateLegSynch(float dt)
+    private void UpdateLegSynch()
     {
         //legSynch.State =
         //    grounded ? PhysicsLegSynchronizer.LegState.standard
@@ -816,24 +816,27 @@ public class SpiderMover : MonoBehaviour
         //        break;
         //}
 
-        legCastDirection[0] = spiderPhysics.head.rotation.direction.CWPerp();
-        legCastDirection[1] = spiderPhysics.LevelRight.direction.CWPerp();
+        legBodyDirection[0] = FrontLegBodyDirection();
+        legBodyDirection[1] = HindLegBodyDirection();
 
-        legSynch.UpdateAllLegs(dt, groundMap, legCastDirection, grounded);
+        legSynch.UpdateAllLegs(groundMap, legBodyDirection, grounded, FacingRight);
     }
 
     private void InitializeLegSynch()
     {
-        legSynch.Initialize(FacingRight);
+        legSynch.Initialize();
 
         for (int i = 0; i < 4; i++)
         {
-            legSynch.InitializeLeg(i, SpideyPhysics.head);
+            legSynch.InitializeLeg(i, SpideyPhysics.head, FrontLegBodyDirection(), EffectiveRideHeight, FacingRight);
         }
         for (int i = 4; i < 8; i++)
         {
-            legSynch.InitializeLeg(i, SpideyPhysics.abdomen);
+            legSynch.InitializeLeg(i, SpideyPhysics.abdomen, HindLegBodyDirection(), EffectiveRideHeight, FacingRight);
         }
         legSynch.RecalculateMass();
     }
+
+    private Vector2 FrontLegBodyDirection() => FacingRight ? spiderPhysics.head.rotation.direction : -spiderPhysics.head.rotation.direction;
+    private Vector2 HindLegBodyDirection() => FacingRight ? spiderPhysics.LevelRight.direction : -spiderPhysics.LevelRight.direction;
 }
