@@ -83,6 +83,32 @@ public struct JointedChain
         }
     }
 
+    public void DrawAngleGizmos()
+    {
+        if (joint != null)
+        {
+            using (new Handles.DrawingScope(Color.red))
+            {
+                for (int i = 0; i < joint.Length; i++)
+                {
+                    ref var j = ref joint[i];
+
+                    if (j.isValid)
+                    {
+                        var p = j.bodyB.position;
+                        var r = Vector2.Distance(p, NextPosition(i));
+                        var rot0 = j.bodyA.rotation.MultiplyRotation(j.localAnchorA.rotation);
+                        var rotMin = rot0.MultiplyRotation(PhysicsRotate.FromDegrees(j.lowerAngleLimit));
+                        var rotMax = rot0.MultiplyRotation(PhysicsRotate.FromDegrees(j.upperAngleLimit));
+                        Handles.DrawLine(p, p + r * rotMin.direction);
+                        Handles.DrawLine(p, p + r * rotMax.direction);
+                        Handles.DrawWireArc(p, Vector3.forward, rotMin.direction, j.upperAngleLimit - j.lowerAngleLimit, r);
+                    }
+                }
+            }
+        }
+    }
+
     public void UpdateDefAndSettings(JointedChainDefinition def, JointedChainSettings settings)
     {
         for (int i = 0; i < body.Length; i++)
