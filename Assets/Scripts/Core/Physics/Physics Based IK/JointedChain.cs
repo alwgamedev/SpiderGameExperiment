@@ -25,6 +25,7 @@ public struct JointedChain
 {
     public PhysicsBody[] body;
     public PhysicsHingeJoint[] joint;
+    public bool reversed;
 
     float effectorDistance;
     float mass;
@@ -32,7 +33,7 @@ public struct JointedChain
     public readonly int JointCount => joint.Length;
     public readonly float Mass => mass;
     public readonly Vector2 BasePosition => body[0].position;
-    public readonly Vector2 EffectorPosition => body[^1].position + effectorDistance * body[^1].rotation.direction;
+    public readonly Vector2 EffectorPosition => body[^1].position + (reversed ? effectorDistance : -effectorDistance) * body[^1].rotation.direction;
     public PhysicsBody AnchorBody => joint[0].bodyA;
     public readonly Vector2 NextPosition(int i) => i == body.Length - 1 ? EffectorPosition : body[i + 1].position;
 
@@ -157,6 +158,8 @@ public struct JointedChain
         jointDef.localAnchorA = anchorBody.transform.InverseMultiplyTransform(body[0].transform);
         jointDef.localAnchorB = PhysicsTransform.identity;
         joint[0] = PhysicsHingeJoint.Create(anchorBody.world, jointDef);
+
+        reversed = false;
     }
 
     /// <summary> Does not create a joint 0. </summary>
@@ -216,6 +219,21 @@ public struct JointedChain
     public readonly void AccelerateEnd(int i, Vector2 accel)
     {
         body[i].ApplyForce(body[i].mass * accel, NextPosition(i));
+    }
+
+    public readonly void ImpulseBase(int i, Vector2 accel)
+    {
+        body[i].ApplyLinearImpulse(body[i].mass * accel, body[i].position);
+    }
+
+    public readonly void ImpulseCenter(int i, Vector2 accel)
+    {
+        body[i].ApplyLinearImpulseToCenter(body[i].mass * accel);
+    }
+
+    public readonly void ImpulseEnd(int i, Vector2 accel)
+    {
+        body[i].ApplyLinearImpulse(body[i].mass * accel, NextPosition(i));
     }
 
     private void RecomputeMass()

@@ -151,7 +151,6 @@ public class SpiderMover : MonoBehaviour
     {
         spiderPhysics.CenterRootTransforms(abdomenRoot, abdomenBone, headRoot, headBone);
     }
-#endif
 
     private void OnDrawGizmos()
     {
@@ -182,6 +181,7 @@ public class SpiderMover : MonoBehaviour
             legSynch.OnValidate();
         }
     }
+#endif
 
     private void Awake()
     {
@@ -445,9 +445,10 @@ public class SpiderMover : MonoBehaviour
 
     private void ChangeDirection()
     {
+        PhysicsTransform reflection;
         if (!grapple.FreeHanging)
         {
-            var reflection = SpideyPhysics.VirtualTransform;
+            reflection = SpideyPhysics.VirtualTransform;
             SpideyPhysics.ChangeDirection(reflection, abdomenBone, headBone, grappleArm);
             //legSynch.OnBodyChangedDirection(reflection.position, reflection.position, reflection.rotation.direction);
         }
@@ -455,12 +456,12 @@ public class SpiderMover : MonoBehaviour
         {
             var p = SpideyPhysics.HeightReferencePosition;
             var u = SpideyPhysics.LevelRight.direction.CCWPerp();
-            var reflection = new PhysicsTransform(grapple.FreeHangLeveragePoint, new PhysicsRotate(u));
+            reflection = new PhysicsTransform(grapple.FreeHangLeveragePoint, new PhysicsRotate(u));
             SpideyPhysics.ChangeDirection(reflection, abdomenBone, headBone, grappleArm);
             //legSynch.OnBodyChangedDirection(p, SpideyPhysics.HeightReferencePosition, u);
         }
 
-        legSynch.OnDirectionChanged(FacingRight);
+        legSynch.OnDirectionChanged(reflection);
         grapple.SetOrientation(FacingRight);
     }
 

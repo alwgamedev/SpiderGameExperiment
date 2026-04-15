@@ -15882,56 +15882,8 @@ PrefabInstance:
       value: Spider
       objectReference: {fileID: 0}
     - target: {fileID: 9070389282856877564, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: legSynch.stepDropPoint
-      value: 0.7
-      objectReference: {fileID: 0}
-    - target: {fileID: 9070389282856877564, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: legSynch.stepStopPoint
-      value: 1.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 9070389282856877564, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: legSynch.drawFootGizmos
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9070389282856877564, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: legSynch.debugForceScale
-      value: 0.025
-      objectReference: {fileID: 0}
-    - target: {fileID: 9070389282856877564, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: legSynch.debugGroundDataScale
-      value: 0.25
-      objectReference: {fileID: 0}
-    - target: {fileID: 9070389282856877564, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: legSynch.drawForces.Array.size
-      value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 9070389282856877564, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: legSynch.debugForces.Array.size
-      value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 9070389282856877564, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: legSynch.footGroundContactRadius
-      value: 0.075
-      objectReference: {fileID: 0}
-    - target: {fileID: 9070389282856877564, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: legSynch.debugGroundData.Array.size
-      value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 9070389282856877564, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: legSynch.stepTransferSafetyThreshold
+      propertyPath: legSynch.chainDef.shapeDef.m_WorldDrawing
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 9070389282856877564, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: 'legSynch.drawAngleLimitGizmos.Array.data[0]'
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9070389282856877564, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: 'legSynch.drawAngleLimitGizmos.Array.data[4]'
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9070389282856877564, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: 'legSynch.drawAngleLimitGizmos.Array.data[5]'
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9149063515827151626, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
       propertyPath: m_LocalPosition.x

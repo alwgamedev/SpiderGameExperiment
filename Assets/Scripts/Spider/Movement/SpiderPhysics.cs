@@ -165,19 +165,19 @@ public struct SpiderPhysics
 
     public void ChangeDirection(PhysicsTransform reflection, Transform abdomenBone, Transform headBone, Transform grappleArmTransform)
     {
-        abdomen.transform = abdomen.transform.ReflectHorizontally(reflection, true);
-        head.transform = head.transform.ReflectHorizontally(reflection, true);
+        abdomen.transform = abdomen.transform.ReflectAndFlip(reflection, Vector2.zero);
+        head.transform = head.transform.ReflectAndFlip(reflection, Vector2.zero);
 
         abdomen.SyncTransform();
         head.SyncTransform();
 
-        abdomenBone.ReflectHorizontally(abdomen.transform);//grapple arm is childed to abdomenBone
-        headBone.ReflectHorizontally(head.transform);
+        abdomenBone.ReflectAndFlip(abdomen.transform);//grapple arm is childed to abdomenBone
+        headBone.ReflectAndFlip(head.transform);
 
         grappleArmShape.polygonGeometry = GrappleArmWorldBox(grappleArmTransform).InverseTransform(abdomen.transform);
         abdomen.ApplyMassFromShapes();
 
-        ((PhysicsJoint)headJoint).ReflectAnchorsHorizontallyWithinBodies(true);
+        ((PhysicsJoint)headJoint).ReflectAndFlipAnchors();
 
         facingRight = !facingRight;
     }

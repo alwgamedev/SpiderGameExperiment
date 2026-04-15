@@ -7,33 +7,49 @@ public static class PhysicsCoreHelper
 {
     //MISC
 
+    public static PhysicsTransform RotateAroundPoint(this PhysicsTransform t, PhysicsRotate rot, Vector2 rotLocalCenter)
+    {
+        var rotWorldCenter = t.TransformPoint(rotLocalCenter);
+        t.rotation = t.rotation.MultiplyRotation(rot);
+        t.position += rotWorldCenter - t.TransformPoint(rotLocalCenter);
+        return t;
+    }
+
     /// <summary>
     /// Reflect transform A over transform B's y-axis, with transform B's position as the origin.
-    /// changeDirection = true means transform A does an additional 180 deg rotation in its local space after the reflection.
     /// </summary>
-    public static PhysicsTransform ReflectHorizontally(this PhysicsTransform tA, PhysicsTransform tB, bool changeDirection)
+    public static PhysicsTransform Reflect(this PhysicsTransform tA, PhysicsTransform tB)
     {
         var origin = tB.position;
-        var hyperplaneNormal = tB.rotation.direction;
-        var rotHyperplaneNormal = changeDirection ? hyperplaneNormal.CCWPerp() : hyperplaneNormal;
-        tA.position = origin + (tA.position - origin).ReflectAcrossHyperplane(hyperplaneNormal);
-        tA.rotation = new PhysicsRotate(tA.rotation.direction.ReflectAcrossHyperplane(rotHyperplaneNormal));
+        //var hyperplaneNormal = tB.rotation.direction;
+        //var rotHyperplaneNormal = changeDirection ? hyperplaneNormal.CCWPerp() : hyperplaneNormal;
+        tA.position = origin + (tA.position - origin).ReflectAcrossHyperplane(tB.rotation.direction);
+        tA.rotation = new PhysicsRotate(tA.rotation.direction.ReflectAcrossHyperplane(tB.rotation.direction));
         return tA;
+    }
+
+    /// <summary>
+    /// Reflect transform A over transform B's y-axis, with transform B's position as the origin, 
+    /// then rotate A an additional 180 degrees with respect to given center.
+    /// </summary>
+    public static PhysicsTransform ReflectAndFlip(this PhysicsTransform tA, PhysicsTransform tB, Vector2 flipLocalCenter)
+    {
+        return tA.Reflect(tB).RotateAroundPoint(PhysicsRotate.left, flipLocalCenter);
     }
 
     /// <summary>
     /// Use in conjunction with reflect methods if reflected physics bodies are connected by joints.
     /// </summary>
-    public static void ReflectAnchorsHorizontallyWithinBodies(this PhysicsJoint joint, bool changeDirection)
+    public static void ReflectAndFlipAnchors(this PhysicsJoint joint)
     {
-        joint.localAnchorA = joint.localAnchorA.ReflectHorizontally(PhysicsTransform.identity, changeDirection);
-        joint.localAnchorB = joint.localAnchorB.ReflectHorizontally(PhysicsTransform.identity, changeDirection);
+        joint.localAnchorA = joint.localAnchorA.ReflectAndFlip(PhysicsTransform.identity, Vector2.zero);
+        joint.localAnchorB = joint.localAnchorB.ReflectAndFlip(PhysicsTransform.identity, Vector2.zero);
     }
 
     /// <summary>
     /// Use e.g. for a bone rig childed to a physics transform to make the rigged character change direction.
     /// </summary>
-    public static void ReflectHorizontally(this Transform transform, PhysicsTransform reflection)
+    public static void ReflectAndFlip(this Transform transform, PhysicsTransform reflection)
     {
         var s = transform.localScale;
         s.x *= -1;
