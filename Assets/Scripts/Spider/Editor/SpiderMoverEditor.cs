@@ -26,6 +26,16 @@ public class SpiderMoverEditor : Editor
             text = "Center Physics Bodies"
         });
 
+        root.Add(new Button(() => ((SpiderMover)target).CreateLegPhysicsBodies())
+        {
+            text = "Create Leg Physics Bodies"
+        });
+
+        root.Add(new Button(() => ((SpiderMover)target).CenterLegPhysicsBodies())
+        {
+            text = "Center Leg Physics Bodies"
+        });
+
         return root;
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using Unity.Mathematics;
 using Unity.U2D.Physics;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -26,8 +27,6 @@ public class LegSynchronizer
     [SerializeField] int[] castDirectionIndex;
     [SerializeField] Vector2 stepAccel;
     [SerializeField] Vector2 restAccel;
-    //[SerializeField] Vector2 stepImpulse;
-    [SerializeField] Vector2 stepDamping;
     [SerializeField] float stepPeakTime;
     [SerializeField] float stepDropPoint;//no upward forces will be applied beyond this point
     [SerializeField] float stepStopPoint;
@@ -113,9 +112,9 @@ public class LegSynchronizer
     {
         if (drawBodyGizmos)
         {
-            for (int i = 0; i < chainTransform.Length; i++)
+            for (int i = 0; i < bones.Length; i++)
             {
-                JointedChain.DrawBodyGizmos(chainTransform[i].array, chainDef.width);
+                JointedChain.DrawBodyGizmos(bones[i].array, chainDef.width);
             }
         }
 
@@ -131,29 +130,97 @@ public class LegSynchronizer
                     }
                 }
             }
-            else if (chainTransform != null && drawAngleLimitGizmos.Length == chainTransform.Length)//for edit mode
+            else if (bones != null && drawAngleLimitGizmos.Length == bones.Length)//for edit mode
             {
-                for (int i = 0; i < chainTransform.Length; i++)
+                for (int i = 0; i < bones.Length; i++)
                 {
                     if (drawAngleLimitGizmos[i])
                     {
-                        JointedChain.DrawAngleGizmos(chainTransform[i].array, chainSettings[i]);
+                        JointedChain.DrawAngleGizmos(bones[i].array, chainSettings[i]);
                     }
                 }
             }
         }
 
-        if (chainTransform != null && drawFootGizmo != null && drawFootGizmo.Length == chainTransform.Length)
+        if (bones != null && drawFootGizmo != null && drawFootGizmo.Length == bones.Length)
         {
-            for (int i = 0; i < chainTransform.Length; i++)
+            for (int i = 0; i < bones.Length; i++)
             {
-                if (drawFootGizmo[i] && chainTransform[i].array != null)
+                if (drawFootGizmo[i] && bones[i].array != null)
                 {
                     Gizmos.color = Color.green;
-                    Gizmos.DrawWireSphere(chainTransform[i].array[^1].position, footGroundContactRadius);
+                    Gizmos.DrawWireSphere(bones[i].array[^1].position, footGroundContactRadius);
                 }
             }
         }
+    }
+
+    //for one-time use
+    public void CreatePhysicsTransforms(MonoBehaviour owner)
+    {
+        Undo.IncrementCurrentGroup();
+        Undo.SetCurrentGroupName("Create Leg Physics Transforms");
+        int groupId = Undo.GetCurrentGroup();
+
+        bones = new ArrayContainer<Transform>[chainTransform.Length];
+        Undo.RecordObject(owner, "Create Leg Physics Transforms");
+
+        for (int i = 0; i < chainTransform.Length; i++)
+        {
+            var oldBones = chainTransform[i].array;
+            var parent = oldBones[0].parent;
+
+            bones[i] = new()
+            {
+                array = new Transform[oldBones.Length]
+            };
+            Array.Copy(oldBones, bones[i].array, bones[i].array.Length);
+
+            for (int j = 0; j < oldBones.Length; j++)
+            {
+                var physBody = new GameObject(oldBones[j].name + " Phys Body");
+                Undo.RegisterCreatedObjectUndo(physBody, "Create Phys Transform");
+                Undo.SetTransformParent(physBody.transform, parent, "Set Phys Transform Parent");
+
+                physBody.transform.localScale = Vector3.one;
+                physBody.transform.SetPositionAndRotation(oldBones[j].position, oldBones[j].rotation);
+                Undo.SetTransformParent(oldBones[j], physBody.transform, "Set Bone Parent");
+
+                chainTransform[i].array[j] = physBody.transform;
+                PrefabUtility.RecordPrefabInstancePropertyModifications(oldBones[j]);
+            }
+        }
+
+        PrefabUtility.RecordPrefabInstancePropertyModifications(owner);
+
+        Undo.CollapseUndoOperations(groupId);
+    }
+
+    public void CenterPhysicsTransforms()
+    {
+        Undo.IncrementCurrentGroup();
+        Undo.SetCurrentGroupName("Center Leg Bodies");
+        int groupId = Undo.GetCurrentGroup();
+
+        for (int i = 0; i < bones.Length; i++)
+        {
+            var physBodies = chainTransform[i].array;
+            var bones = this.bones[i].array;
+            for (int j = 0; j < bones.Length - 1; j++)
+            {
+                var p0 = bones[j].position;
+
+                Undo.RecordObject(physBodies[j], "Set phys body position");
+                Undo.RecordObject(bones[j], "Set bone position");
+                physBodies[j].position = 0.5f * (bones[j].position + bones[j + 1].position);
+                bones[j].position = p0;
+
+                PrefabUtility.RecordPrefabInstancePropertyModifications(physBodies[j]);
+                PrefabUtility.RecordPrefabInstancePropertyModifications(bones[j]);
+            }
+        }
+
+        Undo.CollapseUndoOperations(groupId);
     }
 #endif
 
@@ -179,7 +246,7 @@ public class LegSynchronizer
 
         void InitializeLeg(int i, PhysicsBody body)
         {
-            leg[i].Initialize(chainTransform[i].array, body, chainDef, chainSettings[i]);
+            leg[i].Initialize(chainTransform[i].array, bones[i].array, body, chainDef, chainSettings[i]);
         }
     }
 
@@ -323,7 +390,8 @@ public class LegSynchronizer
         //    aY -= gY;
         //}
 
-        AccelerateLegEndsWithDamping(ref l, aX, aY, gdDir, gdUp, stepDamping);
+        var a = aX * gdDir + aY * gdUp;
+        AccelerateLegEnds(ref l, a);
     }
 
     //2do:
@@ -364,7 +432,8 @@ public class LegSynchronizer
         //    aY -= gY;
         //}
 
-        AccelerateLegEndsWithDamping(ref l, aX, aY, gdDir, gdUp, stepDamping);
+        var a = aX * gdDir + aY * gdUp;
+        AccelerateLegEnds(ref l, a);
     }
 
     //private void ApplyInitialStepImpulse(int i, GroundMap map, float stepHeight, float hipSpeed,
@@ -405,19 +474,6 @@ public class LegSynchronizer
         }
 
         return gdPt;
-    }
-
-    private static void AccelerateLegEndsWithDamping(ref JointedChain l, float aX, float aY, Vector2 dirX, Vector2 dirY, Vector2 damping)
-    {
-        for (int j = 0; j < l.JointCount; j++)
-        {
-            var v = l.body[j].GetWorldPointVelocity(l.NextPosition(j));//linearVelocity;
-            var vX = Vector2.Dot(v, dirX);
-            var vY = Vector2.Dot(v, dirY);
-            var a = (aX - damping.x * Mathf.Abs(vX) * vX) * dirX + (aY - damping.y * Mathf.Abs(vY) * vY) * dirY;
-            //l.AccelerateCenter(j, a);
-            l.AccelerateEnd(j, a);
-        }
     }
 
     private static void AccelerateLegEnds(ref JointedChain l, Vector2 a)

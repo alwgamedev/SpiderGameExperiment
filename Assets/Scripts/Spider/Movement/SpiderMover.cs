@@ -2,7 +2,6 @@
 using UnityEngine.Events;
 using Unity.U2D.Physics;
 using Unity.Collections;
-using System;
 
 
 public class SpiderMover : MonoBehaviour
@@ -150,6 +149,16 @@ public class SpiderMover : MonoBehaviour
     public void CenterPhysicsBodies()
     {
         spiderPhysics.CenterRootTransforms(abdomenRoot, abdomenBone, headRoot, headBone);
+    }
+
+    public void CreateLegPhysicsBodies()
+    {
+        legSynch.CreatePhysicsTransforms(this);
+    }
+
+    public void CenterLegPhysicsBodies()
+    {
+        legSynch.CenterPhysicsTransforms();
     }
 
     private void OnDrawGizmos()

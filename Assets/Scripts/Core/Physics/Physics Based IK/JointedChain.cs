@@ -145,9 +145,9 @@ public struct JointedChain
     }
 
     /// <summary> Use if you want the base of the chain to be anchored to another body. </summary>
-    public void Initialize(Transform[] transform, PhysicsBody anchorBody, JointedChainDefinition def, JointedChainSettings settings)
+    public void Initialize(Transform[] physTransform, Transform[] bone, PhysicsBody anchorBody, JointedChainDefinition def, JointedChainSettings settings)
     {
-        Initialize(transform, anchorBody.world, def, settings);
+        Initialize(physTransform, bone, anchorBody.world, def, settings);
 
         var jointDef = def.jointDef;
         jointDef.enableLimit = settings.enableLimit[0];
@@ -155,37 +155,36 @@ public struct JointedChain
         jointDef.upperAngleLimit = settings.upperAngleLimit[0];
         jointDef.bodyA = anchorBody;
         jointDef.bodyB = body[0];
-        jointDef.localAnchorA = anchorBody.transform.InverseMultiplyTransform(body[0].transform);
-        jointDef.localAnchorB = PhysicsTransform.identity;
+        var worldAnchor = new PhysicsTransform(bone[0].position, body[0].rotation);
+        jointDef.localAnchorA = anchorBody.transform.InverseMultiplyTransform(worldAnchor);
+        jointDef.localAnchorB = body[0].transform.InverseMultiplyTransform(worldAnchor);
         joint[0] = PhysicsHingeJoint.Create(anchorBody.world, jointDef);
 
         reversed = false;
     }
 
-    /// <summary> Does not create a joint 0. </summary>
-    public void Initialize(Transform[] transform, PhysicsWorld world, JointedChainDefinition def, JointedChainSettings settings)
+    /// <summary> Does not create a joint 0. Bone array should list the joint positions and effector position, and
+    /// physTransforms are expected to be centered between the bone positions.</summary>
+    public void Initialize(Transform[] physTransform, Transform[] bone, PhysicsWorld world, JointedChainDefinition def, JointedChainSettings settings)
     {
-        body = new PhysicsBody[transform.Length - 1];
-        joint = new PhysicsHingeJoint[transform.Length - 1];
-        effectorDistance = Vector2.Distance(transform[^2].position, transform[^1].position);
+        body = new PhysicsBody[bone.Length - 1];
+        joint = new PhysicsHingeJoint[bone.Length - 1];
+        effectorDistance = Vector2.Distance(bone[^2].position, bone[^1].position);
 
         //create bodies
         var bodyDefCopy = def.bodyDef;
         for (int i = 0; i < body.Length; i++)
         {
-            bodyDefCopy.position = transform[i].position;
-            bodyDefCopy.rotation = new PhysicsRotate(transform[i].rotation, PhysicsWorld.TransformPlane.XY);
+            bodyDefCopy.position = physTransform[i].position;
+            bodyDefCopy.rotation = new PhysicsRotate(physTransform[i].rotation, PhysicsWorld.TransformPlane.XY);
             var chainBody = world.CreateBody(bodyDefCopy);
 
-            Vector2 v = transform[i + 1].position - transform[i].position;
+            Vector2 v = 2 * (physTransform[i].position - bone[i].position);
             var l = v.magnitude;
-            Vector2 midpoint = 0.5f * (transform[i].position + transform[i + 1].position);
             var boxGeometry = PolygonGeometry.CreateBox(new Vector2(l, def.width[i]));
-            var worldTransform = new PhysicsTransform(midpoint, chainBody.rotation);
-            boxGeometry = boxGeometry.Transform(worldTransform).InverseTransform(chainBody.transform);
 
             chainBody.CreateShape(boxGeometry, def.shapeDef);
-            chainBody.transformObject = transform[i];
+            chainBody.transformObject = physTransform[i];
             body[i] = chainBody;
         }
 
@@ -197,8 +196,9 @@ public struct JointedChain
             jointDefCopy.upperAngleLimit = settings.upperAngleLimit[i];
             jointDefCopy.bodyA = body[i - 1];
             jointDefCopy.bodyB = body[i];
-            jointDefCopy.localAnchorA = body[i - 1].transform.InverseMultiplyTransform(body[i].transform);
-            jointDefCopy.localAnchorB = PhysicsTransform.identity;
+            var worldAnchor = new PhysicsTransform(bone[i].position, body[i].rotation);
+            jointDefCopy.localAnchorA = body[i - 1].transform.InverseMultiplyTransform(worldAnchor);
+            jointDefCopy.localAnchorB = body[i].transform.InverseMultiplyTransform(worldAnchor);
 
             joint[i] = PhysicsHingeJoint.Create(world, jointDefCopy);
         }
