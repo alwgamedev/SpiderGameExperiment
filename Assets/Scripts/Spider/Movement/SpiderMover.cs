@@ -13,7 +13,7 @@ public class SpiderMover : MonoBehaviour
     //[SerializeField] PhysicsLegSynchronizer legSynch;
     [SerializeField] SpiderPhysics spiderPhysics;
     [SerializeField] LegSynchronizer legSynch;
-    [SerializeField] Transform headBoneHeightRefPoint; 
+    [SerializeField] Transform headBoneHeightRefPoint;
     [SerializeField] Transform grappleArm;
     [SerializeField] Transform abdomenRoot;
     [SerializeField] Transform abdomenBone;
@@ -318,7 +318,7 @@ public class SpiderMover : MonoBehaviour
 
         }
 
-        thrusterFlame.Update(thruster.Engaged ? legSynch.absoluteBodyGroundSpeed : -1, Time.deltaTime);
+        thrusterFlame.Update(thruster.Engaged ? Abdomen.linearVelocity.magnitude : -1, Time.deltaTime);
     }
 
     private void UpdateThrusterEngagement()
@@ -470,7 +470,7 @@ public class SpiderMover : MonoBehaviour
             //legSynch.OnBodyChangedDirection(p, SpideyPhysics.HeightReferencePosition, u);
         }
 
-        legSynch.OnDirectionChanged(reflection);
+        legSynch.OnDirectionChanged(reflection, FacingRight);
         grapple.SetOrientation(FacingRight);
     }
 
@@ -583,7 +583,7 @@ public class SpiderMover : MonoBehaviour
 
     private Vector2 FreeHangingHeadRight(Vector2 bodyRight)
     {
-        var y =  bodyRight.y;
+        var y = bodyRight.y;
         if (y < 0)
         {
             y = -y * freeHangHeadAngle;
@@ -652,7 +652,7 @@ public class SpiderMover : MonoBehaviour
         {
             var dot = Vector2.Dot(grapple.LastCarryForce, down);
             if (down.y < 0 && dot < 0 && l > 0 && grapple.GrappleReleaseInput < 0)
-                //allow the grapple to pull you away from ground, except when you're clinging upside down (so you don't fall unintentionally from rope bobbling)
+            //allow the grapple to pull you away from ground, except when you're clinging upside down (so you don't fall unintentionally from rope bobbling)
             {
                 return;
             }
@@ -794,9 +794,16 @@ public class SpiderMover : MonoBehaviour
         //    : grapple.FreeHanging ? PhysicsLegSynchronizer.LegState.limp
         //    : PhysicsLegSynchronizer.LegState.freefall;
 
-        var groundVelocity = Vector2.Dot(Abdomen.linearVelocity, OrientedGroundDirection);
-        legSynch.bodyGroundSpeedSign = (grounded && grapple.GrappleAnchored) || grapple.FreeHanging ? 1 : Mathf.Sign(groundVelocity);
-        legSynch.absoluteBodyGroundSpeed = grounded ? Mathf.Abs(groundVelocity) : Mathf.Min(Abdomen.linearVelocity.magnitude, airborneLegSpeedMax);
+        //var groundVelocity = Vector2.Dot(Abdomen.linearVelocity, OrientedGroundDirection);
+        //var orientedbodyGroundSpeed = grounded ?
+        //    Vector2.Dot(Abdomen.linearVelocity, OrientedGroundDirection)
+        //    : Mathf.Min(Abdomen.linearVelocity.magnitude, airborneLegSpeedMax);
+        //if (grounded && grapple.GrappleAnchored)
+        //{
+        //    orientedbodyGroundSpeed = Mathf.Abs(orientedbodyGroundSpeed);
+        //}
+        //legSynch.bodyGroundSpeedSign = (grounded && grapple.GrappleAnchored) || grapple.FreeHanging ? 1 : Mathf.Sign(groundVelocity);
+        //legSynch.absoluteBodyGroundSpeed = grounded ? Mathf.Abs(groundVelocity) : Mathf.Min(Abdomen.linearVelocity.magnitude, airborneLegSpeedMax);
         legSynch.stepHeightFraction = 1 - crouchProgress * crouchHeightFraction;
         legSynch.timeScale = grounded || thruster.Engaged ? 1 : airborneLegAnimationTimeScale;
 

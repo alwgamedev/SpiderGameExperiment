@@ -1384,8 +1384,8 @@ MonoBehaviour:
             direction: {x: 1, y: 0}
         m_EnableSpring: 1
         m_SpringTargetAngle: 0
-        m_SpringFrequency: 7.5
-        m_SpringDamping: 2.5
+        m_SpringFrequency: 2.5
+        m_SpringDamping: 5
         m_EnableMotor: 0
         m_MotorSpeed: 0
         m_MaxMotorTorque: 0
@@ -1427,7 +1427,7 @@ MonoBehaviour:
         m_PreSolveCallbacks: 0
         m_StartStaticContacts: 0
         m_StartMassUpdate: 1
-        m_WorldDrawing: 1
+        m_WorldDrawing: 0
         moverData:
           m_PushLimit: 0
           m_ClipVelocity: 0
@@ -1440,8 +1440,8 @@ MonoBehaviour:
           direction: {x: 1, y: 0}
         m_LinearVelocity: {x: 0, y: 0}
         m_AngularVelocity: 0
-        m_LinearDamping: 0
-        m_AngularDamping: 5
+        m_LinearDamping: 0.25
+        m_AngularDamping: 2.5
         m_GravityScale: 1
         m_SleepThreshold: 0.01
         m_FastRotationAllowed: 0
@@ -1457,91 +1457,91 @@ MonoBehaviour:
       - 0.025
     chainSettings:
     - lowerAngleLimit:
-      - -60
-      - -30
-      - -22.5
-      - -30
-      upperAngleLimit:
-      - 30
-      - 60
-      - 30
-      - 30
-      enableLimit: 01010101
-    - lowerAngleLimit:
-      - -60
-      - -30
-      - -22.5
-      - -30
-      upperAngleLimit:
-      - 30
-      - 60
-      - 30
-      - 30
-      enableLimit: 01010101
-    - lowerAngleLimit:
-      - -60
-      - -30
-      - -22.5
-      - -30
-      upperAngleLimit:
-      - 30
-      - 60
-      - 30
-      - 30
-      enableLimit: 01010101
-    - lowerAngleLimit:
-      - -60
-      - -30
-      - -22.5
-      - -30
-      upperAngleLimit:
-      - 30
-      - 60
-      - 30
-      - 30
-      enableLimit: 01010101
-    - lowerAngleLimit:
-      - -22.5
       - -75
-      - -22.5
+      - -45
+      - -15
+      - -30
+      upperAngleLimit:
+      - 37.5
+      - 60
+      - 45
+      - 30
+      enableLimit: 01010101
+    - lowerAngleLimit:
+      - -75
+      - -45
+      - -15
+      - -30
+      upperAngleLimit:
+      - 37.5
+      - 60
+      - 45
+      - 30
+      enableLimit: 01010101
+    - lowerAngleLimit:
+      - -75
+      - -45
+      - -15
+      - -30
+      upperAngleLimit:
+      - 37.5
+      - 60
+      - 45
+      - 30
+      enableLimit: 01010101
+    - lowerAngleLimit:
+      - -75
+      - -45
+      - -15
+      - -30
+      upperAngleLimit:
+      - 37.5
+      - 60
+      - 45
+      - 30
+      enableLimit: 01010101
+    - lowerAngleLimit:
+      - -30
+      - -75
+      - -37.5
       - -15
       upperAngleLimit:
-      - 90
-      - 45
-      - 7.5
+      - 105
+      - 52.5
+      - 15
       - 0
       enableLimit: 01010101
     - lowerAngleLimit:
-      - -22.5
+      - -30
       - -75
-      - -22.5
+      - -37.5
       - -15
       upperAngleLimit:
-      - 90
-      - 45
-      - 7.5
+      - 105
+      - 52.5
+      - 15
       - 0
       enableLimit: 01010101
     - lowerAngleLimit:
-      - -22.5
+      - -30
       - -75
-      - -22.5
+      - -37.5
       - -15
       upperAngleLimit:
-      - 90
-      - 45
-      - 7.5
+      - 105
+      - 52.5
+      - 15
       - 0
       enableLimit: 01010101
     - lowerAngleLimit:
-      - -22.5
+      - -30
       - -75
-      - -22.5
+      - -37.5
       - -15
       upperAngleLimit:
-      - 90
-      - 45
-      - 7.5
+      - 105
+      - 52.5
+      - 15
       - 0
       enableLimit: 01010101
     chainTransform:
@@ -1635,19 +1635,19 @@ MonoBehaviour:
       - {fileID: 3207324145476504997}
       - {fileID: 4614320631808763307}
     stepMax:
-    - 0.75
-    - 0.75
-    - 0.75
-    - 0.75
-    - -0.3
-    - -0.3
-    - -0.3
-    - -0.3
+    - 0.7
+    - 0.7
+    - 0.65
+    - 0.65
+    - -0.2
+    - -0.2
+    - -0.2
+    - -0.2
     stepLength:
-    - 0.475
-    - 0.475
-    - 0.475
-    - 0.475
+    - 0.55
+    - 0.55
+    - 0.55
+    - 0.55
     - 0.475
     - 0.475
     - 0.475
@@ -1662,27 +1662,29 @@ MonoBehaviour:
     - 0.4
     - 0.4
     stepHeight:
-    - 0.7
-    - 0.7
-    - 0.7
-    - 0.7
-    - 0.7
-    - 0.7
-    - 0.7
-    - 0.7
+    - 0.45
+    - 0.45
+    - 0.45
+    - 0.45
+    - 0.6
+    - 0.6
+    - 0.6
+    - 0.6
     castDirectionIndex: 0000000000000000000000000000000001000000010000000100000001000000
-    stepAccel: {x: 100, y: 200}
+    stepAccel: {x: 200, y: 200}
     restAccel: {x: 100, y: 200}
-    stepDamping: {x: 0, y: 0}
-    stepPeakTime: 0.4
-    stepDropPoint: 0.7
-    stepStopPoint: 1.25
+    stepPeakTime: 0.35
+    stepDropPoint: 0.5
+    stepStopPoint: 1.2
+    restDropPoint: 0.1
+    restStopPoint: -0.02
     speed0: 0.05
     speed1: 3
     footGroundContactRadius: 0.075
     drawBodyGizmos: 0
     drawAngleLimitGizmos: 0000000000000000
     drawFootGizmo: 0000000000000000
+    debugStepStats: 0000000000000000
   headBoneHeightRefPoint: {fileID: 3597460655033676372}
   grappleArm: {fileID: 8393107135455579191}
   abdomenRoot: {fileID: 7095442034761804592}

@@ -2,6 +2,7 @@
 using Unity.U2D.Physics;
 using UnityEditor;
 using UnityEngine;
+using Unity.Mathematics;
 
 [Serializable]
 public struct JointedChainDefinition
@@ -33,9 +34,11 @@ public struct JointedChain
     public readonly int JointCount => joint.Length;
     public readonly float Mass => mass;
     public readonly Vector2 BasePosition => body[0].position;
-    public readonly Vector2 EffectorPosition => body[^1].position + (reversed ? effectorDistance : -effectorDistance) * body[^1].rotation.direction;
+    public readonly Vector2 EffectorPosition => 
+        JointPosition(JointCount - 1) + math.select(effectorDistance, -effectorDistance, reversed) * body[^1].rotation.direction;
     public PhysicsBody AnchorBody => joint[0].bodyA;
-    public readonly Vector2 NextPosition(int i) => i == body.Length - 1 ? EffectorPosition : body[i + 1].position;
+    public readonly Vector2 JointPosition(int i) => body[i].transform.TransformPoint(joint[i].localAnchorB.position);
+    public readonly Vector2 NextPosition(int i) => i == JointCount - 1 ? EffectorPosition : JointPosition(i + 1);
 
     public static void DrawBodyGizmos(Transform[] transform, float[] width)
     {
@@ -96,8 +99,12 @@ public struct JointedChain
 
                     if (j.isValid)
                     {
-                        var p = j.bodyB.position;
+                        var p = JointPosition(i);
                         var r = Vector2.Distance(p, NextPosition(i));
+                        if (reversed)
+                        {
+                            r = -r;
+                        }
                         var rot0 = j.bodyA.rotation.MultiplyRotation(j.localAnchorA.rotation);
                         var rotMin = rot0.MultiplyRotation(PhysicsRotate.FromDegrees(j.lowerAngleLimit));
                         var rotMax = rot0.MultiplyRotation(PhysicsRotate.FromDegrees(j.upperAngleLimit));
@@ -144,7 +151,9 @@ public struct JointedChain
         }
     }
 
-    /// <summary> Use if you want the base of the chain to be anchored to another body. </summary>
+    /// <summary> Use if you want the base of the chain to be anchored to another body. 
+    /// Bone array should list the joint positions and effector position, and
+    /// physTransforms are expected to be centered between the bone positions.</summary>
     public void Initialize(Transform[] physTransform, Transform[] bone, PhysicsBody anchorBody, JointedChainDefinition def, JointedChainSettings settings)
     {
         Initialize(physTransform, bone, anchorBody.world, def, settings);
@@ -163,7 +172,8 @@ public struct JointedChain
         reversed = false;
     }
 
-    /// <summary> Does not create a joint 0. Bone array should list the joint positions and effector position, and
+    /// <summary> Does not create a joint 0. 
+    /// Bone array should list the joint positions and effector position, and
     /// physTransforms are expected to be centered between the bone positions.</summary>
     public void Initialize(Transform[] physTransform, Transform[] bone, PhysicsWorld world, JointedChainDefinition def, JointedChainSettings settings)
     {
@@ -204,6 +214,13 @@ public struct JointedChain
         }
 
         RecomputeMass();
+    }
+
+    public void FlipAngleLimits(int i)
+    {
+        var temp = joint[i].upperAngleLimit;
+        joint[i].upperAngleLimit = -joint[i].lowerAngleLimit;
+        joint[i].lowerAngleLimit = -temp;
     }
 
     public readonly void AccelerateBase(int i, Vector2 accel)
