@@ -88,11 +88,13 @@ public static class MathTools
         return new Vector2(v.x + t1 * (w.x - v.x), v.y + t2 * (w.y - v.y));
     }
 
+    /// <summary> False if one of the arguments is zero. </summary>
     public static bool OppositeSigns(int x, int y)
     {
         return (x > 0 && y < 0) || (x < 0 && y > 0);
     }
 
+    /// <summary> False if one of the arguments is zero. </summary>
     public static bool OppositeSigns(float x, float y)
     {
         return (x > 0 && y < 0) || (x < 0 && y > 0);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection.Metadata.Ecma335;
 using Unity.Mathematics;
 using Unity.U2D.Physics;
 using UnityEditor;
@@ -316,17 +317,22 @@ public class LegSynchronizer
         for (int i = 0; i < leg.Length / 2; i++)
         {
             var j = 2 * i;
-            int stepper = math.select(j + 1, j, Stepping(j));
+            int stepper = Stepping(j) ? j : j + 1;
             int rester = stepper ^ 1;//flips first bit (so 2i => 2i + 1 and 2i + 1 => 2i)
 
             //should be same for stepper and rester
             var castDir = castDirection[castDirectionIndex[stepper]];
 
             var stepperGdPos = EffectorRelativeGroundPosition(ref leg[stepper], map, castDir, facingRight,
-                out var stepperEffPos, out var stepperGdPt, out var stepperGdUp);
-            var stepperStepFraction = StepFraction(stepper, stepperGdPos);
+                out var stepperEffPos, out var stepperGdPt, out var stepperGdUp, out var hipGdUp);
             var resterGdPos = EffectorRelativeGroundPosition(ref leg[rester], map, castDir, facingRight,
-                out var resterEffPos, out var resterGdPt, out var resterGdUp);
+                out var resterEffPos, out var resterGdPt, out var resterGdUp, out _);
+
+            var hipGdDir = facingRight ? hipGdUp.CWPerp() : hipGdUp.CCWPerp();
+            var hipSpeed = HipSpeed(ref leg[stepper], hipGdDir);
+            //var speedFraction = SpeedFraction(hipSpeed);
+
+            var stepperStepFraction = StepFraction(stepper, stepperGdPos);
             var resterStepFraction = StepFraction(rester, resterGdPos);
 
             if (resterStepFraction < 0 && stepperStepFraction > 1)
@@ -353,31 +359,12 @@ public class LegSynchronizer
                 resterGdUp = tempGdUp;
             }
 
-            UpdateLegStepping(stepper, facingRight, grounded, stepperEffPos, stepperStepFraction, stepperGdPt, stepperGdUp);
-            UpdateLegResting(rester, facingRight, resterEffPos, resterStepFraction, resterGdPt, resterGdUp);
+            UpdateLegStepping(stepper, hipSpeed, facingRight, grounded, stepperEffPos, stepperStepFraction, stepperGdPt, stepperGdUp);
+            UpdateLegResting(rester, hipSpeed, facingRight, resterEffPos, resterStepFraction, resterGdPt, resterGdUp);
         }
     }
 
-    //2DO:
-    //A) initial offsets
-    //B) when hipSpeed = 0, should freeze stepping leg's x-position (can you just use the UpdateResting method for both legs in that case
-    //-- except maybe cache x when hipSpeed initially becomes zero)
-    //C) extract accel(dx, dy, etc.) into a method (same thing in both stepping and resting method)
-    //D) still breaks without spring... -- behavior is erratic (which we can fix by fine tuning forces and damping,
-    //but it also stalls. so i'd be interested in investigating the source of stall in that case)
-    //D.5) doesn't work well over uneven terrain
-    //D.75) falling off walls and upside down -- maybe we should use a slightly fattened overlapBox/circle to detect groundedness
-    //E) do we properly handle negative hipSpeed and "scaled" hipSpeed?
-    //+ simplify the things that need to be passed in from mover now that system has changed
-    //F) changing direction lol
-    //G) jump and freehang
-    //H) clean up leg (get rid of unused fields, excess parameters, etc.)
-    //+ clean up groundMap (move to job? (burst compile could do wonders for gdMap -- even if synchronous) + more efficient access (boxing?))
-    //I) grabber arm with joints will be sweet
-    //J) but keep an eye on performance -- I haven't been watching the impact of all these joints yet (we can always try multithreaded physics,
-    //or increasing time step now)
-
-    private void UpdateLegStepping(int i, /*float stepHeight, float hipSpeed, */
+    private void UpdateLegStepping(int i, float hipSpeed,
         bool facingRight, bool grounded, Vector2 effectorPos, float stepFraction, Vector2 gdPt, Vector2 gdUp)
     {
         if (stepStrength[i] == 0)
@@ -386,15 +373,14 @@ public class LegSynchronizer
         }
 
         ref var l = ref leg[i];
-        Vector2 gdDir = math.select(gdUp.CCWPerp(), gdUp.CWPerp(), facingRight);
-        var hipSpeed = HipSpeed(ref l, gdDir);
-        var speedFraction = SpeedFraction(hipSpeed);
+        Vector2 gdDir = facingRight ? gdUp.CWPerp() : gdUp.CCWPerp();
+        var speedFraction = AbsoluteSpeedFraction(hipSpeed);
         var stepHt = StepHeight(i, grounded, speedFraction);
 
         //compute dX
-        var goalRelSpd = math.select(stepSpeed[i],
-            stepSpeed[i] * Mathf.Clamp01((stepStopPoint - stepFraction) / (stepStopPoint - stepDropPoint)),
-            stepFraction > stepDropPoint);
+        var goalRelSpd = stepFraction > stepDropPoint ?
+            stepSpeed[i] * Mathf.Clamp01((stepStopPoint - stepFraction) / (stepStopPoint - stepDropPoint))
+            : stepSpeed[i];
         var dX = hipSpeed * (goalRelSpd + 1) - Vector2.Dot(l.body[^1].linearVelocity, gdDir);
         //note that step speed is measured along ground!
         //stepDropPt = past this point, no upward forces will be applied and horizontal speed will begin to drop
@@ -448,7 +434,7 @@ public class LegSynchronizer
     //A) apply force along gdDir to keep movement smooth, but take direction between bodyDir and gdDir into account
     //(bc goal is position along bodyDir -- you will have to be careful when angle gets close to 90 e.g. moving past a small ledge)
     //B) we can extract the pull leg method that takes dX, dY and directions as parameters
-    private void UpdateLegResting(int i, bool facingRight, 
+    private void UpdateLegResting(int i, float hipSpeed, bool facingRight, 
         Vector2 effectorPos, float stepFraction, Vector2 gdPt, Vector2 gdUp)
     {
         if (stepStrength[i] == 0)
@@ -457,12 +443,12 @@ public class LegSynchronizer
         }
 
         ref var l = ref leg[i];
-        Vector2 gdDir = math.select(gdUp.CCWPerp(), gdUp.CWPerp(), facingRight);
-        var hipSpeed = HipSpeed(ref l, gdDir);
+        Vector2 gdDir = facingRight ? gdUp.CWPerp() : gdUp.CCWPerp();
+        //var hipSpeed = HipSpeed(ref l, gdDir);
 
-        var goalRelSpd = math.select(stepSpeed[i],
-            stepSpeed[i] * Mathf.Clamp01((restStopPoint - stepFraction) / (restStopPoint - restDropPoint)),
-            stepFraction < restDropPoint);
+        var goalRelSpd = stepFraction < restDropPoint ?
+            stepSpeed[i] * Mathf.Clamp01((restStopPoint - stepFraction) / (restStopPoint - restDropPoint))
+            : stepSpeed[i];
         var dX = hipSpeed * (-goalRelSpd + 1) - Vector2.Dot(l.body[^1].linearVelocity, gdDir);
         var dY = Mathf.Min(Vector2.Dot(gdPt - effectorPos, gdUp), 0);
         //^take min with 0, i.e. never apply upward forces (don't want to stack with collision forces)
@@ -487,22 +473,11 @@ public class LegSynchronizer
 
     private static float2 CastToGroundPoint(GroundMap map, float2 p, float2 castDir, out float arcLengthPosition, out float2 normal)
     {
-        float2 gdPt;
+        (int i, float t) = map.LineCastOrClosest(p, castDir, GroundMap.DEFAULT_PRECISION);
+        normal = map.NormalFromReducedPosition(i, t);
+        arcLengthPosition = map.ArcLengthPos(i) + t;
 
-        if (map.LineCastToGround(p, castDir, out var hit))
-        {
-            gdPt = hit.point;
-            normal = hit.normal;
-            arcLengthPosition = hit.arcLengthPosition;
-        }
-        else
-        {
-            //line cast really never fails unless p is outside of the gdMap
-            //but we'll keep this just in case
-            gdPt = map.TrueClosestPoint(p, out arcLengthPosition, out normal, out _);
-        }
-
-        return gdPt;
+        return map.PointFromReducedPosition(i, t);
     }
 
     private void AccelerateLegEnds(int i, Vector2 a)
@@ -558,9 +533,10 @@ public class LegSynchronizer
         }
     }
 
-    private float SpeedFraction(float speed)
+    private float AbsoluteSpeedFraction(float speed)
     {
-        return  math.select(speed / speed1, 0, Mathf.Abs(speed) < speed0);
+        speed = Mathf.Abs(speed);
+        return speed < speed0 ? 0 : speed / speed1;
     }
 
     private float HipSpeed(ref JointedChain l, Vector2 gdDir)
@@ -570,20 +546,20 @@ public class LegSynchronizer
 
     private float StepHeight(int i, bool grounded, float speedFraction)
     {
-        return math.select(stepHeight[i], Mathf.Min(speedFraction, 1) * stepHeight[i], grounded);
+        return grounded ? Mathf.Min(speedFraction, 1) * stepHeight[i] : stepHeight[i];
     }
 
-    private float StepFraction(int i, float effectorX) => (effectorX - StepMin(i)) / stepLength[i];
+    private float StepFraction(int i, float effectorX) => (effectorX - StepMin(i)) / (stepLength[i]);
 
     private float StepMin(int i) => stepMax[i] - stepLength[i];
 
     private float EffectorRelativeGroundPosition(ref JointedChain leg, GroundMap map, Vector2 castDir, bool facingRight,
-        out Vector2 effectorPos, out float2 gdPt, out float2 gdUp)
+        out Vector2 effectorPos, out float2 gdPt, out float2 gdUp, out float2 hipGdUp)
     {
         effectorPos = leg.EffectorPosition;
         gdPt = CastToGroundPoint(map, effectorPos, castDir, out var effectorGroundPos, out gdUp);
-        CastToGroundPoint(map, leg.body[0].position, castDir, out var hipGroundPos, out _);
-        return math.select(hipGroundPos - effectorGroundPos, effectorGroundPos - hipGroundPos, facingRight);
+        CastToGroundPoint(map, leg.body[0].position, castDir, out var hipGroundPos, out hipGdUp);
+        return facingRight ? effectorGroundPos - hipGroundPos : hipGroundPos - effectorGroundPos;
     }
 
     //private float EffectorRelativeX(int i, Vector2 bodyDirection)

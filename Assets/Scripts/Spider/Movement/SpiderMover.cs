@@ -2,6 +2,7 @@
 using UnityEngine.Events;
 using Unity.U2D.Physics;
 using Unity.Collections;
+using Unity.Mathematics;
 
 
 public class SpiderMover : MonoBehaviour
@@ -10,7 +11,6 @@ public class SpiderMover : MonoBehaviour
     [SerializeField] bool drawGizmos;
 
     [Header("Parts")]
-    //[SerializeField] PhysicsLegSynchronizer legSynch;
     [SerializeField] SpiderPhysics spiderPhysics;
     [SerializeField] LegSynchronizer legSynch;
     [SerializeField] Transform headBoneHeightRefPoint;
@@ -126,6 +126,14 @@ public class SpiderMover : MonoBehaviour
     Vector2 OrientedRight => FacingRight ? Right : -Right;
     Vector2 OrientedGroundDirection => FacingRight ? groundDirection : -groundDirection;
     Vector2 HeightReferencePt => SpideyPhysics.HeightReferencePosition;
+    Vector2 HeadHeightReferencePt
+    {
+        get
+        {
+            SpideyPhysics.head.SyncTransform();
+            return headBoneHeightRefPoint.position;
+        }
+    }
     float MaxSpeed => grounded ? maxSpeed : maxSpeedAirborne;
     float GrappleScurryResistance => Vector2.Dot(grapple.LastCarryForce, -OrientedGroundDirection);
     float GrappleScurryResistanceFraction => Mathf.Clamp(GrappleScurryResistance / grappleScurryResistanceMax, 0, 1);
@@ -238,9 +246,9 @@ public class SpiderMover : MonoBehaviour
             jumpVerificationTimer -= Time.deltaTime;
         }
 
+        UpdateGroundData();
         RotateAbdomen();
         RotateHead();
-        UpdateGroundData();
         UpdateThruster();
         UpdateGrappleScurrying();
 
@@ -566,10 +574,10 @@ public class SpiderMover : MonoBehaviour
         Vector2 g;
         if (grounded)
         {
-            var p = groundMap.TrueClosestPoint((Vector2)headBoneHeightRefPoint.position, out var t, out _, out _);
-            var n = FacingRight ?
-                groundMap.AverageNormalFromCenter(t + headRotationMinPos, t + headRotationMaxPos)
-                : groundMap.AverageNormalFromCenter(t - headRotationMaxPos, t - headRotationMinPos);
+            var (i, t) = groundMap.ClosestPoint(HeadHeightReferencePt, GroundMap.DEFAULT_PRECISION);
+            var p = groundMap.PointFromReducedPosition(i, t);
+            var n = FacingRight ? groundMap.AverageNormal(i, t + headRotationMinPos, t + headRotationMaxPos)
+                : groundMap.AverageNormal(i, t - headRotationMaxPos, t - headRotationMinPos);
             g = n.CWPerp();
         }
         else
@@ -640,11 +648,11 @@ public class SpiderMover : MonoBehaviour
 
     private void UpdateHeightSpring()
     {
-        Vector2 p = groundMap.AveragePointFromCenter(heightSampleMin, heightSampleMax);
-        //^average point so that body sinks a little as it rounds a sharp peak (keeping leg extension natural)
-        //--note you only want to do this when strongly grounded
-
         Vector2 down = -Up;
+        var (i, t) = groundMap.LineCastOrClosest(HeightReferencePt, down, GroundMap.DEFAULT_PRECISION);
+        Vector2 p = FacingRight ? groundMap.AveragePoint(i, t + heightSampleMin, t + heightSampleMax)
+            : groundMap.AveragePoint(i, t - heightSampleMax, t - heightSampleMin);
+
         var v = Vector2.Dot(Abdomen.linearVelocity, down);
         var l = Vector2.Dot(p - HeightReferencePt, down) - EffectiveRideHeight;
         var f = l * heightSpringForce;
@@ -694,25 +702,37 @@ public class SpiderMover : MonoBehaviour
     {
         UpdateGroundMap();
         var i = groundMap.IndexOfFirstGroundHitFromCenter;
-        bool isCentralIndex = i == groundMap.CentralIndex;
-        var pt = groundMap.MapPoint(i);
-        var goalGroundDirection = pt.hitGround && isCentralIndex ?
-            groundMap.AverageNormalFromCenter(-groundDirectionSampleWidth, groundDirectionSampleWidth).CWPerp()
-            : pt.normal.CWPerp();
 
-        groundDirection = grounded ? goalGroundDirection : Vector2.right;
+        //bool isCentralIndex = i == groundMap.CentralIndex;
+        //var pt = groundMap.MapPoint(i);
+        //var goalGroundDirection = pt.hitGround && isCentralIndex ?
+        //    groundMap.AverageNormalFromCenter(-groundDirectionSampleWidth, groundDirectionSampleWidth).CWPerp()
+        //    : pt.normal.CWPerp();
+        groundDirection = grounded ?
+            groundMap.AverageNormal(i, -groundDirectionSampleWidth, groundDirectionSampleWidth).CWPerp()
+            : Vector2.right;
+
+        if (grounded && i == groundMap.CentralIndex)
+        {
+            groundDirection = groundMap.AverageNormal(i, -groundDirectionSampleWidth, groundDirectionSampleWidth).CWPerp();
+        }
+        else
+        {
+            groundDirection = Vector2.right;
+        }
+            groundDirection = grounded ? groundMap.Normal(i).CWPerp() : Vector2.right;
 
         if (HorizontalMoveInput != 0 || !grounded || (grapple.GrappleAnchored && grapple.GrappleReleaseInput < 0))
         {
-            groundAnchorPt = GetGroundAnchorPoint(ref pt, isCentralIndex);
+            groundAnchorPt = GetGroundAnchorPoint(i);
             balanceDirection = groundDirection;
         }
         else if (settleTimer > 0)
         {
             var t = settleTimer / settleTime;
             balanceDirection = MathTools.CheapRotationalLerpClamped(balanceDirection, groundDirection, 1 - 0.5f * t, out _);
-            var p = Vector2.Lerp(groundAnchorPt, GetGroundAnchorPoint(ref pt, isCentralIndex), t);
-            groundAnchorPt = groundMap.TrueClosestPoint(p, out _, out _, out _);
+            groundAnchorPt = Vector2.Lerp(groundAnchorPt, GetGroundAnchorPoint(i), t);
+            //groundAnchorPt = groundMap.TrueClosestPoint(p, out _, out _, out _);
         }
 
         if (!VerifyingJump())
@@ -722,19 +742,66 @@ public class SpiderMover : MonoBehaviour
             grapple.FreeHanging = grappleFreeHangPrerequisites && !grounded;
         }
 
-        Vector2 GetGroundAnchorPoint(ref GroundMapPt pt, bool isCentralIndex)
+        Vector2 GetGroundAnchorPoint(int i)
         {
-            if (pt.hitGround && !isCentralIndex)
+            if (groundMap.HitGround(i) && i != groundMap.CentralIndex)
             {
-                var castResult = Abdomen.world.CastRay(HeightReferencePt, -backupGroundPtRaycastLengthFactor * GroundMapRaycastLength * pt.normal, spiderPhysics.queryFilter);
+                var castResult = Abdomen.world.CastRay(HeightReferencePt, 
+                    -backupGroundPtRaycastLengthFactor * GroundMapRaycastLength * groundMap.Normal(i),
+                    spiderPhysics.queryFilter);
                 if (castResult.Length > 0)
                 {
                     return castResult[0].point;
                 }
             }
 
-            return pt.point;
+            return groundMap.Point(i);
         }
+
+        //UpdateGroundMap();
+        //var i = groundMap.IndexOfFirstGroundHitFromCenter;
+        //bool isCentralIndex = i == groundMap.CentralIndex;
+        //var pt = groundMap.MapPoint(i);
+        //var goalGroundDirection = pt.hitGround && isCentralIndex ?
+        //    groundMap.AverageNormalFromCenter(-groundDirectionSampleWidth, groundDirectionSampleWidth).CWPerp()
+        //    : pt.normal.CWPerp();
+
+        //groundDirection = grounded ? goalGroundDirection : Vector2.right;
+
+        //if (HorizontalMoveInput != 0 || !grounded || (grapple.GrappleAnchored && grapple.GrappleReleaseInput < 0))
+        //{
+        //    groundAnchorPt = GetGroundAnchorPoint(ref pt, isCentralIndex);
+        //    balanceDirection = groundDirection;
+        //}
+        //else if (settleTimer > 0)
+        //{
+        //    var t = settleTimer / settleTime;
+        //    balanceDirection = MathTools.CheapRotationalLerpClamped(balanceDirection, groundDirection, 1 - 0.5f * t, out _);
+        //    var p = Vector2.Lerp(groundAnchorPt, GetGroundAnchorPoint(ref pt, isCentralIndex), t);
+        //    groundAnchorPt = groundMap.TrueClosestPoint(p, out _, out _, out _);
+        //}
+
+        //if (!VerifyingJump())
+        //{
+        //    UpdateGroundednessRating();
+        //    SetGrounded(GroundedCondition());
+        //    grapple.FreeHanging = grappleFreeHangPrerequisites && !grounded;
+        //}
+
+        //Vector2 GetGroundAnchorPoint(ref GroundMapPt pt, bool isCentralIndex)
+        //{
+        //    if (pt.hitGround && !isCentralIndex)
+        //    {
+        //        var castResult = Abdomen.world.CastRay(HeightReferencePt, -backupGroundPtRaycastLengthFactor * GroundMapRaycastLength * pt.normal, 
+        //            spiderPhysics.queryFilter);
+        //        if (castResult.Length > 0)
+        //        {
+        //            return castResult[0].point;
+        //        }
+        //    }
+
+        //    return pt.point;
+        //}
     }
 
     private bool GroundedCondition()
@@ -746,7 +813,9 @@ public class SpiderMover : MonoBehaviour
 
     private void UpdateGroundednessRating()
     {
-        groundednessRating = groundednessRating == 0 ? legSynch.FractionTouchingGround() > 0 ? Mathf.Max(legSynch.FractionTouchingGround(), groundednessInitialContactValue) : 0
+        groundednessRating = groundednessRating == 0 ? legSynch.FractionTouchingGround() > 0 ? 
+            Mathf.Max(legSynch.FractionTouchingGround(), groundednessInitialContactValue) 
+            : 0
             : grapple.GrappleAnchored && grapple.GrappleReleaseInput < 0 ? legSynch.FractionTouchingGround()
             : MathTools.LerpAtConstantSpeed(groundednessRating, legSynch.FractionTouchingGround(), groundednessSmoothingRate, Time.deltaTime);
     }
@@ -763,7 +832,7 @@ public class SpiderMover : MonoBehaviour
 
     private void InitializeGroundMap()
     {
-        groundMap.Initialize();
+        groundMap.Initialize(HeightReferencePt, Right, GroundMapRaycastLength);
         UpdateGroundMap();
     }
 
@@ -771,7 +840,7 @@ public class SpiderMover : MonoBehaviour
     {
         InitializeGroundMap();
         UpdateGroundednessRating();
-        groundAnchorPt = groundMap.Center.point;
+        groundAnchorPt = groundMap.Point(groundMap.CentralIndex);
     }
 
 

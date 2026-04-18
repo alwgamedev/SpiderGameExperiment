@@ -7,33 +7,54 @@ using Unity.Mathematics;
 [BurstCompile]
 public struct GroundMapUpdate : IJob
 {
-    public NativeArray<GroundMapPt> map;
-    public NativeReference<int> indexOfFirstGroundHitFromCenter;
-    [ReadOnly] public PhysicsWorld world;//[ReadOnly] in the job so it is safe to be read by other threads during the job
+    public NativeArray<float2> point;
+    public NativeArray<float2> normal;
+    public NativeArray<float> arcLengthPos;
+    public NativeArray<float> raycastDistance;
+    public NativeArray<bool> hitGround;
+    [ReadOnly] public PhysicsWorld world;
     public PhysicsQuery.QueryFilter filter;
     public float2 origin;
     public float2 originDown;
     public float2 originRight;
+    public NativeReference<int> indexOfFirstGroundHitFromCenter;
     public float raycastLength;
     public float intervalWidth;
     public bool searchRightFirst;//just for now (won't be in parallel setup)
 
-    int CentralIndex => map.Length / 2;
+    int CentralIndex => point.Length / 2;
+    float2 Right(int i) => normal[i].CWPerp();
+    float2 Left(int i) => normal[i].CCWPerp();
 
-    public GroundMapUpdate(NativeArray<GroundMapPt> map, NativeReference<int> indexOfFirstGroundHitFromCenter, 
-        PhysicsWorld world, PhysicsQuery.QueryFilter filter, float2 origin, float2 originDown, float2 originRight, 
-        float raycastLength, float intervalWidth, bool searchRightFirst)
+    public GroundMapUpdate(NativeArray<float2> point, NativeArray<float2> normal, NativeArray<float> arcLengthPos, NativeArray<float> raycastDistance, 
+        NativeArray<bool> hitGround, PhysicsWorld world, PhysicsQuery.QueryFilter filter, float2 origin, float2 originDown, float2 originRight, 
+        NativeReference<int> indexOfFirstGroundHitFromCenter, float raycastLength, float intervalWidth, bool searchRightFirst)
     {
-        this.map = map;
-        this.indexOfFirstGroundHitFromCenter = indexOfFirstGroundHitFromCenter;
+        this.point = point;
+        this.normal = normal;
+        this.arcLengthPos = arcLengthPos;
+        this.raycastDistance = raycastDistance;
+        this.hitGround = hitGround;
         this.world = world;
         this.filter = filter;
         this.origin = origin;
         this.originDown = originDown;
         this.originRight = originRight;
+        this.indexOfFirstGroundHitFromCenter = indexOfFirstGroundHitFromCenter;
         this.raycastLength = raycastLength;
         this.intervalWidth = intervalWidth;
         this.searchRightFirst = searchRightFirst;
+    }
+
+    public static void SetMapPoint(int i, NativeArray<float2> pointArr, NativeArray<float2> normalArr, NativeArray<float> arcLengthPosArr,
+        NativeArray<float> raycastDistanceArr, NativeArray<bool> hitGroundArr,
+        float2 point, float2 normal, float arcLengthPos, float raycastDistance, bool hitGround)
+    {
+        pointArr[i] = point;
+        normalArr[i] = normal;
+        arcLengthPosArr[i] = arcLengthPos;
+        raycastDistanceArr[i] = raycastDistance;
+        hitGroundArr[i] = hitGround;
     }
 
     public void Execute()
@@ -44,24 +65,18 @@ public struct GroundMapUpdate : IJob
         if (castOuput.Length > 0)
         {
             var result = castOuput[0];
-            map[CentralIndex] = new(result.point, result.normal, 0, result.fraction * raycastLength, true);
+            SetMapPoint(CentralIndex, point, normal, arcLengthPos, raycastDistance, hitGround, 
+                result.point, result.normal, 0, result.fraction * raycastLength, true);
             indexOfFirstGroundHitFromCenter.Value = CentralIndex;
         }
         else
         {
-            map[CentralIndex] = new(origin + raycastLength * originDown, -originDown, 0, raycastLength, false);
+            SetMapPoint(CentralIndex, point, normal, arcLengthPos, raycastDistance, hitGround,
+                origin + raycastLength * originDown, -originDown, 0, raycastLength, false);
         }
 
-        if (searchRightFirst)
-        {
-            FillRight();
-            FillLeft();
-        }
-        else
-        {
-            FillLeft();
-            FillRight();
-        }
+        FillMapHalf(searchRightFirst);
+        FillMapHalf(!searchRightFirst);
 
         if (indexOfFirstGroundHitFromCenter.Value < 0)
         {
@@ -69,41 +84,49 @@ public struct GroundMapUpdate : IJob
         }
     }
 
-
-    private void FillRight()
+    private void FillMapHalf(bool right)
     {
-        for (int i = map.Length / 2; i < map.Length - 1; i++)
-        {
-            //set map[i + 1]
+        int sign = math.select(-1, 1, right);
+        int end = math.select(0, point.Length - 1, right);
 
-            var lastMapPt = map[i];
+        int i = CentralIndex;
+        while (i != end)
+        {
+            //set map[iNext]
+            var iNext = i + sign;
+            var lastPt = point[i];
+            var lastNormal = normal[i];
+            var lastTangent = math.select(lastNormal.CCWPerp(), lastNormal.CWPerp(), right);
+            var lastArcLength = arcLengthPos[i];
+            var lastRaycastDistance = raycastDistance[i];
 
             //first raycast horizontally to check if ground kicks UP suddenly (running into a wall e.g.)
-            var castOuput = world.CastRay(lastMapPt.point + intervalWidth * lastMapPt.normal, 2 * intervalWidth * lastMapPt.Right, filter);
+            var castOuput = world.CastRay(lastPt + intervalWidth * lastNormal, 2 * intervalWidth * lastTangent, filter);
 
             if (castOuput.Length > 0)
             {
                 var result = castOuput[0];
-                map[i + 1] = new(result.point, result.normal, lastMapPt.arcLengthPosition + math.distance(lastMapPt.point, result.point),
+                SetMapPoint(iNext, point, normal, arcLengthPos, raycastDistance, hitGround,
+                    result.point, result.normal, lastArcLength + sign * math.distance(lastPt, result.point),
                     result.fraction * 2 * intervalWidth, true);
 
                 if (indexOfFirstGroundHitFromCenter.Value < 0)
                 {
-                    indexOfFirstGroundHitFromCenter.Value = i + 1;
+                    indexOfFirstGroundHitFromCenter.Value = iNext;
                 }
             }
             else
             {
                 //now shift forward and raycast down
-                var o = lastMapPt.point + lastMapPt.raycastDistance * lastMapPt.normal + intervalWidth * lastMapPt.Right;
-                castOuput = world.CastRay(o, -raycastLength * lastMapPt.normal, filter);
+                var o = lastPt + lastRaycastDistance * lastNormal + intervalWidth * lastTangent;
+                castOuput = world.CastRay(o, -raycastLength * lastNormal, filter);
 
                 if (castOuput.Length > 0 && castOuput[0].fraction == 0)
                 {
                     var y = intervalWidth;
-                    while (y < lastMapPt.raycastDistance)
+                    while (y < lastRaycastDistance)
                     {
-                        castOuput = world.CastRay(o - y * lastMapPt.normal, -raycastLength * lastMapPt.normal, filter);
+                        castOuput = world.CastRay(o - y * lastNormal, -raycastLength * lastNormal, filter);
                         if (castOuput.Length == 0 || castOuput[0].fraction > 0)
                         {
                             break;
@@ -116,20 +139,141 @@ public struct GroundMapUpdate : IJob
                 if (castOuput.Length > 0)
                 {
                     var result = castOuput[0];
-                    var l = math.distance(lastMapPt.point, result.point);
+                    var l = math.distance(lastPt, result.point);
                     if (intervalWidth < l * MathTools.sin15)//if l > ~3.86 * intervalWidth...
                     {
-                        var u = ((float2)result.point - lastMapPt.point) / l;
-                        castOuput = world.CastRay(lastMapPt.point + 0.25f * intervalWidth * u, 0.75f * intervalWidth * u, filter);
+                        var u = ((float2)result.point - lastPt) / l;
+                        castOuput = world.CastRay(lastPt + 0.25f * intervalWidth * u, 0.75f * intervalWidth * u, filter);
 
                         if (castOuput.Length > 0)
                         {
                             result = castOuput[0];
                             var dist = 0.25f * intervalWidth * (3 * result.fraction + 1);//(cast distance + 0.25f * intervalWidth)
-                            var raycastDistance = (lastMapPt.raycastDistance - math.dot((float2)result.point - lastMapPt.point, lastMapPt.normal)) 
-                                * math.dot(lastMapPt.normal, result.normal);
-                            map[i + 1] = new(result.point, result.normal, lastMapPt.arcLengthPosition + dist,
-                                raycastDistance, true);
+                            var castDistance = (lastRaycastDistance - math.dot((float2)result.point - lastPt, lastNormal))
+                                * math.dot(lastNormal, result.normal);
+                            SetMapPoint(iNext, point, normal, arcLengthPos, raycastDistance, hitGround,
+                                result.point, result.normal, lastArcLength + sign * dist, castDistance, true);
+
+                            if (indexOfFirstGroundHitFromCenter.Value < 0)
+                            {
+                                indexOfFirstGroundHitFromCenter.Value = iNext;
+                            }
+                        }
+                        else
+                        {
+                            var castDistance = (lastRaycastDistance - intervalWidth * math.dot(u, lastNormal))
+                                * math.dot(u.CCWPerp(), lastNormal);
+                            SetMapPoint(iNext, point, normal, arcLengthPos, raycastDistance, hitGround,
+                                lastPt + intervalWidth * u, u.CCWPerp(), lastArcLength + sign * intervalWidth, castDistance, false);
+                        }
+                    }
+                    else
+                    {
+                        SetMapPoint(iNext, point, normal, arcLengthPos, raycastDistance, hitGround,
+                            result.point, result.normal, lastArcLength + sign * l,
+                            result.fraction * raycastLength * math.dot(lastNormal, result.normal), true);
+
+                        if (indexOfFirstGroundHitFromCenter.Value < 0)
+                        {
+                            indexOfFirstGroundHitFromCenter.Value = iNext;
+                        }
+                    }
+                }
+                else
+                {
+                    var l = math.min(lastRaycastDistance + 0.5f * intervalWidth, raycastLength);
+                    castOuput = world.CastRay(o - l * lastNormal, -2 * intervalWidth * lastTangent, filter);
+
+                    if (castOuput.Length > 0)
+                    {
+                        var result = castOuput[0];
+                        SetMapPoint(iNext, point, normal, arcLengthPos, raycastDistance, hitGround,
+                            result.point, result.normal, lastArcLength + sign * math.distance(lastPt, result.point),
+                            result.fraction * 2 * intervalWidth, true);
+
+                        if (indexOfFirstGroundHitFromCenter.Value < 0)
+                        {
+                            indexOfFirstGroundHitFromCenter.Value = iNext;
+                        }
+                    }
+                    else
+                    {
+                        o -= raycastLength * lastNormal;
+                        SetMapPoint(iNext, point, normal, arcLengthPos, raycastDistance, hitGround,
+                            o, lastNormal, lastArcLength + sign * math.distance(lastPt, o), raycastLength, false);
+                    }
+                }
+            }
+
+            i = iNext;
+        }
+    }
+
+
+    private void FillRight()
+    {
+        for (int i = CentralIndex; i < point.Length - 1; i++)
+        {
+            //set map[i + 1]
+            var lastPt = point[i];
+            var lastNormal = normal[i];
+            var lastRight = lastNormal.CWPerp();
+            var lastArcLength = arcLengthPos[i];
+            var lastRaycastDistance = raycastDistance[i];
+
+            //first raycast horizontally to check if ground kicks UP suddenly (running into a wall e.g.)
+            var castOuput = world.CastRay(lastPt + intervalWidth * lastNormal, 2 * intervalWidth * lastRight, filter);
+
+            if (castOuput.Length > 0)
+            {
+                var result = castOuput[0];
+                SetMapPoint(i + 1, point, normal, arcLengthPos, raycastDistance, hitGround, 
+                    result.point, result.normal, lastArcLength + math.distance(lastPt, result.point),
+                    result.fraction * 2 * intervalWidth, true);
+
+                if (indexOfFirstGroundHitFromCenter.Value < 0)
+                {
+                    indexOfFirstGroundHitFromCenter.Value = i + 1;
+                }
+            }
+            else
+            {
+                //now shift forward and raycast down
+                var o = lastPt + lastRaycastDistance * lastNormal + intervalWidth * lastRight;
+                castOuput = world.CastRay(o, -raycastLength * lastNormal, filter);
+
+                if (castOuput.Length > 0 && castOuput[0].fraction == 0)
+                {
+                    var y = intervalWidth;
+                    while (y < lastRaycastDistance)
+                    {
+                        castOuput = world.CastRay(o - y * lastNormal, -raycastLength * lastNormal, filter);
+                        if (castOuput.Length == 0 || castOuput[0].fraction > 0)
+                        {
+                            break;
+                        }
+
+                        y += intervalWidth;
+                    }
+                }
+
+                if (castOuput.Length > 0)
+                {
+                    var result = castOuput[0];
+                    var l = math.distance(lastPt, result.point);
+                    if (intervalWidth < l * MathTools.sin15)//if l > ~3.86 * intervalWidth...
+                    {
+                        var u = ((float2)result.point - lastPt) / l;
+                        castOuput = world.CastRay(lastPt + 0.25f * intervalWidth * u, 0.75f * intervalWidth * u, filter);
+
+                        if (castOuput.Length > 0)
+                        {
+                            result = castOuput[0];
+                            var dist = 0.25f * intervalWidth * (3 * result.fraction + 1);//(cast distance + 0.25f * intervalWidth)
+                            var castDistance = (lastRaycastDistance - math.dot((float2)result.point - lastPt, lastNormal)) 
+                                * math.dot(lastNormal, result.normal);
+                            SetMapPoint(i + 1, point, normal, arcLengthPos, raycastDistance, hitGround, 
+                                result.point, result.normal, lastArcLength + dist, castDistance, true);
 
                             if (indexOfFirstGroundHitFromCenter.Value < 0)
                             {
@@ -138,15 +282,17 @@ public struct GroundMapUpdate : IJob
                         }
                         else
                         {
-                            var raycastDistance = (lastMapPt.raycastDistance - intervalWidth * math.dot(u, lastMapPt.normal)) * math.dot(u.CCWPerp(), lastMapPt.normal);
-                            map[i + 1] = new(lastMapPt.point + intervalWidth * u, u.CCWPerp(), lastMapPt.arcLengthPosition + intervalWidth,
-                                raycastDistance, false);
+                            var castDistance = (lastRaycastDistance - intervalWidth * math.dot(u, lastNormal)) 
+                                * math.dot(u.CCWPerp(), lastNormal);
+                            SetMapPoint(i + 1, point, normal, arcLengthPos, raycastDistance, hitGround,
+                                lastPt + intervalWidth * u, u.CCWPerp(), lastArcLength + intervalWidth, castDistance, false);
                         }
                     }
                     else
                     {
-                        map[i + 1] = new(result.point, result.normal, lastMapPt.arcLengthPosition + l,
-                            result.fraction * raycastLength * math.dot(lastMapPt.normal, result.normal), true);
+                        SetMapPoint(i + 1, point, normal, arcLengthPos, raycastDistance, hitGround,
+                            result.point, result.normal, lastArcLength + l, 
+                            result.fraction * raycastLength * math.dot(lastNormal, result.normal), true);
 
                         if (indexOfFirstGroundHitFromCenter.Value < 0)
                         {
@@ -156,13 +302,14 @@ public struct GroundMapUpdate : IJob
                 }
                 else
                 {
-                    var l = math.min(lastMapPt.raycastDistance + 0.5f * intervalWidth, raycastLength);
-                    castOuput = world.CastRay(o - l * lastMapPt.normal, -2 * intervalWidth * lastMapPt.Right, filter);
+                    var l = math.min(lastRaycastDistance + 0.5f * intervalWidth, raycastLength);
+                    castOuput = world.CastRay(o - l * lastNormal, -2 * intervalWidth * lastRight, filter);
 
                     if (castOuput.Length > 0)
                     {
                         var result = castOuput[0];
-                        map[i + 1] = new(result.point, result.normal, lastMapPt.arcLengthPosition + math.distance(lastMapPt.point, result.point),
+                        SetMapPoint(i + 1, point, normal, arcLengthPos, raycastDistance, hitGround,
+                            result.point, result.normal, lastArcLength + math.distance(lastPt, result.point),
                             result.fraction * 2 * intervalWidth, true);
 
                         if (indexOfFirstGroundHitFromCenter.Value < 0)
@@ -172,8 +319,9 @@ public struct GroundMapUpdate : IJob
                     }
                     else
                     {
-                        o -= raycastLength * lastMapPt.normal;
-                        map[i + 1] = new(o, lastMapPt.normal, lastMapPt.arcLengthPosition + math.distance(lastMapPt.point, o), raycastLength, false);
+                        o -= raycastLength * lastNormal;
+                        SetMapPoint(i + 1, point, normal, arcLengthPos, raycastDistance, hitGround,
+                            o, lastNormal, lastArcLength + math.distance(lastPt, o), raycastLength, false);
                     }
                 }
             }
@@ -186,15 +334,20 @@ public struct GroundMapUpdate : IJob
         {
             //set map[i - 1]
 
-            var lastMapPt = map[i];
+            var lastPt = point[i];
+            var lastNormal = normal[i];
+            var lastLeft = lastNormal.CCWPerp();
+            var lastArcLength = arcLengthPos[i];
+            var lastRaycastDistance = raycastDistance[i];
 
             //first raycast horizontally to check if ground kicks UP suddenly (running into a wall e.g.)
-            var castOuput = world.CastRay(lastMapPt.point + intervalWidth * lastMapPt.normal, -2 * intervalWidth * lastMapPt.Right, filter);
+            var castOuput = world.CastRay(lastPt + intervalWidth * lastNormal, 2 * intervalWidth * lastLeft, filter);
 
             if (castOuput.Length > 0)
             {
                 var result = castOuput[0];
-                map[i - 1] = new(result.point, result.normal, lastMapPt.arcLengthPosition - math.distance(lastMapPt.point, result.point),
+                SetMapPoint(i - 1, point, normal, arcLengthPos, raycastDistance, hitGround, 
+                    result.point, result.normal, lastArcLength - math.distance(lastPt, result.point),
                     result.fraction * 2 * intervalWidth, true);
 
                 if (indexOfFirstGroundHitFromCenter.Value < 0)
@@ -205,15 +358,15 @@ public struct GroundMapUpdate : IJob
             else
             {
                 //now shift forward and raycast down
-                var o = lastMapPt.point + lastMapPt.raycastDistance * lastMapPt.normal - intervalWidth * lastMapPt.Right;
-                castOuput = world.CastRay(o, -raycastLength * lastMapPt.normal, filter);
+                var o = lastPt + lastRaycastDistance * lastNormal + intervalWidth * lastLeft;
+                castOuput = world.CastRay(o, -raycastLength * lastNormal, filter);
 
                 if (castOuput.Length > 0 && castOuput[0].fraction == 0)
                 {
                     var y = intervalWidth;
-                    while (y < lastMapPt.raycastDistance)
+                    while (y < lastRaycastDistance)
                     {
-                        castOuput = world.CastRay(o - y * lastMapPt.normal, -raycastLength * lastMapPt.normal, filter);
+                        castOuput = world.CastRay(o - y * lastNormal, -raycastLength * lastNormal, filter);
                         if (castOuput.Length == 0 || castOuput[0].fraction > 0)
                         {
                             break;
@@ -226,18 +379,19 @@ public struct GroundMapUpdate : IJob
                 if (castOuput.Length > 0)
                 {
                     var result = castOuput[0];
-                    var l = math.distance(lastMapPt.point, result.point);
+                    var l = math.distance(lastPt, result.point);
                     if (intervalWidth < l * MathTools.sin15)//if l > ~3.86 * intervalWidth...
                     {
-                        var u = ((float2)result.point - lastMapPt.point) / l;
-                        castOuput = world.CastRay(lastMapPt.point + 0.25f * intervalWidth * u, 0.75f * intervalWidth * u, filter);
+                        var u = ((float2)result.point - lastPt) / l;
+                        castOuput = world.CastRay(lastPt + 0.25f * intervalWidth * u, 0.75f * intervalWidth * u, filter);
                         if (castOuput.Length > 0)
                         {
                             result = castOuput[0];
                             var dist = 0.25f * intervalWidth * (3 * result.fraction + 1);//(cast distance + 0.25f * intervalWidth)
-                            var raycastDistance = (lastMapPt.raycastDistance - math.dot((float2)result.point - lastMapPt.point, lastMapPt.normal)) * math.dot(lastMapPt.normal, result.normal);
-                            map[i - 1] = new(result.point, result.normal, lastMapPt.arcLengthPosition - dist,
-                                raycastDistance, true);
+                            var castDistance = (lastRaycastDistance - math.dot((float2)result.point - lastPt, lastNormal)) 
+                                * math.dot(lastNormal, result.normal);
+                            SetMapPoint(i - 1, point, normal, arcLengthPos, raycastDistance, hitGround,
+                                result.point, result.normal, lastArcLength - dist, castDistance, true);
 
                             if (indexOfFirstGroundHitFromCenter.Value < 0)
                             {
@@ -246,15 +400,17 @@ public struct GroundMapUpdate : IJob
                         }
                         else
                         {
-                            var raycastDistance = (lastMapPt.raycastDistance - intervalWidth * math.dot(u, lastMapPt.normal)) * math.dot(u.CCWPerp(), lastMapPt.normal);
-                            map[i - 1] = new(lastMapPt.point + intervalWidth * u, u.CWPerp(), lastMapPt.arcLengthPosition - intervalWidth,
-                                raycastDistance, false);
+                            var castDistance = (lastRaycastDistance - intervalWidth * math.dot(u, lastNormal)) 
+                                * math.dot(u.CCWPerp(), lastNormal);
+                            SetMapPoint(i - 1, point, normal, arcLengthPos, raycastDistance, hitGround, 
+                                lastPt + intervalWidth * u, u.CWPerp(), lastArcLength - intervalWidth, castDistance, false);
                         }
                     }
                     else
                     {
-                        map[i - 1] = new(result.point, result.normal, lastMapPt.arcLengthPosition - l,
-                            result.fraction * raycastLength * math.dot(lastMapPt.normal, result.normal), true);
+                        SetMapPoint(i - 1, point, normal, arcLengthPos, raycastDistance, hitGround, 
+                            result.point, result.normal, lastArcLength - l,
+                            result.fraction * raycastLength * math.dot(lastNormal, result.normal), true);
 
                         if (indexOfFirstGroundHitFromCenter.Value < 0)
                         {
@@ -264,12 +420,13 @@ public struct GroundMapUpdate : IJob
                 }
                 else
                 {
-                    var l = math.min(lastMapPt.raycastDistance + 0.5f * intervalWidth, raycastLength);
-                    castOuput = world.CastRay(o - l * lastMapPt.normal, 2 * intervalWidth * lastMapPt.Right, filter);
+                    var l = math.min(lastRaycastDistance + 0.5f * intervalWidth, raycastLength);
+                    castOuput = world.CastRay(o - l * lastNormal, -2 * intervalWidth * lastLeft, filter);
                     if (castOuput.Length > 0)
                     {
                         var result = castOuput[0];
-                        map[i - 1] = new(result.point, result.normal, lastMapPt.arcLengthPosition - math.distance(lastMapPt.point, result.point),
+                        SetMapPoint(i - 1, point, normal, arcLengthPos, raycastDistance, hitGround, 
+                            result.point, result.normal, lastArcLength - math.distance(lastPt, result.point),
                             result.fraction * 2 * intervalWidth, true);
 
                         if (indexOfFirstGroundHitFromCenter.Value < 0)
@@ -279,8 +436,9 @@ public struct GroundMapUpdate : IJob
                     }
                     else
                     {
-                        o -= raycastLength * lastMapPt.normal;
-                        map[i - 1] = new(o, lastMapPt.normal, lastMapPt.arcLengthPosition - math.distance(lastMapPt.point, o), raycastLength, false);
+                        o -= raycastLength * lastNormal;
+                        SetMapPoint(i - 1, point, normal, arcLengthPos, raycastDistance, hitGround, 
+                            o, lastNormal, lastArcLength - math.distance(lastPt, o), raycastLength, false);
                     }
                 }
             }
