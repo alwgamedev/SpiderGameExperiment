@@ -8,7 +8,7 @@ using UnityEngine;
 [Serializable]
 public class GroundMap
 {
-    public const float DEFAULT_PRECISION = 0.2f;
+    public const float DEFAULT_PRECISION = 0.5f;
 
     [SerializeField] int numFwdIntervals;
     [SerializeField] float intervalWidth;

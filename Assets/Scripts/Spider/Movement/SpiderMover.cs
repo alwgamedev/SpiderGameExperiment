@@ -176,8 +176,9 @@ public class SpiderMover : MonoBehaviour
             if (Application.isPlaying)
             {
                 groundMap.DrawGizmos();
-                Gizmos.color = Color.magenta;
+                Gizmos.color = Color.blue;
                 Gizmos.DrawSphere(groundAnchorPt, 0.1f);
+                Gizmos.DrawLine(HeightReferencePt, groundAnchorPt);
             }
             spiderPhysics.DrawGizmos(abdomenBone, headBone);
         }
@@ -297,7 +298,7 @@ public class SpiderMover : MonoBehaviour
         }
 
         grapple.FixedUpdate(SpideyPhysics.VirtualTransform, Abdomen);
-        UpdateLegSynch();
+        UpdateLegSynch(Time.deltaTime);
     }
 
 
@@ -703,24 +704,10 @@ public class SpiderMover : MonoBehaviour
         UpdateGroundMap();
         var i = groundMap.IndexOfFirstGroundHitFromCenter;
 
-        //bool isCentralIndex = i == groundMap.CentralIndex;
-        //var pt = groundMap.MapPoint(i);
-        //var goalGroundDirection = pt.hitGround && isCentralIndex ?
-        //    groundMap.AverageNormalFromCenter(-groundDirectionSampleWidth, groundDirectionSampleWidth).CWPerp()
-        //    : pt.normal.CWPerp();
+
         groundDirection = grounded ?
             groundMap.AverageNormal(i, -groundDirectionSampleWidth, groundDirectionSampleWidth).CWPerp()
             : Vector2.right;
-
-        if (grounded && i == groundMap.CentralIndex)
-        {
-            groundDirection = groundMap.AverageNormal(i, -groundDirectionSampleWidth, groundDirectionSampleWidth).CWPerp();
-        }
-        else
-        {
-            groundDirection = Vector2.right;
-        }
-            groundDirection = grounded ? groundMap.Normal(i).CWPerp() : Vector2.right;
 
         if (HorizontalMoveInput != 0 || !grounded || (grapple.GrappleAnchored && grapple.GrappleReleaseInput < 0))
         {
@@ -731,8 +718,9 @@ public class SpiderMover : MonoBehaviour
         {
             var t = settleTimer / settleTime;
             balanceDirection = MathTools.CheapRotationalLerpClamped(balanceDirection, groundDirection, 1 - 0.5f * t, out _);
-            groundAnchorPt = Vector2.Lerp(groundAnchorPt, GetGroundAnchorPoint(i), t);
-            //groundAnchorPt = groundMap.TrueClosestPoint(p, out _, out _, out _);
+            var p = Vector2.Lerp(groundAnchorPt, GetGroundAnchorPoint(i), t);
+            var (j, s) = groundMap.ClosestPoint(p, GroundMap.DEFAULT_PRECISION);
+            groundAnchorPt = groundMap.Point(j, s);
         }
 
         if (!VerifyingJump())
@@ -746,16 +734,19 @@ public class SpiderMover : MonoBehaviour
         {
             if (groundMap.HitGround(i) && i != groundMap.CentralIndex)
             {
-                var castResult = Abdomen.world.CastRay(HeightReferencePt, 
-                    -backupGroundPtRaycastLengthFactor * GroundMapRaycastLength * groundMap.Normal(i),
-                    spiderPhysics.queryFilter);
-                if (castResult.Length > 0)
-                {
-                    return castResult[0].point;
-                }
+
+                var (j, s) = groundMap.LineCastOrClosest(HeightReferencePt, -groundMap.Normal(i), GroundMap.DEFAULT_PRECISION);
+                return groundMap.Point(j, s);
+                //var castResult = Abdomen.world.CastRay(HeightReferencePt, 
+                //    -backupGroundPtRaycastLengthFactor * GroundMapRaycastLength * groundMap.Normal(i),
+                //    spiderPhysics.queryFilter);
+                //if (castResult.Length > 0)
+                //{
+                //    return castResult[0].point;
+                //}
             }
 
-            return groundMap.Point(i);
+            return groundMap.Point(groundMap.CentralIndex);
         }
 
         //UpdateGroundMap();
@@ -855,7 +846,7 @@ public class SpiderMover : MonoBehaviour
             : Mathf.Lerp(airborneStrideMultiplier, 1, -y);
     }
 
-    private void UpdateLegSynch()
+    private void UpdateLegSynch(float dt)
     {
         //legSynch.State =
         //    grounded ? PhysicsLegSynchronizer.LegState.standard
@@ -907,7 +898,7 @@ public class SpiderMover : MonoBehaviour
         legCastDirection[0] = SpideyPhysics.head.rotation.direction.CWPerp();
         legCastDirection[1] = SpideyPhysics.LevelRight.direction.CWPerp();
 
-        legSynch.UpdateAllLegs(groundMap, legCastDirection, grounded, FacingRight);
+        legSynch.UpdateAllLegs(dt, groundMap, legCastDirection, grounded, FacingRight);
     }
 
     private void InitializeLegSynch()

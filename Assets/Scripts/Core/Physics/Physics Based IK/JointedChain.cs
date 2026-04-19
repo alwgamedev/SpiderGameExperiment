@@ -33,12 +33,20 @@ public struct JointedChain
 
     public readonly int JointCount => joint.Length;
     public readonly float Mass => mass;
-    public readonly Vector2 BasePosition => body[0].position;
     public readonly Vector2 EffectorPosition => 
         JointPosition(JointCount - 1) + math.select(effectorDistance, -effectorDistance, reversed) * body[^1].rotation.direction;
     public PhysicsBody AnchorBody => joint[0].bodyA;
     public readonly Vector2 JointPosition(int i) => body[i].transform.TransformPoint(joint[i].localAnchorB.position);
     public readonly Vector2 NextPosition(int i) => i == JointCount - 1 ? EffectorPosition : JointPosition(i + 1);
+    public readonly float MassTail(int i)
+    {
+        var total = 0f;
+        for (int j = i; j < body.Length; j++)
+        {
+            total += body[j].mass;
+        }
+        return total;
+    }
 
     public static void DrawBodyGizmos(Transform[] transform, float[] width)
     {
@@ -136,6 +144,8 @@ public struct JointedChain
                 joint[i].UpdateSettings(jointDef);
             }
         }
+
+        RecomputeMass();
     }
 
     public void UpdateSettings(JointedChainSettings settings)
@@ -221,36 +231,6 @@ public struct JointedChain
         var temp = joint[i].upperAngleLimit;
         joint[i].upperAngleLimit = -joint[i].lowerAngleLimit;
         joint[i].lowerAngleLimit = -temp;
-    }
-
-    public readonly void AccelerateBase(int i, Vector2 accel)
-    {
-        body[i].ApplyForce(body[i].mass * accel, body[i].position);
-    }
-
-    public readonly void AccelerateCenter(int i, Vector2 accel)
-    {
-        body[i].ApplyForceToCenter(body[i].mass * accel);
-    }
-
-    public readonly void AccelerateEnd(int i, Vector2 accel)
-    {
-        body[i].ApplyForce(body[i].mass * accel, NextPosition(i));
-    }
-
-    public readonly void ImpulseBase(int i, Vector2 accel)
-    {
-        body[i].ApplyLinearImpulse(body[i].mass * accel, body[i].position);
-    }
-
-    public readonly void ImpulseCenter(int i, Vector2 accel)
-    {
-        body[i].ApplyLinearImpulseToCenter(body[i].mass * accel);
-    }
-
-    public readonly void ImpulseEnd(int i, Vector2 accel)
-    {
-        body[i].ApplyLinearImpulse(body[i].mass * accel, NextPosition(i));
     }
 
     private void RecomputeMass()

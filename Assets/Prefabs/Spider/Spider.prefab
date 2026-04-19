@@ -1384,8 +1384,8 @@ MonoBehaviour:
             direction: {x: 1, y: 0}
         m_EnableSpring: 1
         m_SpringTargetAngle: 0
-        m_SpringFrequency: 2.5
-        m_SpringDamping: 5
+        m_SpringFrequency: 5
+        m_SpringDamping: 2.5
         m_EnableMotor: 0
         m_MotorSpeed: 0
         m_MaxMotorTorque: 0
@@ -1407,7 +1407,7 @@ MonoBehaviour:
             bitMask: 64
           m_GroupIndex: 0
         surfaceMaterial:
-          m_Friction: 2
+          m_Friction: 0.4
           m_Bounciness: 0
           m_FrictionMixing: 0
           m_BouncinessMixing: 0
@@ -1418,7 +1418,7 @@ MonoBehaviour:
           m_CustomColor:
             serializedVersion: 2
             rgba: 0
-        m_Density: 0.01
+        m_Density: 0.1
         m_IsTrigger: 0
         m_TriggerEvents: 0
         m_ContactEvents: 0
@@ -1441,7 +1441,7 @@ MonoBehaviour:
         m_LinearVelocity: {x: 0, y: 0}
         m_AngularVelocity: 0
         m_LinearDamping: 0.25
-        m_AngularDamping: 2.5
+        m_AngularDamping: 5
         m_GravityScale: 1
         m_SleepThreshold: 0.01
         m_FastRotationAllowed: 0
@@ -1634,33 +1634,52 @@ MonoBehaviour:
       - {fileID: 1963197130059215229}
       - {fileID: 3207324145476504997}
       - {fileID: 4614320631808763307}
+    timer:
+    - 0.9
+    - 0.1
+    - 0.7
+    - 0.3
+    - 0.9
+    - 0.1
+    - 0.7
+    - 0.3
+    beginStepping: 0100010001000100
     stepMax:
-    - 0.7
-    - 0.7
-    - 0.65
-    - 0.65
-    - -0.2
-    - -0.2
-    - -0.2
-    - -0.2
+    - 0.925
+    - 0.925
+    - 0.875
+    - 0.875
+    - -0.1
+    - -0.1
+    - -0.125
+    - -0.125
     stepLength:
-    - 0.55
-    - 0.55
-    - 0.55
-    - 0.55
-    - 0.475
-    - 0.475
-    - 0.475
-    - 0.475
+    - 0.7
+    - 0.7
+    - 0.7
+    - 0.7
+    - 0.65
+    - 0.65
+    - 0.65
+    - 0.65
     stepSpeed:
-    - 0.4
-    - 0.4
-    - 0.4
-    - 0.4
-    - 0.4
-    - 0.4
-    - 0.4
-    - 0.4
+    - 0.45
+    - 0.45
+    - 0.45
+    - 0.45
+    - 0.45
+    - 0.45
+    - 0.45
+    - 0.45
+    restSpeed:
+    - 0.375
+    - 0.375
+    - 0.375
+    - 0.375
+    - 0.375
+    - 0.375
+    - 0.375
+    - 0.375
     stepHeight:
     - 0.45
     - 0.45
@@ -1671,13 +1690,13 @@ MonoBehaviour:
     - 0.6
     - 0.6
     castDirectionIndex: 0000000000000000000000000000000001000000010000000100000001000000
-    stepAccel: {x: 200, y: 200}
-    restAccel: {x: 100, y: 200}
-    stepPeakTime: 0.35
-    stepDropPoint: 0.5
+    stepAccel: 450
+    stepDamping: 0.95
+    stepPeakTime: 0.3
+    stepDropPoint: 0.7
     stepStopPoint: 1.2
-    restDropPoint: 0.1
-    restStopPoint: -0.02
+    restDropPoint: 0.25
+    restStopPoint: -0.1
     speed0: 0.05
     speed1: 3
     footGroundContactRadius: 0.075
