@@ -38,15 +38,6 @@ public struct JointedChain
     public PhysicsBody AnchorBody => joint[0].bodyA;
     public readonly Vector2 JointPosition(int i) => body[i].transform.TransformPoint(joint[i].localAnchorB.position);
     public readonly Vector2 NextPosition(int i) => i == JointCount - 1 ? EffectorPosition : JointPosition(i + 1);
-    public readonly float MassTail(int i)
-    {
-        var total = 0f;
-        for (int j = i; j < body.Length; j++)
-        {
-            total += body[j].mass;
-        }
-        return total;
-    }
 
     public static void DrawBodyGizmos(Transform[] transform, float[] width)
     {

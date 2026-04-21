@@ -1384,8 +1384,8 @@ MonoBehaviour:
             direction: {x: 1, y: 0}
         m_EnableSpring: 1
         m_SpringTargetAngle: 0
-        m_SpringFrequency: 5
-        m_SpringDamping: 2.5
+        m_SpringFrequency: 1
+        m_SpringDamping: 5
         m_EnableMotor: 0
         m_MotorSpeed: 0
         m_MaxMotorTorque: 0
@@ -1407,7 +1407,7 @@ MonoBehaviour:
             bitMask: 64
           m_GroupIndex: 0
         surfaceMaterial:
-          m_Friction: 0.4
+          m_Friction: 0
           m_Bounciness: 0
           m_FrictionMixing: 0
           m_BouncinessMixing: 0
@@ -1418,7 +1418,7 @@ MonoBehaviour:
           m_CustomColor:
             serializedVersion: 2
             rgba: 0
-        m_Density: 0.1
+        m_Density: 0.0025
         m_IsTrigger: 0
         m_TriggerEvents: 0
         m_ContactEvents: 0
@@ -1441,7 +1441,7 @@ MonoBehaviour:
         m_LinearVelocity: {x: 0, y: 0}
         m_AngularVelocity: 0
         m_LinearDamping: 0.25
-        m_AngularDamping: 5
+        m_AngularDamping: 200
         m_GravityScale: 1
         m_SleepThreshold: 0.01
         m_FastRotationAllowed: 0
@@ -1457,46 +1457,46 @@ MonoBehaviour:
       - 0.025
     chainSettings:
     - lowerAngleLimit:
-      - -75
+      - -45
       - -45
       - -15
       - -30
       upperAngleLimit:
       - 37.5
-      - 60
+      - 37.5
       - 45
       - 30
       enableLimit: 01010101
     - lowerAngleLimit:
-      - -75
+      - -45
       - -45
       - -15
       - -30
       upperAngleLimit:
       - 37.5
-      - 60
+      - 37.5
       - 45
       - 30
       enableLimit: 01010101
     - lowerAngleLimit:
-      - -75
+      - -45
       - -45
       - -15
       - -30
       upperAngleLimit:
       - 37.5
-      - 60
+      - 37.5
       - 45
       - 30
       enableLimit: 01010101
     - lowerAngleLimit:
-      - -75
+      - -45
       - -45
       - -15
       - -30
       upperAngleLimit:
       - 37.5
-      - 60
+      - 37.5
       - 45
       - 30
       enableLimit: 01010101
@@ -1645,8 +1645,8 @@ MonoBehaviour:
     - 0.3
     beginStepping: 0100010001000100
     stepMax:
-    - 0.925
-    - 0.925
+    - 0.975
+    - 0.975
     - 0.875
     - 0.875
     - -0.1
@@ -1654,10 +1654,10 @@ MonoBehaviour:
     - -0.125
     - -0.125
     stepLength:
-    - 0.7
-    - 0.7
-    - 0.7
-    - 0.7
+    - 0.65
+    - 0.65
+    - 0.65
+    - 0.65
     - 0.65
     - 0.65
     - 0.65
@@ -1691,7 +1691,7 @@ MonoBehaviour:
     - 0.6
     castDirectionIndex: 0000000000000000000000000000000001000000010000000100000001000000
     stepAccel: 450
-    stepDamping: 0.95
+    stepDamping: 2.5
     stepPeakTime: 0.3
     stepDropPoint: 0.7
     stepStopPoint: 1.2

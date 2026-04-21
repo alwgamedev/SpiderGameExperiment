@@ -1,5 +1,4 @@
-﻿using PlasticGui;
-using System;
+﻿using System;
 using Unity.Mathematics;
 using Unity.U2D.Physics;
 using UnityEditor;
@@ -11,8 +10,6 @@ public class LegSynchronizer
 {
     public UnityEvent[] footHitGround;
     internal float[] stepStrength;//public multiplier (0 - 1) for step and rest forces (set to 0 if you want the leg to go limp)
-    //internal float bodyGroundSpeedSign;
-    //internal float absoluteBodyGroundSpeed;
     internal float timeScale;
     internal float stepHeightFraction;
     internal float strideMultiplier;
@@ -52,7 +49,6 @@ public class LegSynchronizer
     float legCountInverse;
     float totalMass;
 
-    public int LegCount => leg.Length;
     public float TotalMass => totalMass;
 
     public bool Stepping(int i) => (stepping & (1 << i)) != 0;
@@ -100,7 +96,7 @@ public class LegSynchronizer
         var ct = 0;
         for (int i = 0; i < leg.Length; i++)
         {
-            if (LegIsTouchingGround(i)/*FootIsTouchingGround(i)*/)
+            if (LegIsTouchingGround(i))
             {
                 ct++;
             }
@@ -137,6 +133,8 @@ public class LegSynchronizer
             }
 
             footQueryFilter = chainDef.shapeDef.contactFilter.ToQueryFilter(PhysicsWorld.IgnoreFilter.IgnoreTriggerShapes);
+
+            RecalculateMass();
         }
     }
 
@@ -268,14 +266,6 @@ public class LegSynchronizer
         stepping = 0;
         footQueryFilter = chainDef.shapeDef.contactFilter.ToQueryFilter(PhysicsWorld.IgnoreFilter.IgnoreTriggerShapes);
 
-        //for (int i = 0; i < chainTransform.Length / 2; i++)
-        //{
-        //    int j = 2 * i;
-        //    stepping |= 1 << j;//even legs start as stepping, odd legs start as resting
-        //    InitializeLeg(j, anchorBody[j]);
-        //    InitializeLeg(j + 1, anchorBody[j + 1]);
-        //}
-
         for (int i = 0; i < chainTransform.Length; i++)
         {
             InitializeLeg(i, anchorBody[i]);
@@ -289,16 +279,12 @@ public class LegSynchronizer
         {
             leg[i].Initialize(chainTransform[i].array, bones[i].array, body, chainDef, chainSettings[i]);
         }
+
+        RecalculateMass();
     }
 
     public void OnDirectionChanged(PhysicsTransform bodyReflection, bool facingRight)
     {
-        //a) all bodies undergo same world reflection as main body, EXCEPT we use different convention for rotation (i.e. rotation reflects over same axis as position, keeping orientation)
-        //b) reflect hip anchors to other side of their anchored bodies
-        //c) negate joint angle limits
-
-        //also reflect stepStart positions
-
         for (int i = 0; i < leg.Length; i++)
         {
             ref var l = ref leg[i];
@@ -370,9 +356,7 @@ public class LegSynchronizer
         var target = gdPt + goalStepHt * gdUp;
         var error = target - effectorPos;
         var accel = stepAccel * error;
-        var aX = Vector2.Dot(accel, gdRight);
-        var aY = Vector2.Dot(accel, gdUp);
-        AccelerateLegWithDamping(i, aX, aY, gdRight, gdUp, stepDamping);
+        AccelerateLegWithDamping(i, accel, gdRight, gdUp, stepDamping);
 
 #if UNITY_EDITOR
         if (debugStepStats[i])
@@ -396,24 +380,25 @@ public class LegSynchronizer
         }
     }
 
-    private void AccelerateLegWithDamping(int i, float aX, float aY, float2 dirX, float2 dirY, float damping)
+    private void AccelerateLegWithDamping(int i, float2 accel, float2 dirX, float2 dirY, float damping)
     {
         ref var l = ref leg[i];
-        var a0 = aX * dirX + aY * dirY;
-        var dampX = damping * dirX;
-        var dampY = damping * dirY;
 
         for (int j = 0; j < l.JointCount; j++)
         {
-            var p = l.NextPosition(j);
-            var v = l.body[j].GetWorldPointVelocity(p);
-            var vX = Vector2.Dot(v, dirX);
-            var vY = Vector2.Dot(v, dirY);
-
-            float2 n = l.body[j].rotation.direction.CCWPerp();
-            var a = math.dot(a0, n) * n - Mathf.Abs(vX) * vX * dampX - Mathf.Abs(vY) * vY * dampY;
-            l.body[j].ApplyForce(l.body[j].mass * a, p);
+            AccelerateLegSegmentWithDamping(ref l, j, accel, dirX, dirY, damping);
         }
+    }
+
+    private void AccelerateLegSegmentWithDamping(ref JointedChain l, int j, float2 accel, float2 dirX, float2 dirY, float damping)
+    {
+        var p = l.NextPosition(j);
+        var v = l.body[j].GetWorldPointVelocity(p);
+        var vX = Vector2.Dot(v, dirX);
+        var vY = Vector2.Dot(v, dirY);
+
+        accel -= damping * (Mathf.Abs(vX) * vX * dirX + Mathf.Abs(vY) * vY * dirY);
+        l.body[j].ApplyForce(l.body[j].mass * accel, p);
     }
 
     private float HipSpeed(ref JointedChain l, Vector2 gdDir)

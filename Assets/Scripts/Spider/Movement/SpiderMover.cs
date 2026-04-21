@@ -2,7 +2,6 @@
 using UnityEngine.Events;
 using Unity.U2D.Physics;
 using Unity.Collections;
-using Unity.Mathematics;
 
 
 public class SpiderMover : MonoBehaviour
@@ -467,18 +466,15 @@ public class SpiderMover : MonoBehaviour
         if (!grapple.FreeHanging)
         {
             reflection = SpideyPhysics.VirtualTransform;
-            SpideyPhysics.ChangeDirection(reflection, abdomenBone, headBone, grappleArm);
-            //legSynch.OnBodyChangedDirection(reflection.position, reflection.position, reflection.rotation.direction);
         }
         else
         {
             var p = SpideyPhysics.HeightReferencePosition;
             var u = SpideyPhysics.LevelRight.direction.CCWPerp();
             reflection = new PhysicsTransform(grapple.FreeHangLeveragePoint, new PhysicsRotate(u));
-            SpideyPhysics.ChangeDirection(reflection, abdomenBone, headBone, grappleArm);
-            //legSynch.OnBodyChangedDirection(p, SpideyPhysics.HeightReferencePosition, u);
         }
 
+        SpideyPhysics.ChangeDirection(reflection, abdomenBone, headBone, grappleArm);
         legSynch.OnDirectionChanged(reflection, FacingRight);
         grapple.SetOrientation(FacingRight);
     }
@@ -634,9 +630,6 @@ public class SpiderMover : MonoBehaviour
         return SpideyPhysics.FacingRight ?
             SpideyPhysics.AbdomenBaseRotationFromLevel.InverseMultiplyRotation(Abdomen.rotation).direction.CCWPerp()
             : SpideyPhysics.AbdomenBaseRotationFromLevel.MultiplyRotation(Abdomen.rotation).direction.CCWPerp();
-        //return Up;//although you'll have to adjust when leaning
-        //var u = AbdomenBoneUpInBaseLocalCoords();//quaternion version would compute a lot of extra trivial products
-        //return u.x * Right + u.y * Up;
     }
 
     private bool VerifyingJump()
@@ -737,69 +730,15 @@ public class SpiderMover : MonoBehaviour
 
                 var (j, s) = groundMap.LineCastOrClosest(HeightReferencePt, -groundMap.Normal(i), GroundMap.DEFAULT_PRECISION);
                 return groundMap.Point(j, s);
-                //var castResult = Abdomen.world.CastRay(HeightReferencePt, 
-                //    -backupGroundPtRaycastLengthFactor * GroundMapRaycastLength * groundMap.Normal(i),
-                //    spiderPhysics.queryFilter);
-                //if (castResult.Length > 0)
-                //{
-                //    return castResult[0].point;
-                //}
             }
 
             return groundMap.Point(groundMap.CentralIndex);
         }
-
-        //UpdateGroundMap();
-        //var i = groundMap.IndexOfFirstGroundHitFromCenter;
-        //bool isCentralIndex = i == groundMap.CentralIndex;
-        //var pt = groundMap.MapPoint(i);
-        //var goalGroundDirection = pt.hitGround && isCentralIndex ?
-        //    groundMap.AverageNormalFromCenter(-groundDirectionSampleWidth, groundDirectionSampleWidth).CWPerp()
-        //    : pt.normal.CWPerp();
-
-        //groundDirection = grounded ? goalGroundDirection : Vector2.right;
-
-        //if (HorizontalMoveInput != 0 || !grounded || (grapple.GrappleAnchored && grapple.GrappleReleaseInput < 0))
-        //{
-        //    groundAnchorPt = GetGroundAnchorPoint(ref pt, isCentralIndex);
-        //    balanceDirection = groundDirection;
-        //}
-        //else if (settleTimer > 0)
-        //{
-        //    var t = settleTimer / settleTime;
-        //    balanceDirection = MathTools.CheapRotationalLerpClamped(balanceDirection, groundDirection, 1 - 0.5f * t, out _);
-        //    var p = Vector2.Lerp(groundAnchorPt, GetGroundAnchorPoint(ref pt, isCentralIndex), t);
-        //    groundAnchorPt = groundMap.TrueClosestPoint(p, out _, out _, out _);
-        //}
-
-        //if (!VerifyingJump())
-        //{
-        //    UpdateGroundednessRating();
-        //    SetGrounded(GroundedCondition());
-        //    grapple.FreeHanging = grappleFreeHangPrerequisites && !grounded;
-        //}
-
-        //Vector2 GetGroundAnchorPoint(ref GroundMapPt pt, bool isCentralIndex)
-        //{
-        //    if (pt.hitGround && !isCentralIndex)
-        //    {
-        //        var castResult = Abdomen.world.CastRay(HeightReferencePt, -backupGroundPtRaycastLengthFactor * GroundMapRaycastLength * pt.normal, 
-        //            spiderPhysics.queryFilter);
-        //        if (castResult.Length > 0)
-        //        {
-        //            return castResult[0].point;
-        //        }
-        //    }
-
-        //    return pt.point;
-        //}
     }
 
     private bool GroundedCondition()
     {
-        return ((!grapple.FreeHanging || grounded /*|| legSynch.AnyGroundedLegsUnderextended(freeHangGroundedEntryLegExtensionThreshold)*/)
-            && groundednessRating > 0) /*|| spiderPhysics.HasContact()*/;
-        //keep the HasContact() out of parentheses; that on its own automatically qualifies you as grounded!
+        return (!grapple.FreeHanging || grounded) && groundednessRating > 0;
     }
 
     private void UpdateGroundednessRating()
