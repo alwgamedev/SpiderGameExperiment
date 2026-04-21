@@ -1440,7 +1440,7 @@ MonoBehaviour:
           direction: {x: 1, y: 0}
         m_LinearVelocity: {x: 0, y: 0}
         m_AngularVelocity: 0
-        m_LinearDamping: 0.25
+        m_LinearDamping: 1
         m_AngularDamping: 200
         m_GravityScale: 1
         m_SleepThreshold: 0.01
@@ -1635,24 +1635,24 @@ MonoBehaviour:
       - {fileID: 3207324145476504997}
       - {fileID: 4614320631808763307}
     timer:
+    - 0
     - 0.9
-    - 0.1
-    - 0.7
-    - 0.3
-    - 0.9
-    - 0.1
-    - 0.7
-    - 0.3
+    - 0.5
+    - 0.4
+    - 0
+    - 1
+    - 0.5
+    - 0.5
     beginStepping: 0100010001000100
     stepMax:
     - 0.975
     - 0.975
     - 0.875
     - 0.875
-    - -0.1
-    - -0.1
-    - -0.125
-    - -0.125
+    - -0.15
+    - -0.15
+    - -0.15
+    - -0.15
     stepLength:
     - 0.65
     - 0.65
@@ -1663,23 +1663,23 @@ MonoBehaviour:
     - 0.65
     - 0.65
     stepSpeed:
-    - 0.45
-    - 0.45
-    - 0.45
-    - 0.45
-    - 0.45
-    - 0.45
-    - 0.45
-    - 0.45
+    - 0.5
+    - 0.5
+    - 0.5
+    - 0.5
+    - 0.5
+    - 0.5
+    - 0.5
+    - 0.5
     restSpeed:
-    - 0.375
-    - 0.375
-    - 0.375
-    - 0.375
-    - 0.375
-    - 0.375
-    - 0.375
-    - 0.375
+    - 0.55
+    - 0.55
+    - 0.55
+    - 0.55
+    - 0.55
+    - 0.55
+    - 0.55
+    - 0.55
     stepHeight:
     - 0.45
     - 0.45
@@ -1691,7 +1691,6 @@ MonoBehaviour:
     - 0.6
     castDirectionIndex: 0000000000000000000000000000000001000000010000000100000001000000
     stepAccel: 450
-    stepDamping: 2.5
     stepPeakTime: 0.3
     stepDropPoint: 0.7
     stepStopPoint: 1.2
@@ -1704,6 +1703,66 @@ MonoBehaviour:
     drawAngleLimitGizmos: 0000000000000000
     drawFootGizmo: 0000000000000000
     debugStepStats: 0000000000000000
+  stdLegSettings:
+    stepStrength:
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    timeScale: 1
+    stepDamping: 2.5
+    stepHeightFraction: 1
+    strideMultiplier: 1
+    scaleStepHeightWithSpeed: 1
+  freefallLegSettings:
+    stepStrength:
+    - 0.25
+    - 0.25
+    - 0.25
+    - 0.25
+    - 0.25
+    - 0.25
+    - 0.25
+    - 0.25
+    timeScale: 0.15
+    stepDamping: 0.15
+    stepHeightFraction: 0.75
+    strideMultiplier: 1.125
+    scaleStepHeightWithSpeed: 0
+  thrustingLegSettings:
+    stepStrength:
+    - 0.8
+    - 0.8
+    - 0.8
+    - 0.8
+    - 0.8
+    - 0.8
+    - 0.8
+    - 0.8
+    timeScale: 1
+    stepDamping: 0.5
+    stepHeightFraction: 1
+    strideMultiplier: 1.05
+    scaleStepHeightWithSpeed: 0
+  freeHangLegSettings:
+    stepStrength:
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    timeScale: 1
+    stepDamping: 2.5
+    stepHeightFraction: 1
+    strideMultiplier: 1
+    scaleStepHeightWithSpeed: 0
   headBoneHeightRefPoint: {fileID: 3597460655033676372}
   grappleArm: {fileID: 8393107135455579191}
   abdomenRoot: {fileID: 7095442034761804592}
@@ -1800,8 +1859,8 @@ MonoBehaviour:
   grappleSquatReduction: 0.4
   heightSampleMin: -0.4
   heightSampleMax: 0.6
-  headRotationMinPos: -0.25
-  headRotationMaxPos: 0.45
+  headRotationMinPos: -0.05
+  headRotationMaxPos: 0.15
   balanceSpringForce: 210
   airborneBalanceSpringForce: 100
   balanceSpringDamping: 0.25

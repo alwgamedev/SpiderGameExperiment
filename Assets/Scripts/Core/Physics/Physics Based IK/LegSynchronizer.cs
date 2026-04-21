@@ -6,13 +6,21 @@ using UnityEngine;
 using UnityEngine.Events;
 
 [Serializable]
+public struct LegSynchSettings
+{
+    public float[] stepStrength;
+    public float timeScale;
+    public float stepDamping;
+    public float stepHeightFraction;
+    public float strideMultiplier;
+    public bool scaleStepHeightWithSpeed;
+}
+
+[Serializable]
 public class LegSynchronizer
 {
     public UnityEvent[] footHitGround;
-    internal float[] stepStrength;//public multiplier (0 - 1) for step and rest forces (set to 0 if you want the leg to go limp)
-    internal float timeScale;
-    internal float stepHeightFraction;
-    internal float strideMultiplier;
+    //internal LegSynchSettings settings;
 
     [SerializeField] JointedChainDefinition chainDef;
     [SerializeField] JointedChainSettings[] chainSettings;
@@ -27,7 +35,6 @@ public class LegSynchronizer
     [SerializeField] float[] stepHeight;
     [SerializeField] int[] castDirectionIndex;
     [SerializeField] float stepAccel;
-    [SerializeField] float stepDamping;
     [SerializeField] float stepPeakTime;
     [SerializeField] float stepDropPoint;//no upward forces will be applied beyond this point
     [SerializeField] float stepStopPoint;
@@ -260,8 +267,7 @@ public class LegSynchronizer
         legCountInverse = 1f / numLegs;
 
         leg = new JointedChain[numLegs];
-        stepStrength = new float[numLegs];
-        Array.Fill(stepStrength, 1);
+        //this.settings = settings.Clone();
 
         stepping = 0;
         footQueryFilter = chainDef.shapeDef.contactFilter.ToQueryFilter(PhysicsWorld.IgnoreFilter.IgnoreTriggerShapes);
@@ -271,7 +277,7 @@ public class LegSynchronizer
             InitializeLeg(i, anchorBody[i]);
             if (beginStepping[i])
             {
-                stepping &= (1 << i);
+                stepping |= (1 << i);
             }
         }
 
@@ -307,47 +313,57 @@ public class LegSynchronizer
         }
     }
 
-    public void UpdateAllLegs(float dt, GroundMap map, Vector2[] castDirection, bool grounded, bool facingRight)
+    public void UpdateAllLegs(float dt, GroundMap map, Vector2[] castDirection, bool facingRight, LegSynchSettings settings)
     {
         for (int i = 0; i < leg.Length; i++)
         {
             var castDir = castDirection[castDirectionIndex[i]];
             var (j, s) = map.LineCastOrClosest(leg[i].JointPosition(0), castDir, GroundMap.DEFAULT_PRECISION);//hip ground point
+
+            float hipSpeed;
             var n = map.NormalFromReducedPosition(j, s);//normal at hip ground point
             var hipGroundDir = facingRight ? n.CWPerp() : n.CCWPerp();
-            var hipSpeed = HipSpeed(ref leg[i], hipGroundDir);
+            hipSpeed = HipSpeed(ref leg[i], hipGroundDir);
+
             if (Mathf.Abs(hipSpeed) < speed0)
             {
                 hipSpeed = 0;
             }
+            else
+            {
+                hipSpeed *= settings.timeScale;
+            }
 
-            if ((Stepping(i) && timer[i] > 1) || (!Stepping(i) && timer[i] < 0))
+            var t = timer[i];
+
+            if ((Stepping(i) && t > 1) || (!Stepping(i) && t < 0))
             {
                 stepping ^= 1 << i;//flip i-th bit
             }
 
             if (Stepping(i))
             {
-                var goalRelSpeed = GoalRelSpeedStepping(timer[i], stepSpeed[i], hipSpeed);
-                var goalStepHt = StepHeight(stepHeight[i], timer[i], hipSpeed, grounded);
-                UpdateLeg(i, dt, map, facingRight, (j, s), goalRelSpeed, goalStepHt);
+                var goalRelSpeed = GoalRelSpeedStepping(t, stepSpeed[i], hipSpeed);
+                var speedFraction = settings.scaleStepHeightWithSpeed ? Mathf.Min(Mathf.Abs(hipSpeed) / speed1, 1) : 1;
+                var goalStepHt = StepHeight(t, speedFraction * settings.stepHeightFraction * stepHeight[i]);
+                UpdateLeg(i, dt, map, facingRight, (j, s), goalRelSpeed, goalStepHt, settings);
             }
             else
             {
-                var goalRelSpeed = GoalRelSpeedResting(timer[i], restSpeed[i], hipSpeed);
-                UpdateLeg(i, dt, map, facingRight, (j, s), goalRelSpeed, 0);
+                var goalRelSpeed = GoalRelSpeedResting(t, restSpeed[i], hipSpeed);
+                UpdateLeg(i, dt, map, facingRight, (j, s), goalRelSpeed, 0, settings);
             }
         }
     }
 
     private void UpdateLeg(int i, float dt, GroundMap map, bool facingRight, (int, float) hipGroundMapPosition,
-        float goalRelSpd, float goalStepHt)
+        float goalRelSpd, float goalStepHt, LegSynchSettings settings)
     {
         float2 effectorPos = leg[i].EffectorPosition;
 
         timer[i] += dt * goalRelSpd / stepLength[i];
 
-        var targetRelPos = StepPosition(stepMax[i], stepLength[i], timer[i]);//target position along ground map, relative to hip
+        var targetRelPos = settings.strideMultiplier * StepPosition(stepMax[i], stepLength[i], timer[i]);//target position along ground map, relative to hip
         var (j, a) = map.AddArcLength(hipGroundMapPosition.Item1, hipGroundMapPosition.Item2 + (facingRight ? targetRelPos : -targetRelPos));//target ground map position
 
         var gdPt = map.PointFromReducedPosition(j, a);
@@ -355,8 +371,8 @@ public class LegSynchronizer
         var gdRight = gdUp.CWPerp();
         var target = gdPt + goalStepHt * gdUp;
         var error = target - effectorPos;
-        var accel = stepAccel * error;
-        AccelerateLegWithDamping(i, accel, gdRight, gdUp, stepDamping);
+        var accel = settings.stepStrength[i] * stepAccel * error;
+        AccelerateLegWithDamping(i, accel, gdRight, gdUp, settings.stepDamping);
 
 #if UNITY_EDITOR
         if (debugStepStats[i])
@@ -367,7 +383,7 @@ public class LegSynchronizer
             Debug.DrawLine(hipPos, (Vector2)effectorPos, Color.yellow);
             Debug.DrawLine(hipPos, stepPos, Color.green);
 
-            Debug.Log($"Leg {i}: stepping {Stepping(i)}, dX {math.dot(error, gdRight)}, dY {math.dot(error, gdUp)}");
+            Debug.Log($"Leg {i}: stepping {Stepping(i)}, errorX {math.dot(error, gdRight)}, errorY {math.dot(error, gdUp)}");
         }
 #endif
     }
@@ -403,7 +419,7 @@ public class LegSynchronizer
 
     private float HipSpeed(ref JointedChain l, Vector2 gdDir)
     {
-        return Vector2.Dot(l.body[0].GetWorldPointVelocity(l.JointPosition(0)), gdDir);
+        return Vector2.Dot(l.AnchorBody.GetWorldPointVelocity(l.JointPosition(0)), gdDir);
     }
 
     private float GoalRelSpeedStepping(float stepTime, float stepSpeed, float hipSpeed)
@@ -421,29 +437,12 @@ public class LegSynchronizer
 
     }
 
-    private float AbsoluteSpeedFraction(float hipSpeed)
-    {
-        return Mathf.Abs(hipSpeed / speed1);
-    }
-
-    private float MaxStepHeight(float baseStepHeight, float speedFraction, bool grounded)
-    {
-        return grounded ? Mathf.Min(speedFraction, 1) * baseStepHeight : baseStepHeight;
-    }
-
     private float StepHeight(float stepTime, float maxStepHeight)
     {
         var c = 1 - 2 * stepPeakTime;
         var denom = 1 / (1 - stepPeakTime);
         denom *= denom;
         return maxStepHeight * Mathf.Clamp01(denom * (stepTime + c) * (1 - stepTime));
-    }
-
-    private float StepHeight(float baseStepHeight, float stepTime, float hipSpeed, bool grounded)
-    {
-        var speedFrac = AbsoluteSpeedFraction(hipSpeed);
-        var maxStepHt = MaxStepHeight(baseStepHeight, speedFrac, grounded);
-        return StepHeight(stepTime, maxStepHt);
     }
 
     private static float StepPosition(float stepMax, float stepLength, float stepTime) => stepMax + (stepTime - 1) * stepLength;

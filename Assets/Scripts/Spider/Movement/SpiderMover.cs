@@ -12,6 +12,10 @@ public class SpiderMover : MonoBehaviour
     [Header("Parts")]
     [SerializeField] SpiderPhysics spiderPhysics;
     [SerializeField] LegSynchronizer legSynch;
+    [SerializeField] LegSynchSettings stdLegSettings;
+    [SerializeField] LegSynchSettings freefallLegSettings;
+    [SerializeField] LegSynchSettings thrustingLegSettings;
+    [SerializeField] LegSynchSettings freeHangLegSettings;
     [SerializeField] Transform headBoneHeightRefPoint;
     [SerializeField] Transform grappleArm;
     [SerializeField] Transform abdomenRoot;
@@ -573,8 +577,9 @@ public class SpiderMover : MonoBehaviour
         {
             var (i, t) = groundMap.ClosestPoint(HeadHeightReferencePt, GroundMap.DEFAULT_PRECISION);
             var p = groundMap.PointFromReducedPosition(i, t);
-            var n = FacingRight ? groundMap.AverageNormal(i, t + headRotationMinPos, t + headRotationMaxPos)
-                : groundMap.AverageNormal(i, t - headRotationMaxPos, t - headRotationMinPos);
+            var tMin = FacingRight ? t + headRotationMinPos : t - headRotationMaxPos;
+            var tMax = FacingRight ? t + headRotationMaxPos : t - headRotationMinPos;
+            var n = groundMap.AverageNormal(i, tMin, tMax);
             g = n.CWPerp();
         }
         else
@@ -785,6 +790,26 @@ public class SpiderMover : MonoBehaviour
             : Mathf.Lerp(airborneStrideMultiplier, 1, -y);
     }
 
+    enum LegState
+    {
+        std, freefall, thrusting, freeHang
+    }
+
+    ref LegSynchSettings LegSettings(LegState state)
+    {
+        switch (state)
+        {
+            case LegState.freefall:
+                return ref freefallLegSettings;
+            case LegState.thrusting:
+                return ref thrustingLegSettings;
+            case LegState.freeHang:
+                return ref freeHangLegSettings;
+            default:
+                return ref stdLegSettings;
+        }
+    }
+
     private void UpdateLegSynch(float dt)
     {
         //legSynch.State =
@@ -803,12 +828,41 @@ public class SpiderMover : MonoBehaviour
         //}
         //legSynch.bodyGroundSpeedSign = (grounded && grapple.GrappleAnchored) || grapple.FreeHanging ? 1 : Mathf.Sign(groundVelocity);
         //legSynch.absoluteBodyGroundSpeed = grounded ? Mathf.Abs(groundVelocity) : Mathf.Min(Abdomen.linearVelocity.magnitude, airborneLegSpeedMax);
-        legSynch.stepHeightFraction = 1 - crouchProgress * crouchHeightFraction;
-        legSynch.timeScale = grounded || thruster.Engaged ? 1 : airborneLegAnimationTimeScale;
+
+        LegState state = grounded ? LegState.std
+            : thruster.Engaged ? LegState.thrusting
+            : grapple.FreeHanging ? LegState.freeHang
+            : LegState.freefall;
+
+        var settings = LegSettings(state);
+        settings.stepHeightFraction *= 1 - crouchProgress * crouchHeightFraction;
+
+        legCastDirection[0] = SpideyPhysics.head.rotation.direction.CWPerp();
+        legCastDirection[1] = SpideyPhysics.LevelRight.direction.CWPerp();
+
+        legSynch.UpdateAllLegs(dt, groundMap, legCastDirection, FacingRight, settings);
+
+        //if (grounded)
+        //{
+        //    legSynch.settings.timeScale = 1;
+        //    legSynch.strideMultiplier = 1;
+        //}
+        //else if (thruster.Engaged)
+        //{
+        //    legSynch.timeScale = 1;
+        //    legSynch.strideMultiplier = MathTools.LerpAtConstantSpeed(legSynch.strideMultiplier, airborneStrideMultiplier, strideMultiplierSmoothingRate, dt);
+        //}
+        //else
+        //{
+        //    legSynch.timeScale = airborneLegAnimationTimeScale;
+        //    legSynch.strideMultiplier = MathTools.LerpAtConstantSpeed(legSynch.strideMultiplier, airborneStrideMultiplier, strideMultiplierSmoothingRate, dt);
+        //}
+
+        //legSynch.timeScale = grounded || thruster.Engaged ? 1 : airborneLegAnimationTimeScale;
 
         //var simulateContactWeight = 0f;
 
-        legSynch.strideMultiplier = 1;
+        //legSynch.strideMultiplier = 1;
         //switch (legSynch.State)
         //{
         //    case PhysicsLegSynchronizer.LegState.standard:
@@ -833,11 +887,6 @@ public class SpiderMover : MonoBehaviour
         //        legSynch.absoluteBodyGroundSpeed *= simulateContactWeight;
         //        break;
         //}
-
-        legCastDirection[0] = SpideyPhysics.head.rotation.direction.CWPerp();
-        legCastDirection[1] = SpideyPhysics.LevelRight.direction.CWPerp();
-
-        legSynch.UpdateAllLegs(dt, groundMap, legCastDirection, grounded, FacingRight);
     }
 
     private void InitializeLegSynch()
