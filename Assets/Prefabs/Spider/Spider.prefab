@@ -1392,10 +1392,10 @@ MonoBehaviour:
         m_EnableLimit: 0
         m_LowerAngleLimit: 0
         m_UpperAngleLimit: 0
-        m_ForceThreshold: 100000
-        m_TorqueThreshold: 100000
+        m_ForceThreshold: 10000000
+        m_TorqueThreshold: 10000000
         m_TuningFrequency: 500
-        m_TuningDamping: 1
+        m_TuningDamping: 10
         m_DrawScale: 0.001
         m_WorldDrawing: 0
         m_CollideConnected: 0
@@ -1440,7 +1440,7 @@ MonoBehaviour:
           direction: {x: 1, y: 0}
         m_LinearVelocity: {x: 0, y: 0}
         m_AngularVelocity: 0
-        m_LinearDamping: 0
+        m_LinearDamping: 0.1
         m_AngularDamping: 200
         m_GravityScale: 1
         m_SleepThreshold: 0.01
@@ -1753,19 +1753,19 @@ MonoBehaviour:
     scaleStepHeightWithSpeed: 0
   freeHangLegSettings:
     stepStrength:
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    stepHeightFraction: 1
-    timeScale: 1
-    stepDamping: 2.5
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0.1
+    - 0.1
+    - 0.1
+    - 0.1
+    stepHeightFraction: 0
+    timeScale: 0
+    stepDamping: 0.025
     gravityScale: 1
-    strideMultiplier: 1
+    strideMultiplier: 1.2
     scaleStepHeightWithSpeed: 0
   headBoneHeightRefPoint: {fileID: 3597460655033676372}
   grappleArm: {fileID: 8393107135455579191}
@@ -1785,7 +1785,7 @@ MonoBehaviour:
     shootSpeedPowerUpMax: 3
     releaseRate: 6
     retractMaxTension: 2
-    carrySpringForce: 450
+    carrySpringForce: 350
     grappleSettings:
       collisionMask:
         bitMask: 64
