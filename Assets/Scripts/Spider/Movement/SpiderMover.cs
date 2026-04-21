@@ -143,7 +143,7 @@ public class SpiderMover : MonoBehaviour
 
     public bool FacingRight => SpideyPhysics.FacingRight;
     public float CrouchProgress => crouchProgress;
-    public float TotalMass => SpideyPhysics.TotalMass + legSynch.TotalMass;
+    public float TotalMass => SpideyPhysics.TotalMass + legSynch.settings.gravityScale * legSynch.TotalMass;
     public Thruster Thruster => thruster;
     public GrappleCannon Grapple => grapple;
     public ref SpiderPhysics SpideyPhysics => ref spiderPhysics;
@@ -757,6 +757,8 @@ public class SpiderMover : MonoBehaviour
 
     private void UpdateGroundMap()
     {
+        var (j, s) = groundMap.ClosestPoint(HeightReferencePt, GroundMap.DEFAULT_PRECISION);
+        var n = groundMap.NormalFromReducedPosition(j, s);
         groundMap.UpdateMap(Abdomen.world, spiderPhysics.queryFilter,
             HeightReferencePt,
             -Up,
@@ -781,14 +783,7 @@ public class SpiderMover : MonoBehaviour
 
     //LEGS
 
-    private float FreeHangStrideMultiplier()
-    {
-        var y = Right.y;
-        //using y > cosLegAngleMax b/c we really want sin(90 - legAngleMax)
-        return y > cosFreeHangLegAngleMin ? 1 :
-            y > 0 ? Mathf.Lerp(airborneStrideMultiplier, 1, y / cosFreeHangLegAngleMin)
-            : Mathf.Lerp(airborneStrideMultiplier, 1, -y);
-    }
+    LegState legState;
 
     enum LegState
     {
@@ -812,35 +807,25 @@ public class SpiderMover : MonoBehaviour
 
     private void UpdateLegSynch(float dt)
     {
-        //legSynch.State =
-        //    grounded ? PhysicsLegSynchronizer.LegState.standard
-        //    : thruster.Engaged ? PhysicsLegSynchronizer.LegState.jumping
-        //    : grapple.FreeHanging ? PhysicsLegSynchronizer.LegState.limp
-        //    : PhysicsLegSynchronizer.LegState.freefall;
-
-        //var groundVelocity = Vector2.Dot(Abdomen.linearVelocity, OrientedGroundDirection);
-        //var orientedbodyGroundSpeed = grounded ?
-        //    Vector2.Dot(Abdomen.linearVelocity, OrientedGroundDirection)
-        //    : Mathf.Min(Abdomen.linearVelocity.magnitude, airborneLegSpeedMax);
-        //if (grounded && grapple.GrappleAnchored)
-        //{
-        //    orientedbodyGroundSpeed = Mathf.Abs(orientedbodyGroundSpeed);
-        //}
-        //legSynch.bodyGroundSpeedSign = (grounded && grapple.GrappleAnchored) || grapple.FreeHanging ? 1 : Mathf.Sign(groundVelocity);
-        //legSynch.absoluteBodyGroundSpeed = grounded ? Mathf.Abs(groundVelocity) : Mathf.Min(Abdomen.linearVelocity.magnitude, airborneLegSpeedMax);
-
         LegState state = grounded ? LegState.std
             : thruster.Engaged ? LegState.thrusting
             : grapple.FreeHanging ? LegState.freeHang
             : LegState.freefall;
 
-        var settings = LegSettings(state);
-        settings.stepHeightFraction *= 1 - crouchProgress * crouchHeightFraction;
+        ref var settings = ref LegSettings(state);
+
+        if (state != legState)
+        {
+            legState = state;
+            legSynch.UpdateSettings(in settings);
+        }
+
+        legSynch.settings.stepHeightFraction = settings.stepHeightFraction * (1 - crouchProgress * crouchHeightFraction);
 
         legCastDirection[0] = SpideyPhysics.head.rotation.direction.CWPerp();
         legCastDirection[1] = SpideyPhysics.LevelRight.direction.CWPerp();
 
-        legSynch.UpdateAllLegs(dt, groundMap, legCastDirection, FacingRight, settings);
+        legSynch.UpdateAllLegs(dt, groundMap, legCastDirection, FacingRight);
 
         //if (grounded)
         //{
@@ -899,5 +884,16 @@ public class SpiderMover : MonoBehaviour
         }
 
         legSynch.Initialize(anchorBody);
+        legSynch.settings = stdLegSettings.Clone();
+        legState = LegState.std;
+    }
+
+    private float FreeHangStrideMultiplier()
+    {
+        var y = Right.y;
+        //using y > cosLegAngleMax b/c we really want sin(90 - legAngleMax)
+        return y > cosFreeHangLegAngleMin ? 1 :
+            y > 0 ? Mathf.Lerp(airborneStrideMultiplier, 1, y / cosFreeHangLegAngleMin)
+            : Mathf.Lerp(airborneStrideMultiplier, 1, -y);
     }
 }
