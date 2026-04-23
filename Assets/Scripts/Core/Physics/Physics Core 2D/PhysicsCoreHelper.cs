@@ -1,11 +1,12 @@
-﻿using Unity.Collections;
+﻿using System.Runtime.CompilerServices;
+using Unity.Collections;
 using Unity.U2D.Physics;
 using UnityEditor;
 using UnityEngine;
 
 public static class PhysicsCoreHelper
 {
-    //MISC
+    //REFLECT AND ROTATE 
 
     public static PhysicsTransform RotateAroundPoint(this PhysicsTransform t, PhysicsRotate rot, Vector2 rotLocalCenter)
     {
@@ -253,5 +254,20 @@ public static class PhysicsCoreHelper
         joint.drawScale = def.drawScale;
         joint.worldDrawing = def.worldDrawing;
         joint.collideConnected = def.collideConnected;
+    }
+
+    public static PhysicsRotate UpperLimitSeparation(this PhysicsHingeJoint joint)
+    {
+        var cur = joint.bodyB.rotation.MultiplyRotation(joint.localAnchorB.rotation);
+        var upperLimit = joint.bodyA.rotation.MultiplyRotation(joint.localAnchorA.rotation.MultiplyRotation(PhysicsRotate.FromDegrees(joint.upperAngleLimit)));
+        return upperLimit.InverseMultiplyRotation(cur);
+    }
+
+    public static PhysicsRotate LowerLimitSeparation(this PhysicsHingeJoint joint)
+    {
+        //joint world rotation
+        var cur = joint.bodyB.rotation.MultiplyRotation(joint.localAnchorB.rotation);
+        var lowerLimit = joint.bodyA.rotation.MultiplyRotation(joint.localAnchorA.rotation.MultiplyRotation(PhysicsRotate.FromDegrees(joint.lowerAngleLimit)));
+        return lowerLimit.InverseMultiplyRotation(cur);
     }
 }

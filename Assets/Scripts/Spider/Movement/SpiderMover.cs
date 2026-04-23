@@ -184,6 +184,10 @@ public class SpiderMover : MonoBehaviour
             spiderBody.OnValidate();
             thruster.Initialize();
             grapple.OnValidate();
+            if (legSynch.settings.stepStrength != null)
+            {
+                legSynch.UpdateSettings(in LegSettings());
+            }
             legSynch.OnValidate();
         }
     }
@@ -779,6 +783,16 @@ public class SpiderMover : MonoBehaviour
             default:
                 return ref stdLegSettings;
         }
+    }
+
+    ref LegSynchSettings LegSettings()
+    {
+        LegState state = grounded ? LegState.std
+            : thruster.Engaged ? LegState.thrusting
+            : grapple.FreeHanging ? LegState.freeHang
+            : LegState.freefall;
+
+        return ref LegSettings(state);
     }
 
     private void UpdateLegSynch(float dt)

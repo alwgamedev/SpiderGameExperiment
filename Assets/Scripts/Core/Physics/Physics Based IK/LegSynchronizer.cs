@@ -69,6 +69,7 @@ public class LegSynchronizer
     [SerializeField] float stepStopPoint;
     [SerializeField] float restDropPoint;
     [SerializeField] float restStopPoint;
+    [SerializeField] float restingStepHeight;//make this a small negative number to give legs some extra encouragement to reach ground
     [SerializeField] float speed0;
     [SerializeField] float speed1;
 #if UNITY_EDITOR
@@ -118,6 +119,7 @@ public class LegSynchronizer
             }
 
             RecalculateMass();
+            SetGravityScale(settings.gravityScale);
         }
     }
 
@@ -314,7 +316,8 @@ public class LegSynchronizer
 
             var t = timer[i];
 
-            if ((Stepping(i) && t > 1) || (!Stepping(i) && t < 0))
+            bool goalForward = Stepping(i) ^ hipSpeed < 0;
+            if (goalForward ? t > 1 : t < 0)
             {
                 stepping ^= 1 << i;//flip i-th bit
             }
@@ -323,13 +326,13 @@ public class LegSynchronizer
             {
                 var goalRelSpeed = GoalRelSpeedStepping(t, stepSpeed[i], hipSpeed);
                 var speedFraction = settings.scaleStepHeightWithSpeed ? Mathf.Min(Mathf.Abs(hipSpeed) / speed1, 1) : 1;
-                var goalStepHt = StepHeight(t, speedFraction * settings.stepHeightFraction * stepHeight[i]);
+                var goalStepHt = restingStepHeight + StepHeight(t, speedFraction * settings.stepHeightFraction * stepHeight[i] - restingStepHeight);
                 UpdateLeg(i, dt, map, facingRight, (j, s), goalRelSpeed, goalStepHt);
             }
             else
             {
                 var goalRelSpeed = GoalRelSpeedResting(t, restSpeed[i], hipSpeed);
-                UpdateLeg(i, dt, map, facingRight, (j, s), goalRelSpeed, 0);
+                UpdateLeg(i, dt, map, facingRight, (j, s), goalRelSpeed, restingStepHeight);
             }
         }
     }
@@ -367,7 +370,7 @@ public class LegSynchronizer
         {
             Vector2 hipPos = leg[i].JointPosition(0);
             Vector2 stepPos = map.PointFromReducedPosition(j, a) + goalStepHt * gdUp;
-            Debug.DrawLine(hipPos, (Vector2)map.PointFromReducedPosition(hipGroundMapPosition.Item1, hipGroundMapPosition.Item2), Color.red);
+            Debug.DrawLine(hipPos, (Vector2)map.PointFromReducedPosition(hipGroundMapPosition.Item1, hipGroundMapPosition.Item2), Color.orange);
             Debug.DrawLine(hipPos, (Vector2)effectorPos, Color.yellow);
             Debug.DrawLine(hipPos, stepPos, Color.green);
 
