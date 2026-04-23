@@ -27,7 +27,6 @@ public class GrappleCannon
     bool shootInProgress;
     Vector2 lastShootDirection;
 
-    //PhysicsBody spiderBody;
     SpiderInput spiderInput;
     FastRope grapple;
 
@@ -66,18 +65,26 @@ public class GrappleCannon
     public UnityEvent grappleBecameAnchored;
     public UnityEvent grappleDestroyed;
 
+    public void OnValidate()
+    {
+        if (grapple != null)
+        {
+            UpdateGrappleSettings();
+        }
+    }
+
     public void OnDrawGizmos()
     {
-        if (drawGizmos && grapple != null && GrappleEnabled)
+        if (drawGizmos && GrappleEnabled)
         {
             grapple.DrawGizmos();
+            grappleRenderer.OnDrawGizmos();
         }
     }
 
     public void Initialize(SpiderInput spiderInput, PhysicsWorld ownerWorld, float ownerMass, bool facingRight)
     {
         this.spiderInput = spiderInput;
-        //this.spiderBody = spiderBody;
 
         grapple = new FastRope(grappleSettings, ownerWorld, ownerMass, SourcePosition, minLength, numNodes);
         grapple.Disable();
@@ -87,12 +94,10 @@ public class GrappleCannon
         SetOrientation(facingRight);
     }
 
-    public void OnValidate()
+    public void OnDestroy()
     {
-        if (grapple != null)
-        {
-            UpdateGrappleSettings();
-        }
+        grappleRenderer.OnDestroy();
+        grapple?.Dispose();
     }
 
     public void Update()
@@ -155,11 +160,6 @@ public class GrappleCannon
                 ShootGrapple(Time.deltaTime);
             }
         }
-    }
-
-    public void OnDestroy()
-    {
-        grapple?.Dispose();
     }
 
     public void SetOrientation(bool facingRight)

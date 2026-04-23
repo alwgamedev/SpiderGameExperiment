@@ -1,9 +1,11 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class SpiderInput : MonoBehaviour
+[Serializable]
+public class SpiderInput
 {
-    PlayerInput playerInput;
+    [SerializeField] PlayerInput playerInput;
 
     public InputAction ArrowsAction { get; private set; }
     public InputAction WASDAction { get; private set; }
@@ -16,15 +18,14 @@ public class SpiderInput : MonoBehaviour
 
     public Vector2 MoveInput => ArrowsAction.ReadValue<Vector2>();
     public Vector2 SecondaryInput => WASDAction.ReadValue<Vector2>();
-    
+
     //yes, we're basically still using the input system legacy style (just reading values in update rather than subscribing to actions),
     //which you can just do through Keyboard.current,
     //but the nice thing about having all the input in one central place is you can disable all player input here, instead of disabling input handling in every script
     //(also allows us to set up input for console or other systems, like smart fridge)
 
-    private void Awake()
+    public void Initialize()
     {
-        playerInput = GetComponent<PlayerInput>();
         ArrowsAction = playerInput.actions["Arrows"];
         WASDAction = playerInput.actions["WASD"];
         SpaceAction = playerInput.actions["SpaceAction"];

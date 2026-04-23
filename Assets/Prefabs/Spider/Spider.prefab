@@ -283,14 +283,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2773261855031594176}
-  - component: {fileID: 6184217582605660535}
   m_Layer: 3
   m_Name: Jump Preview Arrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2773261855031594176
 Transform:
   m_ObjectHideFlags: 0
@@ -307,27 +306,6 @@ Transform:
   - {fileID: 1508738495151511723}
   m_Father: {fileID: 6490454046939129288}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6184217582605660535
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 481106168194493055}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef6f833f3db11d843aec20507c57d0a6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arrowNeck: {fileID: 9040078322212251582}
-  arrowHead: {fileID: 5137735048366120409}
-  arrowNeckAnchor: {fileID: 1673474227076270}
-  stretchMin: 0.25
-  stretchMax: 3
-  colorMin0: {r: 0.5019608, g: 1, b: 0.9137255, a: 0}
-  colorMin1: {r: 0, g: 1, b: 0.7869272, a: 0}
-  colorMax0: {r: 0.5019608, g: 1, b: 0.9137255, a: 0}
-  colorMax1: {r: 0, g: 1, b: 0.57336473, a: 1}
 --- !u!1 &508153227575764431
 GameObject:
   m_ObjectHideFlags: 0
@@ -1030,9 +1008,7 @@ GameObject:
   - component: {fileID: 2290889871136229131}
   - component: {fileID: 170334193149612089}
   - component: {fileID: 8477651183600270903}
-  - component: {fileID: 3362887635798995877}
   - component: {fileID: 534478759235766021}
-  - component: {fileID: 9070389282856877564}
   m_Layer: 3
   m_Name: Spider
   m_TagString: Player
@@ -1165,57 +1141,673 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f9811c81910e5142bbf8431d3d7685d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  timeScale: 1
+  spiderInput:
+    playerInput: {fileID: 534478759235766021}
   health:
     maxHealth: 100
-  mover: {fileID: 9070389282856877564}
-  grapple:
+  mover:
     drawGizmos: 0
-    numNodes: 0
-    minLength: 0
-    maxLength: 0
-    baseShootSpeed: 0
-    shootSpeedPowerUpRate: 0
-    shootSpeedPowerUpMax: 0
-    releaseRate: 0
-    retractMaxTension: 0
-    carrySpringForce: 0
-    grappleSettings:
-      collisionMask:
-        bitMask: 0
-      collisionBounciness: 0
-      width: 0
-      minNodeSpacing: 0
-      maxNodeSpacing: 0
-      drag: 0
-      nodeMass: 0
-      terminusMass: 0
-      constraintStiffness: 0
-      constraintIterations: 0
-      itersPulledByOwner: 0
-      dynamicAnchorPullForce: 0
-    cannonFulcrum:
-      lever: {fileID: 0}
-      leveragePoint: {fileID: 0}
-      fulcrumAnchor: {fileID: 0}
-      fulcrum: {fileID: 0}
-      baseAnchor: {fileID: 0}
-      floppiness: 0
-      angularDamping: 0
-      linearDamping: 0
-      kinematicRotationMin: 0
-      kinematicRotationMax: 0
-      kinematicRotationSpeed: 0
-      kinematicRotationCatchUpMultiplier: 0
-    grappleRenderer: {fileID: 0}
-    grappleShot:
+    spiderBody:
+      shapeDef:
+        contactFilter:
+          m_Categories:
+            bitMask: 8
+          m_Contacts:
+            bitMask: 64
+          m_GroupIndex: 0
+        surfaceMaterial:
+          m_Friction: 1
+          m_Bounciness: 0
+          m_FrictionMixing: 0
+          m_BouncinessMixing: 0
+          m_FrictionPriority: 0
+          m_BouncinessPriority: 0
+          m_RollingResistance: 0
+          m_TangentSpeed: 0
+          m_CustomColor:
+            serializedVersion: 2
+            rgba: 0
+        m_Density: 1
+        m_IsTrigger: 0
+        m_TriggerEvents: 0
+        m_ContactEvents: 0
+        m_HitEvents: 0
+        m_ContactFilterCallbacks: 0
+        m_PreSolveCallbacks: 0
+        m_StartStaticContacts: 0
+        m_StartMassUpdate: 1
+        m_WorldDrawing: 0
+        moverData:
+          m_PushLimit: 0
+          m_ClipVelocity: 0
+      headJointDef:
+        m_LocalAnchorA:
+          position: {x: 0, y: 0}
+          rotation:
+            direction: {x: 1, y: 0}
+        m_LocalAnchorB:
+          position: {x: 0, y: 0}
+          rotation:
+            direction: {x: 1, y: 0}
+        m_LinearFrequency: 100
+        m_LinearDamping: 1
+        m_AngularFrequency: 10
+        m_AngularDamping: 2
+        m_ForceThreshold: 0
+        m_TorqueThreshold: 0
+        m_TuningFrequency: 0
+        m_TuningDamping: 0
+        m_DrawScale: 0.1
+        m_WorldDrawing: 0
+        m_CollideConnected: 0
+      bodyDef:
+        m_BodyType: 0
+        m_BodyConstraints: 0
+        m_TransformWriteMode: 1
+        m_Position: {x: 0, y: 0}
+        m_Rotation:
+          direction: {x: 1, y: 0}
+        m_LinearVelocity: {x: 0, y: 0}
+        m_AngularVelocity: 0
+        m_LinearDamping: 0.425
+        m_AngularDamping: 0.6
+        m_GravityScale: 1
+        m_SleepThreshold: 0.01
+        m_FastRotationAllowed: 0
+        m_FastCollisionsAllowed: 0
+        m_SleepingAllowed: 0
+        m_Awake: 1
+        m_Enabled: 1
+        m_WorldDrawing: 0
+      abdomenCapsuleSize: {x: 2.75, y: 2.3}
+      abdomenCapsuleOffset: {x: 1.325, y: -0.025}
+      headCapsuleSize: {x: 2.1, y: 1.25}
+      headCapsuleOffset: {x: 0.5, y: -0.035}
+      queryIgnoreFilter: 8
+    legSynch:
+      footHitGround: []
+      chainDef:
+        jointDef:
+          m_LocalAnchorA:
+            position: {x: 0, y: 0}
+            rotation:
+              direction: {x: 1, y: 0}
+          m_LocalAnchorB:
+            position: {x: 0, y: 0}
+            rotation:
+              direction: {x: 1, y: 0}
+          m_EnableSpring: 1
+          m_SpringTargetAngle: 0
+          m_SpringFrequency: 2.5
+          m_SpringDamping: 5
+          m_EnableMotor: 0
+          m_MotorSpeed: 0
+          m_MaxMotorTorque: 0
+          m_EnableLimit: 0
+          m_LowerAngleLimit: 0
+          m_UpperAngleLimit: 0
+          m_ForceThreshold: 10000000
+          m_TorqueThreshold: 10000000
+          m_TuningFrequency: 500
+          m_TuningDamping: 10
+          m_DrawScale: 0.001
+          m_WorldDrawing: 0
+          m_CollideConnected: 0
+        shapeDef:
+          contactFilter:
+            m_Categories:
+              bitMask: 8
+            m_Contacts:
+              bitMask: 64
+            m_GroupIndex: 0
+          surfaceMaterial:
+            m_Friction: 0
+            m_Bounciness: 0
+            m_FrictionMixing: 0
+            m_BouncinessMixing: 0
+            m_FrictionPriority: 0
+            m_BouncinessPriority: 0
+            m_RollingResistance: 0
+            m_TangentSpeed: 0
+            m_CustomColor:
+              serializedVersion: 2
+              rgba: 0
+          m_Density: 0.0025
+          m_IsTrigger: 0
+          m_TriggerEvents: 0
+          m_ContactEvents: 0
+          m_HitEvents: 0
+          m_ContactFilterCallbacks: 0
+          m_PreSolveCallbacks: 0
+          m_StartStaticContacts: 0
+          m_StartMassUpdate: 1
+          m_WorldDrawing: 0
+          moverData:
+            m_PushLimit: 0
+            m_ClipVelocity: 0
+        bodyDef:
+          m_BodyType: 0
+          m_BodyConstraints: 0
+          m_TransformWriteMode: 1
+          m_Position: {x: 0, y: 0}
+          m_Rotation:
+            direction: {x: 1, y: 0}
+          m_LinearVelocity: {x: 0, y: 0}
+          m_AngularVelocity: 0
+          m_LinearDamping: 0.1
+          m_AngularDamping: 100
+          m_GravityScale: 1
+          m_SleepThreshold: 0.01
+          m_FastRotationAllowed: 0
+          m_FastCollisionsAllowed: 0
+          m_SleepingAllowed: 0
+          m_Awake: 1
+          m_Enabled: 1
+          m_WorldDrawing: 0
+        width:
+        - 0.025
+        - 0.025
+        - 0.025
+        - 0.025
+      chainSettings:
+      - lowerAngleLimit:
+        - -45
+        - -45
+        - -15
+        - -30
+        upperAngleLimit:
+        - 37.5
+        - 37.5
+        - 45
+        - 30
+        enableLimit: 01010101
+      - lowerAngleLimit:
+        - -45
+        - -45
+        - -15
+        - -30
+        upperAngleLimit:
+        - 37.5
+        - 37.5
+        - 45
+        - 30
+        enableLimit: 01010101
+      - lowerAngleLimit:
+        - -45
+        - -45
+        - -15
+        - -30
+        upperAngleLimit:
+        - 37.5
+        - 37.5
+        - 45
+        - 30
+        enableLimit: 01010101
+      - lowerAngleLimit:
+        - -45
+        - -45
+        - -15
+        - -30
+        upperAngleLimit:
+        - 37.5
+        - 37.5
+        - 45
+        - 30
+        enableLimit: 01010101
+      - lowerAngleLimit:
+        - -30
+        - -75
+        - -37.5
+        - -30
+        upperAngleLimit:
+        - 105
+        - 52.5
+        - 15
+        - 30
+        enableLimit: 01010101
+      - lowerAngleLimit:
+        - -30
+        - -75
+        - -37.5
+        - -30
+        upperAngleLimit:
+        - 105
+        - 52.5
+        - 15
+        - 30
+        enableLimit: 01010101
+      - lowerAngleLimit:
+        - -30
+        - -75
+        - -37.5
+        - -30
+        upperAngleLimit:
+        - 105
+        - 52.5
+        - 15
+        - 30
+        enableLimit: 01010101
+      - lowerAngleLimit:
+        - -30
+        - -75
+        - -37.5
+        - -30
+        upperAngleLimit:
+        - 105
+        - 52.5
+        - 15
+        - 30
+        enableLimit: 01010101
+      chainTransform:
+      - array:
+        - {fileID: 2974402965915621103}
+        - {fileID: 8686777011346269178}
+        - {fileID: 3086949379317786505}
+        - {fileID: 5727586575378524909}
+      - array:
+        - {fileID: 1917526133295412550}
+        - {fileID: 1289114507541036655}
+        - {fileID: 1232018779033201799}
+        - {fileID: 2482226090655315431}
+      - array:
+        - {fileID: 7327228190026911204}
+        - {fileID: 551132981929823995}
+        - {fileID: 1011116130801531375}
+        - {fileID: 5662199325577067701}
+      - array:
+        - {fileID: 6880000548841465589}
+        - {fileID: 3209501442011102308}
+        - {fileID: 1871646389039820030}
+        - {fileID: 4055223819943296254}
+      - array:
+        - {fileID: 7479401018590102365}
+        - {fileID: 7135817681344834441}
+        - {fileID: 8474188332374388410}
+        - {fileID: 3170014219240281688}
+      - array:
+        - {fileID: 2406411891331119525}
+        - {fileID: 1667932096359723063}
+        - {fileID: 9144806582170962176}
+        - {fileID: 8208697548624940441}
+      - array:
+        - {fileID: 3374800013995644756}
+        - {fileID: 491542802059227947}
+        - {fileID: 96702895424933743}
+        - {fileID: 6317921484413754608}
+      - array:
+        - {fileID: 5329026372133235874}
+        - {fileID: 2645459166057198224}
+        - {fileID: 4695957763848092019}
+        - {fileID: 2419135551903725335}
+      bones:
+      - array:
+        - {fileID: 22272622812096587}
+        - {fileID: 8441832845829404896}
+        - {fileID: 5417361688116629949}
+        - {fileID: 5156781721996848529}
+        - {fileID: 3936103547676037109}
+      - array:
+        - {fileID: 392562895396955329}
+        - {fileID: 4774993986430394206}
+        - {fileID: 5545924089802491900}
+        - {fileID: 5080324851170624962}
+        - {fileID: 4254784759877925316}
+      - array:
+        - {fileID: 3375176604030035034}
+        - {fileID: 481651784299103877}
+        - {fileID: 8082015730857100818}
+        - {fileID: 4876095274293422944}
+        - {fileID: 7258615092875416420}
+      - array:
+        - {fileID: 1329707510189468019}
+        - {fileID: 3808130946259013042}
+        - {fileID: 5362888252177123281}
+        - {fileID: 354977928401432904}
+        - {fileID: 1464431940796462116}
+      - array:
+        - {fileID: 2585876819461345877}
+        - {fileID: 6893505030894218327}
+        - {fileID: 4769979956926427322}
+        - {fileID: 9211722957049143961}
+        - {fileID: 4381848644071924810}
+      - array:
+        - {fileID: 8432733846155491958}
+        - {fileID: 7004356620672790054}
+        - {fileID: 7233620997852398348}
+        - {fileID: 3734759025146115614}
+        - {fileID: 3709860287618901617}
+      - array:
+        - {fileID: 6352680355348902683}
+        - {fileID: 2497506978430973624}
+        - {fileID: 7209045866781297930}
+        - {fileID: 7943478544504156278}
+        - {fileID: 6565431291079056172}
+      - array:
+        - {fileID: 7100841932218194387}
+        - {fileID: 346920434607627716}
+        - {fileID: 1963197130059215229}
+        - {fileID: 3207324145476504997}
+        - {fileID: 4614320631808763307}
+      initialTimer:
+      - 0
+      - 0.9
+      - 0.5
+      - 0.4
+      - 0
+      - 0.9
+      - 0.5
+      - 0.4
+      beginStepping: 0100010001000100
+      groupIndex: 0000000000000000000000000000000001000000010000000100000001000000
+      groupLeader: 0000000000000000000000000000000004000000040000000400000004000000
+      resynchRate: 0.05
+      stepMax:
+      - 0.975
+      - 0.975
+      - 0.875
+      - 0.875
+      - -0.15
+      - -0.15
+      - -0.15
+      - -0.15
+      stepLength:
+      - 0.65
+      - 0.65
+      - 0.65
+      - 0.65
+      - 0.65
+      - 0.65
+      - 0.65
+      - 0.65
+      stepSpeed:
+      - 0.5
+      - 0.5
+      - 0.5
+      - 0.5
+      - 0.5
+      - 0.5
+      - 0.5
+      - 0.5
+      restSpeed:
+      - 0.55
+      - 0.55
+      - 0.55
+      - 0.55
+      - 0.55
+      - 0.55
+      - 0.55
+      - 0.55
+      stepHeight:
+      - 0.45
+      - 0.45
+      - 0.45
+      - 0.45
+      - 0.6
+      - 0.6
+      - 0.6
+      - 0.6
+      stepAccel: 300
+      stepPeakTime: 0.3
+      stepDropPoint: 0.7
+      stepStopPoint: 1.2
+      restDropPoint: 0.25
+      restStopPoint: -0.1
+      restingStepHeight: -0.1
+      speed0: 0.05
+      speed1: 3
+      drawBodyGizmos: 0
+      drawAngleLimitGizmos: 0000000000000000
+      debugStepStats: 0000000000000000
+    stdLegSettings:
+      stepStrength:
+      - 1
+      - 1
+      - 1
+      - 1
+      - 1
+      - 1
+      - 1
+      - 1
+      stepHeightFraction: 1
+      timeScale: 1
+      stepDamping: 2.5
+      gravityScale: 0
+      strideMultiplier: 1
+      scaleStepHeightWithSpeed: 1
+    freefallLegSettings:
+      stepStrength:
+      - 0.25
+      - 0.25
+      - 0.25
+      - 0.25
+      - 0.25
+      - 0.25
+      - 0.25
+      - 0.25
+      stepHeightFraction: 1
+      timeScale: 0.15
+      stepDamping: 0.05
+      gravityScale: 1
+      strideMultiplier: 1.125
+      scaleStepHeightWithSpeed: 0
+    thrustingLegSettings:
+      stepStrength:
+      - 0.65
+      - 0.65
+      - 0.65
+      - 0.65
+      - 0.65
+      - 0.65
+      - 0.65
+      - 0.65
+      stepHeightFraction: 1
+      timeScale: 1
+      stepDamping: 0.2
+      gravityScale: 1
+      strideMultiplier: 1.05
+      scaleStepHeightWithSpeed: 0
+    freeHangLegSettings:
+      stepStrength:
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0.1
+      - 0.1
+      - 0.1
+      - 0.1
+      stepHeightFraction: 0
+      timeScale: 0
+      stepDamping: 0.025
+      gravityScale: 1
+      strideMultiplier: 1.2
+      scaleStepHeightWithSpeed: 0
+    headBoneHeightRefPoint: {fileID: 3597460655033676372}
+    grappleArm: {fileID: 8393107135455579191}
+    abdomenRoot: {fileID: 7095442034761804592}
+    abdomenBone: {fileID: 6490454046939129288}
+    headRoot: {fileID: 6997872735324007566}
+    headBone: {fileID: 1544918830229533694}
+    heightReferencePoint: {fileID: 8270157252145170821}
+    grapple:
+      drawGizmos: 0
+      numNodes: 120
+      minLength: 1
+      maxLength: 14
+      baseShootSpeed: 18
+      shootSpeedPowerUpRate: 4
+      shootSpeedPowerUpMax: 3
+      releaseRate: 6
+      retractMaxTension: 2
+      carrySpringForce: 350
+      grappleSettings:
+        collisionMask:
+          bitMask: 64
+        collisionBounciness: 0.95
+        width: 0.17
+        minNodeSpacing: 0.11
+        maxNodeSpacing: 0.115
+        drag: 0.02
+        nodeMass: 0.1
+        terminusMass: 50
+        constraintStiffness: 0.975
+        constraintIterations: 45
+        itersPulledByOwner: 5
+        dynamicAnchorPullForce: 300
+      cannonFulcrum:
+        lever: {fileID: 3468580104259901786}
+        leveragePoint: {fileID: 2623017782420822094}
+        fulcrumAnchor: {fileID: 8750429978019596847}
+        fulcrum: {fileID: 1762823443036713442}
+        baseAnchor: {fileID: 2420108127432548890}
+        floppiness: 0.25
+        angularDamping: 1.25
+        linearDamping: 2
+        kinematicRotationMin: 0
+        kinematicRotationMax: 3.1415927
+        kinematicRotationSpeed: 5
+        kinematicRotationCatchUpMultiplier: 15
+      grappleRenderer:
+        meshRenderer: {fileID: 8668545299952063791}
+        meshFilter: {fileID: 6131955794355331125}
+        drawGizmos: 0
+        endCapTriangles: 12
+        taperLength: 0.5
+        taperBaseScale: 0.5
+      grappleShot:
+        m_PersistentCalls:
+          m_Calls: []
+      grappleBecameAnchored:
+        m_PersistentCalls:
+          m_Calls: []
+      grappleDestroyed:
+        m_PersistentCalls:
+          m_Calls: []
+    thruster:
+      secondsToDrain: 5
+      secondsToRecharge: 10
+      rechargeThreshold: 0.2
+      gravityReduction: 0.65
+    thrusterFlame:
+      hook: {fileID: 4447335719399263385}
+      widthMin: 1.5
+      widthMax: 6.5
+      intensityMin: 1.5
+      intensityMax: 3.5
+      intensityLerpRate: 9
+      disengageLerpRate: 15
+      sr: {fileID: 5014689274299548898}
+    groundedExitToleranceFactor: 1.35
+    groundedEntryToleranceFactor: 0.9
+    groundDirectionSampleWidth: 0.5
+    backupGroundPtRaycastLengthFactor: 1.1
+    groundMap:
+      numFwdIntervals: 40
+      intervalWidth: 0.06
+    accelFactor: 40
+    accelFactorFreeHanging: 14
+    deadThrusterAccelFactor: 4
+    thrustingAccelFactor: 48
+    accelCap: 5
+    gripStrength: 1500
+    gripDamping: 50
+    maxSpeed: 5
+    maxSpeedAirborne: 9
+    settleTime: 0.35
+    preferredRideHeight: 0.9
+    heightSpringForce: 600
+    heightSpringDamping: 20
+    grappleSquatReduction: 0.4
+    heightSampleMin: -0.4
+    heightSampleMax: 0.6
+    headRotationMinPos: -0.05
+    headRotationMaxPos: 0.2
+    balanceSpringForce: 300
+    airborneBalanceSpringForce: 100
+    balanceSpringDamping: 0.25
+    airborneBalanceSpringDamping: 0.04
+    grappleScurryResistanceMax: 175
+    grappleScurryAngleMin: -0.5235988
+    jumpForce: 10
+    jumpForceCrouchBoostRate: 14
+    jumpAngleMin: -0.45
+    jumpAngleLerpRate: 3
+    jumpVerificationTime: 0.125
+    tapJumpVerificationTime: 0.125
+    crouchHeightFraction: 0.25
+    crouchTime: 0.3
+    crouchReleaseSpeedMultiplier: 2.5
+    freeHangHeadAngle: 0.20943952
+    jumpChargeBegan:
       m_PersistentCalls:
         m_Calls: []
-    grappleBecameAnchored:
+    jumpChargeEnded:
       m_PersistentCalls:
         m_Calls: []
-    grappleDestroyed:
+    jumped:
       m_PersistentCalls:
-        m_Calls: []
+        m_Calls:
+        - m_Target: {fileID: 2290889871136229131}
+          m_TargetAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
+          m_MethodName: PlayOneShot
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 8300000, guid: 044c09d15b4556341ad51c7672a24b1d, type: 3}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    thrustersEngaged:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 5023897089517341320}
+          m_TargetAssemblyTypeName: AudioFader, Assembly-CSharp
+          m_MethodName: FadePlay
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    thrustersDisengaged:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 5023897089517341320}
+          m_TargetAssemblyTypeName: AudioFader, Assembly-CSharp
+          m_MethodName: FadeStop
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  grappleShootPreview:
+    lineRenderer: {fileID: 3237866026040055037}
+    arcLengthStep: 0.025
+    velocitySmoothingRate: 12
+    terminationMask:
+      serializedVersion: 2
+      m_Bits: 64
+  jumpPreviewArrow:
+    arrowNeck: {fileID: 9040078322212251582}
+    arrowHead: {fileID: 5137735048366120409}
+    arrowNeckAnchor: {fileID: 1673474227076270}
+    arrowHeadAnchor: {fileID: 2567034927825035637}
+    stretchMin: 0.25
+    stretchMax: 3
+    colorMin0: {r: 0.5019608, g: 1, b: 0.9137255, a: 0}
+    colorMin1: {r: 0, g: 1, b: 0.7882353, a: 0}
+    colorMax0: {r: 0.5019608, g: 1, b: 0.9137255, a: 0}
+    colorMax1: {r: 0, g: 1, b: 0.57254905, a: 1}
 --- !u!114 &8477651183600270903
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1232,18 +1824,6 @@ MonoBehaviour:
   rb: {fileID: 0}
   repulsionRadius: 0.25
   repulsionRadiusMax: 1
---- !u!114 &3362887635798995877
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1231387903212816449}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f2993c98269be346853e53d2a619b7f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpiderInput
 --- !u!114 &534478759235766021
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1274,662 +1854,6 @@ MonoBehaviour:
   m_DefaultActionMap: S1Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!114 &9070389282856877564
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1231387903212816449}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 590c1f1cc4de0f343a5599e95eb15b9e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpiderMover
-  timeScale: 1
-  drawGizmos: 0
-  spiderBody:
-    queryFilter:
-      m_Categories:
-        bitMask: 0
-      m_HitCategories:
-        bitMask: 0
-      m_IgnoreFilter: 8
-    shapeDef:
-      contactFilter:
-        m_Categories:
-          bitMask: 8
-        m_Contacts:
-          bitMask: 64
-        m_GroupIndex: 0
-      surfaceMaterial:
-        m_Friction: 1
-        m_Bounciness: 0
-        m_FrictionMixing: 0
-        m_BouncinessMixing: 0
-        m_FrictionPriority: 0
-        m_BouncinessPriority: 0
-        m_RollingResistance: 0
-        m_TangentSpeed: 0
-        m_CustomColor:
-          serializedVersion: 2
-          rgba: 0
-      m_Density: 1
-      m_IsTrigger: 0
-      m_TriggerEvents: 0
-      m_ContactEvents: 0
-      m_HitEvents: 0
-      m_ContactFilterCallbacks: 0
-      m_PreSolveCallbacks: 0
-      m_StartStaticContacts: 0
-      m_StartMassUpdate: 1
-      m_WorldDrawing: 0
-      moverData:
-        m_PushLimit: 0
-        m_ClipVelocity: 0
-    headJointDef:
-      m_LocalAnchorA:
-        position: {x: 0, y: 0}
-        rotation:
-          direction: {x: 1, y: 0}
-      m_LocalAnchorB:
-        position: {x: 0, y: 0}
-        rotation:
-          direction: {x: 1, y: 0}
-      m_LinearFrequency: 100
-      m_LinearDamping: 1
-      m_AngularFrequency: 10
-      m_AngularDamping: 2
-      m_ForceThreshold: 0
-      m_TorqueThreshold: 0
-      m_TuningFrequency: 0
-      m_TuningDamping: 0
-      m_DrawScale: 0.1
-      m_WorldDrawing: 0
-      m_CollideConnected: 0
-    bodyDef:
-      m_BodyType: 0
-      m_BodyConstraints: 0
-      m_TransformWriteMode: 1
-      m_Position: {x: 0, y: 0}
-      m_Rotation:
-        direction: {x: 1, y: 0}
-      m_LinearVelocity: {x: 0, y: 0}
-      m_AngularVelocity: 0
-      m_LinearDamping: 0.425
-      m_AngularDamping: 0.6
-      m_GravityScale: 1
-      m_SleepThreshold: 0.01
-      m_FastRotationAllowed: 0
-      m_FastCollisionsAllowed: 0
-      m_SleepingAllowed: 0
-      m_Awake: 1
-      m_Enabled: 1
-      m_WorldDrawing: 0
-    abdomenCapsuleSize: {x: 2.75, y: 2.3}
-    abdomenCapsuleOffset: {x: 1.325, y: -0.025}
-    headCapsuleSize: {x: 2.1, y: 1.25}
-    headCapsuleOffset: {x: 0.5, y: -0.035}
-  legSynch:
-    footHitGround: []
-    chainDef:
-      jointDef:
-        m_LocalAnchorA:
-          position: {x: 0, y: 0}
-          rotation:
-            direction: {x: 1, y: 0}
-        m_LocalAnchorB:
-          position: {x: 0, y: 0}
-          rotation:
-            direction: {x: 1, y: 0}
-        m_EnableSpring: 1
-        m_SpringTargetAngle: 0
-        m_SpringFrequency: 2.5
-        m_SpringDamping: 5
-        m_EnableMotor: 0
-        m_MotorSpeed: 0
-        m_MaxMotorTorque: 0
-        m_EnableLimit: 0
-        m_LowerAngleLimit: 0
-        m_UpperAngleLimit: 0
-        m_ForceThreshold: 10000000
-        m_TorqueThreshold: 10000000
-        m_TuningFrequency: 500
-        m_TuningDamping: 10
-        m_DrawScale: 0.001
-        m_WorldDrawing: 0
-        m_CollideConnected: 0
-      shapeDef:
-        contactFilter:
-          m_Categories:
-            bitMask: 8
-          m_Contacts:
-            bitMask: 64
-          m_GroupIndex: 0
-        surfaceMaterial:
-          m_Friction: 0
-          m_Bounciness: 0
-          m_FrictionMixing: 0
-          m_BouncinessMixing: 0
-          m_FrictionPriority: 0
-          m_BouncinessPriority: 0
-          m_RollingResistance: 0
-          m_TangentSpeed: 0
-          m_CustomColor:
-            serializedVersion: 2
-            rgba: 0
-        m_Density: 0.0025
-        m_IsTrigger: 0
-        m_TriggerEvents: 0
-        m_ContactEvents: 0
-        m_HitEvents: 0
-        m_ContactFilterCallbacks: 0
-        m_PreSolveCallbacks: 0
-        m_StartStaticContacts: 0
-        m_StartMassUpdate: 1
-        m_WorldDrawing: 0
-        moverData:
-          m_PushLimit: 0
-          m_ClipVelocity: 0
-      bodyDef:
-        m_BodyType: 0
-        m_BodyConstraints: 0
-        m_TransformWriteMode: 1
-        m_Position: {x: 0, y: 0}
-        m_Rotation:
-          direction: {x: 1, y: 0}
-        m_LinearVelocity: {x: 0, y: 0}
-        m_AngularVelocity: 0
-        m_LinearDamping: 0.1
-        m_AngularDamping: 200
-        m_GravityScale: 1
-        m_SleepThreshold: 0.01
-        m_FastRotationAllowed: 0
-        m_FastCollisionsAllowed: 0
-        m_SleepingAllowed: 0
-        m_Awake: 1
-        m_Enabled: 1
-        m_WorldDrawing: 0
-      width:
-      - 0.025
-      - 0.025
-      - 0.025
-      - 0.025
-    chainSettings:
-    - lowerAngleLimit:
-      - -45
-      - -45
-      - -15
-      - -30
-      upperAngleLimit:
-      - 37.5
-      - 37.5
-      - 45
-      - 30
-      enableLimit: 01010101
-    - lowerAngleLimit:
-      - -45
-      - -45
-      - -15
-      - -30
-      upperAngleLimit:
-      - 37.5
-      - 37.5
-      - 45
-      - 30
-      enableLimit: 01010101
-    - lowerAngleLimit:
-      - -45
-      - -45
-      - -15
-      - -30
-      upperAngleLimit:
-      - 37.5
-      - 37.5
-      - 45
-      - 30
-      enableLimit: 01010101
-    - lowerAngleLimit:
-      - -45
-      - -45
-      - -15
-      - -30
-      upperAngleLimit:
-      - 37.5
-      - 37.5
-      - 45
-      - 30
-      enableLimit: 01010101
-    - lowerAngleLimit:
-      - -30
-      - -75
-      - -37.5
-      - -15
-      upperAngleLimit:
-      - 105
-      - 52.5
-      - 15
-      - 0
-      enableLimit: 01010101
-    - lowerAngleLimit:
-      - -30
-      - -75
-      - -37.5
-      - -15
-      upperAngleLimit:
-      - 105
-      - 52.5
-      - 15
-      - 0
-      enableLimit: 01010101
-    - lowerAngleLimit:
-      - -30
-      - -75
-      - -37.5
-      - -15
-      upperAngleLimit:
-      - 105
-      - 52.5
-      - 15
-      - 0
-      enableLimit: 01010101
-    - lowerAngleLimit:
-      - -30
-      - -75
-      - -37.5
-      - -15
-      upperAngleLimit:
-      - 105
-      - 52.5
-      - 15
-      - 0
-      enableLimit: 01010101
-    chainTransform:
-    - array:
-      - {fileID: 2974402965915621103}
-      - {fileID: 8686777011346269178}
-      - {fileID: 3086949379317786505}
-      - {fileID: 5727586575378524909}
-    - array:
-      - {fileID: 1917526133295412550}
-      - {fileID: 1289114507541036655}
-      - {fileID: 1232018779033201799}
-      - {fileID: 2482226090655315431}
-    - array:
-      - {fileID: 7327228190026911204}
-      - {fileID: 551132981929823995}
-      - {fileID: 1011116130801531375}
-      - {fileID: 5662199325577067701}
-    - array:
-      - {fileID: 6880000548841465589}
-      - {fileID: 3209501442011102308}
-      - {fileID: 1871646389039820030}
-      - {fileID: 4055223819943296254}
-    - array:
-      - {fileID: 7479401018590102365}
-      - {fileID: 7135817681344834441}
-      - {fileID: 8474188332374388410}
-      - {fileID: 3170014219240281688}
-    - array:
-      - {fileID: 2406411891331119525}
-      - {fileID: 1667932096359723063}
-      - {fileID: 9144806582170962176}
-      - {fileID: 8208697548624940441}
-    - array:
-      - {fileID: 3374800013995644756}
-      - {fileID: 491542802059227947}
-      - {fileID: 96702895424933743}
-      - {fileID: 6317921484413754608}
-    - array:
-      - {fileID: 5329026372133235874}
-      - {fileID: 2645459166057198224}
-      - {fileID: 4695957763848092019}
-      - {fileID: 2419135551903725335}
-    bones:
-    - array:
-      - {fileID: 22272622812096587}
-      - {fileID: 8441832845829404896}
-      - {fileID: 5417361688116629949}
-      - {fileID: 5156781721996848529}
-      - {fileID: 3936103547676037109}
-    - array:
-      - {fileID: 392562895396955329}
-      - {fileID: 4774993986430394206}
-      - {fileID: 5545924089802491900}
-      - {fileID: 5080324851170624962}
-      - {fileID: 4254784759877925316}
-    - array:
-      - {fileID: 3375176604030035034}
-      - {fileID: 481651784299103877}
-      - {fileID: 8082015730857100818}
-      - {fileID: 4876095274293422944}
-      - {fileID: 7258615092875416420}
-    - array:
-      - {fileID: 1329707510189468019}
-      - {fileID: 3808130946259013042}
-      - {fileID: 5362888252177123281}
-      - {fileID: 354977928401432904}
-      - {fileID: 1464431940796462116}
-    - array:
-      - {fileID: 2585876819461345877}
-      - {fileID: 6893505030894218327}
-      - {fileID: 4769979956926427322}
-      - {fileID: 9211722957049143961}
-      - {fileID: 4381848644071924810}
-    - array:
-      - {fileID: 8432733846155491958}
-      - {fileID: 7004356620672790054}
-      - {fileID: 7233620997852398348}
-      - {fileID: 3734759025146115614}
-      - {fileID: 3709860287618901617}
-    - array:
-      - {fileID: 6352680355348902683}
-      - {fileID: 2497506978430973624}
-      - {fileID: 7209045866781297930}
-      - {fileID: 7943478544504156278}
-      - {fileID: 6565431291079056172}
-    - array:
-      - {fileID: 7100841932218194387}
-      - {fileID: 346920434607627716}
-      - {fileID: 1963197130059215229}
-      - {fileID: 3207324145476504997}
-      - {fileID: 4614320631808763307}
-    initialTimer:
-    - 0
-    - 0.9
-    - 0.5
-    - 0.4
-    - 0
-    - 0.9
-    - 0.5
-    - 0.4
-    beginStepping: 8500850085008500
-    groupIndex: 0000000000000000000000000000000001000000010000000100000001000000
-    groupLeader: 0000000000000000000000000000000004000000040000000400000004000000
-    resynchRate: 0.05
-    stepMax:
-    - 0.975
-    - 0.975
-    - 0.875
-    - 0.875
-    - -0.15
-    - -0.15
-    - -0.15
-    - -0.15
-    stepLength:
-    - 0.65
-    - 0.65
-    - 0.65
-    - 0.65
-    - 0.65
-    - 0.65
-    - 0.65
-    - 0.65
-    stepSpeed:
-    - 0.5
-    - 0.5
-    - 0.5
-    - 0.5
-    - 0.5
-    - 0.5
-    - 0.5
-    - 0.5
-    restSpeed:
-    - 0.55
-    - 0.55
-    - 0.55
-    - 0.55
-    - 0.55
-    - 0.55
-    - 0.55
-    - 0.55
-    stepHeight:
-    - 0.45
-    - 0.45
-    - 0.45
-    - 0.45
-    - 0.6
-    - 0.6
-    - 0.6
-    - 0.6
-    stepAccel: 450
-    stepPeakTime: 0.3
-    stepDropPoint: 0.7
-    stepStopPoint: 1.2
-    restDropPoint: 0.25
-    restStopPoint: -0.1
-    restingStepHeight: -0.1
-    speed0: 0.05
-    speed1: 3
-    drawBodyGizmos: 0
-    drawAngleLimitGizmos: 0000000000000000
-    debugStepStats: 0000000000000000
-  stdLegSettings:
-    stepStrength:
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    stepHeightFraction: 1
-    timeScale: 1
-    stepDamping: 2.5
-    gravityScale: 0
-    strideMultiplier: 1
-    scaleStepHeightWithSpeed: 1
-  freefallLegSettings:
-    stepStrength:
-    - 0.25
-    - 0.25
-    - 0.25
-    - 0.25
-    - 0.25
-    - 0.25
-    - 0.25
-    - 0.25
-    stepHeightFraction: 1
-    timeScale: 0.15
-    stepDamping: 0.05
-    gravityScale: 1
-    strideMultiplier: 1.125
-    scaleStepHeightWithSpeed: 0
-  thrustingLegSettings:
-    stepStrength:
-    - 0.65
-    - 0.65
-    - 0.65
-    - 0.65
-    - 0.65
-    - 0.65
-    - 0.65
-    - 0.65
-    stepHeightFraction: 1
-    timeScale: 1
-    stepDamping: 0.2
-    gravityScale: 1
-    strideMultiplier: 1.05
-    scaleStepHeightWithSpeed: 0
-  freeHangLegSettings:
-    stepStrength:
-    - 0
-    - 0
-    - 0
-    - 0
-    - 0.1
-    - 0.1
-    - 0.1
-    - 0.1
-    stepHeightFraction: 0
-    timeScale: 0
-    stepDamping: 0.025
-    gravityScale: 1
-    strideMultiplier: 1.2
-    scaleStepHeightWithSpeed: 0
-  headBoneHeightRefPoint: {fileID: 3597460655033676372}
-  grappleArm: {fileID: 8393107135455579191}
-  abdomenRoot: {fileID: 7095442034761804592}
-  abdomenBone: {fileID: 6490454046939129288}
-  headRoot: {fileID: 6997872735324007566}
-  headBone: {fileID: 1544918830229533694}
-  heightReferencePoint: {fileID: 8270157252145170821}
-  spiderInput: {fileID: 3362887635798995877}
-  grapple:
-    drawGizmos: 0
-    numNodes: 120
-    minLength: 1
-    maxLength: 14
-    baseShootSpeed: 18
-    shootSpeedPowerUpRate: 4
-    shootSpeedPowerUpMax: 3
-    releaseRate: 6
-    retractMaxTension: 2
-    carrySpringForce: 350
-    grappleSettings:
-      collisionMask:
-        bitMask: 64
-      collisionBounciness: 0.95
-      width: 0.17
-      minNodeSpacing: 0.11
-      maxNodeSpacing: 0.115
-      drag: 0.02
-      nodeMass: 0.1
-      terminusMass: 50
-      constraintStiffness: 0.975
-      constraintIterations: 45
-      itersPulledByOwner: 5
-      dynamicAnchorPullForce: 300
-    cannonFulcrum:
-      lever: {fileID: 3468580104259901786}
-      leveragePoint: {fileID: 2623017782420822094}
-      fulcrumAnchor: {fileID: 8750429978019596847}
-      fulcrum: {fileID: 1762823443036713442}
-      baseAnchor: {fileID: 2420108127432548890}
-      floppiness: 0.25
-      angularDamping: 1.25
-      linearDamping: 2
-      kinematicRotationMin: 0
-      kinematicRotationMax: 3.1415927
-      kinematicRotationSpeed: 5
-      kinematicRotationCatchUpMultiplier: 15
-    grappleRenderer: {fileID: 5333562299232230829}
-    grappleShot:
-      m_PersistentCalls:
-        m_Calls: []
-    grappleBecameAnchored:
-      m_PersistentCalls:
-        m_Calls: []
-    grappleDestroyed:
-      m_PersistentCalls:
-        m_Calls: []
-  thruster:
-    secondsToDrain: 5
-    secondsToRecharge: 10
-    rechargeThreshold: 0.2
-    gravityReduction: 0.65
-  thrusterFlame:
-    hook: {fileID: 4447335719399263385}
-    widthMin: 1.5
-    widthMax: 6.5
-    intensityMin: 1.5
-    intensityMax: 3.5
-    intensityLerpRate: 9
-    disengageLerpRate: 15
-    sr: {fileID: 5014689274299548898}
-  groundedExitToleranceFactor: 1.35
-  groundedEntryToleranceFactor: 0.9
-  groundDirectionSampleWidth: 0.5
-  backupGroundPtRaycastLengthFactor: 1.1
-  groundMap:
-    numFwdIntervals: 40
-    intervalWidth: 0.06
-  accelFactor: 40
-  accelFactorFreeHanging: 14
-  deadThrusterAccelFactor: 4
-  thrustingAccelFactor: 48
-  accelCap: 5
-  gripStrength: 1500
-  gripDamping: 50
-  maxSpeed: 5
-  maxSpeedAirborne: 9
-  settleTime: 0.35
-  preferredRideHeight: 0.9
-  heightSpringForce: 600
-  heightSpringDamping: 20
-  grappleSquatReduction: 0.4
-  heightSampleMin: -0.4
-  heightSampleMax: 0.6
-  headRotationMinPos: -0.05
-  headRotationMaxPos: 0.2
-  balanceSpringForce: 300
-  airborneBalanceSpringForce: 100
-  balanceSpringDamping: 0.25
-  airborneBalanceSpringDamping: 0.04
-  grappleScurryResistanceMax: 175
-  grappleScurryAngleMin: -0.5235988
-  jumpForce: 10
-  jumpForceCrouchBoostRate: 14
-  jumpAngleMin: -0.45
-  jumpAngleLerpRate: 3
-  jumpVerificationTime: 0.125
-  tapJumpVerificationTime: 0.125
-  crouchHeightFraction: 0.25
-  crouchTime: 0.3
-  crouchReleaseSpeedMultiplier: 2.5
-  freeHangHeadAngle: 0.2094395
-  jumpChargeBegan:
-    m_PersistentCalls:
-      m_Calls: []
-  jumpChargeEnded:
-    m_PersistentCalls:
-      m_Calls: []
-  jumped:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2290889871136229131}
-        m_TargetAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
-        m_MethodName: PlayOneShot
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 8300000, guid: 044c09d15b4556341ad51c7672a24b1d, type: 3}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  thrustersEngaged:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5023897089517341320}
-        m_TargetAssemblyTypeName: AudioFader, Assembly-CSharp
-        m_MethodName: FadePlay
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  thrustersDisengaged:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5023897089517341320}
-        m_TargetAssemblyTypeName: AudioFader, Assembly-CSharp
-        m_MethodName: FadeStop
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &1279694596658025051
 GameObject:
   m_ObjectHideFlags: 0
@@ -6167,7 +6091,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2758710151609347884}
-  - component: {fileID: 5333562299232230829}
   - component: {fileID: 8668545299952063791}
   - component: {fileID: 6131955794355331125}
   - component: {fileID: 7656390236752476432}
@@ -6193,22 +6116,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3901913187642462778}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5333562299232230829
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4235097869299837472}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d72f96512435c2342be1b064f572c593, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  drawGizmos: 0
-  endCapTriangles: 12
-  taperLength: 0.5
-  taperBaseScale: 0.5
 --- !u!23 &8668545299952063791
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -7618,6 +7525,37 @@ MonoBehaviour:
   _renderer: {fileID: 4440582255649089679}
   orderDelta: -1
   sds: {fileID: 3350112837996441087}
+--- !u!1 &5495158459956853964
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2567034927825035637}
+  m_Layer: 0
+  m_Name: Arrow Head Anchor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2567034927825035637
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5495158459956853964}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 6.6666656, y: 6.6666656, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 81406379879847648}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5497090683297160772
 GameObject:
   m_ObjectHideFlags: 0
@@ -11271,7 +11209,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3173094838828295783}
-  - component: {fileID: 6455842628730732647}
   - component: {fileID: 3237866026040055037}
   m_Layer: 0
   m_Name: Grapple Shoot Preview
@@ -11295,24 +11232,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3901913187642462778}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6455842628730732647
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9217149646416210096}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f69dd8714be5d744c8c46dff3aa5c39b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  lineRenderer: {fileID: 3237866026040055037}
-  arcLengthStep: 0.025
-  velocitySmoothingRate: 12
-  terminationMask:
-    serializedVersion: 2
-    m_Bits: 64
 --- !u!120 &3237866026040055037
 LineRenderer:
   serializedVersion: 3
@@ -13959,6 +13878,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -9007483984710256747, guid: ad864bcca22f51748ad352a8df355dc7, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1673474227076270}
+    - targetCorrespondingSourceObject: {fileID: -9007483984710256747, guid: ad864bcca22f51748ad352a8df355dc7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2567034927825035637}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 4843985084834002234, guid: ad864bcca22f51748ad352a8df355dc7, type: 3}
 --- !u!4 &81406379879847648 stripped
@@ -14225,10 +14147,6 @@ PrefabInstance:
       propertyPath: m_SortingLayerID
       value: -1251726909
       objectReference: {fileID: 0}
-    - target: {fileID: 1712633781287781073, guid: c48c2c27835040c4583bc8b1bcda90c6, type: 3}
-      propertyPath: input
-      value: 
-      objectReference: {fileID: 3362887635798995877}
     - target: {fileID: 1712633781287781073, guid: c48c2c27835040c4583bc8b1bcda90c6, type: 3}
       propertyPath: mouth
       value: 

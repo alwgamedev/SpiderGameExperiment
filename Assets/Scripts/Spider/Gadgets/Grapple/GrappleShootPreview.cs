@@ -1,15 +1,14 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
+using System;
 
-public class GrappleShootPreview : MonoBehaviour
+[Serializable]
+public class GrappleShootPreview
 {
     [SerializeField] LineRenderer lineRenderer;
     [SerializeField] float arcLengthStep;
     [SerializeField] float velocitySmoothingRate;
     [SerializeField] LayerMask terminationMask;
 
-    SpiderMover player;
-    GrappleCannon grapple;
     Vector3[] positions;
     Vector3 lastShootPosition;
     Vector3 lastShootDirection;
@@ -18,22 +17,25 @@ public class GrappleShootPreview : MonoBehaviour
 
     Material material;
     float length;
-
     int lengthProperty;
- 
 
-    private void Start()
+
+    public void Start(bool playerFacingRight)
     {
-        player = Spider.Player.Mover;
-        grapple = player.Grapple;
         positions = new Vector3[lineRenderer.positionCount];
         lineRenderer.enabled = false;
         lengthProperty = Shader.PropertyToID("_Length");
-        material = lineRenderer.material;
-        lineRenderer.SetMaterials(new List<Material>() { material });
+        material = new Material(lineRenderer.sharedMaterial);
+        lineRenderer.sharedMaterial = material;
+        this.playerFacingRight = playerFacingRight;
     }
 
-    private void LateUpdate()
+    public void OnDestroy()
+    {
+        UnityEngine.Object.Destroy(material);
+    }
+
+    public void LateUpdate(GrappleCannon grapple, bool playerFacingRight)
     {
         if (grapple.PoweringUp)
         {
@@ -42,8 +44,7 @@ public class GrappleShootPreview : MonoBehaviour
                 lineRenderer.enabled = true;
                 lastShootDirection = grapple.ShootDirection;
             }
-            SetLineRendererPositions();
-            //playerFacingRight = player.FacingRight;//transform.lossyScale.x > 0;was there a reason we were doing this instead of just check player.FacingRight?
+            SetLineRendererPositions(grapple, playerFacingRight);
         }
         else if (lineRenderer.enabled)
         {
@@ -51,13 +52,11 @@ public class GrappleShootPreview : MonoBehaviour
         }
     }
 
-    //first we'll just renderer the parabola 
-    private void SetLineRendererPositions()
+    private void SetLineRendererPositions(GrappleCannon grapple, bool playerFacingRight)
     {
         Vector3 p = grapple.SourcePosition;
-        bool playerFacingRight = player.FacingRight;
         bool directionChange = playerFacingRight != this.playerFacingRight;
-        lastShootDirection = directionChange ? grapple.ShootDirection : 
+        lastShootDirection = directionChange ? grapple.ShootDirection :
             MathTools.CheapRotationalLerpClamped(lastShootDirection, grapple.ShootDirection, velocitySmoothingRate * Time.deltaTime, out directionChange);
         Vector3 v = grapple.ShootSpeed * lastShootDirection;
 

@@ -13,7 +13,7 @@ public struct SpiderBody
     public PhysicsFixedJoint headJoint;
     /// <summary> (when facing right) </summary>
     [NonSerialized] public PhysicsRotate abdomenRotationFromBase;
-    public PhysicsQuery.QueryFilter queryFilter;
+    [NonSerialized] public PhysicsQuery.QueryFilter queryFilter;
 
     [SerializeField] PhysicsShapeDefinition shapeDef; 
     [SerializeField] PhysicsFixedJointDefinition headJointDef;
@@ -27,6 +27,7 @@ public struct SpiderBody
     PhysicsRotate abdomenBaseRotationFromLevel;
     Vector2 heightReferenceLocalPos;
     float totalMass;
+    [SerializeField] PhysicsWorld.IgnoreFilter queryIgnoreFilter;
     bool facingRight;
 
     public readonly bool FacingRight => facingRight;
@@ -66,7 +67,7 @@ public struct SpiderBody
 
             headJoint.UpdateSettings(headJointDef);
 
-            queryFilter = shapeDef.contactFilter.ToQueryFilter(queryFilter.ignoreFilter);
+            UpdateQueryFilter();
             totalMass = abdomen.mass + head.mass;
         }
     }
@@ -112,7 +113,7 @@ public struct SpiderBody
     public void CreatePhysicsBody(PhysicsRotate levelDirection, Transform abdomenRoot, Transform headRoot, Transform headBone, 
         Transform grappleArmTransform, Transform heightReferencePoint)
     {
-        queryFilter = shapeDef.contactFilter.ToQueryFilter(queryFilter.ignoreFilter);
+        UpdateQueryFilter();
 
         var defaultWorld = PhysicsWorld.defaultWorld;
 
@@ -175,6 +176,11 @@ public struct SpiderBody
         ((PhysicsJoint)headJoint).ReflectAndFlipAnchors();
 
         facingRight = !facingRight;
+    }
+
+    private void UpdateQueryFilter()
+    {
+        queryFilter = shapeDef.contactFilter.ToQueryFilter(queryIgnoreFilter);
     }
 
     private readonly PolygonGeometry GrappleArmWorldBox(Transform grappleArmTransform)

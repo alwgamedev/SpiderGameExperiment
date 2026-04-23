@@ -2,11 +2,11 @@
 using UnityEngine.Events;
 using Unity.U2D.Physics;
 using Unity.Collections;
+using System;
 
-
-public class SpiderMover : MonoBehaviour
+[Serializable]
+public class SpiderMover
 {
-    [SerializeField] float timeScale;
     [SerializeField] bool drawGizmos;
 
     [Header("Parts")]
@@ -23,7 +23,6 @@ public class SpiderMover : MonoBehaviour
     [SerializeField] Transform headRoot;
     [SerializeField] Transform headBone;
     [SerializeField] Transform heightReferencePoint;
-    [SerializeField] SpiderInput spiderInput;
     [SerializeField] GrappleCannon grapple;
     [SerializeField] Thruster thruster;
     [SerializeField] ThrusterFlame thrusterFlame;
@@ -79,6 +78,8 @@ public class SpiderMover : MonoBehaviour
     [Header("Free Hang")]
     [SerializeField] float freeHangHeadAngle;
 
+    SpiderInput spiderInput;
+
     bool chargingJump;
     bool waitingToHandleJump;
     float jumpVerificationTimer;
@@ -127,6 +128,7 @@ public class SpiderMover : MonoBehaviour
     float GrappleScurryResistanceFraction => Mathf.Clamp(GrappleScurryResistance / grappleScurryResistanceMax, 0, 1);
 
     public bool FacingRight => SpideyBody.FacingRight;
+    public bool ChargingJump => chargingJump;
     public float CrouchProgress => crouchProgress;
     public float TotalMass => SpideyBody.TotalMass + legSynch.settings.gravityScale * legSynch.TotalMass;
     public Thruster Thruster => thruster;
@@ -147,9 +149,9 @@ public class SpiderMover : MonoBehaviour
         spiderBody.CenterRootTransforms(abdomenRoot, abdomenBone, headRoot, headBone);
     }
 
-    public void CreateLegPhysicsBodies()
+    public void CreateLegPhysicsBodies(MonoBehaviour owner)
     {
-        legSynch.CreatePhysicsTransforms(this);
+        legSynch.CreatePhysicsTransforms(owner);
     }
 
     public void CenterLegPhysicsBodies()
@@ -157,7 +159,7 @@ public class SpiderMover : MonoBehaviour
         legSynch.CenterPhysicsTransforms();
     }
 
-    private void OnDrawGizmos()
+    public void OnDrawGizmos()
     {
         if (drawGizmos)
         {
@@ -175,12 +177,10 @@ public class SpiderMover : MonoBehaviour
         grapple.OnDrawGizmos();
     }
 
-    private void OnValidate()
+    public void OnValidate()
     {
         if (Application.isPlaying)
         {
-            Time.timeScale = timeScale;
-
             spiderBody.OnValidate();
             thruster.Initialize();
             grapple.OnValidate();
@@ -193,46 +193,41 @@ public class SpiderMover : MonoBehaviour
     }
 #endif
 
-    private void Awake()
+    public void Initialize(Transform transform, SpiderInput spiderInput)
     {
-        legCastDirection = new Vector2[2];
+        this.spiderInput = spiderInput;
 
-        //cosFreeHangLegAngleMin = Mathf.Cos(freeHangLegAngleMin);
+        legCastDirection = new Vector2[2];
         scurryRotateMin = new PhysicsRotate(new Vector2(Mathf.Cos(grappleScurryAngleMin), Mathf.Sin(grappleScurryAngleMin)));
         jumpRotateMin = new PhysicsRotate(new Vector2(Mathf.Cos(jumpAngleMin), Mathf.Sin(jumpAngleMin)));
 
         thruster.Initialize();
         thrusterFlame.Initialize();
-    }
 
-    private void Start()
-    {
         spiderBody.CreatePhysicsBody(new PhysicsRotate(transform.right), abdomenRoot, headRoot, headBone, grappleArm, heightReferencePoint);
         InitializeLegSynch();
         InitializeGroundData();
         grapple.Initialize(spiderInput, Abdomen.world, TotalMass, FacingRight);
-
-        Time.timeScale = timeScale;
     }
 
-    private void OnDestroy()
+    public void OnDestroy()
     {
         groundMap.Dispose();
         grapple.OnDestroy();
     }
 
-    private void Update()
+    public void Update()
     {
         UpdateState();
         grapple.Update();
     }
 
-    private void LateUpdate()
+    public void LateUpdate()
     {
         grapple.LateUpdate();
     }
 
-    private void FixedUpdate()
+    public void FixedUpdate()
     {
         if (VerifyingJump())
         {
@@ -721,7 +716,7 @@ public class SpiderMover : MonoBehaviour
 
         if (!VerifyingJump())
         {
-            SetGrounded(legSynch.AnyLegGrounded());
+            SetGrounded(legSynch.AnyLegGrounded() && Vector2.Dot(groundAnchorPt - HeightReferencePt, Up) < 0);
             grapple.FreeHanging = grappleFreeHangPrerequisites && !grounded;
         }
 

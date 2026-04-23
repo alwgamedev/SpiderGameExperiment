@@ -1,10 +1,13 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
-public class JumpPreviewArrow : MonoBehaviour
+[Serializable]
+public class JumpPreviewArrow
 {
     [SerializeField] SpriteRenderer arrowNeck;
     [SerializeField] SpriteRenderer arrowHead;
     [SerializeField] Transform arrowNeckAnchor;//for fixing position after scaling arrowNeck
+    [SerializeField] Transform arrowHeadAnchor;
     [SerializeField] float stretchMin;
     [SerializeField] float stretchMax;
     [SerializeField] Color colorMin0;//min = crouchProgress == 0 (and then arrow fades from color0 to color1 along its body)
@@ -12,63 +15,71 @@ public class JumpPreviewArrow : MonoBehaviour
     [SerializeField] Color colorMax0;//max = crouchProgress == 1
     [SerializeField] Color colorMax1;
 
-    SpiderMover player;
-    Transform arrowHeadAnchor;
     Material neckMaterial;
-
-    bool chargingJump;
+    bool arrowActive;
     bool hasReachedMax;
+    int color0Property;
+    int color1Property;
 
-    const string Color0Property = "_Color0";
-    const string Color1Property = "_Color1";
-
-    private void Start()
+    public void Start()
     {
-        player = Spider.Player.Mover;
-
-        arrowHeadAnchor = new GameObject("Arrow Head Anchor").transform;
         arrowHeadAnchor.position = new(arrowNeck.bounds.center.x, arrowNeck.bounds.max.y, 0);//need to make sure it's right on the edge of bounding box, otherwise scales poorly
-        arrowHeadAnchor.SetParent(arrowNeck.transform, true);
 
-        neckMaterial = new Material(arrowNeck.material);
-        arrowNeck.material = neckMaterial;//copy so changes made to material during play don't persist
+        neckMaterial = new Material(arrowNeck.sharedMaterial);
+        arrowNeck.sharedMaterial = neckMaterial;
+
+        color0Property = Shader.PropertyToID("_Color0");
+        color1Property = Shader.PropertyToID("_Color1");
 
         HideArrow();
     }
 
-    private void Update()
+    public void OnDestroy()
     {
-        if (chargingJump)
+        UnityEngine.Object.Destroy(neckMaterial);
+    }
+
+    public void LateUpdate(SpiderMover spider)
+    {
+        if (spider.ChargingJump)
         {
-            UpdateArrow();
+            if (!arrowActive)
+            {
+                ShowArrow();
+            }
+
+            UpdateArrow(spider.CrouchProgress);
+        }
+        else if (arrowActive)
+        {
+            HideArrow();
         }
     }
 
-    public void OnBeginJumpCharge()
+    private void ShowArrow()
     {
+        arrowActive = true;
         arrowNeckAnchor.gameObject.SetActive(true);
         arrowNeck.gameObject.SetActive(true);
         arrowHead.gameObject.SetActive(true);
         ResetArrow();
-        chargingJump = true;
     }
 
-    public void HideArrow()
+    private void HideArrow()
     {
         arrowNeckAnchor.gameObject.SetActive(false);//and arrowHeadAnchor is a child of arrowNeck so gets set inactive automatically
         arrowNeck.gameObject.SetActive(false);
         arrowHead.gameObject.SetActive(false);
-        chargingJump = false;
+        arrowActive = true;
     }
 
-    private void UpdateArrow()
+    private void UpdateArrow(float crouchProgress)
     {
         if (!hasReachedMax)
         {
-            var t = player.CrouchProgress;
-            SetStretch(Mathf.Lerp(stretchMin, stretchMax, t));
-            SetColor(t);
-            if (!(t < 1))
+            SetStretch(Mathf.Lerp(stretchMin, stretchMax, crouchProgress));
+            SetColor(crouchProgress);
+            if (!(crouchProgress < 1))
             {
                 hasReachedMax = true;
             }
@@ -89,16 +100,16 @@ public class JumpPreviewArrow : MonoBehaviour
     {
         var c0 = Color.LerpUnclamped(colorMin0, colorMax0, lerpParameter);
         var c1 = Color.LerpUnclamped(colorMin1, colorMax1, lerpParameter);
-        neckMaterial.SetColor(Color0Property, c0);
-        neckMaterial.SetColor(Color1Property, c1);
+        neckMaterial.SetColor(color0Property, c0);
+        neckMaterial.SetColor(color1Property, c1);
         arrowHead.color = c1;
     }
 
     private void ResetArrow()
     {
         SetStretch(stretchMin);
-        neckMaterial.SetColor(Color0Property, colorMin0);
-        neckMaterial.SetColor(Color1Property, colorMin1);
+        neckMaterial.SetColor(color0Property, colorMin0);
+        neckMaterial.SetColor(color1Property, colorMin1);
         arrowHead.color = colorMin1;
         hasReachedMax = false;
     }

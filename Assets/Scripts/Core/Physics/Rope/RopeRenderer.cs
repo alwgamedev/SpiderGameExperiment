@@ -1,22 +1,24 @@
-﻿using Unity.Mathematics;
+﻿using System;
+using Unity.Mathematics;
 using UnityEngine;
 
-public class RopeRenderer : MonoBehaviour
+[Serializable]
+public class RopeRenderer
 {
+    [SerializeField] MeshRenderer meshRenderer;
+    [SerializeField] MeshFilter meshFilter;
     [SerializeField] bool drawGizmos;
     [Min(2)][SerializeField] int endCapTriangles;
     [SerializeField] float taperLength;//measured in number of rope segments, just to keep things simple
     [SerializeField] float taperBaseScale;
 
     Mesh mesh;
-    MeshRenderer meshRenderer;
-    MeshFilter meshFilter;
     Material material;
 
     Vector4[] nodePositions;
     int positionsProperty;
 
-    private void OnDrawGizmos()
+    public void OnDrawGizmos()
     {
         if (drawGizmos && nodePositions != null)
         {
@@ -28,18 +30,19 @@ public class RopeRenderer : MonoBehaviour
         }
     }
 
-    private void Awake()
-    {
-        meshRenderer = GetComponent<MeshRenderer>();
-        meshFilter = GetComponent<MeshFilter>();
-        positionsProperty = Shader.PropertyToID("_NodePositions");
-    }
-
     public void Initialize()
     {
-        material = new Material(meshRenderer.material);
-        meshRenderer.material = material;
+        positionsProperty = Shader.PropertyToID("_NodePositions");
+
+        material = new Material(meshRenderer.sharedMaterial);
+        meshRenderer.sharedMaterial = material;
         meshRenderer.enabled = false;
+    }
+
+    public void OnDestroy()
+    {
+        UnityEngine.Object.Destroy(material);
+        UnityEngine.Object.Destroy(mesh);
     }
 
     public void OnRopeSpawned(FastRope rope, float2 sourcePosition)

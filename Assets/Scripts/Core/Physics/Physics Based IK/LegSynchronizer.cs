@@ -49,7 +49,6 @@ public class LegSynchronizer
 {
     public UnityEvent[] footHitGround;
     internal LegSynchSettings settings;
-    //internal LegSynchSettings settings;
 
     [SerializeField] JointedChainDefinition chainDef;
     [SerializeField] JointedChainSettings[] chainSettings;
@@ -82,7 +81,7 @@ public class LegSynchronizer
 
     JointedChain[] leg;
     float[] timer;
-    int stepping;//used as bit mask (bit i = whether leg i is stepping)
+    int stepping;//bit i = whether leg i is stepping
     int grounded;
     float totalMass;
 
