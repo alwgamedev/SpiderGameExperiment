@@ -55,14 +55,16 @@ public class LegSynchronizer
     [SerializeField] JointedChainSettings[] chainSettings;
     [SerializeField] ArrayContainer<Transform>[] chainTransform;
     [SerializeField] ArrayContainer<Transform>[] bones;
-    [SerializeField] float[] timer;//for initial positions: use [0, 1) to begin stepping, and use (1, 2] to begin resting (will subtract 1 off at start)
-    [SerializeField] int beginStepping;
+    [SerializeField] float[] initialTimer;
+    [SerializeField] bool[] beginStepping;
+    [SerializeField] int[] groupIndex;
+    [SerializeField] int[] groupLeader;
+    [SerializeField] float resynchRate;
     [SerializeField] float[] stepMax;
     [SerializeField] float[] stepLength;
     [SerializeField] float[] stepSpeed;
     [SerializeField] float[] restSpeed;
     [SerializeField] float[] stepHeight;
-    [SerializeField] int[] castDirectionIndex;
     [SerializeField] float stepAccel;
     [SerializeField] float stepPeakTime;
     [SerializeField] float stepDropPoint;//no upward forces will be applied beyond this point
@@ -79,6 +81,7 @@ public class LegSynchronizer
 #endif
 
     JointedChain[] leg;
+    float[] timer;
     int stepping;//used as bit mask (bit i = whether leg i is stepping)
     int grounded;
     float totalMass;
@@ -232,13 +235,15 @@ public class LegSynchronizer
         var numLegs = chainTransform.Length;
 
         leg = new JointedChain[numLegs];
+        timer = new float[numLegs];
         stepping = 0;
         grounded = 0;
 
         for (int i = 0; i < chainTransform.Length; i++)
         {
             InitializeLeg(i, anchorBody[i]);
-            if ((beginStepping & 1 << i) != 0)
+            timer[i] = initialTimer[i];
+            if (beginStepping[i])
             {
                 stepping |= 1 << i;
             }
@@ -297,7 +302,7 @@ public class LegSynchronizer
     {
         for (int i = 0; i < leg.Length; i++)
         {
-            var castDir = castDirection[castDirectionIndex[i]];
+            var castDir = castDirection[groupIndex[i]];
             var (j, s) = map.LineCastOrClosest(leg[i].JointPosition(0), castDir, GroundMap.DEFAULT_PRECISION);//hip ground point
 
             float hipSpeed;
@@ -314,8 +319,13 @@ public class LegSynchronizer
                 hipSpeed *= settings.timeScale;
             }
 
+            if (i > 0)
+            {
+                Resynchronize(i, resynchRate, hipSpeed < 0);
+            }
             var t = timer[i];
 
+            //check if we should change state (stepping/resting)
             bool goalForward = Stepping(i) ^ hipSpeed < 0;
             if (goalForward ? t > 1 : t < 0)
             {
@@ -377,6 +387,41 @@ public class LegSynchronizer
             Debug.Log($"Leg {i}: stepping {Stepping(i)}, errorX {math.dot(error, gdRight)}, errorY {math.dot(error, gdUp)}");
         }
 #endif
+    }
+
+    private void Resynchronize(int i, float lerpRate, bool hipSpdNegative)
+    {
+        int i0 = groupLeader[i];
+        if (i0 == i)
+        {
+            return;
+        }
+
+        var t0Initial = beginStepping[i0] ? initialTimer[i0] : 2 - initialTimer[i0];
+        var t1Initial = beginStepping[i] ? initialTimer[i] : 2 - initialTimer[i];
+        var initialOffset = t1Initial - t0Initial;
+        var t0Cur = Stepping(0) ? timer[i0] : 2 - timer[i0];
+        var tGoal = t0Cur + initialOffset;
+        while (tGoal > 2)
+        {
+            tGoal -= 2;
+        }
+        while (tGoal < 0)
+        {
+            tGoal += 2;
+        }
+
+        bool shouldBeStepping = tGoal < 1;
+        if (shouldBeStepping != Stepping(i))
+        {
+            tGoal = Stepping(i) ? (hipSpdNegative ? 0 : 1) : (hipSpdNegative ? 1 : 0);
+        }
+        else if (!shouldBeStepping)
+        {
+            tGoal = 2 - tGoal;
+        }
+        
+        timer[i] = Mathf.Lerp(timer[i], tGoal, lerpRate);
     }
 
     private void FlipAngleLimits(int i)

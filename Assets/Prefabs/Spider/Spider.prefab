@@ -1634,7 +1634,7 @@ MonoBehaviour:
       - {fileID: 1963197130059215229}
       - {fileID: 3207324145476504997}
       - {fileID: 4614320631808763307}
-    timer:
+    initialTimer:
     - 0
     - 0.9
     - 0.5
@@ -1643,7 +1643,10 @@ MonoBehaviour:
     - 0.9
     - 0.5
     - 0.4
-    beginStepping: 85
+    beginStepping: 8500850085008500
+    groupIndex: 0000000000000000000000000000000001000000010000000100000001000000
+    groupLeader: 0000000000000000000000000000000004000000040000000400000004000000
+    resynchRate: 0.05
     stepMax:
     - 0.975
     - 0.975
@@ -1689,7 +1692,6 @@ MonoBehaviour:
     - 0.6
     - 0.6
     - 0.6
-    castDirectionIndex: 0000000000000000000000000000000001000000010000000100000001000000
     stepAccel: 450
     stepPeakTime: 0.3
     stepDropPoint: 0.7
