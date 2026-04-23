@@ -56,7 +56,7 @@ public class LegSynchronizer
     [SerializeField] ArrayContainer<Transform>[] chainTransform;
     [SerializeField] ArrayContainer<Transform>[] bones;
     [SerializeField] float[] timer;//for initial positions: use [0, 1) to begin stepping, and use (1, 2] to begin resting (will subtract 1 off at start)
-    [SerializeField] bool[] beginStepping;
+    [SerializeField] int beginStepping;
     [SerializeField] float[] stepMax;
     [SerializeField] float[] stepLength;
     [SerializeField] float[] stepSpeed;
@@ -71,75 +71,24 @@ public class LegSynchronizer
     [SerializeField] float restStopPoint;
     [SerializeField] float speed0;
     [SerializeField] float speed1;
-    [SerializeField] float footGroundContactRadius;
 #if UNITY_EDITOR
     [SerializeField] bool drawBodyGizmos;
     [SerializeField] bool[] drawAngleLimitGizmos;
-    [SerializeField] bool[] drawFootGizmo;
     [SerializeField] bool[] debugStepStats;
 #endif
 
     JointedChain[] leg;
-    PhysicsQuery.QueryFilter footQueryFilter;
     int stepping;//used as bit mask (bit i = whether leg i is stepping)
-    float legCountInverse;
+    int grounded;
     float totalMass;
 
     public float TotalMass => totalMass;
 
     public bool Stepping(int i) => (stepping & (1 << i)) != 0;
-    public bool FootPadIsTouchingGround(int i)
-    {
-        var cg = new CircleGeometry()
-        {
-            center = leg[i].EffectorPosition,
-            radius = footGroundContactRadius
-        };
-        return leg[i].body[^1].world.TestOverlapGeometry(cg, footQueryFilter);
-    }
-    public bool LegIsTouchingGround(int i)
-    {
-        if (FootPadIsTouchingGround(i))
-        {
-            return true;
-        }
 
-        ref var l = ref leg[i];
-        for (int j = l.JointCount - 1; j > -1; j--)
-        {
-            if (l.body[j].GetContacts().Length > 0)
-            {
-                return true;
-            }
-        }
+    public bool LegGrounded(int i) => (grounded & (1 << i)) != 0;
 
-        return false;
-    }
-    public bool AnyLegIsTouchingGround()
-    {
-        for (int i = 0; i < leg.Length; i++)
-        {
-            if (LegIsTouchingGround(i))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-    public float FractionTouchingGround()
-    {
-        var ct = 0;
-        for (int i = 0; i < leg.Length; i++)
-        {
-            if (LegIsTouchingGround(i))
-            {
-                ct++;
-            }
-        }
-
-        return ct * legCountInverse;
-    }
+    public bool AnyLegGrounded() => grounded != 0;
 
     public void RecalculateMass()
     {
@@ -167,8 +116,6 @@ public class LegSynchronizer
                     }
                 }
             }
-
-            footQueryFilter = chainDef.shapeDef.contactFilter.ToQueryFilter(PhysicsWorld.IgnoreFilter.IgnoreTriggerShapes);
 
             RecalculateMass();
         }
@@ -204,18 +151,6 @@ public class LegSynchronizer
                     {
                         JointedChain.DrawAngleGizmos(bones[i].array, chainSettings[i]);
                     }
-                }
-            }
-        }
-
-        if (bones != null && drawFootGizmo != null && drawFootGizmo.Length == bones.Length)
-        {
-            for (int i = 0; i < bones.Length; i++)
-            {
-                if (drawFootGizmo[i] && bones[i].array != null)
-                {
-                    Gizmos.color = Color.green;
-                    Gizmos.DrawWireSphere(bones[i].array[^1].position, footGroundContactRadius);
                 }
             }
         }
@@ -293,20 +228,17 @@ public class LegSynchronizer
     public void Initialize(ReadOnlySpan<PhysicsBody> anchorBody)
     {
         var numLegs = chainTransform.Length;
-        legCountInverse = 1f / numLegs;
 
         leg = new JointedChain[numLegs];
-        //this.settings = settings.Clone();
-
         stepping = 0;
-        footQueryFilter = chainDef.shapeDef.contactFilter.ToQueryFilter(PhysicsWorld.IgnoreFilter.IgnoreTriggerShapes);
+        grounded = 0;
 
         for (int i = 0; i < chainTransform.Length; i++)
         {
             InitializeLeg(i, anchorBody[i]);
-            if (beginStepping[i])
+            if ((beginStepping & 1 << i) != 0)
             {
-                stepping |= (1 << i);
+                stepping |= 1 << i;
             }
         }
 
@@ -412,6 +344,15 @@ public class LegSynchronizer
 
         var targetRelPos = settings.strideMultiplier * StepPosition(stepMax[i], stepLength[i], timer[i]);//target position along ground map, relative to hip
         var (j, a) = map.AddArcLength(hipGroundMapPosition.Item1, hipGroundMapPosition.Item2 + (facingRight ? targetRelPos : -targetRelPos));//target ground map position
+        var legGrounded = map.HitGround(j);
+        if (legGrounded)
+        {
+            grounded |= 1 << i;
+        }
+        else
+        {
+            grounded &= ~(1 << i);
+        }
 
         var gdPt = map.PointFromReducedPosition(j, a);
         var gdUp = map.NormalFromReducedPosition(j, a);

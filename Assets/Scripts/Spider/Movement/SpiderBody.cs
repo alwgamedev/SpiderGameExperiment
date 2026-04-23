@@ -5,7 +5,7 @@ using UnityEditor;
 
 
 [Serializable]
-public struct SpiderPhysics
+public struct SpiderBody
 {
     public PhysicsBody abdomen;
     public PhysicsBody head;
@@ -18,12 +18,6 @@ public struct SpiderPhysics
     [SerializeField] PhysicsShapeDefinition shapeDef; 
     [SerializeField] PhysicsFixedJointDefinition headJointDef;
     [SerializeField] PhysicsBodyDefinition bodyDef;
-    //[SerializeField] Transform grappleArm;
-    //[SerializeField] Transform abdomenRoot;
-    //[SerializeField] Transform abdomenBone;
-    //[SerializeField] Transform headRoot;
-    //[SerializeField] Transform headBone;
-    //[SerializeField] Transform heightReferencePoint;//just for initialization; cache position in local space
     [SerializeField] Vector2 abdomenCapsuleSize;//(width, height) -- full width and height
     [SerializeField] Vector2 abdomenCapsuleOffset;
     [SerializeField] Vector2 headCapsuleSize;
@@ -58,6 +52,7 @@ public struct SpiderPhysics
             return abdomen.transform.TransformPoint(localPos);
         }
     }
+    public readonly bool HasContact() => abdomen.GetContacts().Length > 0 || head.GetContacts().Length > 0;
 
     public void OnValidate()
     {

@@ -1288,13 +1288,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SpiderMover
   timeScale: 1
   drawGizmos: 1
-  spiderPhysics:
+  spiderBody:
     queryFilter:
       m_Categories:
         bitMask: 0
       m_HitCategories:
         bitMask: 0
-      m_IgnoreFilter: 0
+      m_IgnoreFilter: 8
     shapeDef:
       contactFilter:
         m_Categories:
@@ -1640,10 +1640,10 @@ MonoBehaviour:
     - 0.5
     - 0.4
     - 0
-    - 1
+    - 0.9
     - 0.5
-    - 0.5
-    beginStepping: 0100010001000100
+    - 0.4
+    beginStepping: 85
     stepMax:
     - 0.975
     - 0.975
@@ -1698,10 +1698,8 @@ MonoBehaviour:
     restStopPoint: -0.1
     speed0: 0.05
     speed1: 3
-    footGroundContactRadius: 0.085
     drawBodyGizmos: 0
     drawAngleLimitGizmos: 0000000000000000
-    drawFootGizmo: 0000000000000000
     debugStepStats: 0000000000000000
   stdLegSettings:
     stepStrength:
@@ -1839,8 +1837,6 @@ MonoBehaviour:
     sr: {fileID: 5014689274299548898}
   groundedExitToleranceFactor: 1.35
   groundedEntryToleranceFactor: 0.9
-  groundednessSmoothingRate: 2.5
-  groundednessInitialContactValue: 1
   groundDirectionSampleWidth: 0.5
   backupGroundPtRaycastLengthFactor: 1.1
   groundMap:
@@ -1859,7 +1855,6 @@ MonoBehaviour:
   preferredRideHeight: 0.9
   heightSpringForce: 600
   heightSpringDamping: 20
-  heightSpringBreakThreshold: 0.01
   grappleSquatReduction: 0.4
   heightSampleMin: -0.4
   heightSampleMax: 0.6
@@ -1879,18 +1874,8 @@ MonoBehaviour:
   tapJumpVerificationTime: 0.125
   crouchHeightFraction: 0.25
   crouchTime: 0.3
-  crouchBoostMinProgress: 0.4
   crouchReleaseSpeedMultiplier: 2.5
-  airborneLegAnimationTimeScale: 0.15
-  airborneLegSpeedMax: 12
-  airborneStrideMultiplier: 1.2
-  strideMultiplierSmoothingRate: 3
-  freeHangGroundedEntryLegExtensionThreshold: 0.95
-  freeHangLegAngleMin: 1.047198
   freeHangHeadAngle: 0.2094395
-  freeHangStepHeightReductionMax: 0.9
-  freeHangStrideMultiplier: 1
-  freeHangSimulateContactMax: 0.025
   jumpChargeBegan:
     m_PersistentCalls:
       m_Calls: []

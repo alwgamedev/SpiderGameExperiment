@@ -10,7 +10,7 @@ public class SpiderMover : MonoBehaviour
     [SerializeField] bool drawGizmos;
 
     [Header("Parts")]
-    [SerializeField] SpiderPhysics spiderPhysics;
+    [SerializeField] SpiderBody spiderBody;
     [SerializeField] LegSynchronizer legSynch;
     [SerializeField] LegSynchSettings stdLegSettings;
     [SerializeField] LegSynchSettings freefallLegSettings;
@@ -31,8 +31,6 @@ public class SpiderMover : MonoBehaviour
     [Header("Ground Data")]
     [SerializeField] float groundedExitToleranceFactor;
     [SerializeField] float groundedEntryToleranceFactor;
-    [SerializeField] float groundednessSmoothingRate;
-    [SerializeField] float groundednessInitialContactValue;
     [SerializeField] float groundDirectionSampleWidth;
     [SerializeField] float backupGroundPtRaycastLengthFactor;
     [SerializeField] GroundMap groundMap;
@@ -53,7 +51,6 @@ public class SpiderMover : MonoBehaviour
     [SerializeField] float preferredRideHeight;
     [SerializeField] float heightSpringForce;
     [SerializeField] float heightSpringDamping;
-    [SerializeField] float heightSpringBreakThreshold;
     [SerializeField] float grappleSquatReduction;
     [SerializeField] float heightSampleMin;
     [SerializeField] float heightSampleMax;
@@ -77,20 +74,10 @@ public class SpiderMover : MonoBehaviour
     [SerializeField] float tapJumpVerificationTime;
     [SerializeField] float crouchHeightFraction;
     [SerializeField] float crouchTime;
-    [SerializeField] float crouchBoostMinProgress;
     [SerializeField] float crouchReleaseSpeedMultiplier;
-    [SerializeField] float airborneLegAnimationTimeScale;
-    [SerializeField] float airborneLegSpeedMax;
-    [SerializeField] float airborneStrideMultiplier;
-    [SerializeField] float strideMultiplierSmoothingRate;
 
     [Header("Free Hang")]
-    [SerializeField] float freeHangGroundedEntryLegExtensionThreshold;
-    [SerializeField] float freeHangLegAngleMin;
     [SerializeField] float freeHangHeadAngle;
-    [SerializeField] float freeHangStepHeightReductionMax;
-    [SerializeField] float freeHangStrideMultiplier;
-    [SerializeField] float freeHangSimulateContactMax;
 
     bool chargingJump;
     bool waitingToHandleJump;
@@ -99,16 +86,15 @@ public class SpiderMover : MonoBehaviour
     PhysicsRotate jumpRotateMin;
     PhysicsRotate scurryRotateMin;
     float crouchProgress;//0 - 1
+    bool canFlip;
 
     bool grounded;
-    float groundednessRating;
     Vector2 groundDirection;
     Vector2 groundAnchorPt;
     Vector2 balanceDirection;
     float settleTimer;
 
     Vector2[] legCastDirection;
-    float cosFreeHangLegAngleMin;
 
     bool needChangeDirection;
     bool grappleScurrying;
@@ -123,17 +109,16 @@ public class SpiderMover : MonoBehaviour
     float EffectiveRideHeight => crouchProgress > 0 ? (1 - crouchProgress * crouchHeightFraction) * preferredRideHeight : preferredRideHeight;
     float GroundMapRaycastLength => (grounded ? groundedExitToleranceFactor : groundedEntryToleranceFactor) * EffectiveRideHeight;
     bool ForceFreeHang => grapple.GrappleAnchored && spiderInput.ShiftAction.IsPressed();
-    int Orientation => FacingRight ? 1 : -1;
-    Vector2 Right => SpideyPhysics.LevelRight.direction;
+    Vector2 Right => SpideyBody.LevelRight.direction;
     Vector2 Up => Right.CCWPerp();
     Vector2 OrientedRight => FacingRight ? Right : -Right;
     Vector2 OrientedGroundDirection => FacingRight ? groundDirection : -groundDirection;
-    Vector2 HeightReferencePt => SpideyPhysics.HeightReferencePosition;
+    Vector2 HeightReferencePt => SpideyBody.HeightReferencePosition;
     Vector2 HeadHeightReferencePt
     {
         get
         {
-            SpideyPhysics.head.SyncTransform();
+            SpideyBody.head.SyncTransform();
             return headBoneHeightRefPoint.position;
         }
     }
@@ -141,13 +126,13 @@ public class SpiderMover : MonoBehaviour
     float GrappleScurryResistance => Vector2.Dot(grapple.LastCarryForce, -OrientedGroundDirection);
     float GrappleScurryResistanceFraction => Mathf.Clamp(GrappleScurryResistance / grappleScurryResistanceMax, 0, 1);
 
-    public bool FacingRight => SpideyPhysics.FacingRight;
+    public bool FacingRight => SpideyBody.FacingRight;
     public float CrouchProgress => crouchProgress;
-    public float TotalMass => SpideyPhysics.TotalMass + legSynch.settings.gravityScale * legSynch.TotalMass;
+    public float TotalMass => SpideyBody.TotalMass + legSynch.settings.gravityScale * legSynch.TotalMass;
     public Thruster Thruster => thruster;
     public GrappleCannon Grapple => grapple;
-    public ref SpiderPhysics SpideyPhysics => ref spiderPhysics;
-    public ref PhysicsBody Abdomen => ref SpideyPhysics.abdomen;
+    public ref SpiderBody SpideyBody => ref spiderBody;
+    public ref PhysicsBody Abdomen => ref SpideyBody.abdomen;
 
     //mainly to hook up audio (later maybe also ui stuff)
     public UnityEvent jumpChargeBegan;
@@ -159,7 +144,7 @@ public class SpiderMover : MonoBehaviour
 #if UNITY_EDITOR
     public void CenterPhysicsBodies()
     {
-        spiderPhysics.CenterRootTransforms(abdomenRoot, abdomenBone, headRoot, headBone);
+        spiderBody.CenterRootTransforms(abdomenRoot, abdomenBone, headRoot, headBone);
     }
 
     public void CreateLegPhysicsBodies()
@@ -183,7 +168,7 @@ public class SpiderMover : MonoBehaviour
                 Gizmos.DrawSphere(groundAnchorPt, 0.1f);
                 Gizmos.DrawLine(HeightReferencePt, groundAnchorPt);
             }
-            spiderPhysics.DrawGizmos(abdomenBone, headBone);
+            spiderBody.DrawGizmos(abdomenBone, headBone);
         }
 
         legSynch.OnDrawGizmos();
@@ -196,7 +181,7 @@ public class SpiderMover : MonoBehaviour
         {
             Time.timeScale = timeScale;
 
-            spiderPhysics.OnValidate();
+            spiderBody.OnValidate();
             thruster.Initialize();
             grapple.OnValidate();
             legSynch.OnValidate();
@@ -208,7 +193,7 @@ public class SpiderMover : MonoBehaviour
     {
         legCastDirection = new Vector2[2];
 
-        cosFreeHangLegAngleMin = Mathf.Cos(freeHangLegAngleMin);
+        //cosFreeHangLegAngleMin = Mathf.Cos(freeHangLegAngleMin);
         scurryRotateMin = new PhysicsRotate(new Vector2(Mathf.Cos(grappleScurryAngleMin), Mathf.Sin(grappleScurryAngleMin)));
         jumpRotateMin = new PhysicsRotate(new Vector2(Mathf.Cos(jumpAngleMin), Mathf.Sin(jumpAngleMin)));
 
@@ -218,7 +203,7 @@ public class SpiderMover : MonoBehaviour
 
     private void Start()
     {
-        spiderPhysics.CreatePhysicsBody(new PhysicsRotate(transform.right), abdomenRoot, headRoot, headBone, grappleArm, heightReferencePoint);
+        spiderBody.CreatePhysicsBody(new PhysicsRotate(transform.right), abdomenRoot, headRoot, headBone, grappleArm, heightReferencePoint);
         InitializeLegSynch();
         InitializeGroundData();
         grapple.Initialize(spiderInput, Abdomen.world, TotalMass, FacingRight);
@@ -262,6 +247,16 @@ public class SpiderMover : MonoBehaviour
             needChangeDirection = false;
         }
 
+        if (canFlip && FlipInput && (grounded || SpideyBody.HasContact()))//end flip
+        {
+            canFlip = false;
+        }
+        else if (!canFlip && !FlipInput && !grounded && !SpideyBody.HasContact())//re-enable flip once flip input released and we're eligible to flip (not in contact with ground)
+        {
+            canFlip = true;
+        }
+
+
         if (chargingJump)
         {
             jumpAngleFraction = Mathf.Clamp(jumpAngleFraction + LeanInput * jumpAngleLerpRate * Time.deltaTime, 0, 1);
@@ -300,7 +295,7 @@ public class SpiderMover : MonoBehaviour
             settleTimer -= Time.deltaTime;
         }
 
-        grapple.FixedUpdate(SpideyPhysics.VirtualTransform, Abdomen);
+        grapple.FixedUpdate(SpideyBody.VirtualTransform, Abdomen);
         UpdateLegSynch(Time.deltaTime);
     }
 
@@ -440,7 +435,7 @@ public class SpiderMover : MonoBehaviour
             grappleFreeHangPrerequisites = false;
         }
 
-        if (MathTools.OppositeSigns(HorizontalMoveInput, SpideyPhysics.Orientation))
+        if (MathTools.OppositeSigns(HorizontalMoveInput, SpideyBody.Orientation))
         {
             needChangeDirection = true;
         }
@@ -469,16 +464,16 @@ public class SpiderMover : MonoBehaviour
         PhysicsTransform reflection;
         if (!grapple.FreeHanging)
         {
-            reflection = SpideyPhysics.VirtualTransform;
+            reflection = SpideyBody.VirtualTransform;
         }
         else
         {
-            var p = SpideyPhysics.HeightReferencePosition;
-            var u = SpideyPhysics.LevelRight.direction.CCWPerp();
+            var p = SpideyBody.HeightReferencePosition;
+            var u = SpideyBody.LevelRight.direction.CCWPerp();
             reflection = new PhysicsTransform(grapple.FreeHangLeveragePoint, new PhysicsRotate(u));
         }
 
-        SpideyPhysics.ChangeDirection(reflection, abdomenBone, headBone, grappleArm);
+        SpideyBody.ChangeDirection(reflection, abdomenBone, headBone, grappleArm);
         legSynch.OnDirectionChanged(reflection, FacingRight);
         grapple.SetOrientation(FacingRight);
     }
@@ -495,7 +490,7 @@ public class SpiderMover : MonoBehaviour
             }
             else
             {
-                Vector2 d = FlipInput && !grounded ? -OrientedGroundDirection : OrientedGroundDirection;
+                Vector2 d = FlipInput && canFlip ? -OrientedGroundDirection : OrientedGroundDirection;
                 var spd = Vector2.Dot(Abdomen.linearVelocity, d);
                 var maxSpd = MaxSpeed;
                 var accFactor = grounded ? accelFactor : (thruster.Engaged ? thrustingAccelFactor : deadThrusterAccelFactor * Mathf.Clamp(1 - d.y, 0, 1));
@@ -532,7 +527,7 @@ public class SpiderMover : MonoBehaviour
 
         if (!grapple.FreeHanging)
         {
-            var a = MathTools.PseudoAngle(SpideyPhysics.LevelRight, FlipInput && !grounded ? -balanceDirection : balanceDirection);
+            var a = MathTools.PseudoAngle(SpideyBody.LevelRight, FlipInput && canFlip ? -balanceDirection : balanceDirection);
             f += a * (grounded ? balanceSpringForce : airborneBalanceSpringForce);
         }
 
@@ -543,15 +538,15 @@ public class SpiderMover : MonoBehaviour
     {
         if (chargingJump)
         {
-            SpideyPhysics.abdomenRotationFromBase = JumpAbdomenRotation();
+            SpideyBody.abdomenRotationFromBase = JumpAbdomenRotation();
         }
         else if (grappleScurrying)
         {
-            SpideyPhysics.abdomenRotationFromBase = ScurryAbdomenRotation();
+            SpideyBody.abdomenRotationFromBase = ScurryAbdomenRotation();
         }
-        else if (SpideyPhysics.abdomenRotationFromBase.direction != Vector2.right)
+        else if (SpideyBody.abdomenRotationFromBase.direction != Vector2.right)
         {
-            SpideyPhysics.abdomenRotationFromBase = PhysicsRotate.identity;
+            SpideyBody.abdomenRotationFromBase = PhysicsRotate.identity;
         }
     }
 
@@ -588,7 +583,7 @@ public class SpiderMover : MonoBehaviour
             g = grapple.FreeHanging ? FreeHangingHeadRight(right) : right;
         }
 
-        SpideyPhysics.SetHeadRotation(new PhysicsRotate(g));
+        SpideyBody.SetHeadRotation(new PhysicsRotate(g));
     }
 
     private Vector2 FreeHangingHeadRight(Vector2 bodyRight)
@@ -612,11 +607,10 @@ public class SpiderMover : MonoBehaviour
         if (waitingToHandleJump)
         {
             waitingToHandleJump = false;
-            jumpVerificationTimer = jumpVerificationTime;//needs to be first bc SetGround > OnTakeoff depends on VerifyingJump()
-            groundednessRating = 0;
+            jumpVerificationTimer = jumpVerificationTime;
             SetGrounded(false);
             var jumpDir = JumpDirection();
-            Abdomen.ApplyLinearImpulse(TotalMass * JumpForce() * jumpDir, SpideyPhysics.HeightReferencePosition);
+            Abdomen.ApplyLinearImpulse(TotalMass * JumpForce() * jumpDir, SpideyBody.HeightReferencePosition);
             jumped.Invoke();
         }
     }
@@ -632,9 +626,9 @@ public class SpiderMover : MonoBehaviour
 
     private Vector2 JumpDirection()
     {
-        return SpideyPhysics.FacingRight ?
-            SpideyPhysics.AbdomenBaseRotationFromLevel.InverseMultiplyRotation(Abdomen.rotation).direction.CCWPerp()
-            : SpideyPhysics.AbdomenBaseRotationFromLevel.MultiplyRotation(Abdomen.rotation).direction.CCWPerp();
+        return SpideyBody.FacingRight ?
+            SpideyBody.AbdomenBaseRotationFromLevel.InverseMultiplyRotation(Abdomen.rotation).direction.CCWPerp()
+            : SpideyBody.AbdomenBaseRotationFromLevel.MultiplyRotation(Abdomen.rotation).direction.CCWPerp();
     }
 
     private bool VerifyingJump()
@@ -723,8 +717,7 @@ public class SpiderMover : MonoBehaviour
 
         if (!VerifyingJump())
         {
-            UpdateGroundednessRating();
-            SetGrounded(GroundedCondition());
+            SetGrounded(legSynch.AnyLegGrounded());
             grapple.FreeHanging = grappleFreeHangPrerequisites && !grounded;
         }
 
@@ -741,25 +734,9 @@ public class SpiderMover : MonoBehaviour
         }
     }
 
-    private bool GroundedCondition()
-    {
-        return (!grapple.FreeHanging || grounded) && groundednessRating > 0;
-    }
-
-    private void UpdateGroundednessRating()
-    {
-        groundednessRating = groundednessRating == 0 ? legSynch.FractionTouchingGround() > 0 ? 
-            Mathf.Max(legSynch.FractionTouchingGround(), groundednessInitialContactValue) 
-            : 0
-            : grapple.GrappleAnchored && grapple.GrappleReleaseInput < 0 ? legSynch.FractionTouchingGround()
-            : MathTools.LerpAtConstantSpeed(groundednessRating, legSynch.FractionTouchingGround(), groundednessSmoothingRate, Time.deltaTime);
-    }
-
     private void UpdateGroundMap()
     {
-        var (j, s) = groundMap.ClosestPoint(HeightReferencePt, GroundMap.DEFAULT_PRECISION);
-        var n = groundMap.NormalFromReducedPosition(j, s);
-        groundMap.UpdateMap(Abdomen.world, spiderPhysics.queryFilter,
+        groundMap.UpdateMap(Abdomen.world, spiderBody.queryFilter,
             HeightReferencePt,
             -Up,
             Right,
@@ -776,7 +753,6 @@ public class SpiderMover : MonoBehaviour
     private void InitializeGroundData()
     {
         InitializeGroundMap();
-        UpdateGroundednessRating();
         groundAnchorPt = groundMap.Point(groundMap.CentralIndex);
     }
 
@@ -822,56 +798,10 @@ public class SpiderMover : MonoBehaviour
 
         legSynch.settings.stepHeightFraction = settings.stepHeightFraction * (1 - crouchProgress * crouchHeightFraction);
 
-        legCastDirection[0] = SpideyPhysics.head.rotation.direction.CWPerp();
-        legCastDirection[1] = SpideyPhysics.LevelRight.direction.CWPerp();
+        legCastDirection[0] = SpideyBody.head.rotation.direction.CWPerp();
+        legCastDirection[1] = SpideyBody.LevelRight.direction.CWPerp();
 
         legSynch.UpdateAllLegs(dt, groundMap, legCastDirection, FacingRight);
-
-        //if (grounded)
-        //{
-        //    legSynch.settings.timeScale = 1;
-        //    legSynch.strideMultiplier = 1;
-        //}
-        //else if (thruster.Engaged)
-        //{
-        //    legSynch.timeScale = 1;
-        //    legSynch.strideMultiplier = MathTools.LerpAtConstantSpeed(legSynch.strideMultiplier, airborneStrideMultiplier, strideMultiplierSmoothingRate, dt);
-        //}
-        //else
-        //{
-        //    legSynch.timeScale = airborneLegAnimationTimeScale;
-        //    legSynch.strideMultiplier = MathTools.LerpAtConstantSpeed(legSynch.strideMultiplier, airborneStrideMultiplier, strideMultiplierSmoothingRate, dt);
-        //}
-
-        //legSynch.timeScale = grounded || thruster.Engaged ? 1 : airborneLegAnimationTimeScale;
-
-        //var simulateContactWeight = 0f;
-
-        //legSynch.strideMultiplier = 1;
-        //switch (legSynch.State)
-        //{
-        //    case PhysicsLegSynchronizer.LegState.standard:
-        //        legSynch.strideMultiplier = 1;
-        //        break;
-        //    case PhysicsLegSynchronizer.LegState.jumping:
-        //        legSynch.strideMultiplier = MathTools.LerpAtConstantSpeed(legSynch.strideMultiplier, airborneStrideMultiplier,
-        //            strideMultiplierSmoothingRate, Time.deltaTime);
-        //        break;
-        //    case PhysicsLegSynchronizer.LegState.freefall:
-        //        legSynch.strideMultiplier = MathTools.LerpAtConstantSpeed(legSynch.strideMultiplier, airborneStrideMultiplier,
-        //            strideMultiplierSmoothingRate, Time.deltaTime);
-        //        break;
-        //    case PhysicsLegSynchronizer.LegState.limp:
-        //        var r = OrientedRight;
-        //        var y = grounded ? 0 : MathTools.OppositeSigns(Orientation, r.x) ? 1 : r.y < -MathTools.sin15 ? (-r.y - MathTools.sin15) / (1 - MathTools.sin15) : 0;
-        //        legSynch.stepHeightFraction *= 1 - freeHangStepHeightReductionMax * y;
-        //        legSynch.strideMultiplier = MathTools.LerpAtConstantSpeed(legSynch.strideMultiplier, Mathf.Lerp(FreeHangStrideMultiplier(), freeHangStrideMultiplier, y),
-        //                strideMultiplierSmoothingRate, Time.deltaTime);
-        //        simulateContactWeight = (1 - y);
-        //        simulateContactWeight *= simulateContactWeight * freeHangSimulateContactMax;
-        //        legSynch.absoluteBodyGroundSpeed *= simulateContactWeight;
-        //        break;
-        //}
     }
 
     private void InitializeLegSynch()
@@ -879,21 +809,12 @@ public class SpiderMover : MonoBehaviour
         var anchorBody = new NativeArray<PhysicsBody>(8, Allocator.Temp);
         for (int i = 0; i < 4; i++)
         {
-            anchorBody[i] = SpideyPhysics.head;
-            anchorBody[4 + i] = SpideyPhysics.abdomen;
+            anchorBody[i] = SpideyBody.head;
+            anchorBody[4 + i] = SpideyBody.abdomen;
         }
 
         legSynch.Initialize(anchorBody);
         legSynch.settings = stdLegSettings.Clone();
         legState = LegState.std;
-    }
-
-    private float FreeHangStrideMultiplier()
-    {
-        var y = Right.y;
-        //using y > cosLegAngleMax b/c we really want sin(90 - legAngleMax)
-        return y > cosFreeHangLegAngleMin ? 1 :
-            y > 0 ? Mathf.Lerp(airborneStrideMultiplier, 1, y / cosFreeHangLegAngleMin)
-            : Mathf.Lerp(airborneStrideMultiplier, 1, -y);
     }
 }
