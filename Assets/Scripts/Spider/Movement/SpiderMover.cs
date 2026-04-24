@@ -28,6 +28,7 @@ public class SpiderMover
     [SerializeField] ThrusterFlame thrusterFlame;
 
     [Header("Ground Data")]
+    [SerializeField] float groundedWidth;
     [SerializeField] float groundedExitToleranceFactor;
     [SerializeField] float groundedEntryToleranceFactor;
     [SerializeField] float groundDirectionSampleWidth;
@@ -716,7 +717,9 @@ public class SpiderMover
 
         if (!VerifyingJump())
         {
-            SetGrounded(legSynch.AnyLegGrounded() && Vector2.Dot(groundAnchorPt - HeightReferencePt, Up) < 0);
+            SetGrounded(legSynch.AnyLegGrounded() 
+                && Vector2.Dot(groundAnchorPt - HeightReferencePt, Up) < 0
+                && Mathf.Abs(Vector2.Dot(groundAnchorPt - HeightReferencePt, Right)) < groundedWidth);//prevents you from becoming grounded at awkward times when you bop into walls/ceiling
             grapple.FreeHanging = grappleFreeHangPrerequisites && !grounded;
         }
 

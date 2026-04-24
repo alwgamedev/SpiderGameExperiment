@@ -16,8 +16,9 @@ public class JumpPreviewArrow
     [SerializeField] Color colorMax1;
 
     Material neckMaterial;
-    bool arrowActive;
-    bool hasReachedMax;
+    //bool arrowActive;
+    //bool hasReachedMax;
+    float progress;//negative = arrow inactive
     int color0Property;
     int color1Property;
 
@@ -43,14 +44,14 @@ public class JumpPreviewArrow
     {
         if (spider.ChargingJump)
         {
-            if (!arrowActive)
+            if (progress < 0)
             {
                 ShowArrow();
             }
 
             UpdateArrow(spider.CrouchProgress);
         }
-        else if (arrowActive)
+        else if (!(progress < 0))
         {
             HideArrow();
         }
@@ -58,7 +59,7 @@ public class JumpPreviewArrow
 
     private void ShowArrow()
     {
-        arrowActive = true;
+        progress = 0;
         arrowNeckAnchor.gameObject.SetActive(true);
         arrowNeck.gameObject.SetActive(true);
         arrowHead.gameObject.SetActive(true);
@@ -70,19 +71,16 @@ public class JumpPreviewArrow
         arrowNeckAnchor.gameObject.SetActive(false);//and arrowHeadAnchor is a child of arrowNeck so gets set inactive automatically
         arrowNeck.gameObject.SetActive(false);
         arrowHead.gameObject.SetActive(false);
-        arrowActive = true;
+        progress = -1;
     }
 
     private void UpdateArrow(float crouchProgress)
     {
-        if (!hasReachedMax)
+        if (progress < 1)
         {
             SetStretch(Mathf.Lerp(stretchMin, stretchMax, crouchProgress));
             SetColor(crouchProgress);
-            if (!(crouchProgress < 1))
-            {
-                hasReachedMax = true;
-            }
+            progress = crouchProgress;
         }
     }
 
@@ -111,6 +109,5 @@ public class JumpPreviewArrow
         neckMaterial.SetColor(color0Property, colorMin0);
         neckMaterial.SetColor(color1Property, colorMin1);
         arrowHead.color = colorMin1;
-        hasReachedMax = false;
     }
 }

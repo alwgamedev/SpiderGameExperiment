@@ -1633,27 +1633,27 @@ MonoBehaviour:
     grapple:
       drawGizmos: 0
       numNodes: 120
-      minLength: 1
-      maxLength: 14
+      minLength: 1.2
+      maxLength: 12
       baseShootSpeed: 18
       shootSpeedPowerUpRate: 4
       shootSpeedPowerUpMax: 3
       releaseRate: 6
       retractMaxTension: 2
-      carrySpringForce: 350
+      carrySpringForce: 400
       grappleSettings:
         collisionMask:
           bitMask: 64
         collisionBounciness: 0.95
         width: 0.17
-        minNodeSpacing: 0.11
-        maxNodeSpacing: 0.115
+        minNodeSpacing: 0.1
+        maxNodeSpacing: 0.105
         drag: 0.02
         nodeMass: 0.1
         terminusMass: 50
         constraintStiffness: 0.975
-        constraintIterations: 45
-        itersPulledByOwner: 5
+        constraintIterations: 50
+        itersPulledByOwner: 10
         dynamicAnchorPullForce: 300
       cannonFulcrum:
         lever: {fileID: 3468580104259901786}
@@ -1663,7 +1663,7 @@ MonoBehaviour:
         baseAnchor: {fileID: 2420108127432548890}
         floppiness: 0.25
         angularDamping: 1.25
-        linearDamping: 2
+        linearDamping: 2.5
         kinematicRotationMin: 0
         kinematicRotationMax: 3.1415927
         kinematicRotationSpeed: 5
@@ -1698,6 +1698,7 @@ MonoBehaviour:
       intensityLerpRate: 9
       disengageLerpRate: 15
       sr: {fileID: 5014689274299548898}
+    groundedWidth: 0.5
     groundedExitToleranceFactor: 1.35
     groundedEntryToleranceFactor: 0.9
     groundDirectionSampleWidth: 0.5
@@ -1736,7 +1737,7 @@ MonoBehaviour:
     jumpVerificationTime: 0.125
     tapJumpVerificationTime: 0.125
     crouchHeightFraction: 0.25
-    crouchTime: 0.3
+    crouchTime: 0.35
     crouchReleaseSpeedMultiplier: 2.5
     freeHangHeadAngle: 0.20943952
     jumpChargeBegan:
