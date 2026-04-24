@@ -477,6 +477,8 @@ public class SpiderMover
         var overlapCorrection = SpideyBody.ResolveOverlaps();
         if (!grounded)
         {
+            //if not grounded and changing direction will make you become grounded (e.g. when freehanging and change direction near an obstacle),
+            //then make sure that you "become grounded" at an appropriate ride height -- helps prevent legs tunneling)
             var d = -EffectiveRideHeight * Up;
             var cast = Abdomen.world.CastRay(HeightReferencePt, d, SpideyBody.queryFilter);
             if (cast.Length > 0)

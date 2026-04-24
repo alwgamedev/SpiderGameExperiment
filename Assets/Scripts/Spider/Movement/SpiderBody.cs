@@ -184,30 +184,29 @@ public struct SpiderBody
         head.position += t;
     }
 
-    //returns total translation -- use this to resolve overlaps after direction change
+    //returns total translation
     public Vector2 ResolveOverlaps()
     {
         var totalTranslation = Vector2.zero;
 
         var world = abdomen.world;
-        var abdShapes = abdomen.GetShapes();
-        var headShape = head.GetShapes()[0];
 
-        if (HasOverlap(headShape, world, queryFilter, out var c2))
+        if (HasOverlap(head.GetShapes()[0], world, queryFilter, out var c))
         {
-            totalTranslation += c2;
-            ApplyTranslation(c2);
+            totalTranslation += c;
+            ApplyTranslation(c);
         }
-        if (HasOverlap(abdShapes[0], world, queryFilter, out var c0))
+        if (HasOverlap(abdomen.GetShapes()[0], world, queryFilter, out c))
         {
-            totalTranslation += c0;
-            ApplyTranslation(c0);
+            totalTranslation += c;
+            ApplyTranslation(c);
         }
-        if (HasOverlap(abdShapes[1], world, queryFilter, out var c1))
+        if (HasOverlap(abdomen.GetShapes()[1], world, queryFilter, out c))
         {
-            totalTranslation += c1;
-            ApplyTranslation(c1);
+            totalTranslation += c;
+            ApplyTranslation(c);
         }
+
 
         return totalTranslation;
 
@@ -220,6 +219,7 @@ public struct SpiderBody
             {
                 var overlappedShape = overlapResults[0].shape;
                 var contactManifold = shape.Intersect(shape.transform, overlappedShape, overlappedShape.transform);
+
                 var minSep = 0f;
                 for (int i = 0; i < contactManifold.pointCount; i++)
                 {

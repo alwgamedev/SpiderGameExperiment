@@ -1157,7 +1157,7 @@ MonoBehaviour:
             bitMask: 64
           m_GroupIndex: 0
         surfaceMaterial:
-          m_Friction: 1
+          m_Friction: 0.05
           m_Bounciness: 0
           m_FrictionMixing: 0
           m_BouncinessMixing: 0
