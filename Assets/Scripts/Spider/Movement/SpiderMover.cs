@@ -474,7 +474,21 @@ public class SpiderMover
         }
 
         SpideyBody.ChangeDirection(reflection, abdomenBone, headBone, grappleArm);
-        legSynch.OnDirectionChanged(reflection, FacingRight);
+        var overlapCorrection = SpideyBody.ResolveOverlaps();
+        if (!grounded)
+        {
+            var d = -EffectiveRideHeight * Up;
+            var cast = Abdomen.world.CastRay(HeightReferencePt, d, SpideyBody.queryFilter);
+            if (cast.Length > 0)
+            {
+                var cor = cast[0].point - HeightReferencePt - d;
+                SpideyBody.ApplyTranslation(cor);
+                overlapCorrection += cor;
+                overlapCorrection += SpideyBody.ResolveOverlaps();
+            }
+        }
+
+        legSynch.OnDirectionChanged(reflection, overlapCorrection, FacingRight);
         grapple.SetOrientation(FacingRight);
     }
 

@@ -11,11 +11,11 @@ using UnityEngine.Rendering;
 //you need to use the [NativeDisableParallelForRestriction] attribute to get rid of the error.
 
 [BurstCompile]
-public struct ClearArray<T> : IJob where T : unmanaged
+public struct ClearArrayJob<T> : IJob where T : unmanaged
 {
     public NativeArray<T> array;
 
-    public ClearArray(NativeArray<T> array)
+    public ClearArrayJob(NativeArray<T> array)
     {
         this.array = array;
     }

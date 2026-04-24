@@ -178,6 +178,69 @@ public struct SpiderBody
         facingRight = !facingRight;
     }
 
+    public void ApplyTranslation(Vector2 t)
+    {
+        abdomen.position += t;
+        head.position += t;
+    }
+
+    //returns total translation -- use this to resolve overlaps after direction change
+    public Vector2 ResolveOverlaps()
+    {
+        var totalTranslation = Vector2.zero;
+
+        var world = abdomen.world;
+        var abdShapes = abdomen.GetShapes();
+        var headShape = head.GetShapes()[0];
+
+        if (HasOverlap(headShape, world, queryFilter, out var c2))
+        {
+            totalTranslation += c2;
+            ApplyTranslation(c2);
+        }
+        if (HasOverlap(abdShapes[0], world, queryFilter, out var c0))
+        {
+            totalTranslation += c0;
+            ApplyTranslation(c0);
+        }
+        if (HasOverlap(abdShapes[1], world, queryFilter, out var c1))
+        {
+            totalTranslation += c1;
+            ApplyTranslation(c1);
+        }
+
+        return totalTranslation;
+
+        static bool HasOverlap(PhysicsShape shape, PhysicsWorld world, PhysicsQuery.QueryFilter filter, out Vector2 correction)
+        {
+            var worldShape = shape.CreateShapeProxy(true);
+            worldShape.radius = 0.2f;
+            var overlapResults = world.OverlapShapeProxy(worldShape, filter);
+            if (overlapResults.Length > 0 )
+            {
+                var overlappedShape = overlapResults[0].shape;
+                var contactManifold = shape.Intersect(shape.transform, overlappedShape, overlappedShape.transform);
+                var minSep = 0f;
+                for (int i = 0; i < contactManifold.pointCount; i++)
+                {
+                    if (contactManifold.points[i].separation < minSep)
+                    {
+                        minSep = contactManifold.points[i].separation;
+                    }
+                }
+
+                if (minSep < 0)
+                {
+                    correction = minSep * contactManifold.normal;
+                    return true;
+                }
+            }
+
+            correction = Vector2.zero;
+            return false;
+        }
+    }
+
     private void UpdateQueryFilter()
     {
         queryFilter = shapeDef.contactFilter.ToQueryFilter(queryIgnoreFilter);

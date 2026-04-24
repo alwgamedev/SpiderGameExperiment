@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using Unity.Collections;
+﻿using Unity.Collections;
 using Unity.U2D.Physics;
 using UnityEditor;
 using UnityEngine;

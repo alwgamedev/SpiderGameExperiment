@@ -92,7 +92,7 @@ MonoBehaviour:
       m_Rotate: {x: 0, y: 0, z: 0}
       m_Scale: 1
     m_SyncInterpolation: 0
-    m_SleepingAllowed: 1
+    m_SleepingAllowed: 0
     m_ContinuousAllowed: 1
     m_ContactFilterCallbacks: 0
     m_PreSolveCallbacks: 0
@@ -105,7 +105,7 @@ MonoBehaviour:
     m_ContactFrequency: 30
     m_ContactDamping: 10
     m_ContactSpeed: 3
-    m_MaximumLinearSpeed: 400
+    m_MaximumLinearSpeed: 100
     m_DrawOptions: 4256
     m_DrawFillOptions: 7
     m_DrawFilter: 0

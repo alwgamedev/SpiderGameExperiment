@@ -29,6 +29,9 @@ public struct RopeSettings
 
 public class FastRope
 {
+    //const float MAX_SPEED = 50f;
+    //const float MAX_SPEED_SQRD = MAX_SPEED * MAX_SPEED;
+
     public enum TerminusAnchorMode
     {
         notAnchored, staticAnchor, dynamicAnchor
@@ -339,9 +342,11 @@ public class FastRope
         CalculateMaxTension().Run();
         positionBuffer.CopyFrom(position);//copy positions for rendering (and we'll use lastPositionBuffer for constraint deltas)
 
+        //ClampSpeed(dt);
+
         var integrateJob = IntegrateRope(dt * dt, 1);
 
-        var clearConstraintDelta = new ClearArray<float2>(lastPositionBuffer);
+        var clearConstraintDelta = new ClearArrayJob<float2>(lastPositionBuffer);
         var calculateConstraintsEven = CalculateConstraints(ownerMass, terminusMass, 0);
         var calculateConstraintOdd = CalculateConstraints(ownerMass, terminusMass, 1);
         var applyConstraints = ApplyConstraints();
@@ -378,6 +383,20 @@ public class FastRope
             jobHandle = applyConstraints.Schedule(numActive + 1, 16, jobHandle);
         }
     }
+
+    //private void ClampSpeed(float dt)
+    //{
+    //    var dt2inv = 1 / (dt * dt);
+    //    for (int i = sourceIndex.Value + 1; i < position.Length; i++)
+    //    {
+    //        var w = lastPosition[i] - position[i];
+    //        var spd2 = math.lengthsq(w) * dt2inv;
+    //        if (spd2 > MAX_SPEED_SQRD)
+    //        {
+    //            lastPosition[i] = position[i] + dt * MAX_SPEED * math.normalize(w);
+    //        }
+    //    }
+    //}
 
     private void SetSourcePosition(NativeArray<float2> position, float2 sourcePosition)
     {

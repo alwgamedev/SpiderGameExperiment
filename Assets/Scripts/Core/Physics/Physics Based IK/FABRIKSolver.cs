@@ -1,12 +1,13 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public static class FABRIKSolver
 {
-    public static bool RunFABRIKIteration(Vector2[] position, float[] length, float maxLength, Vector2 target, float toleranceSqrd)
+    public static bool RunFABRIKIteration(Span<Vector2> position, Span<float> length, float totalLength, Vector2 target, float toleranceSqrd)
     {
-        if (Vector2.SqrMagnitude(target - position[0]) > maxLength * maxLength)
+        if (Vector2.SqrMagnitude(target - position[0]) > totalLength * totalLength)
         {
-            target = position[0] + maxLength * (target - position[0]).normalized;
+            target = position[0] + totalLength * (target - position[0]).normalized;
         }
 
         if (Vector2.SqrMagnitude(target - position[^1]) < toleranceSqrd)
@@ -20,7 +21,7 @@ public static class FABRIKSolver
         return true;
     }
 
-    private static void Forward(Vector2[] position, float[] length, Vector2 target)
+    private static void Forward(Span<Vector2> position, Span<float> length, Vector2 target)
     {
         position[^1] = target;
         for (int i = position.Length - 2; i > -1; i--)
@@ -30,7 +31,7 @@ public static class FABRIKSolver
         }
     }
 
-    private static void Backward(Vector2[] position, float[] length, Vector2 anchor)
+    private static void Backward(Span<Vector2> position, Span<float> length, Vector2 anchor)
     {
         position[0] = anchor;
         for (int i = 1; i < position.Length; i++)

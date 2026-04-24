@@ -80,6 +80,8 @@ public class LegSynchronizer
 #endif
 
     JointedChain[] leg;
+    float[][] length;
+    float[] totalLength;
     float[] timer;
     int stepping;//bit i = whether leg i is stepping
     int grounded;
@@ -235,28 +237,49 @@ public class LegSynchronizer
 
         leg = new JointedChain[numLegs];
         timer = new float[numLegs];
+        length = new float[numLegs][];
+        totalLength = new float[numLegs];
         stepping = 0;
         grounded = 0;
 
-        for (int i = 0; i < chainTransform.Length; i++)
+        for (int i = 0; i < numLegs; i++)
         {
             InitializeLeg(i, anchorBody[i]);
-            timer[i] = initialTimer[i];
             if (beginStepping[i])
             {
                 stepping |= 1 << i;
             }
+
+            timer[i] = initialTimer[i];
+        }
+
+        for (int i = 0; i < numLegs; i++)
+        {
+            var i0 = groupLeader[i];
+            var t0Initial = beginStepping[i0] ? timer[i0] : 2 - timer[i0];
+            var t1Initial = beginStepping[i] ? timer[i] : 2 - timer[i];
+            initialTimer[i] = t1Initial - t0Initial;//initialTimer now stores the offsets
         }
 
         void InitializeLeg(int i, PhysicsBody body)
         {
             leg[i].Initialize(chainTransform[i].array, bones[i].array, body, chainDef, chainSettings[i]);
+            length[i] = new float[leg[i].JointCount];
+            var totLength = 0f;
+            for (int j = 0; j < leg[i].JointCount; j++)
+            {
+                var l = Vector2.Distance(leg[i].JointPosition(j), leg[i].NextPosition(j));
+                length[i][j] = l;
+                totLength += l;
+            }
+
+            totalLength[i] = totLength;
         }
 
         RecalculateMass();
     }
 
-    public void OnDirectionChanged(PhysicsTransform bodyReflection, bool facingRight)
+    public void OnDirectionChanged(PhysicsTransform bodyReflection, Vector2 postTranslation, bool facingRight)
     {
         for (int i = 0; i < leg.Length; i++)
         {
@@ -272,11 +295,21 @@ public class LegSynchronizer
                 ((PhysicsJoint)l.joint[j]).ReflectAndFlipAnchors();
             }
 
+            if (postTranslation != Vector2.zero)
+            {
+                for (int j = 0; j < leg[i].JointCount; j++)
+                {
+                    l.body[j].position += postTranslation;
+                }
+            }
+
             if (l.reversed == facingRight)
             {
                 l.reversed = !l.reversed;
                 FlipAngleLimits(i);
             }
+
+            FixTunneling(i, 10, 0.0001f);
         }
     }
 
@@ -396,9 +429,7 @@ public class LegSynchronizer
             return;
         }
 
-        var t0Initial = beginStepping[i0] ? initialTimer[i0] : 2 - initialTimer[i0];
-        var t1Initial = beginStepping[i] ? initialTimer[i] : 2 - initialTimer[i];
-        var initialOffset = t1Initial - t0Initial;
+        var initialOffset = initialTimer[i];
         var t0Cur = Stepping(0) ? timer[i0] : 2 - timer[i0];
         var tGoal = t0Cur + initialOffset;
         while (tGoal > 2)
@@ -419,7 +450,7 @@ public class LegSynchronizer
         {
             tGoal = 2 - tGoal;
         }
-        
+
         timer[i] = Mathf.Lerp(timer[i], tGoal, lerpRate);
     }
 
@@ -480,4 +511,45 @@ public class LegSynchronizer
     }
 
     private static float StepPosition(float stepMax, float stepLength, float stepTime) => stepMax + (stepTime - 1) * stepLength;
+
+    //quick fix for tunneling that can occur after direction change.
+    private void FixTunneling(int i, int fabrikIterations, float fabrikToleranceSqrd)
+    {
+        ref var l = ref leg[i];
+        var world = l.body[0].world;
+        var queryFilter = l.body[0].GetShapes()[0].contactFilter.ToQueryFilter(PhysicsWorld.IgnoreFilter.IgnoreTriggerShapes);
+        var p = l.JointPosition(0);
+        var q = l.NextPosition(l.JointCount - 1);
+        var cast = world.CastRay(p, q - p, queryFilter);
+
+        if (cast.Length > 0)
+        {
+            var target = cast[0].point;
+
+            Span<Vector2> position = stackalloc Vector2[l.JointCount + 1];
+            for (int j = 0; j < l.JointCount; j++)
+            {
+                position[j] = l.JointPosition(j);
+            }
+            position[^1] = l.NextPosition(l.JointCount - 1);
+
+            for (int j = 0; j < fabrikIterations; j++)
+            {
+                if (!FABRIKSolver.RunFABRIKIteration(position, length[i], totalLength[i], target, fabrikToleranceSqrd))
+                {
+                    break;
+                }
+            }
+
+            for (int j = 0; j < l.JointCount; j++)
+            {
+                var p0 = position[j];
+                var p1 = position[j + 1];
+                var pos = 0.5f * (p0 + p1);
+                var dir = leg[i].reversed ? (p0 - p1).normalized : (p1 - p0).normalized;
+                var rot = new PhysicsRotate(dir);
+                l.body[j].transform = new PhysicsTransform(pos, rot);
+            }
+        }
+    }
 }
