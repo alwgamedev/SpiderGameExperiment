@@ -8,6 +8,7 @@ public class Spider : MonoBehaviour
     [SerializeField] SpiderInput spiderInput;
     [SerializeField] Health health;
     [SerializeField] SpiderMover mover;
+    [SerializeField] SGrabber grabber;
     [SerializeField] GrappleShootPreview grappleShootPreview;
     [SerializeField] JumpPreviewArrow jumpPreviewArrow;
 
@@ -47,13 +48,30 @@ public class Spider : MonoBehaviour
         spiderInput.Initialize();
         health.Start();
         mover.Initialize(transform, spiderInput);
+        grabber.Initialize(spiderInput, mover.SpideyBody.head, mover.SpideyBody.abdomen);
         jumpPreviewArrow.Start();
         grappleShootPreview.Start(mover.FacingRight);
+
+        grabber.Disable(true);
+        grabber.HideSprites();
+    }
+
+    private void OnEnable()
+    {
+        mover.Enable();
+        grabber.Enable();
+    }
+
+    private void OnDisable()
+    {
+        mover.Disable();
+        grabber.Disable(false);
     }
 
     private void Update()
     {
         mover.Update();
+        grabber.Update(Time.deltaTime);
     }
 
     private void LateUpdate()
@@ -66,6 +84,7 @@ public class Spider : MonoBehaviour
     private void FixedUpdate()
     {
         mover.FixedUpdate();
+        grabber.FixedUpdate(Time.deltaTime);
     }
 
     private void OnDestroy()

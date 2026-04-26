@@ -52,12 +52,12 @@ public struct SGrabberArm
         jointedChain.Destroy();
     }
 
-    public bool Update()
+    public bool Update(bool reversed)
     {
         return mode switch
         {
-            Mode.trackBody => TrackBodyBehavior(),
-            Mode.trackPose => TrackPoseBehavior(),
+            Mode.trackBody => TrackBodyBehavior(reversed),
+            Mode.trackPose => TrackPoseBehavior(reversed),
             _ => false
         };
     }
@@ -88,7 +88,7 @@ public struct SGrabberArm
         for (int i = 0; i < jointedChain.JointCount; i++)
         {
             ref var joint = ref jointedChain.joint[i];
-            var pos = jointedChain.JointPosition(i);//joint position is computed using bodyA
+            var pos = jointedChain.JointPosition(i);//joint position is computed using bodyA (good, since previous body already in right place)
             var rot = joint.bodyA.rotation.MultiplyRotation(joint.localAnchorA.rotation).MultiplyRotation(PhysicsRotate.FromDegrees(poseAngle[i]));
             jointedChain.body[i].transform = new PhysicsTransform(pos, rot);
         }
@@ -115,7 +115,7 @@ public struct SGrabberArm
         targetReached = false;
     }
 
-    private bool TrackBodyBehavior()
+    private bool TrackBodyBehavior(bool reversed)
     {
         if (!targetBody.isValid)
         {
@@ -158,7 +158,7 @@ public struct SGrabberArm
         return false;
     }
 
-    private bool TrackPoseBehavior()
+    private bool TrackPoseBehavior(bool reversed)
     {
         if (targetReached)
         {

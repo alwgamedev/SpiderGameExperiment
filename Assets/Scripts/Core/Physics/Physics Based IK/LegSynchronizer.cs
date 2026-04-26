@@ -261,6 +261,22 @@ public class LegSynchronizer
         RecalculateMass();
     }
 
+    public void Enable()
+    {
+        for (int i = 0; i < leg.Length; i++)
+        {
+            leg[i].Enable();
+        }
+    }
+
+    public void Disable()
+    {
+        for (int i = 0; i < leg.Length; i++)
+        {
+            leg[i].Disable(false);
+        }
+    }
+
     public void Destroy()
     {
         for (int i = 0; i < leg.Length; i++)

@@ -210,6 +210,18 @@ public class SpiderMover
         grapple.Initialize(spiderInput, Abdomen.world, TotalMass, FacingRight);
     }
 
+    public void Enable()
+    {
+        spiderBody.Enable();
+        legSynch.Enable();
+    }
+
+    public void Disable()
+    {
+        spiderBody.Disable();
+        legSynch.Disable();
+    }
+
     public void OnDestroy()
     {
         groundMap.Dispose();

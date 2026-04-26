@@ -22,6 +22,9 @@ public struct SGrabberAnchor
         this.joint = joint;
         offPosition = joint.bodyA.transform.InverseTransformPoint(offWorldPosition);
         deployedPosition = joint.bodyA.transform.InverseTransformPoint(deployedWorldPosition);
+        var anchor = joint.localAnchorA;
+        anchor.position = offPosition;
+        joint.localAnchorA = anchor;
     }
 
     public void Disable()

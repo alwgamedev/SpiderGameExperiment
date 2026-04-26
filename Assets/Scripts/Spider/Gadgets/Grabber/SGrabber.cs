@@ -29,7 +29,7 @@ public class SGrabber
     [SerializeField] SDoubleDoor mouth;
     [SerializeField] SpriteRenderer[] sprite;
     [SerializeField] Transform depositTarget;
-    [SerializeField] Transform offAnchorPosition;
+    [SerializeField] Transform offAnchor;
     [SerializeField] Transform deployedAnchorPosition;
 
     [Header("Grab")]
@@ -53,10 +53,11 @@ public class SGrabber
     Action onClawTargetReached;
 
     //2do:
-    //0) integrate into main spider script
-    //0.5f) initialize methods for this and all components
+    //0) integrate into main spider script - DONE (?)
+    //0.5f) initialize methods for this and all components - CLAW REMAINS
     //1) set up and test
     //2) get direction change working (and components will need to know if reversed)
+    //3) add a mask or masks to mask the sprites as they're retreating into body (only activate once arm has made it back to folded position, so they never block while arm is out)
 
 
     //LIFETIME
@@ -68,6 +69,13 @@ public class SGrabber
         world = anchorBody.world;
         this.depositTargetBody = depositTargetBody;
         depositTargetPosition = depositTargetBody.transform.InverseTransformPoint(depositTarget.position);
+
+        arm.Initialize(armNodes, armBones, anchorBody, armDef, armSettings);
+        anchor.Initialize(arm.jointedChain.joint[0], offAnchor.position, depositTarget.position);
+        claw.Initialize(arm.jointedChain.body[^1], upperClawArm, lowerClawArm);
+
+        depositDoor.SnapClosed();
+        mouth.SnapClosed();
 
         //initialize arm and claw
 
@@ -112,8 +120,22 @@ public class SGrabber
         claw.Disable(forgetState);
     }
 
-    //not sure if we'll have separate fixed update to check progress of current task or how we'll organize it
-    //for now fill out helper methods
+    public void ShowSprites()
+    {
+        for (int i = 0; i < sprite.Length; i++)
+        {
+            sprite[i].enabled = true;
+        }
+    }
+
+    public void HideSprites()
+    {
+        for (int i = 0; i < sprite.Length; i++)
+        {
+            sprite[i].enabled = false;
+        }
+    }
+
     public void Update(float dt)
     {
         //handle input
@@ -150,11 +172,14 @@ public class SGrabber
 
     public void FixedUpdate(float dt)
     {
+        mouth.FixedUpdate(dt);
+        depositDoor.FixedUpdate(dt);
+
         if (anchor.Update(dt))
         {
             onAnchorTargetReached?.Invoke();
         }
-        if (arm.Update())
+        if (arm.Update(reversed))
         {
             onArmTargetReached?.Invoke();
         }
@@ -164,12 +189,11 @@ public class SGrabber
         }
     }
 
-    public void Deploy()
+    private void Deploy()
     {
         taskInProgress = true;
 
-        arm.Enable();
-        claw.Enable();
+        Enable();
 
         //1) snap to folded pose and set springs to maintain pose
         arm.SnapToPose(foldedPose);
@@ -195,7 +219,7 @@ public class SGrabber
     }
 
     //move to default pose
-    public void GoIdle()
+    private void GoIdle()
     {
         taskInProgress = true;
         claw.Close();
@@ -360,22 +384,6 @@ public class SGrabber
         else
         {
             OnGrabFailed();
-        }
-    }
-
-    private void ShowSprites()
-    {
-        for (int i = 0; i < sprite.Length; i++)
-        {
-            sprite[i].enabled = true;
-        }
-    }
-
-    private void HideSprites()
-    {
-        for (int i = 0; i < sprite.Length; i++)
-        {
-            sprite[i].enabled = false;
         }
     }
 

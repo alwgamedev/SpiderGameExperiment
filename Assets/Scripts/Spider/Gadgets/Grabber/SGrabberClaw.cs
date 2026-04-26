@@ -41,7 +41,7 @@ public struct SGrabberClaw
         off, standard, grabbingTarget, holdingTarget
     }
 
-    public void Initialize()
+    public void Initialize(PhysicsBody anchorBody, Transform upperArmTransform, Transform lowerArmTransform)
     {
 
     }

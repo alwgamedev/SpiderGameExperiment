@@ -152,6 +152,18 @@ public struct SpiderBody
         facingRight = true;
     }
 
+    public void Enable()
+    {
+        head.enabled = true;
+        abdomen.enabled = true;
+    }
+
+    public void Disable()
+    {
+        head.enabled = false;
+        abdomen.enabled = false;
+    }
+
     public void Destroy()
     {
         abdomen.Destroy();
