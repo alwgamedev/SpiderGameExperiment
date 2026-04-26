@@ -268,30 +268,48 @@ public struct JointedChain
 
     public readonly void Enable()
     {
-        for (int i = 0; i < body.Length; i++)
+        if (body != null)
         {
-            body[i].enabled = true;
+            for (int i = 0; i < body.Length; i++)
+            {
+                if (body[i].isValid)
+                {
+                    body[i].enabled = true;
+                }
+            }
         }
     }
 
     public readonly void Disable(bool forgetState)
     {
-        for (int i = 0; i < body.Length; i++)
+        if (body != null)
         {
-            if (forgetState)
+            for (int i = 0; i < body.Length; i++)
             {
-                body[i].linearVelocity = Vector2.zero;
-                body[i].angularVelocity = 0;
+                if (body[i].isValid)
+                {
+                    if (forgetState)
+                    {
+                        body[i].linearVelocity = Vector2.zero;
+                        body[i].angularVelocity = 0;
+                    }
+                    body[i].enabled = false;
+                }
             }
-            body[i].enabled = false;
         }
     }
 
     public readonly void Destroy()
     {
-        for (int i = 0; i < body.Length; i++)
+        if (body != null)
         {
-            body[i].Destroy();
+            for (int i = 0; i < body.Length; i++)
+            {
+                if (body[i].isValid)
+                {
+                    body[i].Destroy();
+                }
+            }
         }
     }
 

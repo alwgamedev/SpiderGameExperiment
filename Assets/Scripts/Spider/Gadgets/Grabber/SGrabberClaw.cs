@@ -1,6 +1,6 @@
 ﻿using System;
-using UnityEngine;
 using Unity.U2D.Physics;
+using UnityEngine;
 
 [Serializable]
 public struct GrabberClawDefinition
@@ -41,15 +41,48 @@ public struct SGrabberClaw
         off, standard, grabbingTarget, holdingTarget
     }
 
-    public void Initialize(PhysicsBody anchorBody, Transform upperArmTransform, Transform lowerArmTransform)
+    //geometry should be local to physics transforms
+    public void Initialize(PhysicsBody anchorBody, GrabberClawDefinition def, 
+        Transform upperArmPhysTransform, Vector2 upperArmBonePosition, PolygonGeometry[] upperArmGeometry,
+        Transform lowerArmPhysTransform, Vector2 lowerArmBonePosition, PolygonGeometry[] lowerArmGeometry)
     {
+        upperArm = CreateArmBody(def.bodyDef, def.shapeDef, anchorBody, upperArmPhysTransform, upperArmGeometry);
+        lowerArm = CreateArmBody(def.bodyDef, def.shapeDef, anchorBody, lowerArmPhysTransform, lowerArmGeometry);
 
+        upperArmJoint = CreateArmJoint(def.jointDef, anchorBody, upperArm, upperArmBonePosition);
+        lowerArmJoint = CreateArmJoint(def.jointDef, anchorBody, lowerArm, lowerArmBonePosition);
+
+        static PhysicsBody CreateArmBody(PhysicsBodyDefinition bodyDef, PhysicsShapeDefinition shapeDef, PhysicsBody anchorBody, 
+            Transform physTransform, PolygonGeometry[] geometry)
+        {
+            bodyDef.position = physTransform.position;
+            bodyDef.rotation = new PhysicsRotate(physTransform.rotation, PhysicsWorld.TransformPlane.XY);
+            var body = PhysicsCoreHelper.CreatePolygonBody(anchorBody.world, bodyDef, shapeDef, physTransform.localToWorldMatrix, geometry);
+            body.transformObject = physTransform;
+            return body;
+        }
+
+        static PhysicsHingeJoint CreateArmJoint(PhysicsHingeJointDefinition jointDef, PhysicsBody anchorBody, PhysicsBody armBody, Vector2 anchorWorldPosition)
+        {
+            var anchorTransform = new PhysicsTransform(anchorWorldPosition, anchorBody.rotation);
+            jointDef.bodyA = anchorBody;
+            jointDef.bodyB = armBody;
+            jointDef.localAnchorA = anchorBody.transform.InverseMultiplyTransform(anchorTransform);
+            jointDef.localAnchorB = armBody.transform.InverseMultiplyTransform(anchorTransform);
+            return PhysicsHingeJoint.Create(anchorBody.world, jointDef);
+        }
     }
 
     public void Enable()
     {
-        upperArm.enabled = true;
-        lowerArm.enabled = true;
+        if (upperArm.isValid)
+        {
+            upperArm.enabled = true;
+        }
+        if (lowerArm.isValid)
+        {
+            lowerArm.enabled = true;
+        }
     }
 
     public void Disable(bool forgetState)
@@ -59,19 +92,37 @@ public struct SGrabberClaw
             mode = Mode.off;
             grabTarget = default;
             targetReached = false;
-            upperArm.linearVelocity = Vector2.zero;
-            upperArm.angularVelocity = 0;
-            lowerArm.linearVelocity = Vector2.zero;
-            lowerArm.angularVelocity = 0;
         }
-        upperArm.enabled = false;
-        lowerArm.enabled = false;
+        if (upperArm.isValid)
+        {
+            upperArm.enabled = false;
+            if (forgetState)
+            {
+                upperArm.linearVelocity = Vector2.zero;
+                upperArm.angularVelocity = 0;
+            }
+        }
+        if (lowerArm.isValid)
+        {
+            lowerArm.enabled = false;
+            if (forgetState)
+            {
+                lowerArm.linearVelocity = Vector2.zero;
+                lowerArm.angularVelocity = 0;
+            }
+        }
     }
 
     public readonly void Destroy()
     {
-        upperArm.Destroy();
-        lowerArm.Destroy();
+        if (upperArm.isValid)
+        {
+            upperArm.Destroy();
+        }
+        if (lowerArm.isValid)
+        {
+            lowerArm.Destroy();
+        }
     }
 
     public readonly void SyncTransforms()

@@ -2,7 +2,7 @@ using UnityEditor;
 using UnityEngine;
 
 [CanEditMultipleObjects]
-[CustomEditor(typeof(PolygonPhysicsShape))]
+[CustomEditor(typeof(PolygonPhysicsShapeComponent))]
 public class PolygonPhysicsShapeEditor : Editor
 {
     public override void OnInspectorGUI()
@@ -13,7 +13,8 @@ public class PolygonPhysicsShapeEditor : Editor
         {
             foreach (var t in targets)
             {
-                ((PolygonPhysicsShape)t).GetShape();
+                var comp = (PolygonPhysicsShapeComponent)t;
+                comp.pps.GetShape(comp.gameObject);
             }
         }
 
@@ -21,7 +22,8 @@ public class PolygonPhysicsShapeEditor : Editor
         {
             foreach (var t in targets)
             {
-                ((PolygonPhysicsShape)t).OptimizeShape();
+                var comp = (PolygonPhysicsShapeComponent)t;
+                comp.pps.OptimizeShape(comp);
             }
         }
 
@@ -29,7 +31,8 @@ public class PolygonPhysicsShapeEditor : Editor
         {
             foreach (var t in targets)
             {
-                ((PolygonPhysicsShape)t).SubdividePolygon();
+                var comp = (PolygonPhysicsShapeComponent)t;
+                comp.pps.SubdividePolygon(comp);
             }
         }
 
@@ -37,7 +40,8 @@ public class PolygonPhysicsShapeEditor : Editor
         {
             foreach (var t in targets)
             {
-                ((PolygonPhysicsShape)t).SetPolygonColliderPoints();
+                var comp = (PolygonPhysicsShapeComponent)t;
+                comp.pps.SetPolygonColliderPoints(comp.gameObject);
             }
         }
     }

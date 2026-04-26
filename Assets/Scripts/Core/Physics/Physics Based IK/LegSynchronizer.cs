@@ -263,25 +263,34 @@ public class LegSynchronizer
 
     public void Enable()
     {
-        for (int i = 0; i < leg.Length; i++)
+        if (leg != null)
         {
-            leg[i].Enable();
+            for (int i = 0; i < leg.Length; i++)
+            {
+                leg[i].Enable();
+            }
         }
     }
 
     public void Disable()
     {
-        for (int i = 0; i < leg.Length; i++)
+        if (leg != null)
         {
-            leg[i].Disable(false);
+            for (int i = 0; i < leg.Length; i++)
+            {
+                leg[i].Disable(false);
+            }
         }
     }
 
     public void Destroy()
     {
-        for (int i = 0; i < leg.Length; i++)
+        if (leg != null)
         {
-            leg[i].Destroy();
+            for (int i = 0; i < leg.Length; i++)
+            {
+                leg[i].Destroy();
+            }
         }
     }
 

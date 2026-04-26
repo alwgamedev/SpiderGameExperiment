@@ -154,20 +154,38 @@ public struct SpiderBody
 
     public void Enable()
     {
-        head.enabled = true;
-        abdomen.enabled = true;
+        if (head.isValid)
+        {
+            head.enabled = true;
+        }
+        if (abdomen.isValid)
+        {
+            abdomen.enabled = true;
+        }
     }
 
     public void Disable()
     {
-        head.enabled = false;
-        abdomen.enabled = false;
+        if (head.isValid)
+        {
+            head.enabled = false;
+        }
+        if (abdomen.isValid)
+        {
+            abdomen.enabled = false;
+        }
     }
 
     public void Destroy()
     {
-        abdomen.Destroy();
-        head.Destroy();
+        if (abdomen.isValid)
+        {
+            abdomen.Destroy();
+        }
+        if (head.isValid)
+        {
+            head.Destroy();
+        }
     }
 
     public void SetHeadRotation(PhysicsRotate worldRotation)

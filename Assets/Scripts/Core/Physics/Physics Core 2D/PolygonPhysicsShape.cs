@@ -6,28 +6,29 @@ using UnityEngine;
 using UnityEngine.U2D;
 using Unity.U2D.Physics;
 
-public class PolygonPhysicsShape : MonoBehaviour
+[Serializable]
+public struct PolygonPhysicsShape
 {
-    [SerializeField] bool drawGizmo;
-    [SerializeField] ShapeSource shapeSource;
-    [SerializeField] float optimizationTolerance;
-    [SerializeField] Vector2[] originalPolygon;
-    [SerializeField] Vector2[] optimizedPolygon;
-    [SerializeField] PolygonGeometry[] subdividedPolygon;
-    [SerializeField] int spriteShapeArcLengthSamplesPerSegment = 25;
-    [SerializeField] float spriteShapeSamplesPerUnitArcLength = 12;
+    public bool drawGizmo;
+    public ShapeSource shapeSource;
+    public float optimizationTolerance;
+    public Vector2[] originalPolygon;
+    public Vector2[] optimizedPolygon;
+    public PolygonGeometry[] subdividedPolygon;//the final product that you want to use for creating physics bodies
+    public int spriteShapeArcLengthSamplesPerSegment;
+    public float spriteShapeSamplesPerUnitArcLength;
 
-    enum ShapeSource
+    public enum ShapeSource
     {
         SpriteRenderer, SpriteShape, SpriteShapeMeshGenerator
     }
 
-    private void OnDrawGizmos()
+    public void OnDrawGizmos(Transform transform)
     {
         if (drawGizmo && optimizedPolygon != null && optimizedPolygon.Length > 0)
         {
             Gizmos.color = Color.green;
-            for (int i = 1; i <  optimizedPolygon.Length; i++)
+            for (int i = 1; i < optimizedPolygon.Length; i++)
             {
                 Gizmos.DrawLine(transform.TransformPoint(optimizedPolygon[i - 1]), transform.TransformPoint(optimizedPolygon[i]));
             }
@@ -37,61 +38,59 @@ public class PolygonPhysicsShape : MonoBehaviour
         }
     }
 
-    public PolygonGeometry[] GetSubdividedPolygon() => subdividedPolygon;
-    public ReadOnlySpan<Vector2> GetPolygon() => optimizedPolygon;
 
 #if UNITY_EDITOR
-    public void SetPolygonColliderPoints()//for use with ShadowCaster2D...
+    public void SetPolygonColliderPoints(GameObject go)
     {
-        var pc = GetComponent<PolygonCollider2D>();
+        var pc = go.GetComponent<PolygonCollider2D>();
         Undo.RecordObject(pc, "Set Poly Collider Points");
         pc.points = optimizedPolygon;
         EditorUtility.SetDirty(pc);
         PrefabUtility.RecordPrefabInstancePropertyModifications(pc);
     }
 
-    public void SubdividePolygon()
+    public void SubdividePolygon(UnityEngine.Object owner)
     {
-        Undo.RecordObject(this, "SubdividePolygon");
+        Undo.RecordObject(owner, "SubdividePolygon");
         var temp = PolygonGeometry.CreatePolygons(optimizedPolygon, PhysicsTransform.identity, Vector2.one);
         subdividedPolygon = temp.ToArray();
-        EditorUtility.SetDirty(this);
-        PrefabUtility.RecordPrefabInstancePropertyModifications(this);
+        EditorUtility.SetDirty(owner);
+        PrefabUtility.RecordPrefabInstancePropertyModifications(owner);
     }
 
-    public void OptimizeShape()
+    public void OptimizeShape(UnityEngine.Object owner)
     {
         if (optimizationTolerance > 0)
         {
-            Undo.RecordObject(this, "Optimize Physics Shape");
+            Undo.RecordObject(owner, "Optimize Physics Shape");
             optimizedPolygon = ShapeOptimizationHelper.DouglasPeuckerReduction(originalPolygon.ToList(), optimizationTolerance).ToArray();
-            EditorUtility.SetDirty(this);
-            PrefabUtility.RecordPrefabInstancePropertyModifications(this);
+            EditorUtility.SetDirty(owner);
+            PrefabUtility.RecordPrefabInstancePropertyModifications(owner);
         }
     }
 
-    public void GetShape()
+    public void GetShape(GameObject go)
     {
-        Undo.RecordObject(this, "Get Physics Shape");
-        switch(shapeSource)
+        Undo.RecordObject(go, "Get Physics Shape");
+        switch (shapeSource)
         {
             case ShapeSource.SpriteRenderer:
-                GetShapeFromSpriteRenderer();
+                GetShapeFromSpriteRenderer(go);
                 break;
             case ShapeSource.SpriteShape:
-                GetShapeFromSpriteShape();
+                GetShapeFromSpriteShape(go);
                 break;
             case ShapeSource.SpriteShapeMeshGenerator:
-                GetShapeFromSpriteShapeMeshGenerator();
+                GetShapeFromSpriteShapeMeshGenerator(go);
                 break;
         }
-        EditorUtility.SetDirty(this);
-        PrefabUtility.RecordPrefabInstancePropertyModifications(this);
+        EditorUtility.SetDirty(go);
+        PrefabUtility.RecordPrefabInstancePropertyModifications(go);
     }
 
-    private void GetShapeFromSpriteRenderer()
+    private void GetShapeFromSpriteRenderer(GameObject go)
     {
-        if (TryGetComponent(out SpriteRenderer sr))
+        if (go.TryGetComponent(out SpriteRenderer sr))
         {
             var shape = sr.sprite.GetPhysicsShape(0);
             Array.Resize(ref originalPolygon, shape.Length);
@@ -104,9 +103,9 @@ public class PolygonPhysicsShape : MonoBehaviour
         }
     }
 
-    private void GetShapeFromSpriteShape()
+    private void GetShapeFromSpriteShape(GameObject go)
     {
-        if (TryGetComponent(out SpriteShapeController ssc))
+        if (go.TryGetComponent(out SpriteShapeController ssc))
         {
             originalPolygon = SplineSampler.SampleSpline(ssc.spline, spriteShapeArcLengthSamplesPerSegment, spriteShapeSamplesPerUnitArcLength)
                 .Select(x => (Vector2)x).ToArray();
@@ -118,9 +117,9 @@ public class PolygonPhysicsShape : MonoBehaviour
         }
     }
 
-    private void GetShapeFromSpriteShapeMeshGenerator()
+    private void GetShapeFromSpriteShapeMeshGenerator(GameObject go)
     {
-        if (TryGetComponent(out SpriteShapeMeshGenerator ssmg))
+        if (go.TryGetComponent(out SpriteShapeMeshGenerator ssmg))
         {
             var perimeter = ssmg.GetPerimeter();
             Array.Resize(ref originalPolygon, perimeter.Length);

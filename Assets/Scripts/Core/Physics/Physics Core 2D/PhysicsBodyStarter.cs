@@ -49,7 +49,7 @@ public class PhysicsBodyStarter : MonoBehaviour
                 break;
             case ShapeType.Polygon:
                 body = PhysicsCoreHelper.CreatePolygonBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef, transform.localToWorldMatrix,
-                    GetComponent<PolygonPhysicsShape>().GetSubdividedPolygon());
+                    GetComponent<PolygonPhysicsShapeComponent>().pps.subdividedPolygon);
                 //2do: PolygonGeometry.CreatePolygons has to do some work to split up the polygon, so ideally we can cache that data in edit mode
                 break;
         }

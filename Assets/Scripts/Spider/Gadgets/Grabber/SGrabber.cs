@@ -9,19 +9,21 @@ public class SGrabber
     [SerializeField] JointedChainDefinition armDef;
     [SerializeField] JointedChainSettings armSettings;//might want to have angle limits for joint 0
     [SerializeField] SGrabberArm arm;
-    [SerializeField] Transform[] armNodes;
-    [SerializeField] Transform[] armBones;
+    [SerializeField] Transform[] armPhysTransforms;//centered between joint positions
+    [SerializeField] Transform[] armNodes;//joint positions + effector
     [SerializeField] float[] foldedPose;//poses are spring target angles for the arm joints
     [SerializeField] float[] defaultPose;
     [SerializeField] float[] depositPose;
-    [SerializeField] float accel;
-    [SerializeField] float accelCap;
 
     [Header("Claw")]
     [SerializeField] GrabberClawDefinition clawDef;
     [SerializeField] SGrabberClaw claw;
-    [SerializeField] Transform upperClawArm;
-    [SerializeField] Transform lowerClawArm;
+    [SerializeField] Transform upperClawPhysTransform;
+    [SerializeField] Transform upperClawBone;
+    [SerializeField] PolygonPhysicsShape upperClawShape;
+    [SerializeField] Transform lowerClawPhysTransform;
+    [SerializeField] Transform lowerClawBone;
+    [SerializeField] PolygonPhysicsShape lowerClawShape;
 
     [Header("Auxiliary Parts")]
     [SerializeField] SGrabberAnchor anchor;
@@ -54,10 +56,23 @@ public class SGrabber
 
     //2do:
     //0) integrate into main spider script - DONE (?)
-    //0.5f) initialize methods for this and all components - CLAW REMAINS
+    //0.5f) initialize methods for this and all components - DONE (?)
+    //0.75f) script extras:
+        //editor scripts?
+        //+validate and gizmo methods
     //1) set up and test
     //2) get direction change working (and components will need to know if reversed)
     //3) add a mask or masks to mask the sprites as they're retreating into body (only activate once arm has made it back to folded position, so they never block while arm is out)
+
+    public void OnValidate()
+    {
+
+    }
+
+    public void OnDrawGizmos()
+    {
+
+    }
 
 
     //LIFETIME
@@ -70,9 +85,11 @@ public class SGrabber
         this.depositTargetBody = depositTargetBody;
         depositTargetPosition = depositTargetBody.transform.InverseTransformPoint(depositTarget.position);
 
-        arm.Initialize(armNodes, armBones, anchorBody, armDef, armSettings);
+        arm.Initialize(armPhysTransforms, armNodes, anchorBody, armDef, armSettings);
         anchor.Initialize(arm.jointedChain.joint[0], offAnchor.position, depositTarget.position);
-        claw.Initialize(arm.jointedChain.body[^1], upperClawArm, lowerClawArm);
+        claw.Initialize(arm.jointedChain.body[^1], clawDef,
+            upperClawPhysTransform, upperClawBone.position, upperClawShape.subdividedPolygon,
+            lowerClawPhysTransform, lowerClawBone.position, lowerClawShape.subdividedPolygon);
 
         depositDoor.SnapClosed();
         mouth.SnapClosed();

@@ -5,16 +5,18 @@ using UnityEngine;
 [Serializable]
 public struct SGrabberArm
 {
-    public JointedChain jointedChain;
+    const float TARGETING_TOLERANCE_SQUARED = MathTools.o41;//for a targeting tolerance of 0.01
 
-    [SerializeField] float targetingAccel;
-    [SerializeField] float targetErrorCap;
-    [SerializeField] float targetingTolerance;
-    [SerializeField] float poseRotationTolerance;
+    public JointedChain jointedChain;
 
     PhysicsBody targetBody;
     Vector2 targetPosition;//local to targetBody
     PhysicsRotate[] targetPose;
+
+    [SerializeField] float targetingAccel;
+    [SerializeField] float targetErrorCap;
+    [SerializeField] float poseRotationTolerance;
+    [SerializeField] float effectorDistance;
 
     Mode mode;
     bool targetReached;
@@ -24,9 +26,14 @@ public struct SGrabberArm
         off, idle, trackBody, trackPose
     }
 
+    Vector2 EffectorPosition(bool reversed)
+    {
+        return jointedChain.EffectorPosition(reversed) + (reversed ? -effectorDistance : effectorDistance) * jointedChain.body[^1].rotation.direction;
+    }
     public readonly bool Enabled() => jointedChain.Enabled();
 
-    public void Initialize(Transform[] physTransform, Transform[] bone, PhysicsBody anchorBody, JointedChainDefinition def, JointedChainSettings settings)
+    public void Initialize(Transform[] physTransform, Transform[] bone, PhysicsBody anchorBody,
+        JointedChainDefinition def, JointedChainSettings settings)
     {
         jointedChain.Initialize(physTransform, bone, anchorBody, def, settings);
         targetPose = new PhysicsRotate[jointedChain.JointCount];
@@ -129,10 +136,10 @@ public struct SGrabberArm
         }
 
         var targetPos = targetBody.transform.TransformPoint(targetPosition);
-        var err = targetPos - jointedChain.EffectorPosition(reversed);
+        var err = targetPos - EffectorPosition(reversed);
         var err2 = err.sqrMagnitude;
 
-        if (err2 < targetingTolerance * targetingTolerance)
+        if (err2 < TARGETING_TOLERANCE_SQUARED)
         {
             if (!targetReached)
             {
