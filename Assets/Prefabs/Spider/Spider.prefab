@@ -1698,7 +1698,7 @@ MonoBehaviour:
       intensityLerpRate: 9
       disengageLerpRate: 15
       sr: {fileID: 5014689274299548898}
-    groundedWidth: 0.5
+    groundedWidth: 1
     groundedExitToleranceFactor: 1.35
     groundedEntryToleranceFactor: 0.9
     groundDirectionSampleWidth: 0.5

@@ -109,7 +109,7 @@ public class FastRope
         }
         else
         {
-            nodeSpacing.Value = math.clamp(length / TerminusIndex, settings.minNodeSpacing, settings.maxNodeSpacing);
+            nodeSpacing.Value = Mathf.Clamp(length / TerminusIndex, settings.minNodeSpacing, settings.maxNodeSpacing);
             this.position.FillArray(position, 0, numNodes);
             lastPosition.CopyFrom(this.position);
         }
@@ -185,8 +185,8 @@ public class FastRope
     {
         TerminusIndex = numNodes - 1;
         NumNodes = numNodes;
-        nodeSpacing = new(math.clamp(length / TerminusIndex, minNodeSpacing, maxNodeSpacing), Allocator.Persistent);
-        sourceIndex = new(TerminusIndex - math.clamp((int)(length / nodeSpacing.Value), 1, TerminusIndex), Allocator.Persistent);
+        nodeSpacing = new(Mathf.Clamp(length / TerminusIndex, minNodeSpacing, maxNodeSpacing), Allocator.Persistent);
+        sourceIndex = new(TerminusIndex - Mathf.Clamp((int)(length / nodeSpacing.Value), 1, TerminusIndex), Allocator.Persistent);
 
         terminusAnchor = new(Allocator.Persistent);
         terminusAnchorMode = new(TerminusAnchorMode.notAnchored, Allocator.Persistent);
@@ -319,7 +319,7 @@ public class FastRope
         {
             case TerminusAnchorMode.staticAnchor:
                 lastPosition[TerminusIndex] = SetTerminusToAnchorPosition();
-                terminusMass = math.INFINITY;
+                terminusMass = Mathf.Infinity;
                 break;
             case TerminusAnchorMode.dynamicAnchor:
                 lastPosition[TerminusIndex] = SetTerminusToAnchorPosition() - dt * (float2)terminusAnchor.Value.body.linearVelocity;
@@ -372,8 +372,8 @@ public class FastRope
         jobHandle = CorrectSourcePosition(sourcePosition).Schedule(jobHandle);
 
         //constraints pulled by owner
-        calculateConstraintsEven = CalculateConstraints(math.INFINITY, terminusMass, 0);
-        calculateConstraintOdd = CalculateConstraints(math.INFINITY, terminusMass, 1);
+        calculateConstraintsEven = CalculateConstraints(Mathf.Infinity, terminusMass, 0);
+        calculateConstraintOdd = CalculateConstraints(Mathf.Infinity, terminusMass, 1);
 
         for (int i = 0; i < settings.itersPulledByOwner; i++)
         {
@@ -419,7 +419,7 @@ public class FastRope
 
         if (nodeSpacing.Value < settings.minNodeSpacing || nodeSpacing.Value > settings.maxNodeSpacing)
         {
-            float goalSpacing = math.select(settings.minNodeSpacing, settings.maxNodeSpacing, nodeSpacing.Value > settings.maxNodeSpacing);
+            float goalSpacing = nodeSpacing.Value > settings.maxNodeSpacing ? settings.maxNodeSpacing : settings.minNodeSpacing;
             int newSourceIndex = TerminusIndex - Mathf.Clamp((int)(Length / goalSpacing), 1, TerminusIndex);
             //note: length / nodeSpacing = num nodes past source index
 

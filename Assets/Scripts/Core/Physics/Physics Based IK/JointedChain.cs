@@ -2,7 +2,6 @@
 using Unity.U2D.Physics;
 using UnityEditor;
 using UnityEngine;
-using Unity.Mathematics;
 
 [Serializable]
 public struct JointedChainDefinition
@@ -21,23 +20,41 @@ public struct JointedChainSettings
     public bool[] enableLimit;
 }
 
-[Serializable]
 public struct JointedChain
 {
     public PhysicsBody[] body;
     public PhysicsHingeJoint[] joint;
-    public bool reversed;
 
+    PhysicsWorld world;
     float effectorDistance;
     float mass;
+    
+    //public bool reversed;
 
     public readonly int JointCount => joint.Length;
     public readonly float Mass => mass;
-    public readonly Vector2 EffectorPosition => 
-        JointPosition(JointCount - 1) + math.select(effectorDistance, -effectorDistance, reversed) * body[^1].rotation.direction;
-    public PhysicsBody AnchorBody => joint[0].bodyA;
-    public readonly Vector2 JointPosition(int i) => body[i].transform.TransformPoint(joint[i].localAnchorB.position);
-    public readonly Vector2 NextPosition(int i) => i == JointCount - 1 ? EffectorPosition : JointPosition(i + 1);
+    public readonly PhysicsBody AnchorBody => joint[0].bodyA;
+    public readonly PhysicsWorld World => world;
+
+    public readonly Vector2 EffectorPosition(bool reversed) =>
+        JointPosition(JointCount - 1) + (reversed ? -effectorDistance : effectorDistance) * body[^1].rotation.direction;
+
+    public readonly bool Enabled()
+    {
+        for (int i = 0; i < body.Length; i++)
+        {
+            if (!body[i].enabled)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public readonly Vector2 JointPosition(int i) => joint[i].bodyA.transform.TransformPoint(joint[i].localAnchorA.position);//body[i].transform.TransformPoint(joint[i].localAnchorB.position);
+
+    public readonly Vector2 NextPosition(int i, bool reversed) => i == JointCount - 1 ? EffectorPosition(reversed): JointPosition(i + 1);
 
     public static void DrawBodyGizmos(Transform[] transform, float[] width)
     {
@@ -86,7 +103,7 @@ public struct JointedChain
         }
     }
 
-    public void DrawAngleGizmos()
+    public readonly void DrawAngleGizmos(bool reversed)
     {
         if (joint != null)
         {
@@ -99,7 +116,7 @@ public struct JointedChain
                     if (j.isValid)
                     {
                         var p = JointPosition(i);
-                        var r = Vector2.Distance(p, NextPosition(i));
+                        var r = Vector2.Distance(p, NextPosition(i, reversed));
                         if (reversed)
                         {
                             r = -r;
@@ -114,6 +131,33 @@ public struct JointedChain
                 }
             }
         }
+    }
+
+    public static void CenterPhysicsTransforms(Transform[] physicsTransform, Transform[] bone)
+    {
+        Undo.IncrementCurrentGroup();
+        Undo.SetCurrentGroupName("Center Leg Bodies");
+        int groupId = Undo.GetCurrentGroup();
+
+        for (int i = 0; i < bone.Length; i++)
+        {
+            //var physBodies = physicsTransform[i].array;
+            //var bones = this.bones[i].array;
+            for (int j = 0; j < bone.Length - 1; j++)
+            {
+                var p0 = bone[j].position;
+
+                Undo.RecordObject(physicsTransform[j], "Set phys body position");
+                Undo.RecordObject(bone[j], "Set bone position");
+                physicsTransform[j].position = 0.5f * (bone[j].position + bone[j + 1].position);
+                bone[j].position = p0;
+
+                PrefabUtility.RecordPrefabInstancePropertyModifications(physicsTransform[j]);
+                PrefabUtility.RecordPrefabInstancePropertyModifications(bone[j]);
+            }
+        }
+
+        Undo.CollapseUndoOperations(groupId);
     }
 
     public void UpdateDefAndSettings(JointedChainDefinition def, JointedChainSettings settings)
@@ -139,7 +183,7 @@ public struct JointedChain
         RecomputeMass();
     }
 
-    public void UpdateSettings(JointedChainSettings settings)
+    public readonly void UpdateSettings(JointedChainSettings settings)
     {
         for (int i = 0; i < body.Length; i++)
         {
@@ -160,17 +204,18 @@ public struct JointedChain
         Initialize(physTransform, bone, anchorBody.world, def, settings);
 
         var jointDef = def.jointDef;
-        jointDef.enableLimit = settings.enableLimit[0];
-        jointDef.lowerAngleLimit = settings.lowerAngleLimit[0];
-        jointDef.upperAngleLimit = settings.upperAngleLimit[0];
+        if (settings.upperAngleLimit != null)
+        {
+            jointDef.enableLimit = settings.enableLimit[0];
+            jointDef.lowerAngleLimit = settings.lowerAngleLimit[0];
+            jointDef.upperAngleLimit = settings.upperAngleLimit[0];
+        }
         jointDef.bodyA = anchorBody;
         jointDef.bodyB = body[0];
         var worldAnchor = new PhysicsTransform(bone[0].position, body[0].rotation);
         jointDef.localAnchorA = anchorBody.transform.InverseMultiplyTransform(worldAnchor);
         jointDef.localAnchorB = body[0].transform.InverseMultiplyTransform(worldAnchor);
         joint[0] = PhysicsHingeJoint.Create(anchorBody.world, jointDef);
-
-        reversed = false;
     }
 
     /// <summary> Does not create a joint 0. 
@@ -178,6 +223,7 @@ public struct JointedChain
     /// physTransforms are expected to be centered between the bone positions.</summary>
     public void Initialize(Transform[] physTransform, Transform[] bone, PhysicsWorld world, JointedChainDefinition def, JointedChainSettings settings)
     {
+        this.world = world;
         body = new PhysicsBody[bone.Length - 1];
         joint = new PhysicsHingeJoint[bone.Length - 1];
         effectorDistance = Vector2.Distance(bone[^2].position, bone[^1].position);
@@ -202,9 +248,12 @@ public struct JointedChain
         var jointDefCopy = def.jointDef;
         for (int i = 1; i < joint.Length; i++)
         {
-            jointDefCopy.enableLimit = settings.enableLimit[i];
-            jointDefCopy.lowerAngleLimit = settings.lowerAngleLimit[i];
-            jointDefCopy.upperAngleLimit = settings.upperAngleLimit[i];
+            if (settings.upperAngleLimit != null)
+            {
+                jointDefCopy.enableLimit = settings.enableLimit[i];
+                jointDefCopy.lowerAngleLimit = settings.lowerAngleLimit[i];
+                jointDefCopy.upperAngleLimit = settings.upperAngleLimit[i];
+            }
             jointDefCopy.bodyA = body[i - 1];
             jointDefCopy.bodyB = body[i];
             var worldAnchor = new PhysicsTransform(bone[i].position, body[i].rotation);
@@ -217,7 +266,44 @@ public struct JointedChain
         RecomputeMass();
     }
 
-    public void FlipAngleLimits(int i)
+    public readonly void Enable()
+    {
+        for (int i = 0; i < body.Length; i++)
+        {
+            body[i].enabled = true;
+        }
+    }
+
+    public readonly void Disable(bool forgetState)
+    {
+        for (int i = 0; i < body.Length; i++)
+        {
+            if (forgetState)
+            {
+                body[i].linearVelocity = Vector2.zero;
+                body[i].angularVelocity = 0;
+            }
+            body[i].enabled = false;
+        }
+    }
+
+    public readonly void Destroy()
+    {
+        for (int i = 0; i < body.Length; i++)
+        {
+            body[i].Destroy();
+        }
+    }
+
+    public readonly void SyncTransforms()
+    {
+        for (int i = 0; i < body.Length; i++)
+        {
+            body[i].SyncTransform();
+        }
+    }
+
+    public readonly void FlipAngleLimits(int i)
     {
         var temp = joint[i].upperAngleLimit;
         joint[i].upperAngleLimit = -joint[i].lowerAngleLimit;

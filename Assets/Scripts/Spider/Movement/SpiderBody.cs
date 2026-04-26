@@ -11,24 +11,27 @@ public struct SpiderBody
     public PhysicsBody head;
     public PhysicsShape grappleArmShape;
     public PhysicsFixedJoint headJoint;
-    /// <summary> (when facing right) </summary>
-    [NonSerialized] public PhysicsRotate abdomenRotationFromBase;
-    [NonSerialized] public PhysicsQuery.QueryFilter queryFilter;
 
-    [SerializeField] PhysicsShapeDefinition shapeDef; 
-    [SerializeField] PhysicsFixedJointDefinition headJointDef;
-    [SerializeField] PhysicsBodyDefinition bodyDef;
+    /// <summary> (when facing right) </summary>
+    [NonSerialized] public PhysicsRotate abdomenRotationFromBase; 
+    PhysicsRotate abdomenBaseRotationFromLevel;
+
     [SerializeField] Vector2 abdomenCapsuleSize;//(width, height) -- full width and height
     [SerializeField] Vector2 abdomenCapsuleOffset;
     [SerializeField] Vector2 headCapsuleSize;
     [SerializeField] Vector2 headCapsuleOffset;
-
     /// <summary> (when facing right) </summary>
-    PhysicsRotate abdomenBaseRotationFromLevel;
     Vector2 heightReferenceLocalPos;
+
+    [NonSerialized] public PhysicsQuery.QueryFilter queryFilter;
     float totalMass;
+
     [SerializeField] PhysicsWorld.IgnoreFilter queryIgnoreFilter;
     bool facingRight;
+
+    [SerializeField] PhysicsShapeDefinition shapeDef;
+    [SerializeField] PhysicsFixedJointDefinition headJointDef;
+    [SerializeField] PhysicsBodyDefinition bodyDef;
 
     public readonly bool FacingRight => facingRight;
     public readonly int Orientation => FacingRight ? 1 : -1;
@@ -147,6 +150,12 @@ public struct SpiderBody
 
         totalMass = abdomen.mass + head.mass;
         facingRight = true;
+    }
+
+    public void Destroy()
+    {
+        abdomen.Destroy();
+        head.Destroy();
     }
 
     public void SetHeadRotation(PhysicsRotate worldRotation)

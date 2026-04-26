@@ -62,11 +62,16 @@ public class PhysicsBodyStarter : MonoBehaviour
 #endif
     }
 
-#if UNITY_EDITOR
     private void OnDestroy()
     {
+        body.Destroy();//otherwise body stays in the simulation (even after transformObject is destroyed)
+
+#if UNITY_EDITOR
         SceneView.duringSceneGui -= OnSceneGUI;
+#endif
     }
+
+#if UNITY_EDITOR
 
     bool dragging;
 

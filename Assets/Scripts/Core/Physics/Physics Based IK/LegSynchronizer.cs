@@ -85,6 +85,7 @@ public class LegSynchronizer
     float[] timer;
     int stepping;//bit i = whether leg i is stepping
     int grounded;
+    bool reversed;
     float totalMass;
 
     public float TotalMass => totalMass;
@@ -115,7 +116,7 @@ public class LegSynchronizer
                 if (leg[i].body != null)
                 {
                     leg[i].UpdateDefAndSettings(chainDef, chainSettings[i]);
-                    if (leg[i].reversed)
+                    if (reversed)
                     {
                         FlipAngleLimits(i);
                     }
@@ -145,7 +146,7 @@ public class LegSynchronizer
                 {
                     if (drawAngleLimitGizmos[i])
                     {
-                        leg[i].DrawAngleGizmos();
+                        leg[i].DrawAngleGizmos(reversed);
                     }
                 }
             }
@@ -205,29 +206,10 @@ public class LegSynchronizer
 
     public void CenterPhysicsTransforms()
     {
-        Undo.IncrementCurrentGroup();
-        Undo.SetCurrentGroupName("Center Leg Bodies");
-        int groupId = Undo.GetCurrentGroup();
-
-        for (int i = 0; i < bones.Length; i++)
+        for (int i = 0; i < chainTransform.Length; i++)
         {
-            var physBodies = chainTransform[i].array;
-            var bones = this.bones[i].array;
-            for (int j = 0; j < bones.Length - 1; j++)
-            {
-                var p0 = bones[j].position;
-
-                Undo.RecordObject(physBodies[j], "Set phys body position");
-                Undo.RecordObject(bones[j], "Set bone position");
-                physBodies[j].position = 0.5f * (bones[j].position + bones[j + 1].position);
-                bones[j].position = p0;
-
-                PrefabUtility.RecordPrefabInstancePropertyModifications(physBodies[j]);
-                PrefabUtility.RecordPrefabInstancePropertyModifications(bones[j]);
-            }
+            JointedChain.CenterPhysicsTransforms(chainTransform[i].array, bones[i].array);
         }
-
-        Undo.CollapseUndoOperations(groupId);
     }
 #endif
 
@@ -268,7 +250,7 @@ public class LegSynchronizer
             var totLength = 0f;
             for (int j = 0; j < leg[i].JointCount; j++)
             {
-                var l = Vector2.Distance(leg[i].JointPosition(j), leg[i].NextPosition(j));
+                var l = Vector2.Distance(leg[i].JointPosition(j), leg[i].NextPosition(j, reversed));
                 length[i][j] = l;
                 totLength += l;
             }
@@ -277,6 +259,14 @@ public class LegSynchronizer
         }
 
         RecalculateMass();
+    }
+
+    public void Destroy()
+    {
+        for (int i = 0; i < leg.Length; i++)
+        {
+            leg[i].Destroy();
+        }
     }
 
     public void OnDirectionChanged(PhysicsTransform bodyReflection, Vector2 postTranslation, bool facingRight)
@@ -303,9 +293,9 @@ public class LegSynchronizer
                 }
             }
 
-            if (l.reversed == facingRight)
+            if (reversed == facingRight)
             {
-                l.reversed = !l.reversed;
+                reversed = !reversed;
                 FlipAngleLimits(i);
             }
 
@@ -383,7 +373,7 @@ public class LegSynchronizer
         float goalRelSpd, float goalStepHt)
     {
         ref var l = ref leg[i];
-        float2 effectorPos = l.EffectorPosition;
+        float2 effectorPos = l.EffectorPosition(reversed);
 
         timer[i] += dt * goalRelSpd / stepLength[i];
 
@@ -405,7 +395,7 @@ public class LegSynchronizer
         var target = gdPt + goalStepHt * gdUp;
         var error = target - effectorPos;
         var accel = settings.stepStrength[i] * stepAccel * error;
-        AccelerateLegWithDamping(ref l, accel, gdRight, gdUp, settings.stepDamping);
+        AccelerateLegWithDamping(ref l, accel, gdRight, gdUp, settings.stepDamping, reversed);
 
 #if UNITY_EDITOR
         if (debugStepStats[i])
@@ -462,17 +452,17 @@ public class LegSynchronizer
         }
     }
 
-    private static void AccelerateLegWithDamping(ref JointedChain l, float2 accel, float2 dirX, float2 dirY, float damping)
+    private static void AccelerateLegWithDamping(ref JointedChain l, float2 accel, float2 dirX, float2 dirY, float damping, bool reversed)
     {
         for (int j = 0; j < l.JointCount; j++)
         {
-            AccelerateLegSegmentWithDamping(ref l, j, accel, dirX, dirY, damping);
+            AccelerateLegSegmentWithDamping(ref l, j, accel, dirX, dirY, damping, reversed);
         }
     }
 
-    private static void AccelerateLegSegmentWithDamping(ref JointedChain l, int j, float2 accel, float2 dirX, float2 dirY, float damping)
+    private static void AccelerateLegSegmentWithDamping(ref JointedChain l, int j, float2 accel, float2 dirX, float2 dirY, float damping, bool reversed)
     {
-        var p = l.NextPosition(j);
+        var p = l.NextPosition(j, reversed);
         var v = l.body[j].GetWorldPointVelocity(p);
         var vX = Vector2.Dot(v, dirX);
         var vY = Vector2.Dot(v, dirY);
@@ -516,10 +506,10 @@ public class LegSynchronizer
     private void FixTunneling(int i, int fabrikIterations, float fabrikToleranceSqrd)
     {
         ref var l = ref leg[i];
-        var world = l.body[0].world;
+        var world = l.World;
         var queryFilter = l.body[0].GetShapes()[0].contactFilter.ToQueryFilter(PhysicsWorld.IgnoreFilter.IgnoreTriggerShapes);
         var p = l.JointPosition(0);
-        var q = l.NextPosition(l.JointCount - 1);
+        var q = l.NextPosition(l.JointCount - 1, reversed);
         var cast = world.CastRay(p, q - p, queryFilter);
 
         if (cast.Length > 0)
@@ -531,7 +521,7 @@ public class LegSynchronizer
             {
                 position[j] = l.JointPosition(j);
             }
-            position[^1] = l.NextPosition(l.JointCount - 1);
+            position[^1] = l.NextPosition(l.JointCount - 1, reversed);
 
             for (int j = 0; j < fabrikIterations; j++)
             {
@@ -546,7 +536,7 @@ public class LegSynchronizer
                 var p0 = position[j];
                 var p1 = position[j + 1];
                 var pos = 0.5f * (p0 + p1);
-                var dir = leg[i].reversed ? (p0 - p1).normalized : (p1 - p0).normalized;
+                var dir = reversed ? (p0 - p1).normalized : (p1 - p0).normalized;
                 var rot = new PhysicsRotate(dir);
                 l.body[j].transform = new PhysicsTransform(pos, rot);
             }
