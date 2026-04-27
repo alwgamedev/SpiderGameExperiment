@@ -27,7 +27,7 @@ public class DamageTest : MonoBehaviour
 
     private void ApplyDamage()
     {
-        Spider.Player.Health.AddHealth(-damage);
+        Spider.Player.health.AddHealth(-damage);
         cooldownTimer = cooldownTime;
     }
 }

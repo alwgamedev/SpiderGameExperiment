@@ -5,15 +5,15 @@ public class Spider : MonoBehaviour
 #if UNITY_EDITOR
     [SerializeField] float timeScale;
 #endif
-    [SerializeField] SpiderInput spiderInput;
-    [SerializeField] Health health;
-    [SerializeField] SpiderMover mover;
-    [SerializeField] SGrabber grabber;
-    [SerializeField] GrappleShootPreview grappleShootPreview;
-    [SerializeField] JumpPreviewArrow jumpPreviewArrow;
+    public SpiderInput spiderInput;
+    public Health health;
+    public SpiderMover mover;
+    public SGrabber grabber;
+    public GrappleShootPreview grappleShootPreview;
+    public JumpPreviewArrow jumpPreviewArrow;
 
-    public Health Health => health;
-    public SpiderMover Mover => mover;
+    //public Health Health => health;
+    //public SpiderMover Mover => mover;
     public Collider2D TriggerCollider { get; private set; }//was for fluid interaction; need to update fluid to new physics system
 
     public static Spider Player { get; private set; }
@@ -27,11 +27,13 @@ public class Spider : MonoBehaviour
         }
 
         mover.OnValidate();
+        grabber.OnValidate();
     }
 
     private void OnDrawGizmos()
     {
         mover.OnDrawGizmos();
+        grabber.OnDrawGizmos();
     }
 #endif
 

@@ -415,7 +415,7 @@ Transform:
   m_GameObject: {fileID: 301201877170698781}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0.7614439, w: 0.6482308}
-  m_LocalPosition: {x: 1.358593, y: 1.0065731, z: 0}
+  m_LocalPosition: {x: 1.3264885, y: 0.8079852, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -638,7 +638,7 @@ Transform:
   m_GameObject: {fileID: 520079418366489553}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.055875763, y: 0.000001013279, z: 0}
   m_LocalScale: {x: 0.075, y: 0.075, z: 0.3}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -929,7 +929,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 844615384008115044}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b44f2bbf9e24d6842a370cb6cee60f02, type: 3}
   m_Name: 
@@ -993,7 +993,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 844615384008115044}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a164ea84820c4a044849405fe6afde6f, type: 3}
   m_Name: 
@@ -1035,7 +1035,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 844615384008115044}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1c8c33a748481724bb90c298e7909f7c, type: 3}
   m_Name: 
@@ -1056,7 +1056,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 844615384008115044}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 235fe5e65cbfc1a40b0071037fe843d4, type: 3}
   m_Name: 
@@ -2495,27 +2495,27 @@ MonoBehaviour:
             direction: {x: 1, y: 0}
         m_EnableSpring: 0
         m_SpringTargetAngle: 0
-        m_SpringFrequency: 0
-        m_SpringDamping: 0
+        m_SpringFrequency: 15
+        m_SpringDamping: 5
         m_EnableMotor: 0
         m_MotorSpeed: 0
         m_MaxMotorTorque: 0
         m_EnableLimit: 0
         m_LowerAngleLimit: 0
         m_UpperAngleLimit: 0
-        m_ForceThreshold: 0
-        m_TorqueThreshold: 0
-        m_TuningFrequency: 0
-        m_TuningDamping: 0
-        m_DrawScale: 0
+        m_ForceThreshold: 1e+15
+        m_TorqueThreshold: 1e+15
+        m_TuningFrequency: 1000
+        m_TuningDamping: 10
+        m_DrawScale: 0.001
         m_WorldDrawing: 0
         m_CollideConnected: 0
       shapeDef:
         contactFilter:
           m_Categories:
-            bitMask: 0
+            bitMask: 8
           m_Contacts:
-            bitMask: 0
+            bitMask: 64
           m_GroupIndex: 0
         surfaceMaterial:
           m_Friction: 0
@@ -2529,7 +2529,7 @@ MonoBehaviour:
           m_CustomColor:
             serializedVersion: 2
             rgba: 0
-        m_Density: 0
+        m_Density: 0.001
         m_IsTrigger: 0
         m_TriggerEvents: 0
         m_ContactEvents: 0
@@ -2537,7 +2537,7 @@ MonoBehaviour:
         m_ContactFilterCallbacks: 0
         m_PreSolveCallbacks: 0
         m_StartStaticContacts: 0
-        m_StartMassUpdate: 0
+        m_StartMassUpdate: 1
         m_WorldDrawing: 0
         moverData:
           m_PushLimit: 0
@@ -2545,28 +2545,28 @@ MonoBehaviour:
       bodyDef:
         m_BodyType: 0
         m_BodyConstraints: 0
-        m_TransformWriteMode: 0
+        m_TransformWriteMode: 1
         m_Position: {x: 0, y: 0}
         m_Rotation:
           direction: {x: 1, y: 0}
         m_LinearVelocity: {x: 0, y: 0}
         m_AngularVelocity: 0
-        m_LinearDamping: 0
-        m_AngularDamping: 0
-        m_GravityScale: 0
-        m_SleepThreshold: 0
+        m_LinearDamping: 0.1
+        m_AngularDamping: 250
+        m_GravityScale: 1
+        m_SleepThreshold: 0.01
         m_FastRotationAllowed: 0
         m_FastCollisionsAllowed: 0
         m_SleepingAllowed: 0
-        m_Awake: 0
-        m_Enabled: 0
+        m_Awake: 1
+        m_Enabled: 1
         m_WorldDrawing: 0
       width:
       - 0.05
       - 0.05
-      - 0.1
+      - 0.075
       - 0.05
-      - 0.1
+      - 0.15
     armSettings:
       lowerAngleLimit:
       - -45
@@ -2607,16 +2607,18 @@ MonoBehaviour:
     - 180
     defaultPose:
     - 0
-    - 0
-    - 0
-    - 0
-    - 0
+    - 105
+    - -90
+    - -45
+    - -30
     depositPose:
-    - 0
-    - 0
-    - 0
-    - 0
-    - 0
+    - 30
+    - 30
+    - 15
+    - 15
+    - 15
+    drawBodyGizmos: 0
+    drawAngleLimitGizmos: 0
     clawDef:
       jointDef:
         m_LocalAnchorA:
@@ -2627,48 +2629,29 @@ MonoBehaviour:
           position: {x: 0, y: 0}
           rotation:
             direction: {x: 1, y: 0}
-        m_EnableSpring: 0
+        m_EnableSpring: 1
         m_SpringTargetAngle: 0
-        m_SpringFrequency: 0
-        m_SpringDamping: 0
+        m_SpringFrequency: 5
+        m_SpringDamping: 5
         m_EnableMotor: 0
         m_MotorSpeed: 0
         m_MaxMotorTorque: 0
         m_EnableLimit: 0
         m_LowerAngleLimit: 0
         m_UpperAngleLimit: 0
-        m_ForceThreshold: 0
-        m_TorqueThreshold: 0
-        m_TuningFrequency: 0
-        m_TuningDamping: 0
-        m_DrawScale: 0
+        m_ForceThreshold: 1e+15
+        m_TorqueThreshold: 1e+15
+        m_TuningFrequency: 1000
+        m_TuningDamping: 10
+        m_DrawScale: 0.001
         m_WorldDrawing: 0
         m_CollideConnected: 0
-      bodyDef:
-        m_BodyType: 0
-        m_BodyConstraints: 0
-        m_TransformWriteMode: 0
-        m_Position: {x: 0, y: 0}
-        m_Rotation:
-          direction: {x: 1, y: 0}
-        m_LinearVelocity: {x: 0, y: 0}
-        m_AngularVelocity: 0
-        m_LinearDamping: 0
-        m_AngularDamping: 0
-        m_GravityScale: 0
-        m_SleepThreshold: 0
-        m_FastRotationAllowed: 0
-        m_FastCollisionsAllowed: 0
-        m_SleepingAllowed: 0
-        m_Awake: 0
-        m_Enabled: 0
-        m_WorldDrawing: 0
       shapeDef:
         contactFilter:
           m_Categories:
-            bitMask: 0
+            bitMask: 8
           m_Contacts:
-            bitMask: 0
+            bitMask: 64
           m_GroupIndex: 0
         surfaceMaterial:
           m_Friction: 0
@@ -2682,7 +2665,7 @@ MonoBehaviour:
           m_CustomColor:
             serializedVersion: 2
             rgba: 0
-        m_Density: 0
+        m_Density: 0.001
         m_IsTrigger: 0
         m_TriggerEvents: 0
         m_ContactEvents: 0
@@ -2690,11 +2673,30 @@ MonoBehaviour:
         m_ContactFilterCallbacks: 0
         m_PreSolveCallbacks: 0
         m_StartStaticContacts: 0
-        m_StartMassUpdate: 0
+        m_StartMassUpdate: 1
         m_WorldDrawing: 0
         moverData:
           m_PushLimit: 0
           m_ClipVelocity: 0
+      bodyDef:
+        m_BodyType: 0
+        m_BodyConstraints: 0
+        m_TransformWriteMode: 1
+        m_Position: {x: 0, y: 0}
+        m_Rotation:
+          direction: {x: 1, y: 0}
+        m_LinearVelocity: {x: 0, y: 0}
+        m_AngularVelocity: 0
+        m_LinearDamping: 0.1
+        m_AngularDamping: 250
+        m_GravityScale: 1
+        m_SleepThreshold: 0.01
+        m_FastRotationAllowed: 0
+        m_FastCollisionsAllowed: 0
+        m_SleepingAllowed: 0
+        m_Awake: 1
+        m_Enabled: 1
+        m_WorldDrawing: 0
     claw:
       upperArmOpen: 70
       upperArmClosed: 10
@@ -2728,23 +2730,23 @@ MonoBehaviour:
     anchor:
       moveSpeed: 2
     depositDoor:
-      door1Open: {x: 0, y: 0, z: 0, w: 0}
+      door1Open: {x: 0, y: 0, z: 0.9238795, w: 0.38268343}
       door1Closed: {x: 0, y: 0, z: 0, w: 0}
-      door2Open: {x: 0, y: 0, z: 0, w: 0}
+      door2Open: {x: 0, y: 0, z: 0.92387956, w: -0.3826834}
       door2Closed: {x: 0, y: 0, z: 0, w: 0}
-      door1: {fileID: 0}
-      door2: {fileID: 0}
-      rotationSpeed: 0
-      rotationTolerance: 0
+      door1: {fileID: 6414134033347311081}
+      door2: {fileID: 9018370086238453302}
+      rotationSpeed: 5
+      rotationTolerance: 0.9999
     mouth:
-      door1Open: {x: 0, y: 0, z: 0, w: 0}
-      door1Closed: {x: 0, y: 0, z: 0, w: 0}
-      door2Open: {x: 0, y: 0, z: 0, w: 0}
-      door2Closed: {x: 0, y: 0, z: 0, w: 0}
+      door1Open: {x: 0, y: 0, z: 0.5, w: 0.8660254}
+      door1Closed: {x: 0, y: 0, z: -0.25881904, w: 0.9659258}
+      door2Open: {x: 0, y: 0, z: -0.6087614, w: 0.7933533}
+      door2Closed: {x: 0, y: 0, z: -0.1305262, w: 0.9914449}
       door1: {fileID: 6702582719345520964}
       door2: {fileID: 6521851064104510363}
-      rotationSpeed: 0
-      rotationTolerance: 0
+      rotationSpeed: 5
+      rotationTolerance: 0.9999
     sprite:
     - {fileID: 1263282736340540470}
     - {fileID: 7765114503174755605}
@@ -3705,7 +3707,11 @@ MonoBehaviour:
         m_SelectedSource:
           rid: -2
         m_Provider2DCache:
-          rid: -2
+          rid: 3165680406905487453
+    - rid: 3165680406905487453
+      type: {class: 'Provider2DCache`1[[UnityEngine.Rendering.Universal.Light2DProvider, Unity.RenderPipelines.Universal.2D.Runtime]]', ns: UnityEngine.Rendering.Universal, asm: Unity.RenderPipelines.Universal.2D.Runtime}
+      data:
+        m_Cache: []
 --- !u!1 &1889749874318939924
 GameObject:
   m_ObjectHideFlags: 0
@@ -4238,7 +4244,7 @@ Transform:
   m_GameObject: {fileID: 2053681768564677905}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0.28807157, w: 0.95760894}
-  m_LocalPosition: {x: 1.0453911, y: 1.2137598, z: 0}
+  m_LocalPosition: {x: 1.201992, y: 1.1101664, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4452,9 +4458,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChildSortable
   children:
   - {fileID: 4585055022817763142}
+  - {fileID: 1796198411501180353}
   - {fileID: 5007586244432508783}
   - {fileID: 1827484204446319883}
-  - {fileID: 1796198411501180353}
   - {fileID: 3071107053019204483}
   _renderer: {fileID: 5882208301015060662}
   orderDelta: 0
@@ -5527,7 +5533,7 @@ Transform:
   m_GameObject: {fileID: 3211896036907597782}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.5733529, w: 0.8193085}
-  m_LocalPosition: {x: 0.52466774, y: 0.69731295, z: 0}
+  m_LocalPosition: {x: 0.601593, y: 0.90830624, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5865,7 +5871,7 @@ Transform:
   m_GameObject: {fileID: 3332329211972273773}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.18776433, y: 0.000000059604645, z: 0}
   m_LocalScale: {x: 0.050000004, y: 0.050000004, z: 0.2}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -9979,7 +9985,7 @@ Transform:
   m_GameObject: {fileID: 5479174564383390058}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.22457886, y: -0.0000004172325, z: 0}
   m_LocalScale: {x: 0.04999999, y: 0.04999999, z: 0.2}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -10598,7 +10604,7 @@ Transform:
   m_GameObject: {fileID: 5811274388288693124}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.12566684, w: 0.9920725}
-  m_LocalPosition: {x: 0.6785183, y: 1.1192997, z: 0}
+  m_LocalPosition: {x: 0.86195374, y: 1.1665298, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -10929,7 +10935,7 @@ Transform:
   m_GameObject: {fileID: 6007576796609580321}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.18941818, y: -0.0000003745081, z: 0}
   m_LocalScale: {x: 0.050000016, y: 0.050000016, z: 0.2}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -11843,7 +11849,7 @@ Transform:
   m_GameObject: {fileID: 7229113982209215490}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0.87133086, w: 0.49069598}
-  m_LocalPosition: {x: 1.294384, y: 0.6093974, z: 0}
+  m_LocalPosition: {x: 1.2654152, y: 0.5616176, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -12316,7 +12322,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7752158845176983945}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 966989c69b55b50419e45d4837e0df82, type: 3}
   m_Name: 
@@ -12909,7 +12915,7 @@ Transform:
   m_GameObject: {fileID: 8284963823824367970}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.20116623, y: -0.00000037252903, z: 0}
   m_LocalScale: {x: 0.05, y: 0.05, z: 0.2}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -16783,6 +16789,10 @@ PrefabInstance:
       propertyPath: colorControl
       value: 
       objectReference: {fileID: 259569805516380374}
+    - target: {fileID: 1391311929564105256, guid: ba9133cc0281c364f93a3e6f92f60946, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1962600122901418228, guid: ba9133cc0281c364f93a3e6f92f60946, type: 3}
       propertyPath: colorControl
       value: 
@@ -16954,7 +16964,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 8784613860659808501}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 966989c69b55b50419e45d4837e0df82, type: 3}
   m_Name: 

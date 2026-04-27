@@ -14,6 +14,10 @@ public class SGrabber
     [SerializeField] float[] foldedPose;//poses are spring target angles for the arm joints
     [SerializeField] float[] defaultPose;
     [SerializeField] float[] depositPose;
+#if UNITY_EDITOR
+    [SerializeField] bool drawBodyGizmos;
+    [SerializeField] bool drawAngleLimitGizmos;
+#endif
 
     [Header("Claw")]
     [SerializeField] GrabberClawDefinition clawDef;
@@ -64,6 +68,7 @@ public class SGrabber
     //2) get direction change working (and components will need to know if reversed)
     //3) add a mask or masks to mask the sprites as they're retreating into body (only activate once arm has made it back to folded position, so they never block while arm is out)
 
+#if UNITY_EDITOR
     public void OnValidate()
     {
 
@@ -71,8 +76,14 @@ public class SGrabber
 
     public void OnDrawGizmos()
     {
-
+        arm.OnDrawGizmos(armNodes, armDef.width, armSettings, drawBodyGizmos, drawAngleLimitGizmos, reversed);
     }
+
+    public void CenterArmTransforms()
+    {
+        JointedChain.CenterPhysicsTransforms(armPhysTransforms, armNodes);
+    }
+#endif
 
 
     //LIFETIME

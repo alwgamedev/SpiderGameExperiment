@@ -13,19 +13,24 @@ public class SpiderEditor : Editor
 
         var spider = (Spider)target;
 
-        root.Add(new Button(() => spider.Mover.CenterPhysicsBodies())
+        root.Add(new Button(() => spider.mover.CenterPhysicsBodies())
         {
             text = "Center Physics Bodies"
         });
 
-        root.Add(new Button(() => spider.Mover.CreateLegPhysicsBodies(spider))
+        root.Add(new Button(() => spider.mover.CreateLegPhysicsBodies(spider))
         {
             text = "Create Leg Physics Bodies"
         });
 
-        root.Add(new Button(() => spider.Mover.CenterLegPhysicsBodies())
+        root.Add(new Button(() => spider.mover.CenterLegPhysicsBodies())
         {
             text = "Center Leg Physics Bodies"
+        });
+
+        root.Add(new Button(() => spider.grabber.CenterArmTransforms())
+        {
+            text = "Center Grabber Arm Physics Bodies"
         });
 
         return root;

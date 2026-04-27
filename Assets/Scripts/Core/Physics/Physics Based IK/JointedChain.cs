@@ -141,8 +141,6 @@ public struct JointedChain
 
         for (int i = 0; i < bone.Length; i++)
         {
-            //var physBodies = physicsTransform[i].array;
-            //var bones = this.bones[i].array;
             for (int j = 0; j < bone.Length - 1; j++)
             {
                 var p0 = bone[j].position;

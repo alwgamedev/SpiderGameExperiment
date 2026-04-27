@@ -26,6 +26,32 @@ public struct SGrabberArm
         off, idle, trackBody, trackPose
     }
 
+    public void OnValidate()
+    {
+        //update settings
+    }
+
+    public readonly void OnDrawGizmos(Transform[] bone, float[] width, JointedChainSettings settings,
+        bool drawBodyGizmos, bool drawAngleLimitGizmos, bool reversed)
+    {
+        if (drawBodyGizmos)
+        {
+            JointedChain.DrawBodyGizmos(bone, width);
+        }
+
+        if (drawAngleLimitGizmos)
+        {
+            if (Application.isPlaying)
+            {
+                jointedChain.DrawAngleGizmos(reversed);
+            }
+            else
+            {
+                JointedChain.DrawAngleGizmos(bone, settings);
+            }
+        }
+    }
+
     Vector2 EffectorPosition(bool reversed)
     {
         return jointedChain.EffectorPosition(reversed) + (reversed ? -effectorDistance : effectorDistance) * jointedChain.body[^1].rotation.direction;

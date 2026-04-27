@@ -6,8 +6,8 @@ using UnityEngine;
 public struct GrabberClawDefinition
 {
     public PhysicsHingeJointDefinition jointDef;
-    public PhysicsBodyDefinition bodyDef;
     public PhysicsShapeDefinition shapeDef;
+    public PhysicsBodyDefinition bodyDef;
 }
 
 [Serializable]

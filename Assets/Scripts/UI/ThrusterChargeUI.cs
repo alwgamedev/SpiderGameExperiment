@@ -8,7 +8,7 @@ public class ThrusterChargeUI : MonoBehaviour
     [SerializeField] Color cooldownColor;
     [SerializeField] Color defaultColor;
 
-    Thruster Thruster => Spider.Player.Mover.Thruster;
+    Thruster Thruster => Spider.Player.mover.Thruster;
 
     private void Update()
     {
