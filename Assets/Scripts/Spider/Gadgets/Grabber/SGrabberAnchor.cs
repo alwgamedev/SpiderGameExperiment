@@ -67,8 +67,19 @@ public struct SGrabberAnchor
 
         if (l < MathTools.o91)
         {
-            target = Target.none;
-            return true;
+            //anchorA is at its target position, so wait for bodyB to catch up
+            var worldPosA = joint.bodyA.transform.TransformPoint(joint.localAnchorA.position);
+            var worldPosB = joint.bodyB.transform.TransformPoint(joint.localAnchorB.position);
+            var l1 = (worldPosB - worldPosA).sqrMagnitude;
+            if (l1 < MathTools.o41)//less strict threshold for the joint separation
+            {
+                target = Target.none;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         l = Mathf.Sqrt(l);

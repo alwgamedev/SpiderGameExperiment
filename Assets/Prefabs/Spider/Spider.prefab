@@ -208,8 +208,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 158983689366788904}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0.09825968, w: 0.9951609}
-  m_LocalPosition: {x: -5.0121326, y: 5.7897673, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -287,7 +287,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57c008f954fe54a8bb972de1018a2cb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.2D.Animation.Runtime::UnityEngine.U2D.Animation.SpriteSkin
-  m_RootBone: {fileID: 8028457523695950023}
+  m_RootBone: {fileID: 0}
   m_BoneTransforms:
   - {fileID: 4218969973551576729}
   m_Bounds:
@@ -783,7 +783,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57c008f954fe54a8bb972de1018a2cb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.2D.Animation.Runtime::UnityEngine.U2D.Animation.SpriteSkin
-  m_RootBone: {fileID: 8028457523695950023}
+  m_RootBone: {fileID: 2264100876595627987}
   m_BoneTransforms:
   - {fileID: 7533410502555530917}
   m_Bounds:
@@ -887,192 +887,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3468580104259901786}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &844615384008115044
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8028457523695950023}
-  - component: {fileID: 8954499739145971467}
-  - component: {fileID: 9218839149659196395}
-  - component: {fileID: 3947066186217238991}
-  - component: {fileID: 4085935985566337826}
-  m_Layer: 2
-  m_Name: Spider Grab Arm (OLD CONTAINER)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8028457523695950023
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 844615384008115044}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.027577996, w: 0.9996197}
-  m_LocalPosition: {x: 0.52466774, y: 0.69731295, z: 0}
-  m_LocalScale: {x: 0.049999997, y: 0.049999997, z: 0.2}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2264100876595627987}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8954499739145971467
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 844615384008115044}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b44f2bbf9e24d6842a370cb6cee60f02, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GrabberArm
-  input:
-    playerInput: {fileID: 0}
-  arm: {fileID: 9218839149659196395}
-  anchor: {fileID: 3947066186217238991}
-  grabberClaw: {fileID: 4085935985566337826}
-  inventoryDoor: {fileID: 3175208090269734813}
-  mouth: {fileID: 7685349983967986397}
-  armSprites:
-  - {fileID: 4944418093456694075}
-  - {fileID: 3008343964068888382}
-  - {fileID: 7795578895907248328}
-  - {fileID: 7045943931430494151}
-  - {fileID: 3770993823398899413}
-  - {fileID: 230114878001301583}
-  - {fileID: 863026632727503834}
-  - {fileID: 9065238412988560687}
-  - {fileID: 1628421707226849257}
-  - {fileID: 3010018386896350506}
-  - {fileID: 7765114503174755605}
-  - {fileID: 1263282736340540470}
-  grabMask:
-    serializedVersion: 2
-    m_Bits: 1
-  grabAttemptRadius: 3
-  depositTarget: {fileID: 2619272820850071255}
-  offAnchorPosition: {fileID: 4816503237226909710}
-  deployedAnchorPosition: {fileID: 1391080338648683509}
-  foldedPose:
-  - {x: 1, y: 0}
-  - {x: 1, y: 0}
-  - {x: -1, y: 0}
-  - {x: 1, y: 0}
-  - {x: -1, y: 0}
-  defaultPose:
-  - {x: 1, y: 0}
-  - {x: 0, y: 1}
-  - {x: 0.9238795, y: -0.38268343}
-  - {x: 0.38268343, y: -0.9238795}
-  - {x: 0.98078525, y: -0.19509032}
-  depositPose:
-  - {x: 0.8660254, y: 0.5}
-  - {x: -0.5, y: 0.8660254}
-  - {x: -1, y: 0}
-  - {x: -1, y: 0}
-  - {x: 0, y: -1}
-  depositPoseWeight:
-  - 0.5
-  - 0
-  - 0
-  - 0.5
-  - 1
-  grabTimeOut: 2.5
---- !u!114 &9218839149659196395
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 844615384008115044}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a164ea84820c4a044849405fe6afde6f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PhysicsBasedIKArm
-  orientingTransform: {fileID: 9149063515827151626}
-  chain:
-  - {fileID: 4410384836176449269}
-  - {fileID: 4218969973551576729}
-  - {fileID: 7854505857208756092}
-  - {fileID: 5825069205174597496}
-  - {fileID: 2855444345511382838}
-  - {fileID: 0}
-  armHalfWidth:
-  - 0.0525
-  - 0.0525
-  - 0.075
-  - 0.0525
-  - 0.1125
-  collisionMask:
-    serializedVersion: 2
-    m_Bits: 64
-  collisionResponse: 15
-  horizontalRaycastSpacing: 0.05
-  tunnelInterval: 0.1575
-  tunnelMax: 1.575
-  effectorSpringConstant: 60
-  maxTargetPursuitSpeed: 30
-  jointDamping: 5.75
-  targetTolerance: 0.01
-  targetingErrorMin: 0.4
-  poseSpringConstant: 80
-  maxPosePursuitSpeed: 25
-  poseTolerance: 0.05
-  gravityScale: 0
---- !u!114 &3947066186217238991
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 844615384008115044}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1c8c33a748481724bb90c298e7909f7c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ArmAnchor
-  chain:
-  - {fileID: 4410384836176449269}
-  - {fileID: 4218969973551576729}
-  - {fileID: 7854505857208756092}
-  - {fileID: 5825069205174597496}
-  - {fileID: 2855444345511382838}
-  - {fileID: 0}
-  moveSpeed: 2
-  targetTolerance: 0.01
---- !u!114 &4085935985566337826
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 844615384008115044}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 235fe5e65cbfc1a40b0071037fe843d4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GrabberClaw
-  upperGrabArm: {fileID: 5710876439982367795}
-  lowerGrabArm: {fileID: 7533410502555530917}
-  upperArmCollider: {fileID: 0}
-  lowerArmCollider: {fileID: 0}
-  upperArmOpen: {x: 0, y: 0, z: 0.57357645, w: 0.81915206}
-  upperArmClosed: {x: 0, y: 0, z: 0.08715574, w: 0.9961947}
-  lowerArmOpen: {x: 0, y: 0, z: -0.57357645, w: 0.81915206}
-  lowerArmClosed: {x: 0, y: 0, z: -0.08715574, w: 0.9961947}
-  grabArmRotationSpeed: 5
-  rotationTolerance: 0.9999
-  grabTolerance: -0.01
-  dropTolerance: 0.5
 --- !u!1 &872662107667997222
 GameObject:
   m_ObjectHideFlags: 0
@@ -1506,7 +1320,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57c008f954fe54a8bb972de1018a2cb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.2D.Animation.Runtime::UnityEngine.U2D.Animation.SpriteSkin
-  m_RootBone: {fileID: 8028457523695950023}
+  m_RootBone: {fileID: 2264100876595627987}
   m_BoneTransforms:
   - {fileID: 4198939658114458145}
   m_Bounds:
@@ -2495,8 +2309,8 @@ MonoBehaviour:
             direction: {x: 1, y: 0}
         m_EnableSpring: 0
         m_SpringTargetAngle: 0
-        m_SpringFrequency: 50
-        m_SpringDamping: 5
+        m_SpringFrequency: 80
+        m_SpringDamping: 40
         m_EnableMotor: 0
         m_MotorSpeed: 0
         m_MaxMotorTorque: 0
@@ -2505,8 +2319,8 @@ MonoBehaviour:
         m_UpperAngleLimit: 0
         m_ForceThreshold: 1e+15
         m_TorqueThreshold: 1e+15
-        m_TuningFrequency: 1000
-        m_TuningDamping: 10
+        m_TuningFrequency: 500
+        m_TuningDamping: 1
         m_DrawScale: 0.001
         m_WorldDrawing: 0
         m_CollideConnected: 0
@@ -2529,7 +2343,7 @@ MonoBehaviour:
           m_CustomColor:
             serializedVersion: 2
             rgba: 0
-        m_Density: 0.001
+        m_Density: 0.05
         m_IsTrigger: 0
         m_TriggerEvents: 0
         m_ContactEvents: 0
@@ -2538,7 +2352,7 @@ MonoBehaviour:
         m_PreSolveCallbacks: 0
         m_StartStaticContacts: 0
         m_StartMassUpdate: 1
-        m_WorldDrawing: 0
+        m_WorldDrawing: 1
         moverData:
           m_PushLimit: 0
           m_ClipVelocity: 0
@@ -2551,8 +2365,8 @@ MonoBehaviour:
           direction: {x: 1, y: 0}
         m_LinearVelocity: {x: 0, y: 0}
         m_AngularVelocity: 0
-        m_LinearDamping: 0.1
-        m_AngularDamping: 1000
+        m_LinearDamping: 0.25
+        m_AngularDamping: 50
         m_GravityScale: 1
         m_SleepThreshold: 0.01
         m_FastRotationAllowed: 0
@@ -2580,11 +2394,11 @@ MonoBehaviour:
       - 0
       - 0
       - 90
-      enableLimit: 0100000001
+      enableLimit: 0100000000
     arm:
       targetingAccel: 100
       targetErrorCap: 1
-      poseRotationTolerance: 0.05
+      poseRotationTolerance: 0.1
       effectorDistance: 0.08
     armPhysTransforms:
     - {fileID: 8365497005758598332}
@@ -2631,8 +2445,8 @@ MonoBehaviour:
             direction: {x: 1, y: 0}
         m_EnableSpring: 1
         m_SpringTargetAngle: 0
-        m_SpringFrequency: 5
-        m_SpringDamping: 5
+        m_SpringFrequency: 80
+        m_SpringDamping: 40
         m_EnableMotor: 0
         m_MotorSpeed: 0
         m_MaxMotorTorque: 0
@@ -2641,8 +2455,8 @@ MonoBehaviour:
         m_UpperAngleLimit: 0
         m_ForceThreshold: 1e+15
         m_TorqueThreshold: 1e+15
-        m_TuningFrequency: 1000
-        m_TuningDamping: 10
+        m_TuningFrequency: 500
+        m_TuningDamping: 1
         m_DrawScale: 0.001
         m_WorldDrawing: 0
         m_CollideConnected: 0
@@ -2665,7 +2479,7 @@ MonoBehaviour:
           m_CustomColor:
             serializedVersion: 2
             rgba: 0
-        m_Density: 0.001
+        m_Density: 0.05
         m_IsTrigger: 0
         m_TriggerEvents: 0
         m_ContactEvents: 0
@@ -2687,8 +2501,8 @@ MonoBehaviour:
           direction: {x: 1, y: 0}
         m_LinearVelocity: {x: 0, y: 0}
         m_AngularVelocity: 0
-        m_LinearDamping: 0.1
-        m_AngularDamping: 250
+        m_LinearDamping: 0.25
+        m_AngularDamping: 50
         m_GravityScale: 1
         m_SleepThreshold: 0.01
         m_FastRotationAllowed: 0
@@ -2705,9 +2519,9 @@ MonoBehaviour:
       - {x: 0.05, y: 0.04}
     claw:
       upperArmOpen: 70
-      upperArmClosed: 10
+      upperArmClosed: 15
       lowerArmOpen: -70
-      lowerArmClosed: -10
+      lowerArmClosed: -15
       rotationTolerance: 0.05
       grabTolerance: -0.01
       dropTolerance: 0.5
@@ -2721,7 +2535,7 @@ MonoBehaviour:
     - {fileID: 7533410502555530917}
     - {fileID: 4198939658114458145}
     - {fileID: 1010410438584294727}
-    drawClawShapeGizmos: 1
+    drawClawShapeGizmos: 0
     anchor:
       moveSpeed: 2
     depositDoor:
@@ -2734,9 +2548,9 @@ MonoBehaviour:
       rotationSpeed: 5
       rotationTolerance: 0.9999
     mouth:
-      door1Open: {x: 0, y: 0, z: 0.5, w: 0.8660254}
-      door1Closed: {x: 0, y: 0, z: -0.25881904, w: 0.9659258}
-      door2Open: {x: 0, y: 0, z: -0.6087614, w: 0.7933533}
+      door1Open: {x: 0, y: 0, z: 0.6087614, w: 0.7933533}
+      door1Closed: {x: 0, y: 0, z: 0.08715588, w: -0.99619466}
+      door2Open: {x: 0, y: 0, z: 0.50000006, w: -0.8660254}
       door2Closed: {x: 0, y: 0, z: -0.1305262, w: 0.9914449}
       door1: {fileID: 6702582719345520964}
       door2: {fileID: 6521851064104510363}
@@ -5462,7 +5276,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57c008f954fe54a8bb972de1018a2cb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.2D.Animation.Runtime::UnityEngine.U2D.Animation.SpriteSkin
-  m_RootBone: {fileID: 8028457523695950023}
+  m_RootBone: {fileID: 2264100876595627987}
   m_BoneTransforms:
   - {fileID: 7854505857208756092}
   m_Bounds:
@@ -5981,7 +5795,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57c008f954fe54a8bb972de1018a2cb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.2D.Animation.Runtime::UnityEngine.U2D.Animation.SpriteSkin
-  m_RootBone: {fileID: 8028457523695950023}
+  m_RootBone: {fileID: 2264100876595627987}
   m_BoneTransforms:
   - {fileID: 4218969973551576729}
   m_Bounds:
@@ -7060,8 +6874,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3894571835484058264}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.7790313, w: 0.62698513}
-  m_LocalPosition: {x: 2.3825898, y: -11.7003, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7139,7 +6953,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57c008f954fe54a8bb972de1018a2cb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.2D.Animation.Runtime::UnityEngine.U2D.Animation.SpriteSkin
-  m_RootBone: {fileID: 8028457523695950023}
+  m_RootBone: {fileID: 0}
   m_BoneTransforms:
   - {fileID: 5825069205174597496}
   m_Bounds:
@@ -7568,7 +7382,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57c008f954fe54a8bb972de1018a2cb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.2D.Animation.Runtime::UnityEngine.U2D.Animation.SpriteSkin
-  m_RootBone: {fileID: 8028457523695950023}
+  m_RootBone: {fileID: 2264100876595627987}
   m_BoneTransforms:
   - {fileID: 5825069205174597496}
   m_Bounds:
@@ -8154,7 +7968,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57c008f954fe54a8bb972de1018a2cb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.2D.Animation.Runtime::UnityEngine.U2D.Animation.SpriteSkin
-  m_RootBone: {fileID: 8028457523695950023}
+  m_RootBone: {fileID: 2264100876595627987}
   m_BoneTransforms:
   - {fileID: 2855444345511382838}
   m_Bounds:
@@ -8764,7 +8578,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57c008f954fe54a8bb972de1018a2cb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.2D.Animation.Runtime::UnityEngine.U2D.Animation.SpriteSkin
-  m_RootBone: {fileID: 8028457523695950023}
+  m_RootBone: {fileID: 2264100876595627987}
   m_BoneTransforms:
   - {fileID: 4410384836176449269}
   m_Bounds:
@@ -9122,7 +8936,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57c008f954fe54a8bb972de1018a2cb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.2D.Animation.Runtime::UnityEngine.U2D.Animation.SpriteSkin
-  m_RootBone: {fileID: 8028457523695950023}
+  m_RootBone: {fileID: 2264100876595627987}
   m_BoneTransforms:
   - {fileID: 6206659856000338823}
   m_Bounds:
@@ -9400,7 +9214,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57c008f954fe54a8bb972de1018a2cb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.2D.Animation.Runtime::UnityEngine.U2D.Animation.SpriteSkin
-  m_RootBone: {fileID: 8028457523695950023}
+  m_RootBone: {fileID: 2264100876595627987}
   m_BoneTransforms:
   - {fileID: 5710876439982367795}
   m_Bounds:
@@ -9829,7 +9643,6 @@ Transform:
   m_LocalScale: {x: 4, y: 4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 8028457523695950023}
   - {fileID: 8365497005758598332}
   - {fileID: 694910629859144908}
   - {fileID: 2076282911927627035}
@@ -11617,8 +11430,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7153344998190150845}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.3143709, w: 0.9493002}
-  m_LocalPosition: {x: -6.658817, y: -0.9390464, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -11696,7 +11509,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57c008f954fe54a8bb972de1018a2cb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.2D.Animation.Runtime::UnityEngine.U2D.Animation.SpriteSkin
-  m_RootBone: {fileID: 8028457523695950023}
+  m_RootBone: {fileID: 0}
   m_BoneTransforms:
   - {fileID: 7854505857208756092}
   m_Bounds:
@@ -17018,14 +16831,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 090be532825f23445bb5131e4dacfaaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChildColor
---- !u!114 &7685349983967986397 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1391311929564105256, guid: ba9133cc0281c364f93a3e6f92f60946, type: 3}
-  m_PrefabInstance: {fileID: 8784613860659808501}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 966989c69b55b50419e45d4837e0df82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoubleDoor

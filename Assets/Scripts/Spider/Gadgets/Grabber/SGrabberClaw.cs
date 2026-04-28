@@ -115,11 +115,12 @@ public struct SGrabberClaw
 
         static PhysicsHingeJoint CreateArmJoint(PhysicsHingeJointDefinition jointDef, PhysicsBody anchorBody, PhysicsBody armBody, Vector2 anchorWorldPosition)
         {
-            var anchorTransform = new PhysicsTransform(anchorWorldPosition, anchorBody.rotation);
             jointDef.bodyA = anchorBody;
             jointDef.bodyB = armBody;
-            jointDef.localAnchorA = anchorBody.transform.InverseMultiplyTransform(anchorTransform);
-            jointDef.localAnchorB = armBody.transform.InverseMultiplyTransform(anchorTransform);
+            var posA = anchorBody.transform.InverseTransformPoint(anchorWorldPosition);
+            var posB = armBody.transform.InverseTransformPoint(anchorWorldPosition);
+            jointDef.localAnchorA = new PhysicsTransform(posA, PhysicsRotate.identity);
+            jointDef.localAnchorB = new PhysicsTransform(posB, PhysicsRotate.identity);
             return PhysicsHingeJoint.Create(anchorBody.world, jointDef);
         }
     }

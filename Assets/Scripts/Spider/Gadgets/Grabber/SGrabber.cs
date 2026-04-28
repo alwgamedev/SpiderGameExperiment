@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using Unity.U2D.Physics;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.U2D.Animation;
 
 [Serializable]
 public class SGrabber
@@ -149,12 +145,14 @@ public class SGrabber
 
     public void Enable()
     {
+        Debug.Log("enable grabber");
         arm.Enable();
         claw.Enable();
     }
 
     public void Disable(bool forgetState)
     {
+        Debug.Log("disable grabber");
         if (forgetState)
         {
             anchor.Disable();
@@ -300,6 +298,7 @@ public class SGrabber
     //return to default pose
     private void ParkPhase1()
     {
+        Debug.Log("park phase 1 (return to default pose)");
         taskInProgress = true;
         arm.BeginTargetingPose(defaultPose);
 
@@ -311,6 +310,7 @@ public class SGrabber
     //close grabber and fold up
     private void ParkPhase2()
     {
+        Debug.Log("park phase 2 (close claw)");
         taskInProgress = true;
         claw.Close();
 
@@ -321,6 +321,7 @@ public class SGrabber
 
     private void ParkPhase3()
     {
+        Debug.Log("park phase 3 (fold up)");
         taskInProgress = true;
         arm.BeginTargetingPose(foldedPose);
 
@@ -332,6 +333,7 @@ public class SGrabber
     //back into the garage
     private void ParkPhase4()
     {
+        Debug.Log("park phase 4 (return to off anchor)");
         taskInProgress = true;
         anchor.BeginTargetingOffPosition();
 
@@ -342,6 +344,7 @@ public class SGrabber
 
     private void CompletePark()
     {
+        Debug.Log("complete park");
         mouth.Close();
         HideSprites();
         Disable(true);
@@ -349,11 +352,6 @@ public class SGrabber
 
     private void TryBeginGrab()
     {
-        if (taskInProgress)
-        {
-            return;
-        }
-
         var grabCircle = new CircleGeometry()
         {
             center = arm.jointedChain.JointPosition(0),

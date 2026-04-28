@@ -197,9 +197,10 @@ public struct JointedChain
     /// <summary> Use if you want the base of the chain to be anchored to another body. 
     /// Bone array should list the joint positions and effector position, and
     /// physTransforms are expected to be centered between the bone positions.</summary>
-    public void Initialize(Transform[] physTransform, Transform[] bone, PhysicsBody anchorBody, JointedChainDefinition def, JointedChainSettings settings)
+    public void Initialize(Transform[] physTransform, Transform[] bone, PhysicsBody anchorBody, JointedChainDefinition def, JointedChainSettings settings,
+        bool alignArmRotations)
     {
-        Initialize(physTransform, bone, anchorBody.world, def, settings);
+        Initialize(physTransform, bone, anchorBody.world, def, settings, alignArmRotations);
 
         var jointDef = def.jointDef;
         if (settings.upperAngleLimit != null)
@@ -210,16 +211,31 @@ public struct JointedChain
         }
         jointDef.bodyA = anchorBody;
         jointDef.bodyB = body[0];
-        var worldAnchor = new PhysicsTransform(bone[0].position, body[0].rotation);
-        jointDef.localAnchorA = anchorBody.transform.InverseMultiplyTransform(worldAnchor);
-        jointDef.localAnchorB = body[0].transform.InverseMultiplyTransform(worldAnchor);
+        if (alignArmRotations)
+        {
+            var worldPos = bone[0].position;
+            var posA = anchorBody.transform.InverseTransformPoint(worldPos);
+            var posB = body[0].transform.InverseTransformPoint(worldPos);
+            var anchorA = new PhysicsTransform(posA, PhysicsRotate.identity);
+            var anchorB = new PhysicsTransform(posB, PhysicsRotate.identity);
+            jointDef.localAnchorA = anchorA;
+            jointDef.localAnchorB = anchorB;
+        }
+        else
+        {
+            var worldAnchor = new PhysicsTransform(bone[0].position, body[0].rotation);
+            jointDef.localAnchorA = anchorBody.transform.InverseMultiplyTransform(worldAnchor);
+            jointDef.localAnchorB = body[0].transform.InverseMultiplyTransform(worldAnchor);
+        }
+
         joint[0] = PhysicsHingeJoint.Create(anchorBody.world, jointDef);
     }
 
     /// <summary> Does not create a joint 0. 
     /// Bone array should list the joint positions and effector position, and
     /// physTransforms are expected to be centered between the bone positions.</summary>
-    public void Initialize(Transform[] physTransform, Transform[] bone, PhysicsWorld world, JointedChainDefinition def, JointedChainSettings settings)
+    public void Initialize(Transform[] physTransform, Transform[] bone, PhysicsWorld world, JointedChainDefinition def, JointedChainSettings settings,
+        bool alignArmRotations)
     {
         this.world = world;
         body = new PhysicsBody[bone.Length - 1];
@@ -254,9 +270,22 @@ public struct JointedChain
             }
             jointDefCopy.bodyA = body[i - 1];
             jointDefCopy.bodyB = body[i];
-            var worldAnchor = new PhysicsTransform(bone[i].position, body[i].rotation);
-            jointDefCopy.localAnchorA = body[i - 1].transform.InverseMultiplyTransform(worldAnchor);
-            jointDefCopy.localAnchorB = body[i].transform.InverseMultiplyTransform(worldAnchor);
+            if (alignArmRotations)
+            {
+                var worldPos = bone[i].position;
+                var posA = body[i - 1].transform.InverseTransformPoint(worldPos);
+                var posB = body[i].transform.InverseTransformPoint(worldPos);
+                var anchorA = new PhysicsTransform(posA, PhysicsRotate.identity);
+                var anchorB = new PhysicsTransform(posB, PhysicsRotate.identity);
+                jointDefCopy.localAnchorA = anchorA;
+                jointDefCopy.localAnchorB = anchorB;
+            }
+            else
+            {
+                var worldAnchor = new PhysicsTransform(bone[i].position, body[i].rotation);
+                jointDefCopy.localAnchorA = body[i - 1].transform.InverseMultiplyTransform(worldAnchor);
+                jointDefCopy.localAnchorB = body[i].transform.InverseMultiplyTransform(worldAnchor);
+            }
 
             joint[i] = PhysicsHingeJoint.Create(world, jointDefCopy);
         }

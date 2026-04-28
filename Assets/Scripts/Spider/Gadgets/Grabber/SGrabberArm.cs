@@ -61,7 +61,7 @@ public struct SGrabberArm
     public void Initialize(Transform[] physTransform, Transform[] bone, PhysicsBody anchorBody,
         JointedChainDefinition def, JointedChainSettings settings)
     {
-        jointedChain.Initialize(physTransform, bone, anchorBody, def, settings);
+        jointedChain.Initialize(physTransform, bone, anchorBody, def, settings, true);
         targetPose = new PhysicsRotate[jointedChain.JointCount];
     }
 
