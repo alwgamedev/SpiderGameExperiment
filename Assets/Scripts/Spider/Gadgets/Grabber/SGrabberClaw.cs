@@ -8,6 +8,8 @@ public struct GrabberClawDefinition
     public PhysicsHingeJointDefinition jointDef;
     public PhysicsShapeDefinition shapeDef;
     public PhysicsBodyDefinition bodyDef;
+    public Vector2[] upperWidth;
+    public Vector2[] lowerWidth;
 }
 
 [Serializable]
@@ -41,19 +43,68 @@ public struct SGrabberClaw
         off, standard, grabbingTarget, holdingTarget
     }
 
+    public static void DrawBodyGizmos(Transform[] bone, Vector2[] width)
+    {
+        if (bone != null && width != null && bone.Length == width.Length + 1)
+        {
+            Gizmos.color = Color.orange;
+            for (int i = 0; i < width.Length; i++)
+            {
+                Vector2 p0 = bone[i].position;
+                Vector2 p1 = bone[i + 1].position;
+                var n = (p1 - p0).normalized.CCWPerp();
+
+                var startN = 0.5f * width[i].x * n;
+                var endN = 0.5f * width[i].y * n;
+
+                Gizmos.DrawLine(p0 - startN, p0 + startN);
+                Gizmos.DrawLine(p0 + startN, p1 + endN);
+                Gizmos.DrawLine(p1 + endN, p1 - endN);
+                Gizmos.DrawLine(p1 - endN, p0 - startN);
+            }
+        }
+    }
+
     //geometry should be local to physics transforms
     public void Initialize(PhysicsBody anchorBody, GrabberClawDefinition def, 
-        Transform upperArmPhysTransform, Vector2 upperArmBonePosition, PolygonGeometry[] upperArmGeometry,
-        Transform lowerArmPhysTransform, Vector2 lowerArmBonePosition, PolygonGeometry[] lowerArmGeometry)
+        Transform upperArmPhysTransform, Transform[] upperArmBone,
+        Transform lowerArmPhysTransform, Transform[] lowerArmBone)
     {
+        Span<PolygonGeometry> upperArmGeometry = stackalloc PolygonGeometry[upperArmBone.Length - 1];
+        Span<PolygonGeometry> lowerArmGeometry = stackalloc PolygonGeometry[lowerArmBone.Length - 1];
+
+        CreateArmGeometry(upperArmGeometry, upperArmPhysTransform, upperArmBone, def.upperWidth);
+        CreateArmGeometry(lowerArmGeometry, lowerArmPhysTransform, lowerArmBone, def.lowerWidth);
+
         upperArm = CreateArmBody(def.bodyDef, def.shapeDef, anchorBody, upperArmPhysTransform, upperArmGeometry);
         lowerArm = CreateArmBody(def.bodyDef, def.shapeDef, anchorBody, lowerArmPhysTransform, lowerArmGeometry);
 
-        upperArmJoint = CreateArmJoint(def.jointDef, anchorBody, upperArm, upperArmBonePosition);
-        lowerArmJoint = CreateArmJoint(def.jointDef, anchorBody, lowerArm, lowerArmBonePosition);
+        upperArmJoint = CreateArmJoint(def.jointDef, anchorBody, upperArm, upperArmBone[0].position);
+        lowerArmJoint = CreateArmJoint(def.jointDef, anchorBody, lowerArm, lowerArmBone[0].position);
+
+        static void CreateArmGeometry(Span<PolygonGeometry> geometry, Transform physTransform, Transform[] bone, Vector2[] width)
+        {
+            for (int i = 0; i < geometry.Length; i++)
+            {
+                Vector2 p0 = bone[i].position;
+                Vector2 p1 = bone[i + 1].position;
+                var n = (p1 - p0).normalized.CCWPerp();
+
+                var startN = 0.5f * width[i].x * n;
+                var endN = 0.5f * width[i].y * n;
+                Span<Vector2> vertices = stackalloc Vector2[4];
+                vertices[0] = p0 - startN;
+                vertices[1] = p0 + startN;
+                vertices[2] = p1 + endN;
+                vertices[3] = p1 - endN;
+
+                var polygon = PolygonGeometry.Create(vertices);//world space
+                geometry[i] = polygon.InverseTransform(physTransform.localToWorldMatrix, false);
+            }
+        }
 
         static PhysicsBody CreateArmBody(PhysicsBodyDefinition bodyDef, PhysicsShapeDefinition shapeDef, PhysicsBody anchorBody, 
-            Transform physTransform, PolygonGeometry[] geometry)
+            Transform physTransform, Span<PolygonGeometry> geometry)
         {
             bodyDef.position = physTransform.position;
             bodyDef.rotation = new PhysicsRotate(physTransform.rotation, PhysicsWorld.TransformPlane.XY);

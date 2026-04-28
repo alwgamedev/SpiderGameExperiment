@@ -4,6 +4,8 @@ public class PolygonPhysicsShapeComponent : MonoBehaviour
 {
     public PolygonPhysicsShape pps;
 
+    [SerializeField] bool drawGizmo;
+
     enum ShapeSource
     {
         SpriteRenderer, SpriteShape, SpriteShapeMeshGenerator
@@ -11,6 +13,9 @@ public class PolygonPhysicsShapeComponent : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        pps.OnDrawGizmos(transform);
+        if (drawGizmo)
+        {
+            pps.OnDrawGizmos(transform);
+        }
     }
 }

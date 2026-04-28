@@ -2495,7 +2495,7 @@ MonoBehaviour:
             direction: {x: 1, y: 0}
         m_EnableSpring: 0
         m_SpringTargetAngle: 0
-        m_SpringFrequency: 15
+        m_SpringFrequency: 50
         m_SpringDamping: 5
         m_EnableMotor: 0
         m_MotorSpeed: 0
@@ -2552,7 +2552,7 @@ MonoBehaviour:
         m_LinearVelocity: {x: 0, y: 0}
         m_AngularVelocity: 0
         m_LinearDamping: 0.1
-        m_AngularDamping: 250
+        m_AngularDamping: 1000
         m_GravityScale: 1
         m_SleepThreshold: 0.01
         m_FastRotationAllowed: 0
@@ -2674,7 +2674,7 @@ MonoBehaviour:
         m_PreSolveCallbacks: 0
         m_StartStaticContacts: 0
         m_StartMassUpdate: 1
-        m_WorldDrawing: 0
+        m_WorldDrawing: 1
         moverData:
           m_PushLimit: 0
           m_ClipVelocity: 0
@@ -2697,6 +2697,12 @@ MonoBehaviour:
         m_Awake: 1
         m_Enabled: 1
         m_WorldDrawing: 0
+      upperWidth:
+      - {x: 0.06, y: 0.05}
+      - {x: 0.05, y: 0.04}
+      lowerWidth:
+      - {x: 0.06, y: 0.05}
+      - {x: 0.05, y: 0.04}
     claw:
       upperArmOpen: 70
       upperArmClosed: 10
@@ -2706,27 +2712,16 @@ MonoBehaviour:
       grabTolerance: -0.01
       dropTolerance: 0.5
     upperClawPhysTransform: {fileID: 684467152337032374}
-    upperClawBone: {fileID: 5710876439982367795}
-    upperClawShape:
-      drawGizmo: 0
-      shapeSource: 0
-      optimizationTolerance: 0
-      originalPolygon: []
-      optimizedPolygon: []
-      subdividedPolygon: []
-      spriteShapeArcLengthSamplesPerSegment: 0
-      spriteShapeSamplesPerUnitArcLength: 0
+    upperClawBone:
+    - {fileID: 5710876439982367795}
+    - {fileID: 6206659856000338823}
+    - {fileID: 4809372640813283838}
     lowerClawPhysTransform: {fileID: 8919333367664512067}
-    lowerClawBone: {fileID: 7533410502555530917}
-    lowerClawShape:
-      drawGizmo: 0
-      shapeSource: 0
-      optimizationTolerance: 0
-      originalPolygon: []
-      optimizedPolygon: []
-      subdividedPolygon: []
-      spriteShapeArcLengthSamplesPerSegment: 0
-      spriteShapeSamplesPerUnitArcLength: 0
+    lowerClawBone:
+    - {fileID: 7533410502555530917}
+    - {fileID: 4198939658114458145}
+    - {fileID: 1010410438584294727}
+    drawClawShapeGizmos: 1
     anchor:
       moveSpeed: 2
     depositDoor:
@@ -2762,7 +2757,8 @@ MonoBehaviour:
     - {fileID: 4944418093456694075}
     depositTarget: {fileID: 2619272820850071255}
     offAnchor: {fileID: 4816503237226909710}
-    deployedAnchorPosition: {fileID: 1391080338648683509}
+    deployedAnchor: {fileID: 1391080338648683509}
+    drawAnchorGizmos: 0
     grabFilter:
       m_Categories:
         bitMask: 8
@@ -6027,6 +6023,37 @@ MonoBehaviour:
   colorControl: {fileID: 259569805516380374}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
   colorMultiplier: {r: 0.94884944, g: 0.94884944, b: 0.94884944, a: 1}
+--- !u!1 &3353093874544987420
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4809372640813283838}
+  m_Layer: 2
+  m_Name: grabber arm upper endpt
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4809372640813283838
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3353093874544987420}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.39, y: 0.03, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6206659856000338823}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3404750413640200160
 GameObject:
   m_ObjectHideFlags: 0
@@ -6051,13 +6078,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3404750413640200160}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.3007058, w: 0.953717}
+  m_LocalRotation: {x: 0, y: 0, z: 0.32556805, w: 0.9455186}
   m_LocalPosition: {x: 1.3756411, y: 0, z: 0}
   m_LocalScale: {x: 1.5000001, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1010410438584294727}
   m_Father: {fileID: 7533410502555530917}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 35}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 38}
 --- !u!1 &3450705032942096707
 GameObject:
   m_ObjectHideFlags: 0
@@ -9585,13 +9613,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5346415228596760023}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0.30070588, w: 0.953717}
+  m_LocalRotation: {x: 0, y: 0, z: -0.32556805, w: 0.9455186}
   m_LocalPosition: {x: 1.463957, y: -0.007014084, z: 0}
   m_LocalScale: {x: 1.4999999, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 4809372640813283838}
   m_Father: {fileID: 5710876439982367795}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -35}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -38}
 --- !u!1 &5358879463755862813
 GameObject:
   m_ObjectHideFlags: 0
@@ -11529,6 +11558,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3298395373904368218}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7125316501331818230
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1010410438584294727}
+  m_Layer: 2
+  m_Name: grabber arm lower endpt
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1010410438584294727
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7125316501331818230}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: 0.000000029802315, w: 1}
+  m_LocalPosition: {x: 1.35, y: 0.01, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4198939658114458145}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 35}
 --- !u!1 &7153344998190150845
 GameObject:
   m_ObjectHideFlags: 0

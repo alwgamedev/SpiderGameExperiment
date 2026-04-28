@@ -17,14 +17,25 @@ public struct SGrabberAnchor
         none, offPos, deployedPos
     }
 
+    public void OnDrawGizmos()
+    {
+        if (joint.isValid)
+        {
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawSphere(joint.bodyA.transform.TransformPoint(joint.localAnchorA.position), 0.1f);
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawSphere(joint.bodyB.transform.TransformPoint(joint.localAnchorB.position), 0.1f);
+        }
+    }
+
     public void Initialize(PhysicsHingeJoint joint, Vector2 offWorldPosition, Vector2 deployedWorldPosition)
     {
         this.joint = joint;
         offPosition = joint.bodyA.transform.InverseTransformPoint(offWorldPosition);
         deployedPosition = joint.bodyA.transform.InverseTransformPoint(deployedWorldPosition);
-        var anchor = joint.localAnchorA;
-        anchor.position = offPosition;
-        joint.localAnchorA = anchor;
+        var anchorA = joint.localAnchorA;
+        anchorA.position = offPosition;
+        joint.localAnchorA = anchorA;
     }
 
     public void Disable()

@@ -14,7 +14,7 @@ public class PolygonPhysicsShapeEditor : Editor
             foreach (var t in targets)
             {
                 var comp = (PolygonPhysicsShapeComponent)t;
-                comp.pps.GetShape(comp.gameObject);
+                comp.pps.GetShape(comp, comp.gameObject);
             }
         }
 

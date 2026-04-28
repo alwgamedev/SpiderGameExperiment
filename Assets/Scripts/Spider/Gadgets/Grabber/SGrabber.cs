@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Unity.U2D.Physics;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.U2D.Animation;
 
 [Serializable]
 public class SGrabber
@@ -23,11 +27,12 @@ public class SGrabber
     [SerializeField] GrabberClawDefinition clawDef;
     [SerializeField] SGrabberClaw claw;
     [SerializeField] Transform upperClawPhysTransform;
-    [SerializeField] Transform upperClawBone;
-    [SerializeField] PolygonPhysicsShape upperClawShape;
+    [SerializeField] Transform[] upperClawBone;
     [SerializeField] Transform lowerClawPhysTransform;
-    [SerializeField] Transform lowerClawBone;
-    [SerializeField] PolygonPhysicsShape lowerClawShape;
+    [SerializeField] Transform[] lowerClawBone;
+#if UNITY_EDITOR
+    [SerializeField] bool drawClawShapeGizmos;
+#endif
 
     [Header("Auxiliary Parts")]
     [SerializeField] SGrabberAnchor anchor;
@@ -36,7 +41,10 @@ public class SGrabber
     [SerializeField] SpriteRenderer[] sprite;
     [SerializeField] Transform depositTarget;
     [SerializeField] Transform offAnchor;
-    [SerializeField] Transform deployedAnchorPosition;
+    [SerializeField] Transform deployedAnchor;
+#if UNITY_EDITOR
+    [SerializeField] bool drawAnchorGizmos;
+#endif
 
     [Header("Grab")]
     [SerializeField] PhysicsQuery.QueryFilter grabFilter;
@@ -77,6 +85,17 @@ public class SGrabber
     public void OnDrawGizmos()
     {
         arm.OnDrawGizmos(armNodes, armDef.width, armSettings, drawBodyGizmos, drawAngleLimitGizmos, reversed);
+
+        if (drawClawShapeGizmos)
+        {
+            SGrabberClaw.DrawBodyGizmos(upperClawBone, clawDef.upperWidth);
+            SGrabberClaw.DrawBodyGizmos(lowerClawBone, clawDef.lowerWidth);
+        }
+
+        if (drawAnchorGizmos)
+        {
+            anchor.OnDrawGizmos();
+        }
     }
 
     public void CenterArmTransforms()
@@ -97,10 +116,11 @@ public class SGrabber
         depositTargetPosition = depositTargetBody.transform.InverseTransformPoint(depositTarget.position);
 
         arm.Initialize(armPhysTransforms, armNodes, anchorBody, armDef, armSettings);
-        anchor.Initialize(arm.jointedChain.joint[0], offAnchor.position, depositTarget.position);
+        anchor.Initialize(arm.jointedChain.joint[0], offAnchor.position, deployedAnchor.position);
+
         claw.Initialize(arm.jointedChain.body[^1], clawDef,
-            upperClawPhysTransform, upperClawBone.position, upperClawShape.subdividedPolygon,
-            lowerClawPhysTransform, lowerClawBone.position, lowerClawShape.subdividedPolygon);
+            upperClawPhysTransform, upperClawBone,
+            lowerClawPhysTransform, lowerClawBone);
 
         depositDoor.SnapClosed();
         mouth.SnapClosed();
@@ -205,14 +225,17 @@ public class SGrabber
 
         if (anchor.Update(dt))
         {
+            Debug.Log("anchor reached target");
             onAnchorTargetReached?.Invoke();
         }
         if (arm.Update(reversed))
         {
+            Debug.Log("arm reached target");
             onArmTargetReached?.Invoke();
         }
         if (claw.Update())
         {
+            Debug.Log("claw reached target");
             onClawTargetReached?.Invoke();
         }
     }
@@ -244,6 +267,8 @@ public class SGrabber
         onAnchorTargetReached = GoIdle;
         onClawTargetReached = null;
         //let's set all 3 every time we start a new action (so we don't have any old unneeded callbacks coming in when they shouldn't)
+
+        Debug.Log("grabber deploying");
     }
 
     //move to default pose
@@ -257,6 +282,8 @@ public class SGrabber
         onArmTargetReached = CompleteGoIdle;
         onAnchorTargetReached = null;
         onClawTargetReached = null;
+
+        Debug.Log("going idle");
     }
 
     private void CompleteGoIdle()
@@ -267,6 +294,7 @@ public class SGrabber
         onArmTargetReached = null;
         onAnchorTargetReached = null;
         onClawTargetReached = null;
+        Debug.Log("idle position reached");
     }
 
     //return to default pose

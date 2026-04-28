@@ -1924,7 +1924,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PolygonPhysicsShape
   pps:
-    drawGizmo: 0
     shapeSource: 2
     optimizationTolerance: 0.05
     originalPolygon:
@@ -2735,6 +2734,7 @@ MonoBehaviour:
       m_Count: 5
     spriteShapeArcLengthSamplesPerSegment: 25
     spriteShapeSamplesPerUnitArcLength: 12
+  drawGizmo: 0
 --- !u!60 &257951416
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -3634,7 +3634,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PolygonPhysicsShape
   pps:
-    drawGizmo: 0
     shapeSource: 2
     optimizationTolerance: 0.05
     originalPolygon:
@@ -3905,6 +3904,7 @@ MonoBehaviour:
       m_Count: 8
     spriteShapeArcLengthSamplesPerSegment: 25
     spriteShapeSamplesPerUnitArcLength: 12
+  drawGizmo: 0
 --- !u!114 &428938812
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6224,7 +6224,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PolygonPhysicsShape
   pps:
-    drawGizmo: 0
     shapeSource: 0
     optimizationTolerance: 0.025
     originalPolygon:
@@ -11764,6 +11763,7 @@ MonoBehaviour:
       m_Count: 8
     spriteShapeArcLengthSamplesPerSegment: 25
     spriteShapeSamplesPerUnitArcLength: 12
+  drawGizmo: 0
 --- !u!4 &1060888955 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7095442034761804592, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
@@ -15825,7 +15825,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PolygonPhysicsShape
   pps:
-    drawGizmo: 0
     shapeSource: 2
     optimizationTolerance: 0.05
     originalPolygon:
@@ -16289,6 +16288,7 @@ MonoBehaviour:
       m_Count: 8
     spriteShapeArcLengthSamplesPerSegment: 25
     spriteShapeSamplesPerUnitArcLength: 12
+  drawGizmo: 0
 --- !u!114 &1961836324
 MonoBehaviour:
   m_ObjectHideFlags: 0

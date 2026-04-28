@@ -2,6 +2,7 @@
 using Unity.U2D.Physics;
 using UnityEditor;
 using UnityEngine;
+using System;
 
 public static class PhysicsCoreHelper
 {
@@ -116,16 +117,17 @@ public static class PhysicsCoreHelper
     }
 
     public static PhysicsBody CreatePolygonBody(PhysicsWorld world, PhysicsBodyDefinition bodyDef, PhysicsShapeDefinition shapeDef,
-        Matrix4x4 shapeInputSpace, PolygonGeometry[] subdividedPolygon)
+        Matrix4x4 shapeInputSpace, Span<PolygonGeometry> subdividedPolygon)
     {
         var body = world.CreateBody(bodyDef);
+        Span<PolygonGeometry> transformedPolygon = stackalloc PolygonGeometry[subdividedPolygon.Length];
 
         for (int i = 0; i < subdividedPolygon.Length; i++)
         {
-            subdividedPolygon[i] = subdividedPolygon[i].Transform(shapeInputSpace, true).InverseTransform(body.transform);
+            transformedPolygon[i] = subdividedPolygon[i].Transform(shapeInputSpace, true).InverseTransform(body.transform);
         }
 
-        body.CreateShapeBatch(subdividedPolygon, shapeDef);
+        body.CreateShapeBatch(transformedPolygon, shapeDef);
 
         return body;
     }
