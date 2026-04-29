@@ -158,27 +158,31 @@ public struct JointedChain
         Undo.CollapseUndoOperations(groupId);
     }
 
-    public void UpdateDefAndSettings(JointedChainDefinition def, JointedChainSettings settings)
+    public void UpdateDefAndSettings(JointedChainDefinition def, JointedChainSettings settings, 
+        bool keepEnableSpring, bool keepSpringTargetAngle)
     {
-        for (int i = 0; i < body.Length; i++)
+        if (body != null)
         {
-            if (body[i].isValid)
+            for (int i = 0; i < body.Length; i++)
             {
-                body[i].SetBodyDefLive(def.bodyDef);
-                body[i].SetShapeDef(def.shapeDef);
+                if (body[i].isValid)
+                {
+                    body[i].SetBodyDefLive(def.bodyDef);
+                    body[i].SetShapeDef(def.shapeDef);
+                }
+
+                if (joint[i].isValid)
+                {
+                    var jointDef = def.jointDef;
+                    jointDef.enableLimit = settings.enableLimit[i];
+                    jointDef.lowerAngleLimit = settings.lowerAngleLimit[i];
+                    jointDef.upperAngleLimit = settings.upperAngleLimit[i];
+                    joint[i].UpdateSettings(jointDef, keepEnableSpring, keepSpringTargetAngle);
+                }
             }
 
-            if (joint[i].isValid)
-            {
-                var jointDef = def.jointDef;
-                jointDef.enableLimit = settings.enableLimit[i];
-                jointDef.lowerAngleLimit = settings.lowerAngleLimit[i];
-                jointDef.upperAngleLimit = settings.upperAngleLimit[i];
-                joint[i].UpdateSettings(jointDef);
-            }
+            RecomputeMass();
         }
-
-        RecomputeMass();
     }
 
     public readonly void UpdateSettings(JointedChainSettings settings)
@@ -348,11 +352,25 @@ public struct JointedChain
         }
     }
 
+    public readonly void FlipAngleLimits()
+    {
+        if (joint != null)
+        {
+            for (int i = 0; i < JointCount; i++)
+            {
+                FlipAngleLimits(i);
+            }
+        }
+    }
+
     public readonly void FlipAngleLimits(int i)
     {
-        var temp = joint[i].upperAngleLimit;
-        joint[i].upperAngleLimit = -joint[i].lowerAngleLimit;
-        joint[i].lowerAngleLimit = -temp;
+        if (joint[i].isValid)
+        {
+            var temp = joint[i].upperAngleLimit;
+            joint[i].upperAngleLimit = -joint[i].lowerAngleLimit;
+            joint[i].lowerAngleLimit = -temp;
+        }
     }
 
     private void RecomputeMass()

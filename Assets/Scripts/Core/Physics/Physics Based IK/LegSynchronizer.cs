@@ -113,13 +113,10 @@ public class LegSynchronizer
         {
             for (int i = 0; i < leg.Length; i++)
             {
-                if (leg[i].body != null)
+                leg[i].UpdateDefAndSettings(chainDef, chainSettings[i], false, false);
+                if (reversed)
                 {
-                    leg[i].UpdateDefAndSettings(chainDef, chainSettings[i]);
-                    if (reversed)
-                    {
-                        FlipAngleLimits(i);
-                    }
+                    FlipAngleLimits(i);
                 }
             }
 
@@ -471,10 +468,7 @@ public class LegSynchronizer
 
     private void FlipAngleLimits(int i)
     {
-        for (int j = 0; j < leg[i].JointCount; j++)
-        {
-            leg[i].FlipAngleLimits(j);
-        }
+        leg[i].FlipAngleLimits();
     }
 
     private static void AccelerateLegWithDamping(ref JointedChain l, float2 accel, float2 dirX, float2 dirY, float damping, bool reversed)

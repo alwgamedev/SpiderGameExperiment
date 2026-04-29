@@ -63,19 +63,15 @@ public class SGrabber
     Action onClawTargetReached;
 
     //2do:
-    //0) integrate into main spider script - DONE (?)
-    //0.5f) initialize methods for this and all components - DONE (?)
-    //0.75f) script extras:
-        //editor scripts?
-        //+validate and gizmo methods
-    //1) set up and test
-    //2) get direction change working (and components will need to know if reversed)
-    //3) add a mask or masks to mask the sprites as they're retreating into body (only activate once arm has made it back to folded position, so they never block while arm is out)
+    //1) direction change - will need to reverse spring target angles probably?
+    //2) test grabbing & depositing - play with deposit pose and deposit target position
+    //3) sprite mask to hide arm when parking (mask only active during anchor moving stage of deployment/parking so they never block while arm is out) 
 
 #if UNITY_EDITOR
     public void OnValidate()
     {
-
+        arm.OnValidate(armDef, armSettings, reversed);
+        claw.OnValidate(clawDef);
     }
 
     public void OnDrawGizmos()
@@ -113,7 +109,6 @@ public class SGrabber
 
         arm.Initialize(armPhysTransforms, armNodes, anchorBody, armDef, armSettings);
         anchor.Initialize(arm.jointedChain.joint[0], offAnchor.position, deployedAnchor.position);
-
         claw.Initialize(arm.jointedChain.body[^1], clawDef,
             upperClawPhysTransform, upperClawBone,
             lowerClawPhysTransform, lowerClawBone);

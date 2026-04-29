@@ -65,6 +65,29 @@ public struct SGrabberClaw
         }
     }
 
+    public void OnValidate(GrabberClawDefinition def)
+    {
+        if (upperArm.isValid)
+        {
+            upperArm.SetBodyDefLive(def.bodyDef);
+            upperArm.SetShapeDef(def.shapeDef);
+        }
+        if (upperArmJoint.isValid)
+        {
+            upperArmJoint.UpdateSettings(def.jointDef, true, true);
+        }
+
+        if (lowerArm.isValid)
+        {
+            lowerArm.SetBodyDefLive(def.bodyDef);
+            lowerArm.SetShapeDef(def.shapeDef);
+        }
+        if (lowerArmJoint.isValid)
+        {
+            lowerArmJoint.UpdateSettings(def.jointDef, true, true);
+        }
+    }
+
     //geometry should be local to physics transforms
     public void Initialize(PhysicsBody anchorBody, GrabberClawDefinition def, 
         Transform upperArmPhysTransform, Transform[] upperArmBone,

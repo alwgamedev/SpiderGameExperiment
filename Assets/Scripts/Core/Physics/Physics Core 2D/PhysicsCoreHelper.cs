@@ -233,10 +233,17 @@ public static class PhysicsCoreHelper
         joint.collideConnected = def.collideConnected;
     }
 
-    public static void UpdateSettings(this PhysicsHingeJoint joint, PhysicsHingeJointDefinition def)
+    public static void UpdateSettings(this PhysicsHingeJoint joint, PhysicsHingeJointDefinition def, 
+        bool keepEnableSpring, bool keepSpringTargetAngle)
     {
-        joint.enableSpring = def.enableSpring;
-        joint.springTargetAngle = def.springTargetAngle;
+        if (!keepEnableSpring)
+        {
+            joint.enableSpring = def.enableSpring;
+        }
+        if (!keepSpringTargetAngle)
+        {
+            joint.springTargetAngle = def.springTargetAngle;
+        }
         joint.springFrequency = def.springFrequency;
         joint.springDamping = def.springDamping;
 

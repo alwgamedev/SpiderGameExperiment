@@ -12,8 +12,6 @@ public class Spider : MonoBehaviour
     public GrappleShootPreview grappleShootPreview;
     public JumpPreviewArrow jumpPreviewArrow;
 
-    //public Health Health => health;
-    //public SpiderMover Mover => mover;
     public Collider2D TriggerCollider { get; private set; }//was for fluid interaction; need to update fluid to new physics system
 
     public static Spider Player { get; private set; }

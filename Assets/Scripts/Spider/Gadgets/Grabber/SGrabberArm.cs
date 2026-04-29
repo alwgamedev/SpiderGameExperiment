@@ -26,9 +26,14 @@ public struct SGrabberArm
         off, idle, trackBody, trackPose
     }
 
-    public void OnValidate()
+    public void OnValidate(JointedChainDefinition def, JointedChainSettings settings, bool reversed)
     {
-        //update settings
+        jointedChain.UpdateDefAndSettings(def, settings, true, true);
+
+        if (reversed)
+        {
+            jointedChain.FlipAngleLimits();
+        }
     }
 
     public readonly void OnDrawGizmos(Transform[] bone, float[] width, JointedChainSettings settings,

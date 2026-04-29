@@ -2309,8 +2309,8 @@ MonoBehaviour:
             direction: {x: 1, y: 0}
         m_EnableSpring: 0
         m_SpringTargetAngle: 0
-        m_SpringFrequency: 80
-        m_SpringDamping: 40
+        m_SpringFrequency: 65
+        m_SpringDamping: 30
         m_EnableMotor: 0
         m_MotorSpeed: 0
         m_MaxMotorTorque: 0
@@ -2352,7 +2352,7 @@ MonoBehaviour:
         m_PreSolveCallbacks: 0
         m_StartStaticContacts: 0
         m_StartMassUpdate: 1
-        m_WorldDrawing: 1
+        m_WorldDrawing: 0
         moverData:
           m_PushLimit: 0
           m_ClipVelocity: 0
@@ -2366,7 +2366,7 @@ MonoBehaviour:
         m_LinearVelocity: {x: 0, y: 0}
         m_AngularVelocity: 0
         m_LinearDamping: 0.25
-        m_AngularDamping: 50
+        m_AngularDamping: 0.25
         m_GravityScale: 1
         m_SleepThreshold: 0.01
         m_FastRotationAllowed: 0
@@ -2422,9 +2422,9 @@ MonoBehaviour:
     defaultPose:
     - 0
     - 105
-    - -90
+    - -60
+    - -75
     - -45
-    - -30
     depositPose:
     - 30
     - 30
@@ -2488,7 +2488,7 @@ MonoBehaviour:
         m_PreSolveCallbacks: 0
         m_StartStaticContacts: 0
         m_StartMassUpdate: 1
-        m_WorldDrawing: 1
+        m_WorldDrawing: 0
         moverData:
           m_PushLimit: 0
           m_ClipVelocity: 0

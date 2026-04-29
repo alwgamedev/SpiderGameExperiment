@@ -79,13 +79,13 @@ public struct SDoubleDoor
         }
     }
 
-    private void SnapToGoal(Quaternion goal1, Quaternion goal2)
+    private readonly void SnapToGoal(Quaternion goal1, Quaternion goal2)
     {
         door1.localRotation = goal1;
         door2.localRotation = goal2;
     }
 
-    private bool RotateTowardsGoal(Quaternion goal1, Quaternion goal2, float lerpAmount)
+    private readonly bool RotateTowardsGoal(Quaternion goal1, Quaternion goal2, float lerpAmount)
     {
         //q & -q represent the same rotation, so take abs of the dot
         var min = Mathf.Min(Mathf.Abs(Quaternion.Dot(door1.localRotation, goal1)), Mathf.Abs(Quaternion.Dot(door2.localRotation, goal2)));
