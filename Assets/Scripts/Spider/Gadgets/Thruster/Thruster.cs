@@ -31,7 +31,7 @@ public class Thruster
         rechargePerUpdate = (1 / secondsToRecharge) * Time.fixedDeltaTime;
     }
 
-    public ThrustersUpdateResult FixedUpdate(ref PhysicsBody pb)
+    public ThrustersUpdateResult FixedUpdate(PhysicsBody pb)
     {
         if (Engaged)
         {

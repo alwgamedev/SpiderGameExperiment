@@ -5,7 +5,8 @@ using UnityEngine;
 [Serializable]
 public struct SGrabberArm
 {
-    const float TARGETING_TOLERANCE_SQUARED = MathTools.o41;//for a targeting tolerance of 0.01
+    const float TARGETING_TOLERANCE = 0.01f;
+    const float TARGETING_TOLERANCE_SQUARED = TARGETING_TOLERANCE * TARGETING_TOLERANCE;//for a targeting tolerance of 0.01
 
     public JointedChain jointedChain;
 
@@ -23,7 +24,7 @@ public struct SGrabberArm
 
     enum Mode
     {
-        off, idle, trackBody, trackPose
+        off, idle, trackBody, trackPositionOnBody, trackPose
     }
 
     public void OnValidate(JointedChainDefinition def, JointedChainSettings settings, bool reversed)
@@ -94,7 +95,8 @@ public struct SGrabberArm
     {
         return mode switch
         {
-            Mode.trackBody => TrackBodyBehavior(reversed),
+            Mode.trackBody => TrackBodyBehavior(false, reversed),
+            Mode.trackPositionOnBody => TrackBodyBehavior(true, reversed),
             Mode.trackPose => TrackPoseBehavior(reversed),
             _ => false
         };
@@ -121,6 +123,14 @@ public struct SGrabberArm
         }
     }
 
+    public readonly void SetSpringTargetsToZero()
+    {
+        for (int i = 0; i < jointedChain.JointCount; i++)
+        {
+            jointedChain.joint[i].springTargetAngle = 0;
+        }
+    }
+
     public readonly void SnapToPose(float[] poseAngle)
     {
         for (int i = 0; i < jointedChain.JointCount; i++)
@@ -132,11 +142,18 @@ public struct SGrabberArm
         }
     }
 
-    public void BeginTargetingBody(PhysicsBody body, Vector2 bodyPos)
+    public void BeginTargetingBody(PhysicsBody body)
     {
         targetBody = body;
-        targetPosition = bodyPos;
         mode = Mode.trackBody;
+        targetReached = false;
+    }
+
+    public void BeginTargetingPositionOnBody(PhysicsBody body, Vector2 bodyLocalPos)
+    {
+        targetBody = body;
+        targetPosition = bodyLocalPos;
+        mode = Mode.trackPositionOnBody;
         targetReached = false;
     }
 
@@ -153,7 +170,7 @@ public struct SGrabberArm
         targetReached = false;
     }
 
-    private bool TrackBodyBehavior(bool reversed)
+    private bool TrackBodyBehavior(bool trackLocalPos, bool reversed)
     {
         if (!targetBody.isValid)
         {
@@ -166,8 +183,44 @@ public struct SGrabberArm
             return false;
         }
 
-        var targetPos = targetBody.transform.TransformPoint(targetPosition);
-        var err = targetPos - EffectorPosition(reversed);
+        var effectorPos = EffectorPosition(reversed);
+        Vector2 err;
+        if (trackLocalPos)
+        {
+            var targetPos = targetBody.transform.TransformPoint(targetPosition);
+            err = targetPos - effectorPos;
+            Debug.DrawLine(effectorPos, targetPos, Color.red);
+        }
+        else
+        {
+            var targetShapes = targetBody.GetShapes();
+            var minDist2 = Mathf.Infinity;
+            err = Vector2.zero;
+            
+            for (int i = 0; i < targetShapes.Length; i++)
+            {
+                var p = targetShapes[i].ClosestPoint(effectorPos);
+                var d = p - effectorPos;
+                var dist2 = Vector2.SqrMagnitude(d);
+                if (dist2 < minDist2)
+                {
+                    minDist2 = dist2;
+                    err = d;
+                    if (minDist2 < TARGETING_TOLERANCE_SQUARED)
+                    {
+                        break;
+                    }
+                }
+            }
+            
+            Debug.DrawLine(effectorPos, effectorPos + err, Color.red);
+        }
+
+        return TrackBodyInternal(effectorPos, err, reversed);
+    }
+
+    private bool TrackBodyInternal(Vector2 effectorPos, Vector2 err, bool reversed)
+    {
         var err2 = err.sqrMagnitude;
 
         if (err2 < TARGETING_TOLERANCE_SQUARED)
@@ -186,14 +239,30 @@ public struct SGrabberArm
             err = targetErrorCap / Mathf.Sqrt(err2) * err;
         }
 
-        ref var arm = ref jointedChain;
+        var u = err.normalized;
         var a = targetingAccel * err;
-        for (int i = 0; i < jointedChain.body.Length; i++)
-        {
-            arm.body[i].ApplyForce(arm.body[i].mass * a, jointedChain.NextPosition(i, reversed));
-        }
+        var last = jointedChain.JointCount - 1;
+        jointedChain.body[last].ApplyForce(jointedChain.body[last].mass * a, effectorPos);
+
+        //AccelerateWithDamping(jointedChain.body[last], effectorPos, a, u, trackDamping);
+        //for (int i = 0; i < last; i++)
+        //{
+        //    AccelerateWithDamping(jointedChain.body[i], jointedChain.NextPosition(i, reversed), a, u, trackDamping);
+        //}
+        //arm.body[last].ApplyForce(arm.body[last].mass * a, effectorPos);
+        //for (int i = 0; i < last; i++)
+        //{
+        //    arm.body[i].ApplyForce(arm.body[i].mass * a, jointedChain.NextPosition(i, reversed));
+        //}
 
         return false;
+
+        //static void AccelerateWithDamping(PhysicsBody body, Vector2 worldPos, Vector2 accel, Vector2 accelDirection, float damping)
+        //{
+        //    var v = Vector2.Dot(body.GetWorldPointVelocity(worldPos), accelDirection);
+        //    accel -= damping * Mathf.Sign(v) * v * accelDirection;
+        //    body.ApplyForce(body.mass * accel, worldPos);
+        //}
     }
 
     private bool TrackPoseBehavior(bool reversed)

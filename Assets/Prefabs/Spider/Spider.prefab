@@ -1745,7 +1745,7 @@ MonoBehaviour:
               direction: {x: 1, y: 0}
           m_EnableSpring: 1
           m_SpringTargetAngle: 0
-          m_SpringFrequency: 2.5
+          m_SpringFrequency: 5
           m_SpringDamping: 5
           m_EnableMotor: 0
           m_MotorSpeed: 0
@@ -2329,7 +2329,7 @@ MonoBehaviour:
           m_Categories:
             bitMask: 8
           m_Contacts:
-            bitMask: 64
+            bitMask: 65
           m_GroupIndex: 0
         surfaceMaterial:
           m_Friction: 0
@@ -2366,8 +2366,8 @@ MonoBehaviour:
         m_LinearVelocity: {x: 0, y: 0}
         m_AngularVelocity: 0
         m_LinearDamping: 0.25
-        m_AngularDamping: 0.25
-        m_GravityScale: 1
+        m_AngularDamping: 100
+        m_GravityScale: 0.1
         m_SleepThreshold: 0.01
         m_FastRotationAllowed: 0
         m_FastCollisionsAllowed: 0
@@ -2396,10 +2396,10 @@ MonoBehaviour:
       - 90
       enableLimit: 0100000000
     arm:
-      targetingAccel: 100
+      targetingAccel: 150
       targetErrorCap: 1
       poseRotationTolerance: 0.1
-      effectorDistance: 0.08
+      effectorDistance: 0.15
     armPhysTransforms:
     - {fileID: 8365497005758598332}
     - {fileID: 694910629859144908}
@@ -2445,7 +2445,7 @@ MonoBehaviour:
             direction: {x: 1, y: 0}
         m_EnableSpring: 1
         m_SpringTargetAngle: 0
-        m_SpringFrequency: 80
+        m_SpringFrequency: 50
         m_SpringDamping: 40
         m_EnableMotor: 0
         m_MotorSpeed: 0
@@ -2465,10 +2465,10 @@ MonoBehaviour:
           m_Categories:
             bitMask: 8
           m_Contacts:
-            bitMask: 64
+            bitMask: 65
           m_GroupIndex: 0
         surfaceMaterial:
-          m_Friction: 0
+          m_Friction: 1
           m_Bounciness: 0
           m_FrictionMixing: 0
           m_BouncinessMixing: 0
@@ -2479,7 +2479,7 @@ MonoBehaviour:
           m_CustomColor:
             serializedVersion: 2
             rgba: 0
-        m_Density: 0.05
+        m_Density: 0.1
         m_IsTrigger: 0
         m_TriggerEvents: 0
         m_ContactEvents: 0
@@ -2503,7 +2503,7 @@ MonoBehaviour:
         m_AngularVelocity: 0
         m_LinearDamping: 0.25
         m_AngularDamping: 50
-        m_GravityScale: 1
+        m_GravityScale: 0
         m_SleepThreshold: 0.01
         m_FastRotationAllowed: 0
         m_FastCollisionsAllowed: 0
@@ -2519,11 +2519,11 @@ MonoBehaviour:
       - {x: 0.05, y: 0.04}
     claw:
       upperArmOpen: 70
-      upperArmClosed: 15
+      upperArmClosed: 10
       lowerArmOpen: -70
-      lowerArmClosed: -15
+      lowerArmClosed: -10
       rotationTolerance: 0.05
-      grabTolerance: -0.01
+      grabTolerance: 0.01
       dropTolerance: 0.5
     upperClawPhysTransform: {fileID: 684467152337032374}
     upperClawBone:

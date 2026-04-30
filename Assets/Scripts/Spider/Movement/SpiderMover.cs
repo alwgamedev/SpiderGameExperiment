@@ -134,7 +134,7 @@ public class SpiderMover
     public Thruster Thruster => thruster;
     public GrappleCannon Grapple => grapple;
     public ref SpiderBody SpideyBody => ref spiderBody;
-    public ref PhysicsBody Abdomen => ref SpideyBody.abdomen;
+    public PhysicsBody Abdomen => SpideyBody.abdomen;
 
     //mainly to hook up audio (later maybe also ui stuff)
     public UnityEvent jumpChargeBegan;
@@ -318,7 +318,7 @@ public class SpiderMover
     //do before you handle any move input
     private void UpdateThruster()
     {
-        switch (thruster.FixedUpdate(ref Abdomen))
+        switch (thruster.FixedUpdate(Abdomen))
         {
             case Thruster.ThrustersUpdateResult.ChargeRanOut:
                 OnThrusterRanOutOfCharge();

@@ -43,6 +43,11 @@ public struct SGrabberClaw
         off, standard, grabbingTarget, holdingTarget
     }
 
+    public enum TaskResult
+    {
+        none, complete, failed
+    }
+
     public static void DrawBodyGizmos(Transform[] bone, Vector2[] width)
     {
         if (bone != null && width != null && bone.Length == width.Length + 1)
@@ -253,6 +258,7 @@ public struct SGrabberClaw
     public void BeginGrab(PhysicsBody grabTarget)
     {
         this.grabTarget = grabTarget;
+        SetSpringTarget(upperArmClosed, lowerArmClosed);
         mode = Mode.grabbingTarget;
         targetReached = false;
     }
@@ -260,54 +266,57 @@ public struct SGrabberClaw
     public void BeginHold(PhysicsBody grabTarget)
     {
         this.grabTarget = grabTarget;
+        SetSpringTarget(upperArmClosed, lowerArmClosed);
         mode = Mode.holdingTarget;
         targetReached = false;
     }
 
-    public bool Update()
+    public TaskResult Update()
     {
         return mode switch
         {
             Mode.standard => StandardBehavior(),
             Mode.grabbingTarget => GrabBehavior(),
             Mode.holdingTarget => HoldBehavior(),
-            _ => false
+            _ => TaskResult.none
         };
     }
 
     //check whether spring target has been reached
-    private bool StandardBehavior()
+    private TaskResult StandardBehavior()
     {
         if (targetReached)
         {
-            return false;
+            return TaskResult.none;
         }
-
-        //we should also check angular speed is low to make sure joint is actually settling at target angle,
-        //but joints/springs will be heavily damped so they won't really be flying past their target
 
         var err1 = upperTarget.InverseMultiplyRotation(upperArmJoint.bodyA.rotation.InverseMultiplyRotation(upperArm.rotation)).direction;
         if (err1.x < 0 || Mathf.Abs(err1.y) > rotationTolerance)
         {
-            return false;
+            return TaskResult.none;
         }
 
         var err2 = lowerTarget.InverseMultiplyRotation(lowerArmJoint.bodyA.rotation.InverseMultiplyRotation(lowerArm.rotation)).direction;
         if (err2.x < 0 || Mathf.Abs(err2.y) > rotationTolerance)
         {
-            return false;
+            return TaskResult.none;
         }
 
         targetReached = true;
-        return true;
+        return TaskResult.complete;
 
     }
 
-    private bool GrabBehavior()
+    private TaskResult GrabBehavior()
     {
         if (targetReached)
         {
-            return false;
+            return TaskResult.none;
+        }
+
+        if (StandardBehavior() == TaskResult.complete)
+        {
+            return TaskResult.failed;//if claw closes fully, then complete task (just so it always completes eventually -- you may want to have a different return result)
         }
 
         if (grabTarget.isValid)
@@ -315,45 +324,45 @@ public struct SGrabberClaw
             if (MaxDistance(grabTarget) < grabTolerance)
             {
                 targetReached = true;
-                return true;
+                return TaskResult.complete;
             }
             else
             {
-                return false;
+                return TaskResult.none;
             }
         }
         else
         {
             targetReached = true;
-            return true;
+            return TaskResult.failed;
         }
     }
 
     //will tighten grip whenever distance from grab arms to target is > grabThreshold
     //and will invoke "TargetReached" if target is DROPPED
-    private bool HoldBehavior()
+    private TaskResult HoldBehavior()
     {
         if (targetReached)
         {
-            return false;
+            return TaskResult.none;
         }
 
         if (grabTarget.isValid)
         {
-            if (MaxDistance(grabTarget) > dropTolerance)
+            if (MaxDistance(grabTarget) > dropTolerance)//target dropped
             {
                 targetReached = true;
-                return true;
+                return TaskResult.complete;
             }
             else
             {
-                return false;
+                return TaskResult.none;
             }
         }
         else
         {
             targetReached = true;
-            return true;
+            return TaskResult.complete;
         }
     }
 

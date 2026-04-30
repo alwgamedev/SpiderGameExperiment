@@ -61,6 +61,7 @@ public class SGrabber
     Action onArmTargetReached;
     Action onAnchorTargetReached;
     Action onClawTargetReached;
+    Action onClawTargetFailed;
 
     //2do:
     //1) direction change - will need to reverse spring target angles probably?
@@ -226,10 +227,16 @@ public class SGrabber
             Debug.Log("arm reached target");
             onArmTargetReached?.Invoke();
         }
-        if (claw.Update())
+        switch (claw.Update())
         {
-            Debug.Log("claw reached target");
-            onClawTargetReached?.Invoke();
+            case SGrabberClaw.TaskResult.complete:
+                Debug.Log("claw reached target");
+                onClawTargetReached?.Invoke();
+                break;
+            case SGrabberClaw.TaskResult.failed:
+                Debug.Log("claw target failed");
+                onClawTargetFailed?.Invoke();
+                break;
         }
     }
 
@@ -259,6 +266,7 @@ public class SGrabber
         onArmTargetReached = null;
         onAnchorTargetReached = GoIdle;
         onClawTargetReached = null;
+        onClawTargetFailed = null;
         //let's set all 3 every time we start a new action (so we don't have any old unneeded callbacks coming in when they shouldn't)
 
         Debug.Log("grabber deploying");
@@ -267,6 +275,7 @@ public class SGrabber
     //move to default pose
     private void GoIdle()
     {
+        grabTimer = 0;
         taskInProgress = true;
         claw.Close();
         depositDoor.Close();
@@ -275,6 +284,7 @@ public class SGrabber
         onArmTargetReached = CompleteGoIdle;
         onAnchorTargetReached = null;
         onClawTargetReached = null;
+        onClawTargetFailed = null;
 
         Debug.Log("going idle");
     }
@@ -287,6 +297,7 @@ public class SGrabber
         onArmTargetReached = null;
         onAnchorTargetReached = null;
         onClawTargetReached = null;
+        onClawTargetFailed = null;
         Debug.Log("idle position reached");
     }
 
@@ -300,6 +311,7 @@ public class SGrabber
         onArmTargetReached = ParkPhase2;
         onAnchorTargetReached = null;
         onClawTargetReached = null;
+        onClawTargetFailed = null;
     }
 
     //close grabber and fold up
@@ -312,6 +324,7 @@ public class SGrabber
         onArmTargetReached = null;
         onAnchorTargetReached = null;
         onClawTargetReached = ParkPhase3;
+        onClawTargetFailed = null;
     }
 
     private void ParkPhase3()
@@ -323,6 +336,7 @@ public class SGrabber
         onArmTargetReached = ParkPhase4;
         onAnchorTargetReached = null;
         onClawTargetReached = null;
+        onClawTargetFailed = null;
     }
 
     //back into the garage
@@ -335,6 +349,7 @@ public class SGrabber
         onArmTargetReached = null;
         onAnchorTargetReached = CompletePark;
         onClawTargetReached = null;
+        onClawTargetFailed = null;
     }
 
     private void CompletePark()
@@ -360,13 +375,15 @@ public class SGrabber
             var hitBody = overlaps[0].shape.body;
             grabTarget = hitBody;
             claw.Open();
-            arm.BeginTargetingBody(hitBody, hitBody.localCenterOfMass);
+            arm.BeginTargetingBody(hitBody);
             arm.EnableSprings(false);
+            //arm.SetSpringTargetsToZero();
             grabTimer = grabTimeOut;
 
             onArmTargetReached = CompleteGrab;
             onAnchorTargetReached = null;
             onClawTargetReached = null;
+            onClawTargetFailed = null;
         }
         else
         {
@@ -376,8 +393,9 @@ public class SGrabber
 
     private void CompleteGrab()
     {
-        taskInProgress = true;
+        Debug.Log("completing grab");
         grabTimer = 0;
+        taskInProgress = true;
         if (grabTarget.isValid)
         {
             claw.BeginGrab(grabTarget);
@@ -385,6 +403,7 @@ public class SGrabber
             onArmTargetReached = null;
             onAnchorTargetReached = null;
             onClawTargetReached = HeadToDeposit;
+            onClawTargetFailed = OnGrabFailed;
         }
         else
         {
@@ -397,7 +416,7 @@ public class SGrabber
         if (grabTarget.isValid)
         {
             taskInProgress = true;
-            arm.BeginTargetingBody(depositTargetBody, depositTargetPosition);
+            arm.BeginTargetingPositionOnBody(depositTargetBody, depositTargetPosition);
             arm.EnableSprings(true);
             arm.SetSpringTargets(depositPose);
             claw.BeginHold(grabTarget);
@@ -406,6 +425,7 @@ public class SGrabber
             onArmTargetReached = Deposit;
             onAnchorTargetReached = null;
             onClawTargetReached = OnGrabFailed;
+            onClawTargetFailed = null;
         }
         else
         {
@@ -421,6 +441,7 @@ public class SGrabber
         onArmTargetReached = null;
         onAnchorTargetReached = null;
         onClawTargetReached = CompleteDeposit;
+        onClawTargetFailed = null;
     }
 
     private void CompleteDeposit()
