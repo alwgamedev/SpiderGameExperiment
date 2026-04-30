@@ -2309,8 +2309,8 @@ MonoBehaviour:
             direction: {x: 1, y: 0}
         m_EnableSpring: 0
         m_SpringTargetAngle: 0
-        m_SpringFrequency: 65
-        m_SpringDamping: 30
+        m_SpringFrequency: 30
+        m_SpringDamping: 15
         m_EnableMotor: 0
         m_MotorSpeed: 0
         m_MaxMotorTorque: 0
@@ -2365,9 +2365,9 @@ MonoBehaviour:
           direction: {x: 1, y: 0}
         m_LinearVelocity: {x: 0, y: 0}
         m_AngularVelocity: 0
-        m_LinearDamping: 0.25
-        m_AngularDamping: 100
-        m_GravityScale: 0.1
+        m_LinearDamping: 0
+        m_AngularDamping: 2000
+        m_GravityScale: 0
         m_SleepThreshold: 0.01
         m_FastRotationAllowed: 0
         m_FastCollisionsAllowed: 0
@@ -2389,17 +2389,17 @@ MonoBehaviour:
       - 0
       - -90
       upperAngleLimit:
-      - 45
+      - 120
       - 0
       - 0
       - 0
       - 90
       enableLimit: 0100000000
     arm:
-      targetingAccel: 150
-      targetErrorCap: 1
+      targetingLinearAccel: 300
+      targetingRotationalAccel: 7500
       poseRotationTolerance: 0.1
-      effectorDistance: 0.15
+      effectorDistance: 0.1
     armPhysTransforms:
     - {fileID: 8365497005758598332}
     - {fileID: 694910629859144908}
@@ -2463,12 +2463,12 @@ MonoBehaviour:
       shapeDef:
         contactFilter:
           m_Categories:
-            bitMask: 8
+            bitMask: 128
           m_Contacts:
             bitMask: 65
           m_GroupIndex: 0
         surfaceMaterial:
-          m_Friction: 1
+          m_Friction: 5
           m_Bounciness: 0
           m_FrictionMixing: 0
           m_BouncinessMixing: 0
@@ -2523,7 +2523,7 @@ MonoBehaviour:
       lowerArmOpen: -70
       lowerArmClosed: -10
       rotationTolerance: 0.05
-      grabTolerance: 0.01
+      grabTolerance: 0.00001
       dropTolerance: 0.5
     upperClawPhysTransform: {fileID: 684467152337032374}
     upperClawBone:
@@ -2575,7 +2575,7 @@ MonoBehaviour:
     drawAnchorGizmos: 0
     grabFilter:
       m_Categories:
-        bitMask: 8
+        bitMask: 18446744073709551615
       m_HitCategories:
         bitMask: 1
       m_IgnoreFilter: 8
@@ -11365,7 +11365,7 @@ Transform:
   m_GameObject: {fileID: 7121762811123951607}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.53, z: 0}
+  m_LocalPosition: {x: 0, y: 1.83, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

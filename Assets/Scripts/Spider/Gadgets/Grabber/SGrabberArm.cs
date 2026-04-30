@@ -5,8 +5,8 @@ using UnityEngine;
 [Serializable]
 public struct SGrabberArm
 {
-    const float TARGETING_TOLERANCE = 0.01f;
-    const float TARGETING_TOLERANCE_SQUARED = TARGETING_TOLERANCE * TARGETING_TOLERANCE;//for a targeting tolerance of 0.01
+    const float TARGETING_TOLERANCE = 0.025f;
+    const float TARGETING_TOLERANCE_SQUARED = TARGETING_TOLERANCE * TARGETING_TOLERANCE;
 
     public JointedChain jointedChain;
 
@@ -14,8 +14,8 @@ public struct SGrabberArm
     Vector2 targetPosition;//local to targetBody
     PhysicsRotate[] targetPose;
 
-    [SerializeField] float targetingAccel;
-    [SerializeField] float targetErrorCap;
+    [SerializeField] float targetingLinearAccel;
+    [SerializeField] float targetingRotationalAccel;
     [SerializeField] float poseRotationTolerance;
     [SerializeField] float effectorDistance;
 
@@ -95,8 +95,8 @@ public struct SGrabberArm
     {
         return mode switch
         {
-            Mode.trackBody => TrackBodyBehavior(false, reversed),
-            Mode.trackPositionOnBody => TrackBodyBehavior(true, reversed),
+            Mode.trackBody => TrackBodyBehavior(reversed),
+            Mode.trackPositionOnBody => TrackPositionInBodyBehavior(reversed),
             Mode.trackPose => TrackPoseBehavior(reversed),
             _ => false
         };
@@ -120,14 +120,6 @@ public struct SGrabberArm
         for (int i = 0; i < jointedChain.JointCount; i++)
         {
             jointedChain.joint[i].springTargetAngle = targetAngle[i];
-        }
-    }
-
-    public readonly void SetSpringTargetsToZero()
-    {
-        for (int i = 0; i < jointedChain.JointCount; i++)
-        {
-            jointedChain.joint[i].springTargetAngle = 0;
         }
     }
 
@@ -170,7 +162,44 @@ public struct SGrabberArm
         targetReached = false;
     }
 
-    private bool TrackBodyBehavior(bool trackLocalPos, bool reversed)
+    private bool TrackPositionInBodyBehavior(bool reversed)
+    {
+        if (!targetBody.isValid)
+        {
+            if (!targetReached)
+            {
+                targetReached = true;
+                return true;
+            }
+
+            return false;
+        }
+        
+
+
+        var effectorPos = EffectorPosition(reversed);
+        var targetPos = targetBody.transform.TransformPoint(targetPosition);
+        var err = targetPos - effectorPos;
+
+        if (err.sqrMagnitude < TARGETING_TOLERANCE_SQUARED)
+        {
+            if (!targetReached)
+            {
+                targetReached = true;
+                return true;
+            }
+
+            return false;
+        }
+
+        //var effectorBody = jointedChain.body[jointedChain.JointCount - 1];
+        //var accel = targetingLinearAccel * err;
+        //effectorBody.ApplyForce(effectorBody.mass * accel, effectorPos);
+        ReachForPositionFromAbove(effectorPos, targetPos, reversed);
+        return false;
+    }
+
+    private bool TrackBodyBehavior(bool reversed)
     {
         if (!targetBody.isValid)
         {
@@ -184,85 +213,57 @@ public struct SGrabberArm
         }
 
         var effectorPos = EffectorPosition(reversed);
-        Vector2 err;
-        if (trackLocalPos)
+
+        //find closest point
+        var targetShapes = targetBody.GetShapes();
+        var minDist2 = Mathf.Infinity;
+        Vector2 closestPoint = default;
+
+        for (int i = 0; i < targetShapes.Length; i++)
         {
-            var targetPos = targetBody.transform.TransformPoint(targetPosition);
-            err = targetPos - effectorPos;
-            Debug.DrawLine(effectorPos, targetPos, Color.red);
-        }
-        else
-        {
-            var targetShapes = targetBody.GetShapes();
-            var minDist2 = Mathf.Infinity;
-            err = Vector2.zero;
-            
-            for (int i = 0; i < targetShapes.Length; i++)
+            var p = targetShapes[i].ClosestPoint(effectorPos);
+            var dist2 = Vector2.SqrMagnitude(p - effectorPos);
+            if (dist2 < minDist2)
             {
-                var p = targetShapes[i].ClosestPoint(effectorPos);
-                var d = p - effectorPos;
-                var dist2 = Vector2.SqrMagnitude(d);
-                if (dist2 < minDist2)
+                minDist2 = dist2;
+                closestPoint = p;
+                if (minDist2 < TARGETING_TOLERANCE_SQUARED)
                 {
-                    minDist2 = dist2;
-                    err = d;
-                    if (minDist2 < TARGETING_TOLERANCE_SQUARED)
+                    if (!targetReached)
                     {
-                        break;
+                        targetReached = true;
+                        return true;
                     }
+
+                    return false;
                 }
             }
-            
-            Debug.DrawLine(effectorPos, effectorPos + err, Color.red);
         }
 
-        return TrackBodyInternal(effectorPos, err, reversed);
-    }
-
-    private bool TrackBodyInternal(Vector2 effectorPos, Vector2 err, bool reversed)
-    {
-        var err2 = err.sqrMagnitude;
-
-        if (err2 < TARGETING_TOLERANCE_SQUARED)
-        {
-            if (!targetReached)
-            {
-                targetReached = true;
-                return true;
-            }
-
-            return false;
-        }
-
-        if (err2 > targetErrorCap * targetErrorCap)
-        {
-            err = targetErrorCap / Mathf.Sqrt(err2) * err;
-        }
-
-        var u = err.normalized;
-        var a = targetingAccel * err;
-        var last = jointedChain.JointCount - 1;
-        jointedChain.body[last].ApplyForce(jointedChain.body[last].mass * a, effectorPos);
-
-        //AccelerateWithDamping(jointedChain.body[last], effectorPos, a, u, trackDamping);
-        //for (int i = 0; i < last; i++)
-        //{
-        //    AccelerateWithDamping(jointedChain.body[i], jointedChain.NextPosition(i, reversed), a, u, trackDamping);
-        //}
-        //arm.body[last].ApplyForce(arm.body[last].mass * a, effectorPos);
-        //for (int i = 0; i < last; i++)
-        //{
-        //    arm.body[i].ApplyForce(arm.body[i].mass * a, jointedChain.NextPosition(i, reversed));
-        //}
+        ReachForPositionFromAbove(effectorPos, closestPoint, reversed);
+        //var effectorBody = jointedChain.body[^1];
+        //var linearAccel = targetingLinearAccel * (closestPoint - effectorPos);
+        //effectorBody.ApplyForce(effectorBody.mass * linearAccel, effectorPos);
+        
+        //var up = jointedChain.joint[0].bodyA.rotation.direction.CCWPerp();
+        //var effectorDir = reversed ? -effectorBody.rotation.direction : effectorBody.rotation.direction;
+        //var rotAccel = targetingRotationalAccel * MathTools.PseudoAngle(effectorDir, -up);
+        //effectorBody.ApplyTorque(effectorBody.rotationalInertia * rotAccel);
 
         return false;
+    }
 
-        //static void AccelerateWithDamping(PhysicsBody body, Vector2 worldPos, Vector2 accel, Vector2 accelDirection, float damping)
-        //{
-        //    var v = Vector2.Dot(body.GetWorldPointVelocity(worldPos), accelDirection);
-        //    accel -= damping * Mathf.Sign(v) * v * accelDirection;
-        //    body.ApplyForce(body.mass * accel, worldPos);
-        //}
+    private void ReachForPositionFromAbove(Vector2 effectorPos, Vector2 targetPos, bool reversed)
+    {
+        Debug.DrawLine(effectorPos, targetPos, Color.green);
+        var effectorBody = jointedChain.body[^1];
+        var linearAccel = targetingLinearAccel * (targetPos - effectorPos);
+        effectorBody.ApplyForce(effectorBody.mass * linearAccel, effectorPos);
+
+        var up = jointedChain.joint[0].bodyA.rotation.direction.CCWPerp();
+        var effectorDir = reversed ? -effectorBody.rotation.direction : effectorBody.rotation.direction;
+        var rotAccel = targetingRotationalAccel * MathTools.PseudoAngle(effectorDir, -up);
+        effectorBody.ApplyTorque(effectorBody.rotationalInertia * rotAccel);
     }
 
     private bool TrackPoseBehavior(bool reversed)

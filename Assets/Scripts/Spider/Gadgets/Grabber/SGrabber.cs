@@ -219,22 +219,18 @@ public class SGrabber
 
         if (anchor.Update(dt))
         {
-            Debug.Log("anchor reached target");
             onAnchorTargetReached?.Invoke();
         }
         if (arm.Update(reversed))
         {
-            Debug.Log("arm reached target");
             onArmTargetReached?.Invoke();
         }
         switch (claw.Update())
         {
             case SGrabberClaw.TaskResult.complete:
-                Debug.Log("claw reached target");
                 onClawTargetReached?.Invoke();
                 break;
             case SGrabberClaw.TaskResult.failed:
-                Debug.Log("claw target failed");
                 onClawTargetFailed?.Invoke();
                 break;
         }
@@ -417,8 +413,9 @@ public class SGrabber
         {
             taskInProgress = true;
             arm.BeginTargetingPositionOnBody(depositTargetBody, depositTargetPosition);
-            arm.EnableSprings(true);
-            arm.SetSpringTargets(depositPose);
+            arm.EnableSprings(false);
+            //arm.EnableSprings(true);
+            //arm.SetSpringTargets(depositPose);
             claw.BeginHold(grabTarget);
             depositDoor.Open();
 

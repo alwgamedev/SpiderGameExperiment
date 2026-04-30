@@ -109,14 +109,8 @@ public static class PhysicsCoreHelper
         for (int i = 0; i < shapes.Length; i++)
         {
             var s = shapes[i];
-            var fric0 = s.friction;
             s.definition = shapeDef;
             shapes[i] = s;
-            var fric1 = shapes[i].friction;
-            if (fric0 != fric1)
-            {
-                Debug.Log($"friction before {fric0} friciton after {fric1}");
-            }
         }
 
         body.ApplyMassFromShapes();

@@ -219,6 +219,17 @@ public struct SGrabberClaw
         this.lowerTarget = PhysicsRotate.FromDegrees(lowerTarget);
     }
 
+    public void SetSpringTargetToCurrentRotation()
+    {
+        var upperRotA = upperArmJoint.bodyA.rotation.MultiplyRotation(upperArmJoint.localAnchorA.rotation);
+        var upperRotB = upperArmJoint.bodyB.rotation.MultiplyRotation(upperArmJoint.localAnchorB.rotation);
+        upperArmJoint.springTargetAngle = upperRotA.InverseMultiplyRotation(upperRotB).degrees;
+
+        var lowerRotA = lowerArmJoint.bodyA.rotation.MultiplyRotation(lowerArmJoint.localAnchorA.rotation);
+        var lowerRotB = lowerArmJoint.bodyB.rotation.MultiplyRotation(lowerArmJoint.localAnchorB.rotation);
+        lowerArmJoint.springTargetAngle = lowerRotA.InverseMultiplyRotation(lowerRotB).degrees;
+    }
+
     /// <summary> upperTarget, lowerTarget are relative to joint bodyA rotation. This does not set spring targets. </summary>
     public readonly void SnapToPose(float upperTarget, float lowerTarget)
     {
@@ -266,7 +277,8 @@ public struct SGrabberClaw
     public void BeginHold(PhysicsBody grabTarget)
     {
         this.grabTarget = grabTarget;
-        SetSpringTarget(upperArmClosed, lowerArmClosed);
+        //SetSpringTarget(upperArmClosed, lowerArmClosed);
+        SetSpringTargetToCurrentRotation();
         mode = Mode.holdingTarget;
         targetReached = false;
     }
@@ -349,15 +361,25 @@ public struct SGrabberClaw
 
         if (grabTarget.isValid)
         {
-            if (MaxDistance(grabTarget) > dropTolerance)//target dropped
+            var dist = MaxDistance(grabTarget);
+            if (dist > dropTolerance)//target dropped
             {
                 targetReached = true;
                 return TaskResult.complete;
             }
-            else
+
+            if (dist > grabTolerance)
             {
-                return TaskResult.none;
+                //tighten grip
+                SetSpringTarget(upperArmClosed, lowerArmClosed);
             }
+            else if (upperArmJoint.springTargetAngle == upperArmClosed || upperArmJoint.springTargetAngle == lowerArmClosed)
+            {
+                //if grip already tight enough, set spring to current rotation to avoid clipping
+                SetSpringTargetToCurrentRotation();
+            }
+
+            return TaskResult.none;
         }
         else
         {

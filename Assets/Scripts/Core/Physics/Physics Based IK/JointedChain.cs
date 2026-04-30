@@ -33,6 +33,7 @@ public struct JointedChain
 
     public readonly int JointCount => joint.Length;
     public readonly float Mass => mass;
+    public readonly float LastArmLength => effectorDistance;
     public readonly PhysicsBody AnchorBody => joint[0].bodyA;
     public readonly PhysicsWorld World => world;
 

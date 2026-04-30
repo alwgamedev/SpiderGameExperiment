@@ -14127,8 +14127,8 @@ MonoBehaviour:
       direction: {x: 1, y: 0}
     m_LinearVelocity: {x: 0, y: 0}
     m_AngularVelocity: 0
-    m_LinearDamping: 0.1
-    m_AngularDamping: 0.05
+    m_LinearDamping: 0
+    m_AngularDamping: 0
     m_GravityScale: 1
     m_SleepThreshold: 0.01
     m_FastRotationAllowed: 0
@@ -14142,7 +14142,7 @@ MonoBehaviour:
       m_Categories:
         bitMask: 1
       m_Contacts:
-        bitMask: 18446744073709551615
+        bitMask: 192
       m_GroupIndex: 0
     surfaceMaterial:
       m_Friction: 0.4
@@ -14151,12 +14151,12 @@ MonoBehaviour:
       m_BouncinessMixing: 0
       m_FrictionPriority: 0
       m_BouncinessPriority: 0
-      m_RollingResistance: 0.05
+      m_RollingResistance: 0.5
       m_TangentSpeed: 0
       m_CustomColor:
         serializedVersion: 2
         rgba: 0
-    m_Density: 1
+    m_Density: 0.0005
     m_IsTrigger: 0
     m_TriggerEvents: 0
     m_ContactEvents: 0
@@ -14165,7 +14165,7 @@ MonoBehaviour:
     m_PreSolveCallbacks: 0
     m_StartStaticContacts: 0
     m_StartMassUpdate: 1
-    m_WorldDrawing: 1
+    m_WorldDrawing: 0
     moverData:
       m_PushLimit: 0
       m_ClipVelocity: 0
@@ -14243,7 +14243,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -17.58, y: 0.05, z: 0}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 1}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
