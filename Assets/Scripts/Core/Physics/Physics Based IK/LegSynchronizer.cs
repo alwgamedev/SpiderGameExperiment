@@ -116,7 +116,8 @@ public class LegSynchronizer
                 leg[i].UpdateDefAndSettings(chainDef, chainSettings[i], false, false);
                 if (reversed)
                 {
-                    FlipAngleLimits(i);
+                    leg[i].FlipAngleLimits();
+                    leg[i].FlipSpringTargets();
                 }
             }
 
@@ -291,36 +292,18 @@ public class LegSynchronizer
         }
     }
 
-    public void OnDirectionChanged(PhysicsTransform bodyReflection, Vector2 postTranslation, bool facingRight)
+    public void OnDirectionChanged(PhysicsTransform bodyReflection, Vector2 postTranslation, bool reversed)
     {
+        if (this.reversed == reversed)
+        {
+            return;
+        }
+
+        this.reversed = reversed;
+
         for (int i = 0; i < leg.Length; i++)
         {
-            ref var l = ref leg[i];
-
-            for (int j = 0; j < leg[i].body.Length; j++)
-            {
-                l.body[j].transform = l.body[j].transform.ReflectAndFlip(bodyReflection, Vector2.zero);
-                l.body[j].linearVelocity = l.body[j].linearVelocity.ReflectAcrossHyperplane(bodyReflection.rotation.direction);
-                l.body[j].angularVelocity = -l.body[j].angularVelocity;
-                l.body[j].SyncTransform();
-                bones[i].array[j].ReflectAndFlip(l.body[j].transform);//2do: need to create physics transform > bone Transform and "center" physics transform
-                ((PhysicsJoint)l.joint[j]).ReflectAndFlipAnchors();
-            }
-
-            if (postTranslation != Vector2.zero)
-            {
-                for (int j = 0; j < leg[i].JointCount; j++)
-                {
-                    l.body[j].position += postTranslation;
-                }
-            }
-
-            if (reversed == facingRight)
-            {
-                reversed = !reversed;
-                FlipAngleLimits(i);
-            }
-
+            leg[i].OnDirectionChanged(bodyReflection, postTranslation, bones[i].array);
             FixTunneling(i, 10, 0.0001f);
         }
     }
@@ -464,11 +447,6 @@ public class LegSynchronizer
         }
 
         timer[i] = Mathf.Lerp(timer[i], tGoal, lerpRate);
-    }
-
-    private void FlipAngleLimits(int i)
-    {
-        leg[i].FlipAngleLimits();
     }
 
     private static void AccelerateLegWithDamping(ref JointedChain l, float2 accel, float2 dirX, float2 dirY, float damping, bool reversed)

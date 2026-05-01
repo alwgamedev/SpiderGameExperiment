@@ -5,19 +5,18 @@ using UnityEngine;
 [Serializable]
 public struct GrabberArm
 {
-    const float TARGETING_TOLERANCE = 0.025f;
-    const float TARGETING_TOLERANCE_SQUARED = TARGETING_TOLERANCE * TARGETING_TOLERANCE;
-
     public JointedChain jointedChain;
 
     PhysicsBody targetBody;
     Vector2 targetPosition;//local to targetBody
-    PhysicsRotate[] targetPose;
+    PhysicsRotate[] targetPose;//when facing right (these never get flipped)
 
     [SerializeField] float targetingLinearAccel;
     [SerializeField] float targetingRotationalAccel;
     [SerializeField] float poseRotationTolerance;
     [SerializeField] float effectorDistance;
+    [SerializeField] float settleVelocity;
+    [SerializeField] float targetingTolerance;
 
     Mode mode;
     bool targetReached;
@@ -34,6 +33,7 @@ public struct GrabberArm
         if (reversed)
         {
             jointedChain.FlipAngleLimits();
+            //jointedChain.FlipSpringTargets(); -- DON'T DO, because we aren't touching spring angles in UpdateDefAndSettings
         }
     }
 
@@ -115,21 +115,22 @@ public struct GrabberArm
         }
     }
 
-    public readonly void SetSpringTargets(float[] targetAngle)
+    public readonly void SetSpringTargets(float[] targetAngle, bool reversed)
     {
         for (int i = 0; i < jointedChain.JointCount; i++)
         {
-            jointedChain.joint[i].springTargetAngle = targetAngle[i];
+            jointedChain.joint[i].springTargetAngle = reversed ? -targetAngle[i] : targetAngle[i];
         }
     }
 
-    public readonly void SnapToPose(float[] poseAngle)
+    public readonly void SnapToPose(float[] poseAngle, bool reversed)
     {
         for (int i = 0; i < jointedChain.JointCount; i++)
         {
             ref var joint = ref jointedChain.joint[i];
             var pos = jointedChain.JointPosition(i);//joint position is computed using bodyA (good, since previous body already in right place)
-            var rot = joint.bodyA.rotation.MultiplyRotation(joint.localAnchorA.rotation).MultiplyRotation(PhysicsRotate.FromDegrees(poseAngle[i]));
+            var angle = reversed ? -poseAngle[i] : poseAngle[i];
+            var rot = joint.bodyA.rotation.MultiplyRotation(joint.localAnchorA.rotation).MultiplyRotation(PhysicsRotate.FromDegrees(angle));
             jointedChain.body[i].transform = new PhysicsTransform(pos, rot);
         }
     }
@@ -149,17 +150,22 @@ public struct GrabberArm
         targetReached = false;
     }
 
-    public void BeginTargetingPose(float[] pose)
+    public void BeginTargetingPose(float[] pose, bool reversed)
     {
         for (int i = 0; i < targetPose.Length; i++)
         {
             jointedChain.joint[i].enableSpring = true;
-            jointedChain.joint[i].springTargetAngle = pose[i];
+            jointedChain.joint[i].springTargetAngle = reversed ? -pose[i] : pose[i];
             targetPose[i] = PhysicsRotate.FromDegrees(pose[i]);
         }
 
         mode = Mode.trackPose;
         targetReached = false;
+    }
+
+    public void OnDirectionChanged(PhysicsTransform reflection, Vector2 postTranslation, Transform[] bone)
+    {
+        jointedChain.OnDirectionChanged(reflection, postTranslation, bone);
     }
 
     private bool TrackPositionInBodyBehavior(bool reversed)
@@ -176,12 +182,14 @@ public struct GrabberArm
         }
 
         var effectorPos = EffectorPosition(reversed);
-        var targetPos = targetBody.transform.TransformPoint(targetPosition);
-        var err = targetPos - effectorPos;
+        var targetLocalPos = targetBody.userData.boolValue ? new(-targetPosition.x, targetPosition.y) : targetPosition;
+        //^targetBody.userData.boolValue = whether target body is reversed (facing left)
+        var targetWorldPos = targetBody.transform.TransformPoint(targetLocalPos);
+        var err = targetWorldPos - effectorPos;
 
-        if (err.sqrMagnitude < TARGETING_TOLERANCE_SQUARED)
+        if (err.sqrMagnitude < targetingTolerance * targetingTolerance)
         {
-            if (!targetReached)
+            if (!targetReached && jointedChain.body[^1].GetWorldPointVelocity(effectorPos).sqrMagnitude < settleVelocity * settleVelocity)
             {
                 targetReached = true;
                 return true;
@@ -190,10 +198,7 @@ public struct GrabberArm
             return false;
         }
 
-        //var effectorBody = jointedChain.body[jointedChain.JointCount - 1];
-        //var accel = targetingLinearAccel * err;
-        //effectorBody.ApplyForce(effectorBody.mass * accel, effectorPos);
-        ReachForPositionFromAbove(effectorPos, targetPos, reversed);
+        ReachForPositionFromAbove(effectorPos, targetWorldPos, reversed);
         return false;
     }
 
@@ -252,7 +257,6 @@ public struct GrabberArm
 
     private void ReachForPositionFromAbove(Vector2 effectorPos, Vector2 targetPos, bool reversed)
     {
-        Debug.DrawLine(effectorPos, targetPos, Color.green);
         var effectorBody = jointedChain.body[^1];
         var linearAccel = targetingLinearAccel * (targetPos - effectorPos);
         effectorBody.ApplyForce(effectorBody.mass * linearAccel, effectorPos);
@@ -276,7 +280,8 @@ public struct GrabberArm
         {
             ref var joint = ref arm.joint[i];
             var cur = joint.localAnchorA.rotation.InverseMultiplyRotation(joint.bodyA.rotation.InverseMultiplyRotation(joint.bodyB.rotation));
-            var error = targetPose[i].InverseMultiplyRotation(cur).direction;
+            var target = reversed ? targetPose[i].Inverse() : targetPose[i];
+            var error = target.InverseMultiplyRotation(cur).direction;
             if (error.x < 0 || Mathf.Abs(error.y) > poseRotationTolerance)
             {
                 return false;

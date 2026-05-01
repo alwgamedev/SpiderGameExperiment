@@ -53,7 +53,7 @@ public struct GrabberAnchor
         target = Target.deployedPos;
     }
 
-    public bool Update(float dt)
+    public bool Update(float dt, bool reversed)
     {
         if (target == Target.none)
         {
@@ -61,6 +61,11 @@ public struct GrabberAnchor
         }
 
         var targetPos = target == Target.offPos ? offPosition : deployedPosition;
+        if (reversed)
+        {
+            targetPos.x = -targetPos.x;
+        }
+
         var anchor = joint.localAnchorA;
         var d = targetPos - anchor.position;
         var l = d.sqrMagnitude;

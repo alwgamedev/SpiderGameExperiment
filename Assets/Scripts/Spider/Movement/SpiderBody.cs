@@ -215,6 +215,14 @@ public struct SpiderBody
         ((PhysicsJoint)headJoint).ReflectAndFlipAnchors();
 
         facingRight = !facingRight;
+
+        var abdomenUserData = abdomen.userData;
+        abdomenUserData.boolValue = !facingRight;//bool value will track "reversed" ( = !facingRight)
+        abdomen.userData = abdomenUserData;
+
+        var headUserData = head.userData;
+        headUserData.boolValue = !facingRight;
+        head.userData = headUserData;
     }
 
     public void ApplyTranslation(Vector2 t)

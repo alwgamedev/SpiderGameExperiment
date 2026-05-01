@@ -2309,6 +2309,229 @@ MonoBehaviour:
     crouchTime: 0.35
     crouchReleaseSpeedMultiplier: 2.5
     freeHangHeadAngle: 0.20943952
+    grabber:
+      armDef:
+        jointDef:
+          m_LocalAnchorA:
+            position: {x: 0, y: 0}
+            rotation:
+              direction: {x: 1, y: 0}
+          m_LocalAnchorB:
+            position: {x: 0, y: 0}
+            rotation:
+              direction: {x: 1, y: 0}
+          m_EnableSpring: 0
+          m_SpringTargetAngle: 0
+          m_SpringFrequency: 0
+          m_SpringDamping: 0
+          m_EnableMotor: 0
+          m_MotorSpeed: 0
+          m_MaxMotorTorque: 0
+          m_EnableLimit: 0
+          m_LowerAngleLimit: 0
+          m_UpperAngleLimit: 0
+          m_ForceThreshold: 0
+          m_TorqueThreshold: 0
+          m_TuningFrequency: 0
+          m_TuningDamping: 0
+          m_DrawScale: 0
+          m_WorldDrawing: 0
+          m_CollideConnected: 0
+        shapeDef:
+          contactFilter:
+            m_Categories:
+              bitMask: 0
+            m_Contacts:
+              bitMask: 0
+            m_GroupIndex: 0
+          surfaceMaterial:
+            m_Friction: 0
+            m_Bounciness: 0
+            m_FrictionMixing: 0
+            m_BouncinessMixing: 0
+            m_FrictionPriority: 0
+            m_BouncinessPriority: 0
+            m_RollingResistance: 0
+            m_TangentSpeed: 0
+            m_CustomColor:
+              serializedVersion: 2
+              rgba: 0
+          m_Density: 0
+          m_IsTrigger: 0
+          m_TriggerEvents: 0
+          m_ContactEvents: 0
+          m_HitEvents: 0
+          m_ContactFilterCallbacks: 0
+          m_PreSolveCallbacks: 0
+          m_StartStaticContacts: 0
+          m_StartMassUpdate: 0
+          m_WorldDrawing: 0
+          moverData:
+            m_PushLimit: 0
+            m_ClipVelocity: 0
+        bodyDef:
+          m_BodyType: 0
+          m_BodyConstraints: 0
+          m_TransformWriteMode: 0
+          m_Position: {x: 0, y: 0}
+          m_Rotation:
+            direction: {x: 1, y: 0}
+          m_LinearVelocity: {x: 0, y: 0}
+          m_AngularVelocity: 0
+          m_LinearDamping: 0
+          m_AngularDamping: 0
+          m_GravityScale: 0
+          m_SleepThreshold: 0
+          m_FastRotationAllowed: 0
+          m_FastCollisionsAllowed: 0
+          m_SleepingAllowed: 0
+          m_Awake: 0
+          m_Enabled: 0
+          m_WorldDrawing: 0
+        width: []
+      armSettings:
+        lowerAngleLimit: []
+        upperAngleLimit: []
+        enableLimit: 
+      arm:
+        targetingLinearAccel: 0
+        targetingRotationalAccel: 0
+        poseRotationTolerance: 0
+        effectorDistance: 0
+        settleVelocity: 0
+        targetingTolerance: 0
+      armPhysTransforms: []
+      armNodes: []
+      foldedPose: []
+      defaultPose: []
+      drawBodyGizmos: 0
+      drawAngleLimitGizmos: 0
+      clawDef:
+        jointDef:
+          m_LocalAnchorA:
+            position: {x: 0, y: 0}
+            rotation:
+              direction: {x: 1, y: 0}
+          m_LocalAnchorB:
+            position: {x: 0, y: 0}
+            rotation:
+              direction: {x: 1, y: 0}
+          m_EnableSpring: 0
+          m_SpringTargetAngle: 0
+          m_SpringFrequency: 0
+          m_SpringDamping: 0
+          m_EnableMotor: 0
+          m_MotorSpeed: 0
+          m_MaxMotorTorque: 0
+          m_EnableLimit: 0
+          m_LowerAngleLimit: 0
+          m_UpperAngleLimit: 0
+          m_ForceThreshold: 0
+          m_TorqueThreshold: 0
+          m_TuningFrequency: 0
+          m_TuningDamping: 0
+          m_DrawScale: 0
+          m_WorldDrawing: 0
+          m_CollideConnected: 0
+        shapeDef:
+          contactFilter:
+            m_Categories:
+              bitMask: 0
+            m_Contacts:
+              bitMask: 0
+            m_GroupIndex: 0
+          surfaceMaterial:
+            m_Friction: 0
+            m_Bounciness: 0
+            m_FrictionMixing: 0
+            m_BouncinessMixing: 0
+            m_FrictionPriority: 0
+            m_BouncinessPriority: 0
+            m_RollingResistance: 0
+            m_TangentSpeed: 0
+            m_CustomColor:
+              serializedVersion: 2
+              rgba: 0
+          m_Density: 0
+          m_IsTrigger: 0
+          m_TriggerEvents: 0
+          m_ContactEvents: 0
+          m_HitEvents: 0
+          m_ContactFilterCallbacks: 0
+          m_PreSolveCallbacks: 0
+          m_StartStaticContacts: 0
+          m_StartMassUpdate: 0
+          m_WorldDrawing: 0
+          moverData:
+            m_PushLimit: 0
+            m_ClipVelocity: 0
+        bodyDef:
+          m_BodyType: 0
+          m_BodyConstraints: 0
+          m_TransformWriteMode: 0
+          m_Position: {x: 0, y: 0}
+          m_Rotation:
+            direction: {x: 1, y: 0}
+          m_LinearVelocity: {x: 0, y: 0}
+          m_AngularVelocity: 0
+          m_LinearDamping: 0
+          m_AngularDamping: 0
+          m_GravityScale: 0
+          m_SleepThreshold: 0
+          m_FastRotationAllowed: 0
+          m_FastCollisionsAllowed: 0
+          m_SleepingAllowed: 0
+          m_Awake: 0
+          m_Enabled: 0
+          m_WorldDrawing: 0
+        upperWidth: []
+        lowerWidth: []
+      claw:
+        upperArmOpen: 0
+        upperArmClosed: 0
+        lowerArmOpen: 0
+        lowerArmClosed: 0
+        rotationTolerance: 0
+        grabTolerance: 0
+        dropTolerance: 0
+      upperClawPhysTransform: {fileID: 0}
+      upperClawBone: []
+      lowerClawPhysTransform: {fileID: 0}
+      lowerClawBone: []
+      drawClawShapeGizmos: 0
+      anchor:
+        moveSpeed: 0
+      depositDoor:
+        door1Open: {x: 0, y: 0, z: 0, w: 0}
+        door1Closed: {x: 0, y: 0, z: 0, w: 0}
+        door2Open: {x: 0, y: 0, z: 0, w: 0}
+        door2Closed: {x: 0, y: 0, z: 0, w: 0}
+        door1: {fileID: 0}
+        door2: {fileID: 0}
+        rotationSpeed: 0
+        rotationTolerance: 0
+      mouth:
+        door1Open: {x: 0, y: 0, z: 0, w: 0}
+        door1Closed: {x: 0, y: 0, z: 0, w: 0}
+        door2Open: {x: 0, y: 0, z: 0, w: 0}
+        door2Closed: {x: 0, y: 0, z: 0, w: 0}
+        door1: {fileID: 0}
+        door2: {fileID: 0}
+        rotationSpeed: 0
+        rotationTolerance: 0
+      sprite: []
+      depositTarget: {fileID: 0}
+      offAnchor: {fileID: 0}
+      deployedAnchor: {fileID: 0}
+      drawAnchorGizmos: 0
+      grabFilter:
+        m_Categories:
+          bitMask: 0
+        m_HitCategories:
+          bitMask: 0
+        m_IgnoreFilter: 0
+      grabAttemptRadius: 0
+      grabTimeOut: 0
     jumpChargeBegan:
       m_PersistentCalls:
         m_Calls: []
@@ -2373,8 +2596,8 @@ MonoBehaviour:
             direction: {x: 1, y: 0}
         m_EnableSpring: 0
         m_SpringTargetAngle: 0
-        m_SpringFrequency: 30
-        m_SpringDamping: 13.5
+        m_SpringFrequency: 40
+        m_SpringDamping: 10
         m_EnableMotor: 0
         m_MotorSpeed: 0
         m_MaxMotorTorque: 0
@@ -2407,7 +2630,7 @@ MonoBehaviour:
           m_CustomColor:
             serializedVersion: 2
             rgba: 0
-        m_Density: 0.05
+        m_Density: 0.015
         m_IsTrigger: 0
         m_TriggerEvents: 0
         m_ContactEvents: 0
@@ -2429,7 +2652,7 @@ MonoBehaviour:
           direction: {x: 1, y: 0}
         m_LinearVelocity: {x: 0, y: 0}
         m_AngularVelocity: 0
-        m_LinearDamping: 0
+        m_LinearDamping: 1
         m_AngularDamping: 2500
         m_GravityScale: 0
         m_SleepThreshold: 0.01
@@ -2460,10 +2683,12 @@ MonoBehaviour:
       - 90
       enableLimit: 0100000000
     arm:
-      targetingLinearAccel: 400
+      targetingLinearAccel: 500
       targetingRotationalAccel: 25000
       poseRotationTolerance: 0.1
       effectorDistance: 0.1
+      settleVelocity: 0.5
+      targetingTolerance: 0.05
     armPhysTransforms:
     - {fileID: 8365497005758598332}
     - {fileID: 694910629859144908}
@@ -2504,7 +2729,7 @@ MonoBehaviour:
         m_EnableSpring: 1
         m_SpringTargetAngle: 0
         m_SpringFrequency: 60
-        m_SpringDamping: 20
+        m_SpringDamping: 25
         m_EnableMotor: 0
         m_MotorSpeed: 0
         m_MaxMotorTorque: 0
@@ -2559,7 +2784,7 @@ MonoBehaviour:
           direction: {x: 1, y: 0}
         m_LinearVelocity: {x: 0, y: 0}
         m_AngularVelocity: 0
-        m_LinearDamping: 0.25
+        m_LinearDamping: 2
         m_AngularDamping: 50
         m_GravityScale: 0
         m_SleepThreshold: 0.01

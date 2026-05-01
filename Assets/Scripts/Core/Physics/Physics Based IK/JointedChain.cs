@@ -345,11 +345,44 @@ public struct JointedChain
         }
     }
 
+    public readonly void OnDirectionChanged(PhysicsTransform reflection, Vector2 postTranslation, Transform[] bone)
+    {
+        for (int i = 0; i < body.Length; i++)
+        {
+            body[i].transform = body[i].transform.ReflectAndFlip(reflection, Vector2.zero);
+            body[i].linearVelocity = body[i].linearVelocity.ReflectAcrossHyperplane(reflection.rotation.direction);
+            body[i].angularVelocity = -body[i].angularVelocity;
+            body[i].SyncTransform();
+            bone[i].ReflectAndFlip(body[i].transform);
+            ((PhysicsJoint)joint[i]).ReflectAndFlipAnchors();
+        }
+
+        if (postTranslation != Vector2.zero)
+        {
+            for (int i = 0; i < body.Length; i++)
+            {
+                body[i].position += postTranslation;
+                body[i].SyncTransform();
+            }
+        }
+
+        FlipAngleLimits();
+        FlipSpringTargets();
+    }
+
     public readonly void SyncTransforms()
     {
         for (int i = 0; i < body.Length; i++)
         {
             body[i].SyncTransform();
+        }
+    }
+
+    public readonly void ApplyTranslation(Vector2 t)
+    {
+        for (int i = 0; i < body.Length; i++)
+        {
+            body[i].position += t;
         }
     }
 
@@ -359,18 +392,27 @@ public struct JointedChain
         {
             for (int i = 0; i < JointCount; i++)
             {
-                FlipAngleLimits(i);
+                if (joint[i].isValid)
+                {
+                    var temp = joint[i].upperAngleLimit;
+                    joint[i].upperAngleLimit = -joint[i].lowerAngleLimit;
+                    joint[i].lowerAngleLimit = -temp;
+                }
             }
         }
     }
 
-    public readonly void FlipAngleLimits(int i)
+    public readonly void FlipSpringTargets()
     {
-        if (joint[i].isValid)
+        if (joint != null)
         {
-            var temp = joint[i].upperAngleLimit;
-            joint[i].upperAngleLimit = -joint[i].lowerAngleLimit;
-            joint[i].lowerAngleLimit = -temp;
+            for (int i = 0; i < JointCount; i++)
+            {
+                if (joint[i].isValid)
+                {
+                    joint[i].springTargetAngle = -joint[i].springTargetAngle;
+                }
+            }
         }
     }
 

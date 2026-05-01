@@ -214,7 +214,7 @@ public class Grabber
         mouth.FixedUpdate(dt);
         depositDoor.FixedUpdate(dt);
 
-        if (anchor.Update(dt))
+        if (anchor.Update(dt, reversed))
         {
             onAnchorTargetReached?.Invoke();
         }
@@ -233,6 +233,18 @@ public class Grabber
         }
     }
 
+    public void OnDirectionChanged(PhysicsTransform bodyReflection, Vector2 postTranslation, bool reversed)
+    {
+        if (reversed == this.reversed)
+        {
+            return;
+        }
+
+        this.reversed = reversed;
+        arm.OnDirectionChanged(bodyReflection, postTranslation, armNodes);
+        claw.OnDirectionChanged(bodyReflection, postTranslation);
+    }
+
     private void Deploy()
     {
         taskInProgress = true;
@@ -240,8 +252,8 @@ public class Grabber
         Enable();
 
         //1) snap to folded pose and set springs to maintain pose
-        arm.SnapToPose(foldedPose);
-        arm.SetSpringTargets(foldedPose);
+        arm.SnapToPose(foldedPose, reversed);
+        arm.SetSpringTargets(foldedPose, reversed);
         arm.EnableSprings(true);
 
         claw.SnapClosed();
@@ -270,7 +282,7 @@ public class Grabber
         taskInProgress = true;
         claw.Close();
         depositDoor.Close();
-        arm.BeginTargetingPose(defaultPose);
+        arm.BeginTargetingPose(defaultPose, reversed);
 
         onArmTargetReached = CompleteGoIdle;
         onAnchorTargetReached = null;
@@ -293,7 +305,7 @@ public class Grabber
     private void ParkPhase1()
     {
         taskInProgress = true;
-        arm.BeginTargetingPose(defaultPose);
+        arm.BeginTargetingPose(defaultPose, reversed);
 
         onArmTargetReached = ParkPhase2;
         onAnchorTargetReached = null;
@@ -316,7 +328,7 @@ public class Grabber
     private void ParkPhase3()
     {
         taskInProgress = true;
-        arm.BeginTargetingPose(foldedPose);
+        arm.BeginTargetingPose(foldedPose, reversed);
 
         onArmTargetReached = ParkPhase4;
         onAnchorTargetReached = null;
@@ -442,7 +454,7 @@ public class Grabber
         //open claw to make sure we let go of target, then go idle
         grabTarget = default;
         claw.Open();
-        arm.BeginTargetingPose(defaultPose);
+        arm.BeginTargetingPose(defaultPose, reversed);
 
         onArmTargetReached = null;
         onAnchorTargetReached = null;

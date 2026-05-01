@@ -262,13 +262,8 @@ public struct GrabberClaw
 
     public void SetSpringTargetToCurrentRotation()
     {
-        var upperRotA = upperArmJoint.bodyA.rotation.MultiplyRotation(upperArmJoint.localAnchorA.rotation);
-        var upperRotB = upperArmJoint.bodyB.rotation.MultiplyRotation(upperArmJoint.localAnchorB.rotation);
-        upperArmJoint.springTargetAngle = upperRotA.InverseMultiplyRotation(upperRotB).degrees;
-
-        var lowerRotA = lowerArmJoint.bodyA.rotation.MultiplyRotation(lowerArmJoint.localAnchorA.rotation);
-        var lowerRotB = lowerArmJoint.bodyB.rotation.MultiplyRotation(lowerArmJoint.localAnchorB.rotation);
-        lowerArmJoint.springTargetAngle = lowerRotA.InverseMultiplyRotation(lowerRotB).degrees;
+        upperArmJoint.springTargetAngle = UpperArmJointRotation().degrees;
+        lowerArmJoint.springTargetAngle = LowerArmJointRotation().degrees;
     }
 
     /// <summary> upperTarget, lowerTarget are relative to joint bodyA rotation. This does not set spring targets. </summary>
@@ -318,7 +313,6 @@ public struct GrabberClaw
     public void BeginHold(PhysicsBody grabTarget)
     {
         this.grabTarget = grabTarget;
-        //SetSpringTarget(upperArmClosed, lowerArmClosed);
         SetSpringTargetToCurrentRotation();
         mode = Mode.holdingTarget;
         targetReached = false;
@@ -362,6 +356,34 @@ public struct GrabberClaw
         return true;
     }
 
+    //claw arms will not "flip" due to asymmetric shapes. instead the upper and lower arms will swap sides on the anchor body.
+    //that means we don't have to flip bones or spring angles :)
+    public void OnDirectionChanged(PhysicsTransform reflection, Vector2 postTranslation)
+    {
+        ReflectClawArm(upperArm, upperArmJoint, reflection, postTranslation);
+        ReflectClawArm(lowerArm, lowerArmJoint, reflection, postTranslation);
+
+        static void ReflectClawArm(PhysicsBody armBody, PhysicsHingeJoint joint, PhysicsTransform reflection, Vector2 postTranslation)
+        {
+            armBody.transform = armBody.transform.Reflect(reflection);
+            armBody.linearVelocity = armBody.linearVelocity.ReflectAcrossHyperplane(reflection.rotation.direction);
+
+            //reflect arm over anchor body's x-axis
+            var anchorBody = joint.bodyA;
+            var reflectionOverAnchorBodyX = new PhysicsTransform(anchorBody.position, new PhysicsRotate(anchorBody.rotation.direction.CCWPerp()));
+            armBody.transform = armBody.transform.Reflect(reflectionOverAnchorBodyX);
+            armBody.linearVelocity = armBody.linearVelocity.ReflectAcrossHyperplane(reflectionOverAnchorBodyX.rotation.direction);
+
+            //reflect joint anchorA
+            var anchorA = joint.localAnchorA;
+            joint.localAnchorA = new(-anchorA.position, new PhysicsRotate(-anchorA.rotation.direction));
+            //joint.springTargetAngle = -joint.springTargetAngle;
+
+            armBody.position += postTranslation;
+            armBody.SyncTransform();
+        }
+    }
+
     //check whether spring target has been reached
     private TaskResult StandardBehavior()
     {
@@ -370,13 +392,17 @@ public struct GrabberClaw
             return TaskResult.none;
         }
 
-        var err1 = upperTarget.InverseMultiplyRotation(upperArmJoint.bodyA.rotation.InverseMultiplyRotation(upperArm.rotation)).direction;
+        var cur1 = UpperArmJointRotation();
+        var err1 = upperTarget.InverseMultiplyRotation(UpperArmJointRotation()).direction;
+            //upperTarget.InverseMultiplyRotation(upperArmJoint.bodyA.rotation.InverseMultiplyRotation(upperArm.rotation)).direction;
         if (err1.x < 0 || Mathf.Abs(err1.y) > rotationTolerance)
         {
             return TaskResult.none;
         }
 
-        var err2 = lowerTarget.InverseMultiplyRotation(lowerArmJoint.bodyA.rotation.InverseMultiplyRotation(lowerArm.rotation)).direction;
+        var cur2 = LowerArmJointRotation();
+        var err2 = lowerTarget.InverseMultiplyRotation(LowerArmJointRotation()).direction;
+            //lowerTarget.InverseMultiplyRotation(lowerArmJoint.bodyA.rotation.InverseMultiplyRotation(lowerArm.rotation)).direction;
         if (err2.x < 0 || Mathf.Abs(err2.y) > rotationTolerance)
         {
             return TaskResult.none;
@@ -466,5 +492,19 @@ public struct GrabberClaw
     private readonly float MaxDistance(PhysicsBody body)
     {
         return Mathf.Max(body.Distance(upperArm.GetShapes()[0]).distance, body.Distance(lowerArm.GetShapes()[0]).distance);
+    }
+
+    private readonly PhysicsRotate UpperArmJointRotation()
+    {
+        var upperRotA = upperArmJoint.bodyA.rotation.MultiplyRotation(upperArmJoint.localAnchorA.rotation);
+        var upperRotB = upperArmJoint.bodyB.rotation.MultiplyRotation(upperArmJoint.localAnchorB.rotation);
+        return upperRotA.InverseMultiplyRotation(upperRotB);
+    }
+
+    private readonly PhysicsRotate LowerArmJointRotation()
+    {
+        var lowerRotA = lowerArmJoint.bodyA.rotation.MultiplyRotation(lowerArmJoint.localAnchorA.rotation);
+        var lowerRotB = lowerArmJoint.bodyB.rotation.MultiplyRotation(lowerArmJoint.localAnchorB.rotation);
+        return lowerRotA.InverseMultiplyRotation(lowerRotB);
     }
 }

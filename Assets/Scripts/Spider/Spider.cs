@@ -49,6 +49,7 @@ public class Spider : MonoBehaviour
         health.Start();
         mover.Initialize(transform, spiderInput);
         grabber.Initialize(spiderInput, mover.SpideyBody.head, mover.SpideyBody.abdomen);
+        mover.grabber = grabber;
         jumpPreviewArrow.Start();
         grappleShootPreview.Start(mover.FacingRight);
 

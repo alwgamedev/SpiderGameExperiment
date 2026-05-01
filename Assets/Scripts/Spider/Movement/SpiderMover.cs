@@ -79,6 +79,7 @@ public class SpiderMover
     [SerializeField] float freeHangHeadAngle;
 
     SpiderInput spiderInput;
+    public Grabber grabber;
 
     bool chargingJump;
     bool waitingToHandleJump;
@@ -503,7 +504,8 @@ public class SpiderMover
             }
         }
 
-        legSynch.OnDirectionChanged(reflection, overlapCorrection, FacingRight);
+        grabber.OnDirectionChanged(reflection, overlapCorrection, !FacingRight);
+        legSynch.OnDirectionChanged(reflection, overlapCorrection, !FacingRight);
         grapple.SetOrientation(FacingRight);
     }
 
