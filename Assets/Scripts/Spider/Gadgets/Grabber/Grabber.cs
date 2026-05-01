@@ -3,17 +3,16 @@ using Unity.U2D.Physics;
 using UnityEngine;
 
 [Serializable]
-public class SGrabber
+public class Grabber
 {
     [Header("Arm")]
     [SerializeField] JointedChainDefinition armDef;
     [SerializeField] JointedChainSettings armSettings;//might want to have angle limits for joint 0
-    [SerializeField] SGrabberArm arm;
+    [SerializeField] GrabberArm arm;
     [SerializeField] Transform[] armPhysTransforms;//centered between joint positions
     [SerializeField] Transform[] armNodes;//joint positions + effector
     [SerializeField] float[] foldedPose;//poses are spring target angles for the arm joints
     [SerializeField] float[] defaultPose;
-    [SerializeField] float[] depositPose;
 #if UNITY_EDITOR
     [SerializeField] bool drawBodyGizmos;
     [SerializeField] bool drawAngleLimitGizmos;
@@ -21,7 +20,7 @@ public class SGrabber
 
     [Header("Claw")]
     [SerializeField] GrabberClawDefinition clawDef;
-    [SerializeField] SGrabberClaw claw;
+    [SerializeField] GrabberClaw claw;
     [SerializeField] Transform upperClawPhysTransform;
     [SerializeField] Transform[] upperClawBone;
     [SerializeField] Transform lowerClawPhysTransform;
@@ -31,9 +30,9 @@ public class SGrabber
 #endif
 
     [Header("Auxiliary Parts")]
-    [SerializeField] SGrabberAnchor anchor;
-    [SerializeField] SDoubleDoor depositDoor;
-    [SerializeField] SDoubleDoor mouth;
+    [SerializeField] GrabberAnchor anchor;
+    [SerializeField] DoubleDoor depositDoor;
+    [SerializeField] DoubleDoor mouth;
     [SerializeField] SpriteRenderer[] sprite;
     [SerializeField] Transform depositTarget;
     [SerializeField] Transform offAnchor;
@@ -81,8 +80,8 @@ public class SGrabber
 
         if (drawClawShapeGizmos)
         {
-            SGrabberClaw.DrawBodyGizmos(upperClawBone, clawDef.upperWidth);
-            SGrabberClaw.DrawBodyGizmos(lowerClawBone, clawDef.lowerWidth);
+            GrabberClaw.DrawBodyGizmos(upperClawBone, clawDef.upperWidth);
+            GrabberClaw.DrawBodyGizmos(lowerClawBone, clawDef.lowerWidth);
         }
 
         if (drawAnchorGizmos)
@@ -141,14 +140,12 @@ public class SGrabber
 
     public void Enable()
     {
-        Debug.Log("enable grabber");
         arm.Enable();
         claw.Enable();
     }
 
     public void Disable(bool forgetState)
     {
-        Debug.Log("disable grabber");
         if (forgetState)
         {
             anchor.Disable();
@@ -221,16 +218,16 @@ public class SGrabber
         {
             onAnchorTargetReached?.Invoke();
         }
-        if (arm.Update(reversed))
+        if (arm.Update(ref claw, reversed))
         {
             onArmTargetReached?.Invoke();
         }
         switch (claw.Update())
         {
-            case SGrabberClaw.TaskResult.complete:
+            case GrabberClaw.TaskResult.complete:
                 onClawTargetReached?.Invoke();
                 break;
-            case SGrabberClaw.TaskResult.failed:
+            case GrabberClaw.TaskResult.failed:
                 onClawTargetFailed?.Invoke();
                 break;
         }
@@ -263,9 +260,7 @@ public class SGrabber
         onAnchorTargetReached = GoIdle;
         onClawTargetReached = null;
         onClawTargetFailed = null;
-        //let's set all 3 every time we start a new action (so we don't have any old unneeded callbacks coming in when they shouldn't)
-
-        Debug.Log("grabber deploying");
+        //let's set all 4 actions every time we start a new task (so we don't have any old callbacks coming in when they shouldn't)
     }
 
     //move to default pose
@@ -281,8 +276,6 @@ public class SGrabber
         onAnchorTargetReached = null;
         onClawTargetReached = null;
         onClawTargetFailed = null;
-
-        Debug.Log("going idle");
     }
 
     private void CompleteGoIdle()
@@ -294,13 +287,11 @@ public class SGrabber
         onAnchorTargetReached = null;
         onClawTargetReached = null;
         onClawTargetFailed = null;
-        Debug.Log("idle position reached");
     }
 
     //return to default pose
     private void ParkPhase1()
     {
-        Debug.Log("park phase 1 (return to default pose)");
         taskInProgress = true;
         arm.BeginTargetingPose(defaultPose);
 
@@ -313,7 +304,6 @@ public class SGrabber
     //close grabber and fold up
     private void ParkPhase2()
     {
-        Debug.Log("park phase 2 (close claw)");
         taskInProgress = true;
         claw.Close();
 
@@ -325,7 +315,6 @@ public class SGrabber
 
     private void ParkPhase3()
     {
-        Debug.Log("park phase 3 (fold up)");
         taskInProgress = true;
         arm.BeginTargetingPose(foldedPose);
 
@@ -338,7 +327,6 @@ public class SGrabber
     //back into the garage
     private void ParkPhase4()
     {
-        Debug.Log("park phase 4 (return to off anchor)");
         taskInProgress = true;
         anchor.BeginTargetingOffPosition();
 
@@ -350,7 +338,6 @@ public class SGrabber
 
     private void CompletePark()
     {
-        Debug.Log("complete park");
         mouth.Close();
         HideSprites();
         Disable(true);
@@ -373,7 +360,6 @@ public class SGrabber
             claw.Open();
             arm.BeginTargetingBody(hitBody);
             arm.EnableSprings(false);
-            //arm.SetSpringTargetsToZero();
             grabTimer = grabTimeOut;
 
             onArmTargetReached = CompleteGrab;
@@ -389,7 +375,6 @@ public class SGrabber
 
     private void CompleteGrab()
     {
-        Debug.Log("completing grab");
         grabTimer = 0;
         taskInProgress = true;
         if (grabTarget.isValid)
@@ -414,8 +399,6 @@ public class SGrabber
             taskInProgress = true;
             arm.BeginTargetingPositionOnBody(depositTargetBody, depositTargetPosition);
             arm.EnableSprings(false);
-            //arm.EnableSprings(true);
-            //arm.SetSpringTargets(depositPose);
             claw.BeginHold(grabTarget);
             depositDoor.Open();
 
@@ -456,7 +439,14 @@ public class SGrabber
 
     private void OnGrabFailed()
     {
+        //open claw to make sure we let go of target, then go idle
         grabTarget = default;
-        GoIdle();
+        claw.Open();
+        arm.BeginTargetingPose(defaultPose);
+
+        onArmTargetReached = null;
+        onAnchorTargetReached = null;
+        onClawTargetReached = GoIdle;
+        onClawTargetFailed = null;
     }
 }

@@ -8,7 +8,7 @@ public class Spider : MonoBehaviour
     public SpiderInput spiderInput;
     public Health health;
     public SpiderMover mover;
-    public SGrabber grabber;
+    public Grabber grabber;
     public GrappleShootPreview grappleShootPreview;
     public JumpPreviewArrow jumpPreviewArrow;
 

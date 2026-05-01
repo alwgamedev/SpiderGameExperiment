@@ -3,7 +3,7 @@ using UnityEngine;
 using Unity.U2D.Physics;
 
 [Serializable]
-public struct SGrabberAnchor
+public struct GrabberAnchor
 {
     PhysicsHingeJoint joint;
     Vector2 offPosition;//relative to joint.bodyA's transform

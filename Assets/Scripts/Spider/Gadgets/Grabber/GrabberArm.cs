@@ -1,313 +1,289 @@
 ﻿using System;
+using Unity.U2D.Physics;
 using UnityEngine;
 
-public class GrabberArm : MonoBehaviour
+[Serializable]
+public struct GrabberArm
 {
-    [SerializeField] SpiderInput input;
-    [SerializeField] PhysicsBasedIKArm arm;
-    [SerializeField] ArmAnchor anchor;
-    [SerializeField] GrabberClaw grabberClaw;
-    [SerializeField] DoubleDoor inventoryDoor;
-    [SerializeField] DoubleDoor mouth;
-    [SerializeField] SpriteRenderer[] armSprites;
-    [SerializeField] LayerMask grabMask;
-    [SerializeField] float grabAttemptRadius;
-    //[SerializeField] Transform testTarget;
-    [SerializeField] Transform depositTarget;
-    [SerializeField] Transform offAnchorPosition;
-    [SerializeField] Transform deployedAnchorPosition;
-    [SerializeField] Vector2[] foldedPose;
-    [SerializeField] Vector2[] defaultPose;
-    [SerializeField] Vector2[] depositPose;
-    //[SerializeField] int depositPoseStartIndex;
-    [SerializeField] float[] depositPoseWeight;
-    [SerializeField] float grabTimeOut;
+    const float TARGETING_TOLERANCE = 0.025f;
+    const float TARGETING_TOLERANCE_SQUARED = TARGETING_TOLERANCE * TARGETING_TOLERANCE;
 
-    bool actionInProgress;//will not process input while action in progress
-    float grabTimer;
+    public JointedChain jointedChain;
 
-    Collider2D grabTarget;
+    PhysicsBody targetBody;
+    Vector2 targetPosition;//local to targetBody
+    PhysicsRotate[] targetPose;
 
-    Action onArmTargetReached;
-    Action onAnchorTargetReached;
-    Action onGrabberTargetReached;
+    [SerializeField] float targetingLinearAccel;
+    [SerializeField] float targetingRotationalAccel;
+    [SerializeField] float poseRotationTolerance;
+    [SerializeField] float effectorDistance;
 
-    //pull out of the garage
-    private void Deploy()
+    Mode mode;
+    bool targetReached;
+
+    enum Mode
     {
-        actionInProgress = true;
-        arm.SnapToPose(foldedPose);
-        ShowSprites();
-        anchor.BeginTargetingTransform(deployedAnchorPosition);
-        mouth.Open();
-        grabberClaw.EnableColliders();
-
-        onArmTargetReached = null;
-        onAnchorTargetReached = GoIdle;
-        onGrabberTargetReached = null;
-        //let's set all 3 every time we start a new action (so we don't have any old unneeded callbacks coming in when they shouldn't)
+        off, idle, trackBody, trackPositionOnBody, trackPose
     }
 
-    //move to default pose
-    private void GoIdle()
+    public void OnValidate(JointedChainDefinition def, JointedChainSettings settings, bool reversed)
     {
-        actionInProgress = true;
-        grabberClaw.Close();
-        inventoryDoor.Close();
-        arm.BeginTargetingPose(defaultPose);
+        jointedChain.UpdateDefAndSettings(def, settings, true, true);
 
-        onArmTargetReached = CompleteGoIdle;
-        onAnchorTargetReached = null;
-        onGrabberTargetReached = null;
-    }
-
-    private void CompleteGoIdle()
-    {
-        //we'll continue tracking default pose in case collision knocks the arm out of place
-        actionInProgress = false;
-
-        onArmTargetReached = null;
-        onAnchorTargetReached = null;
-        onGrabberTargetReached = null;
-    }
-
-    //return to default pose
-    private void ParkPhase1()
-    {
-        actionInProgress = true;
-        arm.BeginTargetingPose(defaultPose);
-
-        onArmTargetReached = ParkPhase2;
-        onAnchorTargetReached = null;
-        onGrabberTargetReached = null;
-    }
-
-    //close grabber and fold up
-    private void ParkPhase2()
-    {
-        actionInProgress = true;
-        grabberClaw.Close();
-
-        onArmTargetReached = null;
-        onAnchorTargetReached = null;
-        onGrabberTargetReached = ParkPhase3;
-    }
-
-    private void ParkPhase3()
-    {
-        actionInProgress = true;
-        arm.BeginTargetingPose(foldedPose);
-
-        onArmTargetReached = ParkPhase4;
-        onAnchorTargetReached = null;
-        onGrabberTargetReached = null;
-    }
-
-    //back into the garage
-    private void ParkPhase4()
-    {
-        actionInProgress = true;
-        arm.TurnOff();
-        anchor.BeginTargetingTransform(offAnchorPosition);
-
-        onArmTargetReached = null;
-        onAnchorTargetReached = CompletePark;
-        onGrabberTargetReached = null;
-    }
-
-    private void CompletePark()
-    {
-        HideSprites();
-        mouth.Close();
-        grabberClaw.TurnOff();
-        actionInProgress = false;
-
-        onArmTargetReached = null;
-        onAnchorTargetReached = null;
-        onGrabberTargetReached = null;
-    }
-
-    private void TryBeginGrab()
-    {
-        if (actionInProgress || arm.IsOff)
+        if (reversed)
         {
-            return;
+            jointedChain.FlipAngleLimits();
+        }
+    }
+
+    public readonly void OnDrawGizmos(Transform[] bone, float[] width, JointedChainSettings settings,
+        bool drawBodyGizmos, bool drawAngleLimitGizmos, bool reversed)
+    {
+        if (drawBodyGizmos)
+        {
+            JointedChain.DrawBodyGizmos(bone, width);
         }
 
-        var o = arm.Anchor;
-        var c = Physics2D.OverlapCircle(o.position, grabAttemptRadius, grabMask);
-        //^we'll use a manually set radius here rather than actual arm length, so we can still try when object is slightly out of reach
-        //(maybe it's rolling and will become in reach, or maybe it has a large collider that will allow us to reach the edge of it)
-        if (c)
+        if (drawAngleLimitGizmos)
         {
-            //2DO: also enforce a time-out for reaching the target + trying to grab it with claw
-            actionInProgress = true;
-            grabTarget = c;
-            grabberClaw.Open();
-            arm.BeginTargetingCollider(c);
-            grabTimer = grabTimeOut;
-
-            onArmTargetReached = CompleteGrab;//grip the object with claw and then deposit
-            onAnchorTargetReached = null;
-            onGrabberTargetReached = null;
+            if (Application.isPlaying)
+            {
+                jointedChain.DrawAngleGizmos(reversed);
+            }
+            else
+            {
+                JointedChain.DrawAngleGizmos(bone, settings);
+            }
         }
-        //else
+    }
+
+    Vector2 EffectorPosition(bool reversed)
+    {
+        return jointedChain.EffectorPosition(reversed) + (reversed ? -effectorDistance : effectorDistance) * jointedChain.body[^1].rotation.direction;
+    }
+    public readonly bool Enabled() => jointedChain.Enabled();
+
+    public void Initialize(Transform[] physTransform, Transform[] bone, PhysicsBody anchorBody,
+        JointedChainDefinition def, JointedChainSettings settings)
+    {
+        jointedChain.Initialize(physTransform, bone, anchorBody, def, settings, true);
+        targetPose = new PhysicsRotate[jointedChain.JointCount];
+    }
+
+    public readonly void Enable()
+    {
+        jointedChain.Enable();
+    }
+
+    public void Disable(bool forgetState)
+    {
+        if (forgetState)
+        {
+            mode = Mode.off;
+        }
+
+        jointedChain.Disable(forgetState);
+    }
+
+    public readonly void Destroy()
+    {
+        jointedChain.Destroy();
+    }
+
+    public bool Update(ref GrabberClaw claw, bool reversed)
+    {
+        return mode switch
+        {
+            Mode.trackBody => TrackBodyBehavior(ref claw, reversed),
+            Mode.trackPositionOnBody => TrackPositionInBodyBehavior(reversed),
+            Mode.trackPose => TrackPoseBehavior(reversed),
+            _ => false
+        };
+    }
+
+    public readonly void SyncTransforms()
+    {
+        jointedChain.SyncTransforms();
+    }
+
+    public readonly void EnableSprings(bool val)
+    {
+        for (int i = 0; i < jointedChain.JointCount; i++)
+        {
+            jointedChain.joint[i].enableSpring = val;
+        }
+    }
+
+    public readonly void SetSpringTargets(float[] targetAngle)
+    {
+        for (int i = 0; i < jointedChain.JointCount; i++)
+        {
+            jointedChain.joint[i].springTargetAngle = targetAngle[i];
+        }
+    }
+
+    public readonly void SnapToPose(float[] poseAngle)
+    {
+        for (int i = 0; i < jointedChain.JointCount; i++)
+        {
+            ref var joint = ref jointedChain.joint[i];
+            var pos = jointedChain.JointPosition(i);//joint position is computed using bodyA (good, since previous body already in right place)
+            var rot = joint.bodyA.rotation.MultiplyRotation(joint.localAnchorA.rotation).MultiplyRotation(PhysicsRotate.FromDegrees(poseAngle[i]));
+            jointedChain.body[i].transform = new PhysicsTransform(pos, rot);
+        }
+    }
+
+    public void BeginTargetingBody(PhysicsBody body)
+    {
+        targetBody = body;
+        mode = Mode.trackBody;
+        targetReached = false;
+    }
+
+    public void BeginTargetingPositionOnBody(PhysicsBody body, Vector2 bodyLocalPos)
+    {
+        targetBody = body;
+        targetPosition = bodyLocalPos;
+        mode = Mode.trackPositionOnBody;
+        targetReached = false;
+    }
+
+    public void BeginTargetingPose(float[] pose)
+    {
+        for (int i = 0; i < targetPose.Length; i++)
+        {
+            jointedChain.joint[i].enableSpring = true;
+            jointedChain.joint[i].springTargetAngle = pose[i];
+            targetPose[i] = PhysicsRotate.FromDegrees(pose[i]);
+        }
+
+        mode = Mode.trackPose;
+        targetReached = false;
+    }
+
+    private bool TrackPositionInBodyBehavior(bool reversed)
+    {
+        if (!targetBody.isValid)
+        {
+            if (!targetReached)
+            {
+                targetReached = true;
+                return true;
+            }
+
+            return false;
+        }
+
+        var effectorPos = EffectorPosition(reversed);
+        var targetPos = targetBody.transform.TransformPoint(targetPosition);
+        var err = targetPos - effectorPos;
+
+        if (err.sqrMagnitude < TARGETING_TOLERANCE_SQUARED)
+        {
+            if (!targetReached)
+            {
+                targetReached = true;
+                return true;
+            }
+
+            return false;
+        }
+
+        //var effectorBody = jointedChain.body[jointedChain.JointCount - 1];
+        //var accel = targetingLinearAccel * err;
+        //effectorBody.ApplyForce(effectorBody.mass * accel, effectorPos);
+        ReachForPositionFromAbove(effectorPos, targetPos, reversed);
+        return false;
+    }
+
+    private bool TrackBodyBehavior(ref GrabberClaw claw, bool reversed)
+    {
+        if (!targetBody.isValid)
+        {
+            if (!targetReached)
+            {
+                targetReached = true;
+                return true;
+            }
+
+            return false;
+        }
+
+        var com = targetBody.worldCenterOfMass;
+        if (!targetReached && claw.EnclosesPoint(com))
+        {
+            targetReached = true;
+            return true;
+        }
+
+        var effectorPos = EffectorPosition(reversed);
+
+        //find closest point
+        //var targetShapes = targetBody.GetShapes();
+        //var minDist2 = Mathf.Infinity;
+        //Vector2 closestPoint = default;
+
+        //for (int i = 0; i < targetShapes.Length; i++)
         //{
-        //    Debug.Log("no grabbable target in range.");//replace with ui message in future
+        //    var p = targetShapes[i].ClosestPoint(effectorPos);
+        //    var dist2 = Vector2.SqrMagnitude(p - effectorPos);
+        //    if (dist2 < minDist2)
+        //    {
+        //        minDist2 = dist2;
+        //        closestPoint = p;
+        //        if (minDist2 < TARGETING_TOLERANCE_SQUARED)
+        //        {
+        //            if (!targetReached)
+        //            {
+        //                targetReached = true;
+        //                return true;
+        //            }
+
+        //            return false;
+        //        }
+        //    }
         //}
+
+        ReachForPositionFromAbove(effectorPos, com, reversed);
+
+        return false;
     }
 
-    private void CompleteGrab()
+    private void ReachForPositionFromAbove(Vector2 effectorPos, Vector2 targetPos, bool reversed)
     {
-        actionInProgress = true;
-        grabTimer = 0;
-        if (grabTarget)
-        {
-            grabberClaw.BeginGrab(grabTarget);
+        Debug.DrawLine(effectorPos, targetPos, Color.green);
+        var effectorBody = jointedChain.body[^1];
+        var linearAccel = targetingLinearAccel * (targetPos - effectorPos);
+        effectorBody.ApplyForce(effectorBody.mass * linearAccel, effectorPos);
 
-            onArmTargetReached = null;
-            onAnchorTargetReached = null;
-            onGrabberTargetReached = HeadToDeposit;
+        var up = jointedChain.joint[0].bodyA.rotation.direction.CCWPerp();
+        var effectorDir = reversed ? -effectorBody.rotation.direction : effectorBody.rotation.direction;
+        var rotAccel = targetingRotationalAccel * MathTools.PseudoAngle(effectorDir, -up);
+        effectorBody.ApplyTorque(effectorBody.rotationalInertia * rotAccel);
+    }
+
+    private bool TrackPoseBehavior(bool reversed)
+    {
+        if (targetReached)
+        {
+            return false;
         }
-        else
+
+        ref var arm = ref jointedChain;
+
+        for (int i = 0; i < jointedChain.JointCount; i++)
         {
-            OnGrabFailed();
-        }
-    }
-
-    private void HeadToDeposit()
-    {
-        if (grabTarget)
-        {
-            //arm.BeginTargetingTransform(depositTarget, depositPoseStartIndex, depositPose);
-            arm.BeginTargetingTransform(depositTarget, depositPoseWeight, depositPose);
-            grabberClaw.BeginHold(grabTarget);
-            inventoryDoor.Open();
-
-            onArmTargetReached = Deposit;
-            onAnchorTargetReached = null;
-            onGrabberTargetReached = OnGrabFailed;
-        }
-        else
-        {
-            OnGrabFailed();
-        }
-    }
-
-    private void Deposit()
-    {
-        actionInProgress = true;
-        grabberClaw.Open();
-
-        onArmTargetReached = null;
-        onAnchorTargetReached = null;
-        onGrabberTargetReached = CompleteDeposit;
-    }
-
-    private void CompleteDeposit()
-    {
-        if (grabTarget)
-        {
-            grabTarget = null;
-            GoIdle();
-        }
-        else
-        {
-            OnGrabFailed();
-        }
-    }
-
-    private void OnEnable()
-    {
-        arm.TargetReached += OnArmTargetReached;
-        anchor.TargetReached += OnAnchorTargetReached;
-        grabberClaw.TargetReached += OnGrabberTargetReached;
-    }
-
-    private void Start()
-    {
-        arm.Initialize();
-        arm.TurnOff();
-        arm.SnapToPose(foldedPose);
-        inventoryDoor.SnapClosed();
-        mouth.SnapClosed();
-        anchor.SetPosition(offAnchorPosition.position);
-        grabberClaw.SnapClosed();
-        HideSprites();
-    }
-
-    private void OnDisable()
-    {
-        arm.TargetReached -= OnArmTargetReached;
-        anchor.TargetReached -= OnAnchorTargetReached;
-        grabberClaw.TargetReached -= OnGrabberTargetReached;
-    }
-
-    private void Update()
-    {
-        //handle input
-        if (!actionInProgress)
-        {
-            if (input.QAction.WasPressedThisFrame())
+            ref var joint = ref arm.joint[i];
+            var cur = joint.localAnchorA.rotation.InverseMultiplyRotation(joint.bodyA.rotation.InverseMultiplyRotation(joint.bodyB.rotation));
+            var error = targetPose[i].InverseMultiplyRotation(cur).direction;
+            if (error.x < 0 || Mathf.Abs(error.y) > poseRotationTolerance)
             {
-                if (arm.IsOff)
-                {
-                    Deploy();
-                }
-                else if (input.ShiftAction.IsPressed())//shift+Q to close arm
-                {
-                    ParkPhase1();
-                }
-                else
-                {
-                    TryBeginGrab();
-                }
+                return false;
             }
         }
-        else if (grabTimer > 0)
-        {
-            grabTimer -= Time.deltaTime;
-            if (!(grabTimer > 0))
-            {
-                OnGrabFailed();
-            }
-        }
-    }
 
-    private void OnArmTargetReached()
-    {
-        onArmTargetReached?.Invoke();
-    }
-
-    private void OnAnchorTargetReached()
-    {
-        onAnchorTargetReached?.Invoke();
-    }
-
-    private void OnGrabberTargetReached()
-    {
-        onGrabberTargetReached?.Invoke();
-    }
-
-    private void ShowSprites()
-    {
-        foreach (var r in armSprites)
-        {
-            r.enabled = true;
-        }
-    }
-
-    private void HideSprites()
-    {
-        foreach (var r in armSprites)
-        {
-            r.enabled = false;
-        }
-    }
-
-    private void OnGrabFailed()
-    {
-        grabTarget = null;
-        GoIdle();
+        targetReached = true;
+        return true;
     }
 }

@@ -1,13 +1,15 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
-public class DoubleDoor : MonoBehaviour
+[Serializable]
+public struct DoubleDoor
 {
-    [SerializeField] Transform door1;
-    [SerializeField] Transform door2;
     [SerializeField] Quaternion door1Open;
     [SerializeField] Quaternion door1Closed;
     [SerializeField] Quaternion door2Open;
     [SerializeField] Quaternion door2Closed;
+    [SerializeField] Transform door1;
+    [SerializeField] Transform door2;
     [SerializeField] float rotationSpeed;
     [SerializeField] float rotationTolerance;
 
@@ -58,18 +60,18 @@ public class DoubleDoor : MonoBehaviour
         door2Closed = door2.localRotation;
     }
 
-    private void FixedUpdate()
+    public void FixedUpdate(float dt)
     {
         switch (mode)
         {
             case Mode.opening:
-                if (!RotateTowardsGoal(door1Open, door2Open, rotationSpeed * Time.deltaTime))
+                if (!RotateTowardsGoal(door1Open, door2Open, rotationSpeed * dt))
                 {
                     mode = Mode.idle;
                 }
                 break;
             case Mode.closing:
-                if (!RotateTowardsGoal(door1Closed, door2Closed, rotationSpeed * Time.deltaTime))
+                if (!RotateTowardsGoal(door1Closed, door2Closed, rotationSpeed * dt))
                 {
                     mode = Mode.idle;
                 }
@@ -77,13 +79,13 @@ public class DoubleDoor : MonoBehaviour
         }
     }
 
-    private void SnapToGoal(Quaternion goal1, Quaternion goal2)
+    private readonly void SnapToGoal(Quaternion goal1, Quaternion goal2)
     {
         door1.localRotation = goal1;
         door2.localRotation = goal2;
     }
 
-    private bool RotateTowardsGoal(Quaternion goal1, Quaternion goal2, float lerpAmount)
+    private readonly bool RotateTowardsGoal(Quaternion goal1, Quaternion goal2, float lerpAmount)
     {
         //q & -q represent the same rotation, so take abs of the dot
         var min = Mathf.Min(Mathf.Abs(Quaternion.Dot(door1.localRotation, goal1)), Mathf.Abs(Quaternion.Dot(door2.localRotation, goal2)));
