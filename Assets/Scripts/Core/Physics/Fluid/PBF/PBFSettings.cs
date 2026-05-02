@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using Unity.U2D.Physics;
 
 [Serializable]
 public struct PBFConfiguration
@@ -17,6 +18,7 @@ public struct PBFConfiguration
 [Serializable]
 public struct PBFSimSettings
 {
+    public PhysicsMask obstacleMask;
     public float cellSize;
     public int updateFrequency;
     public int stepsPerUpdate;
@@ -31,15 +33,15 @@ public struct PBFSimSettings
     public int antiClusterN;
     public float epsilon;
     public float collisionBounciness;
-    public LayerMask obstacleMask;
     public float obstacleRepulsion;
     public float velocityBasedObstacleRepulsionMultiplier;
     public float velocityBasedObstacleScaleMultiplier;
     public float obstacleUpscaleMax;
     public float surfaceNormalThreshold;
-
     public float obstacleBuoyancy;
     public float obstacleDrag;
+    public float obstacleRepulsionRadius;
+    public float obstacleRepulsionRadiusMax;
 }
 
 [Serializable]

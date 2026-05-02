@@ -55,6 +55,8 @@ MonoBehaviour:
     numFoamParticles: 4500
     drawGizmos: 1
   simSettings:
+    obstacleMask:
+      bitMask: 8
     cellSize: 1
     updateFrequency: 1
     stepsPerUpdate: 2
@@ -69,9 +71,6 @@ MonoBehaviour:
     antiClusterN: 4
     epsilon: 50
     collisionBounciness: 0.1
-    obstacleMask:
-      serializedVersion: 2
-      m_Bits: 8
     obstacleRepulsion: 25000
     velocityBasedObstacleRepulsionMultiplier: 1
     velocityBasedObstacleScaleMultiplier: 0.2
@@ -79,6 +78,8 @@ MonoBehaviour:
     surfaceNormalThreshold: 100
     obstacleBuoyancy: 0.0175
     obstacleDrag: 0.2
+    obstacleRepulsionRadius: 0
+    obstacleRepulsionRadiusMax: 0
   foamParticleSettings:
     trappedAirDiffuseRate: 800
     spawnRadiusMultiplier: 100
@@ -97,6 +98,7 @@ MonoBehaviour:
     kineticEnergyNormalizer: 200
     kineticEnergyThreshold: 0
   densityTexSettings:
+    noiseStretch: {x: 1.5, y: 1}
     texWidth: 1024
     texHeight: 1024
     timeBlur: 0.2
@@ -104,13 +106,10 @@ MonoBehaviour:
     noiseSmoothingRadius: 0.8
     noiseVelocityRadius: 0.5
     noiseScrollRate: 2
-    noiseStretch: {x: 1.5, y: 1}
     noiseTimeBlur: 0.5
     noiseVelocityInfluence: 0.025
     noiseVelocityInfluenceMax: 1
     foamSmoothingRadius: 1
-  computeShader: {fileID: 0}
-  densityTexture: {fileID: 0}
 --- !u!114 &6766266259801090171
 MonoBehaviour:
   m_ObjectHideFlags: 0

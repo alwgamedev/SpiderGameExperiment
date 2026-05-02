@@ -2,11 +2,12 @@
 using UnityEngine;
 using Unity.Collections;
 using UnityEngine.Rendering;
+using Unity.U2D.Physics;
 
 public class PBFluid : MonoBehaviour
 {
     const int THREADS_PER_GROUP = 256;
-    const int MAX_NUM_OBSTACLES = 16;//we'll make it more when we need to (but for now still need more than 1, because picks up other colliders on the spider)
+    const int MAX_NUM_OBSTACLES = 32;//can make it more when we need to
 
     //kernel indices in compute shader
     public const int recalculateAntiClusterCoefficient = 0;
@@ -38,8 +39,8 @@ public class PBFluid : MonoBehaviour
     public PBFFoamParticleSettings foamParticleSettings;
     public PBFDensityTexSettings densityTexSettings;
 
-    [HideInInspector] public ComputeShader computeShader;
-    [HideInInspector] public RenderTexture densityTexture;
+    internal ComputeShader computeShader;
+    internal RenderTexture densityTexture;
 
     PBFComputeConfig[] configTransfer;
     PBFComputeVariables[] varsTransfer;
@@ -68,15 +69,17 @@ public class PBFluid : MonoBehaviour
 
     ComputeBuffer obstacleData;
     ObstacleData[] obstacleDataTransfer;
-    Collider2D[] colliderQueryBuffer;
-    ContactFilter2D colliderFilter;
-    PBFDynamicObstacle[] obstacle;
+    //Collider2D[] colliderQueryBuffer;
+    //ContactFilter2D colliderFilter;
+    PhysicsQuery.QueryFilter obstacleFilter;
+    //PBFDynamicObstacle[] obstacle;
+    PhysicsShape[] obstacle;
     int numObstacles;
 
     ComputeBuffer obstacleDisplacement;
     AsyncGPUReadbackRequest displacementReadbackRequest;
     NativeArray<int> obstacleDisplacementNA;
-    PBFDynamicObstacle[] obstacleSnapshot;//snapshots taken when we send a readback request (so we have the correct collider lookup to go with the displacements)
+    /*PBFDynamicObstacle[]*/PhysicsShape[] obstacleSnapshot;//snapshots taken when we send a readback request (so we have the correct collider lookup to go with the displacements)
     int numObstaclesSnapshot;
     float lastReadbackTime;
 
@@ -162,21 +165,27 @@ public class PBFluid : MonoBehaviour
 
         obstacleData = new ComputeBuffer(MAX_NUM_OBSTACLES, MiscTools.Stride<ObstacleData>());
         obstacleDataTransfer = new ObstacleData[MAX_NUM_OBSTACLES];
-        colliderQueryBuffer = new Collider2D[MAX_NUM_OBSTACLES];
+        //colliderQueryBuffer = new Collider2D[MAX_NUM_OBSTACLES];
 
         obstacleDisplacement = new ComputeBuffer(MAX_NUM_OBSTACLES, 4);
-        colliderQueryBuffer = new Collider2D[MAX_NUM_OBSTACLES];
-        obstacle = new PBFDynamicObstacle[MAX_NUM_OBSTACLES];
-        obstacleSnapshot = new PBFDynamicObstacle[MAX_NUM_OBSTACLES];
+        //colliderQueryBuffer = new Collider2D[MAX_NUM_OBSTACLES];
+        obstacle = new PhysicsShape[MAX_NUM_OBSTACLES];//new PBFDynamicObstacle[MAX_NUM_OBSTACLES];
+        obstacleSnapshot = new PhysicsShape[MAX_NUM_OBSTACLES];//new PBFDynamicObstacle[MAX_NUM_OBSTACLES];
         if (!obstacleDisplacementNA.IsCreated)
         {
             obstacleDisplacementNA = new(MAX_NUM_OBSTACLES, Allocator.Persistent);
         }
         lastReadbackTime = Time.time;
 
-        colliderFilter = ContactFilter2D.noFilter;
-        colliderFilter.useTriggers = false;
-        colliderFilter.SetLayerMask(simSettings.obstacleMask);
+        //colliderFilter = ContactFilter2D.noFilter;
+        //colliderFilter.useTriggers = false;
+        //colliderFilter.SetLayerMask(simSettings.obstacleMask);
+        obstacleFilter = new()
+        {
+            categories = PhysicsMask.All,
+            hitCategories = simSettings.obstacleMask,
+            ignoreFilter = PhysicsWorld.IgnoreFilter.IgnoreTriggerShapes
+        };
 
         foamParticle = new ComputeBuffer(configuration.numFoamParticles, 32);
         foamParticleBuffer = new ComputeBuffer(configuration.numFoamParticles, 32);
@@ -414,27 +423,35 @@ public class PBFluid : MonoBehaviour
         var worldHeight = configuration.height * simSettings.cellSize;
         var boxCenter = new Vector2(transform.position.x + 0.5f * worldWidth, transform.position.y + 0.5f * worldHeight);
         var boxSize = new Vector2(worldWidth, worldHeight);
-        Array.Clear(colliderQueryBuffer, 0, colliderQueryBuffer.Length);
-        Physics2D.OverlapBox(boxCenter, boxSize, 0, colliderFilter, colliderQueryBuffer);
+        //Array.Clear(colliderQueryBuffer, 0, colliderQueryBuffer.Length);
+        //Physics2D.OverlapBox(boxCenter, boxSize, 0, colliderFilter, colliderQueryBuffer);
+        var boxTransform = new PhysicsTransform(boxCenter, PhysicsRotate.identity);
+        var box = PolygonGeometry.CreateBox(boxSize, 0, boxTransform);
+        var overlapResults = PhysicsWorld.defaultWorld.OverlapGeometry(box, obstacleFilter);
 
         //put non-null obstacles at the beginning of the compute buffer
         //and we'll use numObstacles to mark the end so we don't have to clear out the rest of the buffer
         numObstacles = 0;
-        for (int i = 0; i < MAX_NUM_OBSTACLES; i++)
+        for (int i = 0; i < Mathf.Min(MAX_NUM_OBSTACLES, overlapResults.Length); i++)
         {
-            var c = colliderQueryBuffer[i];
-            if (c && c.gameObject.TryGetComponent(out PBFDynamicObstacle o))
+            //var c = colliderQueryBuffer[i];
+            var shape = overlapResults[i].shape;
+            if (shape.isValid && shape.body.type == PhysicsBody.BodyType.Dynamic /*&& shape.body.transformObject.TryGetComponent(out PBFDynamicObstacle o)*/)
             {
-                var spd = o.Rigidbody.linearVelocity.magnitude;
-                var tScale = Mathf.Min(simSettings.velocityBasedObstacleScaleMultiplier * spd, simSettings.obstacleUpscaleMax);
-                var tRepulsion = Mathf.Min(simSettings.velocityBasedObstacleRepulsionMultiplier * spd, 1);
-                obstacle[numObstacles] = o;
+                var spd = shape.body.linearVelocity.magnitude;//o.Rigidbody.linearVelocity.magnitude;
+                var scale = Mathf.Min(simSettings.velocityBasedObstacleScaleMultiplier * spd, simSettings.obstacleUpscaleMax);
+                var repulsion = Mathf.Min(simSettings.velocityBasedObstacleRepulsionMultiplier * spd, 1);
+                obstacle[numObstacles] = shape;
                 obstacleDataTransfer[numObstacles++] = new()
                 {
-                    center = new(o.Collider.bounds.center.x - transform.position.x, o.Collider.bounds.center.y - transform.position.y),
-                    extents = o.Collider.bounds.extents,
-                    speedScaledRadius = Mathf.Min(tScale * o.RepulsionRadius, o.RepulsionRadiusMax),
-                    repulsionMultiplier = tRepulsion
+                    //center = new(o.Collider.bounds.center.x - transform.position.x, o.Collider.bounds.center.y - transform.position.y),
+                    //extents = o.Collider.bounds.extents,
+
+                    //let's debug draw the box to see what the H is going on
+                    center = shape.aabb.center - (Vector2)transform.position,
+                    extents = shape.aabb.extents,
+                    speedScaledRadius = Mathf.Min(scale * simSettings.obstacleRepulsionRadius, simSettings.obstacleRepulsionRadiusMax),
+                    repulsionMultiplier = repulsion
                 };
             }
         }
@@ -470,11 +487,12 @@ public class PBFluid : MonoBehaviour
             }
 
             var o = obstacleSnapshot[i];
-            if (o)
+            if (o.isValid)
             {
-                var v = o.Rigidbody.linearVelocity;
-                var f = obstacleDisplacementNA[i] * b - o.Collider.bounds.size.x * simSettings.obstacleDrag * v.magnitude * v;
-                o.Rigidbody.linearVelocity += dt * f;
+                var body = o.body;
+                var v = body.linearVelocity;
+                var f = obstacleDisplacementNA[i] * b - 2 * o.aabb.extents.x * simSettings.obstacleDrag * v.magnitude * v;
+                body.linearVelocity += dt * f;
             }
         }
     }
