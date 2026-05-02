@@ -32,6 +32,8 @@ public struct SpiderBody
     [SerializeField] PhysicsShapeDefinition shapeDef;
     [SerializeField] PhysicsFixedJointDefinition headJointDef;
     [SerializeField] PhysicsBodyDefinition bodyDef;
+    [SerializeField] DynamicFluidObstacle headFluidObstacle;
+    [SerializeField] DynamicFluidObstacle abdomenFluidObstacle;
 
     public readonly bool FacingRight => facingRight;
     public readonly int Orientation => FacingRight ? 1 : -1;
@@ -120,6 +122,7 @@ public struct SpiderBody
 
         var defaultWorld = PhysicsWorld.defaultWorld;
 
+        //create abdomen
         var bodyDefCopy = bodyDef;
         bodyDefCopy.position = abdomenRoot.position;
         bodyDefCopy.rotation = new PhysicsRotate(abdomenRoot.rotation, PhysicsWorld.TransformPlane.XY);
@@ -128,13 +131,30 @@ public struct SpiderBody
             //(have written an editor function to do this)
         abdomen.transformObject = abdomenRoot;
 
+        var grappleArmBox = GrappleArmWorldBox(grappleArmTransform).InverseTransform(abdomen.transform);
+        grappleArmShape = abdomen.CreateShape(grappleArmBox, shapeDef);
+
+
+        //create head
         bodyDefCopy.position = headRoot.position;
         bodyDefCopy.rotation = new PhysicsRotate(headRoot.rotation, PhysicsWorld.TransformPlane.XY);
         head = PhysicsCoreHelper.CreateCapsuleBody(defaultWorld, bodyDefCopy, shapeDef, headCapsuleSize, Vector2.zero, headRoot.localToWorldMatrix);
         head.transformObject = headRoot;
 
-        var grappleArmBox = GrappleArmWorldBox(grappleArmTransform).InverseTransform(abdomen.transform);
-        grappleArmShape = abdomen.CreateShape(grappleArmBox, shapeDef);
+        //set user data
+        var abdomenCapsule = abdomen.GetShapes()[0];
+        var abdomenUserData = abdomenCapsule.userData;
+        abdomenUserData.objectValue = abdomenFluidObstacle;
+        abdomenCapsule.userData = abdomenUserData;
+
+        var grappleArmUserData = grappleArmShape.userData;
+        grappleArmUserData.objectValue = abdomenFluidObstacle;
+        grappleArmShape.userData = grappleArmUserData;
+
+        var headCapsule = head.GetShapes()[0];
+        var headUserData = headCapsule.userData;
+        headUserData.objectValue = headFluidObstacle;
+        headCapsule.userData = headUserData;
 
         //fixed joints: anchorB on bodyB will be pulled towards anchorA on bodyA;
         //for rotation that means bodyB will rotate so that its anchor direction lines up with the anchor direction on bodyA

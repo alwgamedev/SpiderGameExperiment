@@ -12399,21 +12399,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: PB Fluid
       objectReference: {fileID: 0}
-    - target: {fileID: 5222157793995484295, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
-      propertyPath: simSettings.obstacleRepulsionRadius
-      value: 0.25
-      objectReference: {fileID: 0}
-    - target: {fileID: 5222157793995484295, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
-      propertyPath: simSettings.obstacleRepulsionRadiusMax
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 5648694684584665525, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -21.6
+      value: -22.3
       objectReference: {fileID: 0}
     - target: {fileID: 5648694684584665525, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -19.9
+      value: -1.8
       objectReference: {fileID: 0}
     - target: {fileID: 5648694684584665525, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
       propertyPath: m_LocalPosition.z
@@ -14845,7 +14837,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!212 &1910163372
 SpriteRenderer:
   serializedVersion: 3
@@ -16756,6 +16748,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 170334193149612089, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
+      propertyPath: mover.spiderBody.headFluidObstacle
+      value: 
+      objectReference: {fileID: 11400000, guid: c3afe89107ef1964094b1b07e5b6a600, type: 2}
+    - target: {fileID: 170334193149612089, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
+      propertyPath: mover.spiderBody.abdomenFluidObstacle
+      value: 
+      objectReference: {fileID: 11400000, guid: c3afe89107ef1964094b1b07e5b6a600, type: 2}
     - target: {fileID: 1231387903212816449, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
       propertyPath: m_Name
       value: Spider
@@ -16804,7 +16804,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 8477651183600270903, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

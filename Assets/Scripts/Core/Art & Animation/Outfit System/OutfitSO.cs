@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Outfit", menuName = "Scriptable Objects/Outfit")]
+[CreateAssetMenu(fileName = "New Outfit", menuName = "Scriptable Objects/Outfit System/Outfit")]
 public class OutfitSO : ScriptableObject
 {
     public Outfit outfit;

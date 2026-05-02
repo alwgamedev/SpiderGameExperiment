@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4d84ff93cd79c24da79b3bdcedb7b22, type: 3}
+  m_Name: Spider Fluid Obstacle
+  m_EditorClassIdentifier: spydr1.Runtime::DynamicFluidObstacle
+  repulsionRadius: 0.3
+  repulsionRadiusMax: 1
+  extentsMultiplier: 3

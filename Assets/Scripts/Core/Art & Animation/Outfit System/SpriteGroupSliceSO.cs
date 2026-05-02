@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New SpriteGroupSlice", menuName = "Scriptable Objects/Sprite Group Slice")]
+[CreateAssetMenu(fileName = "New SpriteGroupSlice", menuName = "Scriptable Objects/Outfit System/Sprite Group Slice")]
 public class SpriteGroupSliceSO : ScriptableObject
 {
     public SpriteGroup group;

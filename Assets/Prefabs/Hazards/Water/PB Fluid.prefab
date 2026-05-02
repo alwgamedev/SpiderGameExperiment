@@ -47,7 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PBFluid
   _computeShader: {fileID: 7200000, guid: 33fbda51eab42c143863879575637ab9, type: 3}
   configuration:
-    width: 32
+    width: 26
     height: 30
     releaseWidth: 20
     releaseSpacing: 0.25
@@ -58,7 +58,6 @@ MonoBehaviour:
     obstacleMask:
       bitMask: 8
     cellSize: 1
-    updateFrequency: 1
     stepsPerUpdate: 2
     pressureSolveIterations: 2
     kernelDeg: 7
@@ -76,10 +75,8 @@ MonoBehaviour:
     velocityBasedObstacleScaleMultiplier: 0.2
     obstacleUpscaleMax: 3
     surfaceNormalThreshold: 100
-    obstacleBuoyancy: 0.0175
-    obstacleDrag: 0.2
-    obstacleRepulsionRadius: 0
-    obstacleRepulsionRadiusMax: 0
+    obstacleBuoyancy: 0.01
+    obstacleDrag: 0.25
   foamParticleSettings:
     trappedAirDiffuseRate: 800
     spawnRadiusMultiplier: 100
@@ -154,8 +151,8 @@ MonoBehaviour:
   particleColorMax:
     c0: {r: 0.28415084, g: 0.46411315, b: 0.94716984, a: 0.101960786}
     c1: {r: 0.09803922, g: 0.3254902, b: 0.9411765, a: 0.2}
-  particleRadiusMin: {x: 0.2, y: 0.4}
-  particleRadiusSpray: {x: 0.05, y: 0.2}
+  particleRadiusMin: {x: 0.025, y: 0.1}
+  particleRadiusSpray: {x: 0.05, y: 0.1}
   particleRadiusFoam: {x: 0.1, y: 0.2}
   particleRadiusBubble: {x: 0.01, y: 0.1}
   particleRadiusMax: {x: 0.05, y: 0.2}

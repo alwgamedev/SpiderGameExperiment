@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.U2D.Animation;
 
-[CreateAssetMenu(fileName = "New SpriteLibraryGroups", menuName = "Scriptable Objects/Sprite Grouping")]
+[CreateAssetMenu(fileName = "New SpriteLibraryGroups", menuName = "Scriptable Objects/Outfit System/Sprite Grouping")]
 public class SpriteGrouping : ScriptableObject
 {
     const string unassigned = "Unassigned";

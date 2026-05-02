@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Outfit3D", menuName = "Scriptable Objects/Outfit3D")]
+[CreateAssetMenu(fileName = "New Outfit3D", menuName = "Scriptable Objects/Outfit System/Outfit3D")]
 public class Outfit3DSO : ScriptableObject, IOutfit3D
 {
     [SerializeField] OutfitSO front;

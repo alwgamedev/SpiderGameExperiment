@@ -20,7 +20,7 @@ public struct PBFSimSettings
 {
     public PhysicsMask obstacleMask;
     public float cellSize;
-    public int updateFrequency;
+    //public int updateFrequency;
     public int stepsPerUpdate;
     public int pressureSolveIterations;
     public int kernelDeg;
@@ -40,8 +40,6 @@ public struct PBFSimSettings
     public float surfaceNormalThreshold;
     public float obstacleBuoyancy;
     public float obstacleDrag;
-    public float obstacleRepulsionRadius;
-    public float obstacleRepulsionRadiusMax;
 }
 
 [Serializable]

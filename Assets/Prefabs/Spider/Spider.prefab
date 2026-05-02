@@ -1577,7 +1577,6 @@ GameObject:
   - component: {fileID: 9149063515827151626}
   - component: {fileID: 2290889871136229131}
   - component: {fileID: 170334193149612089}
-  - component: {fileID: 8477651183600270903}
   - component: {fileID: 534478759235766021}
   m_Layer: 3
   m_Name: Spider
@@ -1795,6 +1794,8 @@ MonoBehaviour:
         m_Awake: 1
         m_Enabled: 1
         m_WorldDrawing: 0
+      headFluidObstacle: {fileID: 0}
+      abdomenFluidObstacle: {fileID: 0}
     legSynch:
       footHitGround: []
       chainDef:
@@ -2888,22 +2889,6 @@ MonoBehaviour:
     colorMin1: {r: 0, g: 1, b: 0.7882353, a: 0}
     colorMax0: {r: 0.5019608, g: 1, b: 0.9137255, a: 0}
     colorMax1: {r: 0, g: 1, b: 0.57254905, a: 1}
---- !u!114 &8477651183600270903
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1231387903212816449}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a4d84ff93cd79c24da79b3bdcedb7b22, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PBFDynamicObstacle
-  coll: {fileID: 0}
-  rb: {fileID: 0}
-  repulsionRadius: 0.25
-  repulsionRadiusMax: 1
 --- !u!114 &534478759235766021
 MonoBehaviour:
   m_ObjectHideFlags: 0

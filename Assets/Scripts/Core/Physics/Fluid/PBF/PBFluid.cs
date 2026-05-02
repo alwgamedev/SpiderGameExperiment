@@ -7,7 +7,8 @@ using Unity.U2D.Physics;
 public class PBFluid : MonoBehaviour
 {
     const int THREADS_PER_GROUP = 256;
-    const int MAX_NUM_OBSTACLES = 32;//can make it more when we need to
+    const int SMALL_THREADS_PER_GROUP = 64;
+    const int MAX_NUM_OBSTACLES = 16;//can make it more when we need to
 
     //kernel indices in compute shader
     public const int recalculateAntiClusterCoefficient = 0;
@@ -69,17 +70,16 @@ public class PBFluid : MonoBehaviour
 
     ComputeBuffer obstacleData;
     ObstacleData[] obstacleDataTransfer;
-    //Collider2D[] colliderQueryBuffer;
-    //ContactFilter2D colliderFilter;
-    PhysicsQuery.QueryFilter obstacleFilter;
-    //PBFDynamicObstacle[] obstacle;
     PhysicsShape[] obstacle;
+    PhysicsQuery.QueryFilter obstacleFilter;
     int numObstacles;
 
     ComputeBuffer obstacleDisplacement;
     AsyncGPUReadbackRequest displacementReadbackRequest;
-    NativeArray<int> obstacleDisplacementNA;
-    /*PBFDynamicObstacle[]*/PhysicsShape[] obstacleSnapshot;//snapshots taken when we send a readback request (so we have the correct collider lookup to go with the displacements)
+    NativeArray<int> obstacleDisplacementWrite;
+    NativeArray<int> obstacleDisplacementRead;
+    int[] obstacleDisplacementArr;
+    PhysicsShape[] obstacleSnapshot;//snapshots taken when we send a readback request (so we have the correct collider lookup to go with the displacements)
     int numObstaclesSnapshot;
     float lastReadbackTime;
 
@@ -89,7 +89,7 @@ public class PBFluid : MonoBehaviour
 
     ComputeBuffer noise;
 
-    int updateCounter;
+    //int updateCounter;
     bool updateSimSettings;
 
     int numObstaclesProperty;
@@ -165,26 +165,22 @@ public class PBFluid : MonoBehaviour
 
         obstacleData = new ComputeBuffer(MAX_NUM_OBSTACLES, MiscTools.Stride<ObstacleData>());
         obstacleDataTransfer = new ObstacleData[MAX_NUM_OBSTACLES];
-        //colliderQueryBuffer = new Collider2D[MAX_NUM_OBSTACLES];
-
         obstacleDisplacement = new ComputeBuffer(MAX_NUM_OBSTACLES, 4);
-        //colliderQueryBuffer = new Collider2D[MAX_NUM_OBSTACLES];
         obstacle = new PhysicsShape[MAX_NUM_OBSTACLES];//new PBFDynamicObstacle[MAX_NUM_OBSTACLES];
         obstacleSnapshot = new PhysicsShape[MAX_NUM_OBSTACLES];//new PBFDynamicObstacle[MAX_NUM_OBSTACLES];
-        if (!obstacleDisplacementNA.IsCreated)
+        if (!obstacleDisplacementWrite.IsCreated)
         {
-            obstacleDisplacementNA = new(MAX_NUM_OBSTACLES, Allocator.Persistent);
+            obstacleDisplacementWrite = new(MAX_NUM_OBSTACLES, Allocator.Persistent);
         }
+        obstacleDisplacementRead = new(MAX_NUM_OBSTACLES, Allocator.Persistent);
+        obstacleDisplacementArr = new int[MAX_NUM_OBSTACLES];
         lastReadbackTime = Time.time;
 
-        //colliderFilter = ContactFilter2D.noFilter;
-        //colliderFilter.useTriggers = false;
-        //colliderFilter.SetLayerMask(simSettings.obstacleMask);
         obstacleFilter = new()
         {
             categories = PhysicsMask.All,
             hitCategories = simSettings.obstacleMask,
-            ignoreFilter = PhysicsWorld.IgnoreFilter.IgnoreTriggerShapes
+            ignoreFilter = PhysicsWorld.IgnoreFilter.IgnoreTriggerShapes | PhysicsWorld.IgnoreFilter.IgnoreKinematicBodies | PhysicsWorld.IgnoreFilter.IgnoreStaticBodies,
         };
 
         foamParticle = new ComputeBuffer(configuration.numFoamParticles, 32);
@@ -217,22 +213,22 @@ public class PBFluid : MonoBehaviour
         texThreadGroupsY = (int)Mathf.Ceil(densityTexSettings.texHeight / 16f);
 
         //bind buffers to compute shader
-        computeShader.SetBuffer(configBuffer, "configBuffer", computePredictedPositions, countParticles, setCellStarts, sortParticlesByCell, calculateDensity, 
-            calculateLambda, calculatePositionDelta, addPositionDelta, storeSolvedVelocity, calculateVorticityConfinementForce, integrateParticles, handleWallCollisions, scrollNoise, 
+        computeShader.SetBuffer(configBuffer, "configBuffer", computePredictedPositions, countParticles, setCellStarts, sortParticlesByCell, calculateDensity,
+            calculateLambda, calculatePositionDelta, addPositionDelta, storeSolvedVelocity, calculateVorticityConfinementForce, integrateParticles, handleWallCollisions, scrollNoise,
             updateDensityTexture, spawnFoam, updateFoam);
-        computeShader.SetBuffer(varsBuffer, "varsBuffer", recalculateAntiClusterCoefficient, computePredictedPositions, countParticles, calculateDensity, 
-            calculateLambda, calculatePositionDelta, storeSolvedVelocity, calculateVorticityConfinementForce, integrateParticles, handleWallCollisions, scrollNoise, updateDensityTexture, 
+        computeShader.SetBuffer(varsBuffer, "varsBuffer", recalculateAntiClusterCoefficient, computePredictedPositions, countParticles, calculateDensity,
+            calculateLambda, calculatePositionDelta, storeSolvedVelocity, calculateVorticityConfinementForce, integrateParticles, handleWallCollisions, scrollNoise, updateDensityTexture,
             spawnFoam, updateFoam);
         computeShader.SetBuffer(density, "density", calculateDensity, calculateLambda, calculateVorticityConfinementForce, updateDensityTexture, spawnFoam, updateFoam);
         computeShader.SetBuffer(lambda, "lambda", calculateLambda, calculatePositionDelta);
         computeShader.SetBuffer(velocity, "velocity", computePredictedPositions, storeSolvedVelocity, calculateVorticityConfinementForce,
             integrateParticles, handleWallCollisions, updateDensityTexture, spawnFoam, updateFoam);
-        computeShader.SetBuffer(position, "position", computePredictedPositions, countParticles, calculateDensity, calculateLambda, addPositionDelta, calculatePositionDelta, 
+        computeShader.SetBuffer(position, "position", computePredictedPositions, countParticles, calculateDensity, calculateLambda, addPositionDelta, calculatePositionDelta,
             storeSolvedVelocity, calculateVorticityConfinementForce, integrateParticles, handleWallCollisions, updateDensityTexture, spawnFoam, updateFoam);
         computeShader.SetBuffer(lastPosition, "lastPosition", computePredictedPositions, storeSolvedVelocity, calculateDensity, integrateParticles, handleWallCollisions, updateDensityTexture);
         computeShader.SetBuffer(particleBuffer, "particleBuffer", calculatePositionDelta, addPositionDelta, calculateVorticityConfinementForce, integrateParticles);
         computeShader.SetBuffer(cellContainingParticle, "cellContainingParticle", countParticles, sortParticlesByCell);
-        computeShader.SetBuffer(particlesByCell, "particlesByCell", sortParticlesByCell, calculateDensity, calculateLambda, calculatePositionDelta, calculateVorticityConfinementForce, 
+        computeShader.SetBuffer(particlesByCell, "particlesByCell", sortParticlesByCell, calculateDensity, calculateLambda, calculatePositionDelta, calculateVorticityConfinementForce,
             updateDensityTexture, spawnFoam, updateFoam);
         computeShader.SetBuffer(cellStart, "cellStart", setCellStarts, sortParticlesByCell, calculateDensity, calculateLambda, calculatePositionDelta, calculateVorticityConfinementForce,
             updateDensityTexture, spawnFoam, updateFoam);
@@ -244,12 +240,12 @@ public class PBFluid : MonoBehaviour
         computeShader.SetBuffer(foamParticleBuffer, "foamParticleBuffer", transferFoamSurvivorsToBuffer, transferFoamSurvivorsBack);
         computeShader.SetBuffer(foamParticleCounter, "foamParticleCounter", spawnFoam, updateFoam, transferFoamSurvivorsToBuffer, transferFoamSurvivorsBack, completeFoamUpdate);
 
-        computeShader.SetBuffer(noise, "noise", scrollNoise, updateDensityTexture);
+        computeShader.SetBuffer(noise, "noise", scrollNoise, updateDensityTexture, integrateParticles);
         computeShader.SetTexture(densityTexture, "densityTex", updateDensityTexture, spawnFoam, updateFoam);
 
         numParticleThreadGroups = (int)Mathf.Ceil((float)configuration.numParticles / THREADS_PER_GROUP);
         numFoamParticleThreadGroups = (int)Mathf.Ceil((float)configuration.numFoamParticles / THREADS_PER_GROUP);
-        numObstacleThreadGroups = (int)Mathf.Ceil((float)MAX_NUM_OBSTACLES / THREADS_PER_GROUP);
+        numObstacleThreadGroups = (int)Mathf.Ceil((float)MAX_NUM_OBSTACLES / SMALL_THREADS_PER_GROUP);
 
         InitializeParticlePhysics();
         cellParticleCount.SetData(new uint[numCells]);//to set all to 0
@@ -282,6 +278,10 @@ public class PBFluid : MonoBehaviour
 
         obstacleData.Release();
         obstacleDisplacement.Release();
+        if (obstacleDisplacementRead.IsCreated)
+        {
+            obstacleDisplacementRead.Dispose();
+        }
 
         foamParticle.Release();
         foamParticleBuffer.Release();
@@ -295,9 +295,9 @@ public class PBFluid : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (displacementReadbackRequest.done && obstacleDisplacementNA.IsCreated)
+        if (displacementReadbackRequest.done && obstacleDisplacementWrite.IsCreated)
         {
-            obstacleDisplacementNA.Dispose();
+            obstacleDisplacementWrite.Dispose();
         }
     }
 
@@ -344,34 +344,50 @@ public class PBFluid : MonoBehaviour
     {
         if (updateSimSettings)
         {
-            var dt = simSettings.updateFrequency * Time.deltaTime / simSettings.stepsPerUpdate;
+            var dt = /*simSettings.updateFrequency **/ Time.deltaTime / simSettings.stepsPerUpdate;
             UpdateSimSettings(dt);
         }
 
-        if (--updateCounter < 0)
-        {
-            updateCounter += simSettings.updateFrequency;
-            SetObstacleData();
-            computeShader.Dispatch(clearObstacleDisplacement, numObstacleThreadGroups, 1, 1);
+        numObstaclesSnapshot = numObstacles;
+        Array.Copy(obstacle, obstacleSnapshot, obstacle.Length);
+        obstacleDisplacement.GetData(obstacleDisplacementArr);
+        ApplyBuoyanceForces();
 
-            for (int i = 0; i < simSettings.stepsPerUpdate; i++)
-            {
-                RunSimulationStep();
-            }
+        SetObstacleData();
+        computeShader.Dispatch(clearObstacleDisplacement, numObstacleThreadGroups, 1, 1);
+
+        for (int i = 0; i < simSettings.stepsPerUpdate; i++)
+        {
+            RunSimulationStep();
         }
 
-        if (displacementReadbackRequest.done/*!displacementReadbackInProgress*/)
-        {
-            ApplyBuoyanceForces(Mathf.Min(Time.time - lastReadbackTime, 4 * Time.deltaTime));
-            lastReadbackTime = Time.time;
+        //if (--updateCounter < 0)
+        //{
+        //    updateCounter += simSettings.updateFrequency;
+        //    SetObstacleData();
+        //    computeShader.Dispatch(clearObstacleDisplacement, numObstacleThreadGroups, 1, 1);
 
-            //take new snapshot to get ready for next readback
-            numObstaclesSnapshot = numObstacles;
-            Array.Copy(obstacle, obstacleSnapshot, obstacle.Length);
+        //    for (int i = 0; i < simSettings.stepsPerUpdate; i++)
+        //    {
+        //        RunSimulationStep();
+        //    }
+        //}
 
-            //send new readback
-            SendDisplacementReadbackRequest();
-        }
+        //if (displacementReadbackRequest.done)
+        //{
+        //    lastReadbackTime = Time.time;
+
+        //    //take new snapshot to get ready for next readback
+        //    numObstaclesSnapshot = numObstacles;
+        //    Array.Copy(obstacle, obstacleSnapshot, obstacle.Length);
+        //    obstacleDisplacementWrite.CopyTo(obstacleDisplacementRead);
+
+        //    //ApplyBuoyanceForces(Mathf.Min(Time.time - lastReadbackTime, 4 * Time.deltaTime));
+
+        //    //send new readback
+        //    SendDisplacementReadbackRequest();
+        //}
+
     }
 
     private void RunSimulationStep()
@@ -394,7 +410,7 @@ public class PBFluid : MonoBehaviour
         computeShader.Dispatch(calculateVorticityConfinementForce, numParticleThreadGroups, 1, 1);
         computeShader.Dispatch(integrateParticles, numParticleThreadGroups, 1, 1);
         computeShader.Dispatch(handleWallCollisions, numParticleThreadGroups, 1, 1);
-        
+
         //update foam particles
         computeShader.Dispatch(spawnFoam, numParticleThreadGroups, 1, 1);
         computeShader.Dispatch(updateFoam, numFoamParticleThreadGroups, 1, 1);
@@ -423,8 +439,6 @@ public class PBFluid : MonoBehaviour
         var worldHeight = configuration.height * simSettings.cellSize;
         var boxCenter = new Vector2(transform.position.x + 0.5f * worldWidth, transform.position.y + 0.5f * worldHeight);
         var boxSize = new Vector2(worldWidth, worldHeight);
-        //Array.Clear(colliderQueryBuffer, 0, colliderQueryBuffer.Length);
-        //Physics2D.OverlapBox(boxCenter, boxSize, 0, colliderFilter, colliderQueryBuffer);
         var boxTransform = new PhysicsTransform(boxCenter, PhysicsRotate.identity);
         var box = PolygonGeometry.CreateBox(boxSize, 0, boxTransform);
         var overlapResults = PhysicsWorld.defaultWorld.OverlapGeometry(box, obstacleFilter);
@@ -432,25 +446,26 @@ public class PBFluid : MonoBehaviour
         //put non-null obstacles at the beginning of the compute buffer
         //and we'll use numObstacles to mark the end so we don't have to clear out the rest of the buffer
         numObstacles = 0;
-        for (int i = 0; i < Mathf.Min(MAX_NUM_OBSTACLES, overlapResults.Length); i++)
+        for (int i = 0; i < overlapResults.Length; i++)
         {
-            //var c = colliderQueryBuffer[i];
-            var shape = overlapResults[i].shape;
-            if (shape.isValid && shape.body.type == PhysicsBody.BodyType.Dynamic /*&& shape.body.transformObject.TryGetComponent(out PBFDynamicObstacle o)*/)
+            if (numObstacles == MAX_NUM_OBSTACLES)
             {
-                var spd = shape.body.linearVelocity.magnitude;//o.Rigidbody.linearVelocity.magnitude;
+                break;
+            }
+
+            var shape = overlapResults[i].shape;
+            if (shape.isValid && shape.userData.objectValue is DynamicFluidObstacle o && o)
+            {
+                var spd = shape.body.linearVelocity.magnitude;
                 var scale = Mathf.Min(simSettings.velocityBasedObstacleScaleMultiplier * spd, simSettings.obstacleUpscaleMax);
                 var repulsion = Mathf.Min(simSettings.velocityBasedObstacleRepulsionMultiplier * spd, 1);
+
                 obstacle[numObstacles] = shape;
                 obstacleDataTransfer[numObstacles++] = new()
                 {
-                    //center = new(o.Collider.bounds.center.x - transform.position.x, o.Collider.bounds.center.y - transform.position.y),
-                    //extents = o.Collider.bounds.extents,
-
-                    //let's debug draw the box to see what the H is going on
                     center = shape.aabb.center - (Vector2)transform.position,
-                    extents = shape.aabb.extents,
-                    speedScaledRadius = Mathf.Min(scale * simSettings.obstacleRepulsionRadius, simSettings.obstacleRepulsionRadiusMax),
+                    extents = o.extentsMultiplier * shape.aabb.extents,
+                    speedScaledRadius = Mathf.Min(scale * o.repulsionRadius, o.repulsionRadiusMax),
                     repulsionMultiplier = repulsion
                 };
             }
@@ -462,28 +477,28 @@ public class PBFluid : MonoBehaviour
 
     private void SendDisplacementReadbackRequest()
     {
-        displacementReadbackRequest = AsyncGPUReadback.RequestIntoNativeArray(ref obstacleDisplacementNA, obstacleDisplacement, OnDisplacementReadbackComplete);
+        displacementReadbackRequest = AsyncGPUReadback.RequestIntoNativeArray(ref obstacleDisplacementWrite, obstacleDisplacement, OnDisplacementReadbackComplete);
     }
 
     private void OnDisplacementReadbackComplete(AsyncGPUReadbackRequest req)
     {
         if (!this)
         {
-            if (obstacleDisplacementNA.IsCreated)
+            if (obstacleDisplacementWrite.IsCreated)
             {
-                obstacleDisplacementNA.Dispose();
+                obstacleDisplacementWrite.Dispose();
             }
         }
     }
 
-    private void ApplyBuoyanceForces(float dt)
+    private void ApplyBuoyanceForces()
     {
-        var b = -simSettings.obstacleBuoyancy * Physics2D.gravity;
+        var b = -simSettings.obstacleBuoyancy * PhysicsWorld.defaultWorld.gravity;
         for (int i = 0; i < numObstaclesSnapshot; i++)
         {
-            if (!(obstacleDisplacementNA[i] > 0))
+            if (!(obstacleDisplacementArr[i] > 0))
             {
-                return;
+                continue;
             }
 
             var o = obstacleSnapshot[i];
@@ -491,8 +506,9 @@ public class PBFluid : MonoBehaviour
             {
                 var body = o.body;
                 var v = body.linearVelocity;
-                var f = obstacleDisplacementNA[i] * b - 2 * o.aabb.extents.x * simSettings.obstacleDrag * v.magnitude * v;
-                body.linearVelocity += dt * f;
+                var f = obstacleDisplacementArr[i] * b - 2 * o.aabb.extents.x * simSettings.obstacleDrag * v.magnitude * v;
+                //body.linearVelocity += dt * f;
+                body.ApplyForceToCenter(f);
             }
         }
     }
