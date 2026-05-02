@@ -37,6 +37,7 @@ public class Grabber
     [SerializeField] Transform depositTarget;
     [SerializeField] Transform offAnchor;
     [SerializeField] Transform deployedAnchor;
+    [SerializeField] GrabberMask mask;
 #if UNITY_EDITOR
     [SerializeField] bool drawAnchorGizmos;
 #endif
@@ -62,10 +63,19 @@ public class Grabber
     Action onClawTargetReached;
     Action onClawTargetFailed;
 
-    //2do:
-    //1) direction change - will need to reverse spring target angles probably?
-    //2) test grabbing & depositing - play with deposit pose and deposit target position
-    //3) sprite mask to hide arm when parking (mask only active during anchor moving stage of deployment/parking so they never block while arm is out) 
+    //cached Actions
+    Action completeDeployment;
+    Action goIdle;
+    Action completeGoIdle;
+    Action parkPhase2;
+    Action parkPhase3;
+    Action parkPhase4;
+    Action completePark;
+    Action completeGrab;
+    Action headToDeposit;
+    Action deposit;
+    Action completeDeposit;
+    Action onGrabFailed;
 
 #if UNITY_EDITOR
     public void OnValidate()
@@ -112,27 +122,30 @@ public class Grabber
         claw.Initialize(arm.jointedChain.body[^1], clawDef,
             upperClawPhysTransform, upperClawBone,
             lowerClawPhysTransform, lowerClawBone);
+        mask.Initialize(sprite);
 
         depositDoor.SnapClosed();
         mouth.SnapClosed();
 
-        //initialize arm and claw
-
-        //this was the old start method:
-        //arm.Initialize();
-        //arm.TurnOff();
-        //arm.SnapToPose(foldedPose);
-        //inventoryDoor.SnapClosed();
-        //mouth.SnapClosed();
-        //anchor.SetPosition(offAnchorPosition.position);
-        //grabberClaw.SnapClosed();
-        //HideSprites();
+        completeDeployment = CompleteDeployment;
+        goIdle = GoIdle;
+        completeGoIdle = CompleteGoIdle;
+        parkPhase2 = ParkPhase2;
+        parkPhase3 = ParkPhase3;
+        parkPhase4 = ParkPhase4;
+        completePark = CompletePark;
+        completeGrab = CompleteGrab;
+        headToDeposit = HeadToDeposit;
+        deposit = Deposit;
+        completeDeposit = CompleteDeposit;
+        onGrabFailed = OnGrabFailed;
     }
 
     public void Destroy()
     {
         arm.Destroy();
         claw.Destroy();
+        mask.Destroy();
     }
 
 
@@ -149,6 +162,7 @@ public class Grabber
         if (forgetState)
         {
             anchor.Disable();
+            mask.Disable();
             taskInProgress = false;
             onAnchorTargetReached = null;
             onArmTargetReached = null;
@@ -207,6 +221,8 @@ public class Grabber
                 }
             }
         }
+
+        mask.Update();
     }
 
     public void FixedUpdate(float dt)
@@ -267,12 +283,19 @@ public class Grabber
         //3) deploy
         mouth.Open();
         anchor.BeginTargetingDeployedPosition();
+        mask.Enable();
 
         onArmTargetReached = null;
-        onAnchorTargetReached = GoIdle;
+        onAnchorTargetReached = completeDeployment;
         onClawTargetReached = null;
         onClawTargetFailed = null;
         //let's set all 4 actions every time we start a new task (so we don't have any old callbacks coming in when they shouldn't)
+    }
+
+    private void CompleteDeployment()
+    {
+        mask.Disable();
+        GoIdle();
     }
 
     //move to default pose
@@ -284,7 +307,7 @@ public class Grabber
         depositDoor.Close();
         arm.BeginTargetingPose(defaultPose, reversed);
 
-        onArmTargetReached = CompleteGoIdle;
+        onArmTargetReached = completeGoIdle;
         onAnchorTargetReached = null;
         onClawTargetReached = null;
         onClawTargetFailed = null;
@@ -307,7 +330,7 @@ public class Grabber
         taskInProgress = true;
         arm.BeginTargetingPose(defaultPose, reversed);
 
-        onArmTargetReached = ParkPhase2;
+        onArmTargetReached = parkPhase2;
         onAnchorTargetReached = null;
         onClawTargetReached = null;
         onClawTargetFailed = null;
@@ -321,7 +344,7 @@ public class Grabber
 
         onArmTargetReached = null;
         onAnchorTargetReached = null;
-        onClawTargetReached = ParkPhase3;
+        onClawTargetReached = parkPhase3;
         onClawTargetFailed = null;
     }
 
@@ -330,7 +353,7 @@ public class Grabber
         taskInProgress = true;
         arm.BeginTargetingPose(foldedPose, reversed);
 
-        onArmTargetReached = ParkPhase4;
+        onArmTargetReached = parkPhase4;
         onAnchorTargetReached = null;
         onClawTargetReached = null;
         onClawTargetFailed = null;
@@ -341,9 +364,10 @@ public class Grabber
     {
         taskInProgress = true;
         anchor.BeginTargetingOffPosition();
+        mask.Enable();
 
         onArmTargetReached = null;
-        onAnchorTargetReached = CompletePark;
+        onAnchorTargetReached = completePark;
         onClawTargetReached = null;
         onClawTargetFailed = null;
     }
@@ -352,7 +376,7 @@ public class Grabber
     {
         mouth.Close();
         HideSprites();
-        Disable(true);
+        Disable(true);//also disables mask
     }
 
     private void TryBeginGrab()
@@ -374,7 +398,7 @@ public class Grabber
             arm.EnableSprings(false);
             grabTimer = grabTimeOut;
 
-            onArmTargetReached = CompleteGrab;
+            onArmTargetReached = completeGrab;
             onAnchorTargetReached = null;
             onClawTargetReached = null;
             onClawTargetFailed = null;
@@ -395,8 +419,8 @@ public class Grabber
 
             onArmTargetReached = null;
             onAnchorTargetReached = null;
-            onClawTargetReached = HeadToDeposit;
-            onClawTargetFailed = OnGrabFailed;
+            onClawTargetReached = headToDeposit;
+            onClawTargetFailed = onGrabFailed;
         }
         else
         {
@@ -414,9 +438,9 @@ public class Grabber
             claw.BeginHold(grabTarget);
             depositDoor.Open();
 
-            onArmTargetReached = Deposit;
+            onArmTargetReached = deposit;
             onAnchorTargetReached = null;
-            onClawTargetReached = OnGrabFailed;
+            onClawTargetReached = onGrabFailed;
             onClawTargetFailed = null;
         }
         else
@@ -432,7 +456,7 @@ public class Grabber
 
         onArmTargetReached = null;
         onAnchorTargetReached = null;
-        onClawTargetReached = CompleteDeposit;
+        onClawTargetReached = completeDeposit;
         onClawTargetFailed = null;
     }
 
@@ -458,7 +482,7 @@ public class Grabber
 
         onArmTargetReached = null;
         onAnchorTargetReached = null;
-        onClawTargetReached = GoIdle;
+        onClawTargetReached = goIdle;
         onClawTargetFailed = null;
     }
 }
