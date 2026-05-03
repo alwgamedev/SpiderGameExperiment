@@ -1722,7 +1722,12 @@ MonoBehaviour:
       abdomenCapsuleOffset: {x: 1.325, y: -0.025}
       headCapsuleSize: {x: 2.1, y: 1.25}
       headCapsuleOffset: {x: 0.5, y: -0.035}
-      queryIgnoreFilter: 8
+      queryFilter:
+        m_Categories:
+          bitMask: 18446744073709551615
+        m_HitCategories:
+          bitMask: 64
+        m_IgnoreFilter: 8
       shapeDef:
         contactFilter:
           m_Categories:
@@ -1794,8 +1799,7 @@ MonoBehaviour:
         m_Awake: 1
         m_Enabled: 1
         m_WorldDrawing: 0
-      headFluidObstacle: {fileID: 0}
-      abdomenFluidObstacle: {fileID: 0}
+      fluidObstacle: {fileID: 11400000, guid: ec00782354276b546be6f1a877bff6be, type: 2}
     legSynch:
       footHitGround: []
       chainDef:

@@ -23,17 +23,15 @@ public struct SpiderBody
     /// <summary> (when facing right) </summary>
     Vector2 heightReferenceLocalPos;
 
-    [NonSerialized] public PhysicsQuery.QueryFilter queryFilter;
+    [SerializeField] public PhysicsQuery.QueryFilter queryFilter;
     float totalMass;
 
-    [SerializeField] PhysicsWorld.IgnoreFilter queryIgnoreFilter;
     bool facingRight;
 
     [SerializeField] PhysicsShapeDefinition shapeDef;
     [SerializeField] PhysicsFixedJointDefinition headJointDef;
     [SerializeField] PhysicsBodyDefinition bodyDef;
-    [SerializeField] DynamicFluidObstacle headFluidObstacle;
-    [SerializeField] DynamicFluidObstacle abdomenFluidObstacle;
+    [SerializeField] DynamicFluidObstacle fluidObstacle;
 
     public readonly bool FacingRight => facingRight;
     public readonly int Orientation => FacingRight ? 1 : -1;
@@ -72,7 +70,6 @@ public struct SpiderBody
 
             headJoint.UpdateSettings(headJointDef);
 
-            UpdateQueryFilter();
             totalMass = abdomen.mass + head.mass;
         }
     }
@@ -118,8 +115,6 @@ public struct SpiderBody
     public void CreatePhysicsBody(PhysicsRotate levelDirection, Transform abdomenRoot, Transform headRoot, Transform headBone, 
         Transform grappleArmTransform, Transform heightReferencePoint)
     {
-        UpdateQueryFilter();
-
         var defaultWorld = PhysicsWorld.defaultWorld;
 
         //create abdomen
@@ -144,16 +139,16 @@ public struct SpiderBody
         //set user data
         var abdomenCapsule = abdomen.GetShapes()[0];
         var abdomenUserData = abdomenCapsule.userData;
-        abdomenUserData.objectValue = abdomenFluidObstacle;
+        abdomenUserData.objectValue = fluidObstacle;
         abdomenCapsule.userData = abdomenUserData;
 
         var grappleArmUserData = grappleArmShape.userData;
-        grappleArmUserData.objectValue = abdomenFluidObstacle;
+        grappleArmUserData.objectValue = fluidObstacle;
         grappleArmShape.userData = grappleArmUserData;
 
         var headCapsule = head.GetShapes()[0];
         var headUserData = headCapsule.userData;
-        headUserData.objectValue = headFluidObstacle;
+        headUserData.objectValue = fluidObstacle;
         headCapsule.userData = headUserData;
 
         //fixed joints: anchorB on bodyB will be pulled towards anchorA on bodyA;
@@ -306,11 +301,6 @@ public struct SpiderBody
             correction = Vector2.zero;
             return false;
         }
-    }
-
-    private void UpdateQueryFilter()
-    {
-        queryFilter = shapeDef.contactFilter.ToQueryFilter(queryIgnoreFilter);
     }
 
     private readonly PolygonGeometry GrappleArmWorldBox(Transform grappleArmTransform)

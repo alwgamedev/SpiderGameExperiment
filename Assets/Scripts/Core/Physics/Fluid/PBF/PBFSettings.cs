@@ -18,9 +18,9 @@ public struct PBFConfiguration
 [Serializable]
 public struct PBFSimSettings
 {
-    public PhysicsMask obstacleMask;
+    public float obstacleBuoyancy;
+    public float obstacleDrag;
     public float cellSize;
-    //public int updateFrequency;
     public int stepsPerUpdate;
     public int pressureSolveIterations;
     public int kernelDeg;
@@ -38,8 +38,6 @@ public struct PBFSimSettings
     public float velocityBasedObstacleScaleMultiplier;
     public float obstacleUpscaleMax;
     public float surfaceNormalThreshold;
-    public float obstacleBuoyancy;
-    public float obstacleDrag;
 }
 
 [Serializable]
@@ -161,7 +159,7 @@ public struct PBFComputeVariables
     public float foamSmoothingRadiusSqrd;
 
     public PBFComputeVariables(PBFConfiguration config, PBFSimSettings settings, PBFFoamParticleSettings foamParticleSettings,
-        PBFDensityTexSettings densityTexSettings, float dt)
+        PBFDensityTexSettings densityTexSettings, Vector2 gravity, float dt)
     {
         float w = config.width * settings.cellSize;
         float h = config.height * settings.cellSize;
@@ -174,7 +172,7 @@ public struct PBFComputeVariables
         worldHeight = h;
         smoothingRadius = 0.5f * settings.cellSize;
         smoothingRadiusSqrd = 0.25f * settings.cellSize * settings.cellSize;
-        gravity = settings.gravityScale * Physics2D.gravity;
+        this.gravity = settings.gravityScale * gravity;
         antiClusterK = settings.antiClusterK;
         antiClusterDQ = settings.antiClusterDQ;
         antiClusterN = settings.antiClusterN;

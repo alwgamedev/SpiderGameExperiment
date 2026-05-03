@@ -72,7 +72,7 @@ struct ObstacleData
 };
 
 StructuredBuffer<ObstacleData> obstacleData;
-RWStructuredBuffer<uint> obstacleDisplacement;
+RWStructuredBuffer<int> obstacleDisplacement;
 uniform uint numObstacles;
 
 float antiClusterCoefficient;
@@ -210,8 +210,7 @@ void InteractWithObstacles(uint p)
             s2 = max(s2, 0.1);
             float sInverse = rsqrt(s2);
             float2 dir = sInverse * repulsionCoords;
-            //float noiseMult = clamp(2 * (noise[p].x - 0.5), 0, 1);
-            velocity[p] += vars.dt * (1 - s2) * (/*noiseMult **/ o.repulsionMultiplier * vars.obstacleRepulsion * dir /*- velocity[p]*/);
+            velocity[p] += vars.dt * (1 - s2) * (o.repulsionMultiplier * vars.obstacleRepulsion * dir/* - velocity[p]*/);
         }
 
         localPos = float2(localPos.x / o.extents.x, localPos.y / o.extents.y);
@@ -222,15 +221,6 @@ void InteractWithObstacles(uint p)
         }
     }
 }
-
-//[numthreads(SMALL_THREADS_PER_GROUP, 1, 1)]
-//void IntegrateObstacles(uint3 id : SV_DispatchThreadID)
-//{
-//    if (id.x < numObstacles)
-//    {
-//        obstacleData[id.x].center += obstacleData[id.x].moveStep;
-//    }
-//}
 
 [numthreads(NUM_THREADS_PER_GROUP, 1, 1)]
 void ComputePredictedPositions(uint3 id : SV_DispatchThreadID)

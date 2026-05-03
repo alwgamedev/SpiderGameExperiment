@@ -55,8 +55,8 @@ MonoBehaviour:
     numFoamParticles: 4500
     drawGizmos: 1
   simSettings:
-    obstacleMask:
-      bitMask: 8
+    obstacleBuoyancy: 0.015
+    obstacleDrag: 0.3
     cellSize: 1
     stepsPerUpdate: 2
     pressureSolveIterations: 2
@@ -75,8 +75,6 @@ MonoBehaviour:
     velocityBasedObstacleScaleMultiplier: 0.2
     obstacleUpscaleMax: 3
     surfaceNormalThreshold: 100
-    obstacleBuoyancy: 0.01
-    obstacleDrag: 0.25
   foamParticleSettings:
     trappedAirDiffuseRate: 800
     spawnRadiusMultiplier: 100
@@ -107,6 +105,12 @@ MonoBehaviour:
     noiseVelocityInfluence: 0.025
     noiseVelocityInfluenceMax: 1
     foamSmoothingRadius: 1
+  obstacleFilter:
+    m_Categories:
+      bitMask: 18446744073709551615
+    m_HitCategories:
+      bitMask: 18446744073709551615
+    m_IgnoreFilter: 11
 --- !u!114 &6766266259801090171
 MonoBehaviour:
   m_ObjectHideFlags: 0
