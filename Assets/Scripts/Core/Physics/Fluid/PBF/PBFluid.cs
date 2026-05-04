@@ -11,6 +11,56 @@ public class PBFluid : MonoBehaviour
     const int MAX_NUM_OBSTACLES = 16;//can make it more when we need to
     const int READBACK_QUEUE_SIZE = 5;
 
+    struct ObstacleData
+    {
+        public Vector2 center;
+        public Vector2 extents;
+        public Vector2 xDirection;
+        public float speedScaledRadius;
+        public float repulsionMultiplier;
+    }
+
+    class DisplacementReadback
+    {
+        public UnityEngine.Object owner;
+        public Action<AsyncGPUReadbackRequest> callback;
+        public NativeArray<PhysicsShape> obstacle;
+        public NativeArray<int> displacement;
+        public AsyncGPUReadbackRequest request;
+        public int numObstacles;
+
+        public DisplacementReadback(int maxNumObstacles, UnityEngine.Object owner)
+        {
+            this.owner = owner;
+
+            obstacle = new(maxNumObstacles, Allocator.Persistent);
+            displacement = new(maxNumObstacles, Allocator.Persistent);
+
+            callback = req =>
+            {
+                if (!this.owner)
+                {
+                    Dispose();
+                }
+            };
+        }
+
+        public void Dispose()
+        {
+            owner = null;//yeet the reference so owner can be gc'd
+
+            if (obstacle.IsCreated)
+            {
+                obstacle.Dispose();
+            }
+
+            if (displacement.IsCreated)
+            {
+                displacement.Dispose();
+            }
+        }
+    }
+
     //kernel indices in compute shader
     public const int recalculateAntiClusterCoefficient = 0;
     public const int computePredictedPositions = 1;
@@ -60,55 +110,6 @@ public class PBFluid : MonoBehaviour
     ComputeBuffer particlesByCell;
     ComputeBuffer cellStart;
     ComputeBuffer cellParticleCount;
-
-    struct ObstacleData
-    {
-        public Vector2 center;
-        public Vector2 extents;
-        public float speedScaledRadius;
-        public float repulsionMultiplier;
-    }
-
-    class DisplacementReadback
-    {
-        public UnityEngine.Object owner;
-        public Action<AsyncGPUReadbackRequest> callback;
-        public NativeArray<PhysicsShape> obstacle;
-        public NativeArray<int> displacement;
-        public AsyncGPUReadbackRequest request;
-        public int numObstacles;
-
-        public DisplacementReadback(int maxNumObstacles, UnityEngine.Object owner)
-        {
-            this.owner = owner;
-
-            obstacle = new(maxNumObstacles, Allocator.Persistent);
-            displacement = new(maxNumObstacles, Allocator.Persistent);
-
-            callback = req =>
-            {
-                if (!this.owner)
-                {
-                    Dispose();
-                }
-            };
-        }
-
-        public void Dispose()
-        {
-            owner = null;//yeet the reference so owner can be gc'd
-            
-            if (obstacle.IsCreated)
-            {
-                obstacle.Dispose();
-            }
-
-            if (displacement.IsCreated)
-            {
-                displacement.Dispose();
-            }
-        }
-    }
 
     ComputeBuffer obstacleData;
     ComputeBuffer obstacleDisplacement;
@@ -491,10 +492,12 @@ public class PBFluid : MonoBehaviour
                 var repulsion = Mathf.Min(simSettings.velocityBasedObstacleRepulsionMultiplier * spd, 1);
 
                 r.obstacle[r.numObstacles] = shape;
+                var localBB = shape.CalculateAABB(PhysicsTransform.identity);
                 obstacleDataToTransfer[r.numObstacles++] = new()
                 {
-                    center = shape.aabb.center - (Vector2)transform.position,
-                    extents = o.extentsMultiplier * shape.aabb.extents,
+                    center = shape.transform.TransformPoint(localBB.center) - (Vector2)transform.position,
+                    extents = o.extentsMultiplier * localBB.extents,
+                    xDirection = shape.transform.rotation.direction,
                     speedScaledRadius = Mathf.Min(scale * o.repulsionRadius, o.repulsionRadiusMax),
                     repulsionMultiplier = repulsion
                 };
@@ -516,7 +519,22 @@ public class PBFluid : MonoBehaviour
             {
                 var body = o.body;
                 var v = body.linearVelocity;
-                var f = d * b - 2 * simSettings.obstacleDrag * o.aabb.extents.x * v.magnitude * v;
+                float extentsMult;
+                if (o.userData.objectValue is DynamicFluidObstacle dfo && dfo)
+                {
+                    extentsMult = dfo.extentsMultiplier;
+                }
+                else
+                {
+                    extentsMult = 1;
+                }
+
+                var area = o.body.mass / o.definition.density;
+                //^we'll multiply drag by displacement / area (so less drag when displace less fluid, and divide by area so this term not affected by size of object)
+                //then we'll use sqrt(area) as the drag cross-section, so in the end we multiply by displacemt / sqrt(area)
+                //(nonsense approach, but good enough)
+
+                var f = d * (b - simSettings.obstacleDrag * extentsMult / Mathf.Sqrt(area) * v.magnitude * v);
                 body.ApplyForceToCenter(f);
             }
         }

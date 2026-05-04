@@ -3,6 +3,7 @@ using Unity.U2D.Physics;
 using UnityEditor;
 using UnityEngine;
 using System;
+using Unity.Burst;
 
 public static class PhysicsCoreHelper
 {
@@ -77,6 +78,30 @@ public static class PhysicsCoreHelper
         PhysicsQuery.WorldCastMode castMode = PhysicsQuery.WorldCastMode.Closest, Allocator allocator = Allocator.Temp)
     {
         return world.CastRay(new PhysicsQuery.CastRayInput(origin, translation), filter, castMode, allocator);
+    }
+
+
+    //SHAPES
+
+    [BurstCompile]
+    public static PhysicsAABB CalculateAABB(this PhysicsShape shape, PhysicsTransform transform)
+    {
+        switch (shape.shapeType)
+        {
+            case PhysicsShape.ShapeType.Circle:
+                return shape.circleGeometry.CalculateAABB(transform);
+            case PhysicsShape.ShapeType.Capsule:
+                return shape.capsuleGeometry.CalculateAABB(transform);
+            case PhysicsShape.ShapeType.Polygon:
+                return shape.polygonGeometry.CalculateAABB(transform);
+            case PhysicsShape.ShapeType.Segment:
+                return shape.segmentGeometry.CalculateAABB(transform);
+            case PhysicsShape.ShapeType.ChainSegment:
+                return shape.chainSegmentGeometry.CalculateAABB(transform);
+            default:
+                return shape.aabb;
+
+        }
     }
 
     //PHYSICS BODIES

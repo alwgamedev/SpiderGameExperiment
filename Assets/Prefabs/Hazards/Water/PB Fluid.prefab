@@ -47,16 +47,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PBFluid
   _computeShader: {fileID: 7200000, guid: 33fbda51eab42c143863879575637ab9, type: 3}
   configuration:
-    width: 26
+    width: 25
     height: 30
     releaseWidth: 20
     releaseSpacing: 0.25
-    numParticles: 4500
-    numFoamParticles: 4500
+    numParticles: 4000
+    numFoamParticles: 4000
     drawGizmos: 1
   simSettings:
     obstacleBuoyancy: 0.015
-    obstacleDrag: 0.3
+    obstacleDrag: 0.00025
     cellSize: 1
     stepsPerUpdate: 2
     pressureSolveIterations: 2
@@ -130,7 +130,7 @@ MonoBehaviour:
   foamColor: {r: 0.390566, g: 0.560566, b: 1, a: 0.8509804}
   smoothStepIterations: 3
   densityNormalizer: 0.06
-  densityThreshold: 0.03
+  densityThreshold: 0
   noiseNormalizer: 0.25
   noiseThreshold: 0
   foaminessNormalizer: 0.0015

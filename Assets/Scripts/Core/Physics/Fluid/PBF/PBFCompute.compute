@@ -67,6 +67,7 @@ struct ObstacleData
 {
     float2 center;
     float2 extents;
+    float2 xDirection;
     float speedScaledRadius;
     float repulsionMultiplier;
 };
@@ -202,23 +203,31 @@ void InteractWithObstacles(uint p)
     {
         ObstacleData o = obstacleData[k];
         
+        float2 right = o.xDirection;
+        float2 up = float2(-right.y, right.x);
+        
+        
         float2 localPos = float2(position[p].x - o.center.x, position[p].y - o.center.y);
-        float2 repulsionCoords = localPos / o.speedScaledRadius;
-        float s2 = repulsionCoords.x * repulsionCoords.x + repulsionCoords.y * repulsionCoords.y;
-        if (s2 < 1)
-        {
-            s2 = max(s2, 0.1);
-            float sInverse = rsqrt(s2);
-            float2 dir = sInverse * repulsionCoords;
-            velocity[p] += vars.dt * (1 - s2) * (o.repulsionMultiplier * vars.obstacleRepulsion * dir/* - velocity[p]*/);
-        }
-
-        localPos = float2(localPos.x / o.extents.x, localPos.y / o.extents.y);
+        localPos = float2(dot(localPos, right) / o.extents.x, dot(localPos, up) / o.extents.y);
         float r2 = localPos.x * localPos.x + localPos.y * localPos.y;
         if (r2 < 1)
         {
             InterlockedAdd(obstacleDisplacement[k], 1);
         }
+        
+        //float2 repulsionCoords = localPos / o.speedScaledRadius;
+        //float s2 = repulsionCoords.x * repulsionCoords.x + repulsionCoords.y * repulsionCoords.y;
+        float ssr2 = o.speedScaledRadius * o.speedScaledRadius;
+        
+        if (r2 < ssr2)
+        {
+            float2 s2 = max(r2 / ssr2, 0.1);
+            float sInverse = rsqrt(r2);
+            float2 dir = sInverse * localPos;
+            velocity[p] += vars.dt * (1 - s2) * (o.repulsionMultiplier * vars.obstacleRepulsion * dir/* - velocity[p]*/);
+        }
+
+        //localPos = float2(localPos.x / o.extents.x, localPos.y / o.extents.y);
     }
 }
 
