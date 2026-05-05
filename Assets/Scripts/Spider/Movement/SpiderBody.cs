@@ -31,7 +31,7 @@ public struct SpiderBody
     [SerializeField] PhysicsShapeDefinition shapeDef;
     [SerializeField] PhysicsFixedJointDefinition headJointDef;
     [SerializeField] PhysicsBodyDefinition bodyDef;
-    [SerializeField] DynamicFluidObstacle fluidObstacle;
+    [SerializeField] PBFDynamicObstacleSO fluidObstacle;
 
     public readonly bool FacingRight => facingRight;
     public readonly int Orientation => FacingRight ? 1 : -1;

@@ -11,57 +11,6 @@ public class PBFluid : MonoBehaviour
     const int MAX_NUM_OBSTACLES = 16;//can make it more when we need to
     const int READBACK_QUEUE_SIZE = 5;
 
-    [Serializable]
-    struct ObstacleData
-    {
-        public Vector2 center;
-        public Vector2 extents;
-        public Vector2 xDirection;
-        public float speedScaledRadius;
-        public float repulsionMultiplier;
-    }
-
-    class DisplacementReadback
-    {
-        public UnityEngine.Object owner;
-        public Action<AsyncGPUReadbackRequest> callback;
-        public NativeArray<PhysicsShape> obstacle;
-        public NativeArray<int> displacement;
-        public AsyncGPUReadbackRequest request;
-        public int numObstacles;
-
-        public DisplacementReadback(int maxNumObstacles, UnityEngine.Object owner)
-        {
-            this.owner = owner;
-
-            obstacle = new(maxNumObstacles, Allocator.Persistent);
-            displacement = new(maxNumObstacles, Allocator.Persistent);
-
-            callback = req =>
-            {
-                if (!this.owner)
-                {
-                    Dispose();
-                }
-            };
-        }
-
-        public void Dispose()
-        {
-            owner = null;//yeet the reference so owner can be gc'd
-
-            if (obstacle.IsCreated)
-            {
-                obstacle.Dispose();
-            }
-
-            if (displacement.IsCreated)
-            {
-                displacement.Dispose();
-            }
-        }
-    }
-
     //kernel indices in compute shader
     public const int recalculateAntiClusterCoefficient = 0;
     public const int computePredictedPositions = 1;
@@ -112,11 +61,13 @@ public class PBFluid : MonoBehaviour
     ComputeBuffer cellStart;
     ComputeBuffer cellParticleCount;
 
-    ComputeBuffer obstacleData;
+    [SerializeField] PolygonPhysicsShapeComponent[] staticObstacleSource;
+    ComputeBuffer staticObstacle;
+    ComputeBuffer dynamicObstacle;
     ComputeBuffer obstacleDisplacement;
     [SerializeField] PhysicsQuery.QueryFilter obstacleFilter;
-    ObstacleData[] obstacleDataToTransfer;
-    DisplacementReadback[] displacementReadback;
+    PBFDynamicObstacle[] obstacleDataToTransfer;
+    PBFDisplacementReadback[] displacementReadback;
     int incomingRequest;
     int outgoingRequest;
 
@@ -128,7 +79,8 @@ public class PBFluid : MonoBehaviour
 
     bool updateSimSettings;
 
-    int numObstaclesProperty;
+    int numStaticObstaclesProperty;
+    int numDynamicObstaclesProperty;
 
     int numParticleThreadGroups;
     int numFoamParticleThreadGroups;
@@ -171,7 +123,8 @@ public class PBFluid : MonoBehaviour
     {
         computeShader = Instantiate(_computeShader);
 
-        numObstaclesProperty = Shader.PropertyToID("numObstacles");
+        numStaticObstaclesProperty = Shader.PropertyToID("numStaticObstacles");
+        numDynamicObstaclesProperty = Shader.PropertyToID("numDynamicObstacles");
     }
 
 
@@ -199,13 +152,50 @@ public class PBFluid : MonoBehaviour
         cellStart = new ComputeBuffer(numCells + 1, 4);
         cellParticleCount = new ComputeBuffer(numCells, 4);
 
-        obstacleData = new ComputeBuffer(MAX_NUM_OBSTACLES, MiscTools.Stride<ObstacleData>());
+        //2do: only include obstacles whose aabb overlaps fluid bounding box
+        int numStaticObstacles = 0;
+        for (int i = 0; i < staticObstacleSource.Length; i++)
+        {
+            numStaticObstacles += staticObstacleSource[i].pps.subdividedPolygon.Length;
+        }
+
+        if (numStaticObstacles > 0)
+        {
+            var staticObstacleTemp = new NativeArray<PBFStaticPolygonObstacle>(numStaticObstacles, Allocator.Temp);
+            int k = 0;
+            for (int i = 0; i < staticObstacleSource.Length; i++)
+            {
+                var transformMtx = staticObstacleSource[i].transform.localToWorldMatrix;
+                transformMtx = Matrix4x4.Translate(-transform.position) * transformMtx;
+                var poly = staticObstacleSource[i].pps.subdividedPolygon;
+                for (int j = 0; j < poly.Length; j++)
+                {
+                    var geom = poly[j].Transform(transformMtx, false);
+                    var obstacle = new PBFStaticPolygonObstacle(geom);
+                    staticObstacleTemp[k++] = obstacle;
+                    //Debug.Log($"OBSTACLE {k - 1}:");
+                    //staticObstacleTemp[k - 1].DebugLog(transform.position);
+                }
+            }
+
+            staticObstacle = new ComputeBuffer(numStaticObstacles, MiscTools.Stride<PBFStaticPolygonObstacle>());
+            computeShader.SetInt(numStaticObstaclesProperty, numStaticObstacles);
+            staticObstacle.SetData(staticObstacleTemp);
+        }
+        else
+        {
+            computeShader.SetInt(numStaticObstaclesProperty, 0);
+            staticObstacle = new ComputeBuffer(1, MiscTools.Stride<PBFStaticPolygonObstacle>());
+            //compute buffer cannot have size 0, and can't be left unbound
+        }
+
+        dynamicObstacle = new ComputeBuffer(MAX_NUM_OBSTACLES, MiscTools.Stride<PBFDynamicObstacle>());
         obstacleDisplacement = new ComputeBuffer(MAX_NUM_OBSTACLES, 4);
-        obstacleDataToTransfer ??= new ObstacleData[MAX_NUM_OBSTACLES];
+        obstacleDataToTransfer ??= new PBFDynamicObstacle[MAX_NUM_OBSTACLES];
 
         if (displacementReadback == null)
         {
-            displacementReadback = new DisplacementReadback[READBACK_QUEUE_SIZE];
+            displacementReadback = new PBFDisplacementReadback[READBACK_QUEUE_SIZE];
             for (int i = 0; i < displacementReadback.Length; i++)
             {
                 displacementReadback[i] = new(MAX_NUM_OBSTACLES, this);
@@ -219,7 +209,7 @@ public class PBFluid : MonoBehaviour
         foamParticleBuffer = new ComputeBuffer(configuration.numFoamParticles, 32);
         foamParticleCounter = new ComputeBuffer(2, 4);
         var foamParticleCounterInit = new NativeArray<int>(2, Allocator.Temp);
-        foamParticleCounter.SetData(foamParticleCounterInit);
+        foamParticleCounter.SetData(foamParticleCounterInit);//compute buffer data may not be zeroed out
 
         //configure compute shader
         configTransfer[0] = new(configuration);
@@ -266,7 +256,8 @@ public class PBFluid : MonoBehaviour
         computeShader.SetBuffer(cellStart, "cellStart", setCellStarts, sortParticlesByCell, calculateDensity, calculateLambda, calculatePositionDelta, calculateVorticityConfinementForce,
             updateDensityTexture, spawnFoam, updateFoam);
         computeShader.SetBuffer(cellParticleCount, "cellParticleCount", countParticles, setCellStarts, sortParticlesByCell);
-        computeShader.SetBuffer(obstacleData, "obstacleData", integrateParticles);
+        computeShader.SetBuffer(staticObstacle, "staticObstacle", handleWallCollisions);
+        computeShader.SetBuffer(dynamicObstacle, "dynamicObstacle", integrateParticles);
         computeShader.SetBuffer(obstacleDisplacement, "obstacleDisplacement", integrateParticles, clearObstacleDisplacement);
 
         computeShader.SetBuffer(foamParticle, "foamParticle", spawnFoam, updateFoam, transferFoamSurvivorsToBuffer, transferFoamSurvivorsBack);
@@ -309,7 +300,8 @@ public class PBFluid : MonoBehaviour
         cellStart.Release();
         cellParticleCount.Release();
 
-        obstacleData.Release();
+        staticObstacle.Release();
+        dynamicObstacle.Release();
         obstacleDisplacement.Release();
 
         foamParticle.Release();
@@ -465,7 +457,7 @@ public class PBFluid : MonoBehaviour
 
     //this is for dynamic obstacles moving through the fluid
     //we'll handle static colliders like ground differently
-    private void SetObstacleData(DisplacementReadback r)
+    private void SetObstacleData(PBFDisplacementReadback r)
     {
         var worldWidth = configuration.width * simSettings.cellSize;
         var worldHeight = configuration.height * simSettings.cellSize;
@@ -486,7 +478,7 @@ public class PBFluid : MonoBehaviour
             }
 
             var shape = overlapResults[i].shape;
-            if (shape.isValid && shape.userData.objectValue is DynamicFluidObstacle o && o)
+            if (shape.isValid && shape.userData.objectValue is PBFDynamicObstacleSO o && o)
             {
                 var spd = shape.body.linearVelocity.magnitude;
                 var scale = Mathf.Min(simSettings.velocityBasedObstacleScaleMultiplier * spd, simSettings.obstacleUpscaleMax);
@@ -520,11 +512,11 @@ public class PBFluid : MonoBehaviour
             }
         }
 
-        computeShader.SetInt(numObstaclesProperty, r.numObstacles);
-        obstacleData.SetData(obstacleDataToTransfer);
+        computeShader.SetInt(numDynamicObstaclesProperty, r.numObstacles);
+        dynamicObstacle.SetData(obstacleDataToTransfer);
     }
 
-    private void ApplyBuoyanceForces(DisplacementReadback r)
+    private void ApplyBuoyanceForces(PBFDisplacementReadback r)
     {
         var b = -simSettings.obstacleBuoyancy / simSettings.stepsPerUpdate * PhysicsWorld.defaultWorld.gravity;
         for (int i = 0; i < r.numObstacles; i++)
@@ -536,7 +528,7 @@ public class PBFluid : MonoBehaviour
                 var body = o.body;
                 var v = body.linearVelocity;
                 float extentsMult;
-                if (o.userData.objectValue is DynamicFluidObstacle dfo && dfo)
+                if (o.userData.objectValue is PBFDynamicObstacleSO dfo && dfo)
                 {
                     extentsMult = dfo.extentsMultiplier;
                 }
