@@ -55,8 +55,8 @@ MonoBehaviour:
     numFoamParticles: 4000
     drawGizmos: 1
   simSettings:
-    obstacleBuoyancy: 0.015
-    obstacleDrag: 0.00025
+    obstacleBuoyancy: 0.0075
+    obstacleDrag: 0.0003
     cellSize: 1
     stepsPerUpdate: 2
     pressureSolveIterations: 2
@@ -72,8 +72,8 @@ MonoBehaviour:
     collisionBounciness: 0.1
     obstacleRepulsion: 25000
     velocityBasedObstacleRepulsionMultiplier: 1
-    velocityBasedObstacleScaleMultiplier: 0.2
-    obstacleUpscaleMax: 3
+    velocityBasedObstacleScaleMultiplier: 0.175
+    obstacleUpscaleMax: 2.5
     surfaceNormalThreshold: 100
   foamParticleSettings:
     trappedAirDiffuseRate: 800
@@ -129,9 +129,9 @@ MonoBehaviour:
   colorMax: {r: 0, g: 0.03658533, b: 1, a: 0.7490196}
   foamColor: {r: 0.390566, g: 0.560566, b: 1, a: 0.8509804}
   smoothStepIterations: 3
-  densityNormalizer: 0.06
+  densityNormalizer: 0.045
   densityThreshold: 0
-  noiseNormalizer: 0.25
+  noiseNormalizer: 0.05
   noiseThreshold: 0
   foaminessNormalizer: 0.0015
   foaminessThreshold: 0

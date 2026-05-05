@@ -121,7 +121,8 @@ public struct SpiderBody
         var bodyDefCopy = bodyDef;
         bodyDefCopy.position = abdomenRoot.position;
         bodyDefCopy.rotation = new PhysicsRotate(abdomenRoot.rotation, PhysicsWorld.TransformPlane.XY);
-        abdomen = PhysicsCoreHelper.CreateCapsuleBody(defaultWorld, bodyDefCopy, shapeDef, abdomenCapsuleSize, Vector2.zero, abdomenRoot.localToWorldMatrix);
+        abdomen = PhysicsCoreHelper.CreateCapsuleBody(defaultWorld, bodyDefCopy, shapeDef, abdomenCapsuleSize, Vector2.zero, abdomenRoot.localToWorldMatrix,
+            out var abdomenCapsule);
             //capsule will be centered at root position and won't use offset field, so need to properly position root and bone in editor before play
             //(have written an editor function to do this)
         abdomen.transformObject = abdomenRoot;
@@ -133,11 +134,11 @@ public struct SpiderBody
         //create head
         bodyDefCopy.position = headRoot.position;
         bodyDefCopy.rotation = new PhysicsRotate(headRoot.rotation, PhysicsWorld.TransformPlane.XY);
-        head = PhysicsCoreHelper.CreateCapsuleBody(defaultWorld, bodyDefCopy, shapeDef, headCapsuleSize, Vector2.zero, headRoot.localToWorldMatrix);
+        head = PhysicsCoreHelper.CreateCapsuleBody(defaultWorld, bodyDefCopy, shapeDef, headCapsuleSize, Vector2.zero, headRoot.localToWorldMatrix, 
+            out var headCapsule);
         head.transformObject = headRoot;
 
         //set user data
-        var abdomenCapsule = abdomen.GetShapes()[0];
         var abdomenUserData = abdomenCapsule.userData;
         abdomenUserData.objectValue = fluidObstacle;
         abdomenCapsule.userData = abdomenUserData;
@@ -146,7 +147,6 @@ public struct SpiderBody
         grappleArmUserData.objectValue = fluidObstacle;
         grappleArmShape.userData = grappleArmUserData;
 
-        var headCapsule = head.GetShapes()[0];
         var headUserData = headCapsule.userData;
         headUserData.objectValue = fluidObstacle;
         headCapsule.userData = headUserData;

@@ -11,6 +11,7 @@ public class PBFluid : MonoBehaviour
     const int MAX_NUM_OBSTACLES = 16;//can make it more when we need to
     const int READBACK_QUEUE_SIZE = 5;
 
+    [Serializable]
     struct ObstacleData
     {
         public Vector2 center;
@@ -501,6 +502,21 @@ public class PBFluid : MonoBehaviour
                     speedScaledRadius = Mathf.Min(scale * o.repulsionRadius, o.repulsionRadiusMax),
                     repulsionMultiplier = repulsion
                 };
+
+                //var center = shape.transform.TransformPoint(localBB.center);
+                //var right = o.extentsMultiplier * localBB.extents.x * shape.transform.rotation.direction;
+                //var up = o.extentsMultiplier * localBB.extents.y * shape.transform.rotation.direction.CCWPerp();
+                //Debug.DrawLine(center + right + up, center + right - up, Color.red);
+                //Debug.DrawLine(center + right - up, center - right - up, Color.red);
+                //Debug.DrawLine(center - right - up, center - right + up, Color.red);
+                //Debug.DrawLine(center - right + up, center + right + up, Color.red);
+                //var ssr = obstacleDataToTransfer[r.numObstacles - 1].speedScaledRadius;
+                //right *= ssr;
+                //up *= ssr;
+                //Debug.DrawLine(center + right + up, center + right - up, Color.orange);
+                //Debug.DrawLine(center + right - up, center - right - up, Color.orange);
+                //Debug.DrawLine(center - right - up, center - right + up, Color.orange);
+                //Debug.DrawLine(center - right + up, center + right + up, Color.orange);
             }
         }
 

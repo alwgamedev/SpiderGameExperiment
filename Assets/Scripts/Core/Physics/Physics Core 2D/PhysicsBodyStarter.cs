@@ -37,15 +37,15 @@ public class PhysicsBodyStarter : MonoBehaviour
         switch (geometryType)
         {
             case ShapeType.Circle:
-                body = PhysicsCoreHelper.CreateCircleBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef, geometryFloatParam, transform.localToWorldMatrix);
+                body = PhysicsCoreHelper.CreateCircleBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef, geometryFloatParam, transform.localToWorldMatrix, out _);
                 break;
             case ShapeType.Capsule:
                 Vector2 center = geometryVectorParam;
                 float radius = geometryFloatParam;
-                body = PhysicsCoreHelper.CreateCapsuleBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef, center, -center, radius, transform.localToWorldMatrix);
+                body = PhysicsCoreHelper.CreateCapsuleBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef, center, -center, radius, transform.localToWorldMatrix, out _);
                 break;
             case ShapeType.Box:
-                body = PhysicsCoreHelper.CreateBoxBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef, geometryVectorParam, transform.localToWorldMatrix);
+                body = PhysicsCoreHelper.CreateBoxBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef, geometryVectorParam, transform.localToWorldMatrix, out _);
                 break;
             case ShapeType.Polygon:
                 body = PhysicsCoreHelper.CreatePolygonBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef, transform.localToWorldMatrix,

@@ -158,44 +158,44 @@ public static class PhysicsCoreHelper
     }
 
     public static PhysicsBody CreateCircleBody(PhysicsWorld world, PhysicsBodyDefinition bodyDef, PhysicsShapeDefinition shapeDef,
-        float radius, Matrix4x4 shapeInputSpace)
+        float radius, Matrix4x4 shapeInputSpace, out PhysicsShape shape)
     {
         var body = world.CreateBody(bodyDef);
 
         var circleGeom = CircleGeometry.Create(radius).Transform(shapeInputSpace, true).InverseTransform(body.transform);
-        body.CreateShape(circleGeom, shapeDef);
+        shape = body.CreateShape(circleGeom, shapeDef);
 
         return body;
     }
 
     public static PhysicsBody CreateCapsuleBody(PhysicsWorld world, PhysicsBodyDefinition bodyDef, PhysicsShapeDefinition shapeDef,
-        Vector2 capCenter1, Vector2 capCenter2, float capRadius, Matrix4x4 shapeInputSpace)
+        Vector2 capCenter1, Vector2 capCenter2, float capRadius, Matrix4x4 shapeInputSpace, out PhysicsShape shape)
     {
         var body = world.CreateBody(bodyDef);
 
         var capsuleGeom = CapsuleGeometry.Create(capCenter1, capCenter2, capRadius).Transform(shapeInputSpace, true).InverseTransform(body.transform);
-        body.CreateShape(capsuleGeom, shapeDef);
+        shape = body.CreateShape(capsuleGeom, shapeDef);
 
         return body;
     }
 
     public static PhysicsBody CreateCapsuleBody(PhysicsWorld world, PhysicsBodyDefinition bodyDef, PhysicsShapeDefinition shapeDef,
-        Vector2 capsuleSize, Vector2 capsuleOffset, Matrix4x4 shapeInputSpace)
+        Vector2 capsuleSize, Vector2 capsuleOffset, Matrix4x4 shapeInputSpace, out PhysicsShape shape)
     {
         var body = world.CreateBody(bodyDef);
         var capsuleGeom = CreateCapsule(capsuleSize, capsuleOffset).Transform(shapeInputSpace, true).InverseTransform(body.transform);
-        body.CreateShape(capsuleGeom, shapeDef);
+        shape = body.CreateShape(capsuleGeom, shapeDef);
 
         return body;
     }
 
     public static PhysicsBody CreateBoxBody(PhysicsWorld world, PhysicsBodyDefinition bodyDef, PhysicsShapeDefinition shapeDef, 
-        Vector2 fullSize, Matrix4x4 shapeInputSpace)
+        Vector2 fullSize, Matrix4x4 shapeInputSpace, out PhysicsShape shape)
     {
         var body = world.CreateBody(bodyDef);
 
         PolygonGeometry boxGeom = PolygonGeometry.CreateBox(fullSize).Transform(shapeInputSpace, true).InverseTransform(body.transform);
-        body.CreateShape(boxGeom, shapeDef);
+        shape = body.CreateShape(boxGeom, shapeDef);
 
         return body;
     }
