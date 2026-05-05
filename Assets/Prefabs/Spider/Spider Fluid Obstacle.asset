@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a4d84ff93cd79c24da79b3bdcedb7b22, type: 3}
-  m_Name: Spider Fluid Obstacle 1
+  m_Name: Spider Fluid Obstacle
   m_EditorClassIdentifier: spydr1.Runtime::DynamicFluidObstacle
-  repulsionRadius: 0.45
+  repulsionRadius: 0.4
   repulsionRadiusMax: 2
   extentsMultiplier: 3

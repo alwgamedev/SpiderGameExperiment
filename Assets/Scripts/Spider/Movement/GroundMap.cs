@@ -328,6 +328,7 @@ public class GroundMap
             bestPt.Item2 *= ArcLengthPos(bestPt.Item1 + 1) - ArcLengthPos(bestPt.Item1);
         }
 
+        bestSqDist = Mathf.Abs(bestSqDist);
         return bestPt;
 
         //note that if aj = 0, then whatever it gets paired with it will always continue searching 
@@ -345,7 +346,8 @@ public class GroundMap
             {
                 if (a0 == 0)
                 {
-                    var d0Sq = math.lengthsq(d0);
+                    var dot = math.dot(d0, castDir);
+                    var d0Sq = math.sign(dot) * math.lengthsq(d0);
                     if (d0Sq < bestSqDist)
                     {
                         bestSqDist = d0Sq;
@@ -355,7 +357,8 @@ public class GroundMap
 
                 if (a1 == 0)
                 {
-                    var d1Sq = math.lengthsq(d1);
+                    var dot = math.dot(d1, castDir);
+                    var d1Sq = math.sign(dot) * math.lengthsq(d1);
                     if (d1Sq < bestSqDist)
                     {
                         bestSqDist = d1Sq;
@@ -366,7 +369,9 @@ public class GroundMap
                 {
                     var t = a0 / (a0 - a1);//time at which zero occurs
                     var q = math.lerp(Point(i0), Point(i1), t);
-                    var sqDist = math.distancesq(p, q);
+                    var d = q - p;
+                    var dot = math.dot(d, castDir);
+                    var sqDist = math.sign(dot) * math.lengthsq(d);
                     if (sqDist < bestSqDist)
                     {
                         bestSqDist = sqDist;
