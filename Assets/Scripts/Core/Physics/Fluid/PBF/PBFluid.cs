@@ -173,8 +173,8 @@ public class PBFluid : MonoBehaviour
                     var geom = poly[j].Transform(transformMtx, false);
                     var obstacle = new PBFStaticPolygonObstacle(geom);
                     staticObstacleTemp[k++] = obstacle;
-                    //Debug.Log($"OBSTACLE {k - 1}:");
-                    //staticObstacleTemp[k - 1].DebugLog(transform.position);
+                    Debug.Log($"OBSTACLE {k - 1}:");
+                    staticObstacleTemp[k - 1].DebugLog(transform.position);
                 }
             }
 
@@ -256,7 +256,7 @@ public class PBFluid : MonoBehaviour
         computeShader.SetBuffer(cellStart, "cellStart", setCellStarts, sortParticlesByCell, calculateDensity, calculateLambda, calculatePositionDelta, calculateVorticityConfinementForce,
             updateDensityTexture, spawnFoam, updateFoam);
         computeShader.SetBuffer(cellParticleCount, "cellParticleCount", countParticles, setCellStarts, sortParticlesByCell);
-        computeShader.SetBuffer(staticObstacle, "staticObstacle", handleWallCollisions);
+        computeShader.SetBuffer(staticObstacle, "staticObstacle", handleWallCollisions, updateFoam);
         computeShader.SetBuffer(dynamicObstacle, "dynamicObstacle", integrateParticles);
         computeShader.SetBuffer(obstacleDisplacement, "obstacleDisplacement", integrateParticles, clearObstacleDisplacement);
 

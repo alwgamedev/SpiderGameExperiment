@@ -1,53 +1,46 @@
-﻿const float o41 = 1E-05;
-const float bigly = 1E30;
-
-struct AABB
-{
-    float2 min;
-    float2 max;
-};
-
-//convex polygon with at most 8 vertices (oriented ccw)
+﻿//convex polygon with at most 8 vertices (oriented ccw)
 struct PolygonGeometry
 {
-    AABB aabb;
-    int vertexCount;
-    int pad;
-    float4 vertex[8];//xy = vertex, zw = outward normal of edge (i, i + 1)
+    float2 aabbMin;
+    float2 aabbMax;
+    float4 vertex[8];
+    uint vertexCount;
+    uint pad1, pad2, pad3;
 };
 
-bool OverlapPoint(AABB box, float2 p)
+bool OverlapPoint(float2 boxMin, float2 boxMax, float2 p)
 {
-    return all(p < box.max && p > box.min);
+    return all(p > boxMin && p < boxMax);
 }
 
 bool OverlapPoint(PolygonGeometry poly, float2 p, out float2 escapeNormal, out float escapeDistance)
 {
     escapeNormal = 0;
-    escapeDistance = 0;
+    escapeDistance = -1;//initializing to large constant (or 100, even) for some reason makes dist < escapeDistance check fail and you will lose your mind
+    //trying to figure out what the HHHH is goin' on
     
-    if (!OverlapPoint(poly.aabb, p))
+    if (!OverlapPoint(poly.aabbMin, poly.aabbMax, p))
     {
         return false;
     }
     
-    escapeDistance = bigly;
-    int escapeIndex = 0;
-    for (int i = 0; i < poly.vertexCount; i++)
+    for (uint i = 0; i < poly.vertexCount; i++)
     {
-        float dist = dot(poly.vertex[i].xy - p, poly.vertex[i].zw);
+        float2 vertex = poly.vertex[i].xy;
+        float2 normal = poly.vertex[i].zw;
+        
+        float dist = dot(vertex - p, normal);
         if (dist < 0)
         {
             return false;
         }
 
-        if (dist < escapeDistance)
+        if (escapeDistance < 0 || dist < escapeDistance)
         {
             escapeDistance = dist;
-            escapeIndex = i;
+            escapeNormal = normal;
         }
     }
     
-    escapeNormal = poly.vertex[escapeIndex].zw;
     return true;
 }

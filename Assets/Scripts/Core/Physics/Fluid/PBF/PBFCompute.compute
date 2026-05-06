@@ -237,52 +237,61 @@ void CollideWithStaticObstacles(inout float2 position, inout float2 velocity)
     {
         PolygonGeometry o = staticObstacle[i];
         
+        //float2 oMin = o.aabbMin;
+        //float2 oMax = o.aabbMax;
+        
+        //if (OverlapPoint(oMin, oMax, position))
+        //{
+        //    float2 center = 0.5f * (oMin + oMax);
+            
+        //    float dRight = oMax.x - position.x;
+        //    float dLeft = position.x - oMin.x;
+        //    float dUp = oMax.y - position.y;
+        //    float dDown = position.y - oMin.y;
+            
+        //    if (min(dRight, dLeft) < min(dUp, dDown))
+        //    {
+        //        if (dRight < dLeft)
+        //        {
+        //            position.x = oMax.x + 0.01;
+        //        }
+        //        else
+        //        {
+        //            position.x = oMin.x - 0.01;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        if (dUp < dDown)
+        //        {
+        //            position.y = oMax.y + 0.01;
+        //        }
+        //        else
+        //        {
+        //            position.y = oMin.y - 0.01;
+        //        }
+        //    }
+
+        //    //velocity += dp / vars.dt;
+        //}
+        
         float2 escapeNormal;
         float escapeDistance;
         
-        AABB aabb = o.aabb;
-        if (OverlapPoint(aabb, position))
+        if (OverlapPoint(o, position, escapeNormal, escapeDistance))
         {
-            float2 center = 0.5f * (aabb.min + aabb.max);
-            float2 dp = 0;
-            if (position.x > center.x)
-            {
-                position.x = aabb.max.x;
-                dp.x = aabb.max.x - position.x;
-            }
-            else
-            {
-                position.x = aabb.min.x;
-                dp.x = aabb.min.x - position.x;
-            }
+            float2 dp = (escapeDistance + 0.1) * escapeNormal;
+            position += dp;
+            //velocity = dp;
             
-            if (position.y > center.y)
-            {
-                position.y = aabb.max.y;
-                dp.y = aabb.max.y - position.y;
-            }
-            else
-            {
-                position.y = aabb.min.y;
-                dp.y = aabb.min.y - position.y;
-            }
-
-            velocity += dp / vars.dt;
+            //float v = dot(velocity, escapeNormal);
+            //if (v < 0)
+            //{
+            //    velocity -= (1 + vars.collisionBounciness) * v * escapeNormal;
+            //}
+            
+            //velocity += dp / vars.dt;
         }
-        
-        //if (OverlapPoint(o, position, escapeNormal, escapeDistance))
-        //{
-        //    float2 dp = escapeDistance * escapeNormal;
-        //    position += dp;
-            
-        //    float v = dot(velocity, escapeNormal);
-        //    if (v < 0)
-        //    {
-        //        velocity -= (1 + vars.collisionBounciness) * v * escapeNormal;
-        //    }
-            
-        //    velocity += dp / vars.dt;
-        //}
     }
 }
 
@@ -813,6 +822,7 @@ void UpdateFoam(uint3 id : SV_DispatchThreadID)
         }
         
         foamParticle[id.x].position += vars.dt * foamParticle[id.x].velocity;
+        CollideWithStaticObstacles(foamParticle[id.x].position, foamParticle[id.x].velocity);
         HandleWallCollisions(foamParticle[id.x].position, foamParticle[id.x].velocity);
     }
 }
