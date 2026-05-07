@@ -1799,7 +1799,7 @@ MonoBehaviour:
         m_Awake: 1
         m_Enabled: 1
         m_WorldDrawing: 0
-      fluidObstacle: {fileID: 11400000, guid: ec00782354276b546be6f1a877bff6be, type: 2}
+      fluidObstacle: {fileID: 11400000, guid: d2d8ad3a676b48d4890f97b033608599, type: 2}
     legSynch:
       footHitGround: []
       chainDef:

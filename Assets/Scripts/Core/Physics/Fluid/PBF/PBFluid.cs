@@ -152,29 +152,48 @@ public class PBFluid : MonoBehaviour
         cellStart = new ComputeBuffer(numCells + 1, 4);
         cellParticleCount = new ComputeBuffer(numCells, 4);
 
-        //2do: only include obstacles whose aabb overlaps fluid bounding box
+        var worldWidth = configuration.width * simSettings.cellSize;
+        var worldHeight = configuration.height * simSettings.cellSize;
+        var fluidAABB = new PhysicsAABB(transform.position, (Vector2)transform.position + new Vector2(worldWidth, worldHeight));
+
         int numStaticObstacles = 0;
         for (int i = 0; i < staticObstacleSource.Length; i++)
         {
-            numStaticObstacles += staticObstacleSource[i].pps.subdividedPolygon.Length;
+            //numStaticObstacles += staticObstacleSource[i].pps.subdividedPolygon.Length;
+            var obstacleSource = staticObstacleSource[i];
+            var poly = obstacleSource.pps.subdividedPolygon;
+            var transformMtx = obstacleSource.transform.localToWorldMatrix;
+            for (int j = 0; j < poly.Length; j++)
+            {
+                var aabb = poly[j].Transform(transformMtx, false).CalculateAABB(PhysicsTransform.identity);
+                if (aabb.Overlap(fluidAABB))
+                {
+                    numStaticObstacles++;
+                }
+            }
         }
 
         if (numStaticObstacles > 0)
         {
             var staticObstacleTemp = new NativeArray<PBFStaticPolygonObstacle>(numStaticObstacles, Allocator.Temp);
-            int k = 0;
+            int k = -1;
             for (int i = 0; i < staticObstacleSource.Length; i++)
             {
                 var transformMtx = staticObstacleSource[i].transform.localToWorldMatrix;
-                transformMtx = Matrix4x4.Translate(-transform.position) * transformMtx;
+                var translateMtx = Matrix4x4.Translate(-transform.position);
                 var poly = staticObstacleSource[i].pps.subdividedPolygon;
                 for (int j = 0; j < poly.Length; j++)
                 {
                     var geom = poly[j].Transform(transformMtx, false);
-                    var obstacle = new PBFStaticPolygonObstacle(geom);
-                    staticObstacleTemp[k++] = obstacle;
-                    Debug.Log($"OBSTACLE {k - 1}:");
-                    staticObstacleTemp[k - 1].DebugLog(transform.position);
+                    var aabb = geom.CalculateAABB(PhysicsTransform.identity);
+                    if (aabb.Overlap(fluidAABB))
+                    {
+                        //PhysicsWorld.defaultWorld.DrawGeometry(geom, PhysicsTransform.identity, Color.red, 30);
+                        geom = geom.Transform(translateMtx, false);
+                        staticObstacleTemp[++k] = new PBFStaticPolygonObstacle(geom);
+                    }
+                    //Debug.Log($"OBSTACLE {k}:");
+                    //staticObstacleTemp[k].DebugLog(transform.position);
                 }
             }
 
@@ -248,7 +267,8 @@ public class PBFluid : MonoBehaviour
             integrateParticles, handleWallCollisions, updateDensityTexture, spawnFoam, updateFoam);
         computeShader.SetBuffer(position, "position", computePredictedPositions, countParticles, calculateDensity, calculateLambda, addPositionDelta, calculatePositionDelta,
             storeSolvedVelocity, calculateVorticityConfinementForce, integrateParticles, handleWallCollisions, updateDensityTexture, spawnFoam, updateFoam);
-        computeShader.SetBuffer(lastPosition, "lastPosition", computePredictedPositions, storeSolvedVelocity, calculateDensity, integrateParticles, handleWallCollisions, updateDensityTexture);
+        computeShader.SetBuffer(lastPosition, "lastPosition", computePredictedPositions, storeSolvedVelocity, calculateDensity, integrateParticles, 
+            handleWallCollisions, updateDensityTexture);
         computeShader.SetBuffer(particleBuffer, "particleBuffer", calculatePositionDelta, addPositionDelta, calculateVorticityConfinementForce, integrateParticles);
         computeShader.SetBuffer(cellContainingParticle, "cellContainingParticle", countParticles, sortParticlesByCell);
         computeShader.SetBuffer(particlesByCell, "particlesByCell", sortParticlesByCell, calculateDensity, calculateLambda, calculatePositionDelta, calculateVorticityConfinementForce,
@@ -256,7 +276,7 @@ public class PBFluid : MonoBehaviour
         computeShader.SetBuffer(cellStart, "cellStart", setCellStarts, sortParticlesByCell, calculateDensity, calculateLambda, calculatePositionDelta, calculateVorticityConfinementForce,
             updateDensityTexture, spawnFoam, updateFoam);
         computeShader.SetBuffer(cellParticleCount, "cellParticleCount", countParticles, setCellStarts, sortParticlesByCell);
-        computeShader.SetBuffer(staticObstacle, "staticObstacle", handleWallCollisions, updateFoam);
+        computeShader.SetBuffer(staticObstacle, "staticObstacle", handleWallCollisions, spawnFoam, updateFoam);
         computeShader.SetBuffer(dynamicObstacle, "dynamicObstacle", integrateParticles);
         computeShader.SetBuffer(obstacleDisplacement, "obstacleDisplacement", integrateParticles, clearObstacleDisplacement);
 

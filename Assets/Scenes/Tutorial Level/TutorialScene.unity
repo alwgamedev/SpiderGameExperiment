@@ -4735,13 +4735,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 945856467}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 22.32, y: -14.75, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0.35855883, w: 0.93350714}
+  m_LocalPosition: {x: 26.76, y: -11.05, z: 0}
   m_LocalScale: {x: 8, y: 8, z: 8}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1329315372}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -42.023}
 --- !u!114 &945856469
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6325,7 +6325,7 @@ SpriteShapeRenderer:
   m_SortingLayer: 2
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Color: {r: 0.09433961, g: 0.09433961, b: 0.09433961, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.15686275}
   m_ShapeTexture: {fileID: 2800000, guid: b281b91a70a624a0da1c43adc1c30c7b, type: 3}
   m_Sprites:
   - {fileID: 21300000, guid: 608e61deb05c54660bebf5a4dd2ee02d, type: 3}
@@ -12452,32 +12452,24 @@ PrefabInstance:
       value: PB Fluid
       objectReference: {fileID: 0}
     - target: {fileID: 5222157793995484295, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
-      propertyPath: simSettings.collisionBounciness
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5222157793995484295, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
-      propertyPath: staticObstacleSource.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5222157793995484295, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
       propertyPath: 'staticObstacleSource.Array.data[0]'
       value: 
       objectReference: {fileID: 945856469}
     - target: {fileID: 5222157793995484295, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
       propertyPath: 'staticObstacleSource.Array.data[1]'
       value: 
-      objectReference: {fileID: 1961836323}
+      objectReference: {fileID: 1036127920}
     - target: {fileID: 5222157793995484295, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
       propertyPath: 'staticObstacleSource.Array.data[2]'
       value: 
-      objectReference: {fileID: 945856469}
+      objectReference: {fileID: 1961836323}
     - target: {fileID: 5648694684584665525, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -19.9
+      value: -27.5
       objectReference: {fileID: 0}
     - target: {fileID: 5648694684584665525, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.4
+      value: -2.6
       objectReference: {fileID: 0}
     - target: {fileID: 5648694684584665525, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
       propertyPath: m_LocalPosition.z
@@ -15434,7 +15426,7 @@ Transform:
   m_GameObject: {fileID: 1961836314}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 33.13, y: -20.67, z: 0}
+  m_LocalPosition: {x: 16.7, y: -20.3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -16654,10 +16646,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 170334193149612089, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: mover.spiderBody.fluidObstacle
-      value: 
-      objectReference: {fileID: 11400000, guid: d7ddc0562a03dfd46a0869ca23a6d8b5, type: 2}
     - target: {fileID: 1231387903212816449, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
       propertyPath: m_Name
       value: Spider

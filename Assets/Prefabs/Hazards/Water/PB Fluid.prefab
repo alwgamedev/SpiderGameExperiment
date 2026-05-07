@@ -105,6 +105,10 @@ MonoBehaviour:
     noiseVelocityInfluence: 0.025
     noiseVelocityInfluenceMax: 1
     foamSmoothingRadius: 1
+  staticObstacleSource:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   obstacleFilter:
     m_Categories:
       bitMask: 18446744073709551615

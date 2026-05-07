@@ -26,6 +26,8 @@
 
 static const int NUM_THREADS_PER_GROUP = 256;
 static const int SMALL_THREADS_PER_GROUP = 64;
+static const uint COLLISION_STEPS = 8;
+static const float COLLISION_STEP_FRAC = 1.0 / COLLISION_STEPS;
 
 //density texture
 RWTexture2D<half4> densityTex;
@@ -231,68 +233,76 @@ void InteractWithObstacles(uint p)
     }
 }
 
-void CollideWithStaticObstacles(inout float2 position, inout float2 velocity)
+//for foam particles
+void SimpleCollideWithStaticObstacles(inout float2 position, inout float2 velocity)
 {
-    for (uint i = 0; i < numStaticObstacles; i++)
+    int overlapIdx;
+    float2 escapeNormal;
+    float escapeDistance;
+    
+    if (OverlapPoint(staticObstacle, numStaticObstacles, position, 0, overlapIdx, escapeNormal, escapeDistance))
     {
-        PolygonGeometry o = staticObstacle[i];
+        position += escapeDistance * escapeNormal;
         
-        //float2 oMin = o.aabbMin;
-        //float2 oMax = o.aabbMax;
-        
-        //if (OverlapPoint(oMin, oMax, position))
-        //{
-        //    float2 center = 0.5f * (oMin + oMax);
-            
-        //    float dRight = oMax.x - position.x;
-        //    float dLeft = position.x - oMin.x;
-        //    float dUp = oMax.y - position.y;
-        //    float dDown = position.y - oMin.y;
-            
-        //    if (min(dRight, dLeft) < min(dUp, dDown))
-        //    {
-        //        if (dRight < dLeft)
-        //        {
-        //            position.x = oMax.x + 0.01;
-        //        }
-        //        else
-        //        {
-        //            position.x = oMin.x - 0.01;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        if (dUp < dDown)
-        //        {
-        //            position.y = oMax.y + 0.01;
-        //        }
-        //        else
-        //        {
-        //            position.y = oMin.y - 0.01;
-        //        }
-        //    }
-
-        //    //velocity += dp / vars.dt;
-        //}
-        
-        float2 escapeNormal;
-        float escapeDistance;
-        
-        if (OverlapPoint(o, position, escapeNormal, escapeDistance))
+        if (dot(velocity, escapeNormal) < 0)
         {
-            float2 dp = (escapeDistance + 0.1) * escapeNormal;
-            position += dp;
-            //velocity = dp;
-            
-            //float v = dot(velocity, escapeNormal);
-            //if (v < 0)
-            //{
-            //    velocity -= (1 + vars.collisionBounciness) * v * escapeNormal;
-            //}
-            
-            //velocity += dp / vars.dt;
+            float2 tang = float2(-escapeNormal.y, escapeNormal.x);
+            velocity = -vars.collisionBounciness * (velocity - 2 * dot(velocity, tang) * tang);
         }
     }
+}
+
+void CollideWithStaticObstacles(float2 lastPosition, inout float2 position, inout float2 velocity)
+{
+    //1) check if particle is inside any static obstacle
+    //2) if so, find "time of collision" between last step and now (using N substeps along the ray lastPos -> curPos)
+    //3) resolve collision at that substep
+    
+    int overlapIdx = -1;
+    float2 escapeNormal;
+    float escapeDistance;
+    
+    if (!OverlapPoint(staticObstacle, numStaticObstacles, position, 0, overlapIdx, escapeNormal, escapeDistance))
+    {
+        return;
+    }
+
+    //find first point along ray curPos -> lastPos that has no collision
+    float2 step = COLLISION_STEP_FRAC * (lastPosition - position);
+    float2 collisionPoint = position;
+    float2 freePoint = position;
+    
+    uint i = 0;
+    while (i < COLLISION_STEPS)
+    {
+        freePoint += step;
+        float2 normal;
+        float dist;
+        if (!OverlapPoint(staticObstacle, numStaticObstacles, freePoint, 0, overlapIdx, normal, dist))
+        {
+            //we found collision-free point. end loop.
+            break;
+        }
+
+        //this point is still in collision. take down collision data.
+        collisionPoint = freePoint;
+        escapeNormal = normal;
+        escapeDistance = dist;
+        i++;
+    }
+
+    if (dot(velocity, escapeNormal) < 0)
+    {
+        float2 tang = float2(-escapeNormal.y, escapeNormal.x);
+        velocity = -vars.collisionBounciness * (velocity - 2 * dot(velocity, tang) * tang);
+    }
+    //else
+    //{
+    //    velocity = 0;
+    //}
+        
+    position = collisionPoint + escapeDistance * escapeNormal + (8 - i) * vars.dt * velocity;
+
 }
 
 void HandleWallCollisions(inout float2 position, inout float2 velocity)
@@ -353,7 +363,7 @@ void HandleWallCollisions(uint3 id : SV_DispatchThreadID)
 {
     if (id.x < config.numParticles)
     {
-        CollideWithStaticObstacles(position[id.x], velocity[id.x]);
+        CollideWithStaticObstacles(lastPosition[id.x], position[id.x], velocity[id.x]);
         HandleWallCollisions(position[id.x], velocity[id.x]);
     }
 }
@@ -739,6 +749,7 @@ void SpawnFoam(uint3 id : SV_DispatchThreadID)
     if (id.x < config.numParticles && foamParticleCounter[0] < config.numFoamParticles)
     {
         float2 pos = position[id.x];
+        
         if (pos.x < 1.5 * vars.cellSize || pos.x > vars.worldWidth - 1.5 * vars.cellSize || pos.y < 1.5 * vars.cellSize)//don't know how else to get rid of the exaggerated foam at edges
         {
             return;
@@ -755,6 +766,14 @@ void SpawnFoam(uint3 id : SV_DispatchThreadID)
         
         if (numToSpawn > 0)
         {
+            int overlapIdx;
+            float2 escapeNormal;
+            float escapeDistance;
+            if (OverlapPoint(staticObstacle, numStaticObstacles, pos, 0.1, overlapIdx, escapeNormal, escapeDistance))//get rid of bubble spam near ground (which makes us run out of foam particles)
+            {
+                return;
+            }
+            
             float spawnRadius = min(dens * vars.foamSpawnRadiusMultiplier, vars.foamSpawnRadiusMax);
             
             float2 v = vars.dt * vel;
@@ -822,7 +841,7 @@ void UpdateFoam(uint3 id : SV_DispatchThreadID)
         }
         
         foamParticle[id.x].position += vars.dt * foamParticle[id.x].velocity;
-        CollideWithStaticObstacles(foamParticle[id.x].position, foamParticle[id.x].velocity);
+        SimpleCollideWithStaticObstacles(foamParticle[id.x].position, foamParticle[id.x].velocity);
         HandleWallCollisions(foamParticle[id.x].position, foamParticle[id.x].velocity);
     }
 }
