@@ -2879,9 +2879,12 @@ MonoBehaviour:
     lineRenderer: {fileID: 3237866026040055037}
     arcLengthStep: 0.025
     velocitySmoothingRate: 12
-    terminationMask:
-      serializedVersion: 2
-      m_Bits: 64
+    terminationFilter:
+      m_Categories:
+        bitMask: 18446744073709551615
+      m_HitCategories:
+        bitMask: 64
+      m_IgnoreFilter: 8
   jumpPreviewArrow:
     arrowNeck: {fileID: 9040078322212251582}
     arrowHead: {fileID: 5137735048366120409}

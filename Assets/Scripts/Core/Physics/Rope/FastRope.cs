@@ -62,7 +62,7 @@ public class FastRope
     NativeArray<float2> position;
     NativeArray<float2> lastPosition;
     NativeArray<float2> positionBuffer;//for reparametrizing & rendering
-    NativeArray<float2> lastPositionBuffer;
+    NativeArray<float2> lastPositionBuffer;//also used to store constraint deltas
     NativeReference<float2> dynamicAnchorTerminusPositionStorage;
 
     NativeArray<float2> raycastDirections;
@@ -307,34 +307,39 @@ public class FastRope
         UnlockWrappers();
         HandleLengthRequest();
 
-        float terminusMass;
         if (TerminusAnchored)
         {
-            //in case someday we have an anchor that could get destroyed or change rigidbody type...
+            //in case someday we have an anchor that could get destroyed or change body type
             terminusAnchorMode.Value = terminusAnchor.Value.isValid ? terminusAnchor.Value.body.type == PhysicsBody.BodyType.Dynamic ?
                 TerminusAnchorMode.dynamicAnchor : TerminusAnchorMode.staticAnchor : TerminusAnchorMode.notAnchored;
         }
 
+        float terminusMass;
         switch (terminusAnchorMode.Value)
         {
             case TerminusAnchorMode.staticAnchor:
-                lastPosition[TerminusIndex] = SetTerminusToAnchorPosition();
-                terminusMass = Mathf.Infinity;
-                break;
+                //lastPosition[TerminusIndex] = SetTerminusToAnchorPosition();
+                {
+                    var p = terminusAnchor.Value.transform.TransformPoint(terminusAnchorLocalPos.Value);
+                    position[TerminusIndex] = p;
+                    lastPosition[TerminusIndex] = p;
+                    terminusMass = Mathf.Infinity;
+                    break;
+                }
             case TerminusAnchorMode.dynamicAnchor:
-                lastPosition[TerminusIndex] = SetTerminusToAnchorPosition() - dt * (float2)terminusAnchor.Value.body.linearVelocity;
-                terminusMass = terminusAnchor.Value.body.mass;
-                break;
+                {
+                    var anchorBody = terminusAnchor.Value.body;
+                    float2 p = anchorBody.transform.TransformPoint(terminusAnchorLocalPos.Value);
+                    var f = settings.dynamicAnchorPullForce * (position[TerminusIndex] - p);
+                    anchorBody.ApplyForce(f, p);
+                    position[TerminusIndex] = p;
+                    lastPosition[TerminusIndex] = p;//we don't integrate position when anchored, but just keep lastPos reasonable in case we become un-anchored (e.g. anchor body is destroyed)
+                    terminusMass = anchorBody.mass;
+                    break;
+                }
             default://not anchored
                 terminusMass = settings.terminusMass;
                 break;
-        }
-
-        float2 SetTerminusToAnchorPosition()
-        {
-            var p = terminusAnchor.Value.transform.TransformPoint(terminusAnchorLocalPos.Value);
-            position[TerminusIndex] = p;
-            return p;
         }
 
         SetSourcePosition(position, sourcePosition);//btw maybe we should set source node velocity (and integrate) now that we are on a one frame delay
@@ -357,7 +362,7 @@ public class FastRope
 
         LockWrappers();
 
-        jobHandle = integrateJob.Schedule(numActive, 16, jobHandle);
+        jobHandle = integrateJob.Schedule(TerminusAnchored ? numActive - 1 : numActive, 16, jobHandle);
 
         //constraints pulling owner
         for (int i = 0; i < settings.constraintIterations; i++)
@@ -383,20 +388,6 @@ public class FastRope
             jobHandle = applyConstraints.Schedule(numActive + 1, 16, jobHandle);
         }
     }
-
-    //private void ClampSpeed(float dt)
-    //{
-    //    var dt2inv = 1 / (dt * dt);
-    //    for (int i = sourceIndex.Value + 1; i < position.Length; i++)
-    //    {
-    //        var w = lastPosition[i] - position[i];
-    //        var spd2 = math.lengthsq(w) * dt2inv;
-    //        if (spd2 > MAX_SPEED_SQRD)
-    //        {
-    //            lastPosition[i] = position[i] + dt * MAX_SPEED * math.normalize(w);
-    //        }
-    //    }
-    //}
 
     private void SetSourcePosition(NativeArray<float2> position, float2 sourcePosition)
     {
@@ -451,7 +442,7 @@ public class FastRope
     /// <summary> Batch = 0 or 1 (because adjacent constraints may write to the same index in constraintDelta). </summary>
     private CalculateRopeConstraints CalculateConstraints(float sourceMass, float terminusMass, int batch)
     {
-        return new(position, lastPosition, lastPositionBuffer, nodeSpacing.Value, settings.nodeMass, sourceMass, terminusMass, settings.constraintStiffness, sourceIndex.Value, batch);
+        return new(position, lastPositionBuffer, nodeSpacing.Value, settings.nodeMass, sourceMass, terminusMass, settings.constraintStiffness, sourceIndex.Value, batch);
     }
 
     private ApplyRopeConstraints ApplyConstraints()

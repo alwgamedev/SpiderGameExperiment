@@ -15,7 +15,7 @@ public static class RopeJobUtils
         PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter, float nodeRadius, float collisionBounciness, bool stepVelocity)
     {
         MoveNode(position.Length - 1, deltaPosition, position, lastPosition,
-            world, collisionFilter, nodeRadius, collisionBounciness, stepVelocity, out var castResults);
+        world, collisionFilter, nodeRadius, collisionBounciness, stepVelocity, out var castResults);
 
         if (castResults.IsCreated && castResults.Length > 0)
         {
@@ -134,7 +134,7 @@ public static class RopeJobUtils
     //CONSTRAINTS
 
     /// <summary> (where i = sourceIndex + 1) </summary>
-    public static void CalculateFirstConstraint(int i, NativeArray<float2> position, NativeArray<float2> lastPosition, NativeArray<float2> constraintDelta,
+    public static void CalculateFirstConstraint(int i, NativeArray<float2> position, NativeArray<float2> constraintDelta,
         float nodeSpacing, float nodeSpacing2, float nodeMass, float sourceMass, float constraintStiffness)
     {
         var d = position[i] - position[i - 1];
@@ -157,7 +157,7 @@ public static class RopeJobUtils
         }
     }
 
-    public static void CalculateConstraint(int i, NativeArray<float2> position, NativeArray<float2> lastPosition, NativeArray<float2> constraintDelta,
+    public static void CalculateConstraint(int i, NativeArray<float2> position, NativeArray<float2> constraintDelta,
         float nodeSpacing, float nodeSpacing2, float constraintStiffness)
     {
         var d = position[i] - position[i - 1];
@@ -172,7 +172,7 @@ public static class RopeJobUtils
     }
 
     /// <summary> (where i = terminusIndex) </summary>
-    public static void CalculateLastConstraint(int i, NativeArray<float2> position, NativeArray<float2> lastPosition, NativeArray<float2> constraintDelta,
+    public static void CalculateLastConstraint(int i, NativeArray<float2> position, NativeArray<float2> constraintDelta,
         float nodeSpacing, float nodeSpacing2, float nodeMass, float terminusMass, float constraintStiffness)
     {
         var d = position[i] - position[i - 1];

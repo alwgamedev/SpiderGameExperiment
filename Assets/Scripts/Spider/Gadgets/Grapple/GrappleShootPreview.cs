@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System;
+using Unity.U2D.Physics;
 
 [Serializable]
 public class GrappleShootPreview
@@ -7,7 +8,7 @@ public class GrappleShootPreview
     [SerializeField] LineRenderer lineRenderer;
     [SerializeField] float arcLengthStep;
     [SerializeField] float velocitySmoothingRate;
-    [SerializeField] LayerMask terminationMask;
+    [SerializeField] PhysicsQuery.QueryFilter terminationFilter;
 
     Vector3[] positions;
     Vector3 lastShootPosition;
@@ -92,11 +93,12 @@ public class GrappleShootPreview
                     float dt = a / Mathf.Sqrt(vx * vx + vy * vy);//time to increase arc length by fixed amount (results in better rendering than fixed time step)
                     t += dt;
                     positions[i] = new Vector3(p.x + t * v.x + t * t * l.x, p.y + t * v.y + t * t * l.y, 0);
-                    var r = Physics2D.Linecast(positions[i - 1], positions[i], terminationMask);
-                    if (r)
+
+                    var cast = PhysicsWorld.defaultWorld.CastRay(positions[i - 1], positions[i] - positions[i - 1], terminationFilter);
+                    if (cast.Length > 0)
                     {
                         hitGround = true;
-                        lastTerminusPosition = r.point;
+                        lastTerminusPosition = cast[0].point;
                         positions[i] = lastTerminusPosition;
                         length = i * arcLengthStep;
                     }

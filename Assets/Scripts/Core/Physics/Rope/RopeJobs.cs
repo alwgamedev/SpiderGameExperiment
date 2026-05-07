@@ -30,7 +30,6 @@ public struct ClearArrayJob<T> : IJob where T : unmanaged
 public struct CalculateRopeConstraints : IJobParallelFor
 {
     [ReadOnly] public NativeArray<float2> position;
-    [ReadOnly] public NativeArray<float2> lastPosition;
     [NativeDisableParallelForRestriction] public NativeArray<float2> constraintDelta;
     public readonly float nodeSpacing;
     public readonly float nodeSpacing2;
@@ -44,12 +43,11 @@ public struct CalculateRopeConstraints : IJobParallelFor
     /// <summary> 
     /// Pass terminusMass = infinity if static anchor, or terminusMass = anchor body mass for dynamic anchor.
     /// </summary>
-    public CalculateRopeConstraints(NativeArray<float2> position, NativeArray<float2> lastPosition, NativeArray<float2> constraintDelta,
+    public CalculateRopeConstraints(NativeArray<float2> position, NativeArray<float2> constraintDelta,
         float nodeSpacing, float nodeMass, float sourceMass, float terminusMass, float constraintStiffness,
         int sourceIndex, int batch)
     {
         this.position = position;
-        this.lastPosition = lastPosition;
         this.constraintDelta = constraintDelta;
         this.nodeSpacing = nodeSpacing;
         nodeSpacing2 = nodeSpacing * nodeSpacing;
@@ -67,15 +65,15 @@ public struct CalculateRopeConstraints : IJobParallelFor
 
         if (i == sourceIndex + 1)
         {
-            RopeJobUtils.CalculateFirstConstraint(i, position, lastPosition, constraintDelta, nodeSpacing, nodeSpacing2, nodeMass, sourceMass, constraintStiffness);
+            RopeJobUtils.CalculateFirstConstraint(i, position, constraintDelta, nodeSpacing, nodeSpacing2, nodeMass, sourceMass, constraintStiffness);
         }
         else if (i == position.Length - 1)
         {
-            RopeJobUtils.CalculateLastConstraint(i, position, lastPosition, constraintDelta, nodeSpacing, nodeSpacing2, nodeMass, terminusMass, constraintStiffness);
+            RopeJobUtils.CalculateLastConstraint(i, position, constraintDelta, nodeSpacing, nodeSpacing2, nodeMass, terminusMass, constraintStiffness);
         }
         else
         {
-            RopeJobUtils.CalculateConstraint(i, position, lastPosition, constraintDelta, nodeSpacing, nodeSpacing2, constraintStiffness);
+            RopeJobUtils.CalculateConstraint(i, position, constraintDelta, nodeSpacing, nodeSpacing2, constraintStiffness);
         }
     }
 }
@@ -122,7 +120,7 @@ public struct ApplyRopeConstraints : IJobParallelFor
         {
             if (terminusAnchorMode.Value == FastRope.TerminusAnchorMode.dynamicAnchor && terminusAnchor.Value.isValid)
             {
-                terminusAnchor.Value.body.ApplyForce(dynamicAnchorPullForce * constraintDelta[i], position[i]);
+                //terminusAnchor.Value.body.ApplyForce(dynamicAnchorPullForce * constraintDelta[i], terminusAnchor.Value.transform.TransformPoint(terminusAnchorLocalPos.Value)/*position[i]*/);
                 position[i] += constraintDelta[i];//no collision; only moving terminus to get accurate forces on the anchor for future constraints
             }
             else if (terminusAnchorMode.Value == FastRope.TerminusAnchorMode.notAnchored)
