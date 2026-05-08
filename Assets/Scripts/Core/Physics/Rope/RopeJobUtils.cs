@@ -1,6 +1,7 @@
 ﻿using Unity.Collections;
 using Unity.Mathematics;
 using Unity.U2D.Physics;
+using Unity.VectorGraphics;
 
 public static class RopeJobUtils
 {
@@ -10,11 +11,12 @@ public static class RopeJobUtils
         lastPosition[i] = position[i];
     }
 
-    public static void MoveAndAnchorTerminus(float2 deltaPosition, NativeArray<float2> position, NativeArray<float2> lastPosition,
+    public static void MoveAndAnchorTerminus(float2 deltaPosition, NativeArray<float2> position, NativeArray<float2> lastPosition, 
+        NativeArray<RopeCollisionDebugData> collisionData, NativeHashMap<uint, PhysicsCoreHelper.ShapeProxy> shapeCapture,
         NativeReference<PhysicsShape> terminusAnchor, NativeReference<float2> terminusAnchorLocalPos, NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode,
         PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter, float nodeRadius, float collisionBounciness, bool stepVelocity)
     {
-        MoveNode(position.Length - 1, deltaPosition, position, lastPosition,
+        MoveNode(position.Length - 1, deltaPosition, position, lastPosition, collisionData, shapeCapture,
         world, collisionFilter, nodeRadius, collisionBounciness, stepVelocity, out var castResults);
 
         if (castResults.IsCreated && castResults.Length > 0)
@@ -38,7 +40,8 @@ public static class RopeJobUtils
         }
     }
 
-    public static void MoveNode(int i, float2 deltaPosition, NativeArray<float2> position, NativeArray<float2> lastPosition,
+    public static void MoveNode(int i, float2 deltaPosition, NativeArray<float2> position, NativeArray<float2> lastPosition, 
+        NativeArray<RopeCollisionDebugData> collisionData, NativeHashMap<uint, PhysicsCoreHelper.ShapeProxy> shapeCapture,
         PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter, float nodeRadius, float collisionBounciness, bool stepVelocity,
         out NativeArray<PhysicsQuery.WorldCastResult> castResults)
     {
@@ -60,54 +63,40 @@ public static class RopeJobUtils
         //(+/- depending on whether center of node is submerged)
         if (castResults.Length > 0)
         {
+            RopeCollisionDebugData colData = new();
+
             var result = castResults[0];
             var positionAtTimeOfImpact = position[i] + result.fraction * deltaPosition;
 
             float2 normal = result.normal;
             if (normal.Equals(0))//there was initial overlap in the world cast
             {
-                normal = math.select(positionAtTimeOfImpact - (float2)result.point,
-                    (float2)result.point - positionAtTimeOfImpact,
-                    world.TestOverlapPoint(positionAtTimeOfImpact, collisionFilter));
-                normal = normal.Normalized();
-                //if (world.TestOverlapPoint(positionAtTimeOfImpact, collisionFilter))
-                //{
-                //    normal = ((float2)result.point - positionAtTimeOfImpact).Normalized();
+                //normal = math.select(positionAtTimeOfImpact - (float2)result.point,
+                //        (float2)result.point - positionAtTimeOfImpact,
+                //        world.TestOverlapPoint(positionAtTimeOfImpact, collisionFilter));
+                //normal = normal.Normalized();
 
-                //    //according to comment in WorldCastResult source, when there is initial overlap the result.point
-                //    //is an "arbitrary point in the overlap," so if node position is also submerged, we don't know if normal is actually pointing towards an escape route
-                //    //(we should actually test this, since this seemed to have no affect on the functionality of the rope)
-                //    int j = 0;
-                //    while (j < 8)
-                //    {
-                //        var p = EdgePoint(j);
-                //        if (!world.TestOverlapPoint(p, collisionFilter))
-                //        {
-                //            normal = (p - (float2)result.point).Normalized();
-                //            break;
-                //        }
-
-                //        j++;
-                //    }
-
-                //    float2 EdgePoint(int j)
-                //    {
-                //        int stretch = j / 4 + 1;
-                //        j %= 4;
-                //        return j switch
-                //        {
-                //            0 => positionAtTimeOfImpact + stretch * nodeRadius * normal,
-                //            1 => positionAtTimeOfImpact - stretch * nodeRadius * normal,
-                //            2 => positionAtTimeOfImpact + stretch * nodeRadius * normal.CCWPerp(),
-                //            _ => positionAtTimeOfImpact + stretch * nodeRadius * normal.CWPerp(),
-                //        };
-                //    }
-                //}
-                //else
-                //{
-                //    normal = (positionAtTimeOfImpact - (float2)result.point).Normalized();
-                //}
+                //the look-up is failing it seems. nodes still come out red even when i just check whether key exists.
+                if (shapeCapture.TryGetValue(result.shape.Id(), out var proxy) && proxy.OverlapPoint(result.point, out var escapeNormal, out var escapeDistance))
+                {
+                    normal = escapeNormal;
+                    positionAtTimeOfImpact += (escapeDistance + MathTools.o41) * normal;
+                    //2do:
+                    //1) move all the way out of the overlap instead of just moving result.point out of overlap?
+                    //2) could also add this translation to lastPosition to avoid velocity jumps? but let's first see if it works at all
+                }
+                else
+                {
+                    colData.failure = true;
+                    normal = math.select(positionAtTimeOfImpact - (float2)result.point,
+                        (float2)result.point - positionAtTimeOfImpact,
+                        world.TestOverlapPoint(positionAtTimeOfImpact, collisionFilter));
+                    normal = normal.Normalized();
+                }
             }
+
+            colData.normal = normal;
+            collisionData[i] = colData;
 
             if (math.dot(deltaPosition, normal) < 0)
             {

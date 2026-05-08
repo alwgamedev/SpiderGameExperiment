@@ -165,6 +165,9 @@ public struct SpiderBody
 
         totalMass = abdomen.mass + head.mass;
         facingRight = true;
+
+        PhysicsRegistry.RegisterBodyAndShapes(head);
+        PhysicsRegistry.RegisterBodyAndShapes(abdomen);
     }
 
     public void Enable()

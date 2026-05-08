@@ -179,6 +179,7 @@ public struct GrabberClaw
             bodyDef.rotation = new PhysicsRotate(physTransform.rotation, PhysicsWorld.TransformPlane.XY);
             var body = PhysicsCoreHelper.CreatePolygonBody(anchorBody.world, bodyDef, shapeDef, physTransform.localToWorldMatrix, geometry);
             body.transformObject = physTransform;
+            PhysicsRegistry.RegisterBodyAndShapes(body);
             return body;
         }
 

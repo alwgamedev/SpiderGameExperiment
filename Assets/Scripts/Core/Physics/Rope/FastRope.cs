@@ -27,6 +27,12 @@ public struct RopeSettings
     public readonly PhysicsQuery.QueryFilter CollisionFilter => new(PhysicsMask.All, collisionMask, PhysicsWorld.IgnoreFilter.IgnoreTriggerShapes);
 }
 
+public struct RopeCollisionDebugData
+{
+    public float2 normal;
+    public bool failure;
+}
+
 public class FastRope
 {
     //const float MAX_SPEED = 50f;
@@ -55,6 +61,10 @@ public class FastRope
     AlwaysAccessibleNativeReference<TerminusAnchorMode> terminusAnchorMode;
     AlwaysAccessibleNativeReference<float2> carryForce;
     AlwaysAccessibleNativeReference<float> maxTension;
+    NativeReference<float2> bbMin;
+    NativeReference<float2> bbMax;
+
+    NativeHashMap<uint, PhysicsCoreHelper.ShapeProxy> shapeCapture;
 
 
     //NODE DATA
@@ -63,9 +73,9 @@ public class FastRope
     NativeArray<float2> lastPosition;
     NativeArray<float2> positionBuffer;//for reparametrizing & rendering
     NativeArray<float2> lastPositionBuffer;//also used to store constraint deltas
+    NativeArray<RopeCollisionDebugData> collisionDebugData;
+    NativeArray<RopeCollisionDebugData> collisionDebugDataCopy;
     NativeReference<float2> dynamicAnchorTerminusPositionStorage;
-
-    NativeArray<float2> raycastDirections;
 
 
     //PROPERTIES
@@ -175,9 +185,26 @@ public class FastRope
             dynamicAnchorTerminusPositionStorage.Dispose();
         }
 
-        if (raycastDirections.IsCreated)
+        if (shapeCapture.IsCreated)
         {
-            raycastDirections.Dispose();
+            shapeCapture.Dispose();
+        }
+        if (bbMin.IsCreated)
+        {
+            bbMin.Dispose();
+        }
+        if (bbMax.IsCreated)
+        {
+            bbMax.Dispose();
+        }
+
+        if (collisionDebugData.IsCreated)
+        {
+            collisionDebugData.Dispose();
+        }
+        if (collisionDebugDataCopy.IsCreated)
+        {
+            collisionDebugDataCopy.Dispose();
         }
     }
 
@@ -205,16 +232,11 @@ public class FastRope
 
         maxTension = new(Allocator.Persistent);
         carryForce = new(Allocator.Persistent);
+        bbMin = new(Allocator.Persistent);
+        bbMax = new(Allocator.Persistent);
 
-        raycastDirections = new(8, Allocator.Persistent);
-        raycastDirections[0] = new(0, -1);
-        raycastDirections[1] = new(0, 1);
-        raycastDirections[2] = new(1, 0);
-        raycastDirections[3] = new(-1, 0);
-        raycastDirections[4] = new(MathTools.cos45, -MathTools.cos45);
-        raycastDirections[5] = new(-MathTools.cos45, MathTools.cos45);
-        raycastDirections[6] = new(-MathTools.cos45, -MathTools.cos45);
-        raycastDirections[7] = new(MathTools.cos45, MathTools.cos45);
+        collisionDebugData = new(numNodes, Allocator.Persistent);
+        collisionDebugDataCopy = new(numNodes, Allocator.Persistent);
     }
 
     private void LockWrappers()
@@ -246,10 +268,14 @@ public class FastRope
 
     public void DrawGizmos()
     {
-        Gizmos.color = Color.red;
         for (int i = sourceIndex.Value; i < positionBuffer.Length; i++)
         {
-            Gizmos.DrawSphere((Vector2)positionBuffer[i], settings.NodeRadius);
+            var colData = collisionDebugDataCopy[i];
+            Gizmos.color = colData.failure ? Color.red : Color.blue;
+            Vector2 p = positionBuffer[i];
+            Gizmos.DrawSphere(p, settings.NodeRadius);
+            Gizmos.color = Color.yellow;
+            Debug.DrawLine(p, p + 0.5f * (Vector2)colData.normal);
         }
     }
 
@@ -304,6 +330,10 @@ public class FastRope
     public void Update(float2 sourcePosition, float dt)
     {
         jobHandle.Complete();
+        if (shapeCapture.IsCreated)
+        {
+            shapeCapture.Dispose();
+        }
         UnlockWrappers();
         HandleLengthRequest();
 
@@ -344,10 +374,15 @@ public class FastRope
 
         SetSourcePosition(position, sourcePosition);//btw maybe we should set source node velocity (and integrate) now that we are on a one frame delay
         GrappleExtent = position[TerminusIndex] - position[sourceIndex.Value];
-        CalculateMaxTension().Run();
         positionBuffer.CopyFrom(position);//copy positions for rendering (and we'll use lastPositionBuffer for constraint deltas)
 
-        //ClampSpeed(dt);
+        CalculateMaxTension(bbMin, bbMax).Run();
+        bbMin.Value += new float2(-5, -5);
+        bbMax.Value += new float2(5, 5);
+        CaptureShapes(bbMin.Value, bbMax.Value);
+
+        collisionDebugDataCopy.CopyFrom(collisionDebugData);
+        collisionDebugData.FillArray(default, 0, collisionDebugData.Length);
 
         var integrateJob = IntegrateRope(dt * dt, 1);
 
@@ -386,6 +421,37 @@ public class FastRope
             jobHandle = calculateConstraintsEven.Schedule(numEven, 16, jobHandle);
             jobHandle = calculateConstraintOdd.Schedule(numOdd, 16, jobHandle);
             jobHandle = applyConstraints.Schedule(numActive + 1, 16, jobHandle);
+        }
+    }
+
+    private void CaptureShapes(float2 bbMin, float2 bbMax)
+    {
+        var overlap = ownerWorld.OverlapAABB(new PhysicsAABB(bbMin, bbMax), settings.CollisionFilter);
+
+        shapeCapture = new(overlap.Length, Allocator.TempJob);
+
+        for (int i = 0; i < overlap.Length; i++)
+        {
+            var shape = overlap[i].shape;
+            var id = shape.Id();
+            if (id != 0)
+            {
+                switch (shape.shapeType)
+                {
+                    case PhysicsShape.ShapeType.Circle:
+                        shapeCapture[id] = new(shape.circleGeometry, shape.transform);
+                        //shape.world.DrawGeometry(shape.circleGeometry, shape.transform, Color.red);
+                        break;
+                    case PhysicsShape.ShapeType.Capsule:
+                        shapeCapture[id] = new(shape.capsuleGeometry, shape.transform);
+                        //shape.world.DrawGeometry(shape.capsuleGeometry, shape.transform, Color.red);
+                        break;
+                    case PhysicsShape.ShapeType.Polygon:
+                        shapeCapture[id] = new(shape.polygonGeometry, shape.transform);
+                        //shape.world.DrawGeometry(shape.polygonGeometry, shape.transform, Color.red);
+                        break;
+                }
+            }
         }
     }
 
@@ -433,9 +499,9 @@ public class FastRope
 
     private IntegrateRope IntegrateRope(float dt2, float timeScale)
     {
-        return new(position, lastPosition,
+        return new(position, lastPosition, collisionDebugData, shapeCapture,
             terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode.native,
-            PhysicsWorld.defaultWorld, settings.CollisionFilter, PhysicsWorld.defaultWorld.gravity, settings.drag, settings.NodeRadius, settings.collisionBounciness,
+            ownerWorld, settings.CollisionFilter, ownerWorld.gravity, settings.drag, settings.NodeRadius, settings.collisionBounciness,
             dt2, timeScale, sourceIndex.Value + 1);
     }
 
@@ -447,7 +513,8 @@ public class FastRope
 
     private ApplyRopeConstraints ApplyConstraints()
     {
-        return new(lastPositionBuffer, position, lastPosition, terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode.native, ownerWorld, settings.CollisionFilter,
+        return new(lastPositionBuffer, position, lastPosition, collisionDebugData, shapeCapture,
+            terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode.native, ownerWorld, settings.CollisionFilter,
             settings.NodeRadius, settings.collisionBounciness, settings.dynamicAnchorPullForce, sourceIndex.Value);
     }
 
@@ -462,8 +529,8 @@ public class FastRope
             sourceIndex.native, Length, newSourceIndex);
     }
 
-    private CalculateRopeMaxTension CalculateMaxTension()
+    private CalculateRopeMaxTension CalculateMaxTension(NativeReference<float2> bbMin, NativeReference<float2> bbMax)
     {
-        return new(position, maxTension.native, nodeSpacing.Value, sourceIndex.Value);
+        return new(position, bbMin, bbMax, maxTension.native, nodeSpacing.Value, sourceIndex.Value);
     }
 }

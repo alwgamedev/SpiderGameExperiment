@@ -37,7 +37,7 @@ public class PhysicsBodyStarter : MonoBehaviour
         switch (geometryType)
         {
             case ShapeType.Circle:
-                body = PhysicsCoreHelper.CreateCircleBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef, geometryFloatParam, transform.localToWorldMatrix, out _);
+                body = PhysicsCoreHelper.CreateCircleBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef, geometryFloatParam, transform.localToWorldMatrix, out var shape);
                 break;
             case ShapeType.Capsule:
                 Vector2 center = geometryVectorParam;
@@ -56,6 +56,8 @@ public class PhysicsBodyStarter : MonoBehaviour
 
         //if body not valid error, check correct geometry type selected
         body.transformObject = transform;
+
+        PhysicsRegistry.RegisterBodyAndShapes(body);
 
 #if UNITY_EDITOR
         SceneView.duringSceneGui += OnSceneGUI;

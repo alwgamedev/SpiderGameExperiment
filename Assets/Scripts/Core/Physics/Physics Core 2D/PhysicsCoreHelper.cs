@@ -1,12 +1,19 @@
-﻿using Unity.Collections;
+﻿using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using Unity.Burst;
+using Unity.Collections;
+using Unity.Mathematics;
 using Unity.U2D.Physics;
 using UnityEditor;
 using UnityEngine;
-using System;
-using Unity.Burst;
 
 public static class PhysicsCoreHelper
 {
+    public static Dictionary<uint, PhysicsShape> ShapeLookup;
+
+    public static Dictionary<uint, PhysicsBody> BodyLookup;
+
     //REFLECT AND ROTATE 
 
     public static PhysicsTransform RotateAroundPoint(this PhysicsTransform t, PhysicsRotate rot, Vector2 rotLocalCenter)
@@ -68,7 +75,90 @@ public static class PhysicsCoreHelper
 
     //QUERIES
 
-    public static PhysicsQuery.QueryFilter ToQueryFilter(this PhysicsShape.ContactFilter contactFilter, 
+    /// <summary> A ShapeProxy that can be used in Jobs (built-in ShapeProxy has potential to throw errors when you access geometry, which stalls jobs). 
+    /// Use Vertex(0) for circle center, and use Vertex(0), Vertex(1) for capsule centers 1, 2.
+    /// </summary>
+    [StructLayout(LayoutKind.Explicit)]
+    public unsafe struct ShapeProxy
+    {
+        [FieldOffset(0)] fixed float vertex[16];
+        [FieldOffset(64)] fixed float normal[16];//only for polygons
+        [FieldOffset(64)] float radius;
+        [FieldOffset(128)] PhysicsShape.ShapeType shapeType;
+        [FieldOffset(132)] int count;
+
+        public PhysicsShape.ShapeType ShapeType => shapeType;
+        public float Radius => radius;
+        public int Count => count;
+
+        public Vector2 Vertex(int i)
+        {
+            fixed (float* vertexPtr = vertex)
+            {
+                return new(vertexPtr[2 * i], vertexPtr[2 * i + 1]);
+            }
+        }
+
+        public Vector2 Normal(int i)
+        {
+            fixed (float* normalPtr = normal)
+            {
+                return new(normalPtr[2 * i], normalPtr[2 * i + 1]);
+            }
+        }
+
+        public ShapeProxy(CircleGeometry circle, PhysicsTransform transform)
+        {
+            shapeType = PhysicsShape.ShapeType.Circle;
+            radius = circle.radius;
+            count = 1;
+
+            fixed (float* vertexPtr = vertex)
+            {
+                var center = transform.TransformPoint(circle.center);
+                vertexPtr[0] = center.x;
+                vertexPtr[1] = center.y;
+            }
+        }
+
+        public ShapeProxy(CapsuleGeometry capsule, PhysicsTransform transform)
+        {
+            shapeType = PhysicsShape.ShapeType.Capsule;
+            radius = capsule.radius;
+            count = 2;
+
+            fixed (float* vertexPtr = vertex)
+            {
+                var c1 = transform.TransformPoint(capsule.center1);
+                var c2 = transform.TransformPoint(capsule.center2);
+                vertexPtr[0] = c1.x;
+                vertexPtr[1] = c1.y;
+                vertexPtr[2] = c2.x;
+                vertexPtr[3] = c2.y;
+            }
+        }
+
+        public ShapeProxy(PolygonGeometry polygonGeometry, PhysicsTransform transform)
+        {
+            shapeType = PhysicsShape.ShapeType.Polygon;
+            radius = 0;
+            count = polygonGeometry.count;
+            fixed (float* vertexPtr = vertex, normalPtr = normal)
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    var v = transform.TransformPoint(polygonGeometry.vertices[i]);
+                    var n = transform.rotation.RotateVector(polygonGeometry.normals[i]);
+                    vertexPtr[2 * i] = v.x;
+                    vertexPtr[2 * i + 1] = v.y;
+                    normalPtr[2 * i] = n.x;
+                    normalPtr[2 * i + 1] = n.y;
+                }
+            }
+        }
+    }
+
+    public static PhysicsQuery.QueryFilter ToQueryFilter(this PhysicsShape.ContactFilter contactFilter,
         PhysicsWorld.IgnoreFilter ignoreFilter = PhysicsWorld.IgnoreFilter.None)
     {
         return new(contactFilter.categories, contactFilter.contacts, ignoreFilter);
@@ -80,6 +170,132 @@ public static class PhysicsCoreHelper
         return world.CastRay(new PhysicsQuery.CastRayInput(origin, translation), filter, castMode, allocator);
     }
 
+    [BurstCompile]
+    public static bool OverlapPoint(this ShapeProxy shape, Vector2 point, out Vector2 escapeNormal, out float escapeDistance)
+    {
+        switch (shape.ShapeType)
+        {
+            case PhysicsShape.ShapeType.Circle:
+                return OverlapCircle(shape.Vertex(0), shape.Radius, point, out escapeNormal, out escapeDistance);
+            case PhysicsShape.ShapeType.Polygon:
+                return OverlapPolygon(shape, point, out escapeNormal, out escapeDistance);
+            case PhysicsShape.ShapeType.Capsule:
+                return OverlapCapsule(shape.Vertex(0), shape.Vertex(1), shape.Radius, point, out escapeNormal, out escapeDistance);
+            default:
+                escapeNormal = default;
+                escapeDistance = default;
+                return false;
+        }
+    }
+
+    [BurstCompile]
+    public static bool OverlapCircle(Vector2 center, float radius, Vector2 point, out Vector2 escapeNormal, out float escapeDistance)
+    {
+        var v = point - center;
+        var d2 = v.sqrMagnitude;
+        if (d2 > radius * radius)
+        {
+            escapeNormal = default;
+            escapeDistance = 0;
+            return false;
+        }
+
+        var d = math.min(math.sqrt(d2), radius);//just in case rounding errors make sqrt(d2) > radius
+        escapeDistance = radius - d;
+        escapeNormal = d < MathTools.o41 ? Vector2.up : v / d;
+        return true;
+    }
+
+    [BurstCompile]
+    public static bool OverlapPolygon(this ShapeProxy polygon, Vector2 point, out Vector2 escapeNormal, out float escapeDistance)
+    {
+        escapeNormal = default;
+        escapeDistance = -1;
+
+        for (int i = 0; i < polygon.Count; i++)
+        {
+            var v = polygon.Vertex(i);
+            var n = polygon.Normal(i);
+
+            //vertices are ordered CCW, and normals[i] = outward normal to edge (vert[i], vert[i + 1])
+            var dist = math.dot(v - point, n);
+            if (dist < 0)
+            {
+                escapeNormal = default;
+                return false;
+            }
+
+            if (escapeDistance < 0 || dist < escapeDistance)
+            {
+                escapeDistance = dist;
+                escapeNormal = n;
+            }
+        }
+
+        return true;
+    }
+
+    [BurstCompile]
+    public static bool OverlapCapsule(Vector2 center1, Vector2 center2, float radius, Vector2 point, out Vector2 escapeNormal, out float escapeDistance)
+    {
+        var h = center2 - center1;
+        var h2 = math.lengthsq(h);
+        var v = point - center1;
+
+        var up = h.CCWPerp();
+        var y = math.dot(v, up);
+
+        if (y * y > h2 * radius * radius)
+        {
+            escapeNormal = default;
+            escapeDistance = 0;
+            return false;
+        }
+
+        var x = math.dot(v, h);
+
+        if (x < 0)
+        {
+            return OverlapCircle(center1, radius, point, out escapeNormal, out escapeDistance);
+        }
+
+        if (x > h2)
+        {
+            return OverlapCircle(center2, radius, point, out escapeNormal, out escapeDistance);
+        }
+
+        var a = math.rsqrt(h2);
+        escapeNormal = y > 0 ? a * up : -a * up;
+        escapeDistance = radius - a * math.abs(y);
+        return true;
+    }
+
+    [BurstCompile]
+    public static bool OverlapPoint(this PhysicsAABB box, Vector2 point, out Vector2 escapeNormal, out float escapeDistance)
+    {
+        if (point.x > box.upperBound.x || point.y > box.upperBound.y || point.x < box.lowerBound.x || point.y < box.lowerBound.y)
+        {
+            escapeNormal = default;
+            escapeDistance = 0;
+            return false;
+        }
+
+        var rlud = new float4(
+            box.upperBound.x - point.x,
+            point.x - box.lowerBound.x,
+            box.upperBound.y - point.y,
+            point.y - box.lowerBound.y
+            );
+
+        escapeDistance = math.cmin(rlud);
+
+        escapeNormal = Vector2.down;
+        escapeNormal = math.select(escapeNormal, Vector2.right, escapeDistance == rlud.x);
+        escapeNormal = math.select(escapeNormal, Vector2.left, escapeDistance == rlud.y);
+        escapeNormal = math.select(escapeNormal, Vector2.up, escapeDistance == rlud.z);
+
+        return true;
+    }
 
     //SHAPES
 
@@ -102,6 +318,24 @@ public static class PhysicsCoreHelper
                 return shape.aabb;
 
         }
+    }
+
+    //the built-in accessor for shape array throws an error when out of bounds, and including that in job code will cause stall (even when error is never reached)
+    [BurstCompile]
+    public static Vector2 GetVertexNoThrow(this PhysicsShape.ShapeArray shapeArray, int i)
+    {
+        return i switch
+        {
+            0 => shapeArray.vertex0,
+            1 => shapeArray.vertex1,
+            2 => shapeArray.vertex2,
+            3 => shapeArray.vertex3,
+            4 => shapeArray.vertex4,
+            5 => shapeArray.vertex5,
+            6 => shapeArray.vertex6,
+            7 => shapeArray.vertex7,
+            _ => shapeArray.vertex0
+        };
     }
 
     //PHYSICS BODIES
@@ -189,7 +423,7 @@ public static class PhysicsCoreHelper
         return body;
     }
 
-    public static PhysicsBody CreateBoxBody(PhysicsWorld world, PhysicsBodyDefinition bodyDef, PhysicsShapeDefinition shapeDef, 
+    public static PhysicsBody CreateBoxBody(PhysicsWorld world, PhysicsBodyDefinition bodyDef, PhysicsShapeDefinition shapeDef,
         Vector2 fullSize, Matrix4x4 shapeInputSpace, out PhysicsShape shape)
     {
         var body = world.CreateBody(bodyDef);
@@ -258,7 +492,7 @@ public static class PhysicsCoreHelper
         joint.collideConnected = def.collideConnected;
     }
 
-    public static void UpdateSettings(this PhysicsHingeJoint joint, PhysicsHingeJointDefinition def, 
+    public static void UpdateSettings(this PhysicsHingeJoint joint, PhysicsHingeJointDefinition def,
         bool keepEnableSpring, bool keepSpringTargetAngle)
     {
         if (!keepEnableSpring)
@@ -283,7 +517,7 @@ public static class PhysicsCoreHelper
         joint.forceThreshold = def.forceThreshold;
         joint.torqueThreshold = def.torqueThreshold;
         joint.tuningFrequency = def.tuningFrequency;
-        joint.tuningDamping= def.tuningDamping;
+        joint.tuningDamping = def.tuningDamping;
         joint.drawScale = def.drawScale;
         joint.worldDrawing = def.worldDrawing;
         joint.collideConnected = def.collideConnected;

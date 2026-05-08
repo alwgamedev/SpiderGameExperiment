@@ -262,6 +262,8 @@ public struct JointedChain
             chainBody.CreateShape(boxGeometry, def.shapeDef);
             chainBody.transformObject = physTransform[i];
             body[i] = chainBody;
+
+            PhysicsRegistry.RegisterBodyAndShapes(chainBody);
         }
 
         var jointDefCopy = def.jointDef;
