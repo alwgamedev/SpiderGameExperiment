@@ -10,7 +10,7 @@ public static class PhysicsRegistry
 
     //for now the only function of the registry is to give each body a unique identifier (e.g. if you cache a bunch of shapes found in a query,
     //and want to be able to recognize them if you find them again in a subsequent query, like for rope collision where you snapshot nearby shapes to send data into a job).
-    //sadly you can't access the built-in body/shape id's, and their GetHashCode combines the id with the world generation (which will be stale next time you check the hash code)
+    //sadly you can't access the built-in body/shape id's, and their GetHashCode combines the id with the world generation (which expires frequently)
 
     //[Serializable]
     //public struct ShapeData

@@ -83,77 +83,72 @@ public static class PhysicsCoreHelper
     {
         [FieldOffset(0)] fixed float vertex[16];
         [FieldOffset(64)] fixed float normal[16];//only for polygons
-        [FieldOffset(64)] float radius;
         [FieldOffset(128)] PhysicsShape.ShapeType shapeType;
         [FieldOffset(132)] int count;
 
-        public PhysicsShape.ShapeType ShapeType => shapeType;
-        public float Radius => radius;
-        public int Count => count;
+        public readonly PhysicsShape.ShapeType ShapeType => shapeType;
+        public readonly float Radius
+        {
+            get
+            {
+                fixed (float* normalPtr = normal)
+                {
+                    return *normalPtr;
+                }
+            }
+        }
+        public readonly int Count => count;
 
-        public Vector2 Vertex(int i)
+        public readonly Vector2 Vertex(int i)
         {
             fixed (float* vertexPtr = vertex)
             {
-                return new(vertexPtr[2 * i], vertexPtr[2 * i + 1]);
+                return ((Vector2*)vertexPtr)[i];
             }
         }
 
-        public Vector2 Normal(int i)
+        public readonly Vector2 Normal(int i)
         {
             fixed (float* normalPtr = normal)
             {
-                return new(normalPtr[2 * i], normalPtr[2 * i + 1]);
+                return ((Vector2*)normalPtr)[i];
             }
         }
 
-        public ShapeProxy(CircleGeometry circle, PhysicsTransform transform)
+        public ShapeProxy(CircleGeometry circle)
         {
             shapeType = PhysicsShape.ShapeType.Circle;
-            radius = circle.radius;
             count = 1;
 
-            fixed (float* vertexPtr = vertex)
+            fixed (float* vertexPtr = vertex, normalPtr = normal)
             {
-                var center = transform.TransformPoint(circle.center);
-                vertexPtr[0] = center.x;
-                vertexPtr[1] = center.y;
+                *normalPtr = circle.radius;
+                *(Vector2*)vertexPtr = circle.center;
             }
         }
 
-        public ShapeProxy(CapsuleGeometry capsule, PhysicsTransform transform)
+        public ShapeProxy(CapsuleGeometry capsule)
         {
             shapeType = PhysicsShape.ShapeType.Capsule;
-            radius = capsule.radius;
             count = 2;
 
-            fixed (float* vertexPtr = vertex)
+            fixed (float* vertexPtr = vertex, normalPtr = normal)
             {
-                var c1 = transform.TransformPoint(capsule.center1);
-                var c2 = transform.TransformPoint(capsule.center2);
-                vertexPtr[0] = c1.x;
-                vertexPtr[1] = c1.y;
-                vertexPtr[2] = c2.x;
-                vertexPtr[3] = c2.y;
+                *normalPtr = capsule.radius;
+                var c1 = capsule.center1;
+                var c2 = capsule.center2;
+                *(Vector4*)vertexPtr = new(c1.x, c1.y, c2.x, c2.y);
             }
         }
 
-        public ShapeProxy(PolygonGeometry polygonGeometry, PhysicsTransform transform)
+        public ShapeProxy(PolygonGeometry polygonGeometry)
         {
             shapeType = PhysicsShape.ShapeType.Polygon;
-            radius = 0;
             count = polygonGeometry.count;
             fixed (float* vertexPtr = vertex, normalPtr = normal)
             {
-                for (int i = 0; i < count; i++)
-                {
-                    var v = transform.TransformPoint(polygonGeometry.vertices[i]);
-                    var n = transform.rotation.RotateVector(polygonGeometry.normals[i]);
-                    vertexPtr[2 * i] = v.x;
-                    vertexPtr[2 * i + 1] = v.y;
-                    normalPtr[2 * i] = n.x;
-                    normalPtr[2 * i + 1] = n.y;
-                }
+                *(PhysicsShape.ShapeArray*)vertexPtr = polygonGeometry.vertices;
+                *(PhysicsShape.ShapeArray*)normalPtr = polygonGeometry.normals;
             }
         }
     }
@@ -171,21 +166,29 @@ public static class PhysicsCoreHelper
     }
 
     [BurstCompile]
-    public static bool OverlapPoint(this ShapeProxy shape, Vector2 point, out Vector2 escapeNormal, out float escapeDistance)
+    public static bool OverlapPoint(this in ShapeProxy shape, PhysicsTransform transform, Vector2 point, out Vector2 escapeNormal, out float escapeDistance)
     {
+        point = transform.InverseTransformPoint(point);
+        bool result;
         switch (shape.ShapeType)
         {
             case PhysicsShape.ShapeType.Circle:
-                return OverlapCircle(shape.Vertex(0), shape.Radius, point, out escapeNormal, out escapeDistance);
+                result = OverlapCircle(shape.Vertex(0), shape.Radius, point, out escapeNormal, out escapeDistance);
+                break;
             case PhysicsShape.ShapeType.Polygon:
-                return OverlapPolygon(shape, point, out escapeNormal, out escapeDistance);
+                result = OverlapPolygon(shape, point, out escapeNormal, out escapeDistance);
+                break;
             case PhysicsShape.ShapeType.Capsule:
-                return OverlapCapsule(shape.Vertex(0), shape.Vertex(1), shape.Radius, point, out escapeNormal, out escapeDistance);
+                result = OverlapCapsule(shape.Vertex(0), shape.Vertex(1), shape.Radius, point, out escapeNormal, out escapeDistance);
+                break;
             default:
                 escapeNormal = default;
                 escapeDistance = default;
                 return false;
         }
+
+        escapeNormal = transform.rotation.RotateVector(escapeNormal);
+        return result;
     }
 
     [BurstCompile]
@@ -207,7 +210,7 @@ public static class PhysicsCoreHelper
     }
 
     [BurstCompile]
-    public static bool OverlapPolygon(this ShapeProxy polygon, Vector2 point, out Vector2 escapeNormal, out float escapeDistance)
+    public static bool OverlapPolygon(this in ShapeProxy polygon, Vector2 point, out Vector2 escapeNormal, out float escapeDistance)
     {
         escapeNormal = default;
         escapeDistance = -1;

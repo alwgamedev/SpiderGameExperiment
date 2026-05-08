@@ -237,6 +237,8 @@ public class FastRope
 
         collisionDebugData = new(numNodes, Allocator.Persistent);
         collisionDebugDataCopy = new(numNodes, Allocator.Persistent);
+
+        shapeCapture = new(256, Allocator.Persistent);
     }
 
     private void LockWrappers()
@@ -330,10 +332,6 @@ public class FastRope
     public void Update(float2 sourcePosition, float dt)
     {
         jobHandle.Complete();
-        if (shapeCapture.IsCreated)
-        {
-            shapeCapture.Dispose();
-        }
         UnlockWrappers();
         HandleLengthRequest();
 
@@ -377,8 +375,8 @@ public class FastRope
         positionBuffer.CopyFrom(position);//copy positions for rendering (and we'll use lastPositionBuffer for constraint deltas)
 
         CalculateMaxTension(bbMin, bbMax).Run();
-        bbMin.Value += new float2(-5, -5);
-        bbMax.Value += new float2(5, 5);
+        bbMin.Value += new float2(-2.5f, -2.5f);
+        bbMax.Value += new float2(2.5f, 2.5f);
         CaptureShapes(bbMin.Value, bbMax.Value);
 
         collisionDebugDataCopy.CopyFrom(collisionDebugData);
@@ -428,7 +426,7 @@ public class FastRope
     {
         var overlap = ownerWorld.OverlapAABB(new PhysicsAABB(bbMin, bbMax), settings.CollisionFilter);
 
-        shapeCapture = new(overlap.Length, Allocator.TempJob);
+        shapeCapture.Clear();
 
         for (int i = 0; i < overlap.Length; i++)
         {
@@ -439,16 +437,16 @@ public class FastRope
                 switch (shape.shapeType)
                 {
                     case PhysicsShape.ShapeType.Circle:
-                        shapeCapture[id] = new(shape.circleGeometry, shape.transform);
-                        //shape.world.DrawGeometry(shape.circleGeometry, shape.transform, Color.red);
+                        shapeCapture[id] = new(shape.circleGeometry);
+                        shape.world.DrawGeometry(shape.circleGeometry, shape.transform, Color.red);
                         break;
                     case PhysicsShape.ShapeType.Capsule:
-                        shapeCapture[id] = new(shape.capsuleGeometry, shape.transform);
-                        //shape.world.DrawGeometry(shape.capsuleGeometry, shape.transform, Color.red);
+                        shapeCapture[id] = new(shape.capsuleGeometry);
+                        shape.world.DrawGeometry(shape.capsuleGeometry, shape.transform, Color.red);
                         break;
                     case PhysicsShape.ShapeType.Polygon:
-                        shapeCapture[id] = new(shape.polygonGeometry, shape.transform);
-                        //shape.world.DrawGeometry(shape.polygonGeometry, shape.transform, Color.red);
+                        shapeCapture[id] = new(shape.polygonGeometry);
+                        shape.world.DrawGeometry(shape.polygonGeometry, shape.transform, Color.red);
                         break;
                 }
             }

@@ -59,7 +59,7 @@ public static class RopeJobUtils
 
         castResults = world.CastGeometry(circle, deltaPosition, collisionFilter);
 
-        //discovery: i think cast result always has a (valid) unit normal, unless there was initial overlap, in which case we can use position - result.point as the normal
+        //note: cast result always has a (valid) unit normal, unless there was initial overlap, in which case we can use position - result.point as the normal
         //(+/- depending on whether center of node is submerged)
         if (castResults.Length > 0)
         {
@@ -71,13 +71,8 @@ public static class RopeJobUtils
             float2 normal = result.normal;
             if (normal.Equals(0))//there was initial overlap in the world cast
             {
-                //normal = math.select(positionAtTimeOfImpact - (float2)result.point,
-                //        (float2)result.point - positionAtTimeOfImpact,
-                //        world.TestOverlapPoint(positionAtTimeOfImpact, collisionFilter));
-                //normal = normal.Normalized();
-
-                //the look-up is failing it seems. nodes still come out red even when i just check whether key exists.
-                if (shapeCapture.TryGetValue(result.shape.Id(), out var proxy) && proxy.OverlapPoint(result.point, out var escapeNormal, out var escapeDistance))
+                var shape = result.shape;
+                if (shapeCapture.TryGetValue(shape.Id(), out var proxy) && proxy.OverlapPoint(shape.transform, result.point, out var escapeNormal, out var escapeDistance))
                 {
                     normal = escapeNormal;
                     positionAtTimeOfImpact += (escapeDistance + MathTools.o41) * normal;
@@ -85,7 +80,7 @@ public static class RopeJobUtils
                     //1) move all the way out of the overlap instead of just moving result.point out of overlap?
                     //2) could also add this translation to lastPosition to avoid velocity jumps? but let's first see if it works at all
                 }
-                else
+                else//this is unreliable but hopefully never reach this case
                 {
                     colData.failure = true;
                     normal = math.select(positionAtTimeOfImpact - (float2)result.point,
