@@ -1,7 +1,6 @@
 ﻿using Unity.Collections;
 using Unity.Mathematics;
 using Unity.U2D.Physics;
-using Unity.VectorGraphics;
 
 public static class RopeJobUtils
 {
@@ -11,8 +10,8 @@ public static class RopeJobUtils
         lastPosition[i] = position[i];
     }
 
-    public static void MoveAndAnchorTerminus(float2 deltaPosition, NativeArray<float2> position, NativeArray<float2> lastPosition, 
-        NativeArray<RopeCollisionDebugData> collisionData, NativeHashMap<uint, PhysicsCoreHelper.ShapeProxy> shapeCapture,
+    public static void MoveAndAnchorTerminus(float2 deltaPosition, NativeArray<float2> position, NativeArray<float2> lastPosition,
+        NativeArray<RopeCollisionDebugData> collisionData, NativeParallelHashMap<uint, PhysicsCoreHelper.ShapeProxy> shapeCapture,
         NativeReference<PhysicsShape> terminusAnchor, NativeReference<float2> terminusAnchorLocalPos, NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode,
         PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter, float nodeRadius, float collisionBounciness, bool stepVelocity)
     {
@@ -40,8 +39,8 @@ public static class RopeJobUtils
         }
     }
 
-    public static void MoveNode(int i, float2 deltaPosition, NativeArray<float2> position, NativeArray<float2> lastPosition, 
-        NativeArray<RopeCollisionDebugData> collisionData, NativeHashMap<uint, PhysicsCoreHelper.ShapeProxy> shapeCapture,
+    public static void MoveNode(int i, float2 deltaPosition, NativeArray<float2> position, NativeArray<float2> lastPosition,
+        NativeArray<RopeCollisionDebugData> collisionData, NativeParallelHashMap<uint, PhysicsCoreHelper.ShapeProxy> shapeCapture,
         PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter, float nodeRadius, float collisionBounciness, bool stepVelocity,
         out NativeArray<PhysicsQuery.WorldCastResult> castResults)
     {
@@ -59,34 +58,83 @@ public static class RopeJobUtils
 
         castResults = world.CastGeometry(circle, deltaPosition, collisionFilter);
 
-        //note: cast result always has a (valid) unit normal, unless there was initial overlap, in which case we can use position - result.point as the normal
-        //(+/- depending on whether center of node is submerged)
-        if (castResults.Length > 0)
+        HandleCastResults(i, deltaPosition, position, lastPosition, collisionData, shapeCapture, collisionBounciness, stepVelocity, position[i], nodeRadius,
+            castResults, 0);
+    }
+
+    public static unsafe void MoveDynamicAnchor(in PhysicsCoreHelper.ShapeProxy* anchorGeometry, PhysicsShape terminusAnchor, float2 terminusAnchorLocalPos,
+    float2 deltaPosition, NativeArray<float2> position, NativeArray<float2> lastPosition,
+    NativeArray<RopeCollisionDebugData> collisionData, NativeParallelHashMap<uint, PhysicsCoreHelper.ShapeProxy> shapeCapture,
+    PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter, float collisionBounciness, bool stepVelocity)
+    {
+        if (math.lengthsq(deltaPosition) < MathTools.o91)
         {
+            return;
+        }
+
+        NativeArray<PhysicsQuery.WorldCastResult> castResults = default;
+
+        var transform = terminusAnchor.transform;
+        transform.position = (float2)(transform.position - transform.TransformPoint(terminusAnchorLocalPos)) + position[^1];
+
+        if (terminusAnchor.isValid)
+        {
+            switch (anchorGeometry->ShapeType)
+            {
+                case PhysicsShape.ShapeType.Circle:
+                    {
+                        var geom = anchorGeometry->CircleGeometry().Transform(transform);
+                        castResults = world.CastGeometry(geom, deltaPosition, collisionFilter);
+                        break;
+                    }
+                case PhysicsShape.ShapeType.Polygon:
+                    {
+                        var geom = anchorGeometry->PolygonGeometry().Transform(transform);
+                        castResults = world.CastGeometry(geom, deltaPosition, collisionFilter);
+                        break;
+                    }
+                case PhysicsShape.ShapeType.Capsule:
+                    {
+                        var geom = anchorGeometry->CapsuleGeometry().Transform(transform);
+                        castResults = world.CastGeometry(geom, deltaPosition, collisionFilter);
+                        break;
+                    }
+            }
+        }
+
+        //2do: anchorGeometry->Radius is just temporary (since testing circle anchor) until we add more shapes (or give every shape an encapsulating radius and treat as circle)
+        HandleCastResults(position.Length - 1, deltaPosition, position, lastPosition, collisionData, shapeCapture, collisionBounciness, stepVelocity, 
+            transform.TransformPoint(anchorGeometry->Center1), anchorGeometry->Radius, castResults, 0);
+    }
+
+    public static void HandleCastResults(int i, float2 deltaPosition, NativeArray<float2> position, NativeArray<float2> lastPosition,
+        NativeArray<RopeCollisionDebugData> collisionData, NativeParallelHashMap<uint, PhysicsCoreHelper.ShapeProxy> shapeCapture,
+        float collisionBounciness, bool stepVelocity, float2 center, float radius,
+        NativeArray<PhysicsQuery.WorldCastResult> castResults, int resultIndex)
+    {
+        if (castResults.IsCreated && resultIndex < castResults.Length)
+        {
+            var result = castResults[resultIndex];
+            float2 normal = result.normal;
+            var positionAtTimeOfImpact = position[i] + result.fraction * deltaPosition;
             RopeCollisionDebugData colData = new();
 
-            var result = castResults[0];
-            var positionAtTimeOfImpact = position[i] + result.fraction * deltaPosition;
-
-            float2 normal = result.normal;
-            if (normal.Equals(0))//there was initial overlap in the world cast
+            if (result.fraction == 0)//there was initial overlap
             {
                 var shape = result.shape;
-                if (shapeCapture.TryGetValue(shape.Id(), out var proxy) && proxy.OverlapPoint(shape.transform, result.point, out var escapeNormal, out var escapeDistance))
+                if (shapeCapture.TryGetValue(shape.Id(), out var proxy) /*&& proxy.OverlapPoint(shape.transform, result.point, out var escapeNormal, out var escapeDistance)*/)
                 {
-                    normal = escapeNormal;
-                    positionAtTimeOfImpact += (escapeDistance + MathTools.o41) * normal;
-                    //2do:
-                    //1) move all the way out of the overlap instead of just moving result.point out of overlap?
-                    //2) could also add this translation to lastPosition to avoid velocity jumps? but let's first see if it works at all
-                }
-                else//this is unreliable but hopefully never reach this case
-                {
-                    colData.failure = true;
-                    normal = math.select(positionAtTimeOfImpact - (float2)result.point,
-                        (float2)result.point - positionAtTimeOfImpact,
-                        world.TestOverlapPoint(positionAtTimeOfImpact, collisionFilter));
-                    normal = normal.Normalized();
+                    //float escapeDistance;
+                    //(normal, escapeDistance) = proxy.OverlapPoint(shape.transform, result.point);
+                    float2 separation;
+                    (separation, normal) = CollisionUtilities.SeparateCircleFromShape(positionAtTimeOfImpact + center - position[i], radius + 0.001f, proxy, shape.transform);
+                    positionAtTimeOfImpact += separation;
+                    lastPosition[i] += separation;
+
+                    if (separation.Equals(0))
+                    {
+                        colData.failure = true;
+                    }
                 }
             }
 

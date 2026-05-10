@@ -1726,7 +1726,7 @@ MonoBehaviour:
         m_Categories:
           bitMask: 18446744073709551615
         m_HitCategories:
-          bitMask: 64
+          bitMask: 320
         m_IgnoreFilter: 8
       shapeDef:
         contactFilter:
@@ -2206,7 +2206,7 @@ MonoBehaviour:
     headBone: {fileID: 1544918830229533694}
     heightReferencePoint: {fileID: 8270157252145170821}
     grapple:
-      drawGizmos: 0
+      drawGizmos: 1
       numNodes: 120
       minLength: 1.2
       maxLength: 12
@@ -2218,8 +2218,9 @@ MonoBehaviour:
       carrySpringForce: 400
       grappleSettings:
         collisionMask:
-          bitMask: 64
-        collisionBounciness: 0.95
+          bitMask: 320
+        collisionBounciness: 0.75
+        anchorCollisionBounciness: 0.1
         width: 0.17
         minNodeSpacing: 0.1
         maxNodeSpacing: 0.105
@@ -2228,8 +2229,9 @@ MonoBehaviour:
         terminusMass: 50
         constraintStiffness: 0.975
         constraintIterations: 50
-        itersPulledByOwner: 10
-        dynamicAnchorPullForce: 300
+        itersPulledByOwner: 15
+        dynamicAnchorSpringForce: 25
+        dynamicAnchorSpringDamping: 0.005
       cannonFulcrum:
         lever: {fileID: 3468580104259901786}
         leveragePoint: {fileID: 2623017782420822094}
@@ -2883,7 +2885,7 @@ MonoBehaviour:
       m_Categories:
         bitMask: 18446744073709551615
       m_HitCategories:
-        bitMask: 64
+        bitMask: 320
       m_IgnoreFilter: 8
   jumpPreviewArrow:
     arrowNeck: {fileID: 9040078322212251582}

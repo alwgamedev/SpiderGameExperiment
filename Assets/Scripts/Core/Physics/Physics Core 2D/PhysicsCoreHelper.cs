@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Unity.Burst;
 using Unity.Collections;
@@ -10,10 +9,6 @@ using UnityEngine;
 
 public static class PhysicsCoreHelper
 {
-    public static Dictionary<uint, PhysicsShape> ShapeLookup;
-
-    public static Dictionary<uint, PhysicsBody> BodyLookup;
-
     //REFLECT AND ROTATE 
 
     public static PhysicsTransform RotateAroundPoint(this PhysicsTransform t, PhysicsRotate rot, Vector2 rotLocalCenter)
@@ -75,8 +70,42 @@ public static class PhysicsCoreHelper
 
     //QUERIES
 
-    /// <summary> A ShapeProxy that can be used in Jobs (built-in ShapeProxy has potential to throw errors when you access geometry, which stalls jobs). 
-    /// Use Vertex(0) for circle center, and use Vertex(0), Vertex(1) for capsule centers 1, 2.
+    public static PhysicsQuery.QueryFilter ToQueryFilter(this PhysicsShape.ContactFilter contactFilter,
+        PhysicsWorld.IgnoreFilter ignoreFilter = PhysicsWorld.IgnoreFilter.None)
+    {
+        return new(contactFilter.categories, contactFilter.contacts, ignoreFilter);
+    }
+
+    public static NativeArray<PhysicsQuery.WorldCastResult> CastRay(this PhysicsWorld world, Vector2 origin, Vector2 translation, PhysicsQuery.QueryFilter filter,
+        PhysicsQuery.WorldCastMode castMode = PhysicsQuery.WorldCastMode.Closest, Allocator allocator = Allocator.Temp)
+    {
+        return world.CastRay(new PhysicsQuery.CastRayInput(origin, translation), filter, castMode, allocator);
+    }
+
+    //SHAPES
+
+    [BurstCompile]
+    public static PhysicsAABB CalculateAABB(this PhysicsShape shape, PhysicsTransform transform)
+    {
+        switch (shape.shapeType)
+        {
+            case PhysicsShape.ShapeType.Circle:
+                return shape.circleGeometry.CalculateAABB(transform);
+            case PhysicsShape.ShapeType.Capsule:
+                return shape.capsuleGeometry.CalculateAABB(transform);
+            case PhysicsShape.ShapeType.Polygon:
+                return shape.polygonGeometry.CalculateAABB(transform);
+            case PhysicsShape.ShapeType.Segment:
+                return shape.segmentGeometry.CalculateAABB(transform);
+            case PhysicsShape.ShapeType.ChainSegment:
+                return shape.chainSegmentGeometry.CalculateAABB(transform);
+            default:
+                return shape.aabb;
+
+        }
+    }
+
+    /// <summary> A ShapeProxy that can be used in Jobs (can't access shape geometry or built-in shape proxy in jobs since properties have potential to throw an error).
     /// </summary>
     [StructLayout(LayoutKind.Explicit)]
     public unsafe struct ShapeProxy
@@ -87,31 +116,97 @@ public static class PhysicsCoreHelper
         [FieldOffset(132)] int count;
 
         public readonly PhysicsShape.ShapeType ShapeType => shapeType;
+        public readonly int Count => count;
         public readonly float Radius
         {
             get
             {
                 fixed (float* normalPtr = normal)
                 {
-                    return *normalPtr;
+                    return *normalPtr;//for circle and capsule, normal[0] will store the radius
                 }
             }
         }
-        public readonly int Count => count;
 
-        public readonly Vector2 Vertex(int i)
+        public readonly float2 Center1 => Vertex(0);
+
+        public readonly float2 Center2 => Vertex(1);
+
+        public readonly ReadOnlySpan<float2> VertexArray
         {
-            fixed (float* vertexPtr = vertex)
+            get
             {
-                return ((Vector2*)vertexPtr)[i];
+                fixed (float* vertexPtr = vertex)
+                {
+                    return new(vertexPtr, count);
+                }
             }
         }
 
-        public readonly Vector2 Normal(int i)
+        public readonly ReadOnlySpan<float2> NormalArray
+        {
+            get
+            {
+                fixed (float* normalPtr = normal)
+                {
+                    return new(normalPtr, count);
+                }
+            }
+        }
+
+        public readonly float2 Vertex(int i)
+        {
+            fixed (float* vertexPtr = vertex)
+            {
+                return ((float2*)vertexPtr)[i];
+            }
+        }
+
+        public readonly float2 Normal(int i)
         {
             fixed (float* normalPtr = normal)
             {
-                return ((Vector2*)normalPtr)[i];
+                return ((float2*)normalPtr)[i];
+            }
+        }
+
+        public readonly CircleGeometry CircleGeometry()
+        {
+            return new()
+            {
+                center = Vertex(0),
+                radius = Radius
+            };
+        }
+
+        public readonly CapsuleGeometry CapsuleGeometry()
+        {
+            return new()
+            {
+                center1 = Vertex(0),
+                center2 = Vertex(1),
+                radius = Radius
+            };
+        }
+
+        public readonly PolygonGeometry PolygonGeometry()
+        {
+            fixed (float* vertexPtr = vertex, normalPtr = normal)
+            {
+                var vertexPoints = (Vector2*)vertexPtr;
+                Vector2 centroid = Vector2.zero;
+                for (int i = 0; i < count; i++)
+                {
+                    centroid += vertexPoints[i];
+                }
+
+                return new()
+                {
+                    vertices = *(PhysicsShape.ShapeArray*)vertexPtr,
+                    normals = *(PhysicsShape.ShapeArray*)normalPtr,
+                    centroid = centroid / count,
+                    count = count
+                };
             }
         }
 
@@ -151,194 +246,6 @@ public static class PhysicsCoreHelper
                 *(PhysicsShape.ShapeArray*)normalPtr = polygonGeometry.normals;
             }
         }
-    }
-
-    public static PhysicsQuery.QueryFilter ToQueryFilter(this PhysicsShape.ContactFilter contactFilter,
-        PhysicsWorld.IgnoreFilter ignoreFilter = PhysicsWorld.IgnoreFilter.None)
-    {
-        return new(contactFilter.categories, contactFilter.contacts, ignoreFilter);
-    }
-
-    public static NativeArray<PhysicsQuery.WorldCastResult> CastRay(this PhysicsWorld world, Vector2 origin, Vector2 translation, PhysicsQuery.QueryFilter filter,
-        PhysicsQuery.WorldCastMode castMode = PhysicsQuery.WorldCastMode.Closest, Allocator allocator = Allocator.Temp)
-    {
-        return world.CastRay(new PhysicsQuery.CastRayInput(origin, translation), filter, castMode, allocator);
-    }
-
-    [BurstCompile]
-    public static bool OverlapPoint(this in ShapeProxy shape, PhysicsTransform transform, Vector2 point, out Vector2 escapeNormal, out float escapeDistance)
-    {
-        point = transform.InverseTransformPoint(point);
-        bool result;
-        switch (shape.ShapeType)
-        {
-            case PhysicsShape.ShapeType.Circle:
-                result = OverlapCircle(shape.Vertex(0), shape.Radius, point, out escapeNormal, out escapeDistance);
-                break;
-            case PhysicsShape.ShapeType.Polygon:
-                result = OverlapPolygon(shape, point, out escapeNormal, out escapeDistance);
-                break;
-            case PhysicsShape.ShapeType.Capsule:
-                result = OverlapCapsule(shape.Vertex(0), shape.Vertex(1), shape.Radius, point, out escapeNormal, out escapeDistance);
-                break;
-            default:
-                escapeNormal = default;
-                escapeDistance = default;
-                return false;
-        }
-
-        escapeNormal = transform.rotation.RotateVector(escapeNormal);
-        return result;
-    }
-
-    [BurstCompile]
-    public static bool OverlapCircle(Vector2 center, float radius, Vector2 point, out Vector2 escapeNormal, out float escapeDistance)
-    {
-        var v = point - center;
-        var d2 = v.sqrMagnitude;
-        if (d2 > radius * radius)
-        {
-            escapeNormal = default;
-            escapeDistance = 0;
-            return false;
-        }
-
-        var d = math.min(math.sqrt(d2), radius);//just in case rounding errors make sqrt(d2) > radius
-        escapeDistance = radius - d;
-        escapeNormal = d < MathTools.o41 ? Vector2.up : v / d;
-        return true;
-    }
-
-    [BurstCompile]
-    public static bool OverlapPolygon(this in ShapeProxy polygon, Vector2 point, out Vector2 escapeNormal, out float escapeDistance)
-    {
-        escapeNormal = default;
-        escapeDistance = -1;
-
-        for (int i = 0; i < polygon.Count; i++)
-        {
-            var v = polygon.Vertex(i);
-            var n = polygon.Normal(i);
-
-            //vertices are ordered CCW, and normals[i] = outward normal to edge (vert[i], vert[i + 1])
-            var dist = math.dot(v - point, n);
-            if (dist < 0)
-            {
-                escapeNormal = default;
-                return false;
-            }
-
-            if (escapeDistance < 0 || dist < escapeDistance)
-            {
-                escapeDistance = dist;
-                escapeNormal = n;
-            }
-        }
-
-        return true;
-    }
-
-    [BurstCompile]
-    public static bool OverlapCapsule(Vector2 center1, Vector2 center2, float radius, Vector2 point, out Vector2 escapeNormal, out float escapeDistance)
-    {
-        var h = center2 - center1;
-        var h2 = math.lengthsq(h);
-        var v = point - center1;
-
-        var up = h.CCWPerp();
-        var y = math.dot(v, up);
-
-        if (y * y > h2 * radius * radius)
-        {
-            escapeNormal = default;
-            escapeDistance = 0;
-            return false;
-        }
-
-        var x = math.dot(v, h);
-
-        if (x < 0)
-        {
-            return OverlapCircle(center1, radius, point, out escapeNormal, out escapeDistance);
-        }
-
-        if (x > h2)
-        {
-            return OverlapCircle(center2, radius, point, out escapeNormal, out escapeDistance);
-        }
-
-        var a = math.rsqrt(h2);
-        escapeNormal = y > 0 ? a * up : -a * up;
-        escapeDistance = radius - a * math.abs(y);
-        return true;
-    }
-
-    [BurstCompile]
-    public static bool OverlapPoint(this PhysicsAABB box, Vector2 point, out Vector2 escapeNormal, out float escapeDistance)
-    {
-        if (point.x > box.upperBound.x || point.y > box.upperBound.y || point.x < box.lowerBound.x || point.y < box.lowerBound.y)
-        {
-            escapeNormal = default;
-            escapeDistance = 0;
-            return false;
-        }
-
-        var rlud = new float4(
-            box.upperBound.x - point.x,
-            point.x - box.lowerBound.x,
-            box.upperBound.y - point.y,
-            point.y - box.lowerBound.y
-            );
-
-        escapeDistance = math.cmin(rlud);
-
-        escapeNormal = Vector2.down;
-        escapeNormal = math.select(escapeNormal, Vector2.right, escapeDistance == rlud.x);
-        escapeNormal = math.select(escapeNormal, Vector2.left, escapeDistance == rlud.y);
-        escapeNormal = math.select(escapeNormal, Vector2.up, escapeDistance == rlud.z);
-
-        return true;
-    }
-
-    //SHAPES
-
-    [BurstCompile]
-    public static PhysicsAABB CalculateAABB(this PhysicsShape shape, PhysicsTransform transform)
-    {
-        switch (shape.shapeType)
-        {
-            case PhysicsShape.ShapeType.Circle:
-                return shape.circleGeometry.CalculateAABB(transform);
-            case PhysicsShape.ShapeType.Capsule:
-                return shape.capsuleGeometry.CalculateAABB(transform);
-            case PhysicsShape.ShapeType.Polygon:
-                return shape.polygonGeometry.CalculateAABB(transform);
-            case PhysicsShape.ShapeType.Segment:
-                return shape.segmentGeometry.CalculateAABB(transform);
-            case PhysicsShape.ShapeType.ChainSegment:
-                return shape.chainSegmentGeometry.CalculateAABB(transform);
-            default:
-                return shape.aabb;
-
-        }
-    }
-
-    //the built-in accessor for shape array throws an error when out of bounds, and including that in job code will cause stall (even when error is never reached)
-    [BurstCompile]
-    public static Vector2 GetVertexNoThrow(this PhysicsShape.ShapeArray shapeArray, int i)
-    {
-        return i switch
-        {
-            0 => shapeArray.vertex0,
-            1 => shapeArray.vertex1,
-            2 => shapeArray.vertex2,
-            3 => shapeArray.vertex3,
-            4 => shapeArray.vertex4,
-            5 => shapeArray.vertex5,
-            6 => shapeArray.vertex6,
-            7 => shapeArray.vertex7,
-            _ => shapeArray.vertex0
-        };
     }
 
     //PHYSICS BODIES

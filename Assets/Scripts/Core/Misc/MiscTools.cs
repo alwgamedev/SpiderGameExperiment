@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public static partial class MiscTools
+public static unsafe class MiscTools
 {
     public static int Stride<T>()
     {
