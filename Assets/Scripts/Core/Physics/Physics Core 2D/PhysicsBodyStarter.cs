@@ -27,6 +27,22 @@ public class PhysicsBodyStarter : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        if (body.isValid)
+        {
+            body.enabled = true;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (body.isValid)
+        {
+            body.enabled = false;
+        }
+    }
+
     private void Start()
     {
         bodyDef.position = transform.position;

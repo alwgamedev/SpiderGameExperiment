@@ -8,7 +8,7 @@ using UnityEngine.Rendering;
 [System.Serializable]
 public struct RopeSettings
 {
-    public PhysicsMask collisionMask;//64 bit mask so put at top
+    public PhysicsMask collisionMask;//64 bit mask -- should include "Ground" and "Ground2" where Ground2 is used for the dynamic anchors (so we can exclude the dynamic anchor when solving terminus movement)
     public float collisionBounciness;
     public float anchorCollisionBounciness;
 
@@ -32,7 +32,12 @@ public struct RopeSettings
 public struct RopeCollisionDebugData
 {
     public float2 normal;
-    public bool failure;
+    public Result result;
+
+    public enum Result
+    {
+        neutral, success, failure
+    }
 }
 
 public class FastRope
@@ -283,11 +288,24 @@ public class FastRope
         for (int i = sourceIndex.Value; i < positionBuffer.Length; i++)
         {
             var colData = collisionDebugDataCopy[i];
-            Gizmos.color = colData.failure ? Color.red : Color.blue;
+            Gizmos.color = NodeColor(colData.result);
             Vector2 p = positionBuffer[i];
             Gizmos.DrawSphere(p, settings.NodeRadius);
             Gizmos.color = Color.yellow;
             Debug.DrawLine(p, p + 0.5f * (Vector2)colData.normal);
+        }
+
+        Color NodeColor(RopeCollisionDebugData.Result result)
+        {
+            switch (result)
+            {
+                case RopeCollisionDebugData.Result.failure:
+                    return Color.red;
+                case RopeCollisionDebugData.Result.success:
+                    return Color.green;
+                default:
+                    return Color.blue;
+            }
         }
     }
 
@@ -415,7 +433,7 @@ public class FastRope
         var clearConstraintDelta = new ClearArrayJob<float2>(lastPositionBuffer);
         var calculateConstraintsEven = CalculateConstraints(ownerMass, terminusMass, 0);
         var calculateConstraintOdd = CalculateConstraints(ownerMass, terminusMass, 1);
-        var applyConstraints = ApplyConstraints(collisionFilter);
+        var applyConstraints = ApplyConstraints(collisionFilter, terminusMass);
 
         var numActive = TerminusIndex - sourceIndex.Value;
         var numOdd = numActive / 2;
@@ -543,7 +561,7 @@ public class FastRope
     {
         return new(position, lastPosition, collisionDebugData, shapeCapture,
             terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode.native, anchorGeometry,
-            ownerWorld, collisionFilter, ownerWorld.gravity, settings.drag, settings.NodeRadius, settings.collisionBounciness, settings.anchorCollisionBounciness,
+            ownerWorld, collisionFilter, ownerWorld.gravity, settings.drag, settings.NodeRadius, settings.collisionBounciness, settings.anchorCollisionBounciness, settings.nodeMass,
             dt2, timeScale, sourceIndex.Value + 1);
     }
 
@@ -553,11 +571,11 @@ public class FastRope
         return new(position, lastPositionBuffer, nodeSpacing.Value, settings.nodeMass, sourceMass, terminusMass, settings.constraintStiffness, sourceIndex.Value, batch);
     }
 
-    private ApplyRopeConstraints ApplyConstraints(PhysicsQuery.QueryFilter collisionFilter)
+    private ApplyRopeConstraints ApplyConstraints(PhysicsQuery.QueryFilter collisionFilter, float terminusMass)
     {
         return new(lastPositionBuffer, position, lastPosition, collisionDebugData, shapeCapture,
             terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode.native, anchorGeometry, ownerWorld, collisionFilter,
-            settings.NodeRadius, settings.collisionBounciness, settings.anchorCollisionBounciness, settings.dynamicAnchorSpringForce, sourceIndex.Value);
+            settings.NodeRadius, settings.collisionBounciness, settings.anchorCollisionBounciness, settings.nodeMass, terminusMass, sourceIndex.Value);
     }
 
     private CorrectRopeSourcePosition CorrectSourcePosition(float2 sourcePosition)

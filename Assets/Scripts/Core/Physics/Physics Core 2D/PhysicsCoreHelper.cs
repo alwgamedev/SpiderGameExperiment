@@ -174,7 +174,7 @@ public static class PhysicsCoreHelper
         {
             return new()
             {
-                center = Vertex(0),
+                center = Center1,
                 radius = Radius
             };
         }
@@ -183,8 +183,8 @@ public static class PhysicsCoreHelper
         {
             return new()
             {
-                center1 = Vertex(0),
-                center2 = Vertex(1),
+                center1 = Center1,
+                center2 = Center2,
                 radius = Radius
             };
         }

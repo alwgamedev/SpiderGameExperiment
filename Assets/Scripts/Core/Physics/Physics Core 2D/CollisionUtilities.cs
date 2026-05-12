@@ -8,7 +8,7 @@ public static class CollisionUtilities
     //All separation methods will return (separation, normal) = (0, 0) if there is no overlap, otherwise sep and normal are always valid.
 
     [BurstCompile]
-    public static (float2 separation, float2 normal) SeparateCircleFromShape(float2 center, float radius, PhysicsCoreHelper.ShapeProxy shape, PhysicsTransform transform)
+    public static (float separation, float2 normal) SeparateCircleFromShape(float2 center, float radius, PhysicsCoreHelper.ShapeProxy shape, PhysicsTransform transform)
     {
         switch (shape.ShapeType)
         {
@@ -17,7 +17,7 @@ public static class CollisionUtilities
             case PhysicsShape.ShapeType.Polygon:
                 center = transform.InverseTransformPoint(center);//do calculation in shape's local space to avoid transforming all the vertices and normals
                 var (separation, normal) = SeparateCircleFromPolygon(center, radius, shape.VertexArray, shape.NormalArray);
-                return (transform.rotation.RotateVector(separation), transform.rotation.RotateVector(normal));
+                return (separation, transform.rotation.RotateVector(normal));
             case PhysicsShape.ShapeType.Capsule:
                 return SeparateCircleFromCapsule(center, radius, transform.TransformPoint(shape.Center1), transform.TransformPoint(shape.Center2), shape.Radius);
             default:
@@ -27,7 +27,7 @@ public static class CollisionUtilities
 
     //separates circle1 from circle2 (i.e. normal points from center2 to center1)
     [BurstCompile]
-    public static (float2 separation, float2 normal) SeparateCircleFromCircle(float2 center1, float radius1, float2 center2, float radius2)
+    public static (float separation, float2 normal) SeparateCircleFromCircle(float2 center1, float radius1, float2 center2, float radius2)
     {
         var d = center1 - center2;
         var d2 = math.lengthsq(d);
@@ -40,16 +40,16 @@ public static class CollisionUtilities
 
         if (d2 < MathTools.o91)
         {
-            return (new float2(radiusSum, 0), new float2(1, 0));
+            return (radiusSum, new float2(1, 0));
         }
 
         var dInv = math.rsqrt(d2);
         var normal = dInv * d;
-        return (radiusSum * normal - d, normal);
+        return (math.max(radiusSum - math.dot(d, normal), 0), normal);
     }
 
     [BurstCompile]
-    public static (float2 separation, float2 normal) SeparateCircleFromCapsule(float2 circleCenter, float circleRadius, float2 capsuleCenter1, float2 capsuleCenter2, float capsuleRadius)
+    public static (float separation, float2 normal) SeparateCircleFromCapsule(float2 circleCenter, float circleRadius, float2 capsuleCenter1, float2 capsuleCenter2, float capsuleRadius)
     {
         var h = capsuleCenter2 - capsuleCenter1;
         var h2 = math.lengthsq(h);
@@ -78,23 +78,25 @@ public static class CollisionUtilities
         var a = math.rsqrt(h2);
         var normal = y > 0 ? a * up : -a * up;
         var yAbs = a * math.abs(y);
-        return ((radiusSum - yAbs) * normal, normal);
+        return (math.max(radiusSum - yAbs, 0), normal);
     }
 
     [BurstCompile]
-    public static (float2 separation, float2 normal) SeparateCircleFromPolygon (float2 center, float radius, ReadOnlySpan<float2> vertex, ReadOnlySpan<float2> normal)
+    public static (float separation, float2 normal) SeparateCircleFromPolygon (float2 center, float radius, ReadOnlySpan<float2> vertex, ReadOnlySpan<float2> normal)
     {
-        float minDist = math.dot(vertex[0] - center, normal[0]);
+
+        float2 minNormal = normal[0];
+        float minDist = math.dot(vertex[0] - center, minNormal);
 
         if (minDist < -radius)
         {
             return default;
         }
 
-        int minIndex = 0;
         for (int i = 1; i < vertex.Length; i++)
         {
-            var dist = math.dot(vertex[i] - center, normal[i]);
+            var n = normal[i];
+            var dist = math.dot(vertex[i] - center, n);
 
             if (dist < -radius)
             {
@@ -104,12 +106,11 @@ public static class CollisionUtilities
             if (dist < minDist)
             {
                 minDist = dist;
-                minIndex = i;
+                minNormal = n;
             }
         }
 
-        var minNormal = normal[minIndex];
-        return ((minDist + radius) * minNormal, minNormal);
+        return (minDist + radius, minNormal);
     }
 
     [BurstCompile]
