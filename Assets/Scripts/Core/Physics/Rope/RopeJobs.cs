@@ -84,7 +84,7 @@ public unsafe struct ApplyRopeConstraints : IJobParallelFor
     [ReadOnly] public NativeArray<float2> constraintDelta;
     [NativeDisableParallelForRestriction] public NativeArray<float2> position;
     [NativeDisableParallelForRestriction] public NativeArray<float2> lastPosition;
-    [ReadOnly] public NativeParallelHashMap<uint, PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture;
+    [ReadOnly] public NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture;
     [NativeDisableParallelForRestriction] public NativeReference<PhysicsShape> terminusAnchor;
     [NativeDisableParallelForRestriction] public NativeReference<float2> terminusAnchorLocalPos;
     [NativeDisableParallelForRestriction] public NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode;
@@ -97,7 +97,7 @@ public unsafe struct ApplyRopeConstraints : IJobParallelFor
     public readonly int offset;
 
     public ApplyRopeConstraints(NativeArray<float2> constraintDelta, NativeArray<float2> position, NativeArray<float2> lastPosition,
-        NativeParallelHashMap<uint, PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture, NativeReference<PhysicsShape> terminusAnchor, NativeReference<float2> terminusAnchorLocalPos, 
+        NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture, NativeReference<PhysicsShape> terminusAnchor, NativeReference<float2> terminusAnchorLocalPos, 
         NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode, NativeReference<PhysicsCoreHelper.ShapeProxyForJobs> anchorGeometry, PhysicsWorld world, 
         PhysicsQuery.QueryFilter collisionFilter, float nodeRadius, float collisionBounciness, float anchorCollisionBounciness, int offset)
     {
@@ -151,7 +151,7 @@ public unsafe struct IntegrateRope : IJobParallelFor
     [NativeDisableParallelForRestriction] public NativeArray<float2> lastPosition;
     [NativeDisableParallelForRestriction] public NativeReference<PhysicsShape> terminusAnchor;
     [NativeDisableParallelForRestriction] public NativeReference<float2> terminusAnchorLocalPos;
-    [ReadOnly] public NativeParallelHashMap<uint, PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture;
+    [ReadOnly] public NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture;
     [NativeDisableParallelForRestriction] public NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode;
     [ReadOnly] public NativeReference<PhysicsCoreHelper.ShapeProxyForJobs> anchorGeometry;
     [ReadOnly] public PhysicsWorld world;
@@ -166,7 +166,7 @@ public unsafe struct IntegrateRope : IJobParallelFor
     public readonly int offset;
 
     public IntegrateRope(NativeArray<float2> position, NativeArray<float2> lastPosition,
-        NativeParallelHashMap<uint, PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture,
+        NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture,
         NativeReference<PhysicsShape> terminusAnchor, NativeReference<float2> terminusAnchorLocalPos,
         NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode, NativeReference<PhysicsCoreHelper.ShapeProxyForJobs> anchorGeometry,
         PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter, float2 gravity, float drag, float nodeRadius, 

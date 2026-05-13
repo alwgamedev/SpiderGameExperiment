@@ -70,7 +70,8 @@ public unsafe class FastRope
     NativeReference<float2> bbMin;
     NativeReference<float2> bbMax;
 
-    NativeParallelHashMap<uint, PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture;
+    //NativeParallelHashMap<uint, PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture;
+    NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture;
 
 
     //NODE DATA
@@ -232,7 +233,7 @@ public unsafe class FastRope
         bbMin = new(Allocator.Persistent);
         bbMax = new(Allocator.Persistent);
 
-        shapeCapture = new(512, Allocator.Persistent);
+        shapeCapture = new(2048, Allocator.Persistent);
     }
 
     private void LockWrappers()
@@ -376,9 +377,6 @@ public unsafe class FastRope
         bbMax.Value += new float2(4, 4);
         CaptureShapes(bbMin.Value, bbMax.Value);
 
-        //collisionDebugDataCopy.CopyFrom(collisionDebugData);
-        //collisionDebugData.FillArray(default, 0, collisionDebugData.Length);
-
         var integrateJob = IntegrateRope(dt * dt, 1, collisionFilter);
 
         var clearConstraintDelta = new ClearArrayJob<float2>(lastPositionBuffer);
@@ -439,13 +437,18 @@ public unsafe class FastRope
     {
         var overlap = ownerWorld.OverlapAABB(new PhysicsAABB(bbMin, bbMax), settings.CollisionFilter);
 
-        shapeCapture.Clear();
+        if (!(shapeCapture.Length > PhysicsRegistry.MaxShapeId))
+        {
+            shapeCapture.Dispose();
+            shapeCapture = new(2 * PhysicsRegistry.MaxShapeId, Allocator.Persistent);
+        }
+
 
         for (int i = 0; i < overlap.Length; i++)
         {
             var shape = overlap[i].shape;
             var id = shape.Id();
-            if (id != 0)
+            if (id > 0)
             {
                 switch (shape.shapeType)
                 {

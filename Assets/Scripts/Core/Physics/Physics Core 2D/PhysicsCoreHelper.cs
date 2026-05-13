@@ -110,7 +110,16 @@ public static class PhysicsCoreHelper
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ShapeProxyForJobs
-    {
+    { 
+        //trying to keep it to 128 bytes.
+        //a) polygons:
+            //-it's a polygon iff normal1 != 0
+            //-we don't store the vertex count, so iterate from 0 to 8 and stop when normal = 0
+        //b) circles and capsule:
+            //-center1, center2 stored at beginning of vertex array.
+            //-normal0.x = radius
+            //-normal0.y = capsule ? 1 : 0
+
         float2 vertex0;
         float2 vertex1;
         float2 vertex2;
@@ -128,16 +137,6 @@ public static class PhysicsCoreHelper
         float2 normal5;
         float2 normal6;
         float2 normal7;
-
-
-        //trying to keep it to 128 bytes.
-        //a) polygons:
-            //-it's a polygon iff normal1 != 0
-            //-we don't store the vertex count, so iterate from 0 to 8 and stop when normal = 0
-        //b) circles and capsule:
-            //-center1, center2 stored at beginning of vertex array.
-            //-normal0.x = radius
-            //-normal0.y = capsule ? 1 : 0
 
         public readonly PhysicsShape.ShapeType ShapeType
         {

@@ -29,22 +29,25 @@ public static class PhysicsRegistry
     //public static NativeHashMap<uint, BodyData> bodyData;
     //public static NativeHashMap<uint, ShapeData> shapeData;
 
-    static uint nextBodyId;
-    static uint nextShapeId;
+    static int nextBodyId;
+    static int nextShapeId;
+
+    public static int MaxBodyId => nextBodyId - 1;
+    public static int MaxShapeId => nextShapeId - 1;
 
     public static bool CompareId(this PhysicsBody bodyA, PhysicsBody bodyB)
     {
-        return bodyA.Id() != 0 && bodyA.Id() == bodyB.Id();
+        return bodyA.Id() > 0 && bodyA.Id() == bodyB.Id();
     }
 
-    public static uint Id(this PhysicsBody body)
+    public static int Id(this PhysicsBody body)
     {
-        return (uint)body.userData.intValue;
+        return body.userData.intValue;
     }
 
-    public static uint Id(this PhysicsShape shape)
+    public static int Id(this PhysicsShape shape)
     {
-        return (uint)shape.userData.intValue;
+        return shape.userData.intValue;
     }
 
     //public static void UpdateData(PhysicsBody body, BodyData data)
@@ -84,16 +87,15 @@ public static class PhysicsRegistry
             return;
         }
 
-        if (nextBodyId == 0)
+        if (nextBodyId < 0)
         {
-            Debug.Log($"Out of body ids...");
+            Debug.Log($"Out of body ids!");
             return;
         }
 
         var userData = body.userData;
-        userData.intValue = (int)nextBodyId;
+        userData.intValue = nextBodyId;
         body.userData = userData;
-        //bodyData[nextBodyId] = data;
         nextBodyId++;
     }
 
@@ -105,16 +107,15 @@ public static class PhysicsRegistry
             return;
         }
 
-        if (nextShapeId == 0)
+        if (nextShapeId < 0)
         {
-            Debug.Log($"Out of shape ids...");
+            Debug.Log($"Out of shape ids!");
             return;
         }
 
         var userData = shape.userData;
-        userData.intValue = (int)nextShapeId;
+        userData.intValue = nextShapeId;
         shape.userData = userData;
-        //shapeData[nextShapeId] = data;
         nextShapeId++;
     }
 
