@@ -1736,8 +1736,8 @@ MonoBehaviour:
             bitMask: 64
           m_GroupIndex: 0
         surfaceMaterial:
-          m_Friction: 0.05
-          m_Bounciness: 0
+          m_Friction: 0.01
+          m_Bounciness: 0.05
           m_FrictionMixing: 0
           m_BouncinessMixing: 0
           m_FrictionPriority: 0
@@ -1848,7 +1848,7 @@ MonoBehaviour:
             m_CustomColor:
               serializedVersion: 2
               rgba: 0
-          m_Density: 0.0025
+          m_Density: 0.025
           m_IsTrigger: 0
           m_TriggerEvents: 0
           m_ContactEvents: 0
@@ -2206,7 +2206,7 @@ MonoBehaviour:
     headBone: {fileID: 1544918830229533694}
     heightReferencePoint: {fileID: 8270157252145170821}
     grapple:
-      drawGizmos: 1
+      drawGizmos: 0
       numNodes: 120
       minLength: 1.2
       maxLength: 12
@@ -2219,7 +2219,7 @@ MonoBehaviour:
       grappleSettings:
         collisionMask:
           bitMask: 320
-        collisionBounciness: 0.75
+        collisionBounciness: 0.6
         anchorCollisionBounciness: 0.1
         width: 0.17
         minNodeSpacing: 0.1
@@ -2227,8 +2227,8 @@ MonoBehaviour:
         drag: 0.02
         nodeMass: 0.1
         terminusMass: 50
-        constraintStiffness: 0.975
-        constraintIterations: 50
+        constraintStiffness: 0.99
+        constraintIterations: 35
         itersPulledByOwner: 15
         dynamicAnchorSpringForce: 25
         dynamicAnchorSpringDamping: 0.005

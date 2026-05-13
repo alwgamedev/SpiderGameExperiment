@@ -1,4 +1,5 @@
 ﻿using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.U2D.Physics;
@@ -29,22 +30,19 @@ public struct RopeSettings
     public readonly PhysicsQuery.QueryFilter CollisionFilter => new(PhysicsMask.All, collisionMask, PhysicsWorld.IgnoreFilter.IgnoreTriggerShapes);
 }
 
-public struct RopeCollisionDebugData
+//public struct RopeCollisionDebugData
+//{
+//    public float2 normal;
+//    public Result result;
+
+//    public enum Result
+//    {
+//        neutral, success, failure
+//    }
+//}
+
+public unsafe class FastRope
 {
-    public float2 normal;
-    public Result result;
-
-    public enum Result
-    {
-        neutral, success, failure
-    }
-}
-
-public class FastRope
-{
-    //const float MAX_SPEED = 50f;
-    //const float MAX_SPEED_SQRD = MAX_SPEED * MAX_SPEED;
-
     public enum TerminusAnchorMode
     {
         notAnchored, staticAnchor, dynamicAnchor
@@ -65,14 +63,14 @@ public class FastRope
     AlwaysAccessibleNativeReference<int> sourceIndex;//effective beginning of rope (we set some nodes at beginning to sleep to maintain node spacing)
     NativeReference<PhysicsShape> terminusAnchor;
     NativeReference<float2> terminusAnchorLocalPos;
-    NativeReference<PhysicsCoreHelper.ShapeProxy> anchorGeometry;//for dynamic anchor
+    NativeReference<PhysicsCoreHelper.ShapeProxyForJobs> anchorGeometry;//for dynamic anchor
     AlwaysAccessibleNativeReference<TerminusAnchorMode> terminusAnchorMode;
     AlwaysAccessibleNativeReference<float2> carryForce;
     AlwaysAccessibleNativeReference<float> maxTension;
     NativeReference<float2> bbMin;
     NativeReference<float2> bbMax;
 
-    NativeParallelHashMap<uint, PhysicsCoreHelper.ShapeProxy> shapeCapture;
+    NativeParallelHashMap<uint, PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture;
 
 
     //NODE DATA
@@ -81,9 +79,7 @@ public class FastRope
     NativeArray<float2> lastPosition;
     NativeArray<float2> positionBuffer;//for reparametrizing & rendering
     NativeArray<float2> lastPositionBuffer;//also used to store constraint deltas
-    NativeArray<RopeCollisionDebugData> collisionDebugData;
-    NativeArray<RopeCollisionDebugData> collisionDebugDataCopy;
-    //NativeReference<float2> dynamicAnchorTerminusPositionStorage;
+    //NativeArray<RopeCollisionDebugData> collisionDebugData;
 
 
     //PROPERTIES
@@ -194,10 +190,6 @@ public class FastRope
         {
             lastPositionBuffer.Dispose();
         }
-        //if (dynamicAnchorTerminusPositionStorage.IsCreated)
-        //{
-        //    dynamicAnchorTerminusPositionStorage.Dispose();
-        //}
 
         if (shapeCapture.IsCreated)
         {
@@ -210,15 +202,6 @@ public class FastRope
         if (bbMax.IsCreated)
         {
             bbMax.Dispose();
-        }
-
-        if (collisionDebugData.IsCreated)
-        {
-            collisionDebugData.Dispose();
-        }
-        if (collisionDebugDataCopy.IsCreated)
-        {
-            collisionDebugDataCopy.Dispose();
         }
     }
 
@@ -242,16 +225,12 @@ public class FastRope
         positionBuffer.CopyFrom(this.position);
         lastPositionBuffer = new(numNodes, Allocator.Persistent);
         lastPositionBuffer.CopyFrom(this.position);
-        //dynamicAnchorTerminusPositionStorage = new(Allocator.Persistent);
         anchorGeometry = new(Allocator.Persistent);
 
         maxTension = new(Allocator.Persistent);
         carryForce = new(Allocator.Persistent);
         bbMin = new(Allocator.Persistent);
         bbMax = new(Allocator.Persistent);
-
-        collisionDebugData = new(numNodes, Allocator.Persistent);
-        collisionDebugDataCopy = new(numNodes, Allocator.Persistent);
 
         shapeCapture = new(512, Allocator.Persistent);
     }
@@ -287,25 +266,9 @@ public class FastRope
     {
         for (int i = sourceIndex.Value; i < positionBuffer.Length; i++)
         {
-            var colData = collisionDebugDataCopy[i];
-            Gizmos.color = NodeColor(colData.result);
+            Gizmos.color = Color.blue;
             Vector2 p = positionBuffer[i];
             Gizmos.DrawSphere(p, settings.NodeRadius);
-            Gizmos.color = Color.yellow;
-            Debug.DrawLine(p, p + 0.5f * (Vector2)colData.normal);
-        }
-
-        Color NodeColor(RopeCollisionDebugData.Result result)
-        {
-            switch (result)
-            {
-                case RopeCollisionDebugData.Result.failure:
-                    return Color.red;
-                case RopeCollisionDebugData.Result.success:
-                    return Color.green;
-                default:
-                    return Color.blue;
-            }
         }
     }
 
@@ -375,17 +338,11 @@ public class FastRope
         switch (terminusAnchorMode.Value)
         {
             case TerminusAnchorMode.staticAnchor:
-                //lastPosition[TerminusIndex] = SetTerminusToAnchorPosition();
                 {
                     var p = terminusAnchor.Value.transform.TransformPoint(terminusAnchorLocalPos.Value);
                     position[TerminusIndex] = p;
                     lastPosition[TerminusIndex] = p;
                     terminusMass = Mathf.Infinity;
-                    if (anchorGeometry.Value.Count != 0)
-                    {
-                        anchorGeometry.Value = default;
-                    }
-
                     break;
                 }
             case TerminusAnchorMode.dynamicAnchor:
@@ -399,20 +356,14 @@ public class FastRope
                     position[TerminusIndex] = p;
                     lastPosition[TerminusIndex] = p - dt * (float2)anchorBody.linearVelocity;
                     terminusMass = anchorBody.mass;
-                    if (anchorGeometry.Value.Count == 0)
+                    if (!anchorGeometry.GetUnsafeReadOnlyPtr()->Initialized)
                     {
                         CaptureAnchorGeometry(terminusAnchor.Value);
                     }
-
-                    //collisionFilter.hitCategories &= ~terminusAnchor.Value.contactFilter.categories;
                     break;
                 }
             default://not anchored
                 terminusMass = settings.terminusMass;
-                if (anchorGeometry.Value.Count != 0)
-                {
-                    anchorGeometry.Value = default;
-                }
                 break;
         }
 
@@ -425,15 +376,15 @@ public class FastRope
         bbMax.Value += new float2(4, 4);
         CaptureShapes(bbMin.Value, bbMax.Value);
 
-        collisionDebugDataCopy.CopyFrom(collisionDebugData);
-        collisionDebugData.FillArray(default, 0, collisionDebugData.Length);
+        //collisionDebugDataCopy.CopyFrom(collisionDebugData);
+        //collisionDebugData.FillArray(default, 0, collisionDebugData.Length);
 
         var integrateJob = IntegrateRope(dt * dt, 1, collisionFilter);
 
         var clearConstraintDelta = new ClearArrayJob<float2>(lastPositionBuffer);
         var calculateConstraintsEven = CalculateConstraints(ownerMass, terminusMass, 0);
         var calculateConstraintOdd = CalculateConstraints(ownerMass, terminusMass, 1);
-        var applyConstraints = ApplyConstraints(collisionFilter, terminusMass);
+        var applyConstraints = ApplyConstraints(collisionFilter);
 
         var numActive = TerminusIndex - sourceIndex.Value;
         var numOdd = numActive / 2;
@@ -559,9 +510,9 @@ public class FastRope
 
     private IntegrateRope IntegrateRope(float dt2, float timeScale, PhysicsQuery.QueryFilter collisionFilter)
     {
-        return new(position, lastPosition, collisionDebugData, shapeCapture,
+        return new(position, lastPosition, shapeCapture,
             terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode.native, anchorGeometry,
-            ownerWorld, collisionFilter, ownerWorld.gravity, settings.drag, settings.NodeRadius, settings.collisionBounciness, settings.anchorCollisionBounciness, settings.nodeMass,
+            ownerWorld, collisionFilter, ownerWorld.gravity, settings.drag, settings.NodeRadius, settings.collisionBounciness, settings.anchorCollisionBounciness,
             dt2, timeScale, sourceIndex.Value + 1);
     }
 
@@ -571,11 +522,11 @@ public class FastRope
         return new(position, lastPositionBuffer, nodeSpacing.Value, settings.nodeMass, sourceMass, terminusMass, settings.constraintStiffness, sourceIndex.Value, batch);
     }
 
-    private ApplyRopeConstraints ApplyConstraints(PhysicsQuery.QueryFilter collisionFilter, float terminusMass)
+    private ApplyRopeConstraints ApplyConstraints(PhysicsQuery.QueryFilter collisionFilter)
     {
-        return new(lastPositionBuffer, position, lastPosition, collisionDebugData, shapeCapture,
+        return new(lastPositionBuffer, position, lastPosition, shapeCapture,
             terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode.native, anchorGeometry, ownerWorld, collisionFilter,
-            settings.NodeRadius, settings.collisionBounciness, settings.anchorCollisionBounciness, settings.nodeMass, terminusMass, sourceIndex.Value);
+            settings.NodeRadius, settings.collisionBounciness, settings.anchorCollisionBounciness, sourceIndex.Value);
     }
 
     private CorrectRopeSourcePosition CorrectSourcePosition(float2 sourcePosition)

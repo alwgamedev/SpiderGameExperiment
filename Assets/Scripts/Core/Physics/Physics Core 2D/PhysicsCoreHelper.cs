@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Unity.Burst;
 using Unity.Collections;
@@ -107,68 +108,58 @@ public static class PhysicsCoreHelper
 
     /// <summary> A ShapeProxy that can be used in Jobs (can't access shape geometry or built-in shape proxy in jobs since properties have potential to throw an error).
     /// </summary>
-    [StructLayout(LayoutKind.Explicit)]
-    public unsafe struct ShapeProxy
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct ShapeProxyForJobs
     {
-        [FieldOffset(0)] fixed float vertex[16];
-        [FieldOffset(64)] fixed float normal[16];//only for polygons
-        [FieldOffset(128)] PhysicsShape.ShapeType shapeType;
-        [FieldOffset(132)] int count;
+        float2 vertex0;
+        float2 vertex1;
+        float2 vertex2;
+        float2 vertex3;
+        float2 vertex4;
+        float2 vertex5;
+        float2 vertex6;
+        float2 vertex7;
 
-        public readonly PhysicsShape.ShapeType ShapeType => shapeType;
-        public readonly int Count => count;
-        public readonly float Radius
+        float2 normal0;
+        float2 normal1;
+        float2 normal2;
+        float2 normal3;
+        float2 normal4;
+        float2 normal5;
+        float2 normal6;
+        float2 normal7;
+
+
+        //trying to keep it to 128 bytes.
+        //a) polygons:
+            //-it's a polygon iff normal1 != 0
+            //-we don't store the vertex count, so iterate from 0 to 8 and stop when normal = 0
+        //b) circles and capsule:
+            //-center1, center2 stored at beginning of vertex array.
+            //-normal0.x = radius
+            //-normal0.y = capsule ? 1 : 0
+
+        public readonly PhysicsShape.ShapeType ShapeType
         {
             get
             {
-                fixed (float* normalPtr = normal)
-                {
-                    return *normalPtr;//for circle and capsule, normal[0] will store the radius
-                }
+                var intVal = math.select((int)PhysicsShape.ShapeType.Polygon,
+                    math.select((int)PhysicsShape.ShapeType.Capsule, (int)PhysicsShape.ShapeType.Circle, normal0.y == 0),
+                    normal1.Equals(0));
+                return (PhysicsShape.ShapeType)intVal;
             }
         }
 
-        public readonly float2 Center1 => Vertex(0);
+        public readonly bool Initialized => !normal0.Equals(0);
+        public readonly float Radius => normal0.x;
+        public readonly float2 Center1 => vertex0;
+        public readonly float2 Center2 => vertex1;
 
-        public readonly float2 Center2 => Vertex(1);
+        public readonly ReadOnlySpan<float2> VertexArray => new(vertex, 8);
+        public readonly ReadOnlySpan<float2> NormalArray => new(normal, 8);
 
-        public readonly ReadOnlySpan<float2> VertexArray
-        {
-            get
-            {
-                fixed (float* vertexPtr = vertex)
-                {
-                    return new(vertexPtr, count);
-                }
-            }
-        }
-
-        public readonly ReadOnlySpan<float2> NormalArray
-        {
-            get
-            {
-                fixed (float* normalPtr = normal)
-                {
-                    return new(normalPtr, count);
-                }
-            }
-        }
-
-        public readonly float2 Vertex(int i)
-        {
-            fixed (float* vertexPtr = vertex)
-            {
-                return ((float2*)vertexPtr)[i];
-            }
-        }
-
-        public readonly float2 Normal(int i)
-        {
-            fixed (float* normalPtr = normal)
-            {
-                return ((float2*)normalPtr)[i];
-            }
-        }
+        private readonly float2* vertex => (float2*)Unsafe.AsPointer(ref Unsafe.AsRef(vertex0));//Unsafe.AsRef allows us to get around readonly, so we can use the pointer in readonly properties/methods
+        private readonly float2* normal => (float2*)Unsafe.AsPointer(ref Unsafe.AsRef(normal0));
 
         public readonly CircleGeometry CircleGeometry()
         {
@@ -191,60 +182,48 @@ public static class PhysicsCoreHelper
 
         public readonly PolygonGeometry PolygonGeometry()
         {
-            fixed (float* vertexPtr = vertex, normalPtr = normal)
+            float2 centroid = float2.zero;
+            int count = 0;
+            for (int i = 0; i < 8; i++)
             {
-                var vertexPoints = (Vector2*)vertexPtr;
-                Vector2 centroid = Vector2.zero;
-                for (int i = 0; i < count; i++)
+                if (normal[i].Equals(0))
                 {
-                    centroid += vertexPoints[i];
+                    break;
                 }
 
-                return new()
-                {
-                    vertices = *(PhysicsShape.ShapeArray*)vertexPtr,
-                    normals = *(PhysicsShape.ShapeArray*)normalPtr,
-                    centroid = centroid / count,
-                    count = count
-                };
+                centroid += vertex[i];
+                count++;
             }
+
+            return new()
+            {
+                vertices = *(PhysicsShape.ShapeArray*)vertex,
+                normals = *(PhysicsShape.ShapeArray*)normal,
+                centroid = centroid / count,
+                count = count
+            };
         }
 
-        public ShapeProxy(CircleGeometry circle)
+        public ShapeProxyForJobs(CircleGeometry circle)
         {
-            shapeType = PhysicsShape.ShapeType.Circle;
-            count = 1;
-
-            fixed (float* vertexPtr = vertex, normalPtr = normal)
-            {
-                *normalPtr = circle.radius;
-                *(Vector2*)vertexPtr = circle.center;
-            }
+            this = default;//clear memory
+            vertex0 = circle.center;
+            normal0.x = circle.radius;
         }
 
-        public ShapeProxy(CapsuleGeometry capsule)
+        public ShapeProxyForJobs(CapsuleGeometry capsule)
         {
-            shapeType = PhysicsShape.ShapeType.Capsule;
-            count = 2;
-
-            fixed (float* vertexPtr = vertex, normalPtr = normal)
-            {
-                *normalPtr = capsule.radius;
-                var c1 = capsule.center1;
-                var c2 = capsule.center2;
-                *(Vector4*)vertexPtr = new(c1.x, c1.y, c2.x, c2.y);
-            }
+            this = default;
+            vertex0 = capsule.center1;
+            vertex1 = capsule.center2;
+            normal0 = new(capsule.radius, 1);
         }
 
-        public ShapeProxy(PolygonGeometry polygonGeometry)
+        public ShapeProxyForJobs(PolygonGeometry polygonGeometry)
         {
-            shapeType = PhysicsShape.ShapeType.Polygon;
-            count = polygonGeometry.count;
-            fixed (float* vertexPtr = vertex, normalPtr = normal)
-            {
-                *(PhysicsShape.ShapeArray*)vertexPtr = polygonGeometry.vertices;
-                *(PhysicsShape.ShapeArray*)normalPtr = polygonGeometry.normals;
-            }
+            this = default;
+            *(PhysicsShape.ShapeArray*)vertex = polygonGeometry.vertices;
+            *(PhysicsShape.ShapeArray*)normal = polygonGeometry.normals;
         }
     }
 

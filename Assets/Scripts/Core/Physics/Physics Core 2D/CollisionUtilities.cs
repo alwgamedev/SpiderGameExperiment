@@ -8,7 +8,7 @@ public static class CollisionUtilities
     //All separation methods will return (separation, normal) = (0, 0) if there is no overlap, otherwise sep and normal are always valid.
 
     [BurstCompile]
-    public static (float separation, float2 normal) SeparateCircleFromShape(float2 center, float radius, PhysicsCoreHelper.ShapeProxy shape, PhysicsTransform transform)
+    public static (float separation, float2 normal) SeparateCircleFromShape(float2 center, float radius, PhysicsCoreHelper.ShapeProxyForJobs shape, PhysicsTransform transform)
     {
         switch (shape.ShapeType)
         {
@@ -96,6 +96,12 @@ public static class CollisionUtilities
         for (int i = 1; i < vertex.Length; i++)
         {
             var n = normal[i];
+            if (n.Equals(0))
+            {
+                //my shape proxy struct doesn't have a vertex count -- you have to just stop once the normals become zero
+                break;
+            }
+
             var dist = math.dot(vertex[i] - center, n);
 
             if (dist < -radius)
@@ -114,7 +120,7 @@ public static class CollisionUtilities
     }
 
     [BurstCompile]
-    public static (float2 escapeNormal, float escapeDistance) OverlapPoint(this in PhysicsCoreHelper.ShapeProxy shape, PhysicsTransform transform, float2 point)
+    public static (float2 escapeNormal, float escapeDistance) OverlapPoint(this in PhysicsCoreHelper.ShapeProxyForJobs shape, PhysicsTransform transform, float2 point)
     {
         point = transform.InverseTransformPoint(point);
         float2 escapeNormal;
