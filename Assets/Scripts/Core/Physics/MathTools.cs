@@ -231,8 +231,34 @@ public static class MathTools
         if (!TryIntersectLine(0.5f * (p0 + p1), (p1 - p0).CCWPerp(), 0.5f * (p0 + p2), (p2 - p0).CCWPerp(), out var c))
         {
             Debug.LogWarning($"Invalid triangle (vertices are colinear).");
+            var v1 = p1 - p0;
+            var v2 = p2 - p0;
+            if (Vector2.Dot(v1, v2) < 0)
+            {
+                //then p0 lies in between p1 & p2
+                return 0.5f * (p1 + p2);
+            }
+
+            return v1.sqrMagnitude > v2.sqrMagnitude ? 0.5f * (p0 + p1) : 0.5f * (p0 + p2);
         }
         return c;
+    }
+
+    public static float CircumradiusSquared(Vector2 p0, Vector2 p1, Vector2 p2)
+    {
+        var v0 = p1 - p0;
+        var v1 = p2 - p0;
+        var v0Sqrd = v0.sqrMagnitude;
+        var v1Sqrd = v1.sqrMagnitude;
+        var cross = Cross2D(v0, v1);
+        var denom = 4 * cross * cross;
+
+        if (denom < o41)
+        {
+            return 0.25f * Mathf.Max(v0Sqrd, v1Sqrd);
+        }
+
+        return (v0 - v1).sqrMagnitude * v0Sqrd * v1Sqrd / denom;
     }
 
     //returns pt on line that is at desired distance from ptOffLine

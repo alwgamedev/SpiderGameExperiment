@@ -63,8 +63,9 @@ public unsafe class FastRope
     AlwaysAccessibleNativeReference<int> sourceIndex;//effective beginning of rope (we set some nodes at beginning to sleep to maintain node spacing)
     NativeReference<PhysicsShape> terminusAnchor;
     NativeReference<float2> terminusAnchorLocalPos;
-    NativeReference<PhysicsCoreHelper.ShapeProxyForJobs> anchorGeometry;//for dynamic anchor
     AlwaysAccessibleNativeReference<TerminusAnchorMode> terminusAnchorMode;
+    NativeReference<CircleGeometry> anchorGeometry;//enclosing circle for dynamic anchor
+    bool anchorGeometryCaptured;
     AlwaysAccessibleNativeReference<float2> carryForce;
     AlwaysAccessibleNativeReference<float> maxTension;
     NativeReference<float2> bbMin;
@@ -72,6 +73,7 @@ public unsafe class FastRope
 
     //NativeParallelHashMap<uint, PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture;
     NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture;
+
 
 
     //NODE DATA
@@ -140,6 +142,8 @@ public unsafe class FastRope
         GrappleExtent = 0;
 
         anchorGeometry.Value = default;
+        anchorGeometryCaptured = false;
+        //anchorGeometry = default;
 
         Enabled = true;
     }
@@ -329,7 +333,7 @@ public unsafe class FastRope
 
         if (TerminusAnchored)
         {
-            //in case someday we have an anchor that could get destroyed or change body type
+            //check if anchor was destroyed or changed body type
             terminusAnchorMode.Value = terminusAnchor.Value.isValid ? terminusAnchor.Value.body.type == PhysicsBody.BodyType.Dynamic ?
                 TerminusAnchorMode.dynamicAnchor : TerminusAnchorMode.staticAnchor : TerminusAnchorMode.notAnchored;
         }
@@ -344,6 +348,11 @@ public unsafe class FastRope
                     position[TerminusIndex] = p;
                     lastPosition[TerminusIndex] = p;
                     terminusMass = Mathf.Infinity;
+                    if (anchorGeometryCaptured)
+                    {
+                        anchorGeometry.Value = default;
+                        anchorGeometryCaptured = false;
+                    }
                     break;
                 }
             case TerminusAnchorMode.dynamicAnchor:
@@ -357,14 +366,22 @@ public unsafe class FastRope
                     position[TerminusIndex] = p;
                     lastPosition[TerminusIndex] = p - dt * (float2)anchorBody.linearVelocity;
                     terminusMass = anchorBody.mass;
-                    if (!anchorGeometry.GetUnsafeReadOnlyPtr()->Initialized)
+                    if (!anchorGeometryCaptured)
                     {
                         CaptureAnchorGeometry(terminusAnchor.Value);
+                        anchorGeometryCaptured = true;
                     }
+
+                    //ownerWorld.DrawGeometry(anchorGeometry.Value, terminusAnchor.Value.transform, Color.red);
                     break;
                 }
             default://not anchored
                 terminusMass = settings.terminusMass;
+                if (anchorGeometryCaptured)
+                {
+                    anchorGeometry.Value = default;
+                    anchorGeometryCaptured = false;
+                }
                 break;
         }
 
@@ -422,13 +439,17 @@ public unsafe class FastRope
         switch(anchor.shapeType)
         {
             case PhysicsShape.ShapeType.Circle:
-                anchorGeometry.Value = new(anchor.circleGeometry);
+                anchorGeometry.Value = anchor.circleGeometry;
                 break;
             case PhysicsShape.ShapeType.Capsule:
-                anchorGeometry.Value = new(anchor.capsuleGeometry);
+                var capsule = anchor.capsuleGeometry;
+                var center = 0.5f * (capsule.center1 + capsule.center2);
+                var l = Vector2.Distance(center, capsule.center1);
+                anchorGeometry.Value = new() { center = center, radius = l + capsule.radius };
                 break;
             case PhysicsShape.ShapeType.Polygon:
-                anchorGeometry.Value = new(anchor.polygonGeometry);
+                var span = anchor.polygonGeometry.AsReadOnlySpan();
+                anchorGeometry.Value = PolygonPhysicsShape.SmallestEnclosingCircle(span);
                 break;
         }
     }

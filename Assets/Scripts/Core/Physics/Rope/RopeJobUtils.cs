@@ -2,6 +2,7 @@
 using Unity.Mathematics;
 using Unity.U2D.Physics;
 using Unity.Burst.CompilerServices;
+using Unity.Collections.LowLevel.Unsafe;
 
 public static class RopeJobUtils
 {
@@ -96,13 +97,14 @@ public static class RopeJobUtils
         return (pos, lastPos, velocity);
     }
 
-    public static void MoveTerminusWithDynamicAnchor(NativeArray<float2> position, float2 movement,
+    public static unsafe void MoveTerminusWithDynamicAnchor(NativeArray<float2> position, float2 movement,
     NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture,
-    PhysicsCoreHelper.ShapeProxyForJobs anchorGeometry, NativeReference<PhysicsShape> terminusAnchor, NativeReference<float2> terminusAnchorLocalPos,
+    NativeReference<CircleGeometry> anchorGeometry, NativeReference<PhysicsShape> terminusAnchor, NativeReference<float2> terminusAnchorLocalPos,
     PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter, float collisionBounciness)
     {
         var anchor = terminusAnchor.Value;
-        if (anchor.isValid)
+        var geom = anchorGeometry.Value;
+        if (anchor.isValid && geom.isValid)
         {
             collisionFilter.hitCategories &= ~terminusAnchor.Value.contactFilter.categories;
 
@@ -111,15 +113,14 @@ public static class RopeJobUtils
             transform.position = position[^1] - d;
 
             //we don't integrate anchor, so just get position
-            float2 pos = transform.TransformPoint(anchorGeometry.Center1);
-            //2DO: we can only handle circular anchor rn
-            (pos, _, _) = MoveNodeFast(pos, anchorGeometry.Radius, pos, movement, shapeCapture, world, collisionFilter, collisionBounciness);
+            float2 pos = transform.TransformPoint(geom.center);
+            (pos, _, _) = MoveNodeFast(pos, geom.radius, pos, movement, shapeCapture, world, collisionFilter, collisionBounciness);
             position[^1] = pos + d;
         }
     }
 
     public static void MoveTerminusUnanchored(NativeArray<float2> position, float radius, NativeArray<float2> lastPosition, float2 movement,
-    NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture,
+    NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture, NativeReference<CircleGeometry> anchorGeometry,
     NativeReference<PhysicsShape> terminusAnchor, NativeReference<float2> terminusAnchorLocalPos, NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode,
     PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter, float collisionBounciness, bool stepVelocity)
     {
@@ -127,17 +128,19 @@ public static class RopeJobUtils
         var castResults = world.CastGeometry(node, movement, collisionFilter);
         var (pos, lastPos, velocity) = MoveNodeUntilImpact(position[^1], radius, lastPosition[^1], movement, movement, 0, castResults, shapeCapture, world, collisionFilter, collisionBounciness);
 
-        if (Hint.Unlikely(castResults.Length > 0))
+        if (Hint.Unlikely(castResults.Length > 0 && IsValidAnchor(castResults[0].shape)))
         {
             position[^1] = pos;
             lastPosition[^1] = math.select(lastPos, pos - velocity, stepVelocity);
 
             var shape = castResults[0].shape;
             terminusAnchor.Value = shape;
-            terminusAnchorLocalPos.Value = shape.body.transform.InverseTransformPoint(pos);
+            var localPos = shape.body.transform.InverseTransformPoint(pos);
+            terminusAnchorLocalPos.Value = localPos;
             if (shape.body.type == PhysicsBody.BodyType.Dynamic)
             {
                 terminusAnchorMode.Value = FastRope.TerminusAnchorMode.dynamicAnchor;
+                //anchorGeometry.Value = new() { center = localPos, radius = 1f };//temporary value until rope can compute the geometry on the main thread
             }
             else
             {
@@ -149,6 +152,12 @@ public static class RopeJobUtils
             position[^1] = pos;
             lastPosition[^1] = math.select(lastPos, pos - velocity, stepVelocity);
         }
+    }
+
+    public static bool IsValidAnchor(PhysicsShape shape)
+    {
+        return shape.body.type != PhysicsBody.BodyType.Dynamic 
+            || shape.shapeType == PhysicsShape.ShapeType.Circle || shape.shapeType == PhysicsShape.ShapeType.Capsule || shape.shapeType == PhysicsShape.ShapeType.Polygon;
     }
 
 

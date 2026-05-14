@@ -37,6 +37,10 @@ public struct PolygonPhysicsShape
                         Handles.DrawLine(vertices[j], vertices[j + 1]);
                     }
                     Handles.DrawLine(vertices[ct - 1], vertices[0]);
+
+                    //testing circle algorithm
+                    //var circle = SmallestEnclosingCircle(vertices);
+                    //Handles.DrawWireArc(circle.center, Vector3.forward, Vector3.right, 360, circle.radius);
                 }
             }
         }
@@ -136,5 +140,111 @@ public struct PolygonPhysicsShape
     {
         Array.Resize(ref optimizedPolygon, originalPolygon.Length);
         Array.Copy(originalPolygon, optimizedPolygon, originalPolygon.Length);
+    }
+
+    //Sven Skyum, "A simple algorithm for computing the smallest enclosing circle" (1990)
+    public static CircleGeometry SmallestEnclosingCircle(ReadOnlySpan<Vector2> vertex)
+    {
+        int excluded = 0;
+        int curCount = vertex.Length;
+        int originalCount = curCount;
+
+        int bestIndex = 0;
+        int bestIndexPrev = vertex.Length - 1;
+        int bestIndexNext = 1;
+
+        var maxRadius2 = Mathf.NegativeInfinity;
+        var minCos = Mathf.Infinity;//min cos <-> max angle
+
+        int prev = vertex.Length - 1;
+        int cur = 0;
+        int next = 1;
+        int seen = 0;
+
+        while (curCount > 3)
+        {
+            //loop through vertices and find max (radius, angle)
+            seen++;
+            var p = vertex[cur];
+            var pPrev = vertex[prev];
+            var pNext = vertex[next];
+
+            var rad2 = MathTools.CircumradiusSquared(p, pPrev, pNext);
+            var cos = Vector2.Dot(pPrev - p, pNext - p);
+
+            if (rad2 > maxRadius2 || (rad2 == maxRadius2 && cos < minCos))
+            {
+                bestIndex = cur;
+                bestIndexPrev = prev;
+                bestIndexNext = next;
+
+                maxRadius2 = rad2;
+                minCos = cos;
+            }
+
+            if (seen == curCount)//we've finished looking through all the remaining vertices and found the highest (radius, angle)
+            {
+                if (minCos >= 0)
+                {
+                    return Circumcircle(vertex[bestIndex], vertex[bestIndexPrev], vertex[bestIndexNext]);
+                }
+
+                //remove vertex[bestIndex]
+                excluded |= 1 << bestIndex;
+                curCount--;
+                cur = Next(cur, excluded, originalCount);
+                next = Next(cur, excluded, originalCount);
+                prev = Prev(cur, excluded, originalCount);
+                seen = 0;
+
+                //reset bests
+                maxRadius2 = Mathf.NegativeInfinity;
+                minCos = Mathf.Infinity;
+            }
+            else
+            {
+                //increment cur
+                prev = cur;
+                cur = next;
+                next = Next(cur, excluded, originalCount);
+            }
+        }
+
+        //3 vertices remaining
+        return Circumcircle(vertex[cur], vertex[prev], vertex[next]);
+
+        static CircleGeometry Circumcircle(Vector2 p0, Vector2 p1, Vector2 p2)
+        {
+            var circumcenter = MathTools.Circumcenter(p0, p1, p2);
+            var radius = Vector2.Distance(p0, circumcenter);
+            return new() { center = circumcenter, radius = radius };
+        }
+
+        static int Next(int i, int excluded, int count)
+        {
+            int next = i < count - 1 ? i + 1 : 0;
+            while (Excluded(next, excluded))
+            {
+                next = next < count - 1 ? next + 1 : 0;
+            }
+
+            return next;
+        }
+
+        static int Prev(int i, int excluded, int count)
+        {
+            int prev = i > 0 ? i - 1 : count - 1;
+            while (Excluded(prev, excluded))
+            {
+                prev = prev > 0 ? prev - 1 : count - 1;
+            }
+
+            return prev;
+        }
+
+        static bool Excluded(int i, int excluded)
+        {
+            return (excluded & 1 << i) != 0;
+        }
     }
 }
