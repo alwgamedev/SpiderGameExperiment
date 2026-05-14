@@ -97,30 +97,30 @@ public static class RopeJobUtils
         return (pos, lastPos, velocity);
     }
 
-    public static unsafe void MoveTerminusWithDynamicAnchor(NativeArray<float2> position, float2 movement,
-    NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture,
-    NativeReference<CircleGeometry> anchorGeometry, NativeReference<PhysicsShape> terminusAnchor, NativeReference<float2> terminusAnchorLocalPos,
-    PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter, float collisionBounciness)
-    {
-        var anchor = terminusAnchor.Value;
-        var geom = anchorGeometry.Value;
-        if (anchor.isValid && geom.isValid)
-        {
-            collisionFilter.hitCategories &= ~terminusAnchor.Value.contactFilter.categories;
+    //public static unsafe void MoveTerminusWithDynamicAnchor(NativeArray<float2> position, float2 movement,
+    //NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture,
+    //NativeReference<CircleGeometry> anchorGeometry, NativeReference<PhysicsShape> terminusAnchor, NativeReference<float2> terminusAnchorLocalPos,
+    //PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter, float collisionBounciness)
+    //{
+    //    var anchor = terminusAnchor.Value;
+    //    var geom = anchorGeometry.Value;
+    //    if (anchor.isValid && geom.isValid)
+    //    {
+    //        collisionFilter.hitCategories &= ~terminusAnchor.Value.contactFilter.categories;
 
-            var transform = anchor.transform;
-            float2 d = transform.TransformPoint(terminusAnchorLocalPos.Value) - transform.position;
-            transform.position = position[^1] - d;
+    //        var transform = anchor.transform;
+    //        float2 d = transform.TransformPoint(terminusAnchorLocalPos.Value) - transform.position;
+    //        transform.position = position[^1] - d;
 
-            //we don't integrate anchor, so just get position
-            float2 pos = transform.TransformPoint(geom.center);
-            (pos, _, _) = MoveNodeFast(pos, geom.radius, pos, movement, shapeCapture, world, collisionFilter, collisionBounciness);
-            position[^1] = pos + d;
-        }
-    }
+    //        //we don't integrate anchor, so just get position
+    //        float2 pos = transform.TransformPoint(geom.center);
+    //        (pos, _, _) = MoveNodeFast(pos, geom.radius, pos, movement, shapeCapture, world, collisionFilter, collisionBounciness);
+    //        position[^1] = pos + d;
+    //    }
+    //}
 
     public static void MoveTerminusUnanchored(NativeArray<float2> position, float radius, NativeArray<float2> lastPosition, float2 movement,
-    NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture, NativeReference<CircleGeometry> anchorGeometry,
+    NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture,
     NativeReference<PhysicsShape> terminusAnchor, NativeReference<float2> terminusAnchorLocalPos, NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode,
     PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter, float collisionBounciness, bool stepVelocity)
     {
@@ -140,7 +140,6 @@ public static class RopeJobUtils
             if (shape.body.type == PhysicsBody.BodyType.Dynamic)
             {
                 terminusAnchorMode.Value = FastRope.TerminusAnchorMode.dynamicAnchor;
-                //anchorGeometry.Value = new() { center = localPos, radius = 1f };//temporary value until rope can compute the geometry on the main thread
             }
             else
             {

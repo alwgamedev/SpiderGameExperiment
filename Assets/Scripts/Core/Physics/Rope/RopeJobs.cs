@@ -88,7 +88,6 @@ public unsafe struct ApplyRopeConstraints : IJobParallelFor
     [NativeDisableParallelForRestriction] public NativeReference<PhysicsShape> terminusAnchor;
     [NativeDisableParallelForRestriction] public NativeReference<float2> terminusAnchorLocalPos;
     [NativeDisableParallelForRestriction] public NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode;
-    [NativeDisableParallelForRestriction] public NativeReference<CircleGeometry> anchorGeometry;
     [ReadOnly] public PhysicsWorld world;
     public readonly PhysicsQuery.QueryFilter collisionFilter;
     public readonly float nodeRadius;
@@ -98,7 +97,7 @@ public unsafe struct ApplyRopeConstraints : IJobParallelFor
 
     public ApplyRopeConstraints(NativeArray<float2> constraintDelta, NativeArray<float2> position, NativeArray<float2> lastPosition,
         NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture, NativeReference<PhysicsShape> terminusAnchor, NativeReference<float2> terminusAnchorLocalPos, 
-        NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode, NativeReference<CircleGeometry> anchorGeometry, PhysicsWorld world, 
+        NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode, PhysicsWorld world, 
         PhysicsQuery.QueryFilter collisionFilter, float nodeRadius, float collisionBounciness, float anchorCollisionBounciness, int offset)
     {
         this.constraintDelta = constraintDelta;
@@ -108,7 +107,6 @@ public unsafe struct ApplyRopeConstraints : IJobParallelFor
         this.terminusAnchor = terminusAnchor;
         this.terminusAnchorLocalPos = terminusAnchorLocalPos;
         this.terminusAnchorMode = terminusAnchorMode;
-        this.anchorGeometry = anchorGeometry;
         this.world = world;
         this.collisionFilter = collisionFilter;
         this.nodeRadius = nodeRadius;
@@ -123,18 +121,12 @@ public unsafe struct ApplyRopeConstraints : IJobParallelFor
 
         if (Hint.Unlikely(i == position.Length - 1))
         {
-            switch (terminusAnchorMode.Value)
+            if (Hint.Likely(terminusAnchorMode.Value == FastRope.TerminusAnchorMode.notAnchored))
             {
-                case FastRope.TerminusAnchorMode.notAnchored:
-                    RopeJobUtils.MoveTerminusUnanchored(position, nodeRadius, lastPosition, constraintDelta[i], shapeCapture, anchorGeometry, terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode,
+                RopeJobUtils.MoveTerminusUnanchored(position, nodeRadius, lastPosition, constraintDelta[i], shapeCapture, terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode,
                         world, collisionFilter, collisionBounciness, false);
-                    break;
-                case FastRope.TerminusAnchorMode.dynamicAnchor:
-                    RopeJobUtils.MoveTerminusWithDynamicAnchor(position, constraintDelta[i], shapeCapture, anchorGeometry, terminusAnchor, terminusAnchorLocalPos,
-                        world, collisionFilter, anchorCollisionBounciness);
-                    break;
             }
-        }
+            }
         else
         {
             var (pos, lastPos, _) = RopeJobUtils.MoveNodeFast(position[i], nodeRadius, lastPosition[i], constraintDelta[i], shapeCapture, world, collisionFilter, collisionBounciness);
@@ -153,7 +145,6 @@ public unsafe struct IntegrateRope : IJobParallelFor
     [NativeDisableParallelForRestriction] public NativeReference<float2> terminusAnchorLocalPos;
     [ReadOnly] public NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture;
     [NativeDisableParallelForRestriction] public NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode;
-    [NativeDisableParallelForRestriction] public NativeReference<CircleGeometry> anchorGeometry;
     [ReadOnly] public PhysicsWorld world;
     public readonly PhysicsQuery.QueryFilter collisionFilter;
     public readonly float2 gravity;
@@ -168,7 +159,7 @@ public unsafe struct IntegrateRope : IJobParallelFor
     public IntegrateRope(NativeArray<float2> position, NativeArray<float2> lastPosition,
         NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture,
         NativeReference<PhysicsShape> terminusAnchor, NativeReference<float2> terminusAnchorLocalPos,
-        NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode, NativeReference<CircleGeometry> anchorGeometry,
+        NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode,
         PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter, float2 gravity, float drag, float nodeRadius, 
         float collisionBounciness, float anchorCollisionBounciness,
         float dt2, float timeScale, int offset)
@@ -179,7 +170,6 @@ public unsafe struct IntegrateRope : IJobParallelFor
         this.terminusAnchor = terminusAnchor;
         this.terminusAnchorLocalPos = terminusAnchorLocalPos;
         this.terminusAnchorMode = terminusAnchorMode;
-        this.anchorGeometry = anchorGeometry;
         this.world = world;
         this.collisionFilter = collisionFilter;
         this.gravity = gravity;
@@ -202,7 +192,7 @@ public unsafe struct IntegrateRope : IJobParallelFor
         {
             if (Hint.Likely(terminusAnchorMode.Value == FastRope.TerminusAnchorMode.notAnchored))//we'll only integrate terminus when not anchored, but just to be sure
             {
-                RopeJobUtils.MoveTerminusUnanchored(position, nodeRadius, lastPosition, dp, shapeCapture, anchorGeometry, terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode,
+                RopeJobUtils.MoveTerminusUnanchored(position, nodeRadius, lastPosition, dp, shapeCapture, terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode,
                         world, collisionFilter, collisionBounciness, true);
             }
         }

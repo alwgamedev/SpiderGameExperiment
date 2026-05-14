@@ -24,6 +24,7 @@ public struct RopeSettings
     public int constraintIterations;
     public int itersPulledByOwner;
     public float dynamicAnchorSpringForce;
+    public float dynamicAnchorSpringForceCap;
     public float dynamicAnchorSpringDamping;
 
     public readonly float NodeRadius => 0.5f * width;
@@ -64,8 +65,8 @@ public unsafe class FastRope
     NativeReference<PhysicsShape> terminusAnchor;
     NativeReference<float2> terminusAnchorLocalPos;
     AlwaysAccessibleNativeReference<TerminusAnchorMode> terminusAnchorMode;
-    NativeReference<CircleGeometry> anchorGeometry;//enclosing circle for dynamic anchor
-    bool anchorGeometryCaptured;
+    //NativeReference<CircleGeometry> anchorGeometry;//enclosing circle for dynamic anchor
+    //bool anchorGeometryCaptured;
     AlwaysAccessibleNativeReference<float2> carryForce;
     AlwaysAccessibleNativeReference<float> maxTension;
     NativeReference<float2> bbMin;
@@ -141,8 +142,8 @@ public unsafe class FastRope
         carryForce.Value = 0;
         GrappleExtent = 0;
 
-        anchorGeometry.Value = default;
-        anchorGeometryCaptured = false;
+        //anchorGeometry.Value = default;
+        //anchorGeometryCaptured = false;
         //anchorGeometry = default;
 
         Enabled = true;
@@ -174,10 +175,10 @@ public unsafe class FastRope
         {
             terminusAnchorLocalPos.Dispose();
         }
-        if (anchorGeometry.IsCreated)
-        {
-            anchorGeometry.Dispose();
-        }
+        //if (anchorGeometry.IsCreated)
+        //{
+        //    anchorGeometry.Dispose();
+        //}
 
         if (position.IsCreated)
         {
@@ -230,7 +231,7 @@ public unsafe class FastRope
         positionBuffer.CopyFrom(this.position);
         lastPositionBuffer = new(numNodes, Allocator.Persistent);
         lastPositionBuffer.CopyFrom(this.position);
-        anchorGeometry = new(Allocator.Persistent);
+        //anchorGeometry = new(Allocator.Persistent);
 
         maxTension = new(Allocator.Persistent);
         carryForce = new(Allocator.Persistent);
@@ -348,40 +349,40 @@ public unsafe class FastRope
                     position[TerminusIndex] = p;
                     lastPosition[TerminusIndex] = p;
                     terminusMass = Mathf.Infinity;
-                    if (anchorGeometryCaptured)
-                    {
-                        anchorGeometry.Value = default;
-                        anchorGeometryCaptured = false;
-                    }
+                    //if (anchorGeometryCaptured)
+                    //{
+                    //    anchorGeometry.Value = default;
+                    //    anchorGeometryCaptured = false;
+                    //}
                     break;
                 }
             case TerminusAnchorMode.dynamicAnchor:
                 {
                     var anchorBody = terminusAnchor.Value.body;
                     float2 p = anchorBody.transform.TransformPoint(terminusAnchorLocalPos.Value);
-                    var f = settings.dynamicAnchorSpringForce * (position[TerminusIndex] - p);
-                    var u = (position[TerminusIndex] - p).NormalizedOrZero();
-                    var v = Vector2.Dot(anchorBody.GetWorldPointVelocity(p), u);
-                    anchorBody.ApplyForce(f - settings.dynamicAnchorSpringDamping * Mathf.Abs(v) * v * u, p);
-                    position[TerminusIndex] = p;
-                    lastPosition[TerminusIndex] = p - dt * (float2)anchorBody.linearVelocity;
-                    terminusMass = anchorBody.mass;
-                    if (!anchorGeometryCaptured)
-                    {
-                        CaptureAnchorGeometry(terminusAnchor.Value);
-                        anchorGeometryCaptured = true;
-                    }
+                    var (f, u) = DynamicAnchorForce(p);
+                    var ptVelocity = anchorBody.GetWorldPointVelocity(p);
+                    var v = Vector2.Dot(ptVelocity, u);
+                    anchorBody.ApplyForce((f - settings.dynamicAnchorSpringDamping * Mathf.Abs(v) * v) * u, p);
+                    position[TerminusIndex] = p + dt * (float2)(ptVelocity - dt * anchorBody.world.gravity);//predict next terminus position -- this actually makes a big difference
+                    lastPosition[TerminusIndex] = p;//in case we lose anchor/gets destroyed, we keep accurate velocity
+                    terminusMass = Mathf.Infinity;//anchorBody.mass;
+                    //if (!anchorGeometryCaptured)
+                    //{
+                    //    CaptureAnchorGeometry(terminusAnchor.Value);
+                    //    anchorGeometryCaptured = true;
+                    //}
 
                     //ownerWorld.DrawGeometry(anchorGeometry.Value, terminusAnchor.Value.transform, Color.red);
                     break;
                 }
             default://not anchored
                 terminusMass = settings.terminusMass;
-                if (anchorGeometryCaptured)
-                {
-                    anchorGeometry.Value = default;
-                    anchorGeometryCaptured = false;
-                }
+                //if (anchorGeometryCaptured)
+                //{
+                //    anchorGeometry.Value = default;
+                //    anchorGeometryCaptured = false;
+                //}
                 break;
         }
 
@@ -434,25 +435,43 @@ public unsafe class FastRope
         }
     }
 
-    private void CaptureAnchorGeometry(PhysicsShape anchor)
+    private (float magnitude, Vector2 direction) DynamicAnchorForce(Vector2 terminusPosition)
     {
-        switch(anchor.shapeType)
+        var d = (Vector2)position[^2] - terminusPosition;
+        var l = d.SqrMagnitude();
+        var nodeSpacing = this.nodeSpacing.Value;
+
+        if (l > nodeSpacing * nodeSpacing)
         {
-            case PhysicsShape.ShapeType.Circle:
-                anchorGeometry.Value = anchor.circleGeometry;
-                break;
-            case PhysicsShape.ShapeType.Capsule:
-                var capsule = anchor.capsuleGeometry;
-                var center = 0.5f * (capsule.center1 + capsule.center2);
-                var l = Vector2.Distance(center, capsule.center1);
-                anchorGeometry.Value = new() { center = center, radius = l + capsule.radius };
-                break;
-            case PhysicsShape.ShapeType.Polygon:
-                var span = anchor.polygonGeometry.AsReadOnlySpan();
-                anchorGeometry.Value = PolygonPhysicsShape.SmallestEnclosingCircle(span);
-                break;
+            l = Mathf.Sqrt(l);
+            var max = nodeSpacing * settings.dynamicAnchorSpringForceCap;
+            return (settings.dynamicAnchorSpringForce * Mathf.Min(l - nodeSpacing, max), d / l);
+        }
+        else
+        {
+            return default;
         }
     }
+
+    //private void CaptureAnchorGeometry(PhysicsShape anchor)
+    //{
+    //    switch (anchor.shapeType)
+    //    {
+    //        case PhysicsShape.ShapeType.Circle:
+    //            anchorGeometry.Value = anchor.circleGeometry;
+    //            break;
+    //        case PhysicsShape.ShapeType.Capsule:
+    //            var capsule = anchor.capsuleGeometry;
+    //            var center = 0.5f * (capsule.center1 + capsule.center2);
+    //            var l = Vector2.Distance(center, capsule.center1);
+    //            anchorGeometry.Value = new() { center = center, radius = l + capsule.radius };
+    //            break;
+    //        case PhysicsShape.ShapeType.Polygon:
+    //            var span = anchor.polygonGeometry.AsReadOnlySpan();
+    //            anchorGeometry.Value = PolygonPhysicsShape.SmallestEnclosingCircle(span);
+    //            break;
+    //    }
+    //}
 
     private void CaptureShapes(float2 bbMin, float2 bbMax)
     {
@@ -535,7 +554,7 @@ public unsafe class FastRope
     private IntegrateRope IntegrateRope(float dt2, float timeScale, PhysicsQuery.QueryFilter collisionFilter)
     {
         return new(position, lastPosition, shapeCapture,
-            terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode.native, anchorGeometry,
+            terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode.native,
             ownerWorld, collisionFilter, ownerWorld.gravity, settings.drag, settings.NodeRadius, settings.collisionBounciness, settings.anchorCollisionBounciness,
             dt2, timeScale, sourceIndex.Value + 1);
     }
@@ -549,7 +568,7 @@ public unsafe class FastRope
     private ApplyRopeConstraints ApplyConstraints(PhysicsQuery.QueryFilter collisionFilter)
     {
         return new(lastPositionBuffer, position, lastPosition, shapeCapture,
-            terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode.native, anchorGeometry, ownerWorld, collisionFilter,
+            terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode.native, ownerWorld, collisionFilter,
             settings.NodeRadius, settings.collisionBounciness, settings.anchorCollisionBounciness, sourceIndex.Value);
     }
 
