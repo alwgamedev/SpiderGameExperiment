@@ -25,7 +25,6 @@ public struct RopeSettings
     public int itersPulledByOwner;
     public float dynamicAnchorSpringForce;
     public float dynamicAnchorSpringForceCap;
-    public float dynamicAnchorSpringDamping;
 
     public readonly float NodeRadius => 0.5f * width;
     public readonly PhysicsQuery.QueryFilter CollisionFilter => new(PhysicsMask.All, collisionMask, PhysicsWorld.IgnoreFilter.IgnoreTriggerShapes);
@@ -83,16 +82,15 @@ public unsafe class FastRope
     NativeArray<float2> lastPosition;
     NativeArray<float2> positionBuffer;//for reparametrizing & rendering
     NativeArray<float2> lastPositionBuffer;//also used to store constraint deltas
+    NativeArray<float4> constraintDeltaF4;
     //NativeArray<RopeCollisionDebugData> collisionDebugData;
 
 
     //PROPERTIES
-
     public bool Enabled { get; private set; }
     public int NumNodes { get; private set; }
     public int TerminusIndex { get; private set; }
     public float Length { get; private set; }//recompute whenever length gets set via SetLength
-
     public float MaxTension => maxTension.Value;
     public float2 CarryForce => carryForce.Value;
     public bool TerminusAnchored => terminusAnchorMode.Value != TerminusAnchorMode.notAnchored;
@@ -196,6 +194,10 @@ public unsafe class FastRope
         {
             lastPositionBuffer.Dispose();
         }
+        if (constraintDeltaF4.IsCreated)
+        {
+            constraintDeltaF4.Dispose();
+        }
 
         if (shapeCapture.IsCreated)
         {
@@ -231,6 +233,7 @@ public unsafe class FastRope
         positionBuffer.CopyFrom(this.position);
         lastPositionBuffer = new(numNodes, Allocator.Persistent);
         lastPositionBuffer.CopyFrom(this.position);
+        constraintDeltaF4 = new(numNodes, Allocator.Persistent);
         //anchorGeometry = new(Allocator.Persistent);
 
         maxTension = new(Allocator.Persistent);
@@ -349,40 +352,22 @@ public unsafe class FastRope
                     position[TerminusIndex] = p;
                     lastPosition[TerminusIndex] = p;
                     terminusMass = Mathf.Infinity;
-                    //if (anchorGeometryCaptured)
-                    //{
-                    //    anchorGeometry.Value = default;
-                    //    anchorGeometryCaptured = false;
-                    //}
                     break;
                 }
             case TerminusAnchorMode.dynamicAnchor:
                 {
                     var anchorBody = terminusAnchor.Value.body;
                     float2 p = anchorBody.transform.TransformPoint(terminusAnchorLocalPos.Value);
-                    var (f, u) = DynamicAnchorForce(p);
+                    var f = DynamicAnchorForce(p);
+                    anchorBody.ApplyLinearImpulse(f, p);
                     var ptVelocity = anchorBody.GetWorldPointVelocity(p);
-                    var v = Vector2.Dot(ptVelocity, u);
-                    anchorBody.ApplyForce((f - settings.dynamicAnchorSpringDamping * Mathf.Abs(v) * v) * u, p);
                     position[TerminusIndex] = p + dt * (float2)(ptVelocity - dt * anchorBody.world.gravity);//predict next terminus position -- this actually makes a big difference
                     lastPosition[TerminusIndex] = p;//in case we lose anchor/gets destroyed, we keep accurate velocity
                     terminusMass = Mathf.Infinity;//anchorBody.mass;
-                    //if (!anchorGeometryCaptured)
-                    //{
-                    //    CaptureAnchorGeometry(terminusAnchor.Value);
-                    //    anchorGeometryCaptured = true;
-                    //}
-
-                    //ownerWorld.DrawGeometry(anchorGeometry.Value, terminusAnchor.Value.transform, Color.red);
                     break;
                 }
             default://not anchored
                 terminusMass = settings.terminusMass;
-                //if (anchorGeometryCaptured)
-                //{
-                //    anchorGeometry.Value = default;
-                //    anchorGeometryCaptured = false;
-                //}
                 break;
         }
 
@@ -395,18 +380,14 @@ public unsafe class FastRope
         bbMax.Value += new float2(4, 4);
         CaptureShapes(bbMin.Value, bbMax.Value);
 
-        var integrateJob = IntegrateRope(dt * dt, 1, collisionFilter);
+        LockWrappers();
 
-        var clearConstraintDelta = new ClearArrayJob<float2>(lastPositionBuffer);
-        var calculateConstraintsEven = CalculateConstraints(ownerMass, terminusMass, 0);
-        var calculateConstraintOdd = CalculateConstraints(ownerMass, terminusMass, 1);
-        var applyConstraints = ApplyConstraints(collisionFilter);
+        var integrateJob = IntegrateRope(dt * dt, 1, collisionFilter);
+        var clearConstraintDelta = new ClearArrayJob<float4>(constraintDeltaF4);
+        var calculateConstraints = CalculateConstraintsF4(ownerMass, terminusMass);
+        var applyConstraints = ApplyConstraintF4(settings.CollisionFilter);
 
         var numActive = TerminusIndex - sourceIndex.Value;
-        var numOdd = numActive / 2;
-        var numEven = numActive - numOdd;
-
-        LockWrappers();
 
         jobHandle = integrateJob.Schedule(TerminusAnchored ? numActive - 1 : numActive, 16, jobHandle);
 
@@ -414,8 +395,7 @@ public unsafe class FastRope
         for (int i = 0; i < settings.constraintIterations; i++)
         {
             jobHandle = clearConstraintDelta.Schedule(jobHandle);
-            jobHandle = calculateConstraintsEven.Schedule(numEven, 16, jobHandle);
-            jobHandle = calculateConstraintOdd.Schedule(numOdd, 16, jobHandle);
+            jobHandle = calculateConstraints.Schedule(numActive, 16, jobHandle);
             jobHandle = applyConstraints.Schedule(numActive + 1, 16, jobHandle);
         }
 
@@ -423,19 +403,54 @@ public unsafe class FastRope
         jobHandle = CorrectSourcePosition(sourcePosition).Schedule(jobHandle);
 
         //constraints pulled by owner
-        calculateConstraintsEven = CalculateConstraints(Mathf.Infinity, terminusMass, 0);
-        calculateConstraintOdd = CalculateConstraints(Mathf.Infinity, terminusMass, 1);
+        calculateConstraints = CalculateConstraintsF4(Mathf.Infinity, terminusMass);
 
         for (int i = 0; i < settings.itersPulledByOwner; i++)
         {
             jobHandle = clearConstraintDelta.Schedule(jobHandle);
-            jobHandle = calculateConstraintsEven.Schedule(numEven, 16, jobHandle);
-            jobHandle = calculateConstraintOdd.Schedule(numOdd, 16, jobHandle);
+            jobHandle = calculateConstraints.Schedule(numActive, 16, jobHandle);
             jobHandle = applyConstraints.Schedule(numActive + 1, 16, jobHandle);
         }
+
+        //var clearConstraintDelta = new ClearArrayJob<float2>(lastPositionBuffer);
+        //var calculateConstraintsEven = CalculateConstraints(ownerMass, terminusMass, 0);
+        //var calculateConstraintOdd = CalculateConstraints(ownerMass, terminusMass, 1);
+        //var applyConstraints = ApplyConstraints(collisionFilter);
+
+        //var numActive = TerminusIndex - sourceIndex.Value;
+        //var numOdd = numActive / 2;
+        //var numEven = numActive - numOdd;
+
+        //LockWrappers();
+
+        //jobHandle = integrateJob.Schedule(TerminusAnchored ? numActive - 1 : numActive, 16, jobHandle);
+
+        ////constraints pulling owner
+        //for (int i = 0; i < settings.constraintIterations; i++)
+        //{
+        //    jobHandle = clearConstraintDelta.Schedule(jobHandle);
+        //    jobHandle = calculateConstraintsEven.Schedule(numEven, 16, jobHandle);
+        //    jobHandle = calculateConstraintOdd.Schedule(numOdd, 16, jobHandle);
+        //    jobHandle = applyConstraints.Schedule(numActive + 1, 16, jobHandle);
+        //}
+
+        ////calculate carry force and put source node back to starting position
+        //jobHandle = CorrectSourcePosition(sourcePosition).Schedule(jobHandle);
+
+        ////constraints pulled by owner
+        //calculateConstraintsEven = CalculateConstraints(Mathf.Infinity, terminusMass, 0);
+        //calculateConstraintOdd = CalculateConstraints(Mathf.Infinity, terminusMass, 1);
+
+        //for (int i = 0; i < settings.itersPulledByOwner; i++)
+        //{
+        //    jobHandle = clearConstraintDelta.Schedule(jobHandle);
+        //    jobHandle = calculateConstraintsEven.Schedule(numEven, 16, jobHandle);
+        //    jobHandle = calculateConstraintOdd.Schedule(numOdd, 16, jobHandle);
+        //    jobHandle = applyConstraints.Schedule(numActive + 1, 16, jobHandle);
+        //}
     }
 
-    private (float magnitude, Vector2 direction) DynamicAnchorForce(Vector2 terminusPosition)
+    private float2 DynamicAnchorForce(Vector2 terminusPosition)
     {
         var d = (Vector2)position[^2] - terminusPosition;
         var l = d.SqrMagnitude();
@@ -445,7 +460,7 @@ public unsafe class FastRope
         {
             l = Mathf.Sqrt(l);
             var max = nodeSpacing * settings.dynamicAnchorSpringForceCap;
-            return (settings.dynamicAnchorSpringForce * Mathf.Min(l - nodeSpacing, max), d / l);
+            return settings.dynamicAnchorSpringForce * Mathf.Min(l - nodeSpacing, max) / l * d;
         }
         else
         {
@@ -559,10 +574,22 @@ public unsafe class FastRope
             dt2, timeScale, sourceIndex.Value + 1);
     }
 
+    private CalculateRopeConstraintsF4 CalculateConstraintsF4(float sourceMass, float terminusMass)
+    {
+        return new(position, constraintDeltaF4, nodeSpacing.Value, settings.nodeMass, sourceMass, terminusMass, settings.constraintStiffness, sourceIndex.Value);
+    }
+
     /// <summary> Batch = 0 or 1 (because adjacent constraints may write to the same index in constraintDelta). </summary>
     private CalculateRopeConstraints CalculateConstraints(float sourceMass, float terminusMass, int batch)
     {
         return new(position, lastPositionBuffer, nodeSpacing.Value, settings.nodeMass, sourceMass, terminusMass, settings.constraintStiffness, sourceIndex.Value, batch);
+    }
+
+    private ApplyRopeConstraintsF4 ApplyConstraintF4(PhysicsQuery.QueryFilter collisionFilter)
+    {
+        return new(constraintDeltaF4, position, lastPosition, shapeCapture,
+            terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode.native, ownerWorld, collisionFilter,
+            settings.NodeRadius, settings.collisionBounciness, settings.anchorCollisionBounciness, sourceIndex.Value);
     }
 
     private ApplyRopeConstraints ApplyConstraints(PhysicsQuery.QueryFilter collisionFilter)

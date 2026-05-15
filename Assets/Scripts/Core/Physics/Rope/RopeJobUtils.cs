@@ -2,7 +2,6 @@
 using Unity.Mathematics;
 using Unity.U2D.Physics;
 using Unity.Burst.CompilerServices;
-using Unity.Collections.LowLevel.Unsafe;
 
 public static class RopeJobUtils
 {
@@ -162,65 +161,30 @@ public static class RopeJobUtils
 
     //CONSTRAINTS
 
-    /// <summary> (where i = sourceIndex + 1) </summary>
-    public static void CalculateFirstConstraint(int i, NativeArray<float2> position, NativeArray<float2> constraintDelta,
-        float nodeSpacing, float nodeSpacing2, float nodeMass, float sourceMass, float constraintStiffness)
+    public static float4 CalculateConstraint(float2 p0, float mass0, float2 p1, float mass1, float nodeSpacing, float nodeSpacing2, float constraintStiffness)
     {
-        var d = position[i] - position[i - 1];
+        var d = p1 - p0;
         var l = math.lengthsq(d);
 
-        if (l > nodeSpacing2)
-        {
-            var c = constraintStiffness * (1 - nodeSpacing * math.rsqrt(l)) * d;
+        var c = math.select(0, constraintStiffness * (1 - nodeSpacing * math.rsqrt(l)) * d, l > nodeSpacing2);
+        var denom = 1 / (mass0 + mass1);//zero if one or both masses are infinite (as long as using FloatMode.Strict (the default))
 
-            if (math.isinf(sourceMass))
-            {
-                constraintDelta[i] -= c;
-            }
-            else
-            {
-                var c1 = nodeMass / (nodeMass + sourceMass) * c;
-                constraintDelta[i - 1] += c1;
-                constraintDelta[i] += c1 - c;
-            }
-        }
+        var c0 = math.select(mass1 * denom * c, c, math.isinf(mass1));
+        return new float4(c0.x, c0.y, c0.x - c.x, c0.y - c.y);//(c0, c0 - c)
     }
 
     public static void CalculateConstraint(int i, NativeArray<float2> position, NativeArray<float2> constraintDelta,
-        float nodeSpacing, float nodeSpacing2, float constraintStiffness)
+        float nodeSpacing, float nodeSpacing2, float prevNodeMass, float nodeMass, float constraintStiffness)
     {
         var d = position[i] - position[i - 1];
         var l = math.lengthsq(d);
 
-        if (l > nodeSpacing2)
-        {
-            var c = 0.5f * constraintStiffness * (1 - nodeSpacing * math.rsqrt(l)) * d;
-            constraintDelta[i - 1] += c;
-            constraintDelta[i] -= c;
-        }
-    }
+        var c = math.select(0, constraintStiffness * (1 - nodeSpacing * math.rsqrt(l)) * d, l > nodeSpacing2);
+        var denom = 1 / (prevNodeMass + nodeMass);//zero if one or both masses are infinite (as long as using FloatMode.Strict (the default))
 
-    /// <summary> (where i = terminusIndex) </summary>
-    public static void CalculateLastConstraint(int i, NativeArray<float2> position, NativeArray<float2> constraintDelta,
-        float nodeSpacing, float nodeSpacing2, float nodeMass, float terminusMass, float constraintStiffness)
-    {
-        var d = position[i] - position[i - 1];
-        var l = math.lengthsq(d);
-
-        if (l > nodeSpacing2)
-        {
-            var c = constraintStiffness * (1 - nodeSpacing * math.rsqrt(l)) * d;
-
-            if (math.isinf(terminusMass))
-            {
-                constraintDelta[i - 1] += c;
-            }
-            else
-            {
-                var c1 = terminusMass / (nodeMass + terminusMass) * c;
-                constraintDelta[i - 1] += c1;
-                constraintDelta[i] += c1 - c;
-            }
-        }
+        var c1 = math.select(nodeMass * denom * c, c, math.isinf(nodeMass));
+        var c2 = c1 - c;
+        constraintDelta[i - 1] += c1;
+        constraintDelta[i] += c2;
     }
 }

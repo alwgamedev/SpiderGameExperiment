@@ -617,7 +617,7 @@ MonoBehaviour:
       m_CustomColor:
         serializedVersion: 2
         rgba: 0
-    m_Density: 0.2
+    m_Density: 0.5
     m_IsTrigger: 0
     m_TriggerEvents: 0
     m_ContactEvents: 0
@@ -12589,32 +12589,33 @@ MonoBehaviour:
     - {x: -0.5, y: 0.5}
     - {x: -0.5, y: -0.5}
     - {x: 0.5, y: -0.5}
-    - {x: 0.5, y: 0.5}
+    - {x: 0.75, y: 0}
+    - {x: 0.25, y: 0.75}
     subdividedPolygon:
     - vertices:
-        m_Vertex0: {x: 0.5, y: 0.5}
-        m_Vertex1: {x: -0.5, y: 0.5}
-        m_Vertex2: {x: -0.5, y: -0.5}
-        m_Vertex3: {x: 0.5, y: -0.5}
-        m_Vertex4: {x: 0, y: 0}
+        m_Vertex0: {x: -0.5, y: -0.5}
+        m_Vertex1: {x: 0.5, y: -0.5}
+        m_Vertex2: {x: 0.75, y: 0}
+        m_Vertex3: {x: 0.25, y: 0.75}
+        m_Vertex4: {x: -0.5, y: 0.5}
         m_Vertex5: {x: 0, y: 0}
         m_Vertex6: {x: 0, y: 0}
         m_Vertex7: {x: 0, y: 0}
       normals:
-        m_Vertex0: {x: 0, y: 1}
-        m_Vertex1: {x: -1, y: -0}
-        m_Vertex2: {x: 0, y: -1}
-        m_Vertex3: {x: 1, y: -0}
-        m_Vertex4: {x: 0, y: 0}
+        m_Vertex0: {x: 0, y: -1}
+        m_Vertex1: {x: 0.8944272, y: -0.4472136}
+        m_Vertex2: {x: 0.8320503, y: 0.5547002}
+        m_Vertex3: {x: -0.31622776, y: 0.94868326}
+        m_Vertex4: {x: -1, y: -0}
         m_Vertex5: {x: 0, y: 0}
         m_Vertex6: {x: 0, y: 0}
         m_Vertex7: {x: 0, y: 0}
-      m_Centroid: {x: 0, y: 0}
+      m_Centroid: {x: 0.055555582, y: 0.04914534}
       m_Radius: 0
-      m_Count: 4
+      m_Count: 5
     spriteShapeArcLengthSamplesPerSegment: 0
     spriteShapeSamplesPerUnitArcLength: 0
-  drawGizmo: 0
+  drawGizmo: 1
 --- !u!114 &1415688797
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12666,12 +12667,12 @@ MonoBehaviour:
       m_BouncinessMixing: 0
       m_FrictionPriority: 0
       m_BouncinessPriority: 0
-      m_RollingResistance: 0
+      m_RollingResistance: 1
       m_TangentSpeed: 0
       m_CustomColor:
         serializedVersion: 2
         rgba: 0
-    m_Density: 0.1
+    m_Density: 0.5
     m_IsTrigger: 0
     m_TriggerEvents: 0
     m_ContactEvents: 0
@@ -12680,7 +12681,7 @@ MonoBehaviour:
     m_PreSolveCallbacks: 0
     m_StartStaticContacts: 0
     m_StartMassUpdate: 1
-    m_WorldDrawing: 0
+    m_WorldDrawing: 1
     moverData:
       m_PushLimit: 0
       m_ClipVelocity: 0
@@ -16974,26 +16975,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 170334193149612089, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: mover.grapple.grappleSettings.itersPulledByOwner
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 170334193149612089, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: mover.grapple.grappleSettings.constraintIterations
-      value: 40
-      objectReference: {fileID: 0}
-    - target: {fileID: 170334193149612089, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: mover.grapple.grappleSettings.dynamicAnchorSpringForce
-      value: 750
-      objectReference: {fileID: 0}
-    - target: {fileID: 170334193149612089, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: mover.grapple.grappleSettings.dynamicAnchorSpringDamping
-      value: 0.05
-      objectReference: {fileID: 0}
-    - target: {fileID: 170334193149612089, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
-      propertyPath: mover.grapple.grappleSettings.dynamicAnchorSpringForceCap
-      value: 0.5
-      objectReference: {fileID: 0}
     - target: {fileID: 1231387903212816449, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
       propertyPath: m_Name
       value: Spider

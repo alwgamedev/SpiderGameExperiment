@@ -2228,10 +2228,10 @@ MonoBehaviour:
         nodeMass: 0.1
         terminusMass: 50
         constraintStiffness: 0.99
-        constraintIterations: 35
-        itersPulledByOwner: 15
-        dynamicAnchorSpringForce: 25
-        dynamicAnchorSpringDamping: 0.005
+        constraintIterations: 50
+        itersPulledByOwner: 10
+        dynamicAnchorSpringForce: 5
+        dynamicAnchorSpringForceCap: 0.5
       cannonFulcrum:
         lever: {fileID: 3468580104259901786}
         leveragePoint: {fileID: 2623017782420822094}
