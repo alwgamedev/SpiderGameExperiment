@@ -11,7 +11,7 @@ public struct RopeSettings
 {
     public PhysicsMask collisionMask;//64 bit mask -- should include "Ground" and "Ground2" where Ground2 is used for the dynamic anchors (so we can exclude the dynamic anchor when solving terminus movement)
     public float collisionBounciness;
-    public float anchorCollisionBounciness;
+    public float dynamicCollisionForce;
 
     public float width;//full width of the rope (not half of it)
     public float minNodeSpacing;
@@ -570,7 +570,7 @@ public unsafe class FastRope
     {
         return new(position, lastPosition, shapeCapture,
             terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode.native,
-            ownerWorld, collisionFilter, ownerWorld.gravity, settings.drag, settings.NodeRadius, settings.collisionBounciness, settings.anchorCollisionBounciness,
+            ownerWorld, collisionFilter, ownerWorld.gravity, settings.drag, settings.NodeRadius, settings.nodeMass, settings.collisionBounciness, settings.dynamicCollisionForce,
             dt2, timeScale, sourceIndex.Value + 1);
     }
 
@@ -589,14 +589,14 @@ public unsafe class FastRope
     {
         return new(constraintDeltaF4, position, lastPosition, shapeCapture,
             terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode.native, ownerWorld, collisionFilter,
-            settings.NodeRadius, settings.collisionBounciness, settings.anchorCollisionBounciness, sourceIndex.Value);
+            settings.NodeRadius, settings.nodeMass, settings.collisionBounciness, settings.dynamicCollisionForce, sourceIndex.Value);
     }
 
     private ApplyRopeConstraints ApplyConstraints(PhysicsQuery.QueryFilter collisionFilter)
     {
         return new(lastPositionBuffer, position, lastPosition, shapeCapture,
             terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode.native, ownerWorld, collisionFilter,
-            settings.NodeRadius, settings.collisionBounciness, settings.anchorCollisionBounciness, sourceIndex.Value);
+            settings.NodeRadius, settings.nodeMass, settings.collisionBounciness, settings.dynamicCollisionForce, sourceIndex.Value);
     }
 
     private CorrectRopeSourcePosition CorrectSourcePosition(float2 sourcePosition)

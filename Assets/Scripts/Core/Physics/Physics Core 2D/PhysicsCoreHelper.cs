@@ -63,9 +63,6 @@ public static class PhysicsCoreHelper
         q = q * MathTools.InverseOfUnitQuaternion(transform.rotation) * q;
         var p = reflection.position + ((Vector2)transform.position - reflection.position).ReflectAcrossHyperplane(reflection.rotation.direction);
         transform.SetPositionAndRotation(p, q);
-
-        //transform.rotation = q * MathTools.InverseOfUnitQuaternion(transform.rotation) * q;
-        //transform.position = reflection.position + ((Vector2)transform.position - reflection.position).ReflectAcrossHyperplane(reflection.rotation.direction);
     }
 
 

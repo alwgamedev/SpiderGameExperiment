@@ -28,15 +28,25 @@ public struct PolygonPhysicsShape
         {
             for (int i = 0; i < geometry.Length; i++)
             {
-                if (geometry[i].isValid)
+                var geom = geometry[i];
+                if (geom.isValid)
                 {
-                    var vertices = geometry[i].AsReadOnlySpan();
-                    var ct = geometry[i].count;
+                    var vertices = geom.AsReadOnlySpan();
+                    var ct = geom.count;
                     for (int j = 0; j < ct - 1; j++)
                     {
-                        Handles.DrawLine(vertices[j], vertices[j + 1]);
+                        var v0 = vertices[j];
+                        var v1 = vertices[j + 1];
+                        Handles.DrawLine(v0, v1);
+                        //var midpoint = 0.5f * (v0 + v1);
+                        //Handles.DrawLine(midpoint, midpoint + 0.25f * geom.normals[j]);
                     }
-                    Handles.DrawLine(vertices[ct - 1], vertices[0]);
+
+                    var w0 = vertices[ct - 1];
+                    var w1 = vertices[0];
+                    Handles.DrawLine(w0, w1);
+                    //var nidpoint = 0.5f * (w0 + w1);
+                    //Handles.DrawLine(nidpoint, nidpoint + 0.25f * geom.normals[ct - 1]);
 
                     //testing circle algorithm
                     //var circle = SmallestEnclosingCircle(vertices);

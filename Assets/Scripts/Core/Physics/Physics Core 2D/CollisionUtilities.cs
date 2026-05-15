@@ -80,11 +80,13 @@ public static class CollisionUtilities
     }
 
     [BurstCompile]
-    public static (float separation, float2 normal) SeparateCircleFromPolygon (float2 center, float radius, ReadOnlySpan<float2> vertex, ReadOnlySpan<float2> normal)
+    public static (float separation, float2 normal) SeparateCircleFromPolygon(float2 center, float radius, ReadOnlySpan<float2> vertex, ReadOnlySpan<float2> normal)
     {
-
         float2 minNormal = normal[0];
         float minDist = math.dot(vertex[0] - center, minNormal);
+
+        //var edgePoint0 = center + minDist * minNormal;
+        //bool externalEdgeFound = !world.TestOverlapPoint(edgePoint0 + 0.01f * minNormal, filter);
 
         if (minDist < -radius)
         {
@@ -94,6 +96,7 @@ public static class CollisionUtilities
         for (int i = 1; i < vertex.Length; i++)
         {
             var n = normal[i];
+
             if (n.Equals(0))
             {
                 //my shape proxy struct doesn't have a vertex count -- you have to just stop once the normals become zero
@@ -107,6 +110,16 @@ public static class CollisionUtilities
                 return default;
             }
 
+            //var edgePoint = center + dist * n;
+            //var isExternalEdge = !world.TestOverlapPoint(edgePoint + 0.01f * n, filter);
+
+            //if (externalEdgeFound && !isExternalEdge)
+            //{
+            //    continue;
+            //}
+
+            //externalEdgeFound = externalEdgeFound || isExternalEdge;
+
             if (dist < minDist)
             {
                 minDist = dist;
@@ -115,10 +128,5 @@ public static class CollisionUtilities
         }
 
         return (minDist + radius, minNormal);
-    }
-
-    public static void SeparateCapsuleFromCircle()
-    {
-
     }
 }

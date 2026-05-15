@@ -12090,7 +12090,7 @@ MonoBehaviour:
       m_Count: 8
     spriteShapeArcLengthSamplesPerSegment: 25
     spriteShapeSamplesPerUnitArcLength: 12
-  drawGizmo: 0
+  drawGizmo: 1
 --- !u!4 &1060888955 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7095442034761804592, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
@@ -12672,7 +12672,7 @@ MonoBehaviour:
       m_CustomColor:
         serializedVersion: 2
         rgba: 0
-    m_Density: 0.5
+    m_Density: 0.3
     m_IsTrigger: 0
     m_TriggerEvents: 0
     m_ContactEvents: 0

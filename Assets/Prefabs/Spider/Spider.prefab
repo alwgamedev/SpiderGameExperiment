@@ -2220,7 +2220,7 @@ MonoBehaviour:
         collisionMask:
           bitMask: 320
         collisionBounciness: 0.6
-        anchorCollisionBounciness: 0.1
+        dynamicCollisionForce: 2.5
         width: 0.17
         minNodeSpacing: 0.1
         maxNodeSpacing: 0.105
@@ -2228,8 +2228,8 @@ MonoBehaviour:
         nodeMass: 0.1
         terminusMass: 50
         constraintStiffness: 0.99
-        constraintIterations: 50
-        itersPulledByOwner: 10
+        constraintIterations: 35
+        itersPulledByOwner: 5
         dynamicAnchorSpringForce: 5
         dynamicAnchorSpringForceCap: 0.5
       cannonFulcrum:
