@@ -56,6 +56,7 @@ public struct SpiderBody
             return abdomen.transform.TransformPoint(localPos);
         }
     }
+
     public readonly bool HasContact() => abdomen.GetContacts().Length > 0 || head.GetContacts().Length > 0;
 
     public void OnValidate()

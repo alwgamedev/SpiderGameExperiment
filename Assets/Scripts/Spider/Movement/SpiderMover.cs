@@ -16,7 +16,7 @@ public class SpiderMover
     [SerializeField] LegSynchSettings freefallLegSettings;
     [SerializeField] LegSynchSettings thrustingLegSettings;
     [SerializeField] LegSynchSettings freeHangLegSettings;
-    [SerializeField] Transform headBoneHeightRefPoint;
+    //[SerializeField] Transform headBoneHeightRefPoint;
     [SerializeField] Transform grappleArm;
     [SerializeField] Transform abdomenRoot;
     [SerializeField] Transform abdomenBone;
@@ -116,14 +116,14 @@ public class SpiderMover
     Vector2 OrientedRight => FacingRight ? Right : -Right;
     Vector2 OrientedGroundDirection => FacingRight ? groundDirection : -groundDirection;
     Vector2 HeightReferencePt => SpideyBody.HeightReferencePosition;
-    Vector2 HeadHeightReferencePt
-    {
-        get
-        {
-            SpideyBody.head.SyncTransform();
-            return headBoneHeightRefPoint.position;
-        }
-    }
+    //Vector2 HeadHeightReferencePt => SpideyBody.HeadHeightReferencePosition;
+    //{
+    //    get
+    //    {
+    //        SpideyBody.head.SyncTransform();
+    //        return headBoneHeightRefPoint.position;
+    //    }
+    //}
     float MaxSpeed => grounded ? maxSpeed : maxSpeedAirborne;
     float GrappleScurryResistance => Vector2.Dot(grapple.LastCarryForce, -OrientedGroundDirection);
     float GrappleScurryResistanceFraction => Mathf.Clamp(GrappleScurryResistance / grappleScurryResistanceMax, 0, 1);
@@ -136,6 +136,7 @@ public class SpiderMover
     public GrappleCannon Grapple => grapple;
     public ref SpiderBody SpideyBody => ref spiderBody;
     public PhysicsBody Abdomen => SpideyBody.abdomen;
+    public PhysicsBody Head => SpideyBody.head;
 
     //mainly to hook up audio (later maybe also ui stuff)
     public UnityEvent jumpChargeBegan;
@@ -601,7 +602,7 @@ public class SpiderMover
         Vector2 g;
         if (grounded)
         {
-            var (i, t) = groundMap.ClosestPoint(HeadHeightReferencePt, GroundMap.DEFAULT_PRECISION);
+            var (i, t) = groundMap.ClosestPoint(Head.position, GroundMap.DEFAULT_PRECISION);
             var p = groundMap.PointFromReducedPosition(i, t);
             var tMin = FacingRight ? t + headRotationMinPos : t - headRotationMaxPos;
             var tMax = FacingRight ? t + headRotationMaxPos : t - headRotationMinPos;
@@ -673,7 +674,7 @@ public class SpiderMover
     private void UpdateHeightSpring()
     {
         Vector2 down = -Up;
-        var (i, t) = groundMap.LineCastOrClosest(HeightReferencePt, down, GroundMap.DEFAULT_PRECISION);
+        var (i, t) = groundMap.LineCastOrClosest(Abdomen.position, down, GroundMap.DEFAULT_PRECISION);
         Vector2 p = FacingRight ? groundMap.AveragePoint(i, t + heightSampleMin, t + heightSampleMax)
             : groundMap.AveragePoint(i, t - heightSampleMax, t - heightSampleMin);
 

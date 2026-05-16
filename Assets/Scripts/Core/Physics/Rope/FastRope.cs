@@ -1,5 +1,4 @@
 ﻿using Unity.Collections;
-using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.U2D.Physics;
@@ -30,17 +29,6 @@ public struct RopeSettings
     public readonly PhysicsQuery.QueryFilter CollisionFilter => new(PhysicsMask.All, collisionMask, PhysicsWorld.IgnoreFilter.IgnoreTriggerShapes);
 }
 
-//public struct RopeCollisionDebugData
-//{
-//    public float2 normal;
-//    public Result result;
-
-//    public enum Result
-//    {
-//        neutral, success, failure
-//    }
-//}
-
 public unsafe class FastRope
 {
     public enum TerminusAnchorMode
@@ -50,7 +38,6 @@ public unsafe class FastRope
 
     //ROPE DATA
 
-    //public PhysicsBody owner;
     public RopeSettings settings;
     public PhysicsWorld ownerWorld;
     public float ownerMass;
@@ -64,14 +51,11 @@ public unsafe class FastRope
     NativeReference<PhysicsShape> terminusAnchor;
     NativeReference<float2> terminusAnchorLocalPos;
     AlwaysAccessibleNativeReference<TerminusAnchorMode> terminusAnchorMode;
-    //NativeReference<CircleGeometry> anchorGeometry;//enclosing circle for dynamic anchor
-    //bool anchorGeometryCaptured;
     AlwaysAccessibleNativeReference<float2> carryForce;
     AlwaysAccessibleNativeReference<float> maxTension;
     NativeReference<float2> bbMin;
     NativeReference<float2> bbMax;
 
-    //NativeParallelHashMap<uint, PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture;
     NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture;
 
 
@@ -83,7 +67,6 @@ public unsafe class FastRope
     NativeArray<float2> positionBuffer;//for reparametrizing & rendering
     NativeArray<float2> lastPositionBuffer;//also used to store constraint deltas
     NativeArray<float4> constraintDeltaF4;
-    //NativeArray<RopeCollisionDebugData> collisionDebugData;
 
 
     //PROPERTIES
@@ -140,10 +123,6 @@ public unsafe class FastRope
         carryForce.Value = 0;
         GrappleExtent = 0;
 
-        //anchorGeometry.Value = default;
-        //anchorGeometryCaptured = false;
-        //anchorGeometry = default;
-
         Enabled = true;
     }
 
@@ -173,10 +152,6 @@ public unsafe class FastRope
         {
             terminusAnchorLocalPos.Dispose();
         }
-        //if (anchorGeometry.IsCreated)
-        //{
-        //    anchorGeometry.Dispose();
-        //}
 
         if (position.IsCreated)
         {
@@ -234,7 +209,6 @@ public unsafe class FastRope
         lastPositionBuffer = new(numNodes, Allocator.Persistent);
         lastPositionBuffer.CopyFrom(this.position);
         constraintDeltaF4 = new(numNodes, Allocator.Persistent);
-        //anchorGeometry = new(Allocator.Persistent);
 
         maxTension = new(Allocator.Persistent);
         carryForce = new(Allocator.Persistent);

@@ -470,7 +470,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3597460655033676372
 Transform:
   m_ObjectHideFlags: 0
@@ -693,7 +693,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &751872102488819706
 Transform:
   m_ObjectHideFlags: 0
@@ -2146,7 +2146,7 @@ MonoBehaviour:
       - 1
       stepHeightFraction: 1
       timeScale: 1
-      stepDamping: 2.5
+      stepDamping: 1
       gravityScale: 0
       strideMultiplier: 1
       scaleStepHeightWithSpeed: 1
@@ -2168,14 +2168,14 @@ MonoBehaviour:
       scaleStepHeightWithSpeed: 0
     thrustingLegSettings:
       stepStrength:
-      - 0.65
-      - 0.65
-      - 0.65
-      - 0.65
-      - 0.65
-      - 0.65
-      - 0.65
-      - 0.65
+      - 1.5
+      - 1.5
+      - 1.5
+      - 1.5
+      - 1.5
+      - 1.5
+      - 1.5
+      - 1.5
       stepHeightFraction: 1
       timeScale: 1
       stepDamping: 0.2
@@ -2198,7 +2198,6 @@ MonoBehaviour:
       gravityScale: 1
       strideMultiplier: 1.2
       scaleStepHeightWithSpeed: 0
-    headBoneHeightRefPoint: {fileID: 3597460655033676372}
     grappleArm: {fileID: 8393107135455579191}
     abdomenRoot: {fileID: 7095442034761804592}
     abdomenBone: {fileID: 6490454046939129288}
@@ -2220,7 +2219,7 @@ MonoBehaviour:
         collisionMask:
           bitMask: 320
         collisionBounciness: 0.6
-        dynamicCollisionForce: 2.5
+        dynamicCollisionForce: 0.8
         width: 0.17
         minNodeSpacing: 0.1
         maxNodeSpacing: 0.105
@@ -2298,8 +2297,8 @@ MonoBehaviour:
     grappleSquatReduction: 0.4
     heightSampleMin: -0.4
     heightSampleMax: 0.6
-    headRotationMinPos: -0.05
-    headRotationMaxPos: 0.2
+    headRotationMinPos: -0.1
+    headRotationMaxPos: 0.25
     balanceSpringForce: 300
     airborneBalanceSpringForce: 100
     balanceSpringDamping: 0.25
@@ -15147,7 +15146,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8270157252145170821
 Transform:
   m_ObjectHideFlags: 0

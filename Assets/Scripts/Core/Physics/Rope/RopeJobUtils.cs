@@ -85,7 +85,7 @@ public static class RopeJobUtils
             (separation, collisionNormal1) = CollisionUtilities.SeparateCircleFromShape(pos, radius + overlapBuffer, shapeCapture[shapeId], result.shape.transform);
             //^add a little cushion to the radius, so the cast in step 2 doesn't grab on the overlap we just resolved (0.001f seems to be enough of a buffer for this to work most of the time)
 
-            var sepVector = 0.5f * separation * collisionNormal1;
+            var sepVector = separation * collisionNormal1;
 
             pos += sepVector;
             lastPos += sepVector;//add the correction to lastPos to keep velocity smooth
@@ -93,7 +93,10 @@ public static class RopeJobUtils
             var body = result.shape.body;
             if (body.type == PhysicsBody.BodyType.Dynamic)
             {
-                var f = -dynamicCollisionForce * mass / (mass + body.mass) * sepVector;
+                var bodySep = mass / (mass + body.mass) * sepVector;
+                var f = -dynamicCollisionForce * bodySep;
+                pos -= bodySep;
+                lastPos -= bodySep;
                 body.ApplyLinearImpulse(f, pos);
             }
         }
