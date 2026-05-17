@@ -33,6 +33,7 @@ public struct SpiderBody
     [SerializeField] PhysicsBodyDefinition bodyDef;
     [SerializeField] PBFDynamicObstacleSO fluidObstacle;
 
+    public readonly PhysicsWorld world => abdomen.world;
     public readonly bool FacingRight => facingRight;
     public readonly int Orientation => FacingRight ? 1 : -1;
     public readonly float TotalMass => totalMass;

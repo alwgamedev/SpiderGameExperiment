@@ -217,7 +217,7 @@ public class GrappleCannon
                 shootTimer += Time.deltaTime;//shoot timer starts negative so doesn't start growing until grapple has extended out it's initial length, ideally
                 if (shootTimer > 0 && GrappleExtent.magnitude > grapple.Length)
                 {
-                    var p = (0.5f * shootTimer * Physics2D.gravity + ShootSpeed * lastShootDirection) * shootTimer + minLength * lastShootDirection;
+                    var p = (0.5f * shootTimer * grapple.ownerWorld.gravity + ShootSpeed * lastShootDirection) * shootTimer + minLength * lastShootDirection;
                     grapple.RequestLengthChange(Mathf.Clamp(p.magnitude, grapple.Length, maxLength));
                 }
             }

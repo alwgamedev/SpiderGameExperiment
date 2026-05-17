@@ -15,13 +15,14 @@ public class GrappleShootPreview
     Vector3 lastShootDirection;
     Vector3 lastTerminusPosition;
     bool playerFacingRight;
+    PhysicsWorld world;
 
     Material material;
     float length;
     int lengthProperty;
 
 
-    public void Start(bool playerFacingRight)
+    public void Start(bool playerFacingRight, PhysicsWorld world)
     {
         positions = new Vector3[lineRenderer.positionCount];
         lineRenderer.enabled = false;
@@ -29,6 +30,7 @@ public class GrappleShootPreview
         material = new Material(lineRenderer.sharedMaterial);
         lineRenderer.sharedMaterial = material;
         this.playerFacingRight = playerFacingRight;
+        this.world = world;
     }
 
     public void OnDestroy()
@@ -71,7 +73,7 @@ public class GrappleShootPreview
         }
         else
         {
-            Vector3 g = Physics2D.gravity;
+            Vector3 g = world.gravity;
             Vector3 l = 0.5f * g;
 
             positions[0] = p;

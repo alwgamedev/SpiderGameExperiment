@@ -135,6 +135,11 @@ public static class PhysicsCoreHelper
         float2 normal6;
         float2 normal7;
 
+        public static bool ShapeValid(int id, ReadOnlySpan<ShapeProxyForJobs> shapeCapture)
+        {
+            return id > 0 && id < shapeCapture.Length && shapeCapture[id].Initialized;
+        }
+
         public readonly PhysicsShape.ShapeType ShapeType
         {
             get

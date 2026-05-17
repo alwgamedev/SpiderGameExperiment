@@ -129,4 +129,27 @@ public static class CollisionUtilities
 
         return (minDist + radius, minNormal);
     }
+
+
+    [BurstCompile]
+    public static (int edge, int count, float signedDist) ClosestEdge(float2 point, ReadOnlySpan<float2> vertex, ReadOnlySpan<float2> normal)
+    {
+        var minEdge = 0;
+        var minDist = math.dot(vertex[0] - point, normal[0]);
+        var count = 1;
+
+        for (int i = 1; i < 8; i++)
+        {
+            var n = normal[i];
+            var valid = !n.Equals(0);
+            count = math.select(count, count + 1, valid);
+
+            var dist = math.dot(vertex[i] - point, n);
+            var beatsMin = valid && math.abs(dist) < math.abs(minDist);
+            minEdge = math.select(minEdge, i, beatsMin);
+            minDist = math.select(minDist, dist, beatsMin);
+        }
+
+        return (minEdge, count, minDist);
+    }
 }

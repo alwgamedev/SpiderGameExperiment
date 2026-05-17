@@ -3,6 +3,7 @@ using Unity.Jobs;
 using Unity.Burst;
 using Unity.U2D.Physics;
 using Unity.Mathematics;
+using System;
 
 [BurstCompile]
 public struct GroundMapUpdate : IJob
@@ -24,8 +25,8 @@ public struct GroundMapUpdate : IJob
 
     int CentralIndex => point.Length / 2;
 
-    public GroundMapUpdate(NativeArray<float2> point, NativeArray<float2> normal, NativeArray<float> arcLengthPos, NativeArray<float> raycastDistance, 
-        NativeArray<bool> hitGround, PhysicsWorld world, PhysicsQuery.QueryFilter filter, float2 origin, float2 originDown, float2 originRight, 
+    public GroundMapUpdate(NativeArray<float2> point, NativeArray<float2> normal, NativeArray<float> arcLengthPos, NativeArray<float> raycastDistance,
+        NativeArray<bool> hitGround, PhysicsWorld world, PhysicsQuery.QueryFilter filter, float2 origin, float2 originDown, float2 originRight,
         NativeReference<int> indexOfFirstGroundHitFromCenter, float raycastLength, float intervalWidth, bool searchRightFirst)
     {
         this.point = point;
@@ -63,7 +64,7 @@ public struct GroundMapUpdate : IJob
         if (castOuput.Length > 0)
         {
             var result = castOuput[0];
-            SetMapPoint(CentralIndex, point, normal, arcLengthPos, raycastDistance, hitGround, 
+            SetMapPoint(CentralIndex, point, normal, arcLengthPos, raycastDistance, hitGround,
                 result.point, result.normal, 0, result.fraction * raycastLength, true);
             indexOfFirstGroundHitFromCenter.Value = CentralIndex;
         }
@@ -94,7 +95,7 @@ public struct GroundMapUpdate : IJob
             var iNext = i + sign;
             var lastPt = point[i];
             var lastNormal = normal[i];
-            var lastTangent = math.select(lastNormal.CCWPerp(), lastNormal.CWPerp(), right);
+            var lastTangent = sign * lastNormal.CWPerp();
             var lastArcLength = arcLengthPos[i];
             var lastRaycastDistance = raycastDistance[i];
 
@@ -104,6 +105,7 @@ public struct GroundMapUpdate : IJob
             if (castOuput.Length > 0)
             {
                 var result = castOuput[0];
+
                 SetMapPoint(iNext, point, normal, arcLengthPos, raycastDistance, hitGround,
                     result.point, result.normal, lastArcLength + sign * math.distance(lastPt, result.point),
                     result.fraction * 2 * intervalWidth, true);
@@ -119,10 +121,10 @@ public struct GroundMapUpdate : IJob
                 var o = lastPt + lastRaycastDistance * lastNormal + intervalWidth * lastTangent;
                 castOuput = world.CastRay(o, -raycastLength * lastNormal, filter);
 
-                if (castOuput.Length > 0 && castOuput[0].fraction == 0)
+                if (castOuput.Length > 0 && castOuput[0].fraction == 0)//the cast origin is overlapping an obstacle
                 {
                     var y = intervalWidth;
-                    while (y < lastRaycastDistance)
+                    while (y < lastRaycastDistance)//keep shifting o DOWN until we get an unobstructed cast
                     {
                         castOuput = world.CastRay(o - y * lastNormal, -raycastLength * lastNormal, filter);
                         if (castOuput.Length == 0 || castOuput[0].fraction > 0)
@@ -137,17 +139,38 @@ public struct GroundMapUpdate : IJob
                 if (castOuput.Length > 0)
                 {
                     var result = castOuput[0];
-                    var l = math.distance(lastPt, result.point);
-                    if (intervalWidth < l * MathTools.sin15)//if l > ~3.86 * intervalWidth...
-                    {
-                        var u = ((float2)result.point - lastPt) / l;
-                        castOuput = world.CastRay(lastPt + 0.25f * intervalWidth * u, 0.75f * intervalWidth * u, filter);
 
-                        if (castOuput.Length > 0)
+                    var d = (float2)result.point - lastPt;
+                    var l = math.length(d);//we need to compute this in either case
+                    if (intervalWidth < l * MathTools.sin15)//if next segment of ground makes more than a +/- 75 deg angle against last tangent
+                    {
+                        var u = d / l;
+                        var h = intervalWidth * math.dot(u, lastNormal);
+                        int iter = 0;
+                        int max = (int)(l / intervalWidth);
+
+                        //if sloping downhill cast from "right to left" (i.e. from next point side towards last point side)
+                        var origin = h < 0 ? lastPt + intervalWidth * lastTangent : lastPt;
+                        var t = h < 0 ? -intervalWidth * lastTangent : intervalWidth * lastTangent;
+
+                        while (iter < max)
                         {
-                            result = castOuput[0];
-                            var dist = 0.25f * intervalWidth * (3 * result.fraction + 1);//(cast distance + 0.25f * intervalWidth)
-                            var castDistance = (lastRaycastDistance - math.dot((float2)result.point - lastPt, lastNormal))
+                            iter++;
+                            castOuput = world.CastRay(origin + iter * h * lastNormal, t, filter);
+                            if (castOuput.Length > 0 && castOuput[0].fraction > 0)
+                            {
+                                break;
+                            }
+                        }
+
+                        //castOuput = world.CastRay(lastPt + 0.25f * intervalWidth * u, 0.75f * intervalWidth * u, filter);
+
+                        if (castOuput.Length > 0 && castOuput[0].fraction > 0)
+                        {
+                            result = castOuput[0];//2do: result.fraction = 0 can happen and causes issues
+
+                            var dist = iter * intervalWidth;//0.25f * intervalWidth * (3 * result.fraction + 1);//(cast distance + 0.25f * intervalWidth)
+                            var castDistance = (lastRaycastDistance - iter * h)
                                 * math.dot(lastNormal, result.normal);
                             SetMapPoint(iNext, point, normal, arcLengthPos, raycastDistance, hitGround,
                                 result.point, result.normal, lastArcLength + sign * dist, castDistance, true);
@@ -179,6 +202,7 @@ public struct GroundMapUpdate : IJob
                 }
                 else
                 {
+                    //sneak around sharp corners
                     var l = math.min(lastRaycastDistance + 0.5f * intervalWidth, raycastLength);
                     castOuput = world.CastRay(o - l * lastNormal, -2 * intervalWidth * lastTangent, filter);
 

@@ -57,6 +57,7 @@ public class SpiderMover
     [Header("Balance & Rotation")]
     [SerializeField] float headRotationMinPos;
     [SerializeField] float headRotationMaxPos;
+    [SerializeField] float headMinHeightFraction;
     [SerializeField] float balanceSpringForce;
     [SerializeField] float airborneBalanceSpringForce;
     [SerializeField] float balanceSpringDamping;
@@ -135,6 +136,7 @@ public class SpiderMover
     public Thruster Thruster => thruster;
     public GrappleCannon Grapple => grapple;
     public ref SpiderBody SpideyBody => ref spiderBody;
+    public PhysicsWorld World => SpideyBody.world;
     public PhysicsBody Abdomen => SpideyBody.abdomen;
     public PhysicsBody Head => SpideyBody.head;
 
@@ -209,7 +211,7 @@ public class SpiderMover
         spiderBody.CreatePhysicsBody(new PhysicsRotate(transform.right), abdomenRoot, headRoot, headBone, grappleArm, heightReferencePoint);
         InitializeLegSynch();
         InitializeGroundData();
-        grapple.Initialize(spiderInput, Abdomen.world, TotalMass, FacingRight);
+        grapple.Initialize(spiderInput, World, TotalMass, FacingRight);
     }
 
     public void Enable()
@@ -253,6 +255,7 @@ public class SpiderMover
         UpdateGroundData();
         RotateAbdomen();
         RotateHead();
+        //UpdatePosture();
         UpdateThruster();
         UpdateGrappleScurrying();
 
@@ -495,7 +498,7 @@ public class SpiderMover
             //if not grounded and changing direction will make you become grounded (e.g. when freehanging and change direction near an obstacle),
             //then make sure that you "become grounded" at an appropriate ride height -- helps prevent legs tunneling)
             var d = -EffectiveRideHeight * Up;
-            var cast = Abdomen.world.CastRay(HeightReferencePt, d, SpideyBody.queryFilter);
+            var cast = World.CastRay(HeightReferencePt, d, SpideyBody.queryFilter);
             if (cast.Length > 0)
             {
                 var cor = cast[0].point - HeightReferencePt - d;
@@ -565,6 +568,74 @@ public class SpiderMover
 
         Abdomen.ApplyTorque(TotalMass * f);
     }
+
+    //private void UpdatePosture()
+    //{
+    //    PhysicsRotate abdomenRotationFromBase =
+    //        chargingJump ? JumpAbdomenRotation() :
+    //        grappleScurrying ? ScurryAbdomenRotation() :
+    //        PhysicsRotate.identity;
+
+    //    PhysicsRotate headRotation;
+    //    if (grounded)
+    //    {
+    //        var (i, t) = groundMap.ClosestPoint(Head.position, GroundMap.DEFAULT_PRECISION);
+    //        Vector2 p = groundMap.PointFromReducedPosition(i, t);
+    //        var tMin = FacingRight ? t + headRotationMinPos : t - headRotationMaxPos;
+    //        var tMax = FacingRight ? t + headRotationMaxPos : t - headRotationMinPos;
+    //        Vector2 u   = groundMap.AverageNormal(i, tMin, tMax);
+    //        var r = u.CWPerp();
+    //        headRotation = new(r);
+
+    //        //var abdomenDeltaRotation = SpideyBody.abdomenRotationFromBase.InverseMultiplyRotation(abdomenRotationFromBase);
+    //        //if (!FacingRight)
+    //        //{
+    //        //    abdomenDeltaRotation = abdomenDeltaRotation.Inverse();
+    //        //}
+
+    //        //var headHeight = Vector2.Dot(Head.position - p, u);
+    //        //var minHeight = headMinHeightFraction * EffectiveRideHeight;
+
+    //        //var headJointPosition = Abdomen.transform.TransformPoint(SpideyBody.headJoint.localAnchorA.position);
+    //        //var v = headJointPosition - Abdomen.position;
+    //        //var v1 = abdomenDeltaRotation.RotateVector(v);
+    //        //var q = Abdomen.position;
+    //        //Debug.DrawLine(q, q + v, Color.blue);
+    //        //Debug.DrawLine(q, q + v1, Color.yellow);
+
+    //        //var predictedHeight = headHeight + Vector2.Dot(v1 - v, u);
+    //        //if (predictedHeight < minHeight)
+    //        //{
+    //        //    var a = v.magnitude;
+    //        //    var aInverse = 1 / a;
+    //        //    //Debug.Log($"predicted height deficit: {minHeight - predictedHeight}");
+    //        //    var minV = v + (minHeight - headHeight) * u;
+    //        //    var vR = Vector2.Dot(minV, r);
+    //        //    if (FacingRight ? vR < 0 : vR > 0)
+    //        //    {
+    //        //        minV -= 2 * vR * r;
+    //        //    }
+    //        //    Debug.DrawLine(q, q + minV, Color.red);
+    //        //    Debug.DrawLine(q + v, q + minV, Color.red);
+    //        //    var vDir = new PhysicsRotate(aInverse * v);
+    //        //    var minDir = new PhysicsRotate(minV.normalized);
+    //        //    var rot = vDir.InverseMultiplyRotation(minDir);
+    //        //    Debug.Log($"corrective rotation: {rot.degrees}");
+
+    //        //    //abdomenRotationFromBase = FacingRight ?
+    //        //    //    rot.MultiplyRotation(SpideyBody.abdomenRotationFromBase) :
+    //        //    //    rot.InverseMultiplyRotation(SpideyBody.abdomenRotationFromBase);
+    //        //}
+    //    }
+    //    else
+    //    {
+    //        var right = Right;
+    //        headRotation = new(grapple.FreeHanging ? FreeHangingHeadRight(right) : right);
+    //    }
+
+    //    SpideyBody.abdomenRotationFromBase = abdomenRotationFromBase;
+    //    SpideyBody.SetHeadRotation(headRotation);
+    //}
 
     private void RotateAbdomen()
     {
@@ -695,8 +766,8 @@ public class SpiderMover
             }
         }
 
-        Abdomen.ApplyForceToCenter(TotalMass * (f - heightSpringDamping * v - Vector2.Dot(Physics2D.gravity, down)) * down);
-        //remove affect of gravity while height spring engaged, otherwise you will settle at a height which is off by -Vector2.Dot(Physics2D.gravity, down) / heightSpringForce
+        Abdomen.ApplyForceToCenter(TotalMass * (f - heightSpringDamping * v - Vector2.Dot(World.gravity, down)) * down);
+        //remove affect of gravity while height spring engaged, otherwise you will settle at a height which is off by -Vector2.Dot(gravity, down) / heightSpringForce
         //(meaning you will be under height when upright, and over height when upside down (which was causing feet to not reach ground while upside down))
         //(e.g. before ride height on flat ground was always off by +- 32/400 = 0.08)
     }
@@ -768,7 +839,7 @@ public class SpiderMover
 
     private void UpdateGroundMap()
     {
-        groundMap.UpdateMap(Abdomen.world, spiderBody.queryFilter,
+        groundMap.UpdateMap(World, spiderBody.queryFilter,
             HeightReferencePt,
             -Up,
             Right,

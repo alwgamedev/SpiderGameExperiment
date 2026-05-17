@@ -53,11 +53,6 @@ public static class RopeJobUtils
         return (pos, lastPos, velocity);
     }
 
-    public static bool ShapeValid(int id, NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture)
-    {
-        return id > 0 && id < shapeCapture.Length && shapeCapture[id].Initialized;
-    }
-
     /// <summary> Casts circle along movement ray, and resolves overlap at the final position of the cast. Goal movement is dt * velocity.</summary>
     public static unsafe (float2 pos, float2 lastPos, float2 velocity, float2 collisionNormal)
         MoveNodeUntilImpact(float2 position, float radius, float mass, float2 lastPosition, float2 velocity, float2 movement, float overlapBuffer, NativeArray<PhysicsQuery.WorldCastResult> castResults,
@@ -70,7 +65,7 @@ public static class RopeJobUtils
 
         var result = castResults[0];
         var shapeId = result.shape.Id();
-        if (Hint.Unlikely(!ShapeValid(shapeId, shapeCapture)))
+        if (Hint.Unlikely(!PhysicsCoreHelper.ShapeProxyForJobs.ShapeValid(shapeId, shapeCapture)))
         {
             return (position + movement, lastPosition, velocity, 0);
         }

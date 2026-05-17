@@ -45,7 +45,7 @@ public struct CalculateRopeConstraintsF4 : IJobParallelFor
         this.position = position;
         this.constraintDelta = constraintDelta;
         this.nodeSpacing = nodeSpacing;
-        this.nodeSpacing2 = nodeSpacing * nodeSpacing;
+        nodeSpacing2 = nodeSpacing * nodeSpacing;
         this.nodeMass = nodeMass;
         this.sourceMass = sourceMass;
         this.terminusMass = terminusMass;
@@ -115,8 +115,8 @@ public unsafe struct ApplyRopeConstraints : IJobParallelFor
     [NativeDisableParallelForRestriction] public NativeReference<PhysicsShape> terminusAnchor;
     [NativeDisableParallelForRestriction] public NativeReference<float2> terminusAnchorLocalPos;
     [NativeDisableParallelForRestriction] public NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode;
-    [ReadOnly] public PhysicsWorld world;
     public readonly PhysicsQuery.QueryFilter collisionFilter;
+    [ReadOnly] public PhysicsWorld world;
     public readonly float nodeRadius;
     public readonly float nodeMass;
     public readonly float collisionBounciness;
@@ -176,8 +176,8 @@ public unsafe struct ApplyRopeConstraintsF4 : IJobParallelFor
     [NativeDisableParallelForRestriction] public NativeReference<PhysicsShape> terminusAnchor;
     [NativeDisableParallelForRestriction] public NativeReference<float2> terminusAnchorLocalPos;
     [NativeDisableParallelForRestriction] public NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode;
-    [ReadOnly] public PhysicsWorld world;
     public readonly PhysicsQuery.QueryFilter collisionFilter;
+    [ReadOnly] public PhysicsWorld world;
     public readonly float nodeRadius;
     public readonly float nodeMass;
     public readonly float collisionBounciness;
@@ -238,8 +238,8 @@ public unsafe struct IntegrateRope : IJobParallelFor
     [NativeDisableParallelForRestriction] public NativeReference<float2> terminusAnchorLocalPos;
     [ReadOnly] public NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture;
     [NativeDisableParallelForRestriction] public NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode;
-    [ReadOnly] public PhysicsWorld world;
     public readonly PhysicsQuery.QueryFilter collisionFilter;
+    [ReadOnly] public PhysicsWorld world;
     public readonly float2 gravity;
     public readonly float drag;
     public readonly float nodeRadius;

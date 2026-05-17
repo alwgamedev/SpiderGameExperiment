@@ -78,39 +78,5 @@ public class MoverCastTest : MonoBehaviour
         position = castOutput.transform.position;
         lastPosition = position - castOutput.velocity * Time.deltaTime;
         this.transform.position = position;
-        //var castResults = PhysicsWorld.defaultWorld.CastGeometry(circle, dp, filter);
-
-        //if (castResults.Length > 0)
-        //{
-        //    var result = castResults[0];
-        //    var positionAtTimeOfImpact = position + result.fraction * dp;
-
-        //    Vector2 normal;
-        //    if (result.normal == Vector2.zero)
-        //    {
-        //        normal = lastCollisionNormal;
-        //    }
-        //    else
-        //    {
-        //        lastCollisionNormal = result.normal;
-        //        normal = result.normal;
-        //    }
-
-        //    if (Vector2.Dot(dp, normal) < 0)
-        //    {
-        //        var tang = normal.CCWPerp();
-        //        dp = -collisionBounciness * (dp - 2 * Vector2.Dot(dp, tang) * tang);
-        //    }
-
-        //    position = positionAtTimeOfImpact + (1 - result.fraction) * dp;
-        //    lastPosition = position - dp;
-        //    transform.position = position;
-        //}
-        //else
-        //{
-        //    lastPosition = position;
-        //    position = targetPosition;
-        //    transform.position = position;
-        //}
     }
 }
