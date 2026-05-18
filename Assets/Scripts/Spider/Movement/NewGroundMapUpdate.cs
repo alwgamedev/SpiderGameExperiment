@@ -11,11 +11,11 @@ public struct NewGroundMapUpdate : IJob
     public NativeArray<float2> point;
     public NativeArray<float2> normal;
     public NativeArray<float> arcLengthPos;
+    [ReadOnly] public NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture;
     public NativeReference<int> endRight;
     public NativeReference<int> endLeft;
     public NativeReference<int> firstHitRight;
     public NativeReference<int> firstHitLeft;
-    [ReadOnly] public NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture;
     public readonly PhysicsQuery.QueryFilter filter;
     [ReadOnly] public PhysicsWorld world;
     public readonly float2 origin;
@@ -26,7 +26,7 @@ public struct NewGroundMapUpdate : IJob
 
     int CentralIndex => point.Length / 2;
 
-    public NewGroundMapUpdate(NativeArray<float2> point, NativeArray<float2> normal, NativeArray<float> arcLengthPos, NativeArray<bool> hitGround,
+    public NewGroundMapUpdate(NativeArray<float2> point, NativeArray<float2> normal, NativeArray<float> arcLengthPos,
         NativeReference<int> endRight, NativeReference<int> endLeft, NativeReference<int> firstHitRight,NativeReference<int> firstHitLeft,
         NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture, PhysicsWorld world, PhysicsQuery.QueryFilter filter,
         float2 origin, float2 originUp, float raycastLength, float intervalWidth)
@@ -57,7 +57,7 @@ public struct NewGroundMapUpdate : IJob
         *endRight = point.Length - 1;
         *endLeft = 0;
 
-        var castResults = world.CastRay(origin, raycastLength * originUp, filter);
+        var castResults = world.CastRay(origin, -raycastLength * originUp, filter);
 
         if (SuccessfulCast(castResults))
         {
@@ -70,16 +70,19 @@ public struct NewGroundMapUpdate : IJob
         {
             *firstHitRight = point.Length;
             *firstHitLeft = -1;
-            FillMapHalf(1, ref *endRight, ref *firstHitRight);
-            FillMapHalf(-1, ref *endLeft, ref *firstHitLeft);
+            var p0 = origin - raycastLength * originUp;
+            point[CentralIndex] = p0;
+            normal[CentralIndex] = originUp;
+            arcLengthPos[CentralIndex] = 0;
+            FillMapHalf(1, ref *endRight, ref *firstHitRight, p0);
+            FillMapHalf(-1, ref *endLeft, ref *firstHitLeft, p0);
         }
     }
 
     //use this if central cast was unsuccessful
-    private unsafe void FillMapHalf(int sign, ref int end, ref int firstHit)
+    private unsafe void FillMapHalf(int sign, ref int end, ref int firstHit, float2 p0)
     {
-        var p0 = point[CentralIndex];
-        var x = sign * intervalWidth * originUp.CWPerp();
+        var x = intervalWidth * originUp.CWPerp();
         var y = raycastLength * originUp;
         var o = p0 + y;
 
@@ -88,7 +91,7 @@ public struct NewGroundMapUpdate : IJob
         while (iter != itersEnd)
         {
             iter += sign;
-            var castResults = world.CastRay(o + iter * x , -y, filter);
+            var castResults = world.CastRay(o + sign * iter * x , -y, filter);
 
             if (SuccessfulCast(castResults))
             {
@@ -97,15 +100,13 @@ public struct NewGroundMapUpdate : IJob
 
                 //now handle cast
                 int i = CentralIndex + sign;
-                float s = 0;
                 if (iter != sign)
                 {
                     //if more than one iteration happened, add a point just before the first successful hit
                     //so we have a long flat segment of ground to represent all the failed casts
                     point[i] = p0 + (iter - sign) * x;
                     normal[i] = originUp;
-                    s = (iter - sign) * intervalWidth;
-                    arcLengthPos[i] = s;
+                    arcLengthPos[i] = (iter - sign) * intervalWidth;
                     i += sign;
                 }
 
@@ -116,10 +117,10 @@ public struct NewGroundMapUpdate : IJob
         }
 
         //we got through the while loop without any hits; add a point to represent this long interval of flat ground
-        point[CentralIndex + sign] = p0 + iter * x;
+        point[CentralIndex + sign] = p0 + sign * iter * x;
         normal[CentralIndex + sign] = originUp;
-        arcLengthPos[CentralIndex + sign] = iter * intervalWidth;
-        end = sign;
+        arcLengthPos[CentralIndex + sign] = sign * iter * intervalWidth;
+        end = CentralIndex + sign;
     }
 
     bool SuccessfulCast(NativeArray<PhysicsQuery.WorldCastResult> castResults)
@@ -150,8 +151,10 @@ public struct NewGroundMapUpdate : IJob
 
     private void MapPolygonUntilEnd(int i, ref int end, int sign, PhysicsQuery.WorldCastResult hit)
     {
-        while (i != end)
+        int k = 0;
+        while (i != end && k < 100)
         {
+            k++;
             hit = MapPolygon(ref i, ref end, sign, hit);
         }
     }
@@ -176,8 +179,8 @@ public struct NewGroundMapUpdate : IJob
             var edgeDir = sign * n.CWPerp();
             var xBuffer = 0.001f * edgeDir;
             var d = nextVertex - pt;
-            var cast = world.CastRay(pt + 0.001f * n - xBuffer, d + 2 * xBuffer, filter);
-            if (SuccessfulCast(cast))
+            var cast = world.CastRay(pt + 0.05f * n - xBuffer, d + 2 * xBuffer, filter);
+            if (SuccessfulCast(cast))//2DO: this can and does get you stuck in an infinite loop
             {
                 return cast[0];
             }

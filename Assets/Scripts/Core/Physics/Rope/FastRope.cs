@@ -442,26 +442,6 @@ public unsafe class FastRope
         }
     }
 
-    //private void CaptureAnchorGeometry(PhysicsShape anchor)
-    //{
-    //    switch (anchor.shapeType)
-    //    {
-    //        case PhysicsShape.ShapeType.Circle:
-    //            anchorGeometry.Value = anchor.circleGeometry;
-    //            break;
-    //        case PhysicsShape.ShapeType.Capsule:
-    //            var capsule = anchor.capsuleGeometry;
-    //            var center = 0.5f * (capsule.center1 + capsule.center2);
-    //            var l = Vector2.Distance(center, capsule.center1);
-    //            anchorGeometry.Value = new() { center = center, radius = l + capsule.radius };
-    //            break;
-    //        case PhysicsShape.ShapeType.Polygon:
-    //            var span = anchor.polygonGeometry.AsReadOnlySpan();
-    //            anchorGeometry.Value = PolygonPhysicsShape.SmallestEnclosingCircle(span);
-    //            break;
-    //    }
-    //}
-
     private void CaptureShapes(float2 bbMin, float2 bbMax)
     {
         var overlap = ownerWorld.OverlapAABB(new PhysicsAABB(bbMin, bbMax), settings.CollisionFilter);

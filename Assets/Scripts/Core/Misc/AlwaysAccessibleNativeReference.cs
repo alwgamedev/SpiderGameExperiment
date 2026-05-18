@@ -3,9 +3,7 @@ using Unity.Collections;
 
 public struct AlwaysAccessibleNativeReference<T> : IDisposable where T : unmanaged
 {
-    /// <summary>
-    /// Use native at your own risk.
-    /// </summary>
+    /// <summary> Use native at your own risk. </summary>
     public NativeReference<T> native;
     T snapshot;
     bool locked;
@@ -26,9 +24,7 @@ public struct AlwaysAccessibleNativeReference<T> : IDisposable where T : unmanag
         }
     }
 
-    /// <summary>
-    /// Writes made while locked are temporary.
-    /// </summary>
+    /// <summary> Writes to Value while locked are temporary. </summary>
     public T Value
     {
         get => locked ? snapshot : native.Value;
@@ -57,6 +53,12 @@ public struct AlwaysAccessibleNativeReference<T> : IDisposable where T : unmanag
         native = new NativeReference<T>(value, allocator);
         snapshot = value;
         this.locked = locked;
+    }
+
+    /// <summary> Allows you to update snapshot while keeping reference locked (for convenience). Use at your own risk. </summary>
+    public void UpdateSnapshot()
+    {
+        snapshot = native.Value;
     }
 
     public void Dispose()

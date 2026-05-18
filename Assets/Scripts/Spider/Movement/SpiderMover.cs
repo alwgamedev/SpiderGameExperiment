@@ -33,6 +33,7 @@ public class SpiderMover
     [SerializeField] float groundDirectionSampleWidth;
     [SerializeField] float backupGroundPtRaycastLengthFactor;
     [SerializeField] GroundMap groundMap;
+    [SerializeField] NewGroundMap test;
 
     [Header("Movement")]
     [SerializeField] float accelFactor;
@@ -169,10 +170,11 @@ public class SpiderMover
         {
             if (Application.isPlaying)
             {
-                groundMap.DrawGizmos();
-                Gizmos.color = Color.blue;
-                Gizmos.DrawSphere(groundAnchorPt, 0.1f);
-                Gizmos.DrawLine(HeightReferencePt, groundAnchorPt);
+                test.DrawGizmos();
+                //groundMap.DrawGizmos();
+                //Gizmos.color = Color.blue;
+                //Gizmos.DrawSphere(groundAnchorPt, 0.1f);
+                //Gizmos.DrawLine(HeightReferencePt, groundAnchorPt);
             }
             spiderBody.DrawGizmos(abdomenBone, headBone);
         }
@@ -229,6 +231,7 @@ public class SpiderMover
     public void OnDestroy()
     {
         groundMap.Dispose();
+        test.Dispose();
         grapple.OnDestroy();
         legSynch.Destroy();
         spiderBody.Destroy();
@@ -845,11 +848,14 @@ public class SpiderMover
             Right,
             GroundMapRaycastLength,
             FacingRight);
+
+        test.UpdateMap(World, spiderBody.queryFilter, HeightReferencePt, Up, GroundMapRaycastLength);
     }
 
     private void InitializeGroundMap()
     {
         groundMap.Initialize(HeightReferencePt, Right, GroundMapRaycastLength);
+        test.Initialize(HeightReferencePt, Up, GroundMapRaycastLength);
         UpdateGroundMap();
     }
 
