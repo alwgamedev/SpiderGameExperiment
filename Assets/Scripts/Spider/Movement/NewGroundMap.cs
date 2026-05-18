@@ -544,7 +544,7 @@ public class NewGroundMap
 
     public void UpdateMap(PhysicsWorld world, PhysicsQuery.QueryFilter filter, Vector2 origin, Vector2 originUp, float raycastLength)
     {
-        jobHandle.Complete();
+        //jobHandle.Complete();
         CopyToReadableArrays();
 
         CaptureShapes(world, filter, origin);
@@ -552,25 +552,31 @@ public class NewGroundMap
         var job = new NewGroundMapUpdate(point, normal, arcLengthPos, endRight.native, endLeft.native, firstHitRight.native, firstHitLeft.native, 
             shapeCapture, world, filter, origin, originUp, raycastLength, intervalWidth);
 
-        jobHandle = job.Schedule();
+        job.Run();
+        Debug.Log($"map runs from {endLeft.Value} to {endRight.Value}");
+        //jobHandle = job.Schedule();
     }
 
     public void DrawGizmos()
     {
         if (!readPoint.IsCreated) return;
 
-        Gizmos.color = GizmoColorLeft;
-        for (int i = endLeft.Value; i < CentralIndex ; i++)
+        int i = endLeft.Value;
+        Vector2 p = readPoint[endLeft.Value];
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(p, 0.1f);
+
+        while (i < endRight.Value)
         {
-            Gizmos.DrawSphere((Vector2)Point(i), 0.1f);
+            i++;
+            Vector2 q = readPoint[i];
+            Gizmos.DrawLine(p, q);
+            Gizmos.DrawSphere(q, 0.1f);
+            p = q;
         }
-        Gizmos.color = GizmoColorCenter;
+
+        Gizmos.color = Color.blue;
         Gizmos.DrawSphere((Vector2)Point(CentralIndex), 0.1f);
-        Gizmos.color = GizmoColorRight;
-        for (int i = CentralIndex + 1; i < endRight.Value + 1; i++)
-        {
-            Gizmos.DrawSphere((Vector2)Point(i), 0.1f);
-        }
     }
 
     public void Dispose()

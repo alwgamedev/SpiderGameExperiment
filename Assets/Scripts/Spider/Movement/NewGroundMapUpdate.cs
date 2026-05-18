@@ -4,6 +4,7 @@ using Unity.Burst;
 using Unity.U2D.Physics;
 using Unity.Mathematics;
 using Unity.Collections.LowLevel.Unsafe;
+using UnityEngine;
 
 [BurstCompile]
 public struct NewGroundMapUpdate : IJob
@@ -58,24 +59,24 @@ public struct NewGroundMapUpdate : IJob
         *endLeft = 0;
 
         var castResults = world.CastRay(origin, -raycastLength * originUp, filter);
+        //Debug.DrawLine((Vector2)origin, (Vector2)(origin - raycastLength * originUp), Color.rebeccaPurple);
 
         if (SuccessfulCast(castResults))
         {
             *firstHitRight = CentralIndex;
             *firstHitLeft = CentralIndex;
             MapPolygonUntilEnd(CentralIndex, ref *endRight, 1, castResults[0]);
-            MapPolygonUntilEnd(CentralIndex, ref *endLeft, -1, castResults[0]);
+            //MapPolygonUntilEnd(CentralIndex, ref *endLeft, -1, castResults[0]);
         }
         else
         {
-            *firstHitRight = point.Length;
-            *firstHitLeft = -1;
             var p0 = origin - raycastLength * originUp;
             point[CentralIndex] = p0;
             normal[CentralIndex] = originUp;
             arcLengthPos[CentralIndex] = 0;
+
             FillMapHalf(1, ref *endRight, ref *firstHitRight, p0);
-            FillMapHalf(-1, ref *endLeft, ref *firstHitLeft, p0);
+            //FillMapHalf(-1, ref *endLeft, ref *firstHitLeft, p0);
         }
     }
 
@@ -151,10 +152,9 @@ public struct NewGroundMapUpdate : IJob
 
     private void MapPolygonUntilEnd(int i, ref int end, int sign, PhysicsQuery.WorldCastResult hit)
     {
-        int k = 0;
-        while (i != end && k < 100)
+        Debug.Log($"---BEGIN---");
+        while (i != end)
         {
-            k++;
             hit = MapPolygon(ref i, ref end, sign, hit);
         }
     }
@@ -163,40 +163,53 @@ public struct NewGroundMapUpdate : IJob
     private PhysicsQuery.WorldCastResult MapPolygon(ref int i, ref int end, int sign, PhysicsQuery.WorldCastResult hit)
     {
         var (shapeProxy, transform, edge, ct, signedDist) = GetDataFromSuccessfulCast(hit);
+        Debug.Log($"mapping polygon with {ct} vertices");
         var polyVertex = shapeProxy.VertexArray;
         var polyNormal = shapeProxy.NormalArray;
         float2 n = transform.rotation.RotateVector(polyNormal[edge]);
         var pt = (float2)hit.point + signedDist * n;
+        Debug.DrawLine((Vector2)pt, (Vector2)(pt + 0.25f * n), Color.orange);
+
         point[i] = pt;
         normal[i] = n;
-        var s = math.select(0, arcLengthPos[i - sign] + sign * math.distance(point[i - sign], pt), i == CentralIndex);
+        var s = math.select(arcLengthPos[i - sign] + sign * math.distance(point[i - sign], pt), 0, i == CentralIndex);
         arcLengthPos[i] = s;
+        float2 prevCastEnd = pt + 0.01f * n;
 
         while (i != end)
         {
-            var nextEdge = math.select(Left(edge, ct), Right(edge, ct), sign > 0);
-            float2 nextVertex = transform.TransformPoint(polyVertex[nextEdge]);
+            i += sign;
+
+            Debug.Log($"casting along edge {edge}");
+            var targetVertexIndex = math.select(Left(edge, ct), edge, sign > 0);
+            float2 targetVertex = transform.TransformPoint(polyVertex[targetVertexIndex]);
             var edgeDir = sign * n.CWPerp();
-            var xBuffer = 0.001f * edgeDir;
-            var d = nextVertex - pt;
-            var cast = world.CastRay(pt + 0.05f * n - xBuffer, d + 2 * xBuffer, filter);
-            if (SuccessfulCast(cast))//2DO: this can and does get you stuck in an infinite loop
+            var xBuffer = 0.01f * edgeDir;//2do: if next angle in the polygon is very sharp, the next cast may hit the polygon itself
+            float2 o = prevCastEnd;
+            float2 t = targetVertex - prevCastEnd + xBuffer;
+            t -= math.dot(t, n) * n;
+            var cast = world.CastRay(o, t, filter);
+            prevCastEnd = o + t;
+            Debug.DrawLine((Vector2)o, (Vector2)(o + t), Color.rebeccaPurple);
+
+            if (SuccessfulCast(cast))
             {
+                Debug.Log($"cast interrupted at fraction {cast[0].fraction}");
                 return cast[0];
             }
 
-            i += sign;
-            edge = nextEdge;
-            pt = nextVertex;
+            s += sign * math.max(math.dot(targetVertex - pt, edgeDir), 0);
+            edge = math.select(Left(edge, ct), Right(edge, ct), sign > 0);
+            pt = targetVertex;
             n = transform.rotation.RotateVector(polyNormal[edge]);
             point[i] = pt;
             normal[i] = n;
-            s += sign * math.max(math.dot(d, edgeDir), 0);
             arcLengthPos[i] = s;
 
             if (sign * s > arcLengthMax)
             {
                 end = i;
+                Debug.Log($"filled arc length on side {sign}");
                 return default;
             }
         }
