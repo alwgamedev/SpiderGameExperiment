@@ -1,14 +1,20 @@
-﻿using Unity.Collections;
-using Unity.Jobs;
-using Unity.Burst;
-using Unity.U2D.Physics;
-using Unity.Mathematics;
+﻿using Unity.Burst;
+using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
+using Unity.Jobs;
+using Unity.Mathematics;
+using Unity.U2D.Physics;
 using UnityEngine;
 
 [BurstCompile]
 public struct NewGroundMapUpdate : IJob
 {
+    //want to keep the edge buffer big enough to prevent superficial cast hits,
+    //and the cast length buffer small-ish, while having the poly angle min small enough to accommodate almost any angle we come across
+    const float EDGE_BUFFER = 0.00390625f;//1f / 256
+    const float CAST_LENGTH_BUFFER_MAX = 0.125f;
+    const float POLY_ANGLE_MIN = EDGE_BUFFER / (CAST_LENGTH_BUFFER_MAX - EDGE_BUFFER);//~0.03 which let's us go down to angle of ~1.8 deg
+
     public NativeArray<float2> point;
     public NativeArray<float2> normal;
     public NativeArray<float> arcLengthPos;
@@ -66,7 +72,7 @@ public struct NewGroundMapUpdate : IJob
             *firstHitRight = CentralIndex;
             *firstHitLeft = CentralIndex;
             MapPolygonUntilEnd(CentralIndex, ref *endRight, 1, castResults[0]);
-            //MapPolygonUntilEnd(CentralIndex, ref *endLeft, -1, castResults[0]);
+            MapPolygonUntilEnd(CentralIndex, ref *endLeft, -1, castResults[0]);
         }
         else
         {
@@ -76,7 +82,7 @@ public struct NewGroundMapUpdate : IJob
             arcLengthPos[CentralIndex] = 0;
 
             FillMapHalf(1, ref *endRight, ref *firstHitRight, p0);
-            //FillMapHalf(-1, ref *endLeft, ref *firstHitLeft, p0);
+            FillMapHalf(-1, ref *endLeft, ref *firstHitLeft, p0);
         }
     }
 
@@ -92,7 +98,7 @@ public struct NewGroundMapUpdate : IJob
         while (iter != itersEnd)
         {
             iter += sign;
-            var castResults = world.CastRay(o + sign * iter * x , -y, filter);
+            var castResults = world.CastRay(o + iter * x , -y, filter);
 
             if (SuccessfulCast(castResults))
             {
@@ -104,7 +110,7 @@ public struct NewGroundMapUpdate : IJob
                 if (iter != sign)
                 {
                     //if more than one iteration happened, add a point just before the first successful hit
-                    //so we have a long flat segment of ground to represent all the failed casts
+                    //to have a long flat segment of ground for all the failed casts
                     point[i] = p0 + (iter - sign) * x;
                     normal[i] = originUp;
                     arcLengthPos[i] = (iter - sign) * intervalWidth;
@@ -118,9 +124,9 @@ public struct NewGroundMapUpdate : IJob
         }
 
         //we got through the while loop without any hits; add a point to represent this long interval of flat ground
-        point[CentralIndex + sign] = p0 + sign * iter * x;
+        point[CentralIndex + sign] = p0 + iter * x;
         normal[CentralIndex + sign] = originUp;
-        arcLengthPos[CentralIndex + sign] = sign * iter * intervalWidth;
+        arcLengthPos[CentralIndex + sign] = iter * intervalWidth;
         end = CentralIndex + sign;
     }
 
@@ -152,7 +158,6 @@ public struct NewGroundMapUpdate : IJob
 
     private void MapPolygonUntilEnd(int i, ref int end, int sign, PhysicsQuery.WorldCastResult hit)
     {
-        Debug.Log($"---BEGIN---");
         while (i != end)
         {
             hit = MapPolygon(ref i, ref end, sign, hit);
@@ -163,7 +168,6 @@ public struct NewGroundMapUpdate : IJob
     private PhysicsQuery.WorldCastResult MapPolygon(ref int i, ref int end, int sign, PhysicsQuery.WorldCastResult hit)
     {
         var (shapeProxy, transform, edge, ct, signedDist) = GetDataFromSuccessfulCast(hit);
-        Debug.Log($"mapping polygon with {ct} vertices");
         var polyVertex = shapeProxy.VertexArray;
         var polyNormal = shapeProxy.NormalArray;
         float2 n = transform.rotation.RotateVector(polyNormal[edge]);
@@ -174,34 +178,49 @@ public struct NewGroundMapUpdate : IJob
         normal[i] = n;
         var s = math.select(arcLengthPos[i - sign] + sign * math.distance(point[i - sign], pt), 0, i == CentralIndex);
         arcLengthPos[i] = s;
-        float2 prevCastEnd = pt + 0.01f * n;
+        float2 prevCastEnd = pt + EDGE_BUFFER * n;
 
         while (i != end)
         {
-            i += sign;
-
-            Debug.Log($"casting along edge {edge}");
+            //we'll cast towards targetVertex
             var targetVertexIndex = math.select(Left(edge, ct), edge, sign > 0);
             float2 targetVertex = transform.TransformPoint(polyVertex[targetVertexIndex]);
             var edgeDir = sign * n.CWPerp();
-            var xBuffer = 0.01f * edgeDir;//2do: if next angle in the polygon is very sharp, the next cast may hit the polygon itself
+
+            //add a little extra buffer to cast length to make sure the next cast (which starts at this cast's endpoint)
+            //stays outside of the next edge
+            var nextEdge = math.select(Left(edge, ct), Right(edge, ct), sign > 0);
+            var nextEdgeNormal = transform.rotation.RotateVector(polyNormal[nextEdge]);
+            var nextEdgeDir = sign * nextEdgeNormal.CWPerp();
+            var sin = math.dot(n, nextEdgeDir);//-sine of the next angle in the polygon
+            var cos = math.dot(edgeDir, nextEdgeDir);
+            if (cos < 0 && math.abs(sin) < POLY_ANGLE_MIN)
+            {
+                //if next angle in the polygon is extremely sharp, our xBuffer would be unreasonably large, so stop mapping 
+                Debug.LogWarning($"mapping failed. cos {cos}, sin {sin}, min {POLY_ANGLE_MIN}");
+                end = i;
+                return default;
+            }
+
+            var x = math.select(EDGE_BUFFER * (1 + cos / sin), EDGE_BUFFER, cos > 0);
+            var xBuffer = x * edgeDir;
+
+            i += sign;
             float2 o = prevCastEnd;
-            float2 t = targetVertex - prevCastEnd + xBuffer;
-            t -= math.dot(t, n) * n;
+            float2 t = targetVertex + EDGE_BUFFER * n - prevCastEnd + xBuffer;
             var cast = world.CastRay(o, t, filter);
             prevCastEnd = o + t;
             Debug.DrawLine((Vector2)o, (Vector2)(o + t), Color.rebeccaPurple);
 
             if (SuccessfulCast(cast))
             {
-                Debug.Log($"cast interrupted at fraction {cast[0].fraction}");
                 return cast[0];
             }
 
             s += sign * math.max(math.dot(targetVertex - pt, edgeDir), 0);
-            edge = math.select(Left(edge, ct), Right(edge, ct), sign > 0);
+            edge = nextEdge;
+            n = nextEdgeNormal;
             pt = targetVertex;
-            n = transform.rotation.RotateVector(polyNormal[edge]);
             point[i] = pt;
             normal[i] = n;
             arcLengthPos[i] = s;
@@ -209,7 +228,6 @@ public struct NewGroundMapUpdate : IJob
             if (sign * s > arcLengthMax)
             {
                 end = i;
-                Debug.Log($"filled arc length on side {sign}");
                 return default;
             }
         }
