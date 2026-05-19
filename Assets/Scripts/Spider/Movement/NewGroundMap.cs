@@ -553,7 +553,6 @@ public class NewGroundMap
             shapeCapture, world, filter, origin, originUp, raycastLength, intervalWidth);
 
         job.Run();
-        Debug.Log($"map runs from {endLeft.Value} to {endRight.Value}");
         //jobHandle = job.Schedule();
     }
 
@@ -636,9 +635,17 @@ public class NewGroundMap
         {
             var shape = overlap[i].shape;
             var id = shape.Id();
-            if (id > 0 && shape.shapeType == PhysicsShape.ShapeType.Polygon)
+            if (id > 0)
             {
-                shapeCapture[id] = new(shape.polygonGeometry);
+                switch (shape.shapeType)
+                {
+                    case PhysicsShape.ShapeType.Polygon:
+                        shapeCapture[id] = new(shape.polygonGeometry);
+                        break;
+                    case PhysicsShape.ShapeType.Circle:
+                        shapeCapture[id] = new(shape.circleGeometry);
+                        break;
+                }
             }
         }
     }

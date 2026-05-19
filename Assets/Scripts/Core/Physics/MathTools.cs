@@ -9,6 +9,8 @@ public static class MathTools
     public const float o91 = 10E-10f;
     //public const float o31 = 10E-4f;
 
+    public const float sqrt2 = 1.41421356f;
+
     public const float cos15 = 0.9659258f;
     public const float sin15 = 0.2588190f;
     //public const float sec15 = 1 / cos15;
