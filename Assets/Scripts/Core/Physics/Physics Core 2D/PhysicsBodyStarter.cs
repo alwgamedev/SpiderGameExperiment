@@ -58,7 +58,7 @@ public class PhysicsBodyStarter : MonoBehaviour
             case ShapeType.Capsule:
                 Vector2 center = geometryVectorParam;
                 float radius = geometryFloatParam;
-                body = PhysicsCoreHelper.CreateCapsuleBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef, center, -center, radius, transform.localToWorldMatrix, out _);
+                body = PhysicsCoreHelper.CreateCapsuleBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef, -center, center, radius, transform.localToWorldMatrix, out _);
                 break;
             case ShapeType.Box:
                 body = PhysicsCoreHelper.CreateBoxBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef, geometryVectorParam, transform.localToWorldMatrix, out _);

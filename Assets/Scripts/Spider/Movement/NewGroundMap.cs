@@ -562,15 +562,16 @@ public class NewGroundMap
 
         int i = endLeft.Value;
         Vector2 p = readPoint[endLeft.Value];
-        Gizmos.color = Color.red;
-        Gizmos.DrawSphere(p, 0.1f);
+        //Gizmos.color = Color.red;
+        //Gizmos.DrawSphere(p, 0.1f);
 
         while (i < endRight.Value)
         {
+            Gizmos.color = i < CentralIndex ? Color.yellow : Color.green;
             i++;
             Vector2 q = readPoint[i];
             Gizmos.DrawLine(p, q);
-            Gizmos.DrawSphere(q, 0.1f);
+            //Gizmos.DrawSphere(q, 0.1f);
             p = q;
         }
 
@@ -644,6 +645,9 @@ public class NewGroundMap
                         break;
                     case PhysicsShape.ShapeType.Circle:
                         shapeCapture[id] = new(shape.circleGeometry);
+                        break;
+                    case PhysicsShape.ShapeType.Capsule:
+                        shapeCapture[id] = new(shape.capsuleGeometry);
                         break;
                 }
             }

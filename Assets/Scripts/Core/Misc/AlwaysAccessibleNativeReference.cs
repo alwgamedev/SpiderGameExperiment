@@ -55,7 +55,7 @@ public struct AlwaysAccessibleNativeReference<T> : IDisposable where T : unmanag
         this.locked = locked;
     }
 
-    /// <summary> Allows you to update snapshot while keeping reference locked (for convenience). Use at your own risk. </summary>
+    /// <summary> Update snapshot while keeping reference locked. Use at your own risk. </summary>
     public void UpdateSnapshot()
     {
         snapshot = native.Value;

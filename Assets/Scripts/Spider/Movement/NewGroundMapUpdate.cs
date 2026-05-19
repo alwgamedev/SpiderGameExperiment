@@ -8,17 +8,17 @@ using UnityEngine;
 [BurstCompile]
 public struct NewGroundMapUpdate : IJob
 {
-    //want to keep the edge buffer big enough to prevent superficial cast hits,
+    //want to keep the edge buffer big enough to prevent self-hits,
     //and the cast length buffer small-ish, while having the poly angle min small enough to accommodate almost any angle we come across
-    const float POLY_EDGE_BUFFER = 0.00390625f;//1f / 256
-    const float POLY_CAST_LENGTH_BUFFER_MAX = 0.125f;
-    const float POLY_ANGLE_MIN = POLY_EDGE_BUFFER / (POLY_CAST_LENGTH_BUFFER_MAX - POLY_EDGE_BUFFER);//~0.03 which let's us go down to angle of ~1.8 deg
+    const float POLY_EDGE_BUFFER = 0.0025f;//1f / 256
+    const float POLY_CAST_LENGTH_BUFFER_MAX = 0.1f;
+    const float POLY_ANGLE_MIN = POLY_EDGE_BUFFER / (POLY_CAST_LENGTH_BUFFER_MAX - POLY_EDGE_BUFFER);//~0.025 which let's us go down to angle of ~1.5 deg
 
     const float CIRCLE_ANGLE_STEP_MAX = 0.125f * math.PI;
-    const float CIRCLE_EDGE_BUFFER = 0.00390625f;
+    const float CIRCLE_EDGE_BUFFER = 0.0025f;
     const float CIRCLE_EDGE_BUFFER_HELPER = 1.02f;
-    //^used for raycasting along circle edge to keep cast above CIRCLE_EDGE_BUFFER at closest point
-    //should be at least sqrt(2) / sqrt(1 + cos(angleStepMax))
+    //^helper should be at least sqrt(2) / sqrt(1 + cos(angleStepMax))
+    //(see use of helper below)
 
     public NativeArray<float2> point;
     public NativeArray<float2> normal;
@@ -39,7 +39,7 @@ public struct NewGroundMapUpdate : IJob
     int CentralIndex => point.Length / 2;
 
     public NewGroundMapUpdate(NativeArray<float2> point, NativeArray<float2> normal, NativeArray<float> arcLengthPos,
-        NativeReference<int> endRight, NativeReference<int> endLeft, NativeReference<int> firstHitRight,NativeReference<int> firstHitLeft,
+        NativeReference<int> endRight, NativeReference<int> endLeft, NativeReference<int> firstHitRight, NativeReference<int> firstHitLeft,
         NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture, PhysicsWorld world, PhysicsQuery.QueryFilter filter,
         float2 origin, float2 originUp, float raycastLength, float intervalWidth)
     {
@@ -106,14 +106,10 @@ public struct NewGroundMapUpdate : IJob
         while (iter != itersEnd)
         {
             iter += sign;
-            var castResults = world.CastRay(o + iter * x , -y, filter);
+            var castResults = world.CastRay(o + iter * x, -y, filter);
 
             if (SuccessfulCast(castResults))
             {
-                //first order of business - if the cast fraction was zero (e.g. we passed through a wall between last cast and this one)
-                //then we cast horizontally from last cast ray towards this one, from bottom up (we know previous cast didn't hit)
-
-                //now handle cast
                 int i = CentralIndex + sign;
                 if (iter != sign)
                 {
@@ -131,38 +127,44 @@ public struct NewGroundMapUpdate : IJob
             }
         }
 
-        //we got through the while loop without any hits; add a point to represent this long interval of flat ground
+        //we got through the loop without any hits; add a point to represent this long interval of flat ground
         point[CentralIndex + sign] = p0 + iter * x;
         normal[CentralIndex + sign] = originUp;
         arcLengthPos[CentralIndex + sign] = iter * intervalWidth;
         end = CentralIndex + sign;
     }
 
-    private bool SuccessfulCast(NativeArray<PhysicsQuery.WorldCastResult> castResults)
+    private readonly bool SuccessfulCast(NativeArray<PhysicsQuery.WorldCastResult> castResults)
     {
         return castResults.Length > 0 && PhysicsCoreHelper.ShapeProxyForJobs.ShapeValid(castResults[0].shape.Id(), shapeCapture);
     }
 
     private void ChaseHit(int i, ref int end, int sign, PhysicsQuery.WorldCastResult hit)
     {
-        while (i != end)
+        while (i != end + sign)
         {
-            switch(shapeCapture[hit.shape.Id()].ShapeType)
-            {
-                case PhysicsShape.ShapeType.Polygon:
-                    hit = MapPolygon(ref i, ref end, sign, hit);
-                    break;
-                case PhysicsShape.ShapeType.Circle:
-                    hit = MapCircle(ref i, ref end, sign, hit);
-                    break;
-                default:
-                    end = i;
-                    break;
-            }
+            hit = MapHit(ref i, ref end, sign, hit);
         }
     }
 
-    private (PhysicsCoreHelper.ShapeProxyForJobs shapeProxy, PhysicsTransform transform, int edge, int count, float signedDist) 
+    private PhysicsQuery.WorldCastResult MapHit(ref int i, ref int end, int sign, PhysicsQuery.WorldCastResult hit)
+    {
+        switch (shapeCapture[hit.shape.Id()].ShapeType)
+        {
+            case PhysicsShape.ShapeType.Polygon:
+                return MapPolygon(ref i, ref end, sign, hit);
+            case PhysicsShape.ShapeType.Circle:
+                return MapCircle(ref i, ref end, sign, hit);
+            case PhysicsShape.ShapeType.Capsule:
+                return MapCapsule(ref i, ref end, sign, hit);
+            default:
+                end = i;
+                i = end + sign;
+                return default;
+        }
+    }
+
+    private (PhysicsCoreHelper.ShapeProxyForJobs shapeProxy, PhysicsTransform transform, int edge, int count, float signedDist)
         GetDataFromPolygonHit(PhysicsQuery.WorldCastResult hit)
     {
         var poly = shapeCapture[hit.shape.Id()];
@@ -210,6 +212,7 @@ public struct NewGroundMapUpdate : IJob
             {
                 //if next angle in the polygon is extremely sharp, our xBuffer would be unreasonably large, so end mapping
                 end = i;
+                i = end + sign;
                 return default;
             }
 
@@ -223,7 +226,7 @@ public struct NewGroundMapUpdate : IJob
             prevCastEnd = o + t;
             Debug.DrawLine((Vector2)o, (Vector2)(o + t), Color.rebeccaPurple);
 
-            if (SuccessfulCast(cast))
+            if (SuccessfulCast(cast) && cast[0].fraction > 0)//check fraction > 0, because sometimes first cast is overlapping the previous shape we came from
             {
                 return cast[0];
             }
@@ -239,10 +242,12 @@ public struct NewGroundMapUpdate : IJob
             if (sign * s > arcLengthMax)
             {
                 end = i;
+                i = end + sign;
                 return default;
             }
         }
 
+        i += sign;
         return default;
     }
 
@@ -252,6 +257,7 @@ public struct NewGroundMapUpdate : IJob
         var shapeProxy = shapeCapture[circleShape.Id()];
         float2 center = hit.shape.transform.TransformPoint(shapeProxy.Center1);
         var radius = shapeProxy.Radius;
+        var bigR = CIRCLE_EDGE_BUFFER_HELPER * (radius + CIRCLE_EDGE_BUFFER);
 
         var n = math.normalize((float2)hit.point - center);
         var pt = center + radius * n;
@@ -269,15 +275,14 @@ public struct NewGroundMapUpdate : IJob
         {
             i += sign;
 
-            var bigR = CIRCLE_EDGE_BUFFER_HELPER * (radius + CIRCLE_EDGE_BUFFER);
             float2 nextNormal = stepRotation.RotateVector(n);
             var o = center + bigR * n;
             var t = bigR * (nextNormal - n);
             Debug.DrawLine((Vector2)o, (Vector2)(o + t), Color.rebeccaPurple);
             var cast = world.CastRay(o, t, filter);
 
-            //check fraction > 0, because sometimes the very first cast is overlapping with the shape we just came from
-            if (cast.Length > 0 && cast[0].fraction > 0)
+            //check fraction > 0, because sometimes the first cast is overlapping with the shape we just came from
+            if (SuccessfulCast(cast) && cast[0].fraction > 0)
             {
                 return cast[0];
             }
@@ -291,10 +296,150 @@ public struct NewGroundMapUpdate : IJob
             if (sign * s > arcLengthMax)
             {
                 end = i;
+                i = end + sign;
                 return default;
             }
         }
 
+        i += sign;
+        return default;
+    }
+
+    /// <summary> -1 = circle1, 0 = box, 1 = circle2 </summary>
+    private static (int seg, float uCoord) CapsuleSegment(float2 pointRelToCenter1, float width, float2 u)
+    {
+        var uCoord = math.dot(pointRelToCenter1, u);
+        int seg = math.select(math.select(0, -1, uCoord < 0), 1, uCoord > width);
+        return (seg, uCoord);
+    }
+
+    private static (float2 pt, float2 n) ClosestPointOnCapsule(float2 point, int seg, float uCoord, float2 u, float2 v, float2 center1, float2 center2, float radius)
+    {
+        switch (seg)
+        {
+            case 1://closest to circle2
+                {
+                    var n = math.normalize(point - center2);
+                    return (center2 + radius * n, n);
+                }
+            case -1://closest to circle1
+                {
+                    var n = math.normalize(point - center1);
+                    return (center1 + radius * n, n);
+                }
+            default://closest to box
+                {
+                    var n = math.select(-v, v, math.dot(point - center1, v) > 0);
+                    var pt = center1 + uCoord * u + radius * n;
+                    return (pt, n);
+                }
+        }
+    }
+
+    private PhysicsQuery.WorldCastResult MapCapsule(ref int i, ref int end, int sign, PhysicsQuery.WorldCastResult hit)
+    {
+        var capsuleShape = hit.shape;
+        var transform = capsuleShape.transform;
+        var shapeProxy = shapeCapture[capsuleShape.Id()];
+        float2 center1 = transform.TransformPoint(shapeProxy.Center1);
+        float2 center2 = transform.TransformPoint(shapeProxy.Center2);
+        var radius = shapeProxy.Radius;
+        var bigR = CIRCLE_EDGE_BUFFER_HELPER * (radius + CIRCLE_EDGE_BUFFER);
+        var radiusBuffer = bigR - radius;
+
+        var width = math.distance(center1, center2);
+        var u = (center2 - center1) / width;
+        var v = u.CCWPerp();
+
+        var stepRotY = -sign * math.min(intervalWidth / radius, CIRCLE_ANGLE_STEP_MAX);//want steps to have arclength = intervalWidth
+        var stepRotX = math.sqrt(math.max(1 - stepRotY * stepRotY, 0));
+        var stepRotation = new PhysicsRotate(new float2(stepRotX, stepRotY));
+        var arcLengthStep = -radius * stepRotY;
+
+        //set initial point;
+        var (seg, uCoord) = CapsuleSegment((float2)hit.point - center1, width, u);
+        var (pt, n) = ClosestPointOnCapsule(hit.point, seg, uCoord, u, v, center1, center2, radius);
+        Debug.DrawLine((Vector2)pt, (Vector2)(pt + 0.25f * n), Color.orange);
+        var s = math.select(arcLengthPos[i - sign] + sign * math.distance(point[i - sign], pt), 0, i == CentralIndex);
+        point[i] = pt;
+        normal[i] = n;
+        arcLengthPos[i] = s;
+        var prevCastEnd = pt + radiusBuffer * n;
+
+        while (i != end)
+        {
+            i += sign;
+
+            switch (seg)
+            {
+                case 0://box case
+                    {
+                        var topSign = math.select(-1, 1, math.dot(prevCastEnd - center1, v) > 0);
+                        var headedTowardsCenter2 = sign * topSign > 0;
+                        var o = prevCastEnd;
+                        var t = math.select(-uCoord - radiusBuffer, width - uCoord + radiusBuffer, headedTowardsCenter2);
+                        prevCastEnd = o + t * u;
+                        Debug.DrawLine((Vector2)o, (Vector2)prevCastEnd, Color.rebeccaPurple);
+                        var cast = world.CastRay(o, t * u, filter);
+
+                        if (SuccessfulCast(cast) && cast[0].fraction > 0)
+                        {
+                            return cast[0];
+                        }
+
+                        //we'll handle cast results right here
+                        n = math.select(-v, v, topSign > 0);
+                        pt = math.select(center1, center2, headedTowardsCenter2) + radius * n;
+                        s += sign * (math.abs(t) - radiusBuffer);
+                        seg = math.select(-1, 1, headedTowardsCenter2);//force set next seg to one of the circles
+
+                        point[i] = pt;
+                        normal[i] = n;
+                        arcLengthPos[i] = s;
+                    }
+                    break;
+                default://circle case
+                    {
+                        n = stepRotation.RotateVector(n);
+                        var exitCircle = seg * math.dot(n, u) < 0;
+
+                        //clamp n to avoid cutting through box with cast
+                        var clampedNormal = math.select(-v, v, math.dot(n, v) > 0);
+                        n = math.select(n, clampedNormal, exitCircle);
+
+                        var center = math.select(center1, center2, seg > 0);
+                        var o = prevCastEnd;
+                        prevCastEnd = center + bigR * n;
+                        Debug.DrawLine((Vector2)o, (Vector2)prevCastEnd, Color.rebeccaPurple);
+                        var cast = world.CastRay(o, prevCastEnd - o, filter);
+
+                        if (SuccessfulCast(cast) && cast[0].fraction > 0)
+                        {
+                            return cast[0];
+                        }
+
+
+                        uCoord = math.select(0, width, seg > 0); 
+                        seg = math.select(seg, 0, exitCircle);
+                        pt = center + radius * n;
+                        s += arcLengthStep;//inaccurate when exiting circle, but with small interval width the error isn't worth worrying about
+                        point[i] = pt;
+                        normal[i] = n;
+                        arcLengthPos[i] = s;
+                    }
+                    break;
+            }
+
+
+            if (sign * s > arcLengthMax)
+            {
+                end = i;
+                i += sign;
+                return default;
+            }
+        }
+
+        i += sign;
         return default;
     }
 
