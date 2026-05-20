@@ -290,8 +290,8 @@ public struct NewGroundMapUpdate : IJob
                         var ray = nextTargetVertex - prevCastEnd;
                         ray -= math.dot(ray, nextEdgeNormal) * nextEdgeNormal;
                         var nextCast = world.CastRay(prevCastEnd, ray, filter);
-                        Debug.DrawLine((Vector2)prevCastEnd, (Vector2)(prevCastEnd + ray), Color.rebeccaPurple);
-                        //^cast to make sure we get the highest/surface shape, in case several shapes meet at that vertex
+                        //Debug.DrawLine((Vector2)prevCastEnd, (Vector2)(prevCastEnd + ray), Color.rebeccaPurple);
+                        //^cast to make sure we get the shape on surface, in case several shapes meet at that vertex
                         //(should be a very short cast)
                         if (SuccessfulCast(nextCast) && nextCast[0].shape.Id() != initialHit.shapeId)
                         {

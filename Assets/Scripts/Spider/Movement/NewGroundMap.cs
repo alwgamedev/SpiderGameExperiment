@@ -78,23 +78,40 @@ public class NewGroundMap
         return NormalFromReducedPosition(j, t);
     }
 
+    //normals, unlike points, are piecewise constant
+    //if i >= CentralIndex, then normal[i] is held on the interval to the right[i, i + 1),
+    //and if i <= CentralIndex, then normal[i] is held on the interval to the left (i - 1, i],
+    //(this is important for the new system where we can have long flat segments
+    //-- when all the points were tightly spaced it made more sense to interpolate normals btwn points, but now it doesn't)
     public float2 NormalFromReducedPosition(int i, float arcLength)
     {
-        if (arcLength > 0)
+        if (arcLength == 0)
         {
-            return i < EndRight ?
-                MathTools.CheapRotationalLerp(Normal(i), Normal(i + 1), arcLength / (ArcLengthPos(i + 1) - ArcLengthPos(i)), out _)
-                : Normal(i);
+            return Normal(i);
+        }
+        else if (arcLength > 0)
+        {
+            return i < CentralIndex ? Normal(i + 1) : Normal(i);
         }
         else
         {
-            return i > EndLeft ?
-                MathTools.CheapRotationalLerp(Normal(i), Normal(i - 1), arcLength / (ArcLengthPos(i - 1) - ArcLengthPos(i)), out _)
-                : Normal(i);
+            return i > CentralIndex ? Normal(i - 1) : Normal(i);
         }
+        //if (arcLength > 0)
+        //{
+        //    return i < EndRight ?
+        //        MathTools.CheapRotationalLerp(Normal(i), Normal(i + 1), arcLength / (ArcLengthPos(i + 1) - ArcLengthPos(i)), out _)
+        //        : Normal(i);
+        //}
+        //else
+        //{
+        //    return i > EndLeft ?
+        //        MathTools.CheapRotationalLerp(Normal(i), Normal(i - 1), arcLength / (ArcLengthPos(i - 1) - ArcLengthPos(i)), out _)
+        //        : Normal(i);
+        //}
     }
 
-    /// <summary> Average point between ArcLengthPos(i) + t0 and ArcLengthPos(i) + t1. </summary>
+    /// <summary> Average point between ArcLengthPos(i) + s0 and ArcLengthPos(i) + s1. </summary>
     public float2 AveragePoint(int i, float s0, float s1)
     {
         float length0 = s1 - s0;
@@ -166,7 +183,7 @@ public class NewGroundMap
         return sum / length0;
     }
 
-    /// <summary> Average normal between ArcLengthPos(i) + t0 and ArcLengthPos(i) + t1. </summary>
+    /// <summary> Average normal between ArcLengthPos(i) + s0 and ArcLengthPos(i) + s1. </summary>
     public float2 AverageNormal(int i, float s0, float s1)
     {
         float length = s1 - s0;
@@ -351,7 +368,7 @@ public class NewGroundMap
                 if (dSq < bestSqDist)
                 {
                     bestSqDist = dSq;
-                    bestPt = (i - 1, t);
+                    bestPt = (i - 1, t * (ArcLengthPos(i) - ArcLengthPos(i - 1)));
                 }
             }
 
@@ -418,14 +435,15 @@ public class NewGroundMap
 
             if (MathTools.OppositeSigns(a0, a1))
             {
-                var t = a0 / (a0 - a1);//time at which zero occurs
+                var v = p1 - p0;
+                var t = Vector2.Dot(p - p0, v) / Vector2.SqrMagnitude(v);//time at which min dist is achieved
                 float2 q = Vector2.Lerp(p0, p1, t);
                 var d = q - p;
                 var dSq = Vector2.SqrMagnitude(d);
                 if (dSq < bestSqDist)
                 {
                     bestSqDist = dSq;
-                    bestPt = (i - 1, t);
+                    bestPt = (i - 1, t * (ArcLengthPos(i) - ArcLengthPos(i - 1)));
                 }
             }
 
@@ -479,18 +497,18 @@ public class NewGroundMap
 
     public void UpdateMap(PhysicsWorld world, PhysicsQuery.QueryFilter filter, Vector2 origin, Vector2 originUp, float raycastLength)
     {
-        //jobHandle.Complete();
-        //CopyToReadableArrays();
+        jobHandle.Complete();
+        CopyToReadableArrays();
 
         CaptureShapes(world, filter, origin);
 
         var job = new NewGroundMapUpdate(point, normal, arcLengthPos, endRight.native, endLeft.native, firstHitRight.native, firstHitLeft.native,
             shapeCapture, world, filter, origin, originUp, raycastLength, intervalWidth);
 
-        job.Run();
-        CopyToReadableArrays();
+        //job.Run();
+        //CopyToReadableArrays();
 
-        //jobHandle = job.Schedule();
+        jobHandle = job.Schedule();
     }
 
     public void DrawGizmos()

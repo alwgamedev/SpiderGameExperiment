@@ -17337,6 +17337,22 @@ PrefabInstance:
       propertyPath: mover.headMinHeightFraction
       value: 0.85
       objectReference: {fileID: 0}
+    - target: {fileID: 170334193149612089, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
+      propertyPath: mover.groundMap.intervalWidth
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 170334193149612089, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
+      propertyPath: mover.groundMap.numFwdIntervals
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 170334193149612089, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
+      propertyPath: mover.oldGroundMap.intervalWidth
+      value: 0.06
+      objectReference: {fileID: 0}
+    - target: {fileID: 170334193149612089, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
+      propertyPath: mover.oldGroundMap.numFwdIntervals
+      value: 40
+      objectReference: {fileID: 0}
     - target: {fileID: 1231387903212816449, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
       propertyPath: m_Name
       value: Spider

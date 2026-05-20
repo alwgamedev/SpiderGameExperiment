@@ -32,7 +32,7 @@ public class SpiderMover
     [SerializeField] float groundedEntryToleranceFactor;
     [SerializeField] float groundDirectionSampleWidth;
     [SerializeField] float backupGroundPtRaycastLengthFactor;
-    [SerializeField] GroundMap oldGroundMap;
+    //[SerializeField] GroundMap oldGroundMap;
     [SerializeField] NewGroundMap groundMap;
 
     [Header("Movement")]
@@ -164,8 +164,6 @@ public class SpiderMover
             Gizmos.color = Color.yellow;
             Gizmos.DrawSphere(groundAnchorPt, 0.1f);
             Gizmos.DrawLine(HeightReferencePt, groundAnchorPt);
-            var (i, t) = groundMap.ClosestPoint(HeightReferencePt);
-            Debug.DrawLine(HeightReferencePt, (Vector2)groundMap.PointFromReducedPosition(i, t), Color.hotPink);
         }
 
         if (drawBodyGizmos)
@@ -225,7 +223,7 @@ public class SpiderMover
     public void OnDestroy()
     {
         groundMap.Dispose();
-        oldGroundMap.Dispose();
+        //oldGroundMap.Dispose();
         //groundMap.Dispose();
         grapple.OnDestroy();
         legSynch.Destroy();
@@ -567,74 +565,6 @@ public class SpiderMover
         Abdomen.ApplyTorque(TotalMass * f);
     }
 
-    //private void UpdatePosture()
-    //{
-    //    PhysicsRotate abdomenRotationFromBase =
-    //        chargingJump ? JumpAbdomenRotation() :
-    //        grappleScurrying ? ScurryAbdomenRotation() :
-    //        PhysicsRotate.identity;
-
-    //    PhysicsRotate headRotation;
-    //    if (grounded)
-    //    {
-    //        var (i, t) = groundMap.ClosestPoint(Head.position, GroundMap.DEFAULT_PRECISION);
-    //        Vector2 p = groundMap.PointFromReducedPosition(i, t);
-    //        var tMin = FacingRight ? t + headRotationMinPos : t - headRotationMaxPos;
-    //        var tMax = FacingRight ? t + headRotationMaxPos : t - headRotationMinPos;
-    //        Vector2 u   = groundMap.AverageNormal(i, tMin, tMax);
-    //        var r = u.CWPerp();
-    //        headRotation = new(r);
-
-    //        //var abdomenDeltaRotation = SpideyBody.abdomenRotationFromBase.InverseMultiplyRotation(abdomenRotationFromBase);
-    //        //if (!FacingRight)
-    //        //{
-    //        //    abdomenDeltaRotation = abdomenDeltaRotation.Inverse();
-    //        //}
-
-    //        //var headHeight = Vector2.Dot(Head.position - p, u);
-    //        //var minHeight = headMinHeightFraction * EffectiveRideHeight;
-
-    //        //var headJointPosition = Abdomen.transform.TransformPoint(SpideyBody.headJoint.localAnchorA.position);
-    //        //var v = headJointPosition - Abdomen.position;
-    //        //var v1 = abdomenDeltaRotation.RotateVector(v);
-    //        //var q = Abdomen.position;
-    //        //Debug.DrawLine(q, q + v, Color.blue);
-    //        //Debug.DrawLine(q, q + v1, Color.yellow);
-
-    //        //var predictedHeight = headHeight + Vector2.Dot(v1 - v, u);
-    //        //if (predictedHeight < minHeight)
-    //        //{
-    //        //    var a = v.magnitude;
-    //        //    var aInverse = 1 / a;
-    //        //    //Debug.Log($"predicted height deficit: {minHeight - predictedHeight}");
-    //        //    var minV = v + (minHeight - headHeight) * u;
-    //        //    var vR = Vector2.Dot(minV, r);
-    //        //    if (FacingRight ? vR < 0 : vR > 0)
-    //        //    {
-    //        //        minV -= 2 * vR * r;
-    //        //    }
-    //        //    Debug.DrawLine(q, q + minV, Color.red);
-    //        //    Debug.DrawLine(q + v, q + minV, Color.red);
-    //        //    var vDir = new PhysicsRotate(aInverse * v);
-    //        //    var minDir = new PhysicsRotate(minV.normalized);
-    //        //    var rot = vDir.InverseMultiplyRotation(minDir);
-    //        //    Debug.Log($"corrective rotation: {rot.degrees}");
-
-    //        //    //abdomenRotationFromBase = FacingRight ?
-    //        //    //    rot.MultiplyRotation(SpideyBody.abdomenRotationFromBase) :
-    //        //    //    rot.InverseMultiplyRotation(SpideyBody.abdomenRotationFromBase);
-    //        //}
-    //    }
-    //    else
-    //    {
-    //        var right = Right;
-    //        headRotation = new(grapple.FreeHanging ? FreeHangingHeadRight(right) : right);
-    //    }
-
-    //    SpideyBody.abdomenRotationFromBase = abdomenRotationFromBase;
-    //    SpideyBody.SetHeadRotation(headRotation);
-    //}
-
     private void RotateAbdomen()
     {
         if (chargingJump)
@@ -671,11 +601,11 @@ public class SpiderMover
         Vector2 g;
         if (grounded)
         {
-            var (i, t) = oldGroundMap.ClosestPoint(Head.position, GroundMap.DEFAULT_PRECISION);
-            var p = oldGroundMap.PointFromReducedPosition(i, t);
+            var (i, t) = groundMap.ClosestPoint(Head.position);
+            var p = groundMap.PointFromReducedPosition(i, t);
             var tMin = FacingRight ? t + headRotationMinPos : t - headRotationMaxPos;
             var tMax = FacingRight ? t + headRotationMaxPos : t - headRotationMinPos;
-            var n = oldGroundMap.AverageNormal(i, tMin, tMax);
+            var n = groundMap.AverageNormal(i, tMin, tMax);
             g = n.CWPerp();
         }
         else
@@ -743,9 +673,9 @@ public class SpiderMover
     private void UpdateHeightSpring()
     {
         Vector2 down = -Up;
-        var (i, t) = oldGroundMap.LineCastOrClosest(Abdomen.position, down, GroundMap.DEFAULT_PRECISION);
-        Vector2 p = FacingRight ? oldGroundMap.AveragePoint(i, t + heightSampleMin, t + heightSampleMax)
-            : oldGroundMap.AveragePoint(i, t - heightSampleMax, t - heightSampleMin);
+        var (i, t) = groundMap.LineCastOrClosest(Abdomen.position, down);
+        Vector2 p = FacingRight ? groundMap.AveragePoint(i, t + heightSampleMin, t + heightSampleMax)
+            : groundMap.AveragePoint(i, t - heightSampleMax, t - heightSampleMin);
 
         var v = Vector2.Dot(Abdomen.linearVelocity, down);
         var l = Vector2.Dot(p - HeightReferencePt, down) - EffectiveRideHeight;
@@ -795,15 +725,15 @@ public class SpiderMover
     private void UpdateGroundData()
     {
         UpdateGroundMap();
-        var i = oldGroundMap.IndexOfFirstGroundHitFromCenter;
-        //var i = groundMap.FirstGroundHitFromCenter(FacingRight);
-        //if (i < groundMap.EndLeft || i > groundMap.EndRight)
-        //{
-        //    i = groundMap.CentralIndex;
-        //}
+        //var i = oldGroundMap.IndexOfFirstGroundHitFromCenter;
+        var i = groundMap.FirstGroundHitFromCenter(FacingRight);
+        if (i < groundMap.EndLeft || i > groundMap.EndRight)
+        {
+            i = groundMap.CentralIndex;
+        }
 
         groundDirection = grounded ?
-            oldGroundMap.AverageNormal(i, -groundDirectionSampleWidth, groundDirectionSampleWidth).CWPerp()
+            groundMap.AverageNormal(i, -groundDirectionSampleWidth, groundDirectionSampleWidth).CWPerp()
             : Vector2.right;
 
         if (HorizontalMoveInput != 0 || !grounded || (grapple.GrappleAnchored && grapple.GrappleReleaseInput < 0))
@@ -816,8 +746,8 @@ public class SpiderMover
             var t = settleTimer / settleTime;
             balanceDirection = MathTools.CheapRotationalLerpClamped(balanceDirection, groundDirection, 1 - 0.5f * t, out _);
             var p = Vector2.Lerp(groundAnchorPt, GetGroundAnchorPoint(i), t);
-            var (j, s) = oldGroundMap.ClosestPoint(p, GroundMap.DEFAULT_PRECISION);
-            groundAnchorPt = oldGroundMap.Point(j, s);
+            var (j, s) = groundMap.ClosestPoint(p);
+            groundAnchorPt = groundMap.Point(j, s);
         }
 
         if (!VerifyingJump())
@@ -828,34 +758,34 @@ public class SpiderMover
 
         Vector2 GetGroundAnchorPoint(int i)
         {
-            if (oldGroundMap.HitGround(i) && i != oldGroundMap.CentralIndex)
+            if (groundMap.HitGround(i) && i != groundMap.CentralIndex)
             {
 
-                var (j, s) = oldGroundMap.LineCastOrClosest(HeightReferencePt, -oldGroundMap.Normal(i), GroundMap.DEFAULT_PRECISION);
-                return oldGroundMap.Point(j, s);
+                var (j, s) = groundMap.LineCastOrClosest(HeightReferencePt, -groundMap.Normal(i));
+                return groundMap.Point(j, s);
             }
 
-            return oldGroundMap.Point(oldGroundMap.CentralIndex);
+            return groundMap.Point(groundMap.CentralIndex);
         }
     }
 
     private void UpdateGroundMap()
     {
-        oldGroundMap.UpdateMap(World, spiderBody.queryFilter, HeightReferencePt, -Up, Right, GroundMapRaycastLength, FacingRight);
+        //oldGroundMap.UpdateMap(World, spiderBody.queryFilter, HeightReferencePt, -Up, Right, GroundMapRaycastLength, FacingRight);
         groundMap.UpdateMap(World, spiderBody.queryFilter, HeightReferencePt, Up, GroundMapRaycastLength);
     }
 
     private void InitializeGroundMap()
     {
-        oldGroundMap.Initialize(HeightReferencePt, Right, GroundMapRaycastLength);
         groundMap.Initialize(HeightReferencePt, Right, GroundMapRaycastLength);
+        //oldGroundMap.Initialize(HeightReferencePt, Right, GroundMapRaycastLength);
         UpdateGroundMap();
     }
 
     private void InitializeGroundData()
     {
         InitializeGroundMap();
-        groundAnchorPt = oldGroundMap.Point(oldGroundMap.CentralIndex);
+        groundAnchorPt = groundMap.Point(groundMap.CentralIndex);
     }
 
 
@@ -913,7 +843,7 @@ public class SpiderMover
         legCastDirection[0] = SpideyBody.head.rotation.direction.CWPerp();
         legCastDirection[1] = SpideyBody.LevelRight.direction.CWPerp();
 
-        legSynch.UpdateAllLegs(dt, oldGroundMap, legCastDirection, FacingRight);
+        legSynch.UpdateAllLegs(dt, groundMap, legCastDirection, FacingRight);
     }
 
     private void InitializeLegSynch()
