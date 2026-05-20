@@ -7,7 +7,8 @@ using System;
 [Serializable]
 public class SpiderMover
 {
-    [SerializeField] bool drawGizmos;
+    [SerializeField] bool drawGroundMapGizmos;
+    [SerializeField] bool drawBodyGizmos;
 
     [Header("Parts")]
     [SerializeField] SpiderBody spiderBody;
@@ -32,8 +33,8 @@ public class SpiderMover
     [SerializeField] float groundedEntryToleranceFactor;
     [SerializeField] float groundDirectionSampleWidth;
     [SerializeField] float backupGroundPtRaycastLengthFactor;
-    [SerializeField] GroundMap groundMap;
-    [SerializeField] NewGroundMap test;
+    //[SerializeField] GroundMap groundMap;
+    [SerializeField] NewGroundMap groundMap;
 
     [Header("Movement")]
     [SerializeField] float accelFactor;
@@ -166,16 +167,16 @@ public class SpiderMover
 
     public void OnDrawGizmos()
     {
-        if (drawGizmos)
+        if (Application.isPlaying && drawGroundMapGizmos)
         {
-            if (Application.isPlaying)
-            {
-                test.DrawGizmos();
-                //groundMap.DrawGizmos();
-                //Gizmos.color = Color.blue;
-                //Gizmos.DrawSphere(groundAnchorPt, 0.1f);
-                //Gizmos.DrawLine(HeightReferencePt, groundAnchorPt);
-            }
+            groundMap.DrawGizmos();
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawSphere(groundAnchorPt, 0.1f);
+            Gizmos.DrawLine(HeightReferencePt, groundAnchorPt);
+        }
+
+        if (drawBodyGizmos)
+        {
             spiderBody.DrawGizmos(abdomenBone, headBone);
         }
 
@@ -231,7 +232,7 @@ public class SpiderMover
     public void OnDestroy()
     {
         groundMap.Dispose();
-        test.Dispose();
+        //groundMap.Dispose();
         grapple.OnDestroy();
         legSynch.Destroy();
         spiderBody.Destroy();
@@ -676,7 +677,7 @@ public class SpiderMover
         Vector2 g;
         if (grounded)
         {
-            var (i, t) = groundMap.ClosestPoint(Head.position, GroundMap.DEFAULT_PRECISION);
+            var (i, t) = groundMap.ClosestPoint(Head.position);
             var p = groundMap.PointFromReducedPosition(i, t);
             var tMin = FacingRight ? t + headRotationMinPos : t - headRotationMaxPos;
             var tMax = FacingRight ? t + headRotationMaxPos : t - headRotationMinPos;
@@ -748,7 +749,7 @@ public class SpiderMover
     private void UpdateHeightSpring()
     {
         Vector2 down = -Up;
-        var (i, t) = groundMap.LineCastOrClosest(Abdomen.position, down, GroundMap.DEFAULT_PRECISION);
+        var (i, t) = groundMap.LineCastOrClosest(Abdomen.position, down);
         Vector2 p = FacingRight ? groundMap.AveragePoint(i, t + heightSampleMin, t + heightSampleMax)
             : groundMap.AveragePoint(i, t - heightSampleMax, t - heightSampleMin);
 
@@ -800,8 +801,11 @@ public class SpiderMover
     private void UpdateGroundData()
     {
         UpdateGroundMap();
-        var i = groundMap.IndexOfFirstGroundHitFromCenter;
-
+        var i = groundMap.FirstGroundHitFromCenter(FacingRight);
+        if (i < groundMap.EndLeft || i > groundMap.EndRight)
+        {
+            i = groundMap.CentralIndex;
+        }
 
         groundDirection = grounded ?
             groundMap.AverageNormal(i, -groundDirectionSampleWidth, groundDirectionSampleWidth).CWPerp()
@@ -817,7 +821,7 @@ public class SpiderMover
             var t = settleTimer / settleTime;
             balanceDirection = MathTools.CheapRotationalLerpClamped(balanceDirection, groundDirection, 1 - 0.5f * t, out _);
             var p = Vector2.Lerp(groundAnchorPt, GetGroundAnchorPoint(i), t);
-            var (j, s) = groundMap.ClosestPoint(p, GroundMap.DEFAULT_PRECISION);
+            var (j, s) = groundMap.ClosestPoint(p);
             groundAnchorPt = groundMap.Point(j, s);
         }
 
@@ -832,7 +836,7 @@ public class SpiderMover
             if (groundMap.HitGround(i) && i != groundMap.CentralIndex)
             {
 
-                var (j, s) = groundMap.LineCastOrClosest(HeightReferencePt, -groundMap.Normal(i), GroundMap.DEFAULT_PRECISION);
+                var (j, s) = groundMap.LineCastOrClosest(HeightReferencePt, -groundMap.Normal(i));
                 return groundMap.Point(j, s);
             }
 
@@ -842,20 +846,19 @@ public class SpiderMover
 
     private void UpdateGroundMap()
     {
-        groundMap.UpdateMap(World, spiderBody.queryFilter,
-            HeightReferencePt,
-            -Up,
-            Right,
-            GroundMapRaycastLength,
-            FacingRight);
+        //groundMap.UpdateMap(World, spiderBody.queryFilter,
+        //    HeightReferencePt,
+        //    -Up,
+        //    Right,
+        //    GroundMapRaycastLength,
+        //    FacingRight);
 
-        test.UpdateMap(World, spiderBody.queryFilter, HeightReferencePt, Up, GroundMapRaycastLength);
+        groundMap.UpdateMap(World, spiderBody.queryFilter, HeightReferencePt, Up, GroundMapRaycastLength);
     }
 
     private void InitializeGroundMap()
     {
         groundMap.Initialize(HeightReferencePt, Right, GroundMapRaycastLength);
-        test.Initialize(HeightReferencePt, Up, GroundMapRaycastLength);
         UpdateGroundMap();
     }
 

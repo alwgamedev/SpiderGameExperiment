@@ -15,7 +15,8 @@ public static class RopeJobUtils
 
     /// <summary> Moves until impact, bounces, then applies the remaining movement without collision detection (good when movement is expected to be small, like constraints). </summary>
     public static (float2 pos, float2 lastPos, float2 velocity) MoveNodeFast(float2 position, float radius, float mass, float2 lastPosition, float2 movement,
-        NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture, PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter, float collisionBounciness, float dynamicCollisionForce)
+        NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture, PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter, 
+        float collisionBounciness, float dynamicCollisionForce)
     {
         var node = new CircleGeometry() { center = position, radius = radius };
         var castResults = world.CastGeometry(node, movement, collisionFilter);
@@ -32,7 +33,8 @@ public static class RopeJobUtils
 
     /// <summary> Moves until impact, bounces, and does a second cast for the remaining movement (if there's a second impact, it just stops at that point). </summary>
     public static (float2 pos, float2 lastPos, float2 velocity) MoveNodeCareful(float2 position, float radius, float mass, float2 lastPosition, float2 movement,
-        NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture, PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter, float collisionBounciness, float dynamicCollisionForce)
+        NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture, PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter, 
+        float collisionBounciness, float dynamicCollisionForce)
     {
         var node1 = new CircleGeometry() { center = position, radius = radius };
         var castResults1 = world.CastGeometry(node1, movement, collisionFilter);
@@ -55,8 +57,9 @@ public static class RopeJobUtils
 
     /// <summary> Casts circle along movement ray, and resolves overlap at the final position of the cast. Goal movement is dt * velocity.</summary>
     public static unsafe (float2 pos, float2 lastPos, float2 velocity, float2 collisionNormal)
-        MoveNodeUntilImpact(float2 position, float radius, float mass, float2 lastPosition, float2 velocity, float2 movement, float overlapBuffer, NativeArray<PhysicsQuery.WorldCastResult> castResults,
-        NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture, float collisionBounciness, float dynamicCollisionForce)
+        MoveNodeUntilImpact(float2 position, float radius, float mass, float2 lastPosition, float2 velocity, float2 movement, float overlapBuffer, 
+        NativeArray<PhysicsQuery.WorldCastResult> castResults, NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture, 
+        float collisionBounciness, float dynamicCollisionForce)
     {
         if (castResults.Length == 0)
         {
@@ -78,8 +81,10 @@ public static class RopeJobUtils
         {
             float separation;
             (separation, collisionNormal1) = CollisionUtilities.SeparateCircleFromShape(pos, radius + overlapBuffer, shapeCapture[shapeId], result.shape.transform);
-            //^add a little cushion to the radius, so the cast in step 2 doesn't grab on the overlap we just resolved (0.001f seems to be enough of a buffer for this to work most of the time)
+            //^add a little cushion to the radius, so the cast in step 2 doesn't grab on the overlap we just resolved
+            //(0.001f seems to be enough of a buffer)
 
+            separation = math.max(separation, 0);
             var sepVector = separation * collisionNormal1;
 
             pos += sepVector;
@@ -105,28 +110,6 @@ public static class RopeJobUtils
         return (pos, lastPos, velocity, collisionNormal1);
     }
 
-    //public static unsafe void MoveTerminusWithDynamicAnchor(NativeArray<float2> position, float2 movement,
-    //NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture,
-    //NativeReference<CircleGeometry> anchorGeometry, NativeReference<PhysicsShape> terminusAnchor, NativeReference<float2> terminusAnchorLocalPos,
-    //PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter, float collisionBounciness)
-    //{
-    //    var anchor = terminusAnchor.Value;
-    //    var geom = anchorGeometry.Value;
-    //    if (anchor.isValid && geom.isValid)
-    //    {
-    //        collisionFilter.hitCategories &= ~terminusAnchor.Value.contactFilter.categories;
-
-    //        var transform = anchor.transform;
-    //        float2 d = transform.TransformPoint(terminusAnchorLocalPos.Value) - transform.position;
-    //        transform.position = position[^1] - d;
-
-    //        //we don't integrate anchor, so just get position
-    //        float2 pos = transform.TransformPoint(geom.center);
-    //        (pos, _, _) = MoveNodeFast(pos, geom.radius, pos, movement, shapeCapture, world, collisionFilter, collisionBounciness);
-    //        position[^1] = pos + d;
-    //    }
-    //}
-
     public static void MoveTerminusUnanchored(NativeArray<float2> position, float radius, float mass, NativeArray<float2> lastPosition, float2 movement,
     NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture,
     NativeReference<PhysicsShape> terminusAnchor, NativeReference<float2> terminusAnchorLocalPos, NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode,
@@ -134,7 +117,8 @@ public static class RopeJobUtils
     {
         var node = new CircleGeometry() { center = position[^1], radius = radius };
         var castResults = world.CastGeometry(node, movement, collisionFilter);
-        var (pos, lastPos, velocity, _) = MoveNodeUntilImpact(position[^1], radius, mass, lastPosition[^1], movement, movement, 0, castResults, shapeCapture, collisionBounciness, dynamicCollisionForce);
+        var (pos, lastPos, velocity, _) = MoveNodeUntilImpact(position[^1], radius, mass, lastPosition[^1], movement, movement, 0, 
+                castResults, shapeCapture, collisionBounciness, dynamicCollisionForce);
 
         if (Hint.Unlikely(castResults.Length > 0 && IsValidAnchor(castResults[0].shape)))
         {

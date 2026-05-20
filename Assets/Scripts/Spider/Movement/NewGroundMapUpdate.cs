@@ -83,8 +83,8 @@ public struct NewGroundMapUpdate : IJob
 
             var firstHitRightLocal = point.Length;
             var firstHitLeftLocal = -1;
-            FillMapHalf(1, ref endRightLocal, ref firstHitRightLocal, p0);
-            FillMapHalf(-1, ref endLeftLocal, ref firstHitLeftLocal, p0);
+            KeepOnCastin(1, ref endRightLocal, ref firstHitRightLocal, p0);
+            KeepOnCastin(-1, ref endLeftLocal, ref firstHitLeftLocal, p0);
 
             firstHitRight.Value = firstHitRightLocal;
             firstHitLeft.Value = firstHitLeftLocal;
@@ -95,7 +95,7 @@ public struct NewGroundMapUpdate : IJob
     }
 
     //use this if central cast was unsuccessful
-    private void FillMapHalf(int sign, ref int end, ref int firstHit, float2 p0)
+    private void KeepOnCastin(int sign, ref int end, ref int firstHit, float2 p0)
     {
         var x = intervalWidth * originUp.CWPerp();
         var y = raycastLength * originUp;
@@ -177,6 +177,16 @@ public struct NewGroundMapUpdate : IJob
 
         var (jRight, ct, signedDist) = CollisionUtilities.ClosestEdge(pLocal, polyVertex, polyNormal);
         return (poly, transform, jRight, ct, signedDist);
+    }
+
+    static int Right(int j, int ct)
+    {
+        return math.select(ct - 1, j - 1, j > 0);
+    }
+
+    static int Left(int j, int ct)
+    {
+        return math.select(0, j + 1, j < ct - 1);
     }
 
     private PhysicsQuery.WorldCastResult MapPolygon(ref int i, ref int end, int sign, PhysicsQuery.WorldCastResult hit)
@@ -441,15 +451,5 @@ public struct NewGroundMapUpdate : IJob
 
         i += sign;
         return default;
-    }
-
-    static int Right(int j, int ct)
-    {
-        return math.select(ct - 1, j - 1, j > 0);
-    }
-
-    static int Left(int j, int ct)
-    {
-        return math.select(0, j + 1, j < ct - 1);
     }
 }

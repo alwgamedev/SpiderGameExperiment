@@ -43,7 +43,7 @@ public static class CollisionUtilities
 
         var dInv = math.rsqrt(d2);
         var normal = dInv * d;
-        return (math.max(radiusSum - math.dot(d, normal), 0), normal);
+        return (radiusSum - math.dot(d, normal), normal);
     }
 
     [BurstCompile]
@@ -76,17 +76,15 @@ public static class CollisionUtilities
         var a = math.rsqrt(h2);
         var normal = y > 0 ? a * up : -a * up;
         var yAbs = a * math.abs(y);
-        return (math.max(radiusSum - yAbs, 0), normal);
+        return (radiusSum - yAbs, normal);
     }
 
+    //separation negative if circle does not overlap polygon
     [BurstCompile]
     public static (float separation, float2 normal) SeparateCircleFromPolygon(float2 center, float radius, ReadOnlySpan<float2> vertex, ReadOnlySpan<float2> normal)
     {
         float2 minNormal = normal[0];
         float minDist = math.dot(vertex[0] - center, minNormal);
-
-        //var edgePoint0 = center + minDist * minNormal;
-        //bool externalEdgeFound = !world.TestOverlapPoint(edgePoint0 + 0.01f * minNormal, filter);
 
         if (minDist < -radius)
         {
@@ -96,35 +94,12 @@ public static class CollisionUtilities
         for (int i = 1; i < vertex.Length; i++)
         {
             var n = normal[i];
-
-            if (n.Equals(0))
-            {
-                //my shape proxy struct doesn't have a vertex count -- you have to just stop once the normals become zero
-                break;
-            }
+            bool valid = !n.Equals(0);
 
             var dist = math.dot(vertex[i] - center, n);
-
-            if (dist < -radius)
-            {
-                return default;
-            }
-
-            //var edgePoint = center + dist * n;
-            //var isExternalEdge = !world.TestOverlapPoint(edgePoint + 0.01f * n, filter);
-
-            //if (externalEdgeFound && !isExternalEdge)
-            //{
-            //    continue;
-            //}
-
-            //externalEdgeFound = externalEdgeFound || isExternalEdge;
-
-            if (dist < minDist)
-            {
-                minDist = dist;
-                minNormal = n;
-            }
+            var beatsMin = valid && dist < minDist;
+            minDist = math.select(minDist, dist, beatsMin);
+            minNormal = math.select(minNormal, n, beatsMin);
         }
 
         return (minDist + radius, minNormal);
