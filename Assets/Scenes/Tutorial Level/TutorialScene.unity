@@ -17310,6 +17310,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 170334193149612089, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
+      propertyPath: timeScale
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 170334193149612089, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
       propertyPath: mover.drawGizmos
       value: 1
       objectReference: {fileID: 0}
@@ -17320,6 +17324,10 @@ PrefabInstance:
     - target: {fileID: 170334193149612089, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
       propertyPath: mover.test.intervalWidth
       value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 170334193149612089, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
+      propertyPath: mover.drawGroundMapGizmos
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 170334193149612089, guid: 39b6ad7a0d2024443a1bddc4ad6342fe, type: 3}
       propertyPath: mover.test.numFwdIntervals

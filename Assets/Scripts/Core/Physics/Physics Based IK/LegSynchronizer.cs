@@ -325,12 +325,12 @@ public class LegSynchronizer
         }
     }
 
-    public void UpdateAllLegs(float dt, NewGroundMap map, Vector2[] castDirection, bool facingRight)
+    public void UpdateAllLegs(float dt, GroundMap map, Vector2[] castDirection, bool facingRight)
     {
         for (int i = 0; i < leg.Length; i++)
         {
             var castDir = castDirection[groupIndex[i]];
-            var (j, s) = map.LineCastOrClosest(leg[i].JointPosition(0), castDir);//hip ground point
+            var (j, s) = map.LineCastOrClosest(leg[i].JointPosition(0), castDir, GroundMap.DEFAULT_PRECISION);//hip ground point
 
             float hipSpeed;
             var n = map.NormalFromReducedPosition(j, s);//normal at hip ground point
@@ -374,7 +374,7 @@ public class LegSynchronizer
         }
     }
 
-    private void UpdateLeg(int i, float dt, NewGroundMap map, bool facingRight, (int, float) hipGroundMapPosition,
+    private void UpdateLeg(int i, float dt, GroundMap map, bool facingRight, (int, float) hipGroundMapPosition,
         float goalRelSpd, float goalStepHt)
     {
         ref var l = ref leg[i];

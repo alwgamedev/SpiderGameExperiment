@@ -351,7 +351,7 @@ public class NewGroundMap
                 if (dSq < bestSqDist)
                 {
                     bestSqDist = dSq;
-                    bestPt = (i, t);
+                    bestPt = (i - 1, t);
                 }
             }
 
@@ -425,7 +425,7 @@ public class NewGroundMap
                 if (dSq < bestSqDist)
                 {
                     bestSqDist = dSq;
-                    bestPt = (i, t);
+                    bestPt = (i - 1, t);
                 }
             }
 
@@ -497,22 +497,24 @@ public class NewGroundMap
     {
         if (!readPoint.IsCreated) return;
 
-        int i = endLeft.Value;
-        Vector2 p = readPoint[endLeft.Value];
+        int i = EndLeft;
+        Vector2 p = Point(i);
         Gizmos.color = Color.red;
-        Gizmos.DrawSphere(p, 0.1f);
+        Gizmos.DrawSphere(p, 0.025f);
+        Gizmos.DrawLine(p, p + 0.25f * (Vector2)Normal(i));
 
         while (i < endRight.Value)
         {
             i++;
             Vector2 q = readPoint[i];
             Gizmos.DrawLine(p, q);
-            Gizmos.DrawSphere(q, 0.1f);
+            Gizmos.DrawSphere(q, 0.025f);
+            Gizmos.DrawLine(q, q + 0.25f * (Vector2)Normal(i));
             p = q;
         }
 
         Gizmos.color = Color.blue;
-        Gizmos.DrawSphere((Vector2)Point(CentralIndex), 0.1f);
+        Gizmos.DrawSphere((Vector2)Point(CentralIndex), 0.025f);
     }
 
     public void Dispose()
