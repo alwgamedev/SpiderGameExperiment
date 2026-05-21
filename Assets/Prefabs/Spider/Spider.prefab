@@ -2292,7 +2292,7 @@ MonoBehaviour:
     maxSpeed: 5
     maxSpeedAirborne: 9
     settleTime: 0.35
-    preferredRideHeight: 0.9
+    preferredRideHeight: 0.875
     heightSpringForce: 600
     heightSpringDamping: 20
     grappleSquatReduction: 0.4

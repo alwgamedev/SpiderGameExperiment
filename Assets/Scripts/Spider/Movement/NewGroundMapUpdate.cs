@@ -1,9 +1,9 @@
-﻿using Unity.Burst;
+﻿using UnityEngine;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.U2D.Physics;
-using UnityEngine;
 
 [BurstCompile]
 public struct NewGroundMapUpdate : IJob
@@ -19,6 +19,9 @@ public struct NewGroundMapUpdate : IJob
     const float CIRCLE_EDGE_BUFFER_HELPER = 1.02f;
     //^helper should be at least sqrt(2) / sqrt(1 + cos(angleStepMax))
     //(see use of helper below)
+
+    const int NUM_CAST_REPAIR_STEPS = 8;
+    const float CAST_REPAIR_STEP = 0.125f;
 
     public NativeArray<float2> point;
     public NativeArray<float2> normal;
@@ -110,8 +113,10 @@ public struct NewGroundMapUpdate : IJob
 
             var firstHitRightLocal = point.Length;
             var firstHitLeftLocal = -1;
-            KeepOnCastin(1, ref endRightLocal, ref firstHitRightLocal, p0);
-            KeepOnCastin(-1, ref endLeftLocal, ref firstHitLeftLocal, p0);
+            var horizontalIncrement = intervalWidth * originUp.CWPerp();
+            var castTranslation = -raycastLength * originUp;
+            KeepOnCastin(1, ref endRightLocal, ref firstHitRightLocal, horizontalIncrement, castTranslation, p0);
+            KeepOnCastin(-1, ref endLeftLocal, ref firstHitLeftLocal, -horizontalIncrement, castTranslation, p0);
 
             firstHitRight.Value = firstHitRightLocal;
             firstHitLeft.Value = firstHitLeftLocal;
@@ -122,18 +127,17 @@ public struct NewGroundMapUpdate : IJob
     }
 
     //use this if central cast was unsuccessful
-    private void KeepOnCastin(int sign, ref int end, ref int firstHit, float2 p0)
+    private void KeepOnCastin(int sign, ref int end, ref int firstHit, float2 horizontalIncrement, float2 castTranslation, float2 p0)
     {
-        var x = intervalWidth * originUp.CWPerp();
-        var y = raycastLength * originUp;
-        var o = p0 + y;
+        var o = p0 - castTranslation;
 
         int iter = 0;
         int itersEnd = sign * point.Length / 2;
         while (iter != itersEnd)
         {
             iter += sign;
-            var castResults = world.CastRay(o + iter * x, -y, filter);
+            o += horizontalIncrement;
+            var castResults = CastAndRepair(o, horizontalIncrement, castTranslation);
 
             if (SuccessfulCast(castResults))
             {
@@ -142,10 +146,16 @@ public struct NewGroundMapUpdate : IJob
                 {
                     //if more than one iteration happened, add a point just before the first successful hit
                     //to have a long flat segment of ground for all the failed casts
-                    point[i] = p0 + (iter - sign) * x;
+                    point[i] = o + castTranslation - horizontalIncrement;
                     normal[i] = originUp;
                     arcLengthPos[i] = (iter - sign) * intervalWidth;
                     i += sign;
+                }
+
+                if (castResults[0].fraction == 0)
+                {
+                    end = i - sign;
+                    return;
                 }
 
                 firstHit = i;
@@ -155,12 +165,43 @@ public struct NewGroundMapUpdate : IJob
         }
 
         //we got through the loop without any hits; add a point to represent this long interval of flat ground
-        point[CentralIndex + sign] = p0 + iter * x;
-        normal[CentralIndex + sign] = originUp;
-        arcLengthPos[CentralIndex + sign] = iter * intervalWidth;
-        end = CentralIndex + sign;
+        int i1 = CentralIndex + sign;
+        point[i1] = o + castTranslation;
+        normal[i1] = originUp;
+        arcLengthPos[i1] = iter * intervalWidth;
+        end = i1;
 
         return;
+    }
+
+    private readonly NativeArray<PhysicsQuery.WorldCastResult> CastAndRepair(float2 origin, float2 horizontalIncrement, float2 translation)
+    {
+        var cast = world.CastRay(origin, translation, filter);
+
+        if (SuccessfulCast(cast) && cast[0].fraction == 0)
+        {
+            origin -= horizontalIncrement;
+            var dt = CAST_REPAIR_STEP * translation;
+            int i = 0;
+            
+            //we know the last cast didn't hit so cast horizontally from last cast towards current until either:
+            //a) the horizontal cast doesn't hit -- we've successfully gotten below an overhead obstacle and will cast down from here
+            //b) all the horizontal casts hit, which means we're coming up against a wall. we return the last horizontal cast (lowest hit on wall).
+            while (i < NUM_CAST_REPAIR_STEPS && SuccessfulCast(cast))
+            {
+                i++;
+                origin += dt;
+                translation -= dt;
+                cast = world.CastRay(origin, horizontalIncrement, filter);
+            }
+
+            if (!SuccessfulCast(cast))//our last horizontal cast hit air, so we cast down from its end point
+            {
+                cast = world.CastRay(origin + horizontalIncrement, translation, filter);
+            }
+        }
+
+        return cast;
     }
 
     private readonly bool SuccessfulCast(NativeArray<PhysicsQuery.WorldCastResult> castResults)

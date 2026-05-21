@@ -161,9 +161,9 @@ public class SpiderMover
         if (Application.isPlaying && drawGroundMapGizmos)
         {
             groundMap.DrawGizmos();
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawSphere(groundAnchorPt, 0.1f);
-            Gizmos.DrawLine(HeightReferencePt, groundAnchorPt);
+            //Gizmos.color = Color.yellow;
+            //Gizmos.DrawSphere(groundAnchorPt, 0.1f);
+            //Gizmos.DrawLine(HeightReferencePt, groundAnchorPt);
         }
 
         if (drawBodyGizmos)
@@ -261,11 +261,12 @@ public class SpiderMover
             needChangeDirection = false;
         }
 
-        if (canFlip && FlipInput && (grounded || SpideyBody.HasContact()))//end flip
+        bool lyingOnBack = SpideyBody.HasContact() && Up.y < MathTools.sin30;
+        if (canFlip && FlipInput && (grounded || lyingOnBack))//end flip
         {
             canFlip = false;
         }
-        else if (!canFlip && !FlipInput && !grounded && !SpideyBody.HasContact())//re-enable flip once flip input released and we're eligible to flip (not in contact with ground)
+        else if (!canFlip && !FlipInput && !grounded && !lyingOnBack)//re-enable flip once flip input released and we're eligible to flip (not in contact with ground)
         {
             canFlip = true;
         }
@@ -672,7 +673,7 @@ public class SpiderMover
     private void UpdateHeightSpring()
     {
         Vector2 down = -Up;
-        var (i, t) = groundMap.LineCastOrClosest(Abdomen.position, down);
+        var (i, t) = groundMap.LineCastOrClosest(HeightReferencePt, down);//switch to HeightRefPt (after we figure out the issue)
         Vector2 p = FacingRight ? groundMap.AveragePoint(i, t + heightSampleMin, t + heightSampleMax)
             : groundMap.AveragePoint(i, t - heightSampleMax, t - heightSampleMin);
 
@@ -693,10 +694,10 @@ public class SpiderMover
             }
         }
 
-        Abdomen.ApplyForceToCenter(TotalMass * (f - heightSpringDamping * v - Vector2.Dot(World.gravity, down)) * down);
+        Abdomen.ApplyForceToCenter(TotalMass * (f - heightSpringDamping * v - Vector2.Dot(World.gravity, down)) * down/*, HeightReferencePt*/);
         //remove affect of gravity while height spring engaged, otherwise you will settle at a height which is off by -Vector2.Dot(gravity, down) / heightSpringForce
         //(meaning you will be under height when upright, and over height when upside down (which was causing feet to not reach ground while upside down))
-        //(e.g. before ride height on flat ground was always off by +- 32/400 = 0.08)
+        //(e.g. before ride height on flat ground was always off by around +- 32/400 = 0.08)
     }
 
 
