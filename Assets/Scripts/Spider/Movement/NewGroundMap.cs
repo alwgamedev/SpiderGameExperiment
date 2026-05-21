@@ -114,159 +114,191 @@ public class NewGroundMap
     /// <summary> Average point between ArcLengthPos(i) + s0 and ArcLengthPos(i) + s1. </summary>
     public float2 AveragePoint(int i, float s0, float s1)
     {
-        float length0 = s1 - s0;
-        float length = length0;
-        if (length < 0)
+        if (s1 < s0)
         {
             return Point(i);
         }
 
         (int j, float t) = AddArcLength(i, s0);
+        (int jEnd, float tEnd) = AddArcLength(i, s1);
 
-        float2 sum = 0;
+        if (tEnd < 0)
+        {
+            if (jEnd == EndLeft)
+            {
+                return Point(EndLeft);
+            }
+
+            tEnd += ArcLengthPos(jEnd) - ArcLengthPos(--jEnd);
+        }
+
+        if (j == jEnd && !MathTools.OppositeSigns(t, tEnd))//this is (*)
+        {
+            //start and end point lie in the same segment
+            return PointFromReducedPosition(j, 0.5f * (t + tEnd));
+        }
+
+        float2 sum;
+        float length;
 
         if (t < 0)
         {
-            if (-t > length)
-            {
-                return 0.5f * (PointFromReducedPosition(j, t) + PointFromReducedPosition(j, t + length));
-            }
-            else
-            {
-                sum += 0.5f * -t * (PointFromReducedPosition(j, t) + Point(j));
-                length += t;
-            }
+            sum = -t * PointFromReducedPosition(j, 0.5f * t);
+            length = -t;
         }
-        else if (t > 0)
+        else
         {
-            if (j == EndRight)
-            {
-                return Point(j);
-            }
-            else
-            {
-                var dt = ArcLengthPos(j + 1) - ArcLengthPos(j) - t;
-                if (dt > length)
-                {
-                    return 0.5f * (PointFromReducedPosition(j, t) + PointFromReducedPosition(j, t + length));
-                }
-                else
-                {
-                    sum += 0.5f * dt * (PointFromReducedPosition(j, t) + Point(j + 1));
-                    length -= dt;
-                    j++;
-                }
-            }
+            length = ArcLengthPos(j + 1) - ArcLengthPos(j) - t;
+            sum = length * PointFromReducedPosition(j, t + 0.5f * length);
+            j++;//increment is valid after (*)
         }
 
-        while (length > 0 && j < EndRight)
+        while (j < jEnd)
         {
             var dt = ArcLengthPos(j + 1) - ArcLengthPos(j);
-            if (dt > length)
-            {
-                sum += 0.5f * length * (Point(j) + PointFromReducedPosition(j, length));
-                length = 0;
-                break;
-            }
-
-            sum += 0.5f * dt * (Point(j) + Point(j + 1));
-            length -= dt;
+            sum += dt * PointFromReducedPosition(j, 0.5f * dt);
+            length += dt;
             j++;
         }
 
-        if (j == EndRight && length > 0)
+        if (tEnd > 0)
         {
-            sum += length * Point(j);
-            //length = 0;
+            sum += tEnd * PointFromReducedPosition(jEnd, 0.5f * tEnd);
+            length += tEnd;
         }
 
-        return sum / length0;
+        return sum / length;
+
+        //float length0 = s1 - s0;
+        //float length = length0;
+        //if (length < 0)
+        //{
+        //    return Point(i);
+        //}
+
+        //(int j, float t) = AddArcLength(i, s0);
+
+        //float2 sum = 0;
+
+        //if (t < 0)
+        //{
+        //    if (-t > length)
+        //    {
+        //        return 0.5f * (PointFromReducedPosition(j, t) + PointFromReducedPosition(j, t + length));
+        //    }
+        //    else
+        //    {
+        //        sum += 0.5f * -t * (PointFromReducedPosition(j, t) + Point(j));
+        //        length += t;
+        //    }
+        //}
+        //else if (t > 0)
+        //{
+        //    if (j == EndRight)
+        //    {
+        //        return Point(j);
+        //    }
+        //    else
+        //    {
+        //        var dt = ArcLengthPos(j + 1) - ArcLengthPos(j) - t;
+        //        if (dt > length)
+        //        {
+        //            return 0.5f * (PointFromReducedPosition(j, t) + PointFromReducedPosition(j, t + length));
+        //        }
+        //        else
+        //        {
+        //            sum += 0.5f * dt * (PointFromReducedPosition(j, t) + Point(j + 1));
+        //            length -= dt;
+        //            j++;
+        //        }
+        //    }
+        //}
+
+        //while (length > 0 && j < EndRight)
+        //{
+        //    var dt = ArcLengthPos(j + 1) - ArcLengthPos(j);
+        //    if (dt > length)
+        //    {
+        //        sum += 0.5f * length * (Point(j) + PointFromReducedPosition(j, length));
+        //        length = 0;
+        //        break;
+        //    }
+
+        //    sum += 0.5f * dt * (Point(j) + Point(j + 1));
+        //    length -= dt;
+        //    j++;
+        //}
+
+        //if (j == EndRight && length > 0)
+        //{
+        //    sum += length * Point(j);
+        //    //length = 0;
+        //}
+
+        //return sum / length0;
     }
 
     /// <summary> Average normal between ArcLengthPos(i) + s0 and ArcLengthPos(i) + s1. </summary>
     public float2 AverageNormal(int i, float s0, float s1)
     {
-        float length = s1 - s0;
-        if (length < 0)
+        if (s1 < s0)
         {
             return Normal(i);
         }
 
         (int j, float t) = AddArcLength(i, s0);
+        (int jEnd, float tEnd) = AddArcLength(i, s1);
 
-        float2 avg = 0;
-        float wt = 0;
-
-        static float2 Avg(float2 n1, float2 n2)
+        if (tEnd < 0)
         {
-            return MathTools.CheapRotationalLerp(n1, n2, 0.5f, out _);
+            if (jEnd == EndLeft)
+            {
+                return Normal(EndLeft);
+            }
+
+            tEnd += ArcLengthPos(jEnd) - ArcLengthPos(--jEnd);
         }
 
-        static void CombineAvg(ref float2 avg1, ref float wt1, float2 avg2, float wt2)
+        if (j == jEnd && !MathTools.OppositeSigns(t, tEnd))//this is (*)
         {
-            wt1 += wt2;
-            avg1 = MathTools.CheapRotationalLerp(avg1, avg2, wt2 / wt1, out _);
+            //start and end point lie in the same segment
+            return Normal(j, t);
         }
+
+        float2 n;
+        float wt;
 
         if (t < 0)
         {
-            if (-t > length)
-            {
-                return Avg(NormalFromReducedPosition(j, t), NormalFromReducedPosition(j, t + length));
-            }
-            else
-            {
-                avg = Avg(NormalFromReducedPosition(j, t), Normal(j));
-                wt = -t;
-                length += t;
-            }
+            n = NormalFromReducedPosition(j, t);
+            wt = -t;
         }
-        else if (t > 0)
+        else
         {
-            if (j == EndRight)
-            {
-                return Normal(j);
-            }
-            else
-            {
-                var dt = ArcLengthPos(j + 1) - ArcLengthPos(j) - t;
-                if (dt > length)
-                {
-                    return Avg(NormalFromReducedPosition(j, t), NormalFromReducedPosition(j, t + length));
-                }
-                else
-                {
-                    avg = Avg(NormalFromReducedPosition(j, t), Normal(j + 1));
-                    length -= dt;
-                    wt = dt;
-                    j++;
-                }
-            }
+            n = NormalFromReducedPosition(j, t);
+            wt = -t - ArcLengthPos(j) + ArcLengthPos(++j);//increment is valid after (*)
         }
 
-        while (length > 0 && j < EndRight)
+        while (j < jEnd)
         {
-            var dt = ArcLengthPos(j + 1) - ArcLengthPos(j);
-            float2 segAvg;
-            if (dt > length)
-            {
-                segAvg = Avg(Normal(j), NormalFromReducedPosition(j, length));
-                CombineAvg(ref avg, ref wt, segAvg, length);
-                return avg;
-            }
-
-            segAvg = Avg(Normal(j), Normal(j + 1));
-            CombineAvg(ref avg, ref wt, segAvg, dt);
-            length -= dt;
-            j++;
+            //use Normal(j, epsilon) to make sure we sample the normal in the interior of the interval
+            //(due to the discrepancy in how normals are attached for segments left of center and right of center)
+            (n, wt) = Avg(n, wt, NormalFromReducedPosition(j, float.Epsilon), -ArcLengthPos(j) + ArcLengthPos(++j));
         }
 
-        if (j == EndRight && length > 0)
+        if (tEnd > 0)
         {
-            CombineAvg(ref avg, ref wt, Normal(j), length);
+            (n, _) = Avg(n, wt, NormalFromReducedPosition(jEnd, float.Epsilon), tEnd);
         }
 
-        return avg;
+        return n;
+
+        static (float2 n, float wt) Avg(float2 n1, float wt1, float2 n2, float wt2)
+        {
+            var wt = wt1 + wt2;
+            var n = MathTools.CheapRotationalLerp(n1, n2, wt2 / wt, out _);
+            return (n, wt);
+        }
     }
 
     /// <summary> Moves from point i by given arc length and returns reduced "index with arc length remainder" (j, t). 
@@ -307,13 +339,13 @@ public class NewGroundMap
 
     public (int, float) LineCastOrClosest(float2 p, float2 castDir)
     {
-        var (i, t) = LineCastToGround(p, castDir, out var d2);
+        var result = LineCastToGround(p, castDir, out var d2);
         if (!float.IsFinite(d2))
         {
-            (i, t) = ClosestPoint(p);
+            result = ClosestPoint(p);
         }
 
-        return (i, t);
+        return result;
     }
 
     /// <summary> 
@@ -325,7 +357,7 @@ public class NewGroundMap
     public (int, float) LineCastToGround(float2 p, float2 castDir, out float bestSqDist)
     {
         bestSqDist = Mathf.Infinity;
-        (int, float) bestPt = (-1, 0);
+        (int j, float s) = (0, 0);//best pt
 
         int i = EndLeft;
         var p0 = Point(i);
@@ -338,7 +370,7 @@ public class NewGroundMap
             if (d0Sq < bestSqDist)
             {
                 bestSqDist = d0Sq;
-                bestPt = (i, 0);
+                (j, s) = (i, 0);
             }
         }
 
@@ -355,7 +387,7 @@ public class NewGroundMap
                 if (d1Sq < bestSqDist)
                 {
                     bestSqDist = d1Sq;
-                    bestPt = (i, 0);
+                    (j, s) = (i, 0);
                 }
             }
 
@@ -368,7 +400,7 @@ public class NewGroundMap
                 if (dSq < bestSqDist)
                 {
                     bestSqDist = dSq;
-                    bestPt = (i - 1, t * (ArcLengthPos(i) - ArcLengthPos(i - 1)));
+                    (j, s) = (i - 1, t);
                 }
             }
 
@@ -376,82 +408,59 @@ public class NewGroundMap
             a0 = a1;
         }
 
-        return bestPt;
+        if (j < EndRight)
+        {
+            s *= ArcLengthPos(j + 1) - ArcLengthPos(j);
+        }
+        return (j, s);
     }
 
-    /// <summary> Looks for a point q on ground map whose normal is parallel to q - p (local extreme of distance)
-    /// If it finds multiple such points, it picks the closest one.
-    /// If no local extremes found, returns the closer of the two map endpoints.
-    /// </summary>
     public (int, float) ClosestPoint(float2 p)
     {
         float bestSqDist;
-        (int, float) bestPt;
-
-        var left2 = Vector2.SqrMagnitude(Point(EndLeft) - p);
-        var right2 = Vector2.SqrMagnitude(Point(EndRight) - p);
-        if (left2 < right2)
-        {
-            bestSqDist = left2;
-            bestPt = (EndLeft, 0);
-        }
-        else
-        {
-            bestSqDist = right2;
-            bestPt = (EndRight, 0);
-        }
+        int j;
+        float s;
 
         int i = EndLeft;
         var p0 = Point(i);
-        var d0 = p0 - p;
-        var a0 = MathTools.Cross2D(d0, Normal(i));
-
-        if (a0 == 0)
-        {
-            var d0Sq = Vector2.SqrMagnitude(d0);
-            if (d0Sq < bestSqDist)
-            {
-                bestSqDist = d0Sq;
-                bestPt = (i, 0);
-            }
-        }
+        bestSqDist = Vector2.SqrMagnitude(p0 - p);
+        (j, s) = (i, 0);
 
         while (i < EndRight)
         {
             i++;
             var p1 = Point(i);
-            var d1 = p1 - p;
-            var a1 = MathTools.Cross2D(d1, Normal(i));
-
-            if (a1 == 0)
+            var v = p1 - p0;
+            var t = Vector2.Dot(p - p0, v) / Vector2.SqrMagnitude(v);
+            if (!(t < 0) && !(t > 1))
             {
-                var d1Sq = Vector2.SqrMagnitude(d1);
-                if (d1Sq < bestSqDist)
-                {
-                    bestSqDist = d1Sq;
-                    bestPt = (i, 0);
-                }
-            }
-
-            if (MathTools.OppositeSigns(a0, a1))
-            {
-                var v = p1 - p0;
-                var t = Vector2.Dot(p - p0, v) / Vector2.SqrMagnitude(v);//time at which min dist is achieved
                 float2 q = Vector2.Lerp(p0, p1, t);
                 var d = q - p;
                 var dSq = Vector2.SqrMagnitude(d);
                 if (dSq < bestSqDist)
                 {
                     bestSqDist = dSq;
-                    bestPt = (i - 1, t * (ArcLengthPos(i) - ArcLengthPos(i - 1)));
+                    (j, s) = (i - 1, t);
+                }
+            }
+            else
+            {
+                var dSq = Vector2.SqrMagnitude(p1 - p);
+                if (dSq < bestSqDist)
+                {
+                    bestSqDist = dSq;
+                    (j, s) = (i, 0);
                 }
             }
 
             p0 = p1;
-            a0 = a1;
         }
 
-        return bestPt;
+        if (j < EndRight)
+        {
+            s *= ArcLengthPos(j + 1) - ArcLengthPos(j);
+        }
+        return (j, s);
     }
 
     public void Initialize(float2 origin, float2 originRight, float raycastLength)

@@ -40,7 +40,7 @@ public struct SpiderBody
     /// <summary> (accurate when facing right; when facing left it is the inverse of this) </summary>
     public readonly PhysicsRotate AbdomenBaseRotationFromLevel => abdomenBaseRotationFromLevel;
     //The heightRefPos and levelRight make up the spider's "true" transform, now that spider is made up of three separate bodies
-    public readonly PhysicsTransform VirtualTransform => new PhysicsTransform(HeightReferencePosition, LevelRight);
+    public readonly PhysicsTransform VirtualTransform => new(HeightReferencePosition, LevelRight);
     public readonly PhysicsRotate LevelRight
     {
         get
@@ -49,14 +49,14 @@ public struct SpiderBody
             return FacingRight? abdomenAngleFromLevel.InverseMultiplyRotation(abdomen.rotation) : abdomenAngleFromLevel.MultiplyRotation(abdomen.rotation);
         }
     }
-    public readonly Vector2 HeightReferencePosition
-    {
-        get
-        {
-            var localPos = FacingRight ? heightReferenceLocalPos : new(-heightReferenceLocalPos.x, heightReferenceLocalPos.y);
-            return abdomen.transform.TransformPoint(localPos);
-        }
-    }
+    public readonly Vector2 HeightReferencePosition => abdomen.transform.TransformPoint(headJoint.localAnchorA.position);
+    //{
+    //    get
+    //    {
+    //        var localPos = FacingRight ? heightReferenceLocalPos : new(-heightReferenceLocalPos.x, heightReferenceLocalPos.y);
+    //        return abdomen.transform.TransformPoint(localPos);
+    //    }
+    //}
 
     public readonly bool HasContact() => abdomen.GetContacts().Length > 0 || head.GetContacts().Length > 0;
 

@@ -482,7 +482,7 @@ public class SpiderMover
         }
         else
         {
-            var p = SpideyBody.HeightReferencePosition;
+            var p = HeightReferencePt;//SpideyBody.HeightReferencePosition;
             var u = SpideyBody.LevelRight.direction.CCWPerp();
             reflection = new PhysicsTransform(grapple.FreeHangLeveragePoint, new PhysicsRotate(u));
         }
@@ -602,10 +602,9 @@ public class SpiderMover
         if (grounded)
         {
             var (i, t) = groundMap.ClosestPoint(Head.position);
-            var p = groundMap.PointFromReducedPosition(i, t);
             var tMin = FacingRight ? t + headRotationMinPos : t - headRotationMaxPos;
             var tMax = FacingRight ? t + headRotationMaxPos : t - headRotationMinPos;
-            var n = groundMap.AverageNormal(i, tMin, tMax);
+            Vector2 n = groundMap.AverageNormal(i, tMin, tMax);
             g = n.CWPerp();
         }
         else
@@ -641,7 +640,7 @@ public class SpiderMover
             jumpVerificationTimer = jumpVerificationTime;
             SetGrounded(false);
             var jumpDir = JumpDirection();
-            Abdomen.ApplyLinearImpulse(TotalMass * JumpForce() * jumpDir, SpideyBody.HeightReferencePosition);
+            Abdomen.ApplyLinearImpulse(TotalMass * JumpForce() * jumpDir, HeightReferencePt);
             jumped.Invoke();
         }
     }
@@ -725,7 +724,6 @@ public class SpiderMover
     private void UpdateGroundData()
     {
         UpdateGroundMap();
-        //var i = oldGroundMap.IndexOfFirstGroundHitFromCenter;
         var i = groundMap.FirstGroundHitFromCenter(FacingRight);
         if (i < groundMap.EndLeft || i > groundMap.EndRight)
         {
@@ -741,13 +739,13 @@ public class SpiderMover
             groundAnchorPt = GetGroundAnchorPoint(i);
             balanceDirection = groundDirection;
         }
-        else if (settleTimer > 0)
+        else if (settleTimer > 0)//fixing the ground pt once "settled" stops us from sliding
         {
             var t = settleTimer / settleTime;
             balanceDirection = MathTools.CheapRotationalLerpClamped(balanceDirection, groundDirection, 1 - 0.5f * t, out _);
             var p = Vector2.Lerp(groundAnchorPt, GetGroundAnchorPoint(i), t);
             var (j, s) = groundMap.ClosestPoint(p);
-            groundAnchorPt = groundMap.Point(j, s);
+            groundAnchorPt = groundMap.PointFromReducedPosition(j, s);
         }
 
         if (!VerifyingJump())
@@ -760,9 +758,8 @@ public class SpiderMover
         {
             if (groundMap.HitGround(i) && i != groundMap.CentralIndex)
             {
-
                 var (j, s) = groundMap.LineCastOrClosest(HeightReferencePt, -groundMap.Normal(i));
-                return groundMap.Point(j, s);
+                return groundMap.PointFromReducedPosition(j, s);
             }
 
             return groundMap.Point(groundMap.CentralIndex);
@@ -771,14 +768,12 @@ public class SpiderMover
 
     private void UpdateGroundMap()
     {
-        //oldGroundMap.UpdateMap(World, spiderBody.queryFilter, HeightReferencePt, -Up, Right, GroundMapRaycastLength, FacingRight);
         groundMap.UpdateMap(World, spiderBody.queryFilter, HeightReferencePt, Up, GroundMapRaycastLength);
     }
 
     private void InitializeGroundMap()
     {
         groundMap.Initialize(HeightReferencePt, Right, GroundMapRaycastLength);
-        //oldGroundMap.Initialize(HeightReferencePt, Right, GroundMapRaycastLength);
         UpdateGroundMap();
     }
 

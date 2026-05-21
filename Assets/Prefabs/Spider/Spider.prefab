@@ -1716,7 +1716,8 @@ MonoBehaviour:
   health:
     maxHealth: 100
   mover:
-    drawGizmos: 0
+    drawGroundMapGizmos: 0
+    drawBodyGizmos: 0
     spiderBody:
       abdomenCapsuleSize: {x: 2.75, y: 2.3}
       abdomenCapsuleOffset: {x: 1.325, y: -0.025}
@@ -2279,8 +2280,8 @@ MonoBehaviour:
     groundDirectionSampleWidth: 0.5
     backupGroundPtRaycastLengthFactor: 1.1
     groundMap:
-      numFwdIntervals: 40
-      intervalWidth: 0.06
+      numFwdIntervals: 30
+      intervalWidth: 0.1
     accelFactor: 40
     accelFactorFreeHanging: 14
     deadThrusterAccelFactor: 4
@@ -2295,11 +2296,12 @@ MonoBehaviour:
     heightSpringForce: 600
     heightSpringDamping: 20
     grappleSquatReduction: 0.4
-    heightSampleMin: -0.4
+    heightSampleMin: -0.5
     heightSampleMax: 0.6
-    headRotationMinPos: -0.1
-    headRotationMaxPos: 0.25
-    balanceSpringForce: 300
+    headRotationMinPos: -0.125
+    headRotationMaxPos: 0.35
+    headMinHeightFraction: 0.85
+    balanceSpringForce: 500
     airborneBalanceSpringForce: 100
     balanceSpringDamping: 0.25
     airborneBalanceSpringDamping: 0.04

@@ -60,6 +60,33 @@ public struct NewGroundMapUpdate : IJob
         arcLengthMax = intervalWidth * point.Length / 2;
     }
 
+    readonly struct MinimalHitData
+    {
+        public readonly PhysicsTransform shapeTransform;
+        public readonly float2 point;
+        public readonly int shapeId;
+        public readonly PhysicsShape.ShapeType shapeType;
+
+        public readonly bool Hit => shapeId > 0;
+
+        public MinimalHitData(PhysicsQuery.WorldCastResult castResult)
+        {
+            var shape = castResult.shape;
+            shapeTransform = shape.transform;
+            point = castResult.point;
+            shapeId = shape.Id();
+            shapeType = shape.shapeType;
+        }
+
+        public MinimalHitData(PhysicsShape shape, float2 point)
+        {
+            shapeTransform = shape.transform;
+            this.point = point;
+            shapeId = shape.Id();
+            shapeType = shape.shapeType;
+        }
+    }
+
     public void Execute()
     {
         var endRightLocal = point.Length - 1;
@@ -132,36 +159,13 @@ public struct NewGroundMapUpdate : IJob
         normal[CentralIndex + sign] = originUp;
         arcLengthPos[CentralIndex + sign] = iter * intervalWidth;
         end = CentralIndex + sign;
+
+        return;
     }
 
     private readonly bool SuccessfulCast(NativeArray<PhysicsQuery.WorldCastResult> castResults)
     {
         return castResults.Length > 0 && PhysicsCoreHelper.ShapeProxyForJobs.ShapeValid(castResults[0].shape.Id(), shapeCapture);
-    }
-
-    readonly struct MinimalHitData
-    {
-        public readonly PhysicsTransform shapeTransform;
-        public readonly float2 point;
-        public readonly int shapeId;
-        public readonly PhysicsShape.ShapeType shapeType;
-
-        public MinimalHitData(PhysicsQuery.WorldCastResult castResult)
-        {
-            var shape = castResult.shape;
-            shapeTransform = shape.transform;
-            point = castResult.point;
-            shapeId = shape.Id();
-            shapeType = shape.shapeType;
-        }
-
-        public MinimalHitData(PhysicsShape shape, float2 point)
-        {
-            shapeTransform = shape.transform;
-            this.point = point;
-            shapeId = shape.Id();
-            shapeType = shape.shapeType;
-        }
     }
 
     private void ChaseHit(int i, ref int end, int sign, MinimalHitData hit)
