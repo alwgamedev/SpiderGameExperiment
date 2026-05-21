@@ -22,7 +22,6 @@ public class SpiderMover
     [SerializeField] Transform abdomenBone;
     [SerializeField] Transform headRoot;
     [SerializeField] Transform headBone;
-    [SerializeField] Transform heightReferencePoint;
     [SerializeField] GrappleCannon grapple;
     [SerializeField] Thruster thruster;
     [SerializeField] ThrusterFlame thrusterFlame;
@@ -32,7 +31,6 @@ public class SpiderMover
     [SerializeField] float groundedEntryToleranceFactor;
     [SerializeField] float groundDirectionSampleWidth;
     [SerializeField] float backupGroundPtRaycastLengthFactor;
-    //[SerializeField] GroundMap oldGroundMap;
     [SerializeField] NewGroundMap groundMap;
 
     [Header("Movement")]
@@ -58,7 +56,6 @@ public class SpiderMover
     [Header("Balance & Rotation")]
     [SerializeField] float headRotationMinPos;
     [SerializeField] float headRotationMaxPos;
-    [SerializeField] float headMinHeightFraction;
     [SerializeField] float balanceSpringForce;
     [SerializeField] float airborneBalanceSpringForce;
     [SerializeField] float balanceSpringDamping;
@@ -115,8 +112,9 @@ public class SpiderMover
     bool ForceFreeHang => grapple.GrappleAnchored && spiderInput.ShiftAction.IsPressed();
     Vector2 Right => SpideyBody.LevelRight.direction;
     Vector2 Up => Right.CCWPerp();
-    Vector2 OrientedRight => FacingRight ? Right : -Right;
     Vector2 OrientedGroundDirection => FacingRight ? groundDirection : -groundDirection;
+    Vector2 OrientedRight => FacingRight ? Right : -Right;
+    Vector2 OrientedHeadDirection => FacingRight ? Head.rotation.direction : -Head.rotation.direction;
     Vector2 HeightReferencePt => SpideyBody.HeightReferencePosition;
     float MaxSpeed => grounded ? maxSpeed : maxSpeedAirborne;
     float GrappleScurryResistance => Vector2.Dot(grapple.LastCarryForce, -OrientedGroundDirection);
@@ -202,7 +200,7 @@ public class SpiderMover
         thruster.Initialize();
         thrusterFlame.Initialize();
 
-        spiderBody.CreatePhysicsBody(new PhysicsRotate(transform.right), abdomenRoot, headRoot, headBone, grappleArm, heightReferencePoint);
+        spiderBody.CreatePhysicsBody(new PhysicsRotate(transform.right), abdomenRoot, headRoot, headBone, grappleArm/*, heightReferencePoint*/);
         InitializeLegSynch();
         InitializeGroundData();
         grapple.Initialize(spiderInput, World, TotalMass, FacingRight);
@@ -223,8 +221,6 @@ public class SpiderMover
     public void OnDestroy()
     {
         groundMap.Dispose();
-        //oldGroundMap.Dispose();
-        //groundMap.Dispose();
         grapple.OnDestroy();
         legSynch.Destroy();
         spiderBody.Destroy();
@@ -251,7 +247,6 @@ public class SpiderMover
         UpdateGroundData();
         RotateAbdomen();
         RotateHead();
-        //UpdatePosture();
         UpdateThruster();
         UpdateGrappleScurrying();
 
@@ -522,15 +517,19 @@ public class SpiderMover
             }
             else
             {
-                Vector2 d = FlipInput && canFlip ? -OrientedGroundDirection : OrientedGroundDirection;
-                var spd = Vector2.Dot(Abdomen.linearVelocity, d);
-                var maxSpd = MaxSpeed;
-                var accFactor = grounded ? accelFactor : (thruster.Engaged ? thrustingAccelFactor : deadThrusterAccelFactor * Mathf.Clamp(1 - d.y, 0, 1));
-
-                var s = Mathf.Min(maxSpd - spd, accelCap * maxSpd);
-                if (grounded || s > 0)
+                if (grounded)
                 {
-                    Abdomen.ApplyForceToCenter(accFactor * s * TotalMass * d);
+                    var accFactor = TotalMass * accelFactor;
+                    var headRel = SpideyBody.LevelRight.InverseMultiplyRotation(Head.rotation).direction;
+                    var t = headRel.x < 0 ? 1 : Mathf.Abs(headRel.y);
+                    MoveBody(Head, OrientedHeadDirection, MaxSpeed, t *  accFactor, accelCap, 0, out var sHead);
+                    MoveBody(Abdomen, OrientedRight, MaxSpeed, /*(1 - t) **/ accFactor, accelCap, Mathf.NegativeInfinity, out var sAbdomen);
+                }
+                else
+                {
+                    var dir = FlipInput && canFlip ? -OrientedGroundDirection : OrientedGroundDirection;
+                    var accFactor = TotalMass * (thruster.Engaged ? thrustingAccelFactor : deadThrusterAccelFactor * Mathf.Clamp(1 - dir.y, 0, 1));
+                    MoveBody(Abdomen, dir, MaxSpeed, accFactor, accelCap, 0, out _);
                 }
             }
         }
@@ -542,6 +541,17 @@ public class SpiderMover
             var l = Vector2.Dot(groundAnchorPt - HeightReferencePt, d);
             var grip = gripStrength * l - gripDamping * vel;
             Abdomen.ApplyForceToCenter(TotalMass * grip * d);//grip to steep slope
+        }
+
+        static void MoveBody(PhysicsBody body, Vector2 direction, float maxSpd, float accFactor, float accCap, float sMin, out float s)
+        {
+            var spd = Vector2.Dot(body.linearVelocity, direction);
+            s = Mathf.Min(maxSpd - spd, accCap * maxSpd);
+
+            if (s > sMin)
+            {
+                body.ApplyForceToCenter(accFactor * s * direction);
+            }
         }
     }
 
@@ -602,16 +612,26 @@ public class SpiderMover
         Vector2 g;
         if (grounded)
         {
-            var (i, t) = groundMap.ClosestPoint(Head.position);
+            var p0 = Head.position;
+            var (i, t) = groundMap.LineCastOrClosest(p0, Head.rotation.direction.CCWPerp());
             var tMin = FacingRight ? t + headRotationMinPos : t - headRotationMaxPos;
-            var tMax = FacingRight ? t + headRotationMaxPos : t - headRotationMinPos;
+            var tMax = tMin + headRotationMaxPos - headRotationMinPos;
             Vector2 n = groundMap.AverageNormal(i, tMin, tMax);
             g = n.CWPerp();
+
+            //Vector2 p = groundMap.PointFromReducedPosition(i, t);
+            //var d = p0 - p;
+            //var headHeight = d.magnitude;
+            //var minHeight = headHeightMinFrac * EffectiveRideHeight;
+            //if (headHeight < minHeight)
+            //{
+            //    //may want to add damping
+            //    Head.ApplyForceToCenter(headHeightSpringForce * (minHeight / headHeight - 1) * d);
+            //}
         }
         else
         {
-            var right = Right;
-            g = grapple.FreeHanging ? FreeHangingHeadRight(right) : right;
+            g = grapple.FreeHanging ? FreeHangingHeadRight(Right) : Right;
         }
 
         SpideyBody.SetHeadRotation(new PhysicsRotate(g));
@@ -672,14 +692,18 @@ public class SpiderMover
 
     private void UpdateHeightSpring()
     {
+        var p0 = HeightReferencePt;
         Vector2 down = -Up;
-        var (i, t) = groundMap.LineCastOrClosest(HeightReferencePt, down);//switch to HeightRefPt (after we figure out the issue)
-        Vector2 p = FacingRight ? groundMap.AveragePoint(i, t + heightSampleMin, t + heightSampleMax)
-            : groundMap.AveragePoint(i, t - heightSampleMax, t - heightSampleMin);
+        var (i, t) = groundMap.LineCastOrClosest(HeightReferencePt, down);
+        var tMin = FacingRight ? t + heightSampleMin : t - heightSampleMax;
+        var tMax = tMin + heightSampleMax - heightSampleMin;
+        Vector2 p = groundMap.AveragePoint(i, tMin, tMax);
 
-        var v = Vector2.Dot(Abdomen.linearVelocity, down);
-        var l = Vector2.Dot(p - HeightReferencePt, down) - EffectiveRideHeight;
-        var f = l * heightSpringForce;
+        var v = Vector2.Dot(Abdomen.GetWorldPointVelocity(p0), down);
+        var d = p - p0;
+        var l = d.magnitude;
+        down = d / l;
+        var f = (l - EffectiveRideHeight) * heightSpringForce;
         if (grapple.GrappleAnchored)
         {
             var dot = Vector2.Dot(grapple.LastCarryForce, down);
@@ -694,7 +718,7 @@ public class SpiderMover
             }
         }
 
-        Abdomen.ApplyForceToCenter(TotalMass * (f - heightSpringDamping * v - Vector2.Dot(World.gravity, down)) * down/*, HeightReferencePt*/);
+        Abdomen.ApplyForce(TotalMass * (f - heightSpringDamping * v - Vector2.Dot(World.gravity, down)) * down, p0);
         //remove affect of gravity while height spring engaged, otherwise you will settle at a height which is off by -Vector2.Dot(gravity, down) / heightSpringForce
         //(meaning you will be under height when upright, and over height when upside down (which was causing feet to not reach ground while upside down))
         //(e.g. before ride height on flat ground was always off by around +- 32/400 = 0.08)
@@ -730,6 +754,7 @@ public class SpiderMover
         {
             i = groundMap.CentralIndex;
         }
+
 
         groundDirection = grounded ?
             groundMap.AverageNormal(i, -groundDirectionSampleWidth, groundDirectionSampleWidth).CWPerp()

@@ -21,7 +21,7 @@ public struct SpiderBody
     [SerializeField] Vector2 headCapsuleSize;
     [SerializeField] Vector2 headCapsuleOffset;
     /// <summary> (when facing right) </summary>
-    Vector2 heightReferenceLocalPos;
+    //Vector2 heightReferenceLocalPos;
 
     [SerializeField] public PhysicsQuery.QueryFilter queryFilter;
     float totalMass;
@@ -115,7 +115,7 @@ public struct SpiderBody
     }
 
     public void CreatePhysicsBody(PhysicsRotate levelDirection, Transform abdomenRoot, Transform headRoot, Transform headBone, 
-        Transform grappleArmTransform, Transform heightReferencePoint)
+        Transform grappleArmTransform/*, Transform heightReferencePoint*/)
     {
         var defaultWorld = PhysicsWorld.defaultWorld;
 
@@ -163,7 +163,7 @@ public struct SpiderBody
 
         abdomenBaseRotationFromLevel = levelDirection.InverseMultiplyRotation(abdomen.rotation);
         abdomenRotationFromBase = PhysicsRotate.identity;
-        heightReferenceLocalPos = abdomen.transform.InverseTransformPoint(heightReferencePoint.position);
+        //heightReferenceLocalPos = abdomen.transform.InverseTransformPoint(heightReferencePoint.position);
 
         totalMass = abdomen.mass + head.mass;
         facingRight = true;
