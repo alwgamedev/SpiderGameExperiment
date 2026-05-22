@@ -29,7 +29,7 @@ public static class PhysicsCoreHelper
         //var hyperplaneNormal = tB.rotation.direction;
         //var rotHyperplaneNormal = changeDirection ? hyperplaneNormal.CCWPerp() : hyperplaneNormal;
         tA.position = origin + (tA.position - origin).ReflectAcrossHyperplane(tB.rotation.direction);
-        tA.rotation = new PhysicsRotate(tA.rotation.direction.ReflectAcrossHyperplane(tB.rotation.direction));
+        tA.rotation = new PhysicsRotate() { direction = tA.rotation.direction.ReflectAcrossHyperplane(tB.rotation.direction) };
         return tA;
     }
 

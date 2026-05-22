@@ -406,18 +406,18 @@ public struct RopeReparametrization : IJob
 public unsafe struct CalculateRopeMaxTension : IJob
 {
     [NoAlias][ReadOnly] public NativeArray<float2> position;
-    public NativeReference<float2> bbMin;//this job will also return bounding box containing all rope nodes
-    public NativeReference<float2> bbMax;
+    //public NativeReference<float2> bbMin;//this job will also return bounding box containing all rope nodes
+    //public NativeReference<float2> bbMax;
     public NativeReference<float> maxTension;
     public readonly float nodeSpacing;
     public readonly int sourceIndex;
 
-    public CalculateRopeMaxTension(NativeArray<float2> position, NativeReference<float2> bbMin, NativeReference<float2> bbMax,
+    public CalculateRopeMaxTension(NativeArray<float2> position, /*NativeReference<float2> bbMin, NativeReference<float2> bbMax,*/
         NativeReference<float> maxTension, float nodeSpacing, int sourceIndex)
     {
         this.position = position;
-        this.bbMin = bbMin;
-        this.bbMax = bbMax;
+        //this.bbMin = bbMin;
+        //this.bbMax = bbMax;
         this.maxTension = maxTension;
         this.nodeSpacing = nodeSpacing;
         this.sourceIndex = sourceIndex;
@@ -438,7 +438,7 @@ public unsafe struct CalculateRopeMaxTension : IJob
         }
 
         maxTension.Value = max;
-        bbMin.Value = bbLower;
-        bbMax.Value = bbUpper;
+        //bbMin.Value = bbLower;
+        //bbMax.Value = bbUpper;
     }
 }

@@ -2,6 +2,7 @@
 using UnityEngine.Events;
 using Unity.U2D.Physics;
 using System;
+using Unity.Collections;
 
 [Serializable]
 public class GrappleCannon
@@ -71,6 +72,8 @@ public class GrappleCannon
         {
             UpdateGrappleSettings();
         }
+
+        cannonFulcrum.OnValidate();
     }
 
     public void OnDrawGizmos()
@@ -82,14 +85,14 @@ public class GrappleCannon
         }
     }
 
-    public void Initialize(SpiderInput spiderInput, PhysicsWorld ownerWorld, float ownerMass, bool facingRight)
+    public void Initialize(SpiderInput spiderInput, PhysicsWorld ownerWorld, PhysicsRotate levelRotation, float ownerMass, bool facingRight)
     {
         this.spiderInput = spiderInput;
 
         grapple = new FastRope(grappleSettings, ownerWorld, ownerMass, SourcePosition, minLength, numNodes);
         grapple.Disable();
 
-        cannonFulcrum.Initialize();
+        cannonFulcrum.Initialize(levelRotation);
         grappleRenderer.Initialize();
         SetOrientation(facingRight);
     }
@@ -125,25 +128,26 @@ public class GrappleCannon
     {
         if (GrappleEnabled)
         {
-            //UpdateGrappleStartPosition();
-            //if (grapple.TerminusAnchored)
-            //{
-            //    grapple.SetTerminusToAnchorPosition();
-            //}
             grappleRenderer.UpdateRenderPositions(grapple, SourcePosition);
         }
     }
 
-    public void FixedUpdate(PhysicsTransform ownerTransform, PhysicsBody ownerBody)
+    public void CompleteJobs()
+    {
+        grapple.CompleteJobs();
+    }
+
+    public void FixedUpdate(float dt, PhysicsRotate levelRotation, PhysicsBody ownerBody, 
+        PhysicsQuery.QueryFilter collisionFilter, NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture)
     {
         ownerBody.SyncTransform();
-        UpdateCannonFulcrum(ownerTransform);
+        UpdateCannonFulcrum(levelRotation);
 
         if (GrappleEnabled)
         {
             var grappleWasAnchored = grapple.TerminusAnchored;
             UpdateGrappleLength();
-            grapple.Update(SourcePosition, Time.deltaTime);
+            grapple.Update(SourcePosition, dt, collisionFilter, shapeCapture);
             if (GrappleAnchored)
             {
                 UpdateCarrySpring(ownerBody);
@@ -162,6 +166,12 @@ public class GrappleCannon
         }
     }
 
+    //public void OnDirectionChanged(PhysicsRotate reflection, bool facingRight)
+    //{
+    //    SetOrientation(facingRight);
+    //    cannonFulcrum.OnDirectionChanged(reflection);
+    //}
+
     public void SetOrientation(bool facingRight)
     {
         this.facingRight = facingRight;
@@ -170,7 +180,7 @@ public class GrappleCannon
 
     //FIXED UPDATE FUNCTIONS
 
-    private void UpdateCannonFulcrum(PhysicsTransform ownerTransform)
+    private void UpdateCannonFulcrum(PhysicsRotate levelRotation)
     {
         if (GrappleAnchored)
         {
@@ -178,7 +188,7 @@ public class GrappleCannon
         }
         else
         {
-            cannonFulcrum.UpdateKinematic(Time.deltaTime, aimInput, ownerTransform, facingRight);
+            cannonFulcrum.UpdateKinematic(Time.deltaTime, aimInput, levelRotation, facingRight);
         }
     }
 

@@ -560,7 +560,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &151097605
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -617,7 +617,7 @@ MonoBehaviour:
       m_CustomColor:
         serializedVersion: 2
         rgba: 0
-    m_Density: 0.5
+    m_Density: 1.25
     m_IsTrigger: 0
     m_TriggerEvents: 0
     m_ContactEvents: 0
@@ -703,7 +703,7 @@ Transform:
   m_GameObject: {fileID: 151097604}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -44.3, y: -0.2, z: 0}
+  m_LocalPosition: {x: -45.61, y: 2.42, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4355,7 +4355,7 @@ MonoBehaviour:
     m_PreSolveCallbacks: 0
     m_StartStaticContacts: 0
     m_StartMassUpdate: 1
-    m_WorldDrawing: 0
+    m_WorldDrawing: 1
     moverData:
       m_PushLimit: 0
       m_ClipVelocity: 0
@@ -12732,7 +12732,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1415688796
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12926,7 +12926,7 @@ Transform:
   m_GameObject: {fileID: 1415688795}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -39.3, y: 2.6, z: 0}
+  m_LocalPosition: {x: -38.15, y: 3.65, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 8}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -14717,7 +14717,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1641393895
 MonoBehaviour:
   m_ObjectHideFlags: 0

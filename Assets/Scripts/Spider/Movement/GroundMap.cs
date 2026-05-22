@@ -8,8 +8,6 @@ using UnityEngine;
 [Serializable]
 public class GroundMap
 {
-    public const float DEFAULT_PRECISION = 0.5f;
-
     [SerializeField] int numFwdIntervals;
     [SerializeField] float intervalWidth;
 
@@ -19,19 +17,18 @@ public class GroundMap
     NativeArray<float2> readNormal;
     NativeArray<float> arcLengthPos;
     NativeArray<float> readArcLengthPos;
-    NativeArray<float> raycastDistance;//only need during job
-    NativeArray<bool> hitGround;
-    NativeArray<bool> readHitGround;
-    AlwaysAccessibleNativeReference<int> indexOfFirstGroundHitFromCenter;
+    AlwaysAccessibleNativeReference<int> endRight;
+    AlwaysAccessibleNativeReference<int> endLeft;
+    AlwaysAccessibleNativeReference<int> firstHitRight;
+    AlwaysAccessibleNativeReference<int> firstHitLeft;
 
     JobHandle jobHandle;
 
-    Color GizmoColorCenter => Color.red;
-    Color GizmoColorRight => Color.green;
-    Color GizmoColorLeft => Color.yellow;
     public int CentralIndex => NumPoints / 2;
     public int NumPoints => readPoint.Length;
-    public int IndexOfFirstGroundHitFromCenter => indexOfFirstGroundHitFromCenter.Value;
+    public int NumActivePoints => EndRight - EndLeft + 1;
+    public int EndRight => endRight.Value;
+    public int EndLeft => endLeft.Value;
 
     public float2 Point(int i) => readPoint[i];
 
@@ -43,7 +40,14 @@ public class GroundMap
 
     public float ArcLengthPos(int i) => readArcLengthPos[i];
 
-    public bool HitGround(int i) => readHitGround[i];
+    public bool HitGround(int i) => !(i < firstHitRight.Value) || !(i > firstHitLeft.Value);
+
+    public int FirstGroundHitFromCenter(bool prioritizeRight)
+    {
+        return prioritizeRight ?
+            firstHitRight.Value < point.Length ? firstHitRight.Value : firstHitLeft.Value :
+            firstHitLeft.Value > -1 ? firstHitLeft.Value : firstHitRight.Value;
+    }
 
     public float2 Point(int i, float arcLength)
     {
@@ -55,14 +59,14 @@ public class GroundMap
     {
         if (arcLength > 0)
         {
-            return i < NumPoints - 1 ?
-                math.lerp(Point(i), Point(i + 1), arcLength / (ArcLengthPos(i + 1) - ArcLengthPos(i)))
+            return i < EndRight ?
+                Vector2.Lerp(Point(i), Point(i + 1), arcLength / (ArcLengthPos(i + 1) - ArcLengthPos(i)))
                 : Point(i);
         }
         else
         {
-            return i > 0 ?
-                math.lerp(Point(i), Point(i - 1), arcLength / (ArcLengthPos(i - 1) - ArcLengthPos(i)))
+            return i > EndLeft ?
+                Vector2.Lerp(Point(i), Point(i - 1), arcLength / (ArcLengthPos(i - 1) - ArcLengthPos(i)))
                 : Point(i);
         }
     }
@@ -73,178 +77,147 @@ public class GroundMap
         return NormalFromReducedPosition(j, t);
     }
 
+    //normals, unlike points, are piecewise constant
+    //if i >= CentralIndex, then normal[i] is held on the interval to the right[i, i + 1),
+    //and if i <= CentralIndex, then normal[i] is held on the interval to the left (i - 1, i],
+    //(this is important for the new system where we can have long flat segments
+    //-- when all the points were tightly spaced it made more sense to interpolate normals btwn points, but now it doesn't)
     public float2 NormalFromReducedPosition(int i, float arcLength)
     {
-        if (arcLength > 0)
+        if (arcLength == 0)
         {
-            return i < NumPoints - 1 ?
-                MathTools.CheapRotationalLerp(Normal(i), Normal(i + 1), arcLength / (ArcLengthPos(i + 1) - ArcLengthPos(i)), out _)
-                : Normal(i);
+            return Normal(i);
+        }
+        else if (arcLength > 0)
+        {
+            return i < CentralIndex ? Normal(i + 1) : Normal(i);
         }
         else
         {
-            return i > 0 ?
-                MathTools.CheapRotationalLerp(Normal(i), Normal(i - 1), arcLength / (ArcLengthPos(i - 1) - ArcLengthPos(i)), out _)
-                : Normal(i);
+            return i > CentralIndex ? Normal(i - 1) : Normal(i);
         }
     }
 
-    /// <summary> Average point between ArcLengthPos(i) + t0 and ArcLengthPos(i) + t1. </summary>
+    /// <summary> Average point between ArcLengthPos(i) + s0 and ArcLengthPos(i) + s1. </summary>
     public float2 AveragePoint(int i, float s0, float s1)
     {
-        float length0 = s1 - s0;
-        float length = length0;
-        if (length < 0)
+        if (s1 < s0)
         {
             return Point(i);
         }
 
         (int j, float t) = AddArcLength(i, s0);
+        (int jEnd, float tEnd) = AddArcLength(i, s1);
 
-        float2 sum = 0;
+        if (tEnd < 0)
+        {
+            if (jEnd == EndLeft)
+            {
+                return Point(EndLeft);
+            }
+
+            tEnd += ArcLengthPos(jEnd) - ArcLengthPos(--jEnd);
+        }
+
+        if (j == jEnd && !MathTools.OppositeSigns(t, tEnd))//this is (*)
+        {
+            //start and end point lie in the same segment
+            return PointFromReducedPosition(j, 0.5f * (t + tEnd));
+        }
+
+        float2 sum;
+        float length;
 
         if (t < 0)
         {
-            if (-t > length)
-            {
-                return 0.5f * (PointFromReducedPosition(j, t) + PointFromReducedPosition(j, t + length));
-            }
-            else
-            {
-                sum += 0.5f * -t * (PointFromReducedPosition(j, t) + Point(j));
-                length += t;
-            }
+            sum = -t * PointFromReducedPosition(j, 0.5f * t);
+            length = -t;
         }
-        else if (t > 0)
+        else
         {
-            if (j == NumPoints - 1)
-            {
-                return Point(j);
-            }
-            else
-            {
-                var dt = ArcLengthPos(j + 1) - ArcLengthPos(j) - t;
-                if (dt > length)
-                {
-                    return 0.5f * (PointFromReducedPosition(j, t) + PointFromReducedPosition(j, t + length));
-                }
-                else
-                {
-                    sum += 0.5f * dt * (PointFromReducedPosition(j, t) + Point(j + 1));
-                    length -= dt;
-                    j++;
-                }
-            }
+            length = ArcLengthPos(j + 1) - ArcLengthPos(j) - t;
+            sum = length * PointFromReducedPosition(j, t + 0.5f * length);
+            j++;//increment is valid after (*)
         }
 
-        while (length > 0 && j < NumPoints - 1)
+        while (j < jEnd)
         {
             var dt = ArcLengthPos(j + 1) - ArcLengthPos(j);
-            if (dt > length)
-            {
-                sum += 0.5f * length * (Point(j) + PointFromReducedPosition(j, length));
-                length = 0;
-                break;
-            }
-
-            sum += 0.5f * dt * (Point(j) + Point(j + 1));
-            length -= dt;
+            sum += dt * PointFromReducedPosition(j, 0.5f * dt);
+            length += dt;
             j++;
         }
 
-        if (j == NumPoints - 1 && length > 0)
+        if (tEnd > 0)
         {
-            sum += length * Point(j);
-            //length = 0;
+            sum += tEnd * PointFromReducedPosition(jEnd, 0.5f * tEnd);
+            length += tEnd;
         }
 
-        return sum / length0;
+        return sum / length;
     }
 
-    /// <summary> Average normal between ArcLengthPos(i) + t0 and ArcLengthPos(i) + t1. </summary>
+    /// <summary> Average normal between ArcLengthPos(i) + s0 and ArcLengthPos(i) + s1. </summary>
     public float2 AverageNormal(int i, float s0, float s1)
     {
-        float length = s1 - s0;
-        if (length < 0)
+        if (s1 < s0)
         {
             return Normal(i);
         }
 
         (int j, float t) = AddArcLength(i, s0);
+        (int jEnd, float tEnd) = AddArcLength(i, s1);
 
-        float2 avg = 0;
-        float wt = 0;
-
-        static float2 Avg(float2 n1, float2 n2)
+        if (tEnd < 0)
         {
-            return MathTools.CheapRotationalLerp(n1, n2, 0.5f, out _);
+            if (jEnd == EndLeft)
+            {
+                return Normal(EndLeft);
+            }
+
+            tEnd += ArcLengthPos(jEnd) - ArcLengthPos(--jEnd);
         }
 
-        static void CombineAvg(ref float2 avg1, ref float wt1, float2 avg2, float wt2)
+        if (j == jEnd && !MathTools.OppositeSigns(t, tEnd))//this is (*)
         {
-            wt1 += wt2;
-            avg1 = MathTools.CheapRotationalLerp(avg1, avg2, wt2 / wt1, out _);
+            //start and end point lie in the same segment
+            return Normal(j, t);
         }
+
+        float2 n;
+        float wt;
 
         if (t < 0)
         {
-            if (-t > length)
-            {
-                return Avg(NormalFromReducedPosition(j, t), NormalFromReducedPosition(j, t + length));
-            }
-            else
-            {
-                avg = Avg(NormalFromReducedPosition(j, t), Normal(j));
-                wt = -t;
-                length += t;
-            }
+            n = NormalFromReducedPosition(j, t);
+            wt = -t;
         }
-        else if (t > 0)
+        else
         {
-            if (j == NumPoints - 1)
-            {
-                return Normal(j);
-            }
-            else
-            {
-                var dt = ArcLengthPos(j + 1) - ArcLengthPos(j) - t;
-                if (dt > length)
-                {
-                    return Avg(NormalFromReducedPosition(j, t), NormalFromReducedPosition(j, t + length));
-                }
-                else
-                {
-                    avg = Avg(NormalFromReducedPosition(j, t), Normal(j + 1));
-                    length -= dt;
-                    wt = dt;
-                    j++;
-                }
-            }
+            n = NormalFromReducedPosition(j, t);
+            wt = -t - ArcLengthPos(j) + ArcLengthPos(++j);//increment is valid after (*)
         }
 
-        while (length > 0 && j < NumPoints - 1)
+        while (j < jEnd)
         {
-            var dt = ArcLengthPos(j + 1) - ArcLengthPos(j);
-            float2 segAvg;
-            if (dt > length)
-            {
-                segAvg = Avg(Normal(j), NormalFromReducedPosition(j, length));
-                CombineAvg(ref avg, ref wt, segAvg, length);
-                return avg;
-            }
-
-            segAvg = Avg(Normal(j), Normal(j + 1));
-            CombineAvg(ref avg, ref wt, segAvg, dt);
-            length -= dt;
-            j++;
+            //use Normal(j, epsilon) to make sure we sample the normal in the interior of the interval
+            //(due to the discrepancy in how normals are attached for segments left of center and right of center)
+            (n, wt) = Avg(n, wt, NormalFromReducedPosition(j, float.Epsilon), -ArcLengthPos(j) + ArcLengthPos(++j));
         }
 
-        if (j == NumPoints - 1 && length > 0)
+        if (tEnd > 0)
         {
-            CombineAvg(ref avg, ref wt, Normal(j), length);
+            (n, _) = Avg(n, wt, NormalFromReducedPosition(jEnd, float.Epsilon), tEnd);
         }
 
-        return avg;
+        return n;
+
+        static (float2 n, float wt) Avg(float2 n1, float wt1, float2 n2, float wt2)
+        {
+            var wt = wt1 + wt2;
+            var n = MathTools.CheapRotationalLerp(n1, n2, wt2 / wt, out _);
+            return (n, wt);
+        }
     }
 
     /// <summary> Moves from point i by given arc length and returns reduced "index with arc length remainder" (j, t). 
@@ -253,7 +226,7 @@ public class GroundMap
     {
         if (arcLength > 0)
         {
-            while (i < NumPoints - 1)
+            while (i < EndRight)
             {
                 var d = ArcLengthPos(i + 1) - ArcLengthPos(i);
                 if (arcLength < d)
@@ -268,7 +241,7 @@ public class GroundMap
         }
         else
         {
-            while (i > 0)
+            while (i > EndLeft)
             {
                 var d = ArcLengthPos(i - 1) - ArcLengthPos(i);
                 if (arcLength > d)
@@ -283,221 +256,130 @@ public class GroundMap
         }
     }
 
-    public (int, float) LineCastOrClosest(float2 p, float2 castDir, float precision)
+    public (int, float) LineCastOrClosest(float2 p, float2 castDir)
     {
-        var (i, t) = LineCastToGround(p, castDir, precision, out var d2);
-        if (math.isinf(d2))
+        var result = LineCastToGround(p, castDir, out var d2);
+        if (!float.IsFinite(d2))
         {
-            (i, t) = ClosestPoint(p, precision);
+            result = ClosestPoint(p);
         }
 
-        return (i, t);
+        return result;
     }
 
     /// <summary> 
     /// Tries to find a point q on ground map such that q - p is parallel to castDir.
     /// If there are multiple such points, returns closest one.
-    /// If the cast did not hit, the out parameter bestSqDist will be infinity.
-    /// The method uses a sort of tree search to find where Cross(q-p,castDir) changes sign:
-    /// it splits the ground map into intervals of width = precision, 
-    /// and if start and end of an interval have different cross signs, it splits the interval in two and searches further,
-    /// otherwise it assumes there is no sign change (line cast hit) in that interval.
     /// </summary>
-    public (int, float) LineCastToGround(float2 p, float2 castDir, float precision, out float bestSqDist)
+    
+    //2do: might write static bursted versions of some of these (the number of active points now is pretty low)
+    public (int, float) LineCastToGround(float2 p, float2 castDir, out float bestSqDist)
     {
-        int interval = (int)Mathf.Ceil(precision / intervalWidth);
+        bestSqDist = Mathf.Infinity;
+        (int j, float s) = (0, 0);//best pt
 
-        bestSqDist = math.INFINITY;
-        (int, float) bestPt = (0, 0);
+        int i = EndLeft;
+        var p0 = Point(i);
+        var d0 = p0 - p;
+        var a0 = MathTools.Cross2D(d0, castDir);
 
-        for (int i = 0; i < (NumPoints - 1) / interval; i++)
+        if (a0 == 0)
         {
-            int i0 = i * interval;
-            int i1 = Mathf.Min(i0 + interval, NumPoints - 1);
+            var d0Sq = Vector2.SqrMagnitude(d0);
+            if (d0Sq < bestSqDist)
+            {
+                bestSqDist = d0Sq;
+                (j, s) = (i, 0);
+            }
+        }
 
-            var d0 = Point(i0) - p;
-            var d1 = Point(i1) - p;
-            var a0 = MathTools.Cross2D(d0, castDir);
+        while (i < EndRight)
+        {
+            i++;
+            var p1 = Point(i);
+            var d1 = p1 - p;
             var a1 = MathTools.Cross2D(d1, castDir);
 
-            Search(p, castDir, i0, i1, a0, a1, d0, d1, ref bestSqDist, ref bestPt);
-        }
-
-        if (bestPt.Item2 > 0)
-        {
-            bestPt.Item2 *= ArcLengthPos(bestPt.Item1 + 1) - ArcLengthPos(bestPt.Item1);
-        }
-
-        bestSqDist = Mathf.Abs(bestSqDist);
-        return bestPt;
-
-        //note that if aj = 0, then whatever it gets paired with it will always continue searching 
-        //so we don't have to update result when we encounter an aj = 0, because it will get checked when the search terminates.
-        //(although getting a zero on one of the actual map points will almost never happen)
-        void Search(float2 p, float2 castDir, int i0, int i1, float a0, float a1, float2 d0, float2 d1,
-            ref float bestSqDist, ref (int, float) bestPt)
-        {
-            if (!(i0 < i1) || (math.sign(a0) == math.sign(a1) && a0 != 0))
+            if (a1 == 0)
             {
-                return;
+                var d1Sq = Vector2.SqrMagnitude(d1);
+                if (d1Sq < bestSqDist)
+                {
+                    bestSqDist = d1Sq;
+                    (j, s) = (i, 0);
+                }
             }
 
-            if (i1 == i0 + 1)//we've honed in on where the sign change occurs and should record the results
+            if (MathTools.OppositeSigns(a0, a1))
             {
-                if (a0 == 0)
+                var t = a0 / (a0 - a1);//time at which zero occurs
+                float2 q = Vector2.Lerp(p0, p1, t);
+                var d = q - p;
+                var dSq = Vector2.SqrMagnitude(d);
+                if (dSq < bestSqDist)
                 {
-                    var dot = math.dot(d0, castDir);
-                    var d0Sq = math.sign(dot) * math.lengthsq(d0);
-                    if (d0Sq < bestSqDist)
-                    {
-                        bestSqDist = d0Sq;
-                        bestPt = (i0, 0);
-                    }
+                    bestSqDist = dSq;
+                    (j, s) = (i - 1, t);
                 }
-
-                if (a1 == 0)
-                {
-                    var dot = math.dot(d1, castDir);
-                    var d1Sq = math.sign(dot) * math.lengthsq(d1);
-                    if (d1Sq < bestSqDist)
-                    {
-                        bestSqDist = d1Sq;
-                        bestPt = (i1, 0);
-                    }
-                }
-                else if (a0 != 0)//a0 != 0 && a1 != 0
-                {
-                    var t = a0 / (a0 - a1);//time at which zero occurs
-                    var q = math.lerp(Point(i0), Point(i1), t);
-                    var d = q - p;
-                    var dot = math.dot(d, castDir);
-                    var sqDist = math.sign(dot) * math.lengthsq(d);
-                    if (sqDist < bestSqDist)
-                    {
-                        bestSqDist = sqDist;
-                        bestPt = (i0, t);
-                    }
-                }
-
-                return;
             }
 
-            var iMid = (i0 + i1) / 2;
-            var dMid = Point(iMid) - p;
-            var aMid = MathTools.Cross2D(dMid, castDir);
-
-            //recursion not a big deal when our array is smallish (groundMap usually < 100 points)
-            Search(p, castDir, i0, iMid, a0, aMid, d0, dMid, ref bestSqDist, ref bestPt);//search left half
-            Search(p, castDir, iMid, i1, aMid, a1, dMid, d1, ref bestSqDist, ref bestPt);//search right half
+            p0 = p1;
+            a0 = a1;
         }
+
+        if (j < EndRight)
+        {
+            s *= ArcLengthPos(j + 1) - ArcLengthPos(j);
+        }
+        return (j, s);
     }
 
-    /// <summary> Same tree traversal approach as LineCast, but looking for a point q on ground map whose normal is parallel
-    /// to q - p. If it finds multiple such points (local extremes of distance function), it picks the closest one.
-    /// If no local extremes found, returns the closer of the two map endpoints.
-    /// </summary>
-    public (int, float) ClosestPoint(float2 p, float precision)
+    public (int, float) ClosestPoint(float2 p)
     {
-        int interval = (int)Mathf.Ceil(precision / intervalWidth);
-
         float bestSqDist;
-        (int, float) bestPt;
+        int j;
+        float s;
 
-        //start by checking dist to endpoints of map (so we can return something meaningful even if no local extremes found)
-        var left2 = math.lengthsq(Point(0) - p);
-        var right2 = math.lengthsq(Point(NumPoints - 1) - p);
-        if (left2 < right2)
+        int i = EndLeft;
+        var p0 = Point(i);
+        bestSqDist = Vector2.SqrMagnitude(p0 - p);
+        (j, s) = (i, 0);
+
+        while (i < EndRight)
         {
-            bestSqDist = left2;
-            bestPt = (0, 0);
-        }
-        else
-        {
-            bestSqDist = right2;
-            bestPt = (NumPoints - 1, 0);
-        }
-
-        for (int i = 0; i < (NumPoints - 1) / interval; i++)
-        {
-            int i0 = i * interval;
-            int i1 = Mathf.Min(i0 + interval, NumPoints - 1);
-
-            var d0 = Point(i0) - p;
-            var d1 = Point(i1) - p;
-            var a0 = MathTools.Cross2D(d0, Normal(i0));
-            var a1 = MathTools.Cross2D(d1, Normal(i1));
-
-            Search(p, i0, i1, a0, a1, d0, d1, ref bestSqDist, ref bestPt);
-        }
-
-        if (bestPt.Item2 > 0)
-        {
-            bestPt.Item2 *= ArcLengthPos(bestPt.Item1 + 1) - ArcLengthPos(bestPt.Item1);
-        }
-
-        return bestPt;
-
-        //note that if aj = 0, then whatever it gets paired with it will always continue searching 
-        //so we don't have to update result when we encounter an aj = 0, because it will get checked when the search terminates
-        //(although aj = 0 will rarely ever happen)
-        void Search(float2 p, int i0, int i1, float a0, float a1, float2 d0, float2 d1,
-            ref float bestSqDist, ref (int, float) bestPt)
-        {
-            if (!(i0 < i1) || (math.sign(a0) == math.sign(a1) && a0 != 0))
+            i++;
+            var p1 = Point(i);
+            var v = p1 - p0;
+            var t = Vector2.Dot(p - p0, v) / Vector2.SqrMagnitude(v);
+            if (!(t < 0) && !(t > 1))
             {
-                return;
+                float2 q = Vector2.Lerp(p0, p1, t);
+                var d = q - p;
+                var dSq = Vector2.SqrMagnitude(d);
+                if (dSq < bestSqDist)
+                {
+                    bestSqDist = dSq;
+                    (j, s) = (i - 1, t);
+                }
+            }
+            else
+            {
+                var dSq = Vector2.SqrMagnitude(p1 - p);
+                if (dSq < bestSqDist)
+                {
+                    bestSqDist = dSq;
+                    (j, s) = (i, 0);
+                }
             }
 
-            if (i1 == i0 + 1)//we've honed in on where the sign change occurs and should record the results
-            {
-                if (a0 == 0)
-                {
-                    var d0Sq = math.lengthsq(d0);
-                    if (d0Sq < bestSqDist)
-                    {
-                        bestSqDist = d0Sq;
-                        bestPt = (i0, 0);
-                    }
-                }
-
-                if (a1 == 0)
-                {
-                    var d1Sq = math.lengthsq(d1);
-                    if (d1Sq < bestSqDist)
-                    {
-                        bestSqDist = d1Sq;
-                        bestPt = (i1, 0);
-                    }
-                }
-                else if (a0 != 0)//a0 != 0 && a1 != 0
-                {
-                    //find the closest point to p between q0 and q1
-                    var q0 = Point(i0);
-                    var q1 = Point(i1);
-                    var n = (q1 - q0).CCWPerp();//don't need to normalize (scale cancels out when computing t)
-                    var b0 = MathTools.Cross2D(d0, n);
-                    var b1 = MathTools.Cross2D(d1, n);
-                    var t = Mathf.Clamp(b0 / (b0 - b1), 0, 1);//clamp since we used different normals for detecting sign change
-                    var q = math.lerp(q0, q1, t);
-                    var sqDist = math.distancesq(p, q);
-                    if (sqDist < bestSqDist)
-                    {
-                        bestSqDist = sqDist;
-                        bestPt = (i0, t);
-                    }
-                }
-
-                return;
-            }
-
-            var iMid = (i0 + i1) / 2;
-            var dMid = Point(iMid) - p;
-            var aMid = MathTools.Cross2D(dMid, Normal(iMid));
-
-            //recursion not a big deal when our array is smallish (groundMap usually < 100 points)
-            Search(p, i0, iMid, a0, aMid, d0, dMid, ref bestSqDist, ref bestPt);//search left half
-            Search(p, iMid, i1, aMid, a1, dMid, d1, ref bestSqDist, ref bestPt);//search right half
+            p0 = p1;
         }
+
+        if (j < EndRight)
+        {
+            s *= ArcLengthPos(j + 1) - ArcLengthPos(j);
+        }
+        return (j, s);
     }
 
     public void Initialize(float2 origin, float2 originRight, float raycastLength)
@@ -510,39 +392,53 @@ public class GroundMap
         readNormal = new NativeArray<float2>(numPoints, Allocator.Persistent);
         arcLengthPos = new NativeArray<float>(numPoints, Allocator.Persistent);
         readArcLengthPos = new NativeArray<float>(numPoints, Allocator.Persistent);
-        raycastDistance = new NativeArray<float>(numPoints, Allocator.Persistent);
-        hitGround = new NativeArray<bool>(numPoints, Allocator.Persistent);
-        readHitGround = new NativeArray<bool>(numPoints, Allocator.Persistent);
-        indexOfFirstGroundHitFromCenter = new(centralIndex, Allocator.Persistent);
+        endRight = new(Allocator.Persistent);
+        endLeft = new(Allocator.Persistent);
+        firstHitRight = new(Allocator.Persistent);
+        firstHitLeft = new(Allocator.Persistent);
+
+        //shapeCapture = new(2048, Allocator.Persistent);
 
         //initialize map with flat ground until first job comes in
         var up = originRight.CCWPerp();
         float2 centerPt = origin - raycastLength * up;
         for (int i = 0; i < numPoints; i++)
         {
-            var k = i - centralIndex;
-            var s = k * intervalWidth;
+            var s = (i - centralIndex) * intervalWidth;
             arcLengthPos[i] = s;
             point[i] = centerPt + s * originRight;
             normal[i] = up;
-            hitGround[i] = false;
-            raycastDistance[i] = raycastLength;
         }
+
+        endRight.Value = numPoints - 1;
+        endLeft.Value = 0;
+        firstHitRight.Value = numPoints;
+        firstHitLeft.Value = -1;
+
+        endRight.Locked = true;
+        endLeft.Locked = true;
+        firstHitRight.Locked = true;
+        firstHitLeft.Locked = true;
 
         CopyToReadableArrays();
     }
 
-    public void UpdateMap(PhysicsWorld world, PhysicsQuery.QueryFilter filter, Vector2 origin, Vector2 originDown, Vector2 originRight,
-        float raycastLength, bool searchRightFirst)
+    public void CompleteJobs()
+    {
+        jobHandle.Complete();
+    }
+
+    public void UpdateMap(PhysicsWorld world, PhysicsQuery.QueryFilter filter, Vector2 origin, Vector2 originUp, float raycastLength,
+        NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture)
     {
         jobHandle.Complete();
         CopyToReadableArrays();
 
-        indexOfFirstGroundHitFromCenter.Locked = false;//flick lock off/on to update public value
-        indexOfFirstGroundHitFromCenter.Locked = true;
+        var job = new GroundMapUpdate(point, normal, arcLengthPos, endRight.native, endLeft.native, firstHitRight.native, firstHitLeft.native,
+            shapeCapture, world, filter, origin, originUp, raycastLength, intervalWidth);
 
-        var job = new GroundMapUpdate(point, normal, arcLengthPos, raycastDistance, hitGround, world, filter,
-            origin, originDown, originRight, indexOfFirstGroundHitFromCenter.native, raycastLength, intervalWidth, searchRightFirst);
+        //job.Run();
+        //CopyToReadableArrays();
 
         jobHandle = job.Schedule();
     }
@@ -551,18 +447,24 @@ public class GroundMap
     {
         if (!readPoint.IsCreated) return;
 
-        Gizmos.color = GizmoColorLeft;
-        for (int i = 0; i < numFwdIntervals; i++)
+        int i = EndLeft;
+        Vector2 p = Point(i);
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(p, 0.025f);
+        Gizmos.DrawLine(p, p + 0.25f * (Vector2)Normal(i));
+
+        while (i < endRight.Value)
         {
-            Gizmos.DrawSphere((Vector2)Point(i), 0.1f);
+            i++;
+            Vector2 q = readPoint[i];
+            Gizmos.DrawLine(p, q);
+            Gizmos.DrawSphere(q, 0.025f);
+            Gizmos.DrawLine(q, q + 0.25f * (Vector2)Normal(i));
+            p = q;
         }
-        Gizmos.color = GizmoColorCenter;
-        Gizmos.DrawSphere((Vector2)Point(CentralIndex), 0.1f);
-        Gizmos.color = GizmoColorRight;
-        for (int i = numFwdIntervals + 1; i < NumPoints; i++)
-        {
-            Gizmos.DrawSphere((Vector2)Point(i), 0.1f);
-        }
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawSphere((Vector2)Point(CentralIndex), 0.025f);
     }
 
     public void Dispose()
@@ -593,22 +495,11 @@ public class GroundMap
         {
             readArcLengthPos.Dispose();
         }
-        if (raycastDistance.IsCreated)
-        {
-            raycastDistance.Dispose();
-        }
-        if (hitGround.IsCreated)
-        {
-            hitGround.Dispose();
-        }
-        if (readHitGround.IsCreated)
-        {
-            readHitGround.Dispose();
-        }
-        if (indexOfFirstGroundHitFromCenter.native.IsCreated)
-        {
-            indexOfFirstGroundHitFromCenter.Dispose();
-        }
+
+        endRight.Dispose();
+        endLeft.Dispose();
+        firstHitRight.Dispose();
+        firstHitLeft.Dispose();
     }
 
     private void CopyToReadableArrays()
@@ -616,6 +507,10 @@ public class GroundMap
         readPoint.CopyFrom(point);
         readNormal.CopyFrom(normal);
         readArcLengthPos.CopyFrom(arcLengthPos);
-        readHitGround.CopyFrom(hitGround);
+
+        endRight.UpdateSnapshot();
+        endLeft.UpdateSnapshot();
+        firstHitRight.UpdateSnapshot();
+        firstHitLeft.UpdateSnapshot();
     }
 }

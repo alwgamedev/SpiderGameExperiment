@@ -794,7 +794,7 @@ SpriteRenderer:
   m_SortingOrder: -2
   m_MaskInteraction: 0
   m_Sprite: {fileID: -6723771279104476658, guid: 4a28f069cb9967a46967f9839c89b727, type: 3}
-  m_Color: {r: 0.43529412, g: 0.43529412, b: 0.43529412, a: 1}
+  m_Color: {r: 0.24705882, g: 0.24705882, b: 0.24705882, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -856,7 +856,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChildColor
   colorControl: {fileID: 259569805516380374}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
-  colorMultiplier: {r: 1.6717823, g: 1.6717823, b: 1.6717823, a: 1}
+  colorMultiplier: {r: 0.9488494, g: 0.9488494, b: 0.9488494, a: 1}
 --- !u!1 &743431128884054347
 GameObject:
   m_ObjectHideFlags: 0
@@ -1362,7 +1362,7 @@ SpriteRenderer:
   m_SortingOrder: -3
   m_MaskInteraction: 0
   m_Sprite: {fileID: -5658210411228558641, guid: 4a28f069cb9967a46967f9839c89b727, type: 3}
-  m_Color: {r: 0.43529412, g: 0.43529412, b: 0.43529412, a: 1}
+  m_Color: {r: 0.24705882, g: 0.24705882, b: 0.24705882, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -1423,7 +1423,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChildColor
   colorControl: {fileID: 259569805516380374}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
-  colorMultiplier: {r: 1.6717823, g: 1.6717823, b: 1.6717823, a: 1}
+  colorMultiplier: {r: 0.9488494, g: 0.9488494, b: 0.9488494, a: 1}
 --- !u!1 &1147273781406288458
 GameObject:
   m_ObjectHideFlags: 0
@@ -1734,7 +1734,7 @@ MonoBehaviour:
           m_Categories:
             bitMask: 8
           m_Contacts:
-            bitMask: 64
+            bitMask: 320
           m_GroupIndex: 0
         surfaceMaterial:
           m_Friction: 0.01
@@ -1835,7 +1835,7 @@ MonoBehaviour:
             m_Categories:
               bitMask: 8
             m_Contacts:
-              bitMask: 64
+              bitMask: 320
             m_GroupIndex: 0
           surfaceMaterial:
             m_Friction: 0
@@ -2216,8 +2216,6 @@ MonoBehaviour:
       retractMaxTension: 2
       carrySpringForce: 450
       grappleSettings:
-        collisionMask:
-          bitMask: 320
         collisionBounciness: 0.6
         dynamicCollisionForce: 0.8
         width: 0.17
@@ -2240,10 +2238,9 @@ MonoBehaviour:
         floppiness: 0.25
         angularDamping: 1.25
         linearDamping: 2.5
-        kinematicRotationMin: 0
-        kinematicRotationMax: 3.1415927
-        kinematicRotationSpeed: 5
-        kinematicRotationCatchUpMultiplier: 15
+        kinematicRotationMax: {x: -0.8660254, y: -0.5}
+        kinematicRotationSpeed: 4
+        kinematicRotationCatchUpMultiplier: 30
       grappleRenderer:
         meshRenderer: {fileID: 8668545299952063791}
         meshFilter: {fileID: 6131955794355331125}
@@ -2281,6 +2278,9 @@ MonoBehaviour:
     groundMap:
       numFwdIntervals: 30
       intervalWidth: 0.1
+    shapeCapture:
+      extents: {x: 50, y: 50}
+      effectiveExtents: {x: 25, y: 25}
     accelFactor: 40
     accelFactorFreeHanging: 14
     deadThrusterAccelFactor: 4
@@ -9521,7 +9521,7 @@ SpriteRenderer:
   m_SortingOrder: -3
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7236718201430723878, guid: 4a28f069cb9967a46967f9839c89b727, type: 3}
-  m_Color: {r: 0.43529412, g: 0.43529412, b: 0.43529412, a: 1}
+  m_Color: {r: 0.24705882, g: 0.24705882, b: 0.24705882, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -9582,7 +9582,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChildColor
   colorControl: {fileID: 259569805516380374}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
-  colorMultiplier: {r: 1.6717823, g: 1.6717823, b: 1.6717823, a: 1}
+  colorMultiplier: {r: 0.9488494, g: 0.9488494, b: 0.9488494, a: 1}
 --- !u!1 &4862750478912074348
 GameObject:
   m_ObjectHideFlags: 0
@@ -9799,7 +9799,7 @@ SpriteRenderer:
   m_SortingOrder: -2
   m_MaskInteraction: 0
   m_Sprite: {fileID: -6994048939202888101, guid: 4a28f069cb9967a46967f9839c89b727, type: 3}
-  m_Color: {r: 0.4339623, g: 0.4339623, b: 0.4339623, a: 1}
+  m_Color: {r: 0.24705882, g: 0.24705882, b: 0.24705882, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -9861,7 +9861,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChildColor
   colorControl: {fileID: 259569805516380374}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
-  colorMultiplier: {r: 1.6666672, g: 1.6666672, b: 1.6666672, a: 1}
+  colorMultiplier: {r: 0.9488494, g: 0.9488494, b: 0.9488494, a: 1}
 --- !u!1 &5256750285083532067
 GameObject:
   m_ObjectHideFlags: 0

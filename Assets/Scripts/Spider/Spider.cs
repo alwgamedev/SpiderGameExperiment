@@ -12,8 +12,6 @@ public class Spider : MonoBehaviour
     public GrappleShootPreview grappleShootPreview;
     public JumpPreviewArrow jumpPreviewArrow;
 
-    public Collider2D TriggerCollider { get; private set; }//was for fluid interaction; need to update fluid to new physics system
-
     public static Spider Player { get; private set; }
 
 #if UNITY_EDITOR
@@ -93,6 +91,9 @@ public class Spider : MonoBehaviour
         mover.OnDestroy();
         jumpPreviewArrow.OnDestroy();
         grappleShootPreview.OnDestroy();
-        Player = null;
+        if (Player == this)
+        {
+            Player = null;
+        }
     }
 }

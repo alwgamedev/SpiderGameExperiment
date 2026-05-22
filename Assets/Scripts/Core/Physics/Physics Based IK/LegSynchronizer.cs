@@ -325,7 +325,7 @@ public class LegSynchronizer
         }
     }
 
-    public void UpdateAllLegs(float dt, NewGroundMap map, Vector2[] castDirection, bool facingRight)
+    public void UpdateAllLegs(float dt, GroundMap map, Vector2[] castDirection, bool facingRight)
     {
         for (int i = 0; i < leg.Length; i++)
         {
@@ -374,7 +374,7 @@ public class LegSynchronizer
         }
     }
 
-    private void UpdateLeg(int i, float dt, NewGroundMap map, bool facingRight, (int, float) hipGroundMapPosition,
+    private void UpdateLeg(int i, float dt, GroundMap map, bool facingRight, (int, float) hipGroundMapPosition,
         float goalRelSpd, float goalStepHt)
     {
         ref var l = ref leg[i];
@@ -534,7 +534,7 @@ public class LegSynchronizer
                 var p1 = position[j + 1];
                 var pos = 0.5f * (p0 + p1);
                 var dir = reversed ? (p0 - p1).normalized : (p1 - p0).normalized;
-                var rot = new PhysicsRotate(dir);
+                var rot = new PhysicsRotate() { direction = dir };
                 l.body[j].transform = new PhysicsTransform(pos, rot);
             }
         }

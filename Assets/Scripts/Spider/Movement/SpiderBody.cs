@@ -21,7 +21,6 @@ public struct SpiderBody
     [SerializeField] Vector2 headCapsuleSize;
     [SerializeField] Vector2 headCapsuleOffset;
     /// <summary> (when facing right) </summary>
-    //Vector2 heightReferenceLocalPos;
 
     [SerializeField] public PhysicsQuery.QueryFilter queryFilter;
     float totalMass;
@@ -50,13 +49,6 @@ public struct SpiderBody
         }
     }
     public readonly Vector2 HeightReferencePosition => abdomen.transform.TransformPoint(headJoint.localAnchorA.position);
-    //{
-    //    get
-    //    {
-    //        var localPos = FacingRight ? heightReferenceLocalPos : new(-heightReferenceLocalPos.x, heightReferenceLocalPos.y);
-    //        return abdomen.transform.TransformPoint(localPos);
-    //    }
-    //}
 
     public readonly bool HasContact() => abdomen.GetContacts().Length > 0 || head.GetContacts().Length > 0;
 

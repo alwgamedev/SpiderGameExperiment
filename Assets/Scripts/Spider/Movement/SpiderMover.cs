@@ -31,7 +31,8 @@ public class SpiderMover
     [SerializeField] float groundedEntryToleranceFactor;
     [SerializeField] float groundDirectionSampleWidth;
     [SerializeField] float backupGroundPtRaycastLengthFactor;
-    [SerializeField] NewGroundMap groundMap;
+    [SerializeField] GroundMap groundMap;
+    [SerializeField] ShapeCapture shapeCapture;//no trigger shapes
 
     [Header("Movement")]
     [SerializeField] float accelFactor;
@@ -194,16 +195,18 @@ public class SpiderMover
         this.spiderInput = spiderInput;
 
         legCastDirection = new Vector2[2];
-        scurryRotateMin = new PhysicsRotate(new Vector2(Mathf.Cos(grappleScurryAngleMin), Mathf.Sin(grappleScurryAngleMin)));
-        jumpRotateMin = new PhysicsRotate(new Vector2(Mathf.Cos(jumpAngleMin), Mathf.Sin(jumpAngleMin)));
+        scurryRotateMin = new PhysicsRotate() { direction = new Vector2(Mathf.Cos(grappleScurryAngleMin), Mathf.Sin(grappleScurryAngleMin)) };
+        jumpRotateMin = new PhysicsRotate() { direction = new Vector2(Mathf.Cos(jumpAngleMin), Mathf.Sin(jumpAngleMin)) };
+
+        shapeCapture.Initialize(2048);
 
         thruster.Initialize();
         thrusterFlame.Initialize();
 
-        spiderBody.CreatePhysicsBody(new PhysicsRotate(transform.right), abdomenRoot, headRoot, headBone, grappleArm/*, heightReferencePoint*/);
+        spiderBody.CreatePhysicsBody(new PhysicsRotate() { direction = transform.right }, abdomenRoot, headRoot, headBone, grappleArm);
         InitializeLegSynch();
         InitializeGroundData();
-        grapple.Initialize(spiderInput, World, TotalMass, FacingRight);
+        grapple.Initialize(spiderInput, World, SpideyBody.LevelRight, TotalMass, FacingRight);
     }
 
     public void Enable()
@@ -224,6 +227,7 @@ public class SpiderMover
         grapple.OnDestroy();
         legSynch.Destroy();
         spiderBody.Destroy();
+        shapeCapture.Dispose();
     }
 
     public void Update()
@@ -239,10 +243,19 @@ public class SpiderMover
 
     public void FixedUpdate()
     {
+        float dt = Time.deltaTime;
+
         if (VerifyingJump())
         {
-            jumpVerificationTimer -= Time.deltaTime;
+            jumpVerificationTimer -= dt;
         }
+
+        //if jobs try to do something like apply force to a body,
+        //and on main thread we access physics shape geometry, the game stalls out,
+        //so complete jobs before updating the shape capture.
+        grapple.CompleteJobs();
+        groundMap.CompleteJobs();
+        shapeCapture.Update(HeightReferencePt, World, SpideyBody.queryFilter);
 
         UpdateGroundData();
         RotateAbdomen();
@@ -269,17 +282,17 @@ public class SpiderMover
 
         if (chargingJump)
         {
-            jumpAngleFraction = Mathf.Clamp(jumpAngleFraction + LeanInput * jumpAngleLerpRate * Time.deltaTime, 0, 1);
+            jumpAngleFraction = Mathf.Clamp(jumpAngleFraction + LeanInput * jumpAngleLerpRate * dt, 0, 1);
             if (crouchProgress < 1)
             {
-                UpdateCrouch(Time.deltaTime);
+                UpdateCrouch(dt);
             }
         }
         else if (!waitingToHandleJump)
         {
             if (crouchProgress > 0)
             {
-                UpdateCrouch(crouchReleaseSpeedMultiplier * -Time.deltaTime);
+                UpdateCrouch(crouchReleaseSpeedMultiplier * -dt);
             }
             if (jumpAngleFraction != 0)
             {
@@ -302,11 +315,11 @@ public class SpiderMover
         }
         else if (settleTimer > 0)
         {
-            settleTimer -= Time.deltaTime;
+            settleTimer -= dt;
         }
 
-        grapple.FixedUpdate(SpideyBody.VirtualTransform, Abdomen);
-        UpdateLegSynch(Time.deltaTime);
+        grapple.FixedUpdate(dt, SpideyBody.LevelRight, Abdomen, SpideyBody.queryFilter, shapeCapture.list.AsArray());
+        UpdateLegSynch(dt);
     }
 
 
@@ -480,7 +493,7 @@ public class SpiderMover
         {
             var p = HeightReferencePt;
             var u = SpideyBody.LevelRight.direction.CCWPerp();
-            reflection = new PhysicsTransform(grapple.FreeHangLeveragePoint, new PhysicsRotate(u));
+            reflection = new PhysicsTransform(grapple.FreeHangLeveragePoint, new PhysicsRotate() { direction = u });
         }
 
         SpideyBody.ChangeDirection(reflection, abdomenBone, headBone, grappleArm);
@@ -634,7 +647,7 @@ public class SpiderMover
             g = grapple.FreeHanging ? FreeHangingHeadRight(Right) : Right;
         }
 
-        SpideyBody.SetHeadRotation(new PhysicsRotate(g));
+        SpideyBody.SetHeadRotation(new PhysicsRotate() { direction = g });
     }
 
     private Vector2 FreeHangingHeadRight(Vector2 bodyRight)
@@ -794,7 +807,7 @@ public class SpiderMover
 
     private void UpdateGroundMap()
     {
-        groundMap.UpdateMap(World, spiderBody.queryFilter, HeightReferencePt, Up, GroundMapRaycastLength);
+        groundMap.UpdateMap(World, spiderBody.queryFilter, HeightReferencePt, Up, GroundMapRaycastLength, shapeCapture.list.AsArray());
     }
 
     private void InitializeGroundMap()

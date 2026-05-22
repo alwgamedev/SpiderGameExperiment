@@ -1,4 +1,6 @@
-﻿using System;
+﻿using log4net.Core;
+using System;
+using System.Runtime.CompilerServices;
 using Unity.U2D.Physics;
 using UnityEngine;
 
@@ -13,16 +15,15 @@ public class CannonFulcrum
     [SerializeField] float floppiness;//what fraction of force at leveragePoint is lost to spin (rest gets transferred to fulcrum)
     [SerializeField] float angularDamping;
     [SerializeField] float linearDamping;
-    [SerializeField] float kinematicRotationMin;
-    [SerializeField] float kinematicRotationMax;
+    [SerializeField] Vector2 kinematicRotationMax;
     [SerializeField] float kinematicRotationSpeed;
     [SerializeField] float kinematicRotationCatchUpMultiplier;
 
     float angularAcceleration;
     float angularVelocity;
 
-    float kinematicRotation0;
-    float kinematicRotation;
+    PhysicsRotate kinematicRotation;//rotation relative to owner
+    PhysicsRotate kinematicDeltaRotation;
 
     float leverLength;
     float inverseLeverLength;
@@ -31,12 +32,20 @@ public class CannonFulcrum
     public Vector2 LeveragePoint => leveragePoint.position;
     public Vector2 FulcrumPosition => fulcrum.position;
 
-    public void Initialize()
+    public void Initialize(PhysicsRotate shooterRotation)
     {
         leverLength = Vector2.Distance(fulcrum.position, leveragePoint.position);
         inverseLeverLength = 1 / leverLength;
-        kinematicRotation0 = lever.eulerAngles.z * Mathf.Deg2Rad;
+        //kinematicRotation0 = shooterRotation.InverseMultiplyRotation(new PhysicsRotate(lever.right/*, PhysicsWorld.TransformPlane.XY*/));
+        //Debug.Log(kinematicRotation0.degrees);
+        kinematicRotation = PhysicsRotate.identity;
+        kinematicDeltaRotation = PhysicsRotate.FromRadians(Time.fixedDeltaTime * kinematicRotationSpeed);
         RecenterLever();
+    }
+
+    public void OnValidate()
+    {
+        kinematicDeltaRotation = PhysicsRotate.FromRadians(Time.fixedDeltaTime * kinematicRotationSpeed);
     }
 
     public void UpdateDynamic(float dt)
@@ -51,21 +60,41 @@ public class CannonFulcrum
     }
 
     //aimInput > 0 is clockwise
-    public void UpdateKinematic(float dt, float aimInput, PhysicsTransform shooterTransform, bool facingRight)
+    public void UpdateKinematic(float dt, float aimInput, PhysicsRotate shooterRotation, bool facingRight)
     {
         if (aimInput != 0)
         {
-            kinematicRotation = Mathf.Clamp(kinematicRotation - aimInput * kinematicRotationSpeed * dt, kinematicRotationMin, kinematicRotationMax);
+            var rotCCW = facingRight ^ aimInput > 0;
+            var target = rotCCW ? kinematicRotationMax : new(-kinematicRotationMax.x, kinematicRotationMax.y);
+            var rel = kinematicRotation.InverseRotateVector(target);//target rotation relative to current rotation
+            var canRotate = rel.x < 0 || (rotCCW ^ rel.y < 0) ;
+            if (canRotate)
+            {
+                kinematicRotation = rotCCW ? 
+                    kinematicDeltaRotation.MultiplyRotation(kinematicRotation) : kinematicDeltaRotation.InverseMultiplyRotation(kinematicRotation);
+            }
         }
-        var a = kinematicRotation0 + kinematicRotation;
-        var right = shooterTransform.rotation.direction;
-        var g = Mathf.Cos(a) * right + Mathf.Sin(a) * (facingRight ? right.CCWPerp() : right.CWPerp());
+
+        var g = facingRight ? kinematicRotation.MultiplyRotation(shooterRotation) : kinematicRotation.InverseMultiplyRotation(shooterRotation);
         lever.ApplyCheapRotationalLerpClamped(g, kinematicRotationCatchUpMultiplier * kinematicRotationSpeed * dt, out var changed);
+        //^the reason to not just set the lever rotation, is that when we change from "dynamic" mode back to kinematic (i.e. when the grapple is destroyed and we regain control of the lever)
+        //the rotation may be off from goal by a significant amount and we need to smoothly transition it back
         if (changed)
         {
             RecenterLever();
         }
     }
+
+    //public void OnDirectionChanged(PhysicsRotate reflection)
+    //{
+    //    Vector2 r = lever.right;
+    //    r = MathTools.ReflectAcrossHyperplane(r, reflection.direction);
+    //    lever.rotation = MathTools.QuaternionFrom2DUnitVector(r);
+    //    RecenterLever();
+
+    //    var d = kinematicRotation.direction;
+    //    kinematicRotation.direction = new(-d.x, d.y);
+    //}
 
     public void ApplyForce(Vector2 force, PhysicsBody shooterBody, bool freeHanging)
     {

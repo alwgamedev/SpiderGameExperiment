@@ -1,4 +1,5 @@
 using Unity.Mathematics;
+using Unity.U2D.Physics;
 using UnityEngine;
 
 public static class MathTools
@@ -457,7 +458,7 @@ public static class MathTools
     public static Vector2 CheapFromToRotation(Vector2 u1, Vector2 u2, float angleInRadians, out bool changed)
     {
         var t = AbsolutePseudoAngle(u1, u2);
-        if (t == 0)
+        if (t < o41)
         {
             changed = false;
             return u1;
@@ -468,7 +469,7 @@ public static class MathTools
     public static Vector2 CheapFromToRotationClamped(Vector2 u1, Vector2 u2, float angleInRadians, out bool changed)
     {
         var t = AbsolutePseudoAngle(u1, u2);
-        if (t == 0)
+        if (t < o41)
         {
             changed = false;
             return u1;
@@ -482,7 +483,7 @@ public static class MathTools
     public static Vector2 CheapRotationBySpeed(Vector2 u1, Vector2 u2, float rotationalSpeed, float dt, out bool changed)
     {
         var c = AbsolutePseudoAngle(u1, u2);
-        if (c == 0)
+        if (c < o41)
         {
             changed = false;
             return u1;
@@ -493,12 +494,32 @@ public static class MathTools
     public static Vector2 CheapRotationBySpeedClamped(Vector2 u1, Vector2 u2, float rotationalSpeed, float dt, out bool changed)
     {
         var c = AbsolutePseudoAngle(u1, u2);
-        if (c == 0)//bc need to divide by 
+        if (c < o41)//bc need to divide by 
         {
             changed = false;
             return u1;
         }
         return CheapRotationalLerpClamped(u1, u2, rotationalSpeed * dt / (Mathf.PI * c), out changed);
+    }
+
+    public static PhysicsRotate CheapRotationBySpeed(PhysicsRotate r1, PhysicsRotate r2, float rotationalSpeed, float dt)
+    {
+        return new PhysicsRotate()
+        {
+            direction = CheapRotationBySpeed(r1.direction, r2.direction, rotationalSpeed, dt, out _)
+        };
+        //var c = AbsolutePseudoAngle(r1.direction, r2.direction);
+        //return r1.LerpRotation(r2, rotationalSpeed * dt / (Mathf.PI * c));
+    }
+
+    public static PhysicsRotate CheapRotationBySpeedClamped(PhysicsRotate r1, PhysicsRotate r2, float rotationalSpeed, float dt)
+    {
+        return new PhysicsRotate()
+        {
+            direction = CheapRotationBySpeedClamped(r1.direction, r2.direction, rotationalSpeed, dt, out _)
+        };
+        //var c = AbsolutePseudoAngle(r1.direction, r2.direction);
+        //return r1.LerpRotation(r2, Mathf.Clamp(rotationalSpeed * dt / (Mathf.PI * c), 0, 1));
     }
 
     public static void ApplyCheapRotationBySpeed(this Transform t, float rotationalSpeed, float dt, out bool changed)

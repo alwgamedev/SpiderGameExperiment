@@ -371,13 +371,13 @@ public struct GrabberClaw
 
             //reflect arm over anchor body's x-axis
             var anchorBody = joint.bodyA;
-            var reflectionOverAnchorBodyX = new PhysicsTransform(anchorBody.position, new PhysicsRotate(anchorBody.rotation.direction.CCWPerp()));
+            var reflectionOverAnchorBodyX = new PhysicsTransform(anchorBody.position, new PhysicsRotate() { direction = anchorBody.rotation.direction.CCWPerp() });
             armBody.transform = armBody.transform.Reflect(reflectionOverAnchorBodyX);
             armBody.linearVelocity = armBody.linearVelocity.ReflectAcrossHyperplane(reflectionOverAnchorBodyX.rotation.direction);
 
             //reflect joint anchorA
             var anchorA = joint.localAnchorA;
-            joint.localAnchorA = new(-anchorA.position, new PhysicsRotate(-anchorA.rotation.direction));
+            joint.localAnchorA = new(-anchorA.position, new PhysicsRotate() { direction = -anchorA.rotation.direction });
             //joint.springTargetAngle = -joint.springTargetAngle;
 
             armBody.position += postTranslation;
