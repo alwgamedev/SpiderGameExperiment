@@ -478,7 +478,7 @@ public class SpiderMover
         }
         else
         {
-            var p = HeightReferencePt;//SpideyBody.HeightReferencePosition;
+            var p = HeightReferencePt;
             var u = SpideyBody.LevelRight.direction.CCWPerp();
             reflection = new PhysicsTransform(grapple.FreeHangLeveragePoint, new PhysicsRotate(u));
         }
