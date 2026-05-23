@@ -8,6 +8,7 @@ using UnityEngine;
 [Serializable]
 public class GroundMap
 {
+    public PhysicsQuery.QueryFilter filter;
     [SerializeField] int numFwdIntervals;
     [SerializeField] float intervalWidth;
 
@@ -428,7 +429,7 @@ public class GroundMap
         jobHandle.Complete();
     }
 
-    public void UpdateMap(PhysicsWorld world, PhysicsQuery.QueryFilter filter, Vector2 origin, Vector2 originUp, float raycastLength,
+    public void UpdateMap(PhysicsWorld world, Vector2 origin, Vector2 originUp, float raycastLength,
         NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture)
     {
         jobHandle.Complete();

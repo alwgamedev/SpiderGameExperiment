@@ -92,7 +92,7 @@ public class GrappleCannon
         grapple = new FastRope(grappleSettings, ownerWorld, ownerMass, SourcePosition, minLength, numNodes);
         grapple.Disable();
 
-        cannonFulcrum.Initialize(levelRotation);
+        cannonFulcrum.Initialize();
         grappleRenderer.Initialize();
         SetOrientation(facingRight);
     }
@@ -137,8 +137,7 @@ public class GrappleCannon
         grapple.CompleteJobs();
     }
 
-    public void FixedUpdate(float dt, PhysicsRotate levelRotation, PhysicsBody ownerBody, 
-        PhysicsQuery.QueryFilter collisionFilter, NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture)
+    public void FixedUpdate(float dt, PhysicsRotate levelRotation, PhysicsBody ownerBody, NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture)
     {
         ownerBody.SyncTransform();
         UpdateCannonFulcrum(levelRotation);
@@ -147,7 +146,7 @@ public class GrappleCannon
         {
             var grappleWasAnchored = grapple.TerminusAnchored;
             UpdateGrappleLength();
-            grapple.Update(SourcePosition, dt, collisionFilter, shapeCapture);
+            grapple.Update(SourcePosition, dt, shapeCapture);
             if (GrappleAnchored)
             {
                 UpdateCarrySpring(ownerBody);

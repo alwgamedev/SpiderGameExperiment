@@ -32,6 +32,7 @@ public class SpiderMover
     [SerializeField] float groundDirectionSampleWidth;
     [SerializeField] float backupGroundPtRaycastLengthFactor;
     [SerializeField] GroundMap groundMap;
+    [SerializeField] PhysicsQuery.QueryFilter shapeCaptureFilter;
     [SerializeField] ShapeCapture shapeCapture;//no trigger shapes
 
     [Header("Movement")]
@@ -255,7 +256,7 @@ public class SpiderMover
         //so complete jobs before updating the shape capture.
         grapple.CompleteJobs();
         groundMap.CompleteJobs();
-        shapeCapture.Update(HeightReferencePt, World, SpideyBody.queryFilter);
+        shapeCapture.Update(HeightReferencePt, World, shapeCaptureFilter);
 
         UpdateGroundData();
         RotateAbdomen();
@@ -318,7 +319,7 @@ public class SpiderMover
             settleTimer -= dt;
         }
 
-        grapple.FixedUpdate(dt, SpideyBody.LevelRight, Abdomen, SpideyBody.queryFilter, shapeCapture.list.AsArray());
+        grapple.FixedUpdate(dt, SpideyBody.LevelRight, Abdomen, shapeCapture.list.AsArray());
         UpdateLegSynch(dt);
     }
 
@@ -503,7 +504,7 @@ public class SpiderMover
             //if not grounded and changing direction will make you become grounded (e.g. when freehanging and change direction near an obstacle),
             //then make sure that you "become grounded" at an appropriate ride height -- helps prevent legs tunneling)
             var d = -EffectiveRideHeight * Up;
-            var cast = World.CastRay(HeightReferencePt, d, SpideyBody.queryFilter);
+            var cast = World.CastRay(HeightReferencePt, d, groundMap.filter);
             if (cast.Length > 0)
             {
                 var cor = cast[0].point - HeightReferencePt - d;
@@ -807,7 +808,7 @@ public class SpiderMover
 
     private void UpdateGroundMap()
     {
-        groundMap.UpdateMap(World, spiderBody.queryFilter, HeightReferencePt, Up, GroundMapRaycastLength, shapeCapture.list.AsArray());
+        groundMap.UpdateMap(World, HeightReferencePt, Up, GroundMapRaycastLength, shapeCapture.list.AsArray());
     }
 
     private void InitializeGroundMap()

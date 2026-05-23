@@ -8,9 +8,9 @@ using UnityEngine.Rendering;
 [System.Serializable]
 public struct RopeSettings
 {
+    public PhysicsQuery.QueryFilter collisionFilter;
     public float collisionBounciness;
     public float dynamicCollisionForce;
-
     public float width;//full width of the rope (not half of it)
     public float minNodeSpacing;
     public float maxNodeSpacing;
@@ -283,7 +283,7 @@ public unsafe class FastRope
         jobHandle.Complete();
     }
 
-    public void Update(float2 sourcePosition, float dt, PhysicsQuery.QueryFilter collisionFilter, NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture)
+    public void Update(float2 sourcePosition, float dt, NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture)
     {
         jobHandle.Complete();
         UnlockWrappers();
@@ -309,14 +309,17 @@ public unsafe class FastRope
                 }
             case TerminusAnchorMode.dynamicAnchor:
                 {
+                    //new system: for dynamic anchor keep terminus position fixed during jobs (hence terminusMass = infinity),
+                    //and calculate forces next cycle based on anchor's new position
+                    //(much easier and more reliable than trying to simulate anchor shape's movement and collision within jobs)
                     var anchorBody = terminusAnchor.Value.body;
                     float2 p = anchorBody.transform.TransformPoint(terminusAnchorLocalPos.Value);
                     var f = DynamicAnchorForce(p);
                     anchorBody.ApplyLinearImpulse(f, p);
                     var ptVelocity = anchorBody.GetWorldPointVelocity(p);
                     position[TerminusIndex] = p + dt * (float2)(ptVelocity - dt * anchorBody.world.gravity);//predict next terminus position -- this actually makes a big difference
-                    lastPosition[TerminusIndex] = p;//in case we lose anchor/gets destroyed, we keep accurate velocity
-                    terminusMass = Mathf.Infinity;//anchorBody.mass;
+                    lastPosition[TerminusIndex] = p;//in case we lose anchor/gets destroyed, keep accurate velocity (not used in jobs)
+                    terminusMass = Mathf.Infinity;
                     break;
                 }
             default://not anchored
@@ -324,7 +327,7 @@ public unsafe class FastRope
                 break;
         }
 
-        SetSourcePosition(position, sourcePosition);//btw maybe we should set source node velocity (and integrate) now that we are on a one frame delay
+        SetSourcePosition(position, sourcePosition);
         GrappleExtent = position[TerminusIndex] - position[sourceIndex.Value];
         positionBuffer.CopyFrom(position);//copy positions for rendering (and we'll use lastPositionBuffer for constraint deltas)
 
@@ -332,10 +335,10 @@ public unsafe class FastRope
 
         LockWrappers();
 
-        var integrateJob = IntegrateRope(dt * dt, 1, collisionFilter, shapeCapture);
+        var integrateJob = IntegrateRope(dt * dt, 1, settings.collisionFilter, shapeCapture);
         var clearConstraintDelta = new ClearArrayJob<float4>(constraintDeltaF4);
         var calculateConstraints = CalculateConstraintsF4(ownerMass, terminusMass);
-        var applyConstraints = ApplyConstraintF4(collisionFilter, shapeCapture);
+        var applyConstraints = ApplyConstraintF4(settings.collisionFilter, shapeCapture);
 
         var numActive = TerminusIndex - sourceIndex.Value;
 
@@ -354,7 +357,6 @@ public unsafe class FastRope
 
         //constraints pulled by owner
         calculateConstraints = CalculateConstraintsF4(Mathf.Infinity, terminusMass);
-
         for (int i = 0; i < settings.itersPulledByOwner; i++)
         {
             jobHandle = clearConstraintDelta.Schedule(jobHandle);

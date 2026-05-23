@@ -1723,18 +1723,12 @@ MonoBehaviour:
       abdomenCapsuleOffset: {x: 1.325, y: -0.025}
       headCapsuleSize: {x: 2.1, y: 1.25}
       headCapsuleOffset: {x: 0.5, y: -0.035}
-      queryFilter:
-        m_Categories:
-          bitMask: 18446744073709551615
-        m_HitCategories:
-          bitMask: 320
-        m_IgnoreFilter: 8
       shapeDef:
         contactFilter:
           m_Categories:
-            bitMask: 8
+            bitMask: 2
           m_Contacts:
-            bitMask: 320
+            bitMask: 65792
           m_GroupIndex: 0
         surfaceMaterial:
           m_Friction: 0.01
@@ -1833,7 +1827,7 @@ MonoBehaviour:
         shapeDef:
           contactFilter:
             m_Categories:
-              bitMask: 8
+              bitMask: 2
             m_Contacts:
               bitMask: 320
             m_GroupIndex: 0
@@ -2216,6 +2210,12 @@ MonoBehaviour:
       retractMaxTension: 2
       carrySpringForce: 450
       grappleSettings:
+        collisionFilter:
+          m_Categories:
+            bitMask: 18446744073709551615
+          m_HitCategories:
+            bitMask: 65792
+          m_IgnoreFilter: 8
         collisionBounciness: 0.6
         dynamicCollisionForce: 0.8
         width: 0.17
@@ -2276,8 +2276,20 @@ MonoBehaviour:
     groundDirectionSampleWidth: 0.5
     backupGroundPtRaycastLengthFactor: 1.1
     groundMap:
+      filter:
+        m_Categories:
+          bitMask: 18446744073709551615
+        m_HitCategories:
+          bitMask: 256
+        m_IgnoreFilter: 8
       numFwdIntervals: 30
       intervalWidth: 0.1
+    shapeCaptureFilter:
+      m_Categories:
+        bitMask: 18446744073709551615
+      m_HitCategories:
+        bitMask: 196864
+      m_IgnoreFilter: 0
     shapeCapture:
       extents: {x: 50, y: 50}
       effectiveExtents: {x: 25, y: 25}
@@ -2623,9 +2635,9 @@ MonoBehaviour:
       shapeDef:
         contactFilter:
           m_Categories:
-            bitMask: 8
+            bitMask: 2
           m_Contacts:
-            bitMask: 65
+            bitMask: 196864
           m_GroupIndex: 0
         surfaceMaterial:
           m_Friction: 0
@@ -2755,9 +2767,9 @@ MonoBehaviour:
       shapeDef:
         contactFilter:
           m_Categories:
-            bitMask: 128
+            bitMask: 4
           m_Contacts:
-            bitMask: 65
+            bitMask: 196864
           m_GroupIndex: 0
         surfaceMaterial:
           m_Friction: 5
@@ -2872,7 +2884,7 @@ MonoBehaviour:
       m_Categories:
         bitMask: 18446744073709551615
       m_HitCategories:
-        bitMask: 1
+        bitMask: 131072
       m_IgnoreFilter: 8
     grabAttemptRadius: 3
     grabTimeOut: 2.5

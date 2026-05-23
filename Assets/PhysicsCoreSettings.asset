@@ -12,10 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 19301, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: PhysicsCoreSettings
   m_EditorClassIdentifier: UnityEngine.dll::Unity.U2D.Physics.PhysicsCoreSettings2D
-  m_UsePhysicsLayers: 0
+  m_UsePhysicsLayers: 1
   m_PhysicsLayerNames:
     m_Names:
     - Default
+    - Player
+    - Player Grabber Claw
+    - 
+    - 
+    - 
+    - 
+    - 
+    - Ground
     - 
     - 
     - 
@@ -23,16 +31,8 @@ MonoBehaviour:
     - 
     - 
     - 
-    - 
-    - 
-    - 
-    - 
-    - 
-    - 
-    - 
-    - 
-    - 
-    - 
+    - Grapple Dynamic Anchor
+    - Grabber Claw Target
     - 
     - 
     - 

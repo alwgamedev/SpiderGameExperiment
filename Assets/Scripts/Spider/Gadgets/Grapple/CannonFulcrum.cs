@@ -32,12 +32,10 @@ public class CannonFulcrum
     public Vector2 LeveragePoint => leveragePoint.position;
     public Vector2 FulcrumPosition => fulcrum.position;
 
-    public void Initialize(PhysicsRotate shooterRotation)
+    public void Initialize()
     {
         leverLength = Vector2.Distance(fulcrum.position, leveragePoint.position);
         inverseLeverLength = 1 / leverLength;
-        //kinematicRotation0 = shooterRotation.InverseMultiplyRotation(new PhysicsRotate(lever.right/*, PhysicsWorld.TransformPlane.XY*/));
-        //Debug.Log(kinematicRotation0.degrees);
         kinematicRotation = PhysicsRotate.identity;
         kinematicDeltaRotation = PhysicsRotate.FromRadians(Time.fixedDeltaTime * kinematicRotationSpeed);
         RecenterLever();
@@ -84,17 +82,6 @@ public class CannonFulcrum
             RecenterLever();
         }
     }
-
-    //public void OnDirectionChanged(PhysicsRotate reflection)
-    //{
-    //    Vector2 r = lever.right;
-    //    r = MathTools.ReflectAcrossHyperplane(r, reflection.direction);
-    //    lever.rotation = MathTools.QuaternionFrom2DUnitVector(r);
-    //    RecenterLever();
-
-    //    var d = kinematicRotation.direction;
-    //    kinematicRotation.direction = new(-d.x, d.y);
-    //}
 
     public void ApplyForce(Vector2 force, PhysicsBody shooterBody, bool freeHanging)
     {

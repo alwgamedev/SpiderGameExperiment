@@ -22,9 +22,7 @@ public struct SpiderBody
     [SerializeField] Vector2 headCapsuleOffset;
     /// <summary> (when facing right) </summary>
 
-    [SerializeField] public PhysicsQuery.QueryFilter queryFilter;
     float totalMass;
-
     bool facingRight;
 
     [SerializeField] PhysicsShapeDefinition shapeDef;
@@ -250,17 +248,21 @@ public struct SpiderBody
 
         var world = abdomen.world;
 
+        var headShape = head.GetShapes()[0];
+        var queryFilter = headShape.contactFilter.ToQueryFilter(PhysicsWorld.IgnoreFilter.IgnoreTriggerShapes);
         if (HasOverlap(head.GetShapes()[0], world, queryFilter, out var c))
         {
             totalTranslation += c;
             ApplyTranslation(c);
         }
-        if (HasOverlap(abdomen.GetShapes()[0], world, queryFilter, out c))
+
+        var abdomenShapes = abdomen.GetShapes();
+        if (HasOverlap(abdomenShapes[0], world, queryFilter, out c))
         {
             totalTranslation += c;
             ApplyTranslation(c);
         }
-        if (HasOverlap(abdomen.GetShapes()[1], world, queryFilter, out c))
+        if (HasOverlap(abdomenShapes[1], world, queryFilter, out c))
         {
             totalTranslation += c;
             ApplyTranslation(c);

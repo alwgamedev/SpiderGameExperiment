@@ -502,26 +502,6 @@ public static class MathTools
         return CheapRotationalLerpClamped(u1, u2, rotationalSpeed * dt / (Mathf.PI * c), out changed);
     }
 
-    public static PhysicsRotate CheapRotationBySpeed(PhysicsRotate r1, PhysicsRotate r2, float rotationalSpeed, float dt)
-    {
-        return new PhysicsRotate()
-        {
-            direction = CheapRotationBySpeed(r1.direction, r2.direction, rotationalSpeed, dt, out _)
-        };
-        //var c = AbsolutePseudoAngle(r1.direction, r2.direction);
-        //return r1.LerpRotation(r2, rotationalSpeed * dt / (Mathf.PI * c));
-    }
-
-    public static PhysicsRotate CheapRotationBySpeedClamped(PhysicsRotate r1, PhysicsRotate r2, float rotationalSpeed, float dt)
-    {
-        return new PhysicsRotate()
-        {
-            direction = CheapRotationBySpeedClamped(r1.direction, r2.direction, rotationalSpeed, dt, out _)
-        };
-        //var c = AbsolutePseudoAngle(r1.direction, r2.direction);
-        //return r1.LerpRotation(r2, Mathf.Clamp(rotationalSpeed * dt / (Mathf.PI * c), 0, 1));
-    }
-
     public static void ApplyCheapRotationBySpeed(this Transform t, float rotationalSpeed, float dt, out bool changed)
     {
         var v = CheapRotationBySpeed(t.right, t.up, rotationalSpeed, dt, out changed);
