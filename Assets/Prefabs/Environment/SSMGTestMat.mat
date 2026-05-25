@@ -54,27 +54,41 @@ Material:
     m_Ints: []
     m_Floats:
     - _AreaFadeRate: 0.06
-    - _AreaMax: 8
-    - _AreaMin: 0.36
-    - _AreaPower: 1
+    - _AreaMax: 12
+    - _AreaMin: -5
+    - _AreaPower: 1.05
     - _BorderFadeRate: 2
-    - _BorderPower: 1
+    - _BorderPower: 20
     - _BorderWidth: 3
-    - _ConcavityScale: 0
-    - _ConvexityPower: 1.5
-    - _ConvexityRadius: 0.34
-    - _ConvexityScale: 5
+    - _ConcavityPower: 2
+    - _ConcavityRadius: 2
+    - _ConcavityScale: 12
+    - _ConvexityPower: 1
+    - _ConvexityRadius: 0.5
+    - _ConvexityScale: 2
     - _EnableExternalAlpha: 0
-    - _VisibilityRadius: 0
+    - _HighlightColor: 0
+    - _ShadowColorMultiplier: 0
+    - _TopSidePower: 0
+    - _TopSideRadius: 1
+    - _TopsidePower: 1.25
+    - _TopsideRadius: 2
+    - _UnderSidePower: 0
+    - _UnderSideRadius: 0
+    - _UndersidePower: 5
+    - _UndersideRadius: 2
+    - _VisibilityRadius: 1
     - _ZWrite: 0
     m_Colors:
     - White: {r: 1, g: 1, b: 1, a: 1}
-    - _AreaColorMult0: {r: 1, g: 0.90659106, b: 0, a: 1}
-    - _AreaColorMult1: {r: 1, g: 0, b: 0, a: 1}
-    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _AreaColorMult0: {r: 0.26568237, g: 0.24220008, b: 0.3283019, a: 1}
+    - _AreaColorMult1: {r: 0.735849, g: 0.4279152, b: 0.281844, a: 1}
+    - _BaseColor: {r: 0.79622644, g: 0.79622644, b: 0.79622644, a: 1}
     - _BorderColorMultiplier: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _HighlightColor: {r: 1, g: 1, b: 1, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
+    - _ShadowColorMultiplier: {r: 0.8415094, g: 0.8415094, b: 0.8415094, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &7327025426366006333

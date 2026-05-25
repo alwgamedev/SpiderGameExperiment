@@ -1,6 +1,5 @@
 ﻿using andywiecko.BurstTriangulator;
 using System;
-using System.Linq;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Mathematics;
@@ -16,8 +15,9 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
     [SerializeField] MeshFilter meshFilter;
     [SerializeField] int arcLengthSamples;//samples per spline segment used to calculate arc length
     [SerializeField] float splineSampleRate;//number of vertices per unit arc length
-
-    [Header("Perimeter")]
+    [SerializeField] int geometrySmoothingIterations;
+    [SerializeField] float geometrySmoothingWeight;
+    [SerializeField] float geometrySmoothingThreshold;
     [SerializeField] Vector2[] perimeter;
     [SerializeField] bool drawPerimeterGizmo;
 
@@ -58,6 +58,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
 
         CalculateUV(uv, positions, bbMin, bbMax);
         CalculateBoundaryUV1(uv1, positions, triangles, boundaryEdges);//uv1 = (convexity, visibility)
+        SmoothUV1AlongBoundary(uv1, triangles, boundaryEdges, geometrySmoothingIterations, geometrySmoothingWeight, geometrySmoothingThreshold);
         CalculateUV2X(uv2, positions, triangles);//uv1[i].x = area of polygon centered at vert i (i.e. sum of triangle areas) 
         CalculateUV2YAndInteriorUV1(uv1, uv2, positions, triangles, boundaryEdges);//uv1.y = distance to border
 
@@ -336,6 +337,37 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             var bestEdgeVerts = EdgeVertices(boundaryEdges[bestEdge], triangles);
             uv1[i] = math.lerp(uv1[bestEdgeVerts.Item1], uv1[bestEdgeVerts.Item2], bestT);
             //^interior points will just take their uv1 from the nearest bdry point, and you can use the distance to border to decide how to fade the value in shader
+        }
+    }
+
+    [BurstCompile]
+    private static void SmoothUV1AlongBoundary(NativeArray<Vector2> uv1, ReadOnlySpan<int> triangles, ReadOnlySpan<int> boundaryEdges,
+        int iterations, float smoothingWeight, float smoothingThreshold)
+    {
+        var temp = new NativeArray<Vector2>(uv1.Length, Allocator.Temp);
+        var a = 1 - smoothingWeight;
+        var b = 0.5f * smoothingWeight;
+
+        for (int iter = 0; iter < iterations; iter++)
+        {
+            var v0 = triangles[boundaryEdges[^1]];
+            var v1 = triangles[boundaryEdges[0]];
+            for (int i = 0; i < boundaryEdges.Length; i++)
+            {
+                var v2 = triangles[boundaryEdges[(i + 1) % boundaryEdges.Length]];
+                var g0 = uv1[v0];
+                var g1 = uv1[v1];
+                var g2 = uv1[v2];
+                var smoothed = a * g1 + b * (g0 + g2);
+                var x = math.select(g1.x, smoothed.x, math.abs(g1.x) < smoothingThreshold);
+                var y = math.select(g1.y, smoothed.y, math.abs(g1.y) < smoothingThreshold);
+                temp[v1] = new(x, y);
+
+                v0 = v1;
+                v1 = v2;
+            }
+
+            uv1.CopyFrom(temp);
         }
     }
 
