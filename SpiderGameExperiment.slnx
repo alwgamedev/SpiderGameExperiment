@@ -1,0 +1,4 @@
+﻿<Solution>
+  <Project Path="spydr1.Runtime.csproj" />
+  <Project Path="spydr1.Editor.csproj" />
+</Solution>

@@ -352,9 +352,9 @@ public class GroundMap
             var p1 = Point(i);
             var v = p1 - p0;
             var t = Vector2.Dot(p - p0, v) / Vector2.SqrMagnitude(v);
-            if (!(t < 0) && !(t > 1))
+            if (t > 0 &&  t < 1)
             {
-                float2 q = Vector2.Lerp(p0, p1, t);
+                float2 q = p0 + t * v;
                 var d = q - p;
                 var dSq = Vector2.SqrMagnitude(d);
                 if (dSq < bestSqDist)

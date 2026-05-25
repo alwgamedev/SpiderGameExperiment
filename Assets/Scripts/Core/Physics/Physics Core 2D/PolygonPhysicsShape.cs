@@ -5,6 +5,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.U2D;
 using Unity.U2D.Physics;
+using Unity.Collections;
 
 [Serializable]
 public struct PolygonPhysicsShape
@@ -128,13 +129,17 @@ public struct PolygonPhysicsShape
         var shape = sr.sprite.GetPhysicsShape(0);
         Array.Resize(ref originalPolygon, shape.Length);
         shape.CopyTo(originalPolygon);
+
         CopyOriginalToOptimized();
     }
 
     public void GetShapeFromSpriteShape(SpriteShapeController ssc)
     {
-        originalPolygon = SplineSampler.SampleSpline(ssc.spline, spriteShapeArcLengthSamplesPerSegment, spriteShapeSamplesPerUnitArcLength)
-            .Select(x => (Vector2)x).ToArray();
+        var splineSample = new NativeList<Vector2>(Allocator.Temp);
+        SplineSampler.SampleSpline(ssc.spline, spriteShapeArcLengthSamplesPerSegment, spriteShapeSamplesPerUnitArcLength, splineSample);
+        originalPolygon = splineSample.ToArray();
+        splineSample.Dispose();
+
         CopyOriginalToOptimized();
     }
 
@@ -143,6 +148,7 @@ public struct PolygonPhysicsShape
         var perimeter = ssmg.GetPerimeter();
         Array.Resize(ref originalPolygon, perimeter.Length);
         perimeter.CopyTo(originalPolygon);
+
         CopyOriginalToOptimized();
     }
 
