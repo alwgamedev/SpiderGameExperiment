@@ -8,8 +8,8 @@ void ScaledPower01(float t, float scale, float power, out float s)
 
 //process uv1, uv2 data stored in ssmg mesh
 void SSMGVertexData_float(float2 uv1, float2 uv2, float2 objectScale, 
-    float convexityRadius, float convexityScale, float convexityPower,
-    float concavityRadius, float concavityScale, float concavityPower,
+    /*float convexityRadius,*/ float convexityScale, float convexityPower,
+    /*float concavityRadius,*/ float concavityScale, float concavityPower,
     float topsideRadius, float topsidePower, float undersideRadius, float undersidePower,
     float areaMin, float areaMax, float areaPower, float borderWorldWidth,  float borderPower,
     out float convexity, out float concavity, out float topside, out float underside, out float area, out float border)
@@ -21,15 +21,15 @@ void SSMGVertexData_float(float2 uv1, float2 uv2, float2 objectScale,
    border = pow(border, borderPower);
 
    float x = uv1.x;
-   convexity = max(x, 0) * clamp(1 - worldDistToBorder / convexityRadius, 0, 1);
+   convexity = max(x, 0);// * clamp(1 - worldDistToBorder / convexityRadius, 0, 1);
    ScaledPower01(convexity, convexityScale, convexityPower, convexity);
-   concavity = max(-x, 0) * clamp(1 - worldDistToBorder / concavityRadius, 0, 1);
+   concavity = max(-x, 0);// * clamp(1 - worldDistToBorder / concavityRadius, 0, 1);
    ScaledPower01(concavity, concavityScale, concavityPower, concavity);
 
    float y = uv1.y;
-   topside = max(y, 0) * clamp(1 - worldDistToBorder / topsideRadius, 0, 1);
+   topside = max(y, 0);// * clamp(1 - worldDistToBorder / topsideRadius, 0, 1);
    topside = pow(topside, topsidePower);
-   underside = max(-y, 0) * clamp(1 - worldDistToBorder / undersideRadius, 0, 1);
+   underside = max(-y, 0);// * clamp(1 - worldDistToBorder / undersideRadius, 0, 1);
    underside = pow(underside, undersidePower);
 
    area = clamp((uv2.x - areaMin) / (areaMax - areaMin), 0, 1);
@@ -37,14 +37,14 @@ void SSMGVertexData_float(float2 uv1, float2 uv2, float2 objectScale,
 }
 
 void SSMGVertexData_half(float2 uv1, float2 uv2, float2 objectScale, 
-    float convexityRadius, float convexityScale, float convexityPower,
-    float concavityRadius, float concavityScale, float concavityPower,
+    /*float convexityRadius,*/ float convexityScale, float convexityPower,
+    /*float concavityRadius,*/ float concavityScale, float concavityPower,
     float topsideRadius, float topsidePower, float undersideRadius, float undersidePower,
     float areaMin, float areaMax, float areaPower, float borderWorldWidth,  float borderPower,
     out float convexity, out float concavity, out float topside, out float underside, out float area, out float border)
 {
-    SSMGVertexData_float(uv1, uv2, objectScale, convexityRadius, convexityScale, convexityPower, 
-        concavityRadius, concavityScale, concavityPower, 
+    SSMGVertexData_float(uv1, uv2, objectScale, /*convexityRadius,*/ convexityScale, convexityPower, 
+        /*concavityRadius,*/ concavityScale, concavityPower, 
         topsideRadius, topsidePower, undersideRadius, undersidePower,
         areaMin, areaMax, areaPower, borderWorldWidth, borderPower,
         convexity, concavity, topside, underside, area, border);
