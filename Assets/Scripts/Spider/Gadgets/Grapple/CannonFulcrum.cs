@@ -1,5 +1,4 @@
-﻿using log4net.Core;
-using System;
+﻿using System;
 using System.Runtime.CompilerServices;
 using Unity.U2D.Physics;
 using UnityEngine;

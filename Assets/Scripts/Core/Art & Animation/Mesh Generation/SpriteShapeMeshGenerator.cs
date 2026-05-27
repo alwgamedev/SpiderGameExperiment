@@ -24,7 +24,6 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
     [SerializeField] Vector2 numCranny;
     [SerializeField] float crannyBorder;
     [SerializeField] float crannyBorderIterations;
-    [SerializeField] float crannySpreadRandomizerMin;//0 - 1 with 1 = no randomization
     [SerializeField] Vector2[] perimeter;
     [SerializeField] bool drawPerimeterGizmo;
     [SerializeField] float triangulationDrawTime;
@@ -70,9 +69,8 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         CalculateUV2X(uv2, positions, triangles, boundaryEdges);//uv2[i].x = area of polygon centered at vert i (i.e. sum of triangle areas) 
         var spreadMin = new Vector2(crannySpread.x, crannySpread.x);
         var spreadMax = new Vector2(crannySpread.y, crannySpread.y);
-        var spreadRandomizerMin = new Vector2(crannySpreadRandomizerMin, crannySpreadRandomizerMin);
         var numCrannies = (int)math.ceil(MathTools.RandomFloat(numCranny.x, numCranny.y) * (bbMax.x - bbMin.x) * (bbMax.y - bbMin.y));
-        CalculateUV2Y(uv2, positions, triangles, halfEdges, numCrannies, crannyInitialVal, spreadMin, spreadMax, spreadRandomizerMin,
+        CalculateUV2Y(uv2, positions, triangles, halfEdges, numCrannies, crannyInitialVal, spreadMin, spreadMax,
             crannyBorder, crannyBorderIterations, transform);
         // CalculateUV2Y(uv1, uv2, positions, triangles, boundaryEdges);//uv1.y = distance to border
 
@@ -363,7 +361,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
     //uv2.y = crannies
     [BurstCompile]
     private static void CalculateUV2Y(NativeArray<Vector2> uv2, ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges,
-        int numCrannies, Vector2 initialVal, Vector2 spreadMin, Vector2 spreadMax, Vector2 spreadRandomizerMin,
+        int numCrannies, Vector2 initialVal, Vector2 spreadMin, Vector2 spreadMax,
         float crannyBorder, float crannyBorderIterations, Transform transform)
     {
         var queue = new NativeQueue<(int, Vector2, bool)>(Allocator.TempJob);
@@ -382,7 +380,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             }
             var val0 = MathTools.RandomFloat(initialVal.x, initialVal.y);
             var spreadDist = new Vector2(MathTools.RandomFloat(spreadMin.x, spreadMax.x), MathTools.RandomFloat(spreadMin.y, spreadMax.y));
-            Spread(edge0, new(0, val0), spreadDist, spreadRandomizerMin, uv2, queue, seen, vertices, triangles, halfEdges, transform);
+            Spread(edge0, new(0, val0), spreadDist, uv2, queue, seen, vertices, triangles, halfEdges, transform);
         }
         queue.Dispose();
         seen.Dispose();
@@ -391,12 +389,10 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
     static void BlendSet(int i, Vector2 val, NativeArray<Vector2> arr)
     {
         var cur = arr[i];
-        cur.x = 1 - (1 - cur.x) * (1 - val.x);
-        cur.y = 1 - (1 - cur.y) * (1 - val.y);
-        arr[i] = cur;
+        arr[i] = new(1 - (1 - cur.x) * (1 - val.x), 1 - (1 - cur.y) * (1 - val.y));
     }
 
-    static void Spread(int edge0, Vector2 val0, Vector2 spreadRadius, Vector2 spreadRandomizerMin,
+    static void Spread(int edge0, Vector2 val0, Vector2 spreadRadius, 
         NativeArray<Vector2> arr, NativeQueue<(int e, Vector2 radius, bool outgoing)> queue, NativeArray<bool> seen,
         ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges, Transform transform)
     {
@@ -414,15 +410,6 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             //we need the flexibility of outgoing/incoming edges to be able to queue boundary edges (which only have one edge side, so we don't get to decide)
             var (e, r, outgoing) = queue.Dequeue();
             var v = Vertex(e, outgoing, triangles);
-
-            if (spreadRandomizerMin.x < 1)
-            {
-                r.x *= MathTools.RandomFloat(spreadRandomizerMin.x, 1);
-            }
-            if (spreadRandomizerMin.y < 1)
-            {
-                r.y *= MathTools.RandomFloat(spreadRandomizerMin.y, 1);
-            }
 
             //search CW first
             var f = e;
@@ -478,6 +465,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             return math.select(triangles[NextIndexInTriangle(edge)], triangles[edge], outgoing);
         }
 
+        //next edge with same endpt
         static bool TryGetNextEdgeCW(int edge, bool outgoing, ReadOnlySpan<int> halfEdges, out int nextEdge, out bool nextOutgoing)
         {
             var eOutgoing = math.select(halfEdges[edge], edge, outgoing);
@@ -493,6 +481,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             return true;
         }
 
+        //next edge with same endpt
         static bool TryGetNextEdgeCCW(int edge, bool outgoing, ReadOnlySpan<int> halfEdges, out int nextEdge, out bool nextOutgoing)
         {
             var eIncoming = math.select(edge, halfEdges[edge], outgoing);

@@ -232,7 +232,7 @@ public static class PhysicsCoreHelper
 
     public static void SyncTransform(this PhysicsBody body)
     {
-        body.GetPositionAndRotation3D(body.transformObject, body.world.transformWriteMode, body.world.transformPlane, out var p, out var q);
+        body.ReadPose(body.transformObject, out var p, out var q);
         body.transformObject.SetPositionAndRotation(p, q);
     }
 
