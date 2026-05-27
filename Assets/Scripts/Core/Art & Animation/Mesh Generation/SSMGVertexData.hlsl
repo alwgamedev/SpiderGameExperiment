@@ -7,20 +7,15 @@ void ScaledPower01(float t, float scale, float power, out float s)
 }
 
 //process uv1, uv2 data stored in ssmg mesh
-void SSMGVertexData_float(float2 uv1, float2 uv2, float2 objectScale, 
+void SSMGVertexData_float(float4 uv1, float2 uv2, float2 objectScale, 
     float convexityPower, float concavityPower, float topsidePower, float undersidePower,
     float borderWorldWidth,  float borderPower, float crannyPower,
     out float convexity, out float concavity, out float topside, out float underside, out float border, out float cranny)
 {
-   float x = uv1.x;
-   convexity = pow(clamp(max(x, 0), 0, 1), convexityPower);
-   concavity = pow(clamp(max(-x, 0), 0, 1), concavityPower);
-
-   float y = uv1.y;
-   topside = max(y, 0);
-   topside = pow(topside, topsidePower);
-   underside = max(-y, 0);
-   underside = pow(underside, undersidePower);
+   convexity = pow(uv1.x, convexityPower);
+   concavity = pow(uv1.y, concavityPower);
+   topside = pow(uv1.z, topsidePower);
+   underside = pow(uv1.w, undersidePower);
 
    float scale = max(objectScale.x, objectScale.y);
    float localDistToBorder = uv2.x;
@@ -31,7 +26,7 @@ void SSMGVertexData_float(float2 uv1, float2 uv2, float2 objectScale,
    cranny = pow(uv2.y, crannyPower);
 }
 
-void SSMGVertexData_half(float2 uv1, float2 uv2, float2 objectScale, 
+void SSMGVertexData_half(float4 uv1, float2 uv2, float2 objectScale, 
     float convexityPower, float concavityPower, float topsidePower, float undersidePower,
     float borderWorldWidth,  float borderPower, float crannyPower,
     out float convexity, out float concavity, out float topside, out float underside, out float border, out float cranny)

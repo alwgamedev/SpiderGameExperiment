@@ -267,14 +267,19 @@ MonoBehaviour:
   arcLengthSamples: 10
   splineSampleRate: 5
   maxTriangleArea: 1
-  uv1ExtrapolationRadius: {x: 3, y: 3}
-  uv1FadeRate: {x: 4, y: 2}
+  convexitySpread: 3
+  convexityMax: 0.01
+  concavitySpread: 2
+  concavityMax: 0.025
+  topsideSpread: 5
+  topsideMax: 0.05
+  undersideSpread: 3.5
+  undersideMax: 0.01
   crannyInitialVal: {x: 0.03, y: 0.035}
   crannySpread: {x: 2, y: 5}
   numCranny: {x: 0.5, y: 1.25}
   crannyBorder: 1
   crannyBorderIterations: 0.05
-  crannySpreadRandomizerMin: 1
   perimeter:
   - {x: -1, y: -1}
   - {x: -1.0308768, y: -0.9778544}
@@ -777,8 +782,9 @@ MonoBehaviour:
     m_AngularDamping: 0
     m_GravityScale: 1
     m_SleepThreshold: 0.01
-    m_FastRotationAllowed: 0
+    m_CollisionThreshold: 0
     m_FastCollisionsAllowed: 0
+    m_FastRotationAllowed: 0
     m_SleepingAllowed: 0
     m_Awake: 1
     m_Enabled: 1

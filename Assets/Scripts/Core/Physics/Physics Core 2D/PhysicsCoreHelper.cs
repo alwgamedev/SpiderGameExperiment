@@ -159,7 +159,8 @@ public static class PhysicsCoreHelper
         public readonly ReadOnlySpan<float2> VertexArray => new(vertex, 8);
         public readonly ReadOnlySpan<float2> NormalArray => new(normal, 8);
 
-        private readonly float2* vertex => (float2*)Unsafe.AsPointer(ref Unsafe.AsRef(vertex0));//Unsafe.AsRef allows us to get around readonly, so we can use the pointer in readonly properties/methods
+        private readonly float2* vertex => (float2*)Unsafe.AsPointer(ref Unsafe.AsRef(vertex0));
+        //^Unsafe.AsRef allows us to get around readonly, so we can use the pointer in readonly properties/methods
         private readonly float2* normal => (float2*)Unsafe.AsPointer(ref Unsafe.AsRef(normal0));
 
         public readonly CircleGeometry CircleGeometry()

@@ -60,16 +60,16 @@ Material:
     - _BorderFadeRate: 2
     - _BorderPower: 3
     - _BorderStrength: 0.75
-    - _BorderWidth: 3
+    - _BorderWidth: 1.5
     - _ConcavityPower: 1
     - _ConcavityRadius: 2
     - _ConcavityScale: 1
-    - _ConcavityStrength: 10
+    - _ConcavityStrength: 2
     - _ConvexityPower: 1
     - _ConvexityRadius: 0.5
     - _ConvexityScale: 10
-    - _ConvexityStrength: 30
-    - _CrannyPower: 1
+    - _ConvexityStrength: 10
+    - _CrannyPower: 2
     - _CrannyStrength: 1
     - _EnableExternalAlpha: 0
     - _HighlightColor: 0
@@ -78,19 +78,19 @@ Material:
     - _TopSideRadius: 1
     - _TopsidePower: 1
     - _TopsideRadius: 117.33
-    - _Topside_Strength: 2
+    - _Topside_Strength: 1
     - _UnderSidePower: 0
     - _UnderSideRadius: 0
-    - _UndersidePower: 0.9
+    - _UndersidePower: 1
     - _UndersideRadius: 6.33
-    - _UndersideStrength: 1.5
+    - _UndersideStrength: 4
     - _VisibilityRadius: 1
     - _ZWrite: 0
     m_Colors:
     - White: {r: 1, g: 1, b: 1, a: 1}
     - _AreaColorMult0: {r: 1, g: 1, b: 1, a: 1}
     - _AreaColorMult1: {r: 1, g: 1, b: 1, a: 1}
-    - _BaseColor: {r: 0.735849, g: 0.735849, b: 0.735849, a: 1}
+    - _BaseColor: {r: 0.83396226, g: 0.83396226, b: 0.83396226, a: 1}
     - _BorderColorMultiplier: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _HighlightColor: {r: 1, g: 1, b: 1, a: 1}
