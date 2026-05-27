@@ -19,6 +19,12 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
     [SerializeField] float maxTriangleArea;
     [SerializeField] Vector2 uv1ExtrapolationRadius;
     [SerializeField] Vector2 uv1FadeRate;
+    [SerializeField] Vector2 crannyInitialVal;
+    [SerializeField] Vector2 crannySpread;
+    [SerializeField] Vector2 numCranny;
+    [SerializeField] float crannyBorder;
+    [SerializeField] float crannyBorderIterations;
+    [SerializeField] float crannySpreadRandomizerMin;//0 - 1 with 1 = no randomization
     [SerializeField] Vector2[] perimeter;
     [SerializeField] bool drawPerimeterGizmo;
     [SerializeField] float triangulationDrawTime;
@@ -61,8 +67,14 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         CalculateUV(uv, positions, bbMin, bbMax);
         CalculateBoundaryUV1(uv1, positions, triangles, boundaryEdges);//uv1 = (convexity, topside/underside)
         CalculateInteriorUV1(uv1, positions, triangles, boundaryEdges, uv1ExtrapolationRadius.x, uv1ExtrapolationRadius.y, uv1FadeRate.x, uv1FadeRate.y);
-        CalculateUV2X(uv2, positions, triangles);//uv2[i].x = area of polygon centered at vert i (i.e. sum of triangle areas) 
-        CalculateUV2Y(uv1, uv2, positions, triangles, boundaryEdges);//uv1.y = distance to border
+        CalculateUV2X(uv2, positions, triangles, boundaryEdges);//uv2[i].x = area of polygon centered at vert i (i.e. sum of triangle areas) 
+        var spreadMin = new Vector2(crannySpread.x, crannySpread.x);
+        var spreadMax = new Vector2(crannySpread.y, crannySpread.y);
+        var spreadRandomizerMin = new Vector2(crannySpreadRandomizerMin, crannySpreadRandomizerMin);
+        var numCrannies = (int)math.ceil(MathTools.RandomFloat(numCranny.x, numCranny.y) * (bbMax.x - bbMin.x) * (bbMax.y - bbMin.y));
+        CalculateUV2Y(uv2, positions, triangles, halfEdges, numCrannies, crannyInitialVal, spreadMin, spreadMax, spreadRandomizerMin,
+            crannyBorder, crannyBorderIterations, transform);
+        // CalculateUV2Y(uv1, uv2, positions, triangles, boundaryEdges);//uv1.y = distance to border
 
         mesh = new();
 
@@ -181,6 +193,16 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         return triangulator;
     }
 
+    private static int PrevIndexInTriangle(int j)
+    {
+        var k = j % 3;
+        return k switch
+        {
+            0 => j + 2,
+            _ => j - 1
+        };
+    }
+
     private static int NextIndexInTriangle(int j)
     {
         var k = j % 3;
@@ -202,13 +224,12 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
     private static int NextBoundaryEdge(int bdryEdge, ReadOnlySpan<int> halfEdges)
     {
         var nextEdge = NextIndexInTriangle(bdryEdge);
-        var edgeNeighbor = halfEdges[nextEdge];
-        while (!(edgeNeighbor < 0))
+        var he = halfEdges[nextEdge];
+        while (!(he < 0))
         {
-            nextEdge = NextIndexInTriangle(edgeNeighbor);
-            edgeNeighbor = halfEdges[nextEdge];
+            nextEdge = NextIndexInTriangle(he);
+            he = halfEdges[nextEdge];
         }
-
         return nextEdge;
     }
 
@@ -271,16 +292,19 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
     }
 
     [BurstCompile]
-    private static void CalculateInteriorUV1(NativeArray<Vector2> uv1,  ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles, 
+    private static void CalculateInteriorUV1(NativeArray<Vector2> uv1, ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles,
         ReadOnlySpan<int> boundaryEdges, float radiusX, float radiusY, float fadeRateX, float fadeRateY)
     {
         NativeArray<bool> isBdryVertex = new(vertices.Length, Allocator.Temp);
-        NativeArray<Vector2> temp = new (uv1.Length, Allocator.Temp);
+        NativeArray<Vector2> temp = new(uv1.Length, Allocator.Temp);
         temp.CopyFrom(uv1);
+
+        NativeArray<float> radiusModifier = new(boundaryEdges.Length, Allocator.Temp);
 
         for (int i = 0; i < boundaryEdges.Length; i++)
         {
             isBdryVertex[triangles[boundaryEdges[i]]] = true;
+            radiusModifier[i] = MathTools.RandomFloat(0, 1);
         }
 
         for (int i = 0; i < vertices.Length; i++)
@@ -293,7 +317,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             {
                 var v = triangles[boundaryEdges[j]];
                 var dist = math.distance(p, vertices[v]);
-                
+
                 var val = temp[v];
                 var tX = math.clamp(1 - dist / radiusX, 0, 1);
                 tX = math.pow(tX, fadeRateX);
@@ -301,52 +325,16 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
                 tY = math.pow(tY, fadeRateY);
                 sum += new Vector2(tX * val.x, tY * val.y);
                 countX = math.select(countX, countX + 1, tX > 0);
-                countY = math.select(countY, countY + 1, tY  > 0);
+                countY = math.select(countY, countY + 1, tY > 0);
             }
 
             uv1[i] = new Vector2(sum.x / math.max(countX, 1), sum.y / math.max(countY, 1));
         }
     }
 
-    //uv2.x = sum of areas of triangles meeting at that vertex
+    //uv2.x = distance to border (in local space)
     [BurstCompile]
-    private static void CalculateUV2X(NativeArray<Vector2> uv2, ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles)
-    {
-        int i = 0;
-        while (i < triangles.Length - 2)
-        {
-            var t0 = i++;
-            var t1 = i++;
-            var t2 = i++;
-
-            var v0 = triangles[t0];
-            var v1 = triangles[t1];
-            var v2 = triangles[t2];
-
-            AddArea(v0, v1, v2, uv2, vertices);
-            AddArea(v1, v2, v0, uv2, vertices);
-            AddArea(v2, v0, v1, uv2, vertices);
-        }
-
-        static void AddArea(int v0, int v1, int v2, NativeArray<Vector2> uv1, ReadOnlySpan<Vector2> vertices)
-        {
-            var cur = uv1[v0];
-            cur.x += Area(v0, v1, v2, vertices);
-            uv1[v0] = cur;
-        }
-
-        static float Area(int v0, int v1, int v2, ReadOnlySpan<Vector2> vertices)
-        {
-            var p0 = vertices[v0];
-            var p1 = vertices[v1];
-            var p2 = vertices[v2];
-            return 0.5f * MathTools.Cross2D(p2 - p0, p1 - p0);
-        }
-    }
-
-    //uv2.y = distance to border (in local space)
-    [BurstCompile]
-    private static void CalculateUV2Y(NativeArray<Vector2> uv1, NativeArray<Vector2> uv2,
+    private static void CalculateUV2X(NativeArray<Vector2> uv2,
         ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles, ReadOnlySpan<int> boundaryEdges)
     {
         for (int i = 0; i < vertices.Length; i++)
@@ -360,7 +348,6 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
                 var p0 = vertices[edge.Item1];
                 var p1 = vertices[edge.Item2];
 
-                var v = p0 - p;
                 var w = p1 - p0;
                 var t = math.dot(p - p0, w) / math.lengthsq(w);
                 t = math.select(0, t, t > 0 && !(t > 1));//if t not in (0, 1] just check left endpt of edge
@@ -369,84 +356,156 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
                 minDist2 = math.min(thisDist2, minDist2);
             }
 
-            uv2[i] = new Vector2(uv2[i].x, math.sqrt(minDist2));
+            uv2[i] = new Vector2(math.sqrt(minDist2), uv2[i].y);
         }
     }
 
+    //uv2.y = crannies
     [BurstCompile]
-    public static void SpreadFromBoundary(NativeArray<Vector2> data, ReadOnlySpan<Vector2> positions,
-        ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges, ReadOnlySpan<int> boundaryEdges,
-        float spreadRadiusMin, float spreadRadiusMax, Vector2 dataMax, float spreadRate, int iterations)
+    private static void CalculateUV2Y(NativeArray<Vector2> uv2, ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges,
+        int numCrannies, Vector2 initialVal, Vector2 spreadMin, Vector2 spreadMax, Vector2 spreadRandomizerMin,
+        float crannyBorder, float crannyBorderIterations, Transform transform)
     {
-        var queue = new NativeQueue<int>(Allocator.Temp);
-        var seen = new NativeArray<bool>(positions.Length, Allocator.Temp);
+        var queue = new NativeQueue<(int, Vector2, bool)>(Allocator.TempJob);
+        var seen = new NativeArray<bool>(vertices.Length, Allocator.TempJob);
 
-        for (int iter = 0; iter < iterations; iter++)
+        for (int i = 0; i < numCrannies; i++)
         {
-            for (int i = 0; i < boundaryEdges.Length; i++)
+            var edge0 = MathTools.RNG.Next(triangles.Length - 1);
+            var v0 = triangles[edge0];
+            int j = 0;
+            while (uv2[v0].x < crannyBorder && edge0 < triangles.Length - 1 && j < crannyBorderIterations * triangles.Length)
             {
-                var e0 = boundaryEdges[i];
-                var v0 = triangles[NextIndexInTriangle(e0)];//right endpt of edge e0
-                var p0 = positions[v0];
-                var d0 = data[v0];
-                var radX = math.lerp(spreadRadiusMin, spreadRadiusMax, math.abs(d0.x) / dataMax.x);
-                var radY = math.lerp(spreadRadiusMin, spreadRadiusMax, math.abs(d0.y) / dataMax.y);
-                var radX2 = radX * radX;
-                var radY2 = radY * radY;
+                edge0++;
+                j++;
+                v0 = triangles[edge0];
+            }
+            var val0 = MathTools.RandomFloat(initialVal.x, initialVal.y);
+            var spreadDist = new Vector2(MathTools.RandomFloat(spreadMin.x, spreadMax.x), MathTools.RandomFloat(spreadMin.y, spreadMax.y));
+            Spread(edge0, new(0, val0), spreadDist, spreadRandomizerMin, uv2, queue, seen, vertices, triangles, halfEdges, transform);
+        }
+        queue.Dispose();
+        seen.Dispose();
+    }
 
-                queue.Clear();
-                seen.FillArray(false, 0, seen.Length);
+    static void BlendSet(int i, Vector2 val, NativeArray<Vector2> arr)
+    {
+        var cur = arr[i];
+        cur.x = 1 - (1 - cur.x) * (1 - val.x);
+        cur.y = 1 - (1 - cur.y) * (1 - val.y);
+        arr[i] = cur;
+    }
 
-                queue.Enqueue(e0);
+    static void Spread(int edge0, Vector2 val0, Vector2 spreadRadius, Vector2 spreadRandomizerMin,
+        NativeArray<Vector2> arr, NativeQueue<(int e, Vector2 radius, bool outgoing)> queue, NativeArray<bool> seen,
+        ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges, Transform transform)
+    {
+        var v0 = triangles[edge0];
+        BlendSet(v0, val0, arr);
 
-                while (queue.Count != 0)
+        seen.FillArray(false, 0, seen.Length);
+        queue.Clear();
+        queue.Enqueue((edge0, spreadRadius, true));
+        seen[v0] = true;
+
+        var origin = vertices[v0];
+        while (queue.Count != 0)
+        {
+            //we need the flexibility of outgoing/incoming edges to be able to queue boundary edges (which only have one edge side, so we don't get to decide)
+            var (e, r, outgoing) = queue.Dequeue();
+            var v = Vertex(e, outgoing, triangles);
+
+            if (spreadRandomizerMin.x < 1)
+            {
+                r.x *= MathTools.RandomFloat(spreadRandomizerMin.x, 1);
+            }
+            if (spreadRandomizerMin.y < 1)
+            {
+                r.y *= MathTools.RandomFloat(spreadRandomizerMin.y, 1);
+            }
+
+            //search CW first
+            var f = e;
+            var fOutgoing = outgoing;
+            while (TryGetNextEdgeCW(f, fOutgoing, halfEdges, out f, out fOutgoing) && !EqualOrHalfEdges(e, f, halfEdges))
+            {
+                ScanNeighbor(f, fOutgoing, val0, r, v, origin, arr, queue, seen, vertices, triangles, halfEdges, transform);
+            }
+
+            //if we hit a boundary edge while rotating CW, so need to go back to start and scan CCW
+            if (!EqualOrHalfEdges(e, f, halfEdges) || (!outgoing && halfEdges[e] < 0))
+            {
+                f = e;
+                fOutgoing = outgoing;
+                while (TryGetNextEdgeCCW(f, fOutgoing, halfEdges, out f, out fOutgoing) && !EqualOrHalfEdges(e, f, halfEdges))
                 {
-                    var e = queue.Dequeue();//edge incoming to the vertex we want to scan
-                    var nextEdge = NextIndexInTriangle(e);
-                    var v = triangles[nextEdge];
-                    var d = data[v];
-
-                    seen[v] = true;
-                    var nextV = triangles[NextIndexInTriangle(nextEdge)];
-
-                    while (!seen[nextV])//scan all neighbors of vertex v
-                    {
-                        seen[nextV] = true;
-                        var dist2 = math.distancesq(p0, positions[nextV]);
-
-                        var inRangeX = dist2 < radX2;
-                        var inRangeY = dist2 < radY2;
-
-                        if (inRangeX || inRangeY)
-                        {
-                            var dist = math.sqrt(dist2);
-                            var cur = data[nextV];
-
-                            var tX = math.select(0, 1 - dist / radX, inRangeX) * spreadRate;
-                            var x = math.lerp(cur.x, d.x, tX);
-                            var tY = math.select(0, 1 - dist / radY, inRangeY) * spreadRate;
-                            var y = math.lerp(cur.y, d.y, tY);
-                            data[nextV] = new(x, y);
-
-                            if (!(halfEdges[nextEdge] < 0))
-                            {
-                                nextEdge = halfEdges[nextEdge];
-                                nextV = triangles[NextIndexInTriangle(nextEdge)];
-                                queue.Enqueue(nextEdge);
-                            }
-                        }
-
-                        //keeping the big picture in mind:
-                        //i think we'll get nice results for uv1 (convexity & top/under side values)
-                        //this gives us nice shading around the edges
-                        //we need a way to give some geometry to the interior -- which i guess will come from smoothing out the area value, which we can maybe then use for highlight
-                        //we could also try planting some random dots in interior and spreading (in non-circular, possibly random way to create little nooks and crannies)
-                        //can also add "cracks" by just darkening certain edges (and following a random path with some random branching thrown in)
-                        //these ideas i think would be a lot better than the crappy results from area
-                        //(note uvs can be V2, V3, or V4 to accomodate the data you want)
-                    }
+                    ScanNeighbor(f, fOutgoing, val0, r, v, origin, arr, queue, seen, vertices, triangles, halfEdges, transform);
                 }
             }
+        }
+
+        static void ScanNeighbor(int f, bool fOutgoing, Vector2 val0, Vector2 spreadDist, int originVertex, Vector2 originPos,
+            NativeArray<Vector2> arr, NativeQueue<(int, Vector2, bool)> queue, NativeArray<bool> seen, ReadOnlySpan<Vector2> vertices,
+            ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges, Transform transform)
+        {
+            var w = Vertex(f, !fOutgoing, triangles);
+            var q = vertices[w];
+            if (!seen[w] && ShouldSpread(originPos, spreadDist, q, out var distToOrigin))
+            {
+                var tX = math.max(1 - distToOrigin / spreadDist.x, 0);
+                var tY = math.max(1 - distToOrigin / spreadDist.y, 0);
+                var val = new Vector2(tX * val0.x, tY * val0.y);
+                BlendSet(w, val, arr);
+                queue.Enqueue((f, spreadDist, !fOutgoing));
+                seen[w] = true;
+                Debug.DrawLine(transform.TransformPoint(vertices[originVertex]), transform.TransformPoint(q), Color.green, 5);
+            }
+        }
+
+        static bool ShouldSpread(Vector2 origin, Vector2 spreadDist, Vector2 q, out float distToOrigin)
+        {
+            distToOrigin = math.distance(origin, q);
+            return distToOrigin < spreadDist.x || distToOrigin < spreadDist.y;
+        }
+
+        static bool EqualOrHalfEdges(int edge1, int edge2, ReadOnlySpan<int> halfEdges)
+        {
+            return edge1 == edge2 || halfEdges[edge1] == edge2;
+        }
+
+        static int Vertex(int edge, bool outgoing, ReadOnlySpan<int> triangles)
+        {
+            return math.select(triangles[NextIndexInTriangle(edge)], triangles[edge], outgoing);
+        }
+
+        static bool TryGetNextEdgeCW(int edge, bool outgoing, ReadOnlySpan<int> halfEdges, out int nextEdge, out bool nextOutgoing)
+        {
+            var eOutgoing = math.select(halfEdges[edge], edge, outgoing);
+            if (eOutgoing < 0)
+            {
+                nextEdge = edge;
+                nextOutgoing = outgoing;
+                return false;
+            }
+
+            nextEdge = PrevIndexInTriangle(eOutgoing);
+            nextOutgoing = false;
+            return true;
+        }
+
+        static bool TryGetNextEdgeCCW(int edge, bool outgoing, ReadOnlySpan<int> halfEdges, out int nextEdge, out bool nextOutgoing)
+        {
+            var eIncoming = math.select(edge, halfEdges[edge], outgoing);
+            if (eIncoming < 0)
+            {
+                nextEdge = edge;
+                nextOutgoing = outgoing;
+                return false;
+            }
+
+            nextEdge = NextIndexInTriangle(eIncoming);
+            nextOutgoing = true;
+            return true;
         }
     }
 

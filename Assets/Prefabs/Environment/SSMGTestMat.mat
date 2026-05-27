@@ -58,14 +58,19 @@ Material:
     - _AreaMin: 0
     - _AreaPower: 0.4
     - _BorderFadeRate: 2
-    - _BorderPower: 5
-    - _BorderWidth: 1
+    - _BorderPower: 3
+    - _BorderStrength: 0.75
+    - _BorderWidth: 3
     - _ConcavityPower: 1
     - _ConcavityRadius: 2
-    - _ConcavityScale: 2
-    - _ConvexityPower: 1.01
+    - _ConcavityScale: 1
+    - _ConcavityStrength: 10
+    - _ConvexityPower: 1
     - _ConvexityRadius: 0.5
-    - _ConvexityScale: 7
+    - _ConvexityScale: 10
+    - _ConvexityStrength: 30
+    - _CrannyPower: 1
+    - _CrannyStrength: 1
     - _EnableExternalAlpha: 0
     - _HighlightColor: 0
     - _ShadowColorMultiplier: 0
@@ -73,10 +78,12 @@ Material:
     - _TopSideRadius: 1
     - _TopsidePower: 1
     - _TopsideRadius: 117.33
+    - _Topside_Strength: 2
     - _UnderSidePower: 0
     - _UnderSideRadius: 0
-    - _UndersidePower: 1.18
+    - _UndersidePower: 0.9
     - _UndersideRadius: 6.33
+    - _UndersideStrength: 1.5
     - _VisibilityRadius: 1
     - _ZWrite: 0
     m_Colors:
@@ -88,7 +95,7 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _HighlightColor: {r: 1, g: 1, b: 1, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
-    - _ShadowColorMultiplier: {r: 0.3584906, g: 0.3584906, b: 0.3584906, a: 1}
+    - _ShadowColorMultiplier: {r: 0, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &7327025426366006333

@@ -264,17 +264,17 @@ MonoBehaviour:
   mesh: {fileID: 0}
   spriteShapeController: {fileID: 7156192905420763951}
   meshFilter: {fileID: 5291316002289393465}
-  arcLengthSamples: 25
-  splineSampleRate: 10
-  minAngleRad: 0.5235988
-  refinementIterations: 5000
-  boundingBoxSize: 1.5
-  borderWidth: 0.5
-  geomSpreadIterations: 25
-  highlightSpreadRate: 0.8
-  shadowSpreadRate: 0.65
-  geomSmoothingIterations: 5
-  geomSmoothingRate: 0.6
+  arcLengthSamples: 10
+  splineSampleRate: 5
+  maxTriangleArea: 1
+  uv1ExtrapolationRadius: {x: 3, y: 3}
+  uv1FadeRate: {x: 4, y: 2}
+  crannyInitialVal: {x: 0.03, y: 0.035}
+  crannySpread: {x: 2, y: 5}
+  numCranny: {x: 0.5, y: 1.25}
+  crannyBorder: 1
+  crannyBorderIterations: 0.05
+  crannySpreadRandomizerMin: 1
   perimeter:
   - {x: -1, y: -1}
   - {x: -1.0308768, y: -0.9778544}
@@ -393,6 +393,7 @@ MonoBehaviour:
   - {x: -0.92581254, y: -1.0438789}
   - {x: -0.96290624, y: -1.0219395}
   drawPerimeterGizmo: 0
+  triangulationDrawTime: 1
 --- !u!33 &5291316002289393465
 MeshFilter:
   m_ObjectHideFlags: 0
