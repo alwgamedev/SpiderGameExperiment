@@ -4,7 +4,6 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Rendering;
 using UnityEngine.U2D;
 
 [ExecuteAlways]
@@ -58,21 +57,22 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
 
         var boundaryEdges = new NativeList<int>(Allocator.Temp);
         GetBoundaryEdges(boundaryEdges, halfEdges);
-
         Array.Resize(ref perimeter, boundaryEdges.Length);
         for (int i = 0; i < perimeter.Length; i++)
         {
             perimeter[i] = positions[triangles[boundaryEdges[i]]];
         }
 
+        var vertexGrid = BuildPointGrid(positions.AsArray(), bbMin, bbMax, 1);
+
         var uv = new NativeArray<Vector2>(positions.Length, Allocator.Temp);
         var uv1 = new NativeArray<Vector4>(positions.Length, Allocator.Temp);
         var uv2 = new NativeArray<Vector2>(positions.Length, Allocator.Temp);
 
         CalculateUV(uv, positions, bbMin, bbMax);
-        CalculateUV1(uv1, positions, triangles, boundaryEdges, halfEdges, convexitySpread, concavitySpread, topsideSpread, undersideSpread, 
+        CalculateUV1(uv1, positions, triangles, boundaryEdges, halfEdges, vertexGrid,
+            convexitySpread, concavitySpread, topsideSpread, undersideSpread,
             convexityMax, concavityMax, topsideMax, undersideMax);
-        // CalculateInteriorUV1(uv1, positions, triangles, boundaryEdges, uv1ExtrapolationRadius.x, uv1ExtrapolationRadius.y, uv1FadeRate.x, uv1FadeRate.y);
         CalculateUV2X(uv2, positions, triangles, boundaryEdges);
         // var spreadMin = new Vector2(crannySpread.x, crannySpread.x);
         // var spreadMax = new Vector2(crannySpread.y, crannySpread.y);
@@ -96,6 +96,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         mesh.RecalculateNormals();
 
         triangulator.Dispose();
+        vertexGrid.Dispose();
     }
 
 
@@ -137,33 +138,6 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         return (min, max);
     }
 
-    private void DrawTriangulationOutput(Triangulator<Vector2> triangulator)
-    {
-        if (triangulationDrawTime > 0)
-        {
-            var output = triangulator.Output;
-            var p = output.Positions;
-            var t = output.Triangles;
-            var he = output.Halfedges;//halfEdges[j] = neighboring edge to edge j, where indices correspond to triangle indices
-                                      //(i.e. he.Length = triangles.Length, and if triangles = { v0, v1, v2, ...} then he[0] corresponds to edge (v0, v1))
-
-            for (int i = 0; i < output.Triangles.Length / 3; i++)
-            {
-                var j = 3 * i;
-                var t0 = t[j];
-                var t1 = t[j + 1];
-                var t2 = t[j + 2];
-                var p0 = transform.TransformPoint(p[t0]);
-                var p1 = transform.TransformPoint(p[t1]);
-                var p2 = transform.TransformPoint(p[t2]);
-
-                Debug.DrawLine(p0, p1, he[j] < 0 ? Color.blue : Color.red, triangulationDrawTime);
-                Debug.DrawLine(p1, p2, he[j + 1] < 0 ? Color.blue : Color.red, triangulationDrawTime);
-                Debug.DrawLine(p2, p0, he[j + 2] < 0 ? Color.blue : Color.red, triangulationDrawTime);
-            }
-        }
-    }
-
     [BurstCompile]
     private static Triangulator<Vector2> Triangulate(NativeArray<Vector2> vertices, float maxArea)
     {
@@ -192,6 +166,34 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         constraintEdges.Dispose();
 
         return triangulator;
+    }
+
+
+    private void DrawTriangulationOutput(Triangulator<Vector2> triangulator)
+    {
+        if (triangulationDrawTime > 0)
+        {
+            var output = triangulator.Output;
+            var p = output.Positions;
+            var t = output.Triangles;
+            var he = output.Halfedges;//halfEdges[j] = neighboring edge to edge j, where indices correspond to triangle indices
+                                      //(i.e. he.Length = triangles.Length, and if triangles = { v0, v1, v2, ...} then he[0] corresponds to edge (v0, v1))
+
+            for (int i = 0; i < output.Triangles.Length / 3; i++)
+            {
+                var j = 3 * i;
+                var t0 = t[j];
+                var t1 = t[j + 1];
+                var t2 = t[j + 2];
+                var p0 = transform.TransformPoint(p[t0]);
+                var p1 = transform.TransformPoint(p[t1]);
+                var p2 = transform.TransformPoint(p[t2]);
+
+                Debug.DrawLine(p0, p1, he[j] < 0 ? Color.blue : Color.red, triangulationDrawTime);
+                Debug.DrawLine(p1, p2, he[j + 1] < 0 ? Color.blue : Color.red, triangulationDrawTime);
+                Debug.DrawLine(p2, p0, he[j + 2] < 0 ? Color.blue : Color.red, triangulationDrawTime);
+            }
+        }
     }
 
     private static int PrevIndexInTriangle(int j)
@@ -273,12 +275,12 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
     //uv1.w = underside shadow
     //keep them separate so that we can decide how they are weighted and how they blend in the shader
     //maxes are enforced so that
-        //a) "BlendSet" doesn't stack too quickly -- we should probably use a better blend function...
-        //b) reduce the extremes (e.g. if i have one very concave region and another not so concave that i want to stand out more, i can increase
-            //the concavity strength without making region A become over-saturated)
+    //a) "BlendSet" doesn't stack too quickly -- we should probably use a better blend function...
+    //b) reduce the extremes (e.g. if i have one very concave region and another not so concave that i want to stand out more, i can increase
+    //the concavity strength without making region A become over-saturated)
     [BurstCompile]
     private static void CalculateUV1(NativeArray<Vector4> uv1, ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles,
-        ReadOnlySpan<int> boundaryEdges, ReadOnlySpan<int> halfEdges,
+        ReadOnlySpan<int> boundaryEdges, ReadOnlySpan<int> halfEdges, PointGrid vertexGrid,
         float convexitySpread, float concavitySpread, float topsideSpread, float undersideSpread,
         float convexityMax, float concavityMax, float topsideMax, float undersideMax)
     {
@@ -286,8 +288,9 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         var e0Verts = EdgeVertices(e0, triangles);
         var u0 = (vertices[e0Verts.Item1] - vertices[e0Verts.Item2]).normalized;
 
-        NativeQueue<(int, bool)> spreadQueue = new(Allocator.Temp);
-        NativeArray<bool> seen = new(vertices.Length, Allocator.Temp);
+        // NativeQueue<(int, bool)> spreadQueue = new(Allocator.Temp);
+        // NativeArray<bool> seen = new(vertices.Length, Allocator.Temp);
+        var uv1Float = uv1.Reinterpret<float>(16);
 
         for (int i = 0; i < boundaryEdges.Length; i++)
         {
@@ -303,28 +306,28 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             if (convexity != 0)
             {
                 var offset = math.select(1, 0, convexity > 0);//which coordinate of the vector4 we're writing to
-                var spread = math.select(concavitySpread, convexitySpread, convexity > 0);
+                var spreadRadius = math.select(concavitySpread, convexitySpread, convexity > 0);
                 convexity = math.select(math.min(-convexity, concavityMax), math.min(convexity, convexityMax), convexity > 0);
-                Spread(e1, true, convexity, spread, uv1.Reinterpret<float>(16), 4, offset, spreadQueue, seen, vertices, triangles, halfEdges);
+
+                var p = vertices[e1Verts.Item1];
+                Spread(p, convexity, spreadRadius, uv1Float, 4, offset, vertices, vertexGrid);
+
+                // Spread(e1, true, convexity, spread, uv1.Reinterpret<float>(16), 4, offset, spreadQueue, seen, vertices, triangles, halfEdges);
             }
             if (topside != 0)
             {
                 var offset = math.select(3, 2, topside > 0);
-                var spread = math.select(undersideSpread, topsideSpread, topside > 0);
+                var spreadRadius = math.select(undersideSpread, topsideSpread, topside > 0);
                 topside = math.select(math.min(-topside, undersideMax), math.min(topside, topsideMax), topside > 0);
-                Spread(e1, true, topside, spread, uv1.Reinterpret<float>(16), 4, offset, spreadQueue, seen, vertices, triangles, halfEdges);
+
+                var p = vertices[e1Verts.Item1];
+                Spread(p, topside, spreadRadius, uv1Float, 4, offset, vertices, vertexGrid);
+
+                // Spread(e1, true, topside, spread, uv1Float, 4, offset, spreadQueue, seen, vertices, triangles, halfEdges);
             }
 
             u0 = -u1;
         }
-
-        //output in [-1, 1]
-        // static float Remap(float a, Vector2 range)
-        // {
-        //     var midpt = 0.5f * (range.x + range.y);
-        //     var halfWidth = range.y - midpt;
-        //     return math.clamp((a - midpt) / halfWidth, -1, 1);
-        // }
     }
 
     //uv2.x = distance to border (in local space)
@@ -355,156 +358,449 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         }
     }
 
-    //uv2.y = crannies
-    // [BurstCompile]
-    // private static void CalculateUV2Y(NativeArray<Vector2> uv2, ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges,
-    //     int numCrannies, Vector2 initialVal, Vector2 spreadMin, Vector2 spreadMax,
-    //     float crannyBorder, float crannyBorderIterations, Transform transform)
-    // {
-    //     var queue = new NativeQueue<(int, Vector2, bool)>(Allocator.TempJob);
-    //     var seen = new NativeArray<bool>(vertices.Length, Allocator.TempJob);
+    struct PointGrid
+    {
+        public NativeArray<int> grid;
+        public NativeArray<int> cellStart;
+        public Vector2 origin;//position of the lower left corner of the grid
+        public float cellSize;
+        public int gridWidth;
+        public int gridHeight;
 
-    //     for (int i = 0; i < numCrannies; i++)
-    //     {
-    //         var edge0 = MathTools.RNG.Next(triangles.Length - 1);
-    //         var v0 = triangles[edge0];
-    //         int j = 0;
-    //         while (uv2[v0].x < crannyBorder && edge0 < triangles.Length - 1 && j < crannyBorderIterations * triangles.Length)
-    //         {
-    //             edge0++;
-    //             j++;
-    //             v0 = triangles[edge0];
-    //         }
-    //         var val0 = MathTools.RandomFloat(initialVal.x, initialVal.y);
-    //         var spreadDist = new Vector2(MathTools.RandomFloat(spreadMin.x, spreadMax.x), MathTools.RandomFloat(spreadMin.y, spreadMax.y));
-    //         Spread(edge0, true, new(0, val0), spreadDist, uv2, queue, seen, vertices, triangles, halfEdges, transform);
-    //     }
-    //     queue.Dispose();
-    //     seen.Dispose();
-    // }
+        public int NumCells => cellStart.Length - 1;
 
-    // static void BlendSet(int i, Vector2 val, NativeArray<Vector2> arr)
-    // {
-    //     var cur = arr[i];
-    //     arr[i] = new(BlendSet(cur.x, val.x), BlendSet(cur.y, val.y));
-    // }
+        public readonly int Cell(int row, int col) => row * gridWidth + col;
 
-    private static void BlendSet(int i, int stride, int offset, float val, NativeArray<float> arr)
+        public readonly int CellOccupancy(int cell) => cellStart[cell + 1] - cellStart[cell];
+
+        public readonly (int row, int col) Cell(Vector2 p)
+        {
+            p -= origin;
+            var col = (int)math.clamp(p.x / cellSize, 0, gridWidth - 1);
+            var row = (int)math.clamp(p.y / cellSize, 0, gridHeight - 1);
+            return (row, col);
+        }
+
+        public (int colMin, int colMax, int rowMin, int rowMax) GetIterBounds(Vector2 minPt, Vector2 maxPt)
+        {
+            var (rowMin, colMin) = Cell(minPt);
+            var (rowMax, colMax) = Cell(maxPt);
+            return (colMin, colMax + 1, rowMin, rowMax + 1);
+        }
+
+        public void Dispose()
+        {
+            if (grid.IsCreated)
+            {
+                grid.Dispose();
+            }
+
+            if (cellStart.IsCreated)
+            {
+                cellStart.Dispose();
+            }
+        }
+    }
+
+    /// <summary> Natives in the PointGrid are TempJob allocated. </summary>
+    [BurstCompile]
+    private static PointGrid BuildPointGrid(NativeArray<Vector2> points, Vector2 bbMin, Vector2 bbMax, float cellSize)
+    {
+        var bbSpan = bbMax - bbMin;
+        var gridWidth = (int)Mathf.Ceil(bbSpan.x / cellSize);
+        var gridHeight = (int)Mathf.Ceil(bbSpan.y / cellSize);
+        var numCells = gridWidth * gridHeight;
+
+        var grid = new NativeArray<int>(points.Length, Allocator.TempJob);
+        var cellStart = new NativeArray<int>(numCells + 1, Allocator.TempJob);
+
+        NativeArray<int> cellCount = new(numCells, Allocator.Temp);
+
+        //first count the number of points in each cell
+        for (int i = 0; i < points.Length; i++)
+        {
+            var p = points[i] - bbMin;
+            var row = (int)(p.y / cellSize);
+            var col = (int)(p.x / cellSize);
+            var cell = row * gridWidth + col;
+            cellCount[cell]++;
+        }
+
+        //set the cell start indices
+        var sum = 0;
+        for (int i = 0; i < cellCount.Length; i++)
+        {
+            cellStart[i] = sum;
+            sum += cellCount[i];
+        }
+        cellStart[numCells] = grid.Length;
+
+        //fill the cells
+        for (int i = 0; i < points.Length; i++)
+        {
+            var p = points[i] - bbMin;
+            var row = (int)(p.y / cellSize);
+            var col = (int)(p.x / cellSize);
+            var cell = row * gridWidth + col;
+            var j = cellStart[cell] + --cellCount[cell];
+            grid[j] = i;
+        }
+
+        return new()
+        {
+            grid = grid,
+            cellStart = cellStart,
+            origin = bbMin,
+            cellSize = cellSize,
+            gridWidth = gridWidth,
+            gridHeight = gridHeight
+        };
+    }
+
+    private static void BlendIn(int i, int stride, int offset, float val, NativeArray<float> arr)
     {
         int j = stride * i + offset;
         var cur = arr[j];
-        arr[j] = BlendSet(cur, val);
+        arr[j] = BlendIn(cur, val);
     }
 
-    private static float BlendSet(float cur, float blend)
+    private static float BlendIn(float cur, float val)
     {
-        return cur + (1 - math.abs(cur)) * blend;// = lerp(cur, sign(cur), sign(cur) * blend);
+        return cur + 0.5f * (1 - math.abs(cur)) * val;
     }
 
-    /// <summary> edg0 is taken as an outgoing edge from the vertex where we want to spread</summary>
-    static void Spread(int edge0, bool outgoing0, float val0, float spreadRadius, 
-        NativeArray<float> arr, int stride, int offset, NativeQueue<(int e, bool outgoing)> queue, NativeArray<bool> seen,
-        ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges)
+    static void Spread(Vector2 pos, float val, float radius, NativeArray<float> arr, int stride, int offset,
+        ReadOnlySpan<Vector2> positions, PointGrid pointGrid)
     {
-        var v0 = Vertex(edge0, outgoing0, triangles);
-        // BlendSet(v0, val0, arr);
-        BlendSet(v0, stride, offset, val0, arr);
+        var minPt = new Vector2(pos.x - radius, pos.y - radius);
+        var maxPt = new Vector2(pos.x + radius, pos.y + radius);
+        var (colMin, colMax, rowMin, rowMax) = pointGrid.GetIterBounds(minPt, maxPt);
 
-        seen.FillArray(false, 0, seen.Length);
-        queue.Clear();
-        queue.Enqueue((edge0, outgoing0));
-        seen[v0] = true;
+        var grid = pointGrid.grid;
+        var cellStart = pointGrid.cellStart;
+        var r2 = radius * radius;
 
-        var origin = vertices[v0];
-        while (queue.Count != 0)
+        for (int col = colMin; col < colMax; col++)
         {
-            //we need the flexibility of outgoing/incoming edges to be able to queue boundary edges (which only have one edge side, so we don't get to decide)
-            var (e, outgoing) = queue.Dequeue();
-            var v = Vertex(e, outgoing, triangles);
-
-            //search CW first
-            var f = e;
-            var fOutgoing = outgoing;
-            while (TryGetNextEdgeCW(f, fOutgoing, halfEdges, out f, out fOutgoing) && !EqualOrHalfEdges(e, f, halfEdges))
+            for (int row = rowMin; row < rowMax; row++)
             {
-                ScanNeighbor(f, fOutgoing, val0, spreadRadius, origin, arr, stride, offset, queue, seen, vertices, triangles, halfEdges);
+                var cell = pointGrid.Cell(row, col);
+                for (int i = cellStart[cell]; i < cellStart[cell + 1]; i++)
+                {
+                    var v = grid[i];
+                    var p = positions[v];
+                    var dist2 = math.distancesq(pos, p);
+                    if (dist2 < r2)
+                    {
+                        var t = math.clamp(1 - math.sqrt(dist2) / radius, 0, 1);
+                        BlendIn(v, stride, offset, t * val, arr);
+                    }
+                }
+            }
+        }
+    }
+
+    struct CrackNode
+    {
+        public int vertex;
+        public int childStart;
+        public int childEnd;
+    }
+
+    struct Crack
+    {
+        public NativeArray<CrackNode> nodes;
+        public int bbMin;
+        public int bbMax;
+        //^for finding grid bounding box when spreading
+
+        public void Dispose()
+        {
+            if (nodes.IsCreated)
+            {
+                nodes.Dispose();
+            }
+        }
+
+        public float DistanceSqrd(Vector2 p, ReadOnlySpan<Vector2> vertices/*, float bendFraction, float bendHeight*/)
+        {
+            float minDist2 = math.INFINITY;
+
+            //first check distances to 
+            for (int i = 0; i < nodes.Length; i++)
+            {
+                var node = nodes[i];
+                var pt = vertices[node.vertex];
+                minDist2 = math.min(minDist2, math.distancesq(p, pt));
+
+                for (int j = node.childStart; j < node.childEnd; j++)
+                {
+                    var child = nodes[j];
+                    var childPt = vertices[child.vertex];
+                    var edge = childPt - pt;
+                    var v = p - pt;
+                    var x = math.dot(v, edge);
+                    var y = math.dot(v, edge.CCWPerp());
+                    var dist2 = y * y / math.lengthsq(v);
+
+                    minDist2 = math.select(minDist2, dist2, x > 0 && x < 1 && dist2 < minDist2);
+
+                    //we'll add bending once we get the basics set up
+                }
             }
 
-            //if we hit a boundary edge while rotating CW, so need to go back to start and scan CCW
-            if (!EqualOrHalfEdges(e, f, halfEdges) || (!outgoing && halfEdges[e] < 0))
+            return minDist2;
+        }
+    }
+
+    static Crack GenerateCrack(ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges, PointGrid vertexGrid,
+        int minDepth, int maxDepth, float continueChance, float branchChance)
+    {
+        //randomize by cell to get cracks more evenly distributed across mesh.
+        //(there are a lot more vertices near the boundary, so if we just choose a random vertex
+        //we end up with most of the cracks near the boundary)
+        int attempts = 0;
+        int edge = -1;
+        bool outgoing = false;
+        while (edge < 0 && attempts < 5)
+        {
+            attempts++;
+
+            //pick a random cell
+            var randomCell = MathTools.RNG.Next(vertexGrid.NumCells - 1);
+            var cellOccupancy = vertexGrid.CellOccupancy(randomCell);
+            if (cellOccupancy == 0)
             {
-                f = e;
-                fOutgoing = outgoing;
-                while (TryGetNextEdgeCCW(f, fOutgoing, halfEdges, out f, out fOutgoing) && !EqualOrHalfEdges(e, f, halfEdges))
+                continue;
+            }
+
+            //pick a random vertex in that cell
+            var vert = MathTools.RNG.Next(cellOccupancy - 1);
+            vert = vertexGrid.grid[vertexGrid.cellStart[randomCell] + vert];
+
+            //find an edge containing that vertex (we need an edge to begin our walk)
+            for (int i = 0; i < triangles.Length; i++)
+            {
+                var edgeVerts = EdgeVertices(i, triangles);
+                if (edgeVerts.Item1 == vert || edgeVerts.Item2 == vert)
                 {
-                    ScanNeighbor(f, fOutgoing, val0, spreadRadius, origin, arr, stride, offset, queue, seen, vertices, triangles, halfEdges);
+                    edge = i;
+                    outgoing = edgeVerts.Item1 == vert;
+                    break;
                 }
             }
         }
 
-        static void ScanNeighbor(int f, bool fOutgoing, float val0, float spreadDist, Vector2 originPos,
-            NativeArray<float> arr, int stride, int offset, NativeQueue<(int, bool)> queue, NativeArray<bool> seen, 
-            ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges)
+        if (edge < 0)
         {
-            var w = Vertex(f, !fOutgoing, triangles);
-            var q = vertices[w];
-            if (!seen[w] && ShouldSpread(originPos, spreadDist, q, out var distToOrigin))
+            edge = MathTools.RNG.Next(triangles.Length - 1);
+        }
+
+        NativeList<CrackNode> nodes = new(Allocator.TempJob);
+        NativeArray<bool> seen = new(vertices.Length, Allocator.Temp);
+
+        int depthMax = MathTools.RNG.Next(minDepth, maxDepth);
+        int depth = 0;
+
+        var vert0 = Vertex(edge, outgoing, triangles);
+        var node0 = new CrackNode() { vertex = vert0 };
+        int initialBranches = MathTools.RNG.Next(3);
+
+        nodes.Add(node0);
+
+        //next loop through edges out of vert0 and pick children
+
+        //once done building list: compute bbMin, bbMax, construct the crack and return it.
+
+        return default;
+    }
+
+    static void AddNodeChildren(int i, int edge, int outgoing, int numChildren, NativeList<CrackNode> nodes, 
+        NativeArray<bool> seen, NativeList<int> validChildren)
+    {
+        var node = nodes[i];
+        var childStart = nodes.Length;
+        var childEnd = childStart;//increment as we find children
+
+        //we'll look through edges 
+    }
+
+    static void SpreadCrack(Crack crack, float val, float radius, NativeArray<float> arr, int stride, int offset,
+        ReadOnlySpan<Vector2> positions, PointGrid pointGrid)
+    {
+        var minPt = positions[crack.bbMin];
+        var maxPt = positions[crack.bbMax];
+        var (colMin, colMax, rowMin, rowMax) = pointGrid.GetIterBounds(minPt, maxPt);
+
+        var grid = pointGrid.grid;
+        var cellStart = pointGrid.cellStart;
+        var r2 = radius * radius;
+
+        for (int col = colMin; col < colMax; col++)
+        {
+            for (int row = rowMin; row < rowMax; row++)
             {
-                var t = math.max(1 - distToOrigin / spreadDist, 0);
-                BlendSet(w, stride, offset, t * val0, arr);
-                queue.Enqueue((f, !fOutgoing));
-                seen[w] = true;
+                var cell = pointGrid.Cell(row, col);
+                for (int i = cellStart[cell]; i < cellStart[cell + 1]; i++)
+                {
+                    var v = grid[i];
+                    var p = positions[v];
+                    var dist2 = crack.DistanceSqrd(p, positions);
+                    if (dist2 < r2)
+                    {
+                        var t = math.clamp(1 - math.sqrt(dist2) / radius, 0, 1);
+                        BlendIn(v, stride, offset, t * val, arr);
+                    }
+                }
             }
-        }
-
-        static bool ShouldSpread(Vector2 origin, float spreadDist, Vector2 q, out float distToOrigin)
-        {
-            distToOrigin = math.distance(origin, q);
-            return distToOrigin < spreadDist;
-        }
-
-        static bool EqualOrHalfEdges(int edge1, int edge2, ReadOnlySpan<int> halfEdges)
-        {
-            return edge1 == edge2 || halfEdges[edge1] == edge2;
-        }
-
-        static int Vertex(int edge, bool outgoing, ReadOnlySpan<int> triangles)
-        {
-            return math.select(triangles[NextIndexInTriangle(edge)], triangles[edge], outgoing);
-        }
-
-        //next edge with same endpt
-        static bool TryGetNextEdgeCW(int edge, bool outgoing, ReadOnlySpan<int> halfEdges, out int nextEdge, out bool nextOutgoing)
-        {
-            var eOutgoing = math.select(halfEdges[edge], edge, outgoing);
-            if (eOutgoing < 0)
-            {
-                nextEdge = edge;
-                nextOutgoing = outgoing;
-                return false;
-            }
-
-            nextEdge = PrevIndexInTriangle(eOutgoing);
-            nextOutgoing = false;
-            return true;
-        }
-
-        //next edge with same endpt
-        static bool TryGetNextEdgeCCW(int edge, bool outgoing, ReadOnlySpan<int> halfEdges, out int nextEdge, out bool nextOutgoing)
-        {
-            var eIncoming = math.select(edge, halfEdges[edge], outgoing);
-            if (eIncoming < 0)
-            {
-                nextEdge = edge;
-                nextOutgoing = outgoing;
-                return false;
-            }
-
-            nextEdge = NextIndexInTriangle(eIncoming);
-            nextOutgoing = true;
-            return true;
         }
     }
+
+    static bool EqualOrHalfEdges(int edge1, int edge2, ReadOnlySpan<int> halfEdges)
+    {
+        return edge1 == edge2 || halfEdges[edge1] == edge2;
+    }
+
+    static int Vertex(int edge, bool outgoing, ReadOnlySpan<int> triangles)
+    {
+        return math.select(triangles[NextIndexInTriangle(edge)], triangles[edge], outgoing);
+    }
+
+    //next edge with same endpt
+    static bool TryGetNextEdgeCW(int edge, bool outgoing, ReadOnlySpan<int> halfEdges, out int nextEdge, out bool nextOutgoing)
+    {
+        var eOutgoing = math.select(halfEdges[edge], edge, outgoing);
+        if (eOutgoing < 0)
+        {
+            nextEdge = edge;
+            nextOutgoing = outgoing;
+            return false;
+        }
+
+        nextEdge = PrevIndexInTriangle(eOutgoing);
+        nextOutgoing = false;
+        return true;
+    }
+
+    //next edge with same endpt
+    static bool TryGetNextEdgeCCW(int edge, bool outgoing, ReadOnlySpan<int> halfEdges, out int nextEdge, out bool nextOutgoing)
+    {
+        var eIncoming = math.select(edge, halfEdges[edge], outgoing);
+        if (eIncoming < 0)
+        {
+            nextEdge = edge;
+            nextOutgoing = outgoing;
+            return false;
+        }
+
+        nextEdge = NextIndexInTriangle(eIncoming);
+        nextOutgoing = true;
+        return true;
+    }
+
+    // static void Spread(int edge0, bool outgoing0, float val0, float spreadRadius, 
+    //     NativeArray<float> arr, int stride, int offset, NativeQueue<(int e, bool outgoing)> queue, NativeArray<bool> seen,
+    //     ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges)
+    // {
+    //     var v0 = Vertex(edge0, outgoing0, triangles);
+    //     // BlendSet(v0, val0, arr);
+    //     BlendIn(v0, stride, offset, val0, arr);
+
+    //     seen.FillArray(false, 0, seen.Length);
+    //     queue.Clear();
+    //     queue.Enqueue((edge0, outgoing0));
+    //     seen[v0] = true;
+
+    //     var origin = vertices[v0];
+    //     while (queue.Count != 0)
+    //     {
+    //         //we need the flexibility of outgoing/incoming edges to be able to queue boundary edges (which only have one edge side, so we don't get to decide)
+    //         var (e, outgoing) = queue.Dequeue();
+    //         var v = Vertex(e, outgoing, triangles);
+
+    //         //search CW first
+    //         var f = e;
+    //         var fOutgoing = outgoing;
+    //         while (TryGetNextEdgeCW(f, fOutgoing, halfEdges, out f, out fOutgoing) && !EqualOrHalfEdges(e, f, halfEdges))
+    //         {
+    //             ScanNeighbor(f, fOutgoing, val0, spreadRadius, origin, arr, stride, offset, queue, seen, vertices, triangles, halfEdges);
+    //         }
+
+    //         //if we hit a boundary edge while rotating CW, so need to go back to start and scan CCW
+    //         if (!EqualOrHalfEdges(e, f, halfEdges) || (!outgoing && halfEdges[e] < 0))
+    //         {
+    //             f = e;
+    //             fOutgoing = outgoing;
+    //             while (TryGetNextEdgeCCW(f, fOutgoing, halfEdges, out f, out fOutgoing) && !EqualOrHalfEdges(e, f, halfEdges))
+    //             {
+    //                 ScanNeighbor(f, fOutgoing, val0, spreadRadius, origin, arr, stride, offset, queue, seen, vertices, triangles, halfEdges);
+    //             }
+    //         }
+    //     }
+
+    //     static void ScanNeighbor(int f, bool fOutgoing, float val0, float spreadDist, Vector2 originPos,
+    //         NativeArray<float> arr, int stride, int offset, NativeQueue<(int, bool)> queue, NativeArray<bool> seen, 
+    //         ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges)
+    //     {
+    //         var w = Vertex(f, !fOutgoing, triangles);
+    //         var q = vertices[w];
+    //         if (!seen[w] && ShouldSpread(originPos, spreadDist, q, out var distToOrigin))
+    //         {
+    //             var t = math.max(1 - distToOrigin / spreadDist, 0);
+    //             BlendIn(w, stride, offset, t * val0,  arr);
+    //             queue.Enqueue((f, !fOutgoing));
+    //             seen[w] = true;
+    //         }
+    //     }
+
+    //     static bool ShouldSpread(Vector2 origin, float spreadDist, Vector2 q, out float distToOrigin)
+    //     {
+    //         distToOrigin = math.distance(origin, q);
+    //         return distToOrigin < spreadDist;
+    //     }
+
+    //     static bool EqualOrHalfEdges(int edge1, int edge2, ReadOnlySpan<int> halfEdges)
+    //     {
+    //         return edge1 == edge2 || halfEdges[edge1] == edge2;
+    //     }
+
+    //     static int Vertex(int edge, bool outgoing, ReadOnlySpan<int> triangles)
+    //     {
+    //         return math.select(triangles[NextIndexInTriangle(edge)], triangles[edge], outgoing);
+    //     }
+
+    //     //next edge with same endpt
+    //     static bool TryGetNextEdgeCW(int edge, bool outgoing, ReadOnlySpan<int> halfEdges, out int nextEdge, out bool nextOutgoing)
+    //     {
+    //         var eOutgoing = math.select(halfEdges[edge], edge, outgoing);
+    //         if (eOutgoing < 0)
+    //         {
+    //             nextEdge = edge;
+    //             nextOutgoing = outgoing;
+    //             return false;
+    //         }
+
+    //         nextEdge = PrevIndexInTriangle(eOutgoing);
+    //         nextOutgoing = false;
+    //         return true;
+    //     }
+
+    //     //next edge with same endpt
+    //     static bool TryGetNextEdgeCCW(int edge, bool outgoing, ReadOnlySpan<int> halfEdges, out int nextEdge, out bool nextOutgoing)
+    //     {
+    //         var eIncoming = math.select(edge, halfEdges[edge], outgoing);
+    //         if (eIncoming < 0)
+    //         {
+    //             nextEdge = edge;
+    //             nextOutgoing = outgoing;
+    //             return false;
+    //         }
+
+    //         nextEdge = NextIndexInTriangle(eIncoming);
+    //         nextOutgoing = true;
+    //         return true;
+    //     }
+    // }
 
     private void OnDrawGizmos()
     {

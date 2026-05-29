@@ -412,7 +412,7 @@ void SortParticlesByCell(uint3 id : SV_DispatchThreadID)
     {
         uint c = cellContainingParticle[id.x];
         uint d;
-        InterlockedAdd(cellParticleCount[c], -1, d);
+        InterlockedAdd(cellParticleCount[c], -1, d);//d is the original value before the add
         uint k = cellStart[c] + d - 1;
         particlesByCell[k] = id.x;
     }

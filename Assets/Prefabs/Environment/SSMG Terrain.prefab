@@ -268,12 +268,16 @@ MonoBehaviour:
   splineSampleRate: 5
   maxTriangleArea: 1
   convexitySpread: 3
-  convexityMax: 0.01
-  concavitySpread: 2
+  convexitySpreadRate: 1
+  convexityMax: 0.025
+  concavitySpread: 3
+  concavitySpreadRate: 1
   concavityMax: 0.025
   topsideSpread: 5
+  topsideSpreadRate: 1
   topsideMax: 0.05
-  undersideSpread: 3.5
+  undersideSpread: 5
+  undersideSpreadRate: 1
   undersideMax: 0.01
   crannyInitialVal: {x: 0.03, y: 0.035}
   crannySpread: {x: 2, y: 5}
