@@ -1204,7 +1204,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "066d2d0f173247bdb3bfddd994d0e7fe",
     "m_Id": 0,
-    "m_DisplayName": "CrannyPower",
+    "m_DisplayName": "CrackPower",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_HideConnector": false,
@@ -1274,7 +1274,7 @@
     "m_Title": "Highlight Strength",
     "m_Position": {
         "x": -2535.19970703125,
-        "y": -612.0000610351563
+        "y": -611.9999389648438
     }
 }
 
@@ -2257,10 +2257,10 @@
     "promotedFromAssetID": "",
     "promotedFromCategoryName": "",
     "promotedOrdering": -1,
-    "m_Name": "CrannyStrength",
+    "m_Name": "CrackStrength",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "CrannyStrength",
-    "m_DefaultReferenceName": "_CrannyStrength",
+    "m_RefNameGeneratedByDisplayName": "CrackStrength",
+    "m_DefaultReferenceName": "_CrackStrength",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
@@ -3689,7 +3689,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "62563e3f9cbb4eac94f92755838732fa",
     "m_Id": 0,
-    "m_DisplayName": "CrannyStrength",
+    "m_DisplayName": "CrackStrength",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_HideConnector": false,
@@ -4647,10 +4647,10 @@
     "promotedFromAssetID": "",
     "promotedFromCategoryName": "",
     "promotedOrdering": -1,
-    "m_Name": "CrannyPower",
+    "m_Name": "CrackPower",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "CrannyPower",
-    "m_DefaultReferenceName": "_CrannyPower",
+    "m_RefNameGeneratedByDisplayName": "CrackPower",
+    "m_DefaultReferenceName": "_CrackPower",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
@@ -4991,7 +4991,7 @@
             "m_Id": "74b2ac09619f4b9a9862118333f1357c"
         },
         {
-            "m_Id": "c97377d67fd34405a3f8e23ca53c2791"
+            "m_Id": "aa10f30651ec4c07ada26bf1bd1d8ff0"
         },
         {
             "m_Id": "e4d7ab64fc404736879c6e2df005c3fd"
@@ -5009,7 +5009,7 @@
             "m_Id": "63ed54bcf51143eabf9322c846d655d1"
         },
         {
-            "m_Id": "e1f8fe89de8a40c8b061ddbdd60ab28a"
+            "m_Id": "f734e40bba444d9d9963f2b9ecc2aeae"
         }
     ],
     "synonyms": [
@@ -5680,6 +5680,24 @@
         "e32": 0.0,
         "e33": 1.0
     }
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "aa10f30651ec4c07ada26bf1bd1d8ff0",
+    "m_Id": 24,
+    "m_DisplayName": "crackPower",
+    "m_SlotType": 0,
+    "m_Hidden": false,
+    "m_HideConnector": false,
+    "m_ShaderOutputName": "crackPower",
+    "m_StageCapability": 3,
+    "m_CustomBinding": "",
+    "m_Value": 0.0,
+    "m_DefaultValue": 0.0,
+    "m_Labels": [],
+    "m_LiteralMode": false
 }
 
 {
@@ -6379,24 +6397,6 @@
 }
 
 {
-    "m_SGVersion": 0,
-    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
-    "m_ObjectId": "c97377d67fd34405a3f8e23ca53c2791",
-    "m_Id": 24,
-    "m_DisplayName": "crannyPower",
-    "m_SlotType": 0,
-    "m_Hidden": false,
-    "m_HideConnector": false,
-    "m_ShaderOutputName": "crannyPower",
-    "m_StageCapability": 3,
-    "m_CustomBinding": "",
-    "m_Value": 0.0,
-    "m_DefaultValue": 0.0,
-    "m_Labels": [],
-    "m_LiteralMode": false
-}
-
-{
     "m_SGVersion": 3,
     "m_Type": "UnityEditor.ShaderGraph.Internal.ColorShaderProperty",
     "m_ObjectId": "cadd16cb593d471db7795137ae9f574a",
@@ -6793,24 +6793,6 @@
 
 {
     "m_SGVersion": 0,
-    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
-    "m_ObjectId": "e1f8fe89de8a40c8b061ddbdd60ab28a",
-    "m_Id": 5,
-    "m_DisplayName": "cranny",
-    "m_SlotType": 1,
-    "m_Hidden": false,
-    "m_HideConnector": false,
-    "m_ShaderOutputName": "cranny",
-    "m_StageCapability": 3,
-    "m_CustomBinding": "",
-    "m_Value": 0.0,
-    "m_DefaultValue": 0.0,
-    "m_Labels": [],
-    "m_LiteralMode": false
-}
-
-{
-    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.DynamicValueMaterialSlot",
     "m_ObjectId": "e28d44db5beb461db9bf6d11bd275e37",
     "m_Id": 2,
@@ -6866,7 +6848,7 @@
     "m_Title": "Shadow Strength",
     "m_Position": {
         "x": -2507.19970703125,
-        "y": 420.0001220703125
+        "y": 419.999755859375
     }
 }
 
@@ -7359,6 +7341,24 @@
         "z": 0.0,
         "w": 0.0
     },
+    "m_LiteralMode": false
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "f734e40bba444d9d9963f2b9ecc2aeae",
+    "m_Id": 5,
+    "m_DisplayName": "crack",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_HideConnector": false,
+    "m_ShaderOutputName": "crack",
+    "m_StageCapability": 3,
+    "m_CustomBinding": "",
+    "m_Value": 0.0,
+    "m_DefaultValue": 0.0,
+    "m_Labels": [],
     "m_LiteralMode": false
 }
 
