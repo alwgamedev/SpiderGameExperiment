@@ -7,7 +7,7 @@ void ScaledPower01(float t, float scale, float power, out float s)
 }
 
 //process uv1, uv2 data stored in ssmg mesh
-void SSMGVertexData_float(float4 uv1, float2 uv2, float2 objectScale, 
+void SSMGVertexData_float(float4 uv1, float4 uv2, float2 objectScale, 
     float convexityPower, float concavityPower, float topsidePower, float undersidePower,
     float borderWorldWidth,  float borderPower, float crackPower,
     out float convexity, out float concavity, out float topside, out float underside, out float border, out float crack)
@@ -23,10 +23,10 @@ void SSMGVertexData_float(float4 uv1, float2 uv2, float2 objectScale,
    border = clamp(1 - worldDistToBorder / borderWorldWidth, 0, 1);
    border = pow(border, borderPower);
 
-   crack = pow(uv2.y, crackPower);
+   crack = pow(max(uv2.y, uv2.z), crackPower);
 }
 
-void SSMGVertexData_half(float4 uv1, float2 uv2, float2 objectScale, 
+void SSMGVertexData_half(float4 uv1, float4 uv2, float2 objectScale, 
     float convexityPower, float concavityPower, float topsidePower, float undersidePower,
     float borderWorldWidth,  float borderPower, float crackPower,
     out float convexity, out float concavity, out float topside, out float underside, out float border, out float crack)

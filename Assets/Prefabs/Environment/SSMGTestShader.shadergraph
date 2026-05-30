@@ -1273,8 +1273,8 @@
     "m_ObjectId": "0d0c2d14d0864034907c5f59d340f8c3",
     "m_Title": "Highlight Strength",
     "m_Position": {
-        "x": -2535.19970703125,
-        "y": -611.9999389648438
+        "x": -2535.199951171875,
+        "y": -612.0
     }
 }
 
@@ -2541,29 +2541,6 @@
 
 {
     "m_SGVersion": 0,
-    "m_Type": "UnityEditor.ShaderGraph.Vector2MaterialSlot",
-    "m_ObjectId": "3beaa2c93a5c49eb82dd3840116294a7",
-    "m_Id": 1,
-    "m_DisplayName": "uv2",
-    "m_SlotType": 0,
-    "m_Hidden": false,
-    "m_HideConnector": false,
-    "m_ShaderOutputName": "uv2",
-    "m_StageCapability": 3,
-    "m_CustomBinding": "",
-    "m_Value": {
-        "x": 0.0,
-        "y": 0.0
-    },
-    "m_DefaultValue": {
-        "x": 0.0,
-        "y": 0.0
-    },
-    "m_Labels": []
-}
-
-{
-    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.SaturateNode",
     "m_ObjectId": "3d72cdc316ef46d6a88cda9d6be0cda9",
     "m_Group": {
@@ -2734,6 +2711,33 @@
     "m_CustomColors": {
         "m_SerializableColors": []
     }
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector4MaterialSlot",
+    "m_ObjectId": "41dc8384b9374764b3d7a97d9836cb20",
+    "m_Id": 1,
+    "m_DisplayName": "uv2",
+    "m_SlotType": 0,
+    "m_Hidden": false,
+    "m_HideConnector": false,
+    "m_ShaderOutputName": "uv2",
+    "m_StageCapability": 3,
+    "m_CustomBinding": "",
+    "m_Value": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+    },
+    "m_DefaultValue": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+    },
+    "m_Labels": []
 }
 
 {
@@ -4967,7 +4971,7 @@
             "m_Id": "e40f1e8e5ba347d781294cabb5bb6114"
         },
         {
-            "m_Id": "3beaa2c93a5c49eb82dd3840116294a7"
+            "m_Id": "41dc8384b9374764b3d7a97d9836cb20"
         },
         {
             "m_Id": "5f20257507014d0fa9c64cc90da810b1"
@@ -6847,8 +6851,8 @@
     "m_ObjectId": "e2f525b153b74461ada98af1c82822fa",
     "m_Title": "Shadow Strength",
     "m_Position": {
-        "x": -2507.19970703125,
-        "y": 419.999755859375
+        "x": -2507.199951171875,
+        "y": 420.0
     }
 }
 

@@ -79,8 +79,8 @@ public class PBFluid : MonoBehaviour
 
     bool updateSimSettings;
 
-    int numStaticObstaclesProperty;
-    int numDynamicObstaclesProperty;
+    int numStaticObstaclesProperty = Shader.PropertyToID("numStaticObstacles");
+    int numDynamicObstaclesProperty = Shader.PropertyToID("numDynamicObstacles");
 
     int numParticleThreadGroups;
     int numFoamParticleThreadGroups;
@@ -122,9 +122,6 @@ public class PBFluid : MonoBehaviour
     private void Awake()
     {
         computeShader = Instantiate(_computeShader);
-
-        numStaticObstaclesProperty = Shader.PropertyToID("numStaticObstacles");
-        numDynamicObstaclesProperty = Shader.PropertyToID("numDynamicObstacles");
     }
 
 
@@ -267,7 +264,7 @@ public class PBFluid : MonoBehaviour
             integrateParticles, handleWallCollisions, updateDensityTexture, spawnFoam, updateFoam);
         computeShader.SetBuffer(position, "position", computePredictedPositions, countParticles, calculateDensity, calculateLambda, addPositionDelta, calculatePositionDelta,
             storeSolvedVelocity, calculateVorticityConfinementForce, integrateParticles, handleWallCollisions, updateDensityTexture, spawnFoam, updateFoam);
-        computeShader.SetBuffer(lastPosition, "lastPosition", computePredictedPositions, storeSolvedVelocity, calculateDensity, integrateParticles, 
+        computeShader.SetBuffer(lastPosition, "lastPosition", computePredictedPositions, storeSolvedVelocity, calculateDensity, integrateParticles,
             handleWallCollisions, updateDensityTexture);
         computeShader.SetBuffer(particleBuffer, "particleBuffer", calculatePositionDelta, addPositionDelta, calculateVorticityConfinementForce, integrateParticles);
         computeShader.SetBuffer(cellContainingParticle, "cellContainingParticle", countParticles, sortParticlesByCell);

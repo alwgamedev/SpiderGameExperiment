@@ -69,8 +69,8 @@ Material:
     - _ConvexityRadius: 0.5
     - _ConvexityScale: 10
     - _ConvexityStrength: 5
-    - _CrackPower: 9.7
-    - _CrackStrength: 189.15
+    - _CrackPower: 3.5
+    - _CrackStrength: 2
     - _CrannyPower: 2
     - _CrannyStrength: 1
     - _EnableExternalAlpha: 0

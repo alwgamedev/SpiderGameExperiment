@@ -50,85 +50,45 @@ public class PBFRenderer : MonoBehaviour
     GraphicsBuffer commandBuffer;
     GraphicsBuffer.IndirectDrawIndexedArgs[] commandData;
 
-    int colorMinProperty;
-    int colorMaxProperty;
-    int foamColorProperty;
-    int smoothStepIterationsProperty;
-    int densityNormalizerProperty;
-    int densityThresholdProperty;
-    int noiseNormalizerProperty;
-    int noiseThresholdProperty;
-    int foaminessNormalizerProperty;
-    int foaminessThresholdProperty;
+    int colorMinProperty = Shader.PropertyToID("colorMin");
+    int colorMaxProperty = Shader.PropertyToID("colorMax");
+    int foamColorProperty = Shader.PropertyToID("foamColor");
 
-    int pivotPositionProperty;
-    int dtProperty;
-    int velocityStretchFactorProperty;
-    int velocityStretchMaxProperty;
-    int particleColorMin0Property;
-    int particleColorMin1Property;
-    int particleColorSpray0Property;
-    int particleColorSpray1Property;
-    int particleColorFoam0Property;
-    int particleColorFoam1Property;
-    int particleColorBubble0Property;
-    int particleColorBubble1Property;
-    int particleColorMax0Property;
-    int particleColorMax1Property;
-    int particleRadiusMinProperty;
-    int particleRadiusSprayProperty;
-    int particleRadiusFoamProperty;
-    int particleRadiusBubbleProperty;
-    int particleRadiusMaxProperty;
+    int smoothStepIterationsProperty = Shader.PropertyToID("smoothStepIterations");
+    int densityNormalizerProperty = Shader.PropertyToID("densityNormalizer");
+    int densityThresholdProperty = Shader.PropertyToID("densityThreshold");
+    int noiseNormalizerProperty = Shader.PropertyToID("noiseNormalizer");
+    int noiseThresholdProperty = Shader.PropertyToID("noiseThreshold");
+    int foaminessNormalizerProperty = Shader.PropertyToID("foaminessNormalizer");
+    int foaminessThresholdProperty = Shader.PropertyToID("foaminessThreshold");
 
-    int sprayThresholdProperty;
-    int foamThresholdProperty;
-    int bubbleThresholdProperty;
-    int densityMaxProperty;
-    int lifeFadeTimeProperty;
+    int pivotPositionProperty = Shader.PropertyToID("pivotPosition");
+    int dtProperty = Shader.PropertyToID("dt");
+    int velocityStretchFactorProperty = Shader.PropertyToID("velocityStretchFactor");
+    int velocityStretchMaxProperty = Shader.PropertyToID("velocityStretchMax");
+    int particleColorMin0Property = Shader.PropertyToID("particleColorMin0");
+    int particleColorMin1Property = Shader.PropertyToID("particleColorMin1");
+    int particleColorSpray0Property = Shader.PropertyToID("particleColorSpray0");
+    int particleColorSpray1Property = Shader.PropertyToID("particleColorSpray1");
+    int particleColorFoam0Property = Shader.PropertyToID("particleColorFoam0");
+    int particleColorFoam1Property = Shader.PropertyToID("particleColorFoam1");
+    int particleColorBubble0Property = Shader.PropertyToID("particleColorBubble0");
+    int particleColorBubble1Property = Shader.PropertyToID("particleColorBubble1");
+    int particleColorMax0Property = Shader.PropertyToID("particleColorMax0");
+    int particleColorMax1Property = Shader.PropertyToID("particleColorMax1");
+    int particleRadiusMinProperty = Shader.PropertyToID("particleRadiusMin");
+    int particleRadiusSprayProperty = Shader.PropertyToID("particleRadiusSpray");
+    int particleRadiusFoamProperty = Shader.PropertyToID("particleRadiusFoam");
+    int particleRadiusBubbleProperty = Shader.PropertyToID("particleRadiusBubble");
+    int particleRadiusMaxProperty = Shader.PropertyToID("particleRadiusMax");
+
+    int sprayThresholdProperty = Shader.PropertyToID("sprayThreshold");
+    int foamThresholdProperty = Shader.PropertyToID("foamThreshold");
+    int bubbleThresholdProperty = Shader.PropertyToID("bubbleThreshold");
+    int densityMaxProperty = Shader.PropertyToID("densityMax");
+    int lifeFadeTimeProperty = Shader.PropertyToID("lifeFadeTime");
 
     bool updateProperties;
-
-    private void Awake()
-    {
-        colorMinProperty = Shader.PropertyToID("colorMin");
-        colorMaxProperty = Shader.PropertyToID("colorMax");
-        foamColorProperty = Shader.PropertyToID("foamColor");
-
-        smoothStepIterationsProperty = Shader.PropertyToID("smoothStepIterations");
-        densityNormalizerProperty = Shader.PropertyToID("densityNormalizer");
-        densityThresholdProperty = Shader.PropertyToID("densityThreshold");
-        noiseNormalizerProperty = Shader.PropertyToID("noiseNormalizer");
-        noiseThresholdProperty = Shader.PropertyToID("noiseThreshold");
-        foaminessNormalizerProperty = Shader.PropertyToID("foaminessNormalizer");
-        foaminessThresholdProperty = Shader.PropertyToID("foaminessThreshold");
-
-        pivotPositionProperty = Shader.PropertyToID("pivotPosition");
-        dtProperty = Shader.PropertyToID("dt");
-        velocityStretchFactorProperty = Shader.PropertyToID("velocityStretchFactor");
-        velocityStretchMaxProperty = Shader.PropertyToID("velocityStretchMax");
-        particleColorMin0Property = Shader.PropertyToID("particleColorMin0");
-        particleColorMin1Property = Shader.PropertyToID("particleColorMin1");
-        particleColorSpray0Property = Shader.PropertyToID("particleColorSpray0");
-        particleColorSpray1Property = Shader.PropertyToID("particleColorSpray1");
-        particleColorFoam0Property = Shader.PropertyToID("particleColorFoam0");
-        particleColorFoam1Property = Shader.PropertyToID("particleColorFoam1");
-        particleColorBubble0Property = Shader.PropertyToID("particleColorBubble0");
-        particleColorBubble1Property = Shader.PropertyToID("particleColorBubble1");
-        particleColorMax0Property = Shader.PropertyToID("particleColorMax0");
-        particleColorMax1Property = Shader.PropertyToID("particleColorMax1");
-        particleRadiusMinProperty = Shader.PropertyToID("particleRadiusMin");
-        particleRadiusSprayProperty = Shader.PropertyToID("particleRadiusSpray");
-        particleRadiusFoamProperty = Shader.PropertyToID("particleRadiusFoam");
-        particleRadiusBubbleProperty = Shader.PropertyToID("particleRadiusBubble");
-        particleRadiusMaxProperty = Shader.PropertyToID("particleRadiusMax");
-
-        sprayThresholdProperty = Shader.PropertyToID("sprayThreshold");
-        foamThresholdProperty = Shader.PropertyToID("foamThreshold");
-        bubbleThresholdProperty = Shader.PropertyToID("bubbleThreshold");
-        densityMaxProperty = Shader.PropertyToID("densityMax");
-        lifeFadeTimeProperty = Shader.PropertyToID("lifeFadeTime");
-    }
 
     private void OnEnable()
     {
