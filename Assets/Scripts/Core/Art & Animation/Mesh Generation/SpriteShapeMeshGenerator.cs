@@ -1,10 +1,13 @@
 ﻿using andywiecko.BurstTriangulator;
 using System;
+using System.Collections;
+using System.Xml.Schema;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.U2D;
+using UnityEngine.UI;
 
 [ExecuteAlways]
 public class SpriteShapeMeshGenerator : MonoBehaviour
@@ -74,16 +77,18 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         var uv1 = new NativeArray<Vector4>(positions.Length, Allocator.Temp);
         var uv2 = new NativeArray<Vector4>(positions.Length, Allocator.Temp);
         var uv2Float = uv2.Reinterpret<float>(16);
+        var uv3 = new NativeArray<Vector3>(positions.Length, Allocator.Temp);
 
         var seed = (uint)MathTools.RNG.Next(1, int.MaxValue);
         var rng = new Unity.Mathematics.Random(seed);
 
-        CalculateUV(uv, positions, bbMin, bbMax);
-        CalculateUV1(uv1, positions, triangles, boundaryEdges, vertexGrid,
+        FillUV(uv, positions, bbMin, bbMax);
+        FillBarycentricCoords(uv3, triangles, halfEdges);
+        FillBorderGeometry(uv1, positions, triangles, boundaryEdges, vertexGrid,
             convexitySpread, concavitySpread, topsideSpread, undersideSpread,
             convexityMax, concavityMax, topsideMax, undersideMax);
-        CalculateDistToBorder(uv2Float, 4, 0, positions, triangles, boundaryEdges);
-        CalculateCracks(uv2Float, 4, 1, 2, positions, triangles, halfEdges, vertexGrid, numCracksMin, numCracksMax, crackMinDepth, crackMaxDepth,
+        FillDistToBorder(uv2Float, 4, 0, positions, triangles, boundaryEdges);
+        FillCracks(uv2Float, 4, 1, 2, positions, triangles, halfEdges, vertexGrid, numCracksMin, numCracksMax, crackMinDepth, crackMaxDepth,
             crackContinueChance, crackBranchChance, crackMinVal, crackMaxVal, ref rng, transform, crackDrawTime);
         // var spreadMin = new Vector2(crannySpread.x, crannySpread.x);
         // var spreadMax = new Vector2(crannySpread.y, crannySpread.y);
@@ -104,6 +109,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         mesh.SetUVs(0, uv);
         mesh.SetUVs(1, uv1);
         mesh.SetUVs(2, uv2);
+        mesh.SetUVs(3, uv3);
         mesh.RecalculateNormals();
 
         triangulator.Dispose();
@@ -268,13 +274,133 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
     }
 
     [BurstCompile]
-    private static void CalculateUV(NativeArray<Vector2> uv, ReadOnlySpan<Vector2> vertices, Vector2 bbMin, Vector2 bbMax)
+    private static void FillUV(NativeArray<Vector2> uv, ReadOnlySpan<Vector2> vertices, Vector2 bbMin, Vector2 bbMax)
     {
         var bbSpan = bbMax - bbMin;
         for (int i = 0; i < vertices.Length; i++)
         {
             var p = vertices[i];
             uv[i] = new((p.x - bbMin.x) / bbSpan.x, (p.y - bbMin.y) / bbSpan.y);
+        }
+    }
+
+    static int BaryMask(Vector3 v)
+    {
+        var i0 = math.select(0, 1, v.x != 0);
+        var i1 = math.select(0, 2, v.y != 0);
+        var i2 = math.select(0, 4, v.z != 0);
+        return i0 | i1 | i2;
+    }
+
+    static Vector3 BaryCoord(int i)
+    {
+        //(bit0, bit1, bit2)
+        return new(i & 1, (i >> 1) & 1, (i >> 2) & 1);
+    }
+
+    //2DO: use 4-coloring. we still have the issue in shader (when 2+ coords are zero, we don't know which one is the unused color)
+    //but at least we will get a valid coloring
+
+    //we try to give the mesh a 3-coloring by vectors (1, 0, 0), (0, 1, 0), (0, 0, 1).
+    //this isn't possible at interior vertices with odd degree -- we would end up with one triangle that has two verts of same color.
+    //but if we make that repeat color = (0, 0, 0) instead, then we can salvage it -- bary coords will look like (0, b, c), where we know a = 1 - (b + c).
+    //...except when both a, b are zero, we don't know which is the missing coord but that's a very minor issue (only affecting a sliver of pixels along one broken edge) :)
+    [BurstCompile]
+    private static void FillBarycentricCoords(NativeArray<Vector3> arr, ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges)
+    {
+        NativeQueue<int> queue = new(Allocator.Temp);
+        NativeArray<bool> seen = new(triangles.Length / 3, Allocator.Temp);
+
+        queue.Enqueue(0);
+        while (queue.Count != 0)
+        {
+            var tri = queue.Dequeue();
+            ScanTriangle(tri, arr, queue, seen, triangles, halfEdges);
+        }
+
+        static void ScanTriangle(int tri, NativeArray<Vector3> arr, NativeQueue<int> queue, NativeArray<bool> seen,
+            ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges)
+        {
+            seen[tri] = true;
+
+            var t0 = 3 * tri;
+            var t1 = t0 + 1;
+            var t2 = t0 + 2;
+
+            var v0 = triangles[t0];
+            var v1 = triangles[t1];
+            var v2 = triangles[t2];
+
+            var color0 = arr[v0];
+            var color1 = arr[v1];
+            var color2 = arr[v2];
+            var mask0 = BaryMask(color0);
+            var mask1 = BaryMask(color1);
+            var mask2 = BaryMask(color2);
+
+            //fill any unset vertices with the first available color
+            mask0 = math.select(mask0, FirstAvailableColor(mask1 | mask2), mask0 == 0);
+            mask1 = math.select(mask1, FirstAvailableColor(mask2 | mask0), mask1 == 0);
+            mask2 = math.select(mask2, FirstAvailableColor(mask0 | mask1), mask2 == 0);
+
+            //replace a repeated color with 0
+            // mask0 &= ~mask1 & ~mask2;
+            // mask1 &= ~mask2 & ~mask0;
+            // mask2 &= ~mask0 & ~mask1;
+
+            arr[v0] = BaryCoord(mask0);
+            arr[v1] = BaryCoord(mask1);
+            arr[v2] = BaryCoord(mask2);
+
+            //queue adjacent triangles
+            var h0 = halfEdges[t0];
+            if (!(h0 < 0) && !seen[h0 / 3])
+            {
+                queue.Enqueue(h0 / 3);
+            }
+
+            var h1 = halfEdges[t1];
+            if (!(h1 < 0) && !seen[h1 / 3])
+            {
+                queue.Enqueue(h1 / 3);
+            }
+
+            var h2 = halfEdges[t2];
+            if (!(h2 < 0) && !seen[h2 / 3])
+            {
+                queue.Enqueue(h2 / 3);
+            }
+        }
+
+        //set repeat colors to 0
+        for (int i = 0; i < triangles.Length; i += 3)
+        {
+            var v0 = triangles[i];
+            var v1 = triangles[i + 1];
+            var v2 = triangles[i + 2];
+
+            var mask0 = BaryMask(arr[v0]);
+            var mask1 = BaryMask(arr[v1]);
+            var mask2 = BaryMask(arr[v2]);
+
+            mask0 &= ~mask1 & ~mask2;
+            mask1 &= ~mask2 & ~mask0;
+            mask2 &= ~mask0 & ~mask1;
+
+            arr[v0] = BaryCoord(mask0);
+            arr[v1] = BaryCoord(mask1);
+            arr[v2] = BaryCoord(mask2);
+        }
+
+        static int FirstAvailableColor(int taken)
+        {
+            int result = 1;
+            while ((taken & result) != 0)
+            {
+                result <<= 1;
+            }
+
+            return result & 7;
         }
     }
 
@@ -288,7 +414,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
     //b) reduce the extremes (e.g. if i have one very concave region and another not so concave that i want to stand out more, i can increase
     //the concavity strength without making region A become over-saturated)
     [BurstCompile]
-    private static void CalculateUV1(NativeArray<Vector4> uv1, ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles,
+    private static void FillBorderGeometry(NativeArray<Vector4> uv1, ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles,
         ReadOnlySpan<int> boundaryEdges, PointGrid vertexGrid,
         float convexitySpread, float concavitySpread, float topsideSpread, float undersideSpread,
         float convexityMax, float concavityMax, float topsideMax, float undersideMax)
@@ -296,7 +422,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         var e0 = boundaryEdges[^1];
         var e0Verts = EdgeVertices(e0, triangles);
         var u0 = (vertices[e0Verts.Item1] - vertices[e0Verts.Item2]).normalized;
-        
+
         var uv1Float = uv1.Reinterpret<float>(16);
 
         for (int i = 0; i < boundaryEdges.Length; i++)
@@ -334,7 +460,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
     }
 
     [BurstCompile]
-    private static void CalculateDistToBorder(NativeArray<float> arr, int stride, int offset,
+    private static void FillDistToBorder(NativeArray<float> arr, int stride, int offset,
         ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles, ReadOnlySpan<int> boundaryEdges)
     {
         for (int i = 0; i < vertices.Length; i++)
@@ -362,8 +488,8 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
 
     //uv2.y = cracks
     [BurstCompile]
-    private static void CalculateCracks(NativeArray<float> arr, int stride, int offset1, int offset2,
-        ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges, PointGrid vertexGrid, 
+    private static void FillCracks(NativeArray<float> arr, int stride, int offset1, int offset2,
+        ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges, PointGrid vertexGrid,
         float numCracksMin, float numCracksMax, int minDepth, int maxDepth, float continueChance, float branchChance,
         float crackMinValue, float crackMaxValue, ref Unity.Mathematics.Random rng,
         Transform transform = null, float drawTime = 0)
@@ -722,7 +848,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles, ref Vector2 bbMin, ref Vector2 bbMax)
         {
             nodes.Add(new() { depth = (ushort)depth, edge = edge, outgoing = (ushort)math.select(0, 1, outgoing) });
-                //{ vertex = edge, childStart = (ushort)math.select(0, 1, outgoing), childEnd = (ushort)depth });
+            //{ vertex = edge, childStart = (ushort)math.select(0, 1, outgoing), childEnd = (ushort)depth });
             var v = Vertex(edge, outgoing, triangles);
             var p = vertices[v];
             bbMin = math.min(p, bbMin);
@@ -888,110 +1014,6 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         nextOutgoing = true;
         return true;
     }
-
-    // static void Spread(int edge0, bool outgoing0, float val0, float spreadRadius, 
-    //     NativeArray<float> arr, int stride, int offset, NativeQueue<(int e, bool outgoing)> queue, NativeArray<bool> seen,
-    //     ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges)
-    // {
-    //     var v0 = Vertex(edge0, outgoing0, triangles);
-    //     // BlendSet(v0, val0, arr);
-    //     BlendIn(v0, stride, offset, val0, arr);
-
-    //     seen.FillArray(false, 0, seen.Length);
-    //     queue.Clear();
-    //     queue.Enqueue((edge0, outgoing0));
-    //     seen[v0] = true;
-
-    //     var origin = vertices[v0];
-    //     while (queue.Count != 0)
-    //     {
-    //         //we need the flexibility of outgoing/incoming edges to be able to queue boundary edges (which only have one edge side, so we don't get to decide)
-    //         var (e, outgoing) = queue.Dequeue();
-    //         var v = Vertex(e, outgoing, triangles);
-
-    //         //search CW first
-    //         var f = e;
-    //         var fOutgoing = outgoing;
-    //         while (TryGetNextEdgeCW(f, fOutgoing, halfEdges, out f, out fOutgoing) && !EqualOrHalfEdges(e, f, halfEdges))
-    //         {
-    //             ScanNeighbor(f, fOutgoing, val0, spreadRadius, origin, arr, stride, offset, queue, seen, vertices, triangles, halfEdges);
-    //         }
-
-    //         //if we hit a boundary edge while rotating CW, so need to go back to start and scan CCW
-    //         if (!EqualOrHalfEdges(e, f, halfEdges) || (!outgoing && halfEdges[e] < 0))
-    //         {
-    //             f = e;
-    //             fOutgoing = outgoing;
-    //             while (TryGetNextEdgeCCW(f, fOutgoing, halfEdges, out f, out fOutgoing) && !EqualOrHalfEdges(e, f, halfEdges))
-    //             {
-    //                 ScanNeighbor(f, fOutgoing, val0, spreadRadius, origin, arr, stride, offset, queue, seen, vertices, triangles, halfEdges);
-    //             }
-    //         }
-    //     }
-
-    //     static void ScanNeighbor(int f, bool fOutgoing, float val0, float spreadDist, Vector2 originPos,
-    //         NativeArray<float> arr, int stride, int offset, NativeQueue<(int, bool)> queue, NativeArray<bool> seen, 
-    //         ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges)
-    //     {
-    //         var w = Vertex(f, !fOutgoing, triangles);
-    //         var q = vertices[w];
-    //         if (!seen[w] && ShouldSpread(originPos, spreadDist, q, out var distToOrigin))
-    //         {
-    //             var t = math.max(1 - distToOrigin / spreadDist, 0);
-    //             BlendIn(w, stride, offset, t * val0,  arr);
-    //             queue.Enqueue((f, !fOutgoing));
-    //             seen[w] = true;
-    //         }
-    //     }
-
-    //     static bool ShouldSpread(Vector2 origin, float spreadDist, Vector2 q, out float distToOrigin)
-    //     {
-    //         distToOrigin = math.distance(origin, q);
-    //         return distToOrigin < spreadDist;
-    //     }
-
-    //     static bool EqualOrHalfEdges(int edge1, int edge2, ReadOnlySpan<int> halfEdges)
-    //     {
-    //         return edge1 == edge2 || halfEdges[edge1] == edge2;
-    //     }
-
-    //     static int Vertex(int edge, bool outgoing, ReadOnlySpan<int> triangles)
-    //     {
-    //         return math.select(triangles[NextIndexInTriangle(edge)], triangles[edge], outgoing);
-    //     }
-
-    //     //next edge with same endpt
-    //     static bool TryGetNextEdgeCW(int edge, bool outgoing, ReadOnlySpan<int> halfEdges, out int nextEdge, out bool nextOutgoing)
-    //     {
-    //         var eOutgoing = math.select(halfEdges[edge], edge, outgoing);
-    //         if (eOutgoing < 0)
-    //         {
-    //             nextEdge = edge;
-    //             nextOutgoing = outgoing;
-    //             return false;
-    //         }
-
-    //         nextEdge = PrevIndexInTriangle(eOutgoing);
-    //         nextOutgoing = false;
-    //         return true;
-    //     }
-
-    //     //next edge with same endpt
-    //     static bool TryGetNextEdgeCCW(int edge, bool outgoing, ReadOnlySpan<int> halfEdges, out int nextEdge, out bool nextOutgoing)
-    //     {
-    //         var eIncoming = math.select(edge, halfEdges[edge], outgoing);
-    //         if (eIncoming < 0)
-    //         {
-    //             nextEdge = edge;
-    //             nextOutgoing = outgoing;
-    //             return false;
-    //         }
-
-    //         nextEdge = NextIndexInTriangle(eIncoming);
-    //         nextOutgoing = true;
-    //         return true;
-    //     }
-    // }
 
     private void OnDrawGizmos()
     {
