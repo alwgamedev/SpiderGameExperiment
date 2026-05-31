@@ -75,6 +75,7 @@ Material:
     - _CrannyStrength: 1
     - _EnableExternalAlpha: 0
     - _HighlightColor: 0
+    - _OutlineTestStrength: 1.2
     - _ShadowColorMultiplier: 0
     - _TopSidePower: 0
     - _TopSideRadius: 1

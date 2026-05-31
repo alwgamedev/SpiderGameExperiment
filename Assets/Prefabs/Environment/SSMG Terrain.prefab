@@ -268,22 +268,22 @@ MonoBehaviour:
   splineSampleRate: 5
   maxTriangleArea: 1
   convexitySpread: 3
-  convexitySpreadRate: 1
   convexityMax: 0.025
   concavitySpread: 3
-  concavitySpreadRate: 1
   concavityMax: 0.025
   topsideSpread: 5
-  topsideSpreadRate: 1
   topsideMax: 0.05
   undersideSpread: 5
-  undersideSpreadRate: 1
   undersideMax: 0.01
-  crannyInitialVal: {x: 0.03, y: 0.035}
-  crannySpread: {x: 2, y: 5}
-  numCranny: {x: 0.5, y: 1.25}
-  crannyBorder: 1
-  crannyBorderIterations: 0.05
+  numCracksMin: 0
+  numCracksMax: 0
+  crackMinDepth: 0
+  crackMaxDepth: 0
+  crackContinueChance: 0
+  crackBranchChance: 0
+  crackMinVal: 0
+  crackMaxVal: 0
+  barySeedSpacing: 6
   perimeter:
   - {x: -1, y: -1}
   - {x: -1.0308768, y: -0.9778544}
@@ -403,6 +403,7 @@ MonoBehaviour:
   - {x: -0.96290624, y: -1.0219395}
   drawPerimeterGizmo: 0
   triangulationDrawTime: 1
+  crackDrawTime: 0
 --- !u!33 &5291316002289393465
 MeshFilter:
   m_ObjectHideFlags: 0

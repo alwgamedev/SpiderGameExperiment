@@ -1,13 +1,11 @@
 ﻿using andywiecko.BurstTriangulator;
 using System;
-using System.Collections;
-using System.Xml.Schema;
 using Unity.Burst;
+using Unity.Burst.CompilerServices;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.U2D;
-using UnityEngine.UI;
 
 [ExecuteAlways]
 public class SpriteShapeMeshGenerator : MonoBehaviour
@@ -77,7 +75,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         var uv1 = new NativeArray<Vector4>(positions.Length, Allocator.Temp);
         var uv2 = new NativeArray<Vector4>(positions.Length, Allocator.Temp);
         var uv2Float = uv2.Reinterpret<float>(16);
-        var uv3 = new NativeArray<Vector3>(positions.Length, Allocator.Temp);
+        var uv3 = new NativeArray<Vector4>(positions.Length, Allocator.Temp);
 
         var seed = (uint)MathTools.RNG.Next(1, int.MaxValue);
         var rng = new Unity.Mathematics.Random(seed);
@@ -284,115 +282,120 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         }
     }
 
-    static int BaryMask(Vector3 v)
+    static int BaryMask(Vector4 v)
     {
         var i0 = math.select(0, 1, v.x != 0);
         var i1 = math.select(0, 2, v.y != 0);
         var i2 = math.select(0, 4, v.z != 0);
-        return i0 | i1 | i2;
+        var i3 = math.select(0, 8, v.w != 0);
+        return i0 | i1 | i2 | i3;
     }
 
-    static Vector3 BaryCoord(int i)
+    static Vector4 BaryCoord(int i)
     {
-        //(bit0, bit1, bit2)
-        return new(i & 1, (i >> 1) & 1, (i >> 2) & 1);
+        //(bit0, bit1, bit2, bit3)
+        return new(i & 1, (i >> 1) & 1, (i >> 2) & 1, (i >> 3) & 1);
     }
 
-    //2DO: use 4-coloring. we still have the issue in shader (when 2+ coords are zero, we don't know which one is the unused color)
-    //but at least we will get a valid coloring
-
-    //we try to give the mesh a 3-coloring by vectors (1, 0, 0), (0, 1, 0), (0, 0, 1).
-    //this isn't possible at interior vertices with odd degree -- we would end up with one triangle that has two verts of same color.
-    //but if we make that repeat color = (0, 0, 0) instead, then we can salvage it -- bary coords will look like (0, b, c), where we know a = 1 - (b + c).
-    //...except when both a, b are zero, we don't know which is the missing coord but that's a very minor issue (only affecting a sliver of pixels along one broken edge) :)
+    //give the mesh a coloring by vectors -- 3-coloring this is not possible around interior vertices of odd degree, but we're able
+    //to salvage this a little by setting the repeat colors to zero at the end because we only need to know two of the bary coords
     [BurstCompile]
-    private static void FillBarycentricCoords(NativeArray<Vector3> arr, ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges)
+    private static void FillBarycentricCoords(NativeArray<Vector4> bary, ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges)
     {
-        NativeQueue<int> queue = new(Allocator.Temp);
-        NativeArray<bool> seen = new(triangles.Length / 3, Allocator.Temp);
+        NativeArray<int> baryMask = new(bary.Length, Allocator.Temp);
 
-        queue.Enqueue(0);
-        while (queue.Count != 0)
+        //we want to "seed" in random places across the mesh, which gives better results than just spreading outwards from one vertex.
+        //the following works about as well as random seeds, without needing a queue or seen tracker
+        var seedSpacing = 6;
+        for (int i = 0; i < seedSpacing; i++)
         {
-            var tri = queue.Dequeue();
-            ScanTriangle(tri, arr, queue, seen, triangles, halfEdges);
-        }
-
-        static void ScanTriangle(int tri, NativeArray<Vector3> arr, NativeQueue<int> queue, NativeArray<bool> seen,
-            ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges)
-        {
-            seen[tri] = true;
-
-            var t0 = 3 * tri;
-            var t1 = t0 + 1;
-            var t2 = t0 + 2;
-
-            var v0 = triangles[t0];
-            var v1 = triangles[t1];
-            var v2 = triangles[t2];
-
-            var color0 = arr[v0];
-            var color1 = arr[v1];
-            var color2 = arr[v2];
-            var mask0 = BaryMask(color0);
-            var mask1 = BaryMask(color1);
-            var mask2 = BaryMask(color2);
-
-            //fill any unset vertices with the first available color
-            mask0 = math.select(mask0, FirstAvailableColor(mask1 | mask2), mask0 == 0);
-            mask1 = math.select(mask1, FirstAvailableColor(mask2 | mask0), mask1 == 0);
-            mask2 = math.select(mask2, FirstAvailableColor(mask0 | mask1), mask2 == 0);
-
-            //replace a repeated color with 0
-            // mask0 &= ~mask1 & ~mask2;
-            // mask1 &= ~mask2 & ~mask0;
-            // mask2 &= ~mask0 & ~mask1;
-
-            arr[v0] = BaryCoord(mask0);
-            arr[v1] = BaryCoord(mask1);
-            arr[v2] = BaryCoord(mask2);
-
-            //queue adjacent triangles
-            var h0 = halfEdges[t0];
-            if (!(h0 < 0) && !seen[h0 / 3])
+            for (int j = i; j < triangles.Length; j += seedSpacing)
             {
-                queue.Enqueue(h0 / 3);
-            }
-
-            var h1 = halfEdges[t1];
-            if (!(h1 < 0) && !seen[h1 / 3])
-            {
-                queue.Enqueue(h1 / 3);
-            }
-
-            var h2 = halfEdges[t2];
-            if (!(h2 < 0) && !seen[h2 / 3])
-            {
-                queue.Enqueue(h2 / 3);
+                ScanVertex(j, true, baryMask, triangles, halfEdges);
             }
         }
 
-        //set repeat colors to 0
-        for (int i = 0; i < triangles.Length; i += 3)
+        // for (int i = 0; i < triangles.Length; i++)
+        // {
+        //     if (i > halfEdges[i])
+        //     {
+        //         var v0 = Vertex(i, true, triangles);
+        //         var v1 = Vertex(i, false, triangles);
+        //         if (baryMask[v0] == baryMask[v1])
+        //         {
+        //             baryMask[v1] = 0;
+        //         }
+        //     }
+        // }
+
+        for (int i = 0; i < bary.Length; i++)
         {
-            var v0 = triangles[i];
-            var v1 = triangles[i + 1];
-            var v2 = triangles[i + 2];
-
-            var mask0 = BaryMask(arr[v0]);
-            var mask1 = BaryMask(arr[v1]);
-            var mask2 = BaryMask(arr[v2]);
-
-            mask0 &= ~mask1 & ~mask2;
-            mask1 &= ~mask2 & ~mask0;
-            mask2 &= ~mask0 & ~mask1;
-
-            arr[v0] = BaryCoord(mask0);
-            arr[v1] = BaryCoord(mask1);
-            arr[v2] = BaryCoord(mask2);
+            bary[i] = BaryCoord(baryMask[i]);
         }
 
-        static int FirstAvailableColor(int taken)
+        var edgeCount = 0;
+        var badEdgeCount = 0;
+        for (int i = 0; i < triangles.Length; i++)
+        {
+            if (i > halfEdges[i])
+            {
+                edgeCount++;
+
+                var v0 = Vertex(i, true, triangles);
+                var v1 = Vertex(i, false, triangles);
+                if (baryMask[v0] == baryMask[v1])
+                {
+                    badEdgeCount++;
+                }
+            }
+        }
+
+        Debug.Log($"{badEdgeCount} / {edgeCount} bad edges");
+
+        static void ScanVertex(int edge, bool outgoing, NativeArray<int> bary, ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges)
+        {
+            var v = Vertex(edge, outgoing, triangles);
+            var mask = bary[v];//BaryMask(bary[v]);
+
+            if (mask == 0)
+            {
+                var neighborMask = 0;
+                var f = edge;
+                var fOutgoing = outgoing;
+
+                while (TryGetNextEdgeCCW(f, fOutgoing, halfEdges, out f, out fOutgoing) && !EqualOrHalfEdges(f, edge, halfEdges))
+                {
+                    ScanNeighbor(f, fOutgoing, bary, triangles, ref neighborMask);
+                }
+
+                //if we hit a boundary edge while scanning CCW, go back to start and scan CW to make sure we get all neighbors
+                if (Hint.Unlikely(!EqualOrHalfEdges(f, edge, halfEdges) || (outgoing && halfEdges[edge] < 0)))
+                {
+                    f = edge;
+                    fOutgoing = outgoing;
+                    while (TryGetNextEdgeCW(f, fOutgoing, halfEdges, out f, out fOutgoing) && !EqualOrHalfEdges(f, edge, halfEdges))
+                    {
+                        ScanNeighbor(f, fOutgoing, bary, triangles, ref neighborMask);
+                    }
+                }
+
+                mask = math.select(mask, FirstAvailableColor(neighborMask, 4), mask == 0);
+                // var v1 = Vertex(NextIndexInTriangle(edge), outgoing, triangles);
+                // var v2 = Vertex(PrevIndexInTriangle(edge), outgoing, triangles);
+                // var triMask = bary[v1] | bary[v2];
+                // mask = math.select(mask, FirstAvailableColor(triMask, 3), mask == 0);
+
+                bary[v] = mask;//BaryCoord(mask);
+            }
+
+            static void ScanNeighbor(int f, bool fOutgoing, ReadOnlySpan<int> bary, ReadOnlySpan<int> triangles, ref int neighborMask)
+            {
+                var w = Vertex(f, !fOutgoing, triangles);
+                neighborMask |= bary[w];//BaryMask(bary[w]);
+            }
+        }
+
+        static int FirstAvailableColor(int taken, int numColors)
         {
             int result = 1;
             while ((taken & result) != 0)
@@ -400,7 +403,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
                 result <<= 1;
             }
 
-            return result & 7;
+            return result & ~(1 << numColors);
         }
     }
 
