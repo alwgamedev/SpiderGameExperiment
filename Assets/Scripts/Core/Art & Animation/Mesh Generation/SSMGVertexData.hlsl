@@ -6,6 +6,15 @@ void ScaledPower01(float t, float scale, float power, out float s)
     s = clamp(pow(scale * t, power), 0, 1);
 }
 
+// void FloatToHalf2(float x, out half x0, out half x1)
+// {
+//     uint bits = asuint(x);
+//     uint bits0 = bits & 0xFFFF;
+//     uint bits1 = bits >> 16;
+//     x0 = f16tof32(bits0);
+//     x1 = f16tof32(bits1);
+// }
+
 //process uv1, uv2 data stored in ssmg mesh
 void SSMGVertexData_float(float4 uv1, float4 uv2, float2 objectScale, 
     float convexityPower, float concavityPower, float topsidePower, float undersidePower,
@@ -34,5 +43,41 @@ void SSMGVertexData_half(float4 uv1, float4 uv2, float2 objectScale,
     SSMGVertexData_float(uv1, uv2, objectScale, convexityPower, concavityPower, topsidePower, undersidePower, borderWorldWidth, borderPower,
         crackPower, convexity, concavity, topside, underside, border, crack);
 }
+
+// void ExtractBary_float(float3 p, out float3 q)
+// {
+//     half x0, x1, x2, x3, x4, x5;
+
+//     FloatToHalf2(p.x, x0, x1);
+//     FloatToHalf2(p.y, x2, x3);
+//     FloatToHalf2(p.z, x4, x5);
+
+//     int i = 0;
+//     half r[6] = { 0, 0, 0, 0, 0, 0 };
+//     r[i] = x0;
+//     i += (uint)(x0 != 0);
+//     r[i] = x1;
+//     i += (uint)(x1 != 0);
+//     r[i] = x2;
+//     i += (uint)(x2 != 0);
+//     r[i] = x3;
+//     i += (uint)(x3 != 0);
+//     r[i] = x4;
+//     i += (uint)(x4 != 0);
+//     r[i] = x5;
+
+//     q = float3(r[0], r[1], r[2]);
+// }
+
+// void ExtractBary_half(float3 p, out float3 q)
+// {
+//     q = p;//and run for your life
+// }
+
+// void FloatToHalf2_half(float x, out half x0, out half x1)
+// {
+//     x0 = x;
+//     x1 = 0;
+// }
 
 #endif

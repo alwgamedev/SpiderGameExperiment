@@ -145,9 +145,16 @@ public struct PolygonPhysicsShape
 
     public void GetShapeFromSpriteShapeMeshGenerator(SpriteShapeMeshGenerator ssmg)
     {
-        var perimeter = ssmg.GetPerimeter();
-        Array.Resize(ref originalPolygon, perimeter.Length);
-        perimeter.CopyTo(originalPolygon);
+        // var perimeter = ssmg.GetPerimeter();
+        var bdryEdges = ssmg.BoundaryEdges;
+        var triangles = ssmg.Triangles;
+        var positions = ssmg.Positions;
+        Array.Resize(ref originalPolygon, ssmg.BoundaryEdges.Length);
+        for (int i = 0; i < bdryEdges.Length; i++)
+        {
+            originalPolygon[i] = positions[triangles[bdryEdges[i]]];
+        }
+        // perimeter.CopyTo(originalPolygon);
 
         CopyOriginalToOptimized();
     }

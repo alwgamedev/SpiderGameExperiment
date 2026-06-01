@@ -33,13 +33,20 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
     [SerializeField] float crackBranchChance;
     [SerializeField] float crackMinVal;
     [SerializeField] float crackMaxVal;
-    // [SerializeField] float crackSpread;
-    [SerializeField] Vector2[] perimeter;
-    [SerializeField] bool drawPerimeterGizmo;
-    [SerializeField] float triangulationDrawTime;
+    // [SerializeField] Vector2[] perimeter;
+    [SerializeField] Vector2[] positions;
+    [SerializeField] int[] triangles;
+    [SerializeField] int[] boundaryEdges;
+    [SerializeField] int[] baryMask;
+    [SerializeField] bool drawTriangles;
+    [SerializeField] bool drawPerimeter;
+    [SerializeField] bool drawBaryColors;
     [SerializeField] float crackDrawTime;
 
-    public ReadOnlySpan<Vector2> GetPerimeter() => perimeter;
+    // public ReadOnlySpan<Vector2> GetPerimeter() => perimeter;
+    public ReadOnlySpan<int> BoundaryEdges => boundaryEdges;
+    public ReadOnlySpan<int> Triangles => triangles;
+    public ReadOnlySpan<Vector2> Positions => positions;
 
     public void GenerateMesh()
     {
@@ -55,7 +62,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         var triangulator = Triangulate(vertices.AsArray(), maxTriangleArea);//TempJob allocated
         vertices.Dispose();
 
-        DrawTriangulationOutput(triangulator);
+        // DrawTriangulationOutput(triangulator);
 
         var positions = triangulator.Output.Positions;
         var triangles = triangulator.Output.Triangles;
@@ -63,11 +70,11 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
 
         var boundaryEdges = new NativeList<int>(Allocator.Temp);
         GetBoundaryEdges(boundaryEdges, halfEdges);
-        Array.Resize(ref perimeter, boundaryEdges.Length);
-        for (int i = 0; i < perimeter.Length; i++)
-        {
-            perimeter[i] = positions[triangles[boundaryEdges[i]]];
-        }
+        // Array.Resize(ref perimeter, boundaryEdges.Length);
+        // for (int i = 0; i < perimeter.Length; i++)
+        // {
+        //     perimeter[i] = positions[triangles[boundaryEdges[i]]];
+        // }
 
         var vertexGrid = BuildPointGrid(positions.AsArray(), bbMin, bbMax, 1);
 
@@ -81,7 +88,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         var rng = new Unity.Mathematics.Random(seed);
 
         FillUV(uv, positions, bbMin, bbMax);
-        FillBarycentricCoords(uv3, triangles, halfEdges);
+        FillBarycentricCoords(uv3, triangles, halfEdges, out var baryMask);
         FillBorderGeometry(uv1, positions, triangles, boundaryEdges, vertexGrid,
             convexitySpread, concavitySpread, topsideSpread, undersideSpread,
             convexityMax, concavityMax, topsideMax, undersideMax);
@@ -93,6 +100,15 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         // var numCrannies = (int)math.ceil(MathTools.RandomFloat(numCranny.x, numCranny.y) * (bbMax.x - bbMin.x) * (bbMax.y - bbMin.y));
         // CalculateUV2Y(uv2, positions, triangles, halfEdges, numCrannies, crannyInitialVal, spreadMin, spreadMax,
         //     crannyBorder, crannyBorderIterations, transform);
+
+        Array.Resize(ref this.positions, positions.Length);
+        positions.AsArray().CopyTo(this.positions);
+        Array.Resize(ref this.triangles, triangles.Length);
+        triangles.AsArray().CopyTo(this.triangles);
+        Array.Resize(ref this.boundaryEdges, boundaryEdges.Length);
+        boundaryEdges.AsArray().CopyTo(this.boundaryEdges);
+        Array.Resize(ref this.baryMask, baryMask.Length);
+        baryMask.CopyTo(this.baryMask);
 
         mesh = new();
 
@@ -184,30 +200,30 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
     }
 
 
-    private void DrawTriangulationOutput(Triangulator<Vector2> triangulator)
-    {
-        if (triangulationDrawTime > 0)
-        {
-            var output = triangulator.Output;
-            var p = output.Positions;
-            var t = output.Triangles;
-            var he = output.Halfedges;
+    // private void DrawTriangulationOutput(Triangulator<Vector2> triangulator)
+    // {
+    //     if (triangulationDrawTime > 0)
+    //     {
+    //         var output = triangulator.Output;
+    //         var p = output.Positions;
+    //         var t = output.Triangles;
+    //         var he = output.Halfedges;
 
-            for (int i = 0; i < output.Triangles.Length; i += 3)
-            {
-                var t0 = t[i];
-                var t1 = t[i + 1];
-                var t2 = t[i + 2];
-                var p0 = transform.TransformPoint(p[t0]);
-                var p1 = transform.TransformPoint(p[t1]);
-                var p2 = transform.TransformPoint(p[t2]);
+    //         for (int i = 0; i < output.Triangles.Length; i += 3)
+    //         {
+    //             var t0 = t[i];
+    //             var t1 = t[i + 1];
+    //             var t2 = t[i + 2];
+    //             var p0 = transform.TransformPoint(p[t0]);
+    //             var p1 = transform.TransformPoint(p[t1]);
+    //             var p2 = transform.TransformPoint(p[t2]);
 
-                Debug.DrawLine(p0, p1, he[i] < 0 ? Color.blue : Color.red, triangulationDrawTime);
-                Debug.DrawLine(p1, p2, he[i + 1] < 0 ? Color.blue : Color.red, triangulationDrawTime);
-                Debug.DrawLine(p2, p0, he[i + 2] < 0 ? Color.blue : Color.red, triangulationDrawTime);
-            }
-        }
-    }
+    //             Debug.DrawLine(p0, p1, he[i] < 0 ? Color.blue : Color.red, triangulationDrawTime);
+    //             Debug.DrawLine(p1, p2, he[i + 1] < 0 ? Color.blue : Color.red, triangulationDrawTime);
+    //             Debug.DrawLine(p2, p0, he[i + 2] < 0 ? Color.blue : Color.red, triangulationDrawTime);
+    //         }
+    //     }
+    // }
 
     private static int PrevIndexInTriangle(int j)
     {
@@ -291,46 +307,48 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         return i0 | i1 | i2 | i3;
     }
 
-    static Vector4 BaryCoord(int i)
+    // static Vector4 BaryCoord(int mask)
+    // {
+    //     //(bit0, bit1, bit2, bit3)
+    //     return new(mask & 1, (mask >> 1) & 1, (mask >> 2) & 1, (mask >> 3) & 1);
+    // }
+
+    static int BaryCoord(int mask, int coordIdx)
     {
-        //(bit0, bit1, bit2, bit3)
-        return new(i & 1, (i >> 1) & 1, (i >> 2) & 1, (i >> 3) & 1);
+        return (mask >> coordIdx) & 1;
     }
 
     //give the mesh a coloring by vectors -- 3-coloring this is not possible around interior vertices of odd degree, but we're able
     //to salvage this a little by setting the repeat colors to zero at the end because we only need to know two of the bary coords
     [BurstCompile]
-    private static void FillBarycentricCoords(NativeArray<Vector4> bary, ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges)
+    private static void FillBarycentricCoords(NativeArray<Vector4> bary, ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges,
+        out NativeArray<int> baryMask)
     {
-        NativeArray<int> baryMask = new(bary.Length, Allocator.Temp);
+        baryMask = new(bary.Length, Allocator.Temp);
 
-        //we want to "seed" in random places across the mesh, which gives better results than just spreading outwards from one vertex.
-        //the following works about as well as random seeds, without needing a queue or seen tracker
+        //to move across the mesh somewhat randomly
         var seedSpacing = 6;
         for (int i = 0; i < seedSpacing; i++)
         {
             for (int j = i; j < triangles.Length; j += seedSpacing)
             {
-                ScanVertex(j, true, baryMask, triangles, halfEdges);
+                var v = triangles[j];
+                if (baryMask[v] == 0)
+                {
+                    var (nbrMask, _) = ScanNeighbors(j, true, baryMask, triangles, halfEdges);
+                    baryMask[v] = FirstAvailableColor(nbrMask, 4);
+                    if (baryMask[v] == 8)
+                    {
+                        Debug.Log("we did it");
+                    }
+                }
             }
         }
 
-        // for (int i = 0; i < triangles.Length; i++)
-        // {
-        //     if (i > halfEdges[i])
-        //     {
-        //         var v0 = Vertex(i, true, triangles);
-        //         var v1 = Vertex(i, false, triangles);
-        //         if (baryMask[v0] == baryMask[v1])
-        //         {
-        //             baryMask[v1] = 0;
-        //         }
-        //     }
-        // }
-
-        for (int i = 0; i < bary.Length; i++)
+        for (int i = 0; i < baryMask.Length; i++)
         {
-            bary[i] = BaryCoord(baryMask[i]);
+            var mask = baryMask[i];
+            bary[i] = new(BaryCoord(mask, 0), BaryCoord(mask, 1), BaryCoord(mask, 2), BaryCoord(mask, 3));
         }
 
         var edgeCount = 0;
@@ -352,46 +370,46 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
 
         Debug.Log($"{badEdgeCount} / {edgeCount} bad edges");
 
-        static void ScanVertex(int edge, bool outgoing, NativeArray<int> bary, ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges)
+        static (int nbrMask, int nbrCount) ScanNeighbors(int edge, bool outgoing, NativeArray<int> baryMask,
+            ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges)
         {
             var v = Vertex(edge, outgoing, triangles);
-            var mask = bary[v];//BaryMask(bary[v]);
+            // var mask = baryMask[v];//BaryMask(bary[v]);
 
-            if (mask == 0)
+            var neighborMask = 0;
+            var neighborCount = 0;
+            var f = edge;
+            var fOutgoing = outgoing;
+
+            ScanNeighbor(f, fOutgoing, baryMask, triangles, ref neighborMask);
+            
+            while (TryGetNextEdgeCCW(f, fOutgoing, halfEdges, out f, out fOutgoing) && !EqualOrHalfEdges(f, edge, halfEdges))
             {
-                var neighborMask = 0;
-                var f = edge;
-                var fOutgoing = outgoing;
-
-                while (TryGetNextEdgeCCW(f, fOutgoing, halfEdges, out f, out fOutgoing) && !EqualOrHalfEdges(f, edge, halfEdges))
-                {
-                    ScanNeighbor(f, fOutgoing, bary, triangles, ref neighborMask);
-                }
-
-                //if we hit a boundary edge while scanning CCW, go back to start and scan CW to make sure we get all neighbors
-                if (Hint.Unlikely(!EqualOrHalfEdges(f, edge, halfEdges) || (outgoing && halfEdges[edge] < 0)))
-                {
-                    f = edge;
-                    fOutgoing = outgoing;
-                    while (TryGetNextEdgeCW(f, fOutgoing, halfEdges, out f, out fOutgoing) && !EqualOrHalfEdges(f, edge, halfEdges))
-                    {
-                        ScanNeighbor(f, fOutgoing, bary, triangles, ref neighborMask);
-                    }
-                }
-
-                mask = math.select(mask, FirstAvailableColor(neighborMask, 4), mask == 0);
-                // var v1 = Vertex(NextIndexInTriangle(edge), outgoing, triangles);
-                // var v2 = Vertex(PrevIndexInTriangle(edge), outgoing, triangles);
-                // var triMask = bary[v1] | bary[v2];
-                // mask = math.select(mask, FirstAvailableColor(triMask, 3), mask == 0);
-
-                bary[v] = mask;//BaryCoord(mask);
+                neighborCount++;
+                ScanNeighbor(f, fOutgoing, baryMask, triangles, ref neighborMask);
             }
 
-            static void ScanNeighbor(int f, bool fOutgoing, ReadOnlySpan<int> bary, ReadOnlySpan<int> triangles, ref int neighborMask)
+            //if we hit a boundary edge while scanning CCW, go back to start and scan CW to make sure we get all neighbors
+            if (!EqualOrHalfEdges(f, edge, halfEdges) || (outgoing && halfEdges[edge] < 0))
+            {
+                f = edge;
+                fOutgoing = outgoing;
+                while (TryGetNextEdgeCW(f, fOutgoing, halfEdges, out f, out fOutgoing) && !EqualOrHalfEdges(f, edge, halfEdges))
+                {
+                    neighborCount++;
+                    ScanNeighbor(f, fOutgoing, baryMask, triangles, ref neighborMask);
+                }
+            }
+
+            return (neighborMask, neighborCount);
+
+            // mask = math.select(mask, FirstAvailableColor(neighborMask, 3), mask == 0);
+            // baryMask[v] = FirstAvailableColor(neighborMask, 3);//mask;//BaryCoord(mask);
+
+            static void ScanNeighbor(int f, bool fOutgoing, ReadOnlySpan<int> baryMask, ReadOnlySpan<int> triangles, ref int neighborMask)
             {
                 var w = Vertex(f, !fOutgoing, triangles);
-                neighborMask |= bary[w];//BaryMask(bary[w]);
+                neighborMask |= baryMask[w];//BaryMask(bary[w]);
             }
         }
 
@@ -403,7 +421,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
                 result <<= 1;
             }
 
-            return result & ~(1 << numColors);
+            return result & ((1 << numColors) - 1);
         }
     }
 
@@ -851,7 +869,6 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles, ref Vector2 bbMin, ref Vector2 bbMax)
         {
             nodes.Add(new() { depth = (ushort)depth, edge = edge, outgoing = (ushort)math.select(0, 1, outgoing) });
-            //{ vertex = edge, childStart = (ushort)math.select(0, 1, outgoing), childEnd = (ushort)depth });
             var v = Vertex(edge, outgoing, triangles);
             var p = vertices[v];
             bbMin = math.min(p, bbMin);
@@ -869,9 +886,6 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             var depth = node.depth;
             var vert = Vertex(edge, outgoing, triangles);
             var p = vertices[vert];
-
-            // node.vertex = Vertex(edge, outgoing, triangles);
-            // node.childStart = (ushort)nodes.Length;
 
             if (numChildren != 0)
             {
@@ -941,40 +955,8 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
                     numChildren--;
                 }
             }
-
-            // node.childEnd = (ushort)nodes.Length;
-            // nodes[i] = node;
         }
     }
-
-    // static void SpreadCrack(Crack crack, float val, float radius, NativeArray<float> arr, int stride, int offset,
-    //     ReadOnlySpan<Vector2> positions, PointGrid pointGrid)
-    // {
-    //     var (colMin, colMax, rowMin, rowMax) = pointGrid.GetIterBounds(crack.bbMin, crack.bbMax);
-
-    //     var grid = pointGrid.grid;
-    //     var cellStart = pointGrid.cellStart;
-    //     var r2 = radius * radius;
-
-    //     for (int col = colMin; col < colMax; col++)
-    //     {
-    //         for (int row = rowMin; row < rowMax; row++)
-    //         {
-    //             var cell = pointGrid.Cell(row, col);
-    //             for (int i = cellStart[cell]; i < cellStart[cell + 1]; i++)
-    //             {
-    //                 var v = grid[i];
-    //                 var p = positions[v];
-    //                 var dist2 = crack.DistanceSqrd(p, positions);
-    //                 if (dist2 < r2)
-    //                 {
-    //                     var t = math.clamp(1 - math.sqrt(dist2) / radius, 0, 1);
-    //                     BlendIn(v, stride, offset, t * val, arr);
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
 
     static bool EqualOrHalfEdges(int edge1, int edge2, ReadOnlySpan<int> halfEdges)
     {
@@ -1020,14 +1002,58 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (drawPerimeterGizmo && perimeter != null && perimeter.Length > 0)
+        if (triangles != null && triangles.Length > 0 && positions != null && positions.Length > 0)
         {
-            Gizmos.color = Color.blue;
-            for (int i = 0; i < perimeter.Length - 1; i++)
+            if (drawTriangles)
             {
-                Gizmos.DrawLine(transform.TransformPoint(perimeter[i]), transform.TransformPoint(perimeter[i + 1]));
+                Gizmos.color = Color.yellow;
+                for (int i = 0; i < triangles.Length; i += 3)
+                {
+                    var v0 = triangles[i];
+                    var v1 = triangles[i + 1];
+                    var v2 = triangles[i + 2];
+                    var p0 = transform.TransformPoint(positions[v0]);
+                    var p1 = transform.TransformPoint(positions[v1]);
+                    var p2 = transform.TransformPoint(positions[v2]);
+                    Gizmos.DrawLine(p0, p1);
+                    Gizmos.DrawLine(p1, p2);
+                    Gizmos.DrawLine(p2, p0);
+                }
             }
-            Gizmos.DrawLine(transform.TransformPoint(perimeter[^1]), transform.TransformPoint(perimeter[0]));
+
+            if (drawPerimeter && boundaryEdges != null && boundaryEdges.Length > 0)
+            {
+                Gizmos.color = Color.purple;
+                var v0 = triangles[boundaryEdges[^1]];
+                var p0 = transform.TransformPoint(positions[v0]);
+                for (int i = 0; i < boundaryEdges.Length; i++)
+                {
+                    var v1 = triangles[boundaryEdges[i]];
+                    var p1 = transform.TransformPoint(positions[v1]);
+                    Gizmos.DrawLine(p0, p1);
+                    p0 = p1;
+                }
+            }
+
+            if (drawBaryColors && baryMask != null && baryMask.Length > 0)
+            {
+                for (int i = 0; i < baryMask.Length; i++)
+                {
+                    var mask = baryMask[i];
+                    Gizmos.color = mask switch
+                    {
+                        1 => Color.red,
+                        2 => Color.green,
+                        4 => Color.blue,
+                        8 => Color.yellow,
+                        16 => Color.purple,
+                        32 => Color.cyan,
+                        _ => Color.white
+                    };
+                    var p = transform.TransformPoint(positions[i]);
+                    Gizmos.DrawSphere(p, 0.075f);
+                }
+            }
         }
     }
 }
