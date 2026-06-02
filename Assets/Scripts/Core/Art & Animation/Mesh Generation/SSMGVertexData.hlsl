@@ -18,8 +18,8 @@ void ScaledPower01(float t, float scale, float power, out float s)
 //process uv1, uv2 data stored in ssmg mesh
 void SSMGVertexData_float(float4 uv1, float4 uv2, float2 objectScale, 
     float convexityPower, float concavityPower, float topsidePower, float undersidePower,
-    float borderWorldWidth,  float borderPower, float crackPower,
-    out float convexity, out float concavity, out float topside, out float underside, out float border, out float crack)
+    float borderWorldWidth,  float borderPower, /*float crackPower,*/
+    out float convexity, out float concavity, out float topside, out float underside, out float border/*, out float crack*/)
 {
    convexity = pow(uv1.x, convexityPower);
    concavity = pow(uv1.y, concavityPower);
@@ -32,16 +32,40 @@ void SSMGVertexData_float(float4 uv1, float4 uv2, float2 objectScale,
    border = clamp(1 - worldDistToBorder / borderWorldWidth, 0, 1);
    border = pow(border, borderPower);
 
-   crack = pow(max(uv2.y, uv2.z), crackPower);
+   //crack = pow(max(uv2.y, uv2.z), crackPower);
 }
 
 void SSMGVertexData_half(float4 uv1, float4 uv2, float2 objectScale, 
     float convexityPower, float concavityPower, float topsidePower, float undersidePower,
-    float borderWorldWidth,  float borderPower, float crackPower,
-    out float convexity, out float concavity, out float topside, out float underside, out float border, out float crack)
+    float borderWorldWidth,  float borderPower, /*float crackPower,*/
+    out float convexity, out float concavity, out float topside, out float underside, out float border/*, out float crack*/)
 {
     SSMGVertexData_float(uv1, uv2, objectScale, convexityPower, concavityPower, topsidePower, undersidePower, borderWorldWidth, borderPower,
-        crackPower, convexity, concavity, topside, underside, border, crack);
+        /*crackPower,*/ convexity, concavity, topside, underside, border/*, crack*/);
+}
+
+void SSMGCrackValue_float(float4 crack, float4 bary, out float val)
+{
+    float4 baryClamped = max(bary, 10E-05);
+    crack *= step(10E-05, bary) / baryClamped;
+
+    float4 val0 = float4(
+        bary.y * crack.x + bary.x * crack.y,
+        bary.z * crack.x + bary.x * crack.z,
+        bary.w * crack.x + bary.x * crack.w,
+        bary.z * crack.y + bary.y * crack.z);
+    float4 val1 = float4(
+        bary.w * crack.y + bary.y * crack.w,
+        bary.w * crack.z + bary.z * crack.w,
+        val0.zw);
+    
+    val1 = max(val0, val1);
+    val = max(max(val1.x, val1.y), max(val1.z, val1.w));
+}
+
+void SSMGCrackValue_half(float4 crack, float4 bary, out float val)
+{
+    SSMGCrackValue_float(crack, bary, val);
 }
 
 // void ExtractBary_float(float3 p, out float3 q)

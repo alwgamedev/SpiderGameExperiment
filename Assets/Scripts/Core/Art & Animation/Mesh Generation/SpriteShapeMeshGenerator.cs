@@ -75,6 +75,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         var uv2 = new NativeArray<Vector4>(positions.Length, Allocator.Temp);
         var uv2Float = uv2.Reinterpret<float>(16);
         var uv3 = new NativeArray<Vector4>(positions.Length, Allocator.Temp);
+        var uv4 = new NativeArray<Vector4>(positions.Length, Allocator.Temp);
 
         var seed = (uint)MathTools.RNG.Next(1, int.MaxValue);
         var rng = new Unity.Mathematics.Random(seed);
@@ -85,7 +86,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             convexitySpread, concavitySpread, topsideSpread, undersideSpread,
             convexityMax, concavityMax, topsideMax, undersideMax);
         FillDistToBorder(uv2Float, 4, 0, positions, triangles, boundaryEdges);
-        FillCracks(uv2Float, 4, 1, 2, positions, triangles, halfEdges, vertexGrid, numCracksMin, numCracksMax, crackMinDepth, crackMaxDepth,
+        FillCracks(uv4, positions, triangles, halfEdges, vertexGrid, baryMask, numCracksMin, numCracksMax, crackMinDepth, crackMaxDepth,
             crackContinueChance, crackBranchChance, crackMinVal, crackMaxVal, ref rng, transform, crackDrawTime);
         // var spreadMin = new Vector2(crannySpread.x, crannySpread.x);
         // var spreadMax = new Vector2(crannySpread.y, crannySpread.y);
@@ -112,10 +113,11 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
 
         mesh.SetVertices(positionsV3);
         mesh.SetIndices(triangles.AsArray(), MeshTopology.Triangles, 0);
-        mesh.SetUVs(0, uv);
-        mesh.SetUVs(1, uv1);
-        mesh.SetUVs(2, uv2);
-        mesh.SetUVs(3, uv3);
+        mesh.SetUVs(0, uv);//uv
+        mesh.SetUVs(1, uv1);//bord geometry
+        mesh.SetUVs(2, uv2);//dist to border (for now)
+        mesh.SetUVs(3, uv3);//bary coords
+        mesh.SetUVs(4, uv4);//crack
         mesh.RecalculateNormals();
 
         triangulator.Dispose();
@@ -264,6 +266,11 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         }
     }
 
+    static Vector4 BaryVector(int mask)
+    {
+        return new(BaryCoord(mask, 0), BaryCoord(mask, 1), BaryCoord(mask, 2), BaryCoord(mask, 3));
+    }
+
     static int BaryCoord(int mask, int coordIdx)
     {
         return (mask >> coordIdx) & 1;
@@ -325,7 +332,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             var fOutgoing = outgoing;
 
             ScanNeighbor(f, fOutgoing, baryMask, triangles, ref neighborMask);
-            
+
             while (TryGetNextEdgeCCW(f, fOutgoing, halfEdges, out f, out fOutgoing) && !EqualOrHalfEdges(f, edge, halfEdges))
             {
                 neighborCount++;
@@ -449,21 +456,23 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
 
     //uv2.y = cracks
     [BurstCompile]
-    private static void FillCracks(NativeArray<float> arr, int stride, int offset1, int offset2,
-        ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges, PointGrid vertexGrid,
+    private static void FillCracks(NativeArray<Vector4> arr, ReadOnlySpan<Vector2> vertices,
+        ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges, PointGrid vertexGrid, ReadOnlySpan<int> baryMask,
         float numCracksMin, float numCracksMax, int minDepth, int maxDepth, float continueChance, float branchChance,
         float crackMinValue, float crackMaxValue, ref Unity.Mathematics.Random rng,
         Transform transform = null, float drawTime = 0)
     {
         NativeArray<bool> seen = new(vertices.Length, Allocator.Temp);
-        NativeList<int> validChildren = new(Allocator.Temp);
+        NativeList<int> possibleChildren = new(Allocator.Temp);
+        NativeArray<float> arrFloat = arr.Reinterpret<float>(16);
 
         var bbArea = vertexGrid.cellSize * vertexGrid.cellSize * vertexGrid.NumCells;
         var numCracks = (int)(MathTools.RandomFloat(numCracksMin, numCracksMax) * bbArea);
         for (int i = 0; i < numCracks; i++)
         {
             var depthMax = rng.NextInt(minDepth, maxDepth + 1);
-            var crack = GenerateCrack(seen, validChildren, vertices, triangles, halfEdges, vertexGrid, depthMax, continueChance, branchChance, ref rng);
+            var crack = GenerateCrack(seen, possibleChildren, vertices, triangles, halfEdges, vertexGrid, baryMask,
+                depthMax, continueChance, branchChance, ref rng);
             if (!crack.nodes.IsCreated)
             {
                 continue;
@@ -473,31 +482,19 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             {
                 var node = crack.nodes[j];
                 var vert = Vertex(node.edge, node.outgoing != 0, triangles);
-
-                BlendIn(vert, stride, offset1, rng.NextFloat(crackMinValue, crackMaxValue), arr);
-
-                // var offset = offset1;
-                // if (j > 0)
-                // {
-                //     var parentVert = Vertex(node.edge, node.outgoing == 0, triangles);
-                //     bool useOffset1 = arr[stride * parentVert + offset1] != 0;
-                //     offset = math.select(offset2, offset1, useOffset1);
-
-                //     var oppVert = Vertex(PrevIndexInTriangle(node.edge), true, triangles);
-                //     if (arr[stride * oppVert + offset] == 0 && !(halfEdges[node.edge] < 0))
-                //     {
-                //         oppVert = Vertex(PrevIndexInTriangle(halfEdges[node.edge]), true, triangles);
-                //     }
-
-                //     if (arr[stride * oppVert + offset] != 0)
-                //     {
-                //         useOffset1 = !useOffset1;
-                //         offset = math.select(offset2, offset1, useOffset1);
-                //         arr[stride * parentVert + offset] = 1;
-                //     }
-                // }
-
-                // arr[stride * vert + offset] = 1;
+                var baryColor = baryMask[vert];
+                var offset = baryColor switch
+                {
+                    1 => 0,
+                    2 => 1,
+                    4 => 2,
+                    8 => 3,
+                    _ => -1
+                };
+                if (!(offset < 0))
+                {
+                    BlendIn(vert, 4, offset, rng.NextFloat(crackMinValue, crackMaxValue), arrFloat);
+                }
             }
 
             if (transform)
@@ -714,29 +711,61 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
                 var p = transform.TransformPoint(vertices[v]);
                 var q = transform.TransformPoint(vertices[w]);
                 Debug.DrawLine(p, q, Color.green, drawTime);
-                // var p = transform.TransformPoint(vertices[m.vertex]);
-
-                // for (int j = m.childStart; j < m.childEnd; j++)
-                // {
-                //     var n = nodes[j];
-                //     var q = transform.TransformPoint(vertices[n.vertex]);
-                //     Debug.DrawLine(p, q, Color.green, drawTime);
-                // }
             }
         }
     }
 
-    static Crack GenerateCrack(NativeArray<bool> seen, NativeList<int> validChildren,
-        ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges, PointGrid vertexGrid,
+    static Crack GenerateCrack(NativeArray<bool> seen, NativeList<int> possibleChildren, ReadOnlySpan<Vector2> vertices,
+        ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges, PointGrid vertexGrid, ReadOnlySpan<int> baryMask,
         int depthMax, float continueChance, float branchChance, ref Unity.Mathematics.Random rng)
     {
+        static bool Valid(int edge, bool outgoing, ReadOnlySpan<bool> seen, ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges,
+            ReadOnlySpan<int> baryMask)
+        {
+            var v = Vertex(edge, outgoing, triangles);
+            return !seen[v] && baryMask[v] != 0 && !VertexCreatesConflict(edge, outgoing, seen, triangles, halfEdges);
+        }
+
+        //vertex cannot have any seen neighbors (except possibly the edge passed in)
+        //or else shader will think there's an edge between them
+        static bool VertexCreatesConflict(int edge, bool outgoing, ReadOnlySpan<bool> seen,
+            ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges)
+        {
+            var f = edge;
+            var fOutgoing = outgoing;
+
+            while (TryGetNextEdgeCCW(f, fOutgoing, halfEdges, out f, out fOutgoing) && !EqualOrHalfEdges(f, edge, halfEdges))
+            {
+                if (seen[Vertex(f, !fOutgoing, triangles)])
+                {
+                    return true;
+                }
+            }
+
+            //if we hit a boundary edge while scanning CCW, go back to start and scan CW to make sure we get all neighbors
+            if (!EqualOrHalfEdges(f, edge, halfEdges) || (outgoing && halfEdges[edge] < 0))
+            {
+                f = edge;
+                fOutgoing = outgoing;
+                while (TryGetNextEdgeCW(f, fOutgoing, halfEdges, out f, out fOutgoing) && !EqualOrHalfEdges(f, edge, halfEdges))
+                {
+                    if (seen[Vertex(f, !fOutgoing, triangles)])
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         //randomize by cell to get cracks more evenly distributed across mesh.
         //(there are a lot more vertices near the boundary, so if we just choose a random vertex
         //we end up with most of the cracks near the boundary)
         int attempts = 0;
         int edge = -1;
         bool outgoing = false;
-        while (edge < 0 && attempts < 5)
+        while (edge < 0 && attempts < 10)
         {
             attempts++;
 
@@ -751,28 +780,25 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             //pick a random vertex in that cell
             var vertInCell = rng.NextInt(cellOccupancy);
             var vert = vertexGrid.grid[vertexGrid.cellStart[randomCell] + vertInCell];
-            var vertShifts = 0;
-            while (seen[vert] && vertShifts < cellOccupancy - 1)
-            {
-                vertInCell = (vertInCell + 1) % cellOccupancy;
-                vert = vertexGrid.grid[vertexGrid.cellStart[randomCell] + vertInCell];
-                vertShifts++;
-            }
 
-            if (seen[vert])
-            {
-                continue;
-            }
-
-            //find an edge containing that vertex, and make sure there is at least one neighboring vertex that hasn't been seen
+            //find an edge containing that vertex, and make sure there is at least one valid neighboring vertex
             for (int i = 0; i < triangles.Length; i++)
             {
                 var edgeVerts = EdgeVertices(i, triangles);
-                if ((edgeVerts.Item1 == vert && !seen[edgeVerts.Item2]) || (edgeVerts.Item2 == vert && !seen[edgeVerts.Item1]))
+                if (edgeVerts.Item1 == vert || edgeVerts.Item2 == vert)
                 {
-                    edge = i;
-                    outgoing = edgeVerts.Item1 == vert;
-                    break;
+                    var og = edgeVerts.Item1 == vert;
+                    if (!Valid(i, og, seen, triangles, halfEdges, baryMask))
+                    {
+                        break;
+                    }
+                    //if opposite vert is valid, then we've confirmed there's at least one valid neighbor and we can proceed
+                    if (Valid(i, !og, seen, triangles, halfEdges, baryMask))
+                    {
+                        edge = i;
+                        outgoing = og;
+                        break;
+                    }
                 }
             }
         }
@@ -786,18 +812,21 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         Vector2 bbMin = new(float.MinValue, float.MinValue);
         Vector2 bbMax = new(float.MaxValue, float.MaxValue);
 
+        //add first node and give it 1-4 children
         int numChildren0 = rng.NextInt(1, 4);
         QueueCrackNode(edge, outgoing, 0, nodes, seen, vertices, triangles, ref bbMin, ref bbMax);
-        AddNodeChildren(0, numChildren0, nodes, seen, validChildren, vertices, triangles, halfEdges, ref bbMin, ref bbMax, ref rng);
+        AddNodeChildren(0, numChildren0, nodes, seen, possibleChildren, vertices, triangles, halfEdges,
+            baryMask, ref bbMin, ref bbMax, ref rng);
 
         int j = 1;
         while (j < nodes.Length)
         {
-            //choose btwn 0-2 children (if depth == depthMax, no children)
-            var depth = nodes[j].depth;//nodes[j].childEnd;
+            //give node 0-2 children (if depth == depthMax, no children)
+            var depth = nodes[j].depth;
             var childRoll = rng.NextFloat();
             var numChildren = math.select(0, math.select(1, 2, childRoll < branchChance), depth < depthMax && childRoll < continueChance);
-            AddNodeChildren(j, numChildren, nodes, seen, validChildren, vertices, triangles, halfEdges, ref bbMin, ref bbMax, ref rng);
+            AddNodeChildren(j, numChildren, nodes, seen, possibleChildren, vertices, triangles, halfEdges,
+                baryMask, ref bbMin, ref bbMax, ref rng);
             j++;
         }
 
@@ -816,45 +845,33 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             seen[v] = true;
         }
 
-        static void AddNodeChildren(int i, int numChildren, NativeList<CrackNode> nodes, NativeArray<bool> seen, NativeList<int> validChildren,
-            ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges, ref Vector2 bbMin, ref Vector2 bbMax,
-            ref Unity.Mathematics.Random rng)
+        static void AddNodeChildren(int i, int numChildren, NativeList<CrackNode> nodes, NativeArray<bool> seen, NativeList<int> possibleChildren,
+            ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges, ReadOnlySpan<int> baryMask,
+            ref Vector2 bbMin, ref Vector2 bbMax, ref Unity.Mathematics.Random rng)
         {
             var node = nodes[i];
             var edge = node.edge;
             var outgoing = node.outgoing != 0;
             var depth = node.depth;
             var vert = Vertex(edge, outgoing, triangles);
-            var p = vertices[vert];
 
             if (numChildren != 0)
             {
-                validChildren.Clear();
+                possibleChildren.Clear();
 
                 var f = edge;
                 var fOutgoing = outgoing;
-                if (i == 0)
+
+                //usually f points back to the parent node, but for i = 0 we can include it
+                if (i == 0 && Valid(f, !fOutgoing, seen, triangles, halfEdges, baryMask))
                 {
-                    validChildren.Add(f);
+                    possibleChildren.Add(f);
                 }
 
-                var parentVert = Vertex(edge, !outgoing, triangles);
-                var p0 = vertices[parentVert];
-                var u = math.select(0, (p - p0).normalized, i > 0);
-
-                //first find all valid children (vertex not seen and edge direction has dot > 0 with previous edge)
+                //first find all valid children (vertex not seen, has valid bary color, and edge direction has dot > 0 with previous edge)
                 while (TryGetNextEdgeCCW(f, fOutgoing, halfEdges, out f, out fOutgoing) && !EqualOrHalfEdges(f, edge, halfEdges))
                 {
-                    var w = Vertex(f, !fOutgoing, triangles);
-                    var opp = Vertex(PrevIndexInTriangle(f), true, triangles);
-                    if (!seen[opp] && !(halfEdges[f] < 0))
-                    {
-                        opp = Vertex(PrevIndexInTriangle(halfEdges[f]), true, triangles);
-                    }
-                    if (!seen[w] && !seen[opp] && math.dot(vertices[w] - p, u) > 0)
-                    {
-                        validChildren.Add(f);
-                    }
+                    possibleChildren.Add(f);
                 }
 
                 //if we hit a boundary edge while scanning CCW, go back to start and scan CW to make sure we get all neighbors
@@ -864,35 +881,22 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
                     fOutgoing = outgoing;
                     while (TryGetNextEdgeCW(f, fOutgoing, halfEdges, out f, out fOutgoing) && !EqualOrHalfEdges(f, edge, halfEdges))
                     {
-                        var w = Vertex(f, !fOutgoing, triangles);
-                        if (!seen[w] && math.dot(vertices[w] - p, u) > 0)
-                        {
-                            validChildren.Add(f);
-                        }
+                        possibleChildren.Add(f);
                     }
                 }
 
-                int numValid = validChildren.Length;
-                while (numChildren > 0 && numValid > 0)
+                while (numChildren > 0 && possibleChildren.Length > 0)
                 {
-                    var j = rng.NextInt(numValid);
-                    int numValidSeen = 0;
-                    int lastScanned = -1;
-                    while (numValidSeen < j + 1)
+                    var j = rng.NextInt(possibleChildren.Length);
+                    var child = possibleChildren[j];
+                    var childOutgoing = triangles[child] != vert;
+                    if (Valid(child, childOutgoing, seen, triangles, halfEdges, baryMask))
                     {
-                        lastScanned++;
-                        if (!(validChildren[lastScanned] < 0))
-                        {
-                            numValidSeen++;
-                        }
+                        QueueCrackNode(child, childOutgoing, depth + 1, nodes, seen, vertices, triangles, ref bbMin, ref bbMax);
+                        numChildren--;
                     }
 
-                    var child = validChildren[lastScanned];
-                    var childOutgoing = triangles[child] != vert;
-                    QueueCrackNode(child, childOutgoing, depth + 1, nodes, seen, vertices, triangles, ref bbMin, ref bbMax);
-                    validChildren[lastScanned] = -69;
-                    numValid--;
-                    numChildren--;
+                    possibleChildren.RemoveAt(j);
                 }
             }
         }

@@ -59,18 +59,18 @@ Material:
     - _AreaPower: 0.4
     - _BorderFadeRate: 2
     - _BorderPower: 2
-    - _BorderStrength: 0
+    - _BorderStrength: 0.85
     - _BorderWidth: 1.5
     - _ConcavityPower: 1
     - _ConcavityRadius: 2
     - _ConcavityScale: 1
-    - _ConcavityStrength: 0
+    - _ConcavityStrength: 3
     - _ConvexityPower: 1
     - _ConvexityRadius: 0.5
     - _ConvexityScale: 10
-    - _ConvexityStrength: 0
-    - _CrackPower: 3.5
-    - _CrackStrength: 0
+    - _ConvexityStrength: 5
+    - _CrackPower: 3
+    - _CrackStrength: 10
     - _CrannyPower: 2
     - _CrannyStrength: 1
     - _EnableExternalAlpha: 0
@@ -81,12 +81,12 @@ Material:
     - _TopSideRadius: 1
     - _TopsidePower: 1
     - _TopsideRadius: 117.33
-    - _Topside_Strength: 0
+    - _Topside_Strength: 1.5
     - _UnderSidePower: 0
     - _UnderSideRadius: 0
     - _UndersidePower: 1
     - _UndersideRadius: 6.33
-    - _UndersideStrength: 0
+    - _UndersideStrength: 4
     - _VisibilityRadius: 1
     - _ZWrite: 0
     m_Colors:
