@@ -71,6 +71,10 @@
             HeightInverse(bary.w, jacInv)
         );
 
+        edgeThickness1 = min(edgeThickness1, 1);
+        edgeThickness2 = min(edgeThickness2, 1);
+        cornerThickness = min(cornerThickness, 1);
+
         float4 edgeCrack1 = crack.xxxy * crack.yzwz;
         float2 edgeCrack2 = crack.yz * crack.ww;
         float4 t1 = bary.xxxy + bary.yzwz;

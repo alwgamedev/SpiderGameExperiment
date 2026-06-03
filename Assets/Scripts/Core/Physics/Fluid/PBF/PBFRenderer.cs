@@ -119,6 +119,10 @@ public class PBFRenderer : MonoBehaviour
     private void OnDestroy()
     {
         commandBuffer?.Release();
+        Destroy(densityMesh);
+        Destroy(densityMaterial);
+        Destroy(particleMesh);
+        Destroy(particleMaterial);
     }
 
     private void OnValidate()
@@ -241,9 +245,9 @@ public class PBFRenderer : MonoBehaviour
             0, 1, 2, 2, 3, 0
         };
 
-        densityMesh.vertices = vertices;
-        densityMesh.uv = uv;
-        densityMesh.triangles = triangles;
+        densityMesh.SetVertices(vertices);
+        densityMesh.SetUVs(0, uv);
+        densityMesh.SetIndices(triangles, MeshTopology.Triangles, 0);
         densityMesh.RecalculateNormals();
     }
 
@@ -266,9 +270,9 @@ public class PBFRenderer : MonoBehaviour
             0, 1, 2, 2, 3, 0
         };
 
-        particleMesh.vertices = vertices;
-        particleMesh.uv = uv;
-        particleMesh.triangles = triangles;
+        particleMesh.SetVertices(vertices);
+        particleMesh.SetUVs(0, uv);
+        particleMesh.SetIndices(triangles, MeshTopology.Triangles, 0);
         particleMesh.RecalculateNormals();
     }
 }

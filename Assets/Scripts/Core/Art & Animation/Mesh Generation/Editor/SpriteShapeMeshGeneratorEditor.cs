@@ -34,20 +34,9 @@ public class SpriteShapeMeshGeneratorEditor : Editor
     private void SaveMesh()
     {
         var mesh = ((SpriteShapeMeshGenerator)target).mesh;
-        if (!mesh)
+        if (mesh)
         {
-            return;
+            EditorTools.CreateAndSaveAsset(mesh);
         }
-
-        var path = EditorUtility.SaveFilePanel("Save Terrain Mesh", "Assets/", "New Terrain Mesh", "asset");
-        //^and this gives you a warning if asset already exists at that path, which is nice
-        if (string.IsNullOrWhiteSpace(path))//panel was closed without selecting path
-        {
-            return;
-        }
-
-        path = FileUtil.GetProjectRelativePath(path);
-        AssetDatabase.CreateAsset(mesh, path);
-        AssetDatabase.SaveAssets();
     }
 }
