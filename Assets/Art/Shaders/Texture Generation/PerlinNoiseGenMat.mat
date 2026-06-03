@@ -57,10 +57,15 @@ Material:
     - _EnableExternalAlpha: 0
     - _QueueControl: 0
     - _QueueOffset: 0
+    - _Scale: 25
     - _ZWrite: 0
     m_Colors:
     - White: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _OffsetA: {r: 69, g: 1, b: 0, a: 0}
+    - _OffsetB: {r: 420.5, g: 520.69, b: 0, a: 0}
+    - _OffsetG: {r: 205, g: 16900.96, b: 0, a: 0}
+    - _OffsetR: {r: 2069.69, g: -69, b: 0, a: 0}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

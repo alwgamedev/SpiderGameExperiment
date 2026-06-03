@@ -36,7 +36,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NoiseTex:
-        m_Texture: {fileID: 2800000, guid: bf8c44c8589065249b6351047a88145d, type: 3}
+        m_Texture: {fileID: 2800000, guid: 83786a4bad912ba448001ac8052a6b29, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalMap:
@@ -78,10 +78,10 @@ Material:
     - _CrackPower: 2
     - _CrackStrength: 0.25
     - _CrackStrengthInverse: 1
-    - _CrackStrengthMax: 0.5
+    - _CrackStrengthMax: 0.25
     - _CrackStrengthMin: 0.1
-    - _CrackStrengthNoiseScale: 0.2
-    - _CrackThickness: 0.5
+    - _CrackStrengthNoiseScale: 0.25
+    - _CrackThickness: 1
     - _CrackThicknessMax: 0.5
     - _CrackThicknessMin: 0.1
     - _CrackThicknessNoiseScale: 1
