@@ -27,10 +27,10 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
     [SerializeField] float undersideMax;
     [SerializeField] float numCracksMin;//per unit area
     [SerializeField] float numCracksMax;
-    [SerializeField] int crackMinDepth;
-    [SerializeField] int crackMaxDepth;
-    [SerializeField] float crackContinueChance;
-    [SerializeField] float crackBranchChance;
+    // [SerializeField] int crackMinDepth;
+    // [SerializeField] int crackMaxDepth;
+    // [SerializeField] float crackContinueChance;
+    // [SerializeField] float crackBranchChance;
     [SerializeField] int barySeedSpacing;
     [SerializeField] Vector2[] positions;
     [SerializeField] int[] triangles;
@@ -85,8 +85,8 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             convexitySpread, concavitySpread, topsideSpread, undersideSpread,
             convexityMax, concavityMax, topsideMax, undersideMax);
         FillDistToBorder(uv2Float, 4, 0, positions, triangles, boundaryEdges);
-        FillCracks(uv4, positions, triangles, halfEdges, vertexGrid, baryMask, numCracksMin, numCracksMax, crackMinDepth, crackMaxDepth,
-            crackContinueChance, crackBranchChance, ref rng, transform, crackDrawTime);
+        FillCracks(uv4, positions, triangles, halfEdges, vertexGrid, baryMask, numCracksMin, numCracksMax, /*crackMinDepth, crackMaxDepth,
+            crackContinueChance, crackBranchChance,*/ ref rng, transform, crackDrawTime);
         // var spreadMin = new Vector2(crannySpread.x, crannySpread.x);
         // var spreadMax = new Vector2(crannySpread.y, crannySpread.y);
         // var numCrannies = (int)math.ceil(MathTools.RandomFloat(numCranny.x, numCranny.y) * (bbMax.x - bbMin.x) * (bbMax.y - bbMin.y));
@@ -457,7 +457,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
     [BurstCompile]
     private static void FillCracks(NativeArray<Vector4> arr, ReadOnlySpan<Vector2> vertices,
         ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges, PointGrid vertexGrid, ReadOnlySpan<int> baryMask,
-        float numCracksMin, float numCracksMax, int minDepth, int maxDepth, float continueChance, float branchChance,
+        float numCracksMin, float numCracksMax, /*int minDepth, int maxDepth, float continueChance, float branchChance,*/
         ref Unity.Mathematics.Random rng, Transform transform = null, float drawTime = 0)
     {
         NativeArray<bool> seen = new(arr.Length, Allocator.Temp);
@@ -473,9 +473,9 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         var numCracks = (int)(MathTools.RandomFloat(numCracksMin, numCracksMax) * bbArea);
         for (int i = 0; i < numCracks; i++)
         {
-            var depthMax = rng.NextInt(minDepth, maxDepth + 1);
+            // var depthMax = rng.NextInt(minDepth, maxDepth + 1);
             var crack = GenerateCrack(seen, possibleChildren, vertices, triangles, halfEdges, vertexGrid,
-                depthMax, continueChance, branchChance, ref rng);
+                /*depthMax, continueChance, branchChance,*/ ref rng);
             if (!crack.nodes.IsCreated)
             {
                 continue;
@@ -721,7 +721,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
 
     static Crack GenerateCrack(NativeArray<bool> seen, NativeList<int> possibleChildren, 
         ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges, PointGrid vertexGrid,
-        int depthMax, float continueChance, float branchChance, ref Unity.Mathematics.Random rng)
+        /*int depthMax, float continueChance, float branchChance,*/ ref Unity.Mathematics.Random rng)
     {
         static bool Valid(int edge, bool outgoing, ReadOnlySpan<bool> seen, ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges)
         {
@@ -816,7 +816,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         Vector2 bbMax = new(float.MaxValue, float.MaxValue);
 
         //add first node and give it 1-4 children
-        int numChildren0 = rng.NextInt(1, 4);
+        int numChildren0 = int.MaxValue;//rng.NextInt(1, 4);
         QueueCrackNode(edge, outgoing, 0, nodes, seen, vertices, triangles, ref bbMin, ref bbMax);
         AddNodeChildren(0, numChildren0, nodes, seen, possibleChildren, vertices, triangles, halfEdges,
             ref bbMin, ref bbMax, ref rng);
@@ -825,9 +825,9 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         while (j < nodes.Length)
         {
             //give node 0-2 children (if depth == depthMax, no children)
-            var depth = nodes[j].depth;
-            var childRoll = rng.NextFloat();
-            var numChildren = math.select(0, math.select(1, 2, childRoll < branchChance), depth < depthMax && childRoll < continueChance);
+            // var depth = nodes[j].depth;
+            // var childRoll = rng.NextFloat();
+            var numChildren = int.MaxValue;//math.select(0, math.select(1, 2, childRoll < branchChance), depth < depthMax && childRoll < continueChance);
             AddNodeChildren(j, numChildren, nodes, seen, possibleChildren, vertices, triangles, halfEdges,
                 ref bbMin, ref bbMax, ref rng);
             j++;
