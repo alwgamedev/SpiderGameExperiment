@@ -38,7 +38,7 @@ bool OverlapPoint(PolygonGeometry poly, float2 p, float buffer, out float2 escap
 
         if (escapeDistance < 0 || abs(dist) < escapeDistance)
         {
-            escapeDistance = max(dist, 10E-05);
+            escapeDistance = max(dist, 1E-05);
             escapeNormal = normal;
         }
     }

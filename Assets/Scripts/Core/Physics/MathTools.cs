@@ -1,14 +1,12 @@
 using Unity.Mathematics;
-using Unity.U2D.Physics;
 using UnityEngine;
 
 public static class MathTools
 {
     static System.Random rng;
 
-    public const float o41 = 10E-05f;
-    public const float o91 = 10E-10f;
-    //public const float o31 = 10E-4f;
+    public const float o41 = 1E-05f;
+    public const float o91 = 1E-10f;
 
     public const float sqrt2 = 1.41421356f;
 
