@@ -7,10 +7,9 @@
     }
 
     //process uv1, uv2 data stored in ssmg mesh
-    void SSMGVertexData_float(float4 uv1, float4 uv2, float2 objectScale, 
-    float convexityPower, float concavityPower, float topsidePower, float undersidePower,
-    float borderWorldWidth,  float borderPower, /*float crackPower,*/
-    out float convexity, out float concavity, out float topside, out float underside, out float border/*, out float crack*/)
+    void SSMGVertexData_float(float4 uv1, float4 uv2, float2 objectScale, float convexityPower, float concavityPower, 
+        float topsidePower, float undersidePower, float borderWorldWidth,  float borderPower, float crackSpreadPower,
+        out float convexity, out float concavity, out float topside, out float underside, out float border, out float crackSpread)
     {
         convexity = pow(uv1.x, convexityPower);
         concavity = pow(uv1.y, concavityPower);
@@ -23,18 +22,19 @@
         border = clamp(1 - worldDistToBorder / borderWorldWidth, 0, 1);
         border = pow(border, borderPower);
 
-        //crack = pow(max(uv2.y, uv2.z), crackPower);
+        crackSpread = pow(uv2.y, crackSpreadPower);
     }
 
-    void SSMGVertexData_half(float4 uv1, float4 uv2, float2 objectScale, 
-    float convexityPower, float concavityPower, float topsidePower, float undersidePower,
-    float borderWorldWidth,  float borderPower, /*float crackPower,*/
-    out float convexity, out float concavity, out float topside, out float underside, out float border/*, out float crack*/)
+    void SSMGVertexData_half(float4 uv1, float4 uv2, float2 objectScale, float convexityPower, float concavityPower, 
+        float topsidePower, float undersidePower, float borderWorldWidth,  float borderPower, float crackSpreadPower,
+        out float convexity, out float concavity, out float topside, out float underside, out float border, out float crackSpread)
     {
-        SSMGVertexData_float(uv1, uv2, objectScale, convexityPower, concavityPower, topsidePower, undersidePower, borderWorldWidth, borderPower,
-        /*crackPower,*/ convexity, concavity, topside, underside, border/*, crack*/);
+        SSMGVertexData_float(uv1, uv2, objectScale, convexityPower, concavityPower, topsidePower, undersidePower, 
+            borderWorldWidth, borderPower, crackSpreadPower, convexity, concavity, topside, underside, border, crackSpread);
     }
 
+    //-we have an edge thickness we want to use that's measured in world units. we need to divide by the height of triangle
+    //to get the "local thickness" (in the range [0,1]).
     //-gradient of baryCoord has length = 1 / (height of the triangle) (in direction corresponding to that bary coord)
     //-we need to go from the provided screen space partial derivatives back to world space partial derivatives,
     //so we use jacInv = (dx/dxWorld, dy/dxWorld, dx/dyWorld, dy/dyWorld) the jacobian

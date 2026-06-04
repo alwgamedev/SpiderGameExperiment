@@ -27,10 +27,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
     [SerializeField] float undersideMax;
     [SerializeField] float numCracksMin;//per unit area
     [SerializeField] float numCracksMax;
-    // [SerializeField] int crackMinDepth;
-    // [SerializeField] int crackMaxDepth;
-    // [SerializeField] float crackContinueChance;
-    // [SerializeField] float crackBranchChance;
+    [SerializeField] float crackSpread;
     [SerializeField] int barySeedSpacing;
     [SerializeField] Vector2[] positions;
     [SerializeField] int[] triangles;
@@ -69,12 +66,12 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
 
         var vertexGrid = BuildPointGrid(positions.AsArray(), bbMin, bbMax, 1);
 
-        var uv = new NativeArray<Vector2>(positions.Length, Allocator.Temp);
-        var uv1 = new NativeArray<Vector4>(positions.Length, Allocator.Temp);
-        var uv2 = new NativeArray<Vector4>(positions.Length, Allocator.Temp);
+        var uv = new NativeArray<Vector2>(positions.Length, Allocator.Temp);//uv
+        var uv1 = new NativeArray<Vector4>(positions.Length, Allocator.Temp);//border geometry
+        var uv2 = new NativeArray<Vector4>(positions.Length, Allocator.Temp);//dist to border + crack spread
         var uv2Float = uv2.Reinterpret<float>(16);
-        var uv3 = new NativeArray<Vector4>(positions.Length, Allocator.Temp);
-        var uv4 = new NativeArray<Vector4>(positions.Length, Allocator.Temp);
+        var uv3 = new NativeArray<Vector4>(positions.Length, Allocator.Temp);//bary coords
+        var uv4 = new NativeArray<Vector4>(positions.Length, Allocator.Temp);//cracks
 
         var seed = (uint)MathTools.RNG.Next(1, int.MaxValue);
         var rng = new Unity.Mathematics.Random(seed);
@@ -85,13 +82,9 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             convexitySpread, concavitySpread, topsideSpread, undersideSpread,
             convexityMax, concavityMax, topsideMax, undersideMax);
         FillDistToBorder(uv2Float, 4, 0, positions, triangles, boundaryEdges);
-        FillCracks(uv4, positions, triangles, halfEdges, vertexGrid, baryMask, numCracksMin, numCracksMax, /*crackMinDepth, crackMaxDepth,
-            crackContinueChance, crackBranchChance,*/ ref rng, transform, crackDrawTime);
-        // var spreadMin = new Vector2(crannySpread.x, crannySpread.x);
-        // var spreadMax = new Vector2(crannySpread.y, crannySpread.y);
-        // var numCrannies = (int)math.ceil(MathTools.RandomFloat(numCranny.x, numCranny.y) * (bbMax.x - bbMin.x) * (bbMax.y - bbMin.y));
-        // CalculateUV2Y(uv2, positions, triangles, halfEdges, numCrannies, crannyInitialVal, spreadMin, spreadMax,
-        //     crannyBorder, crannyBorderIterations, transform);
+        FillCracks(uv4, positions, triangles, halfEdges, vertexGrid, baryMask, numCracksMin, numCracksMax, ref rng, out var cracks,
+            transform, crackDrawTime);
+        FillCrackSpread(uv2Float, 4, 1, cracks, crackSpread, positions, triangles);
 
         Array.Resize(ref this.positions, positions.Length);
         positions.AsArray().CopyTo(this.positions);
@@ -352,7 +345,8 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
 
             return (neighborMask, neighborCount);
 
-            static void ScanNeighbor(int f, bool fOutgoing, ReadOnlySpan<int> baryMask, ReadOnlySpan<int> triangles, ref int neighborMask)
+            static void ScanNeighbor(int f, bool fOutgoing, ReadOnlySpan<int> baryMask,
+                ReadOnlySpan<int> triangles, ref int neighborMask)
             {
                 var w = Vertex(f, !fOutgoing, triangles);
                 neighborMask |= baryMask[w];
@@ -457,12 +451,13 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
     [BurstCompile]
     private static void FillCracks(NativeArray<Vector4> arr, ReadOnlySpan<Vector2> vertices,
         ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges, PointGrid vertexGrid, ReadOnlySpan<int> baryMask,
-        float numCracksMin, float numCracksMax, /*int minDepth, int maxDepth, float continueChance, float branchChance,*/
-        ref Unity.Mathematics.Random rng, Transform transform = null, float drawTime = 0)
+        float numCracksMin, float numCracksMax, ref Unity.Mathematics.Random rng, out NativeList<Crack> cracks,
+        Transform transform = null, float drawTime = 0)
     {
         NativeArray<bool> seen = new(arr.Length, Allocator.Temp);
         NativeList<int> possibleChildren = new(Allocator.Temp);
         NativeArray<float> arrFloat = arr.Reinterpret<float>(16);
+        cracks = new(Allocator.Temp);
 
         for (int i = 0; i < seen.Length; i++)
         {
@@ -473,14 +468,13 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         var numCracks = (int)(MathTools.RandomFloat(numCracksMin, numCracksMax) * bbArea);
         for (int i = 0; i < numCracks; i++)
         {
-            // var depthMax = rng.NextInt(minDepth, maxDepth + 1);
-            var crack = GenerateCrack(seen, possibleChildren, vertices, triangles, halfEdges, vertexGrid,
-                /*depthMax, continueChance, branchChance,*/ ref rng);
+            var crack = GenerateCrack(seen, possibleChildren, vertices, triangles, halfEdges, vertexGrid, ref rng);
             if (!crack.nodes.IsCreated)
             {
                 continue;
             }
 
+            cracks.Add(crack);
             for (int j = 0; j < crack.nodes.Length; j++)
             {
                 var node = crack.nodes[j];
@@ -504,6 +498,28 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             if (transform)
             {
                 crack.DebugDraw(vertices, triangles, transform, drawTime);
+            }
+        }
+    }
+
+    [BurstCompile]
+    private static void FillCrackSpread(NativeArray<float> arr, int stride, int offset,
+        ReadOnlySpan<Crack> cracks, float radius, ReadOnlySpan<Vector2> positions, ReadOnlySpan<int> triangles)
+    {
+        var r2 = radius * radius;
+        for (int i = 0; i < positions.Length; i++)
+        {
+            var p = positions[i];
+            var dist2 = cracks[0].DistanceSqrd(p, positions, triangles);
+            for (int j = 1; j < cracks.Length; j++)
+            {
+                var crack = cracks[j];
+                dist2 = math.min(dist2, crack.DistanceSqrd(p, positions, triangles));
+            }
+            if (dist2 < r2)
+            {
+                var t = math.clamp(1 - math.sqrt(dist2) / radius, 0, 1);
+                arr[stride * i + offset] = t;
             }
         }
     }
@@ -653,10 +669,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
     struct CrackNode
     {
         public int edge;
-        public ushort outgoing;//0 for false
-        public ushort depth;
-        // public ushort childStart;
-        // public ushort childEnd;
+        public int outgoing;//0 for false
     }
 
     struct Crack
@@ -674,36 +687,31 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             }
         }
 
-        // public float DistanceSqrd(Vector2 p, ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles)
-        // {
-        //     var 
-        //     float minDist2 = math.INFINITY;
+        public float DistanceSqrd(Vector2 p, ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles)
+        {
+            var node0 = nodes[0];
+            var p0 = vertices[Vertex(node0.edge, node0.outgoing != 0, triangles)];
+            float minDist2 = math.distancesq(p, p0);
 
-        //     //first check distances to 
-        //     for (int i = 0; i < nodes.Length; i++)
-        //     {
-        //         // var node = nodes[i];
-        //         // var pt = vertices[node.vertex];
-        //         // minDist2 = math.min(minDist2, math.distancesq(p, pt));
+            for (int i = 1; i < nodes.Length; i++)
+            {
+                var node = nodes[i];
+                var p2 = vertices[Vertex(node.edge, node.outgoing != 0, triangles)];
+                var p1 = vertices[Vertex(node.edge, node.outgoing == 0, triangles)];
+                minDist2 = math.min(minDist2, math.distancesq(p, p2));
 
-        //         // for (int j = node.childStart; j < node.childEnd; j++)
-        //         // {
-        //         //     var child = nodes[j];
-        //         //     var childPt = vertices[child.vertex];
-        //         //     var edge = childPt - pt;
-        //         //     var v = p - pt;
-        //         //     var x = math.dot(v, edge);
-        //         //     var y = math.dot(v, edge.CCWPerp());
-        //         //     var dist2 = y * y / math.lengthsq(edge);
+                var edge = p2 - p1;
+                var v = p - p1;
+                var edgeLength2Inv = 1 / math.lengthsq(edge);
+                var t = math.dot(v, edge) * edgeLength2Inv;
+                var y = math.dot(v, edge.CCWPerp());
+                var dist2 = y * y * edgeLength2Inv;
 
-        //         //     minDist2 = math.select(minDist2, dist2, x > 0 && x < 1 && dist2 < minDist2);
+                minDist2 = math.select(minDist2, dist2, t > 0 && t < 1 && dist2 < minDist2);
+            }
 
-        //         //     //we'll add bending once we get the basics set up
-        //         // }
-        //     }
-
-        //     return minDist2;
-        // }
+            return minDist2;
+        }
 
         public void DebugDraw(ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles, Transform transform, float drawTime)
         {
@@ -719,7 +727,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         }
     }
 
-    static Crack GenerateCrack(NativeArray<bool> seen, NativeList<int> possibleChildren, 
+    static Crack GenerateCrack(NativeArray<bool> seen, NativeList<int> possibleChildren,
         ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges, PointGrid vertexGrid,
         /*int depthMax, float continueChance, float branchChance,*/ ref Unity.Mathematics.Random rng)
     {
@@ -817,7 +825,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
 
         //add first node and give it 1-4 children
         int numChildren0 = int.MaxValue;//rng.NextInt(1, 4);
-        QueueCrackNode(edge, outgoing, 0, nodes, seen, vertices, triangles, ref bbMin, ref bbMax);
+        QueueCrackNode(edge, outgoing, nodes, seen, vertices, triangles, ref bbMin, ref bbMax);
         AddNodeChildren(0, numChildren0, nodes, seen, possibleChildren, vertices, triangles, halfEdges,
             ref bbMin, ref bbMax, ref rng);
 
@@ -837,10 +845,10 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
 
         //when node is first queued, it'll store (edge, outgoing, depth)
         //correct data will be entered when the node is processed by AddNodeChildren
-        static void QueueCrackNode(int edge, bool outgoing, int depth, NativeList<CrackNode> nodes, NativeArray<bool> seen,
+        static void QueueCrackNode(int edge, bool outgoing, NativeList<CrackNode> nodes, NativeArray<bool> seen,
             ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles, ref Vector2 bbMin, ref Vector2 bbMax)
         {
-            nodes.Add(new() { depth = (ushort)depth, edge = edge, outgoing = (ushort)math.select(0, 1, outgoing) });
+            nodes.Add(new() { edge = edge, outgoing = (ushort)math.select(0, 1, outgoing) });
             var v = Vertex(edge, outgoing, triangles);
             var p = vertices[v];
             bbMin = math.min(p, bbMin);
@@ -855,7 +863,6 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             var node = nodes[i];
             var edge = node.edge;
             var outgoing = node.outgoing != 0;
-            var depth = node.depth;
             var vert = Vertex(edge, outgoing, triangles);
 
             if (numChildren != 0)
@@ -895,7 +902,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
                     var childOutgoing = triangles[child] != vert;
                     if (Valid(child, childOutgoing, seen, triangles, halfEdges))
                     {
-                        QueueCrackNode(child, childOutgoing, depth + 1, nodes, seen, vertices, triangles, ref bbMin, ref bbMax);
+                        QueueCrackNode(child, childOutgoing, nodes, seen, vertices, triangles, ref bbMin, ref bbMax);
                         numChildren--;
                     }
 

@@ -266,7 +266,8 @@ MonoBehaviour:
   meshFilter: {fileID: 5291316002289393465}
   arcLengthSamples: 10
   splineSampleRate: 5
-  maxTriangleArea: 0.25
+  maxTriangleArea: 1
+  minAngleDeg: 30
   convexitySpread: 3
   convexityMax: 0.025
   concavitySpread: 3
@@ -275,14 +276,9 @@ MonoBehaviour:
   topsideMax: 0.05
   undersideSpread: 5
   undersideMax: 0.01
-  numCracksMin: 0.15
-  numCracksMax: 0.15
-  crackMinDepth: 5
-  crackMaxDepth: 15
-  crackContinueChance: 0.975
-  crackBranchChance: 0.85
-  crackMinVal: 1
-  crackMaxVal: 1
+  numCracksMin: 1
+  numCracksMax: 1
+  crackSpread: 4
   barySeedSpacing: 2
   positions: []
   triangles: 
