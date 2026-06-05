@@ -36,7 +36,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NoiseTex:
-        m_Texture: {fileID: 2800000, guid: e08d8462167949142bb0d9a2ff2428e8, type: 3}
+        m_Texture: {fileID: 2800000, guid: 0024bbf2fa2a5b74aafd532ba676c798, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalMap:
@@ -63,12 +63,12 @@ Material:
     - _AreaPower: 0.4
     - _BorderFadeRate: 2
     - _BorderPower: 2
-    - _BorderStrength: 0.85
+    - _BorderStrength: 0.7
     - _BorderWidth: 1.5
     - _ConcavityPower: 1
     - _ConcavityRadius: 2
     - _ConcavityScale: 1
-    - _ConcavityStrength: 3
+    - _ConcavityStrength: 4
     - _ConvexityPower: 1
     - _ConvexityRadius: 0.5
     - _ConvexityScale: 10
@@ -82,36 +82,64 @@ Material:
     - _CrackSpreadStrengthMin: 0
     - _CrackStrength: 0.25
     - _CrackStrengthInverse: 1
-    - _CrackStrengthMax: 0.2
-    - _CrackStrengthMin: 0.05
-    - _CrackStrengthNoiseScale: 0.01
+    - _CrackStrengthMax: 0.6
+    - _CrackStrengthMin: 0
+    - _CrackStrengthNoiseScale: 0.005
     - _CrackThickness: 1
     - _CrackThicknessMax: 0.5
     - _CrackThicknessMin: 0.1
     - _CrackThicknessNoiseScale: 1
+    - _CrannyDensity: 1
     - _CrannyPower: 2
-    - _CrannyStrength: 1
+    - _CrannyScale: 0.05
+    - _CrannyScaleMax: 2
+    - _CrannyScaleMin: -0.1
+    - _CrannyStrength: 0.5
+    - _CrannyWarpScale: 0.01
+    - _CrannyWarpStrength: 0.1
+    - _DimpleMin: 0.3
+    - _DimpleScaleMax: 0.75
+    - _DimpleScaleMin: -0.1
+    - _DimpleStrength: 0.5
+    - _DimpleWarpScale: 0.01
+    - _DimpleWarpStrength: 0.3
     - _EnableExternalAlpha: 0
+    - _HighlightBlend: 0.46
     - _HighlightColor: 0
+    - _HighlightNoiseScale: 0.01
+    - _HighlightNoiseStrength: 1.53
     - _OutlineTestStrength: 1.2
+    - _RoughnessBlend1: 2.79
+    - _RoughnessPower1: 1
+    - _RoughnessPower2: 1.29
+    - _RoughnessScale1: 0.005
+    - _RoughnessScale2: 5
+    - _RoughnessStrength1: 0.5
+    - _RoughnessStrength2: 0
     - _ShadowColorMultiplier: 0
+    - _ShadowNoisePower1: 0.31
+    - _ShadowNoisePower2: 2.69
+    - _ShadowNoiseScale: 0.09
+    - _ShadowNoiseStrength: 1
+    - _StainScale: 0.125
+    - _StainStrength: 0
     - _TopSidePower: 0
     - _TopSideRadius: 1
     - _TopsidePower: 1
     - _TopsideRadius: 117.33
-    - _Topside_Strength: 1
+    - _Topside_Strength: 5
     - _UnderSidePower: 0
     - _UnderSideRadius: 0
     - _UndersidePower: 1
     - _UndersideRadius: 6.33
-    - _UndersideStrength: 4
+    - _UndersideStrength: 6
     - _VisibilityRadius: 1
     - _ZWrite: 0
     m_Colors:
     - White: {r: 1, g: 1, b: 1, a: 1}
     - _AreaColorMult0: {r: 1, g: 1, b: 1, a: 1}
     - _AreaColorMult1: {r: 1, g: 1, b: 1, a: 1}
-    - _BaseColor: {r: 0.8867924, g: 0.8867924, b: 0.8867924, a: 1}
+    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _BorderColorMultiplier: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _HighlightColor: {r: 1, g: 1, b: 1, a: 1}

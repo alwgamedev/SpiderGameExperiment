@@ -29,19 +29,19 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
     [SerializeField] float numCracksMax;
     [SerializeField] float crackSpread;
     [SerializeField] int barySeedSpacing;
-    [SerializeField] Vector2[] positions;
-    [SerializeField] int[] triangles;
-    [SerializeField] int[] boundaryEdges;
-    [SerializeField] int[] baryMask;
-    [SerializeField] bool drawTriangles;
-    [SerializeField] bool drawPerimeter;
-    [SerializeField] bool drawBaryColors;
-    [SerializeField] float crackDrawTime;
+    // [SerializeField] Vector2[] positions;
+    // [SerializeField] int[] triangles;
+    [SerializeField] Vector2[] perimeter;
+    // [SerializeField] int[] baryMask;
+    // [SerializeField] bool drawTriangles;
+    // [SerializeField] bool drawPerimeter;
+    // [SerializeField] bool drawBaryColors;
+    // [SerializeField] float crackDrawTime;
 
-    // public ReadOnlySpan<Vector2> GetPerimeter() => perimeter;
-    public ReadOnlySpan<int> BoundaryEdges => boundaryEdges;
-    public ReadOnlySpan<int> Triangles => triangles;
-    public ReadOnlySpan<Vector2> Positions => positions;
+    public ReadOnlySpan<Vector2> GetPerimeter() => perimeter;
+    // public ReadOnlySpan<int> BoundaryEdges => perimeter;
+    // public ReadOnlySpan<int> Triangles => triangles;
+    // public ReadOnlySpan<Vector2> Positions => positions;
 
     public void GenerateMesh()
     {
@@ -82,18 +82,23 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             convexitySpread, concavitySpread, topsideSpread, undersideSpread,
             convexityMax, concavityMax, topsideMax, undersideMax);
         FillDistToBorder(uv2Float, 4, 0, positions, triangles, boundaryEdges);
-        FillCracks(uv4, positions, triangles, halfEdges, vertexGrid, baryMask, numCracksMin, numCracksMax, ref rng, out var cracks,
-            transform, crackDrawTime);
+        FillCracks(uv4, positions, triangles, halfEdges, vertexGrid, baryMask, numCracksMin, numCracksMax, ref rng, out var cracks);
         FillCrackSpread(uv2Float, 4, 1, cracks, crackSpread, positions, triangles);
 
-        Array.Resize(ref this.positions, positions.Length);
-        positions.AsArray().CopyTo(this.positions);
-        Array.Resize(ref this.triangles, triangles.Length);
-        triangles.AsArray().CopyTo(this.triangles);
-        Array.Resize(ref this.boundaryEdges, boundaryEdges.Length);
-        boundaryEdges.AsArray().CopyTo(this.boundaryEdges);
-        Array.Resize(ref this.baryMask, baryMask.Length);
-        baryMask.CopyTo(this.baryMask);
+        // Array.Resize(ref this.positions, positions.Length);
+        // positions.AsArray().CopyTo(this.positions);
+        // Array.Resize(ref this.triangles, triangles.Length);
+        // triangles.AsArray().CopyTo(this.triangles);
+        // Array.Resize(ref this.boundaryEdges, boundaryEdges.Length);
+        // boundaryEdges.AsArray().CopyTo(this.boundaryEdges);
+        // Array.Resize(ref this.baryMask, baryMask.Length);
+        // baryMask.CopyTo(this.baryMask);
+
+        Array.Resize(ref perimeter, boundaryEdges.Length);
+        for (int i = 0; i < perimeter.Length; i++)
+        {
+            perimeter[i] = positions[triangles[boundaryEdges[i]]];
+        }
 
         mesh = new();
 
@@ -954,60 +959,60 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         return true;
     }
 
-    private void OnDrawGizmos()
-    {
-        if (triangles != null && triangles.Length > 0 && positions != null && positions.Length > 0)
-        {
-            if (drawTriangles)
-            {
-                Gizmos.color = Color.yellow;
-                for (int i = 0; i < triangles.Length; i += 3)
-                {
-                    var v0 = triangles[i];
-                    var v1 = triangles[i + 1];
-                    var v2 = triangles[i + 2];
-                    var p0 = transform.TransformPoint(positions[v0]);
-                    var p1 = transform.TransformPoint(positions[v1]);
-                    var p2 = transform.TransformPoint(positions[v2]);
-                    Gizmos.DrawLine(p0, p1);
-                    Gizmos.DrawLine(p1, p2);
-                    Gizmos.DrawLine(p2, p0);
-                }
-            }
+    // private void OnDrawGizmos()
+    // {
+    //     if (triangles != null && triangles.Length > 0 && positions != null && positions.Length > 0)
+    //     {
+    //         if (drawTriangles)
+    //         {
+    //             Gizmos.color = Color.yellow;
+    //             for (int i = 0; i < triangles.Length; i += 3)
+    //             {
+    //                 var v0 = triangles[i];
+    //                 var v1 = triangles[i + 1];
+    //                 var v2 = triangles[i + 2];
+    //                 var p0 = transform.TransformPoint(positions[v0]);
+    //                 var p1 = transform.TransformPoint(positions[v1]);
+    //                 var p2 = transform.TransformPoint(positions[v2]);
+    //                 Gizmos.DrawLine(p0, p1);
+    //                 Gizmos.DrawLine(p1, p2);
+    //                 Gizmos.DrawLine(p2, p0);
+    //             }
+    //         }
 
-            if (drawPerimeter && boundaryEdges != null && boundaryEdges.Length > 0)
-            {
-                Gizmos.color = Color.purple;
-                var v0 = triangles[boundaryEdges[^1]];
-                var p0 = transform.TransformPoint(positions[v0]);
-                for (int i = 0; i < boundaryEdges.Length; i++)
-                {
-                    var v1 = triangles[boundaryEdges[i]];
-                    var p1 = transform.TransformPoint(positions[v1]);
-                    Gizmos.DrawLine(p0, p1);
-                    p0 = p1;
-                }
-            }
+    //         if (drawPerimeter && boundaryEdges != null && boundaryEdges.Length > 0)
+    //         {
+    //             Gizmos.color = Color.purple;
+    //             var v0 = triangles[boundaryEdges[^1]];
+    //             var p0 = transform.TransformPoint(positions[v0]);
+    //             for (int i = 0; i < boundaryEdges.Length; i++)
+    //             {
+    //                 var v1 = triangles[boundaryEdges[i]];
+    //                 var p1 = transform.TransformPoint(positions[v1]);
+    //                 Gizmos.DrawLine(p0, p1);
+    //                 p0 = p1;
+    //             }
+    //         }
 
-            if (drawBaryColors && baryMask != null && baryMask.Length > 0)
-            {
-                for (int i = 0; i < baryMask.Length; i++)
-                {
-                    var mask = baryMask[i];
-                    Gizmos.color = mask switch
-                    {
-                        1 => Color.red,
-                        2 => Color.green,
-                        4 => Color.blue,
-                        8 => Color.yellow,
-                        16 => Color.purple,
-                        32 => Color.cyan,
-                        _ => Color.white
-                    };
-                    var p = transform.TransformPoint(positions[i]);
-                    Gizmos.DrawSphere(p, 0.075f);
-                }
-            }
-        }
-    }
+    //         if (drawBaryColors && baryMask != null && baryMask.Length > 0)
+    //         {
+    //             for (int i = 0; i < baryMask.Length; i++)
+    //             {
+    //                 var mask = baryMask[i];
+    //                 Gizmos.color = mask switch
+    //                 {
+    //                     1 => Color.red,
+    //                     2 => Color.green,
+    //                     4 => Color.blue,
+    //                     8 => Color.yellow,
+    //                     16 => Color.purple,
+    //                     32 => Color.cyan,
+    //                     _ => Color.white
+    //                 };
+    //                 var p = transform.TransformPoint(positions[i]);
+    //                 Gizmos.DrawSphere(p, 0.075f);
+    //             }
+    //         }
+    //     }
+    // }
 }

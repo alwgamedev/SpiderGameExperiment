@@ -1,22 +1,22 @@
 ﻿static const float PI = 3.14159265;
 
 //for n >= 0;
-float WholePow(float x, int n)
-{
-    float y = 1;
-    while (n > 0)
-    {
-        if (n & 1)
-        {
-            y *= x;
-        }
+// float WholePow(float x, int n)
+// {
+//     float y = 1;
+//     while (n > 0)
+//     {
+//         if (n & 1)
+//         {
+//             y *= x;
+//         }
         
-        x *= x;
-        n >>= 1;
-    }
+//         x *= x;
+//         n >>= 1;
+//     }
     
-    return y;
-}
+//     return y;
+// }
 
 //returns clamp(x * normalizer - threshold, 0, 1);
 float NormalizeFloat(float x, float normalizer, float threshold)
@@ -77,14 +77,14 @@ float Poly18Kernel(float r2, float d2)
 {
     //coeff is 10 / pi
     float a = 1 - d2 / r2;
-    return 3.18309886 * WholePow(a, 9) / r2;
+    return 3.18309886 * pow(a, 9) / r2;
 }
 
 float2 Poly18KernelGradient(float r2, float d2, float2 dVector)
 {
     //coeff is 180 / pi
     float a = 1 - d2 / r2;
-    return -57.2957795 * WholePow(a, 8) / (r2 * r2) * dVector;
+    return -57.2957795 * pow(a, 8) / (r2 * r2) * dVector;
 
 }
 
@@ -92,20 +92,20 @@ float2 Poly18KernelGradient(float r2, float d2, float2 dVector)
 float Poly2NKernel(int N, float r2, float d2)
 {
     float a = 1 - d2 / r2;
-    return (N + 1) * WholePow(a, N) / (PI * r2);
+    return (N + 1) * pow(a, N) / (PI * r2);
 }
 
 float2 Poly2NKernelGradient(int N, float r2, float d2, float2 dVector)
 {
     float a = 1 - d2 / r2;
-    return -2 * N * (N + 1) / (PI * r2 * r2) * WholePow(a, N - 1) * dVector;
+    return -2 * N * (N + 1) / (PI * r2 * r2) * pow(a, N - 1) * dVector;
 }
 
 float2 Poly2NKernelLaplacian(int N, float r2, float d2)
 {
     float b = d2 / r2;
     float a = 1 - b;
-    return -4 * N * (N + 1) / (PI * r2 * r2) * WholePow(a, N - 2) * (1 - N * b);
+    return -4 * N * (N + 1) / (PI * r2 * r2) * pow(a, N - 2) * (1 - N * b);
 
 }
 

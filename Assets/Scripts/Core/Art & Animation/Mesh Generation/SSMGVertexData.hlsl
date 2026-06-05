@@ -1,36 +1,76 @@
-#ifndef SSMG_VERTEX_DATA//if we use this function twice in one shader, this code will only get included once (like #pragma once)
+#ifndef SSMG_VERTEX_DATA//if we use this file twice in one shader, this code will only get included once (like #pragma once)
     #define SSMG_VERTEX_DATA
 
-    void ScaledPower01(float t, float scale, float power, out float s)
+    //outputs jacInv = (dx/dxWorld, dy/dxWorld, dx/dyWorld, dy/dyWorld),
+    //the Jacobian to the transformation from screen space back to world space
+    //(could also use objectSpace if you wanted)
+    float4 ScreenToWorldJacobian(float2 worldPos)
     {
-        s = clamp(pow(scale * t, power), 0, 1);
+        float4 jac = float4(ddx(worldPos), ddy(worldPos));
+        float det = (jac.x * jac.w - jac.y * jac.z);
+        return (1 / det) * float4(jac.w, -jac.y, -jac.z, jac.x);
     }
 
-    //process uv1, uv2 data stored in ssmg mesh
-    void SSMGVertexData_float(float4 uv1, float4 uv2, float2 objectScale, float convexityPower, float concavityPower, 
-        float topsidePower, float undersidePower, float borderWorldWidth,  float borderPower, float crackSpreadPower,
-        out float convexity, out float concavity, out float topside, out float underside, out float border, out float crackSpread)
+    float ddxWorld(float val, float4 jacInv)
     {
-        convexity = pow(uv1.x, convexityPower);
-        concavity = pow(uv1.y, concavityPower);
-        topside = pow(uv1.z, topsidePower);
-        underside = pow(uv1.w, undersidePower);
+        return ddx(val) * jacInv.x + ddy(val) * jacInv.y;
+    }
 
+    float ddyWorld(float val, float4 jacInv)
+    {
+        return ddx(val) * jacInv.z + ddy(val) * jacInv.w;
+    }
+
+    void NormalZ_float(float height, float2 worldPos, out float nz)
+    {
+        float4 jacInv = ScreenToWorldJacobian(worldPos);
+        float hx = ddxWorld(height, jacInv);
+        float hy = ddyWorld(height, jacInv);
+        nz = rsqrt(1 + hx * hx + hy * hy);
+    }
+
+    void NormalZ_half(float height, float2 worldPos, out float nz)
+    {
+        NormalZ_float(height, worldPos, nz);
+    }
+
+    void SSMGHeightMap_float(float heightMap, float2 objectScale, float distToBdry, float bdryHalfWidth, 
+        out float height)
+    {
         float scale = max(objectScale.x, objectScale.y);
-        float localDistToBorder = uv2.x;
-        float worldDistToBorder = scale * localDistToBorder;
-        border = clamp(1 - worldDistToBorder / borderWorldWidth, 0, 1);
-        border = pow(border, borderPower);
-
-        crackSpread = pow(uv2.y, crackSpreadPower);
+        float d = scale * distToBdry;//world dist to bdry
+        height = d * heightMap / (d + bdryHalfWidth);
     }
 
-    void SSMGVertexData_half(float4 uv1, float4 uv2, float2 objectScale, float convexityPower, float concavityPower, 
-        float topsidePower, float undersidePower, float borderWorldWidth,  float borderPower, float crackSpreadPower,
-        out float convexity, out float concavity, out float topside, out float underside, out float border, out float crackSpread)
+    void SSMGHeightMap_half(float heightMap, float2 objectScale,float distToBdry, float bdryHalfWidth, 
+        out float height)
     {
-        SSMGVertexData_float(uv1, uv2, objectScale, convexityPower, concavityPower, topsidePower, undersidePower, 
-            borderWorldWidth, borderPower, crackSpreadPower, convexity, concavity, topside, underside, border, crackSpread);
+        SSMGHeightMap_float(heightMap, objectScale, distToBdry, bdryHalfWidth, height);
+    }
+
+    void SSMGShadow_float(float concavity, float concavityStrength, float underside, float undersideStrength,
+        float border, float borderStrength, float crack, float crackStrengthMin,  float crackStrengthMax,
+        float crackSpread, float crackSpreadStrengthMin, float crackSpreadStrengthMax, float crackNoise, 
+        out float shadow)
+    {
+        float crackStrength = lerp(crackStrengthMin, crackStrengthMax, crackNoise);
+        float crackSpreadStrength = lerp(crackSpreadStrengthMin, crackSpreadStrengthMax, crackNoise);
+
+        shadow = saturate(1 - concavityStrength * concavity);
+        shadow *= saturate(1 - undersideStrength * underside);
+        shadow *= saturate(1 - borderStrength * border);
+        shadow *= saturate(1 - crackStrength * crack);
+        shadow *= saturate(1 - crackSpreadStrength * crackSpread);
+    }
+
+    void SSMGShadow_half(float concavity, float concavityStrength, float underside, float undersideStrength,
+        float border, float borderStrength, float crack, float crackStrengthMin,  float crackStrengthMax,
+        float crackSpread, float crackSpreadStrengthMin, float crackSpreadStrengthMax, float crackNoise, 
+        out float shadow)
+    {
+        SSMGShadow_float(concavity, concavityStrength, underside, undersideStrength, border, borderStrength, crack, 
+            crackStrengthMin, crackStrengthMax, crackSpread, crackSpreadStrengthMin, crackSpreadStrengthMax, crackNoise,
+            shadow);
     }
 
     //-we have an edge thickness we want to use that's measured in world units. we need to divide by the height of triangle
@@ -92,6 +132,37 @@
     void SSMGCrackValue_half(float4 crack, float4 bary, float2 worldPos, float thickness, out float val)
     {
         SSMGCrackValue_float(crack, bary, worldPos, thickness, val);
+    }
+
+    //process uv1, uv2 data stored in ssmg mesh
+    void SSMGVertexData_float(float4 uv1, float4 uv2, float4 uv3, float4 uv4, 
+        float2 objectScale, float2 worldPos, float borderWorldWidth, float crackThickness,
+        out float convexity, out float concavity, out float topside, out float underside, out float border, 
+        out float crack, out float crackSpread)
+    {
+        convexity = uv1.x;//pow(uv1.x, convexityPower);
+        concavity = uv1.y;//pow(uv1.y, concavityPower);
+        topside = uv1.z;//pow(uv1.z, topsidePower);
+        underside = uv1.w;//pow(uv1.w, undersidePower);
+
+        float scale = max(objectScale.x, objectScale.y);
+        float localDistToBorder = uv2.x;
+        float worldDistToBorder = scale * localDistToBorder;
+        border = clamp(1 - worldDistToBorder / borderWorldWidth, 0, 1);
+        border *= border;//pow(border, borderPower);
+
+        SSMGCrackValue_float(uv4, uv3, worldPos, crackThickness, crack);
+        crack *= crack;
+        crackSpread = uv2.y;//pow(uv2.y, crackSpreadPower);
+    }
+
+    void SSMGVertexData_half(float4 uv1, float4 uv2, float4 uv3, float4 uv4, 
+        float2 objectScale, float2 worldPos, float borderWorldWidth, float crackThickness,
+        out float convexity, out float concavity, out float topside, out float underside, out float border, 
+        out float crackSpread, out float crack)
+    {
+        SSMGVertexData_float(uv1, uv2, uv3, uv4, objectScale, worldPos, borderWorldWidth, crackThickness,
+            convexity, concavity, topside, underside, border, crackSpread, crack);
     }
 
 #endif

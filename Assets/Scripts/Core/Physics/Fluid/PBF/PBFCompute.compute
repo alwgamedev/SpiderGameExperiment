@@ -199,7 +199,8 @@ float2 SurfaceNormal(float2 pos, float r, float r2)
 [numthreads(1, 1, 1)]
 void RecalculateAntiClusterCoefficient()
 {
-    antiClusterCoefficient = -vars.antiClusterK / WholePow(Poly2NKernel(vars.kernelDeg, vars.smoothingRadiusSqrd, vars.antiClusterDQ * vars.antiClusterDQ), vars.antiClusterN);
+    float denom = pow(Poly2NKernel(vars.kernelDeg, vars.smoothingRadiusSqrd, vars.antiClusterDQ * vars.antiClusterDQ), vars.antiClusterN);
+    antiClusterCoefficient = -vars.antiClusterK / denom;
 }
 
 void InteractWithObstacles(uint p)
@@ -479,7 +480,7 @@ void CalculateLambda(uint3 id : SV_DispatchThreadID)
 
 float AntiClusterTerm(float d2)
 {
-    return antiClusterCoefficient * WholePow(Poly2NKernel(vars.kernelDeg, vars.smoothingRadiusSqrd, d2), vars.antiClusterN);
+    return antiClusterCoefficient * pow(Poly2NKernel(vars.kernelDeg, vars.smoothingRadiusSqrd, d2), vars.antiClusterN);
 }
 
 void SearchCellForPositionDelta(uint p, uint cell, inout float2 sum)

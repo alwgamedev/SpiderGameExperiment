@@ -1,4 +1,4 @@
-﻿#ifndef ROPE_VERTEX_POS//if we use this function twice in one shader, this code will only get included once (like #pragma once)
+﻿#ifndef ROPE_VERTEX_POS//if we use this file twice in one shader, this code will only get included once (like #pragma once)
 #define ROPE_VERTEX_POS
 
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
