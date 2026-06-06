@@ -29,6 +29,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
     [SerializeField] float numCracksMax;
     [SerializeField] float crackSpread;
     [SerializeField] int barySeedSpacing;
+    // [SerializeField] float smoothingRadius;
     // [SerializeField] Vector2[] positions;
     // [SerializeField] int[] triangles;
     [SerializeField] Vector2[] perimeter;
@@ -51,6 +52,11 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             return;
         }
 
+        if (mesh)
+        {
+            DestroyImmediate(mesh);
+        }
+
         var vertices = new NativeList<Vector2>(Allocator.TempJob);
         SplineSampler.SampleSpline(spriteShapeController.spline, arcLengthSamples, splineSampleRate, vertices);
         var (bbMin, bbMax) = BoundingBox(vertices.AsArray());
@@ -64,35 +70,27 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         var boundaryEdges = new NativeList<int>(Allocator.Temp);
         GetBoundaryEdges(boundaryEdges, halfEdges);
 
-        var vertexGrid = BuildPointGrid(positions.AsArray(), bbMin, bbMax, 1);
+        // var vertexGrid = BuildPointGrid(positions.AsArray(), bbMin, bbMax, 1);
 
         var uv = new NativeArray<Vector2>(positions.Length, Allocator.Temp);//uv
-        var uv1 = new NativeArray<Vector4>(positions.Length, Allocator.Temp);//border geometry
+        // var uv1 = new NativeArray<Vector4>(positions.Length, Allocator.Temp);//border geometry
         var uv2 = new NativeArray<Vector4>(positions.Length, Allocator.Temp);//dist to border + crack spread
         var uv2Float = uv2.Reinterpret<float>(16);
-        var uv3 = new NativeArray<Vector4>(positions.Length, Allocator.Temp);//bary coords
-        var uv4 = new NativeArray<Vector4>(positions.Length, Allocator.Temp);//cracks
+        // var uv3 = new NativeArray<Vector4>(positions.Length, Allocator.Temp);//bary coords
+        // var uv4 = new NativeArray<Vector4>(positions.Length, Allocator.Temp);//cracks
 
-        var seed = (uint)MathTools.RNG.Next(1, int.MaxValue);
-        var rng = new Unity.Mathematics.Random(seed);
+        // var seed = (uint)MathTools.RNG.Next(1, int.MaxValue);
+        // var rng = new Unity.Mathematics.Random(seed);
 
         FillUV(uv, positions, bbMin, bbMax);
-        FillBarycentricCoords(uv3, triangles, halfEdges, barySeedSpacing, out var baryMask);
-        FillBorderGeometry(uv1, positions, triangles, boundaryEdges, vertexGrid,
-            convexitySpread, concavitySpread, topsideSpread, undersideSpread,
-            convexityMax, concavityMax, topsideMax, undersideMax);
+        // FillBarycentricCoords(uv3, triangles, halfEdges, barySeedSpacing, out var baryMask);
+        // FillBorderGeometry(uv1, positions, triangles, boundaryEdges, vertexGrid,
+        //     convexitySpread, concavitySpread, topsideSpread, undersideSpread,
+        //     convexityMax, concavityMax, topsideMax, undersideMax);
         FillDistToBorder(uv2Float, 4, 0, positions, triangles, boundaryEdges);
-        FillCracks(uv4, positions, triangles, halfEdges, vertexGrid, baryMask, numCracksMin, numCracksMax, ref rng, out var cracks);
-        FillCrackSpread(uv2Float, 4, 1, cracks, crackSpread, positions, triangles);
-
-        // Array.Resize(ref this.positions, positions.Length);
-        // positions.AsArray().CopyTo(this.positions);
-        // Array.Resize(ref this.triangles, triangles.Length);
-        // triangles.AsArray().CopyTo(this.triangles);
-        // Array.Resize(ref this.boundaryEdges, boundaryEdges.Length);
-        // boundaryEdges.AsArray().CopyTo(this.boundaryEdges);
-        // Array.Resize(ref this.baryMask, baryMask.Length);
-        // baryMask.CopyTo(this.baryMask);
+        // SmoothDistToBorder(uv2Float, 4, 0, smoothingRadius, positions);
+        // FillCracks(uv4, positions, triangles, halfEdges, vertexGrid, baryMask, numCracksMin, numCracksMax, ref rng, out var cracks);
+        // FillCrackSpread(uv2Float, 4, 1, cracks, crackSpread, positions, triangles);
 
         Array.Resize(ref perimeter, boundaryEdges.Length);
         for (int i = 0; i < perimeter.Length; i++)
@@ -111,14 +109,14 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         mesh.SetVertices(positionsV3);
         mesh.SetIndices(triangles.AsArray(), MeshTopology.Triangles, 0);
         mesh.SetUVs(0, uv);//uv
-        mesh.SetUVs(1, uv1);//bord geometry
-        mesh.SetUVs(2, uv2);//dist to border (for now)
-        mesh.SetUVs(3, uv3);//bary coords
-        mesh.SetUVs(4, uv4);//crack
+        // mesh.SetUVs(1, uv1);//bord geometry
+        mesh.SetUVs(2, uv2);//dist to border
+        // mesh.SetUVs(3, uv3);//bary coords
+        // mesh.SetUVs(4, uv4);//crack
         mesh.RecalculateNormals();
 
         triangulator.Dispose();
-        vertexGrid.Dispose();
+        // vertexGrid.Dispose();
     }
 
 
@@ -450,7 +448,44 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
 
             arr[stride * i + offset] = math.sqrt(minDist2);
         }
+
+        for (int i = 0; i < vertices.Length; i++)
+        {
+            
+        }
     }
+
+    // [BurstCompile]
+    // private static void SmoothDistToBorder(NativeArray<float> arr, int stride, int offset, float radius,
+    //     ReadOnlySpan<Vector2> positions)
+    // {
+    //     for (int i = 0; i < positions.Length; i++)
+    //     {
+    //         var p = positions[i];
+    //         // var d = arr[stride * i + offset];
+    //         var r = radius;//math.min(d, radius);
+
+    //         //i don't think our points are tightly enough packed for this to work well
+    //         //you could integrate over neighboring triangle faces instead
+    //         var r2 = r * r;
+    //         var sum = arr[stride * i + offset];
+    //         var wt = 1f;
+    //         for (int j = 0; j < positions.Length; j++)
+    //         {
+    //             var q = positions[j];
+    //             var a2 = math.distancesq(p, q);
+    //             if (a2 < r2)
+    //             {
+    //                 var a = math.sqrt(a2);
+    //                 // var k = 1 - a / r;
+    //                 sum += arr[stride * j + offset];
+    //                 wt ++;
+    //             }
+    //         }
+
+    //         arr[stride * i + offset] = sum / wt;
+    //     }
+    // }
 
     //uv2.y = cracks
     [BurstCompile]

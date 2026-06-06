@@ -34,18 +34,15 @@
         NormalZ_float(height, worldPos, nz);
     }
 
-    void SSMGHeightMap_float(float heightMap, float2 objectScale, float distToBdry, float bdryHalfWidth, 
-        out float height)
+    void SSMGDistToBdry_float(float2 objectScale, float distToBdry, out float d)
     {
         float scale = max(objectScale.x, objectScale.y);
-        float d = scale * distToBdry;//world dist to bdry
-        height = d * heightMap / (d + bdryHalfWidth);
+        d = scale * distToBdry;
     }
 
-    void SSMGHeightMap_half(float heightMap, float2 objectScale,float distToBdry, float bdryHalfWidth, 
-        out float height)
+    void SSMGDistToBdry_half(float2 objectScale, float distToBdry, out float d)
     {
-        SSMGHeightMap_float(heightMap, objectScale, distToBdry, bdryHalfWidth, height);
+        SSMGDistToBdry_float(objectScale, distToBdry, d);
     }
 
     void SSMGShadow_float(float concavity, float concavityStrength, float underside, float undersideStrength,
