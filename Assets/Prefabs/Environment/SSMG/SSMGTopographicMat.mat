@@ -49,11 +49,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NoiseTex:
-        m_Texture: {fileID: 2800000, guid: 6cc3e081b4fe43342854a94e470bce43, type: 3}
+        m_Texture: {fileID: 2800000, guid: c766e3daa692d1143b46ba8398037c0e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NoiseTex1:
-        m_Texture: {fileID: 2800000, guid: 6cc3e081b4fe43342854a94e470bce43, type: 3}
+        m_Texture: {fileID: 2800000, guid: c766e3daa692d1143b46ba8398037c0e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalMap:
@@ -79,15 +79,32 @@ Material:
     m_Ints: []
     m_Floats:
     - _BoundaryHalfWidth: 0.22
-    - _BoundaryIntensity: 0.9
+    - _BoundaryIntensity: 0.756
     - _BoundarySteepness: 0.75
-    - _BoundaryWidth: 1
-    - _Constrast: 2
+    - _BoundaryWidth: 2
+    - _Constrast: 1
     - _EnableExternalAlpha: 0
+    - _HeightMax1: 25
+    - _HeightMax2: 5
+    - _HeightMax3: 0.25
     - _HeightMin: 11.25
-    - _HeightScale: 20
-    - _HeightScale1: 4
+    - _HeightMin1: 0
+    - _HeightMin2: -5
+    - _HeightMin3: -0.1
+    - _HeightNoise1: 0.1
+    - _HeightNoise2: 0
+    - _HeightScale: 40
+    - _HeightScale1: 10
     - _HeightScale2: 0.05
+    - _HeightScale2Max: 30
+    - _HeightScale2Min: 25
+    - _HeightScale3: 0
+    - _HeightScaleMax1: 50
+    - _HeightScaleMax2: 4
+    - _HeightScaleMin1: 0
+    - _HeightScaleMin2: -2
+    - _HeightScaleMin3: 0
+    - _Noise2HeightNoise: 0.05
     - _NoiseDensity: 1
     - _NoiseMin: 0.25
     - _NoiseMin1: 0
@@ -95,8 +112,9 @@ Material:
     - _NoisePower1: 0.74
     - _NoisePower2: 3.05
     - _NoiseScale: 0.001
-    - _NoiseScale1: 0.0035
-    - _NoiseScale2: 0.025
+    - _NoiseScale1: 0.003
+    - _NoiseScale2: 0.01
+    - _NoiseScale3: 0.1
     - _Power: 2
     - _Power2: 1
     - _VoronoiHtScale: 4.05
