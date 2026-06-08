@@ -27,7 +27,7 @@ public struct RopeSettings
     public readonly float NodeRadius => 0.5f * width;
 }
 
-public unsafe class FastRope
+public class FastRope
 {
     public enum TerminusAnchorMode
     {
@@ -70,6 +70,7 @@ public unsafe class FastRope
     public float2 CarryForce => carryForce.Value;
     public bool TerminusAnchored => terminusAnchorMode.Value != TerminusAnchorMode.notAnchored;
     public float2 GrappleExtent { get; private set; }//recompute after each simulation step
+    public bool JobsComplete => jobHandle.IsCompleted;
 
 
     //LIFE CYCLE
@@ -285,6 +286,11 @@ public unsafe class FastRope
 
     public void Update(float2 sourcePosition, float dt, NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture)
     {
+        if (!jobHandle.IsCompleted)
+        {
+            return;
+        }
+
         jobHandle.Complete();
         UnlockWrappers();
         HandleLengthRequest();

@@ -9,7 +9,7 @@ public struct SpiderBody
 {
     public PhysicsBody abdomen;
     public PhysicsBody head;
-    public PhysicsShape grappleArmShape;
+    // public PhysicsShape grappleArmShape;
     public PhysicsFixedJoint headJoint;
 
     /// <summary> (when facing right) </summary>
@@ -104,8 +104,8 @@ public struct SpiderBody
         }
     }
 
-    public void CreatePhysicsBody(PhysicsRotate levelDirection, Transform abdomenRoot, Transform headRoot, Transform headBone, 
-        Transform grappleArmTransform/*, Transform heightReferencePoint*/)
+    public void CreatePhysicsBody(PhysicsRotate levelDirection, Transform abdomenRoot, Transform headRoot, Transform headBone
+        /*, Transform grappleArmTransform*//*, Transform heightReferencePoint*/)
     {
         var defaultWorld = PhysicsWorld.defaultWorld;
 
@@ -119,8 +119,8 @@ public struct SpiderBody
             //(have written an editor function to do this)
         abdomen.transformObject = abdomenRoot;
 
-        var grappleArmBox = GrappleArmWorldBox(grappleArmTransform).InverseTransform(abdomen.transform);
-        grappleArmShape = abdomen.CreateShape(grappleArmBox, shapeDef);
+        // var grappleArmBox = GrappleArmWorldBox(grappleArmTransform).InverseTransform(abdomen.transform);
+        // grappleArmShape = abdomen.CreateShape(grappleArmBox, shapeDef);
 
 
         //create head
@@ -135,9 +135,9 @@ public struct SpiderBody
         abdomenUserData.objectValue = fluidObstacle;
         abdomenCapsule.userData = abdomenUserData;
 
-        var grappleArmUserData = grappleArmShape.userData;
-        grappleArmUserData.objectValue = fluidObstacle;
-        grappleArmShape.userData = grappleArmUserData;
+        // var grappleArmUserData = grappleArmShape.userData;
+        // grappleArmUserData.objectValue = fluidObstacle;
+        // grappleArmShape.userData = grappleArmUserData;
 
         var headUserData = headCapsule.userData;
         headUserData.objectValue = fluidObstacle;
@@ -208,7 +208,7 @@ public struct SpiderBody
         }
     }
 
-    public void ChangeDirection(PhysicsTransform reflection, Transform abdomenBone, Transform headBone, Transform grappleArmTransform)
+    public void ChangeDirection(PhysicsTransform reflection, Transform abdomenBone, Transform headBone/*, Transform grappleArmTransform*/)
     {
         abdomen.transform = abdomen.transform.ReflectAndFlip(reflection, Vector2.zero);
         head.transform = head.transform.ReflectAndFlip(reflection, Vector2.zero);
@@ -219,7 +219,7 @@ public struct SpiderBody
         abdomenBone.ReflectAndFlip(abdomen.transform);//grapple arm is childed to abdomenBone
         headBone.ReflectAndFlip(head.transform);
 
-        grappleArmShape.polygonGeometry = GrappleArmWorldBox(grappleArmTransform).InverseTransform(abdomen.transform);
+        // grappleArmShape.polygonGeometry = GrappleArmWorldBox(grappleArmTransform).InverseTransform(abdomen.transform);
         abdomen.ApplyMassFromShapes();
 
         ((PhysicsJoint)headJoint).ReflectAndFlipAnchors();
@@ -262,11 +262,11 @@ public struct SpiderBody
             totalTranslation += c;
             ApplyTranslation(c);
         }
-        if (HasOverlap(abdomenShapes[1], world, queryFilter, out c))
-        {
-            totalTranslation += c;
-            ApplyTranslation(c);
-        }
+        // if (HasOverlap(abdomenShapes[1], world, queryFilter, out c))//grapple arm
+        // {
+        //     totalTranslation += c;
+        //     ApplyTranslation(c);
+        // }
 
 
         return totalTranslation;
@@ -302,8 +302,8 @@ public struct SpiderBody
         }
     }
 
-    private readonly PolygonGeometry GrappleArmWorldBox(Transform grappleArmTransform)
-    {
-        return PolygonGeometry.CreateBox(Vector2.one).Transform(grappleArmTransform.localToWorldMatrix, true);
-    }
+    // private readonly PolygonGeometry GrappleArmWorldBox(Transform grappleArmTransform)
+    // {
+    //     return PolygonGeometry.CreateBox(Vector2.one).Transform(grappleArmTransform.localToWorldMatrix, true);
+    // }
 }

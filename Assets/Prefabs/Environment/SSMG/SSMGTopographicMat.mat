@@ -79,12 +79,14 @@ Material:
     m_Ints: []
     m_Floats:
     - _BoundaryHalfWidth: 0.22
-    - _BoundaryIntensity: 0.756
+    - _BoundaryIntensity: 0.68
+    - _BoundaryScale: 1
     - _BoundarySteepness: 0.75
-    - _BoundaryWidth: 2
+    - _BoundaryWidth: 0.5
+    - _BoundaryWidthMax: 25
     - _Constrast: 1
     - _EnableExternalAlpha: 0
-    - _HeightMax1: 25
+    - _HeightMax1: 40
     - _HeightMax2: 5
     - _HeightMax3: 0.25
     - _HeightMin: 11.25

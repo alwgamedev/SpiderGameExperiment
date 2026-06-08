@@ -29,20 +29,10 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
     [SerializeField] float numCracksMax;
     [SerializeField] float crackSpread;
     [SerializeField] int barySeedSpacing;
-    // [SerializeField] float smoothingRadius;
-    // [SerializeField] Vector2[] positions;
-    // [SerializeField] int[] triangles;
+    [SerializeField] int borderSmoothingIterations;
     [SerializeField] Vector2[] perimeter;
-    // [SerializeField] int[] baryMask;
-    // [SerializeField] bool drawTriangles;
-    // [SerializeField] bool drawPerimeter;
-    // [SerializeField] bool drawBaryColors;
-    // [SerializeField] float crackDrawTime;
 
     public ReadOnlySpan<Vector2> GetPerimeter() => perimeter;
-    // public ReadOnlySpan<int> BoundaryEdges => perimeter;
-    // public ReadOnlySpan<int> Triangles => triangles;
-    // public ReadOnlySpan<Vector2> Positions => positions;
 
     public void GenerateMesh()
     {
@@ -75,7 +65,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         var uv = new NativeArray<Vector2>(positions.Length, Allocator.Temp);//uv
         // var uv1 = new NativeArray<Vector4>(positions.Length, Allocator.Temp);//border geometry
         var uv2 = new NativeArray<Vector4>(positions.Length, Allocator.Temp);//dist to border + crack spread
-        var uv2Float = uv2.Reinterpret<float>(16);
+        // var uv2Float = uv2.Reinterpret<float>(16);
         // var uv3 = new NativeArray<Vector4>(positions.Length, Allocator.Temp);//bary coords
         // var uv4 = new NativeArray<Vector4>(positions.Length, Allocator.Temp);//cracks
 
@@ -87,7 +77,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         // FillBorderGeometry(uv1, positions, triangles, boundaryEdges, vertexGrid,
         //     convexitySpread, concavitySpread, topsideSpread, undersideSpread,
         //     convexityMax, concavityMax, topsideMax, undersideMax);
-        FillDistToBorder(uv2Float, 4, 0, positions, triangles, boundaryEdges);
+        FillDistToBorder(uv2, positions, triangles, boundaryEdges, borderSmoothingIterations);
         // SmoothDistToBorder(uv2Float, 4, 0, smoothingRadius, positions);
         // FillCracks(uv4, positions, triangles, halfEdges, vertexGrid, baryMask, numCracksMin, numCracksMax, ref rng, out var cracks);
         // FillCrackSpread(uv2Float, 4, 1, cracks, crackSpread, positions, triangles);
@@ -116,7 +106,6 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         mesh.RecalculateNormals();
 
         triangulator.Dispose();
-        // vertexGrid.Dispose();
     }
 
 
@@ -423,69 +412,82 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         }
     }
 
+    //x-coord = dist to boundary
+    //y-coord = largest distance to boundary "nearby"
+    //zw = unit vector pointing towards closest boundary pt
     [BurstCompile]
-    private static void FillDistToBorder(NativeArray<float> arr, int stride, int offset,
-        ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles, ReadOnlySpan<int> boundaryEdges)
+    private static void FillDistToBorder(NativeArray<Vector4> arr, ReadOnlySpan<Vector2> positions,
+        ReadOnlySpan<int> triangles, ReadOnlySpan<int> boundaryEdges, int smoothingIterations)
     {
-        for (int i = 0; i < vertices.Length; i++)
+        NativeArray<float> boundaryHalfWidth = new(boundaryEdges.Length, Allocator.Temp);
+        for (int i = 0; i < boundaryEdges.Length; i++)
         {
-            var p = vertices[i];
+            var v0 = triangles[boundaryEdges[i]];
+            var v1 = triangles[boundaryEdges[(i + 1) % boundaryEdges.Length]];
+            var p0 = positions[v0];
+            var p1 = positions[v1];
+            var m = (p1 - p0).normalized.CCWPerp();//outward normal
+
+            //try to find a point on the "opposite" side of the boundary to get an idea of how wide the region is
+            //this method is good enough, especially after a bit of smoothing out
+            var minDist = float.MaxValue;
+            var minJ = i;
+            for (int j = 0; j < boundaryEdges.Length; j++)
+            {
+                var w0 = triangles[boundaryEdges[j]];
+                var q0 = positions[w0];
+                var d = q0 - p0;
+                var l = math.length(d);
+                if (math.dot(d, m) < -0.5f * l)
+                {
+                    minJ = math.select(minJ, j, l < minDist);
+                    minDist = math.min(minDist, l);
+                }
+            }
+            
+            boundaryHalfWidth[i] = 0.5f * minDist;
+        }
+
+        for (int iter = 0; iter < smoothingIterations; iter++)
+        {
+            var iPrev = boundaryHalfWidth.Length - 1;
+            for (int i = 0; i < boundaryHalfWidth.Length; i++)
+            {
+                var iNext = (i + 1) % boundaryHalfWidth.Length;
+                boundaryHalfWidth[i] = 0.25f * boundaryHalfWidth[i] + 0.375f * (boundaryHalfWidth[iPrev] + boundaryHalfWidth[iNext]);
+                iPrev = i;
+            }
+        }
+
+        for (int i = 0; i < positions.Length; i++)
+        {
+            var p = positions[i];
             var minDist2 = Mathf.Infinity;
+            var closestBdryPt = Vector2.zero;
+            int minJ = 0;
 
             for (int j = 0; j < boundaryEdges.Length; j++)
             {
                 var edge = EdgeVertices(boundaryEdges[j], triangles);
-                var p0 = vertices[edge.Item1];
-                var p1 = vertices[edge.Item2];
+                var p0 = positions[edge.Item1];
+                var p1 = positions[edge.Item2];
 
                 var w = p1 - p0;
                 var t = math.dot(p - p0, w) / math.lengthsq(w);
                 t = math.select(0, t, t > 0 && !(t > 1));//if t not in (0, 1] just check left endpt of edge
 
-                var thisDist2 = math.distancesq(p, p0 + t * w);
+                var q = p0 + t * w;
+                var thisDist2 = math.distancesq(p, q);
+                closestBdryPt = math.select(closestBdryPt, q, thisDist2 < minDist2);
+                minJ = math.select(minJ, j, thisDist2 < minDist2);
                 minDist2 = math.min(thisDist2, minDist2);
             }
-
-            arr[stride * i + offset] = math.sqrt(minDist2);
-        }
-
-        for (int i = 0; i < vertices.Length; i++)
-        {
             
+            var minDist = math.sqrt(minDist2);
+            var u = (closestBdryPt - p).normalized;
+            arr[i] = new(minDist, boundaryHalfWidth[minJ], u.x, u.y);
         }
     }
-
-    // [BurstCompile]
-    // private static void SmoothDistToBorder(NativeArray<float> arr, int stride, int offset, float radius,
-    //     ReadOnlySpan<Vector2> positions)
-    // {
-    //     for (int i = 0; i < positions.Length; i++)
-    //     {
-    //         var p = positions[i];
-    //         // var d = arr[stride * i + offset];
-    //         var r = radius;//math.min(d, radius);
-
-    //         //i don't think our points are tightly enough packed for this to work well
-    //         //you could integrate over neighboring triangle faces instead
-    //         var r2 = r * r;
-    //         var sum = arr[stride * i + offset];
-    //         var wt = 1f;
-    //         for (int j = 0; j < positions.Length; j++)
-    //         {
-    //             var q = positions[j];
-    //             var a2 = math.distancesq(p, q);
-    //             if (a2 < r2)
-    //             {
-    //                 var a = math.sqrt(a2);
-    //                 // var k = 1 - a / r;
-    //                 sum += arr[stride * j + offset];
-    //                 wt ++;
-    //             }
-    //         }
-
-    //         arr[stride * i + offset] = sum / wt;
-    //     }
-    // }
 
     //uv2.y = cracks
     [BurstCompile]
@@ -587,7 +589,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             return (row, col);
         }
 
-        public (int colMin, int colMax, int rowMin, int rowMax) GetIterBounds(Vector2 minPt, Vector2 maxPt)
+        public readonly (int colMin, int colMax, int rowMin, int rowMax) GetIterBounds(Vector2 minPt, Vector2 maxPt)
         {
             var (rowMin, colMin) = Cell(minPt);
             var (rowMax, colMax) = Cell(maxPt);
@@ -610,22 +612,23 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
 
     /// <summary> Natives in the PointGrid are TempJob allocated. </summary>
     [BurstCompile]
-    private static PointGrid BuildPointGrid(NativeArray<Vector2> points, Vector2 bbMin, Vector2 bbMax, float cellSize)
+    private static PointGrid BuildPointGrid(ReadOnlySpan<Vector2> positions, Vector2 bbMin, Vector2 bbMax, float cellSize)
     {
         var bbSpan = bbMax - bbMin;
         var gridWidth = (int)Mathf.Ceil(bbSpan.x / cellSize);
         var gridHeight = (int)Mathf.Ceil(bbSpan.y / cellSize);
         var numCells = gridWidth * gridHeight;
 
-        var grid = new NativeArray<int>(points.Length, Allocator.TempJob);
+        //will store triangle edges, ordered in grid by position of their start pt
+        var grid = new NativeArray<int>(positions.Length, Allocator.TempJob);
         var cellStart = new NativeArray<int>(numCells + 1, Allocator.TempJob);
 
         NativeArray<int> cellCount = new(numCells, Allocator.Temp);
 
         //first count the number of points in each cell
-        for (int i = 0; i < points.Length; i++)
+        for (int i = 0; i < positions.Length; i++)
         {
-            var p = points[i] - bbMin;
+            var p = positions[i] - bbMin;
             var row = (int)(p.y / cellSize);
             var col = (int)(p.x / cellSize);
             var cell = row * gridWidth + col;
@@ -642,9 +645,9 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         cellStart[numCells] = grid.Length;
 
         //fill the cells
-        for (int i = 0; i < points.Length; i++)
+        for (int i = 0; i < positions.Length; i++)
         {
-            var p = points[i] - bbMin;
+            var p = positions[i] - bbMin;
             var row = (int)(p.y / cellSize);
             var col = (int)(p.x / cellSize);
             var cell = row * gridWidth + col;

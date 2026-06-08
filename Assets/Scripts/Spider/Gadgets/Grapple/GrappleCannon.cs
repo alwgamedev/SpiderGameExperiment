@@ -132,6 +132,8 @@ public class GrappleCannon
         }
     }
 
+    public bool JobsComplete() => grapple.JobsComplete;
+
     public void CompleteJobs()
     {
         grapple.CompleteJobs();

@@ -3,6 +3,7 @@ using UnityEngine.Events;
 using Unity.U2D.Physics;
 using Unity.Collections;
 using System;
+using UnityEngine.UIElements;
 
 [Serializable]
 public class SpiderMover
@@ -17,7 +18,7 @@ public class SpiderMover
     [SerializeField] LegSynchSettings freefallLegSettings;
     [SerializeField] LegSynchSettings thrustingLegSettings;
     [SerializeField] LegSynchSettings freeHangLegSettings;
-    [SerializeField] Transform grappleArm;
+    // [SerializeField] Transform grappleArm;
     [SerializeField] Transform abdomenRoot;
     [SerializeField] Transform abdomenBone;
     [SerializeField] Transform headRoot;
@@ -204,7 +205,7 @@ public class SpiderMover
         thruster.Initialize();
         thrusterFlame.Initialize();
 
-        spiderBody.CreatePhysicsBody(new PhysicsRotate() { direction = transform.right }, abdomenRoot, headRoot, headBone, grappleArm);
+        spiderBody.CreatePhysicsBody(new PhysicsRotate() { direction = transform.right }, abdomenRoot, headRoot, headBone);
         InitializeLegSynch();
         InitializeGroundData();
         grapple.Initialize(spiderInput, World, SpideyBody.LevelRight, TotalMass, FacingRight);
@@ -254,9 +255,13 @@ public class SpiderMover
         //if jobs try to do something like apply force to a body,
         //and on main thread we access physics shape geometry, the game stalls out,
         //so complete jobs before updating the shape capture.
-        grapple.CompleteJobs();
+
         groundMap.CompleteJobs();
-        shapeCapture.Update(HeightReferencePt, World, shapeCaptureFilter);
+        if (grapple.JobsComplete())
+        {
+            grapple.CompleteJobs();
+            shapeCapture.Update(HeightReferencePt, World, shapeCaptureFilter);
+        }
 
         UpdateGroundData();
         RotateAbdomen();
@@ -271,7 +276,8 @@ public class SpiderMover
         }
 
         bool lyingOnBack = SpideyBody.HasContact() && Up.y < MathTools.sin30;
-        if (canFlip && FlipInput && (grounded || lyingOnBack))//end flip
+        bool alignedWithGroundDir = Mathf.Abs(MathTools.Cross2D(groundDirection, Right)) < MathTools.sin30;
+        if (canFlip && FlipInput && ((grounded && alignedWithGroundDir) || lyingOnBack))//end flip
         {
             canFlip = false;
         }
@@ -497,7 +503,7 @@ public class SpiderMover
             reflection = new PhysicsTransform(grapple.FreeHangLeveragePoint, new PhysicsRotate() { direction = u });
         }
 
-        SpideyBody.ChangeDirection(reflection, abdomenBone, headBone, grappleArm);
+        SpideyBody.ChangeDirection(reflection, abdomenBone, headBone);
         var overlapCorrection = SpideyBody.ResolveOverlaps();
         if (!grounded)
         {
@@ -536,7 +542,7 @@ public class SpiderMover
                     var accFactor = TotalMass * accelFactor;
                     var headRel = SpideyBody.LevelRight.InverseMultiplyRotation(Head.rotation).direction;
                     var t = headRel.x < 0 ? 1 : Mathf.Abs(headRel.y);
-                    MoveBody(Head, OrientedHeadDirection, MaxSpeed, t *  accFactor, accelCap, 0, out var sHead);
+                    MoveBody(Head, OrientedHeadDirection, MaxSpeed, t * accFactor, accelCap, 0, out var sHead);
                     MoveBody(Abdomen, OrientedRight, MaxSpeed, /*(1 - t) **/ accFactor, accelCap, Mathf.NegativeInfinity, out var sAbdomen);
                 }
                 else

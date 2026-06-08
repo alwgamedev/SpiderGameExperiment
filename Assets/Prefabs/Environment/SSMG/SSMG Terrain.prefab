@@ -280,6 +280,7 @@ MonoBehaviour:
   numCracksMax: 1
   crackSpread: 4
   barySeedSpacing: 2
+  borderSmoothingIterations: 8
   perimeter: []
 --- !u!33 &5291316002289393465
 MeshFilter:
@@ -314,7 +315,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 268c7711d6b89b24cb3fa0d61af4a785, type: 2}
+  - {fileID: 2100000, guid: b4aca71b4b45c384b86db7743a36669c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

@@ -26,7 +26,6 @@
         float4 jacInv = ScreenToWorldJacobian(worldPos);
         float hx = ddxWorld(height, jacInv);
         float hy = ddyWorld(height, jacInv);
-        float hxx = ddxWorld(hx, jacInv);
         nz = rsqrt(1 + hx * hx + hy * hy);
     }
 

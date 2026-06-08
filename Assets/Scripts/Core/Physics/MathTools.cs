@@ -209,12 +209,12 @@ public static class MathTools
     }
 
     /// <summary>
-    /// Try to intersect lines p1 + t*v1 and p2 + t*v2.
+    /// Try to intersect lines p1 + t*v1 and p2 + t*v2. Intersection = p1 if lines are close to parallel.
     /// </summary>
     public static bool TryIntersectLine(Vector2 p1, Vector2 v1, Vector2 p2, Vector2 v2, out Vector2 intersection)
     {
         var det = Cross2D(v1, v2);
-        if (det == 0)// parallel lines
+        if (math.abs(det) < o41)// parallel lines
         {
             intersection = p1;
             return Cross2D(p2 - p1, v1) == 0;
@@ -222,8 +222,8 @@ public static class MathTools
 
         float b1 = Cross2D(v1, p1);
         float b2 = Cross2D(v2, p2);
-        det = 1 / det;
-        intersection = new Vector2(det * (v2.x * b1 - v1.x * b2), det * (v2.y * b1 - v1.y * b2));
+        intersection = 1 / det * (b1 * v2 - b2 * v1);
+            //new Vector2((v2.x * b1 - v1.x * b2) / det, (v2.y * b1 - v1.y * b2) / det);
         return true;
     }
 

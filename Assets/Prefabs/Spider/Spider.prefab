@@ -2196,7 +2196,6 @@ MonoBehaviour:
       gravityScale: 1
       strideMultiplier: 1.2
       scaleStepHeightWithSpeed: 0
-    grappleArm: {fileID: 8393107135455579191}
     abdomenRoot: {fileID: 7095442034761804592}
     abdomenBone: {fileID: 6490454046939129288}
     headRoot: {fileID: 6997872735324007566}
@@ -2205,7 +2204,7 @@ MonoBehaviour:
       drawGizmos: 0
       numNodes: 120
       minLength: 1.2
-      maxLength: 12
+      maxLength: 11
       baseShootSpeed: 18
       shootSpeedPowerUpRate: 4
       shootSpeedPowerUpMax: 3
@@ -2222,8 +2221,8 @@ MonoBehaviour:
         collisionBounciness: 0.6
         dynamicCollisionForce: 0.8
         width: 0.17
-        minNodeSpacing: 0.1
-        maxNodeSpacing: 0.105
+        minNodeSpacing: 0.09
+        maxNodeSpacing: 0.095
         drag: 0.02
         nodeMass: 0.1
         terminusMass: 50
@@ -2264,7 +2263,7 @@ MonoBehaviour:
       secondsToDrain: 5
       secondsToRecharge: 10
       rechargeThreshold: 0.2
-      gravityReduction: 0.65
+      gravityReduction: 1
     thrusterFlame:
       hook: {fileID: 4447335719399263385}
       widthMin: 1.5
@@ -2307,7 +2306,7 @@ MonoBehaviour:
     maxSpeedAirborne: 9
     settleTime: 0.35
     preferredRideHeight: 0.875
-    heightSpringForce: 600
+    heightSpringForce: 300
     heightSpringDamping: 20
     grappleSquatReduction: 0.4
     heightSampleMin: -0.5
@@ -2320,8 +2319,8 @@ MonoBehaviour:
     airborneBalanceSpringDamping: 0.04
     grappleScurryResistanceMax: 175
     grappleScurryAngleMin: -0.5235988
-    jumpForce: 10
-    jumpForceCrouchBoostRate: 15
+    jumpForce: 11
+    jumpForceCrouchBoostRate: 17
     jumpAngleMin: -0.45
     jumpAngleLerpRate: 3
     jumpVerificationTime: 0.125
@@ -2907,7 +2906,7 @@ MonoBehaviour:
       m_Categories:
         bitMask: 18446744073709551615
       m_HitCategories:
-        bitMask: 320
+        bitMask: 65792
       m_IgnoreFilter: 8
   jumpPreviewArrow:
     arrowNeck: {fileID: 9040078322212251582}
