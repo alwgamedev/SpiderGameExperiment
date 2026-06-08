@@ -279,6 +279,8 @@ MonoBehaviour:
   numCracksMin: 1
   numCracksMax: 1
   crackSpread: 4
+  splineMaxOffset: 0.4
+  splineSmoothingIterations: 6
   barySeedSpacing: 2
   borderSmoothingIterations: 8
   perimeter: []

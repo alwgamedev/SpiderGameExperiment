@@ -28,6 +28,8 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
     [SerializeField] float numCracksMin;//per unit area
     [SerializeField] float numCracksMax;
     [SerializeField] float crackSpread;
+    [SerializeField] float splineMaxOffset;
+    [SerializeField] float splineSmoothingIterations;
     [SerializeField] int barySeedSpacing;
     [SerializeField] int borderSmoothingIterations;
     [SerializeField] Vector2[] perimeter;
@@ -47,8 +49,12 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             DestroyImmediate(mesh);
         }
 
+        var seed = (uint)MathTools.RNG.Next(1, int.MaxValue);
+        var rng = new Unity.Mathematics.Random(seed);
+
         var vertices = new NativeList<Vector2>(Allocator.TempJob);
         SplineSampler.SampleSpline(spriteShapeController.spline, arcLengthSamples, splineSampleRate, vertices);
+        SplineSampler.RandomizeSpline(vertices.AsArray(), splineMaxOffset, splineSmoothingIterations, rng, transform);
         var (bbMin, bbMax) = BoundingBox(vertices.AsArray());
         var triangulator = Triangulate(vertices.AsArray(), maxTriangleArea, minAngleDeg);//TempJob allocated
         vertices.Dispose();
@@ -444,7 +450,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
                     minDist = math.min(minDist, l);
                 }
             }
-            
+
             boundaryHalfWidth[i] = 0.5f * minDist;
         }
 
@@ -482,10 +488,23 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
                 minJ = math.select(minJ, j, thisDist2 < minDist2);
                 minDist2 = math.min(thisDist2, minDist2);
             }
-            
+
             var minDist = math.sqrt(minDist2);
             var u = (closestBdryPt - p).normalized;
             arr[i] = new(minDist, boundaryHalfWidth[minJ], u.x, u.y);
+        }
+
+        for (int i = 0; i < boundaryEdges.Length; i++)
+        {
+            var v0 = triangles[boundaryEdges[i]];
+            var v1 = triangles[boundaryEdges[(i + 1) % boundaryEdges.Length]];
+            var p0 = positions[v0];
+            var p1 = positions[v1];
+            var u = (p1 - p0).normalized.CCWPerp();
+            var a = arr[v0];
+            a.z = u.x;
+            a.w = u.y;
+            arr[v0] = a;
         }
     }
 

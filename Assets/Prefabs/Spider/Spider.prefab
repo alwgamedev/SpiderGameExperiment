@@ -2241,7 +2241,7 @@ MonoBehaviour:
         angularDamping: 1.25
         linearDamping: 2.5
         kinematicRotationMax: {x: -0.8660254, y: -0.5}
-        kinematicRotationSpeed: 4
+        kinematicRotationSpeed: 3
         kinematicRotationCatchUpMultiplier: 30
       grappleRenderer:
         meshRenderer: {fileID: 8668545299952063791}
@@ -2306,15 +2306,15 @@ MonoBehaviour:
     maxSpeedAirborne: 9
     settleTime: 0.35
     preferredRideHeight: 0.875
-    heightSpringForce: 300
-    heightSpringDamping: 20
+    heightSpringForce: 450
+    heightSpringDamping: 10
     grappleSquatReduction: 0.4
     heightSampleMin: -0.5
     heightSampleMax: 0.5
     headRotationMinPos: 0
     headRotationMaxPos: 1
     balanceSpringForce: 650
-    airborneBalanceSpringForce: 100
+    airborneBalanceSpringForce: 50
     balanceSpringDamping: 0.25
     airborneBalanceSpringDamping: 0.04
     grappleScurryResistanceMax: 175

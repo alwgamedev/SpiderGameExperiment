@@ -276,7 +276,7 @@ public class SpiderMover
         }
 
         bool lyingOnBack = SpideyBody.HasContact() && Up.y < MathTools.sin30;
-        bool alignedWithGroundDir = Mathf.Abs(MathTools.Cross2D(groundDirection, Right)) < MathTools.sin30;
+        bool alignedWithGroundDir = Mathf.Abs(MathTools.Cross2D(groundDirection, Right)) < MathTools.sin15;
         if (canFlip && FlipInput && ((grounded && alignedWithGroundDir) || lyingOnBack))//end flip
         {
             canFlip = false;

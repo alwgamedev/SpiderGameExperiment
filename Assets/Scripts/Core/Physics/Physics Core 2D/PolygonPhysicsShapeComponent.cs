@@ -1,6 +1,4 @@
-﻿using System;
-using Unity.U2D.Physics;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PolygonPhysicsShapeComponent : MonoBehaviour
 {
