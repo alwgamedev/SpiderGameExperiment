@@ -320,13 +320,14 @@ public class LegSynchronizer
         {
             for (int j = 0; j < leg[i].JointCount; j++)
             {
-                leg[i].body[j].gravityScale = settings.gravityScale;
+                leg[i].body[j].gravityScale = gravityScale;
             }
         }
     }
 
     public void UpdateAllLegs(float dt, GroundMap map, Vector2[] castDirection, bool facingRight)
     {
+        grounded = 0;
         for (int i = 0; i < leg.Length; i++)
         {
             var castDir = castDirection[groupIndex[i]];
@@ -384,15 +385,8 @@ public class LegSynchronizer
 
         var targetRelPos = settings.strideMultiplier * StepPosition(stepMax[i], stepLength[i], timer[i]);//target position along ground map, relative to hip
         var (j, a) = map.AddArcLength(hipGroundMapPosition.Item1, hipGroundMapPosition.Item2 + (facingRight ? targetRelPos : -targetRelPos));//target ground map position
-        var legGrounded = map.HitGround(j);
-        if (legGrounded)
-        {
-            grounded |= 1 << i;
-        }
-        else
-        {
-            grounded &= ~(1 << i);
-        }
+        var legGrounded = map.HitGround(j) ? 1 : 0;
+        grounded |= legGrounded << i;
 
         var gdPt = map.PointFromReducedPosition(j, a);
         var gdUp = map.NormalFromReducedPosition(j, a);

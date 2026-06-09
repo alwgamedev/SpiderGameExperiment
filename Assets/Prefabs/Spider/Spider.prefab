@@ -1731,8 +1731,8 @@ MonoBehaviour:
             bitMask: 65792
           m_GroupIndex: 0
         surfaceMaterial:
-          m_Friction: 0.01
-          m_Bounciness: 0.05
+          m_Friction: 0
+          m_Bounciness: 0
           m_FrictionMixing: 0
           m_BouncinessMixing: 0
           m_FrictionPriority: 0
@@ -2300,11 +2300,13 @@ MonoBehaviour:
     deadThrusterAccelFactor: 4
     thrustingAccelFactor: 48
     accelCap: 5
-    gripStrength: 1500
+    gripStrength: 600
     gripDamping: 50
-    maxSpeed: 5
+    maxSpeed: 6
     maxSpeedAirborne: 9
     settleTime: 0.35
+    friction: 10
+    frictionModifier: 1
     preferredRideHeight: 0.875
     heightSpringForce: 450
     heightSpringDamping: 10

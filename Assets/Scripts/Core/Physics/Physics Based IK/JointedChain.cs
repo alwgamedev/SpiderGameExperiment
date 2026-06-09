@@ -53,7 +53,7 @@ public struct JointedChain
         return true;
     }
 
-    public readonly Vector2 JointPosition(int i) => joint[i].bodyA.transform.TransformPoint(joint[i].localAnchorA.position);//body[i].transform.TransformPoint(joint[i].localAnchorB.position);
+    public readonly Vector2 JointPosition(int i) => joint[i].bodyA.transform.TransformPoint(joint[i].localAnchorA.position);
 
     public readonly Vector2 NextPosition(int i, bool reversed) => i == JointCount - 1 ? EffectorPosition(reversed): JointPosition(i + 1);
 
@@ -202,8 +202,8 @@ public struct JointedChain
     /// <summary> Use if you want the base of the chain to be anchored to another body. 
     /// Bone array should list the joint positions and effector position, and
     /// physTransforms are expected to be centered between the bone positions.</summary>
-    public void Initialize(Transform[] physTransform, Transform[] bone, PhysicsBody anchorBody, JointedChainDefinition def, JointedChainSettings settings,
-        bool alignArmRotations)
+    public void Initialize(Transform[] physTransform, Transform[] bone, PhysicsBody anchorBody, 
+        JointedChainDefinition def, JointedChainSettings settings, bool alignArmRotations)
     {
         Initialize(physTransform, bone, anchorBody.world, def, settings, alignArmRotations);
 

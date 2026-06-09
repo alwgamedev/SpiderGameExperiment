@@ -279,10 +279,10 @@ MonoBehaviour:
   numCracksMin: 1
   numCracksMax: 1
   crackSpread: 4
-  splineMaxOffset: 0.4
-  splineSmoothingIterations: 6
+  splineMaxOffset: 0.3
+  splineSmoothingIterations: 5
   barySeedSpacing: 2
-  borderSmoothingIterations: 8
+  bdryDistSmoothingIterations: 8
   perimeter: []
 --- !u!33 &5291316002289393465
 MeshFilter:

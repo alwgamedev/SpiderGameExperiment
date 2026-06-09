@@ -31,7 +31,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
     [SerializeField] float splineMaxOffset;
     [SerializeField] float splineSmoothingIterations;
     [SerializeField] int barySeedSpacing;
-    [SerializeField] int borderSmoothingIterations;
+    [SerializeField] int bdryDistSmoothingIterations;
     [SerializeField] Vector2[] perimeter;
 
     public ReadOnlySpan<Vector2> GetPerimeter() => perimeter;
@@ -83,7 +83,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         // FillBorderGeometry(uv1, positions, triangles, boundaryEdges, vertexGrid,
         //     convexitySpread, concavitySpread, topsideSpread, undersideSpread,
         //     convexityMax, concavityMax, topsideMax, undersideMax);
-        FillDistToBorder(uv2, positions, triangles, boundaryEdges, borderSmoothingIterations);
+        FillDistToBorder(uv2, positions, triangles, boundaryEdges, bdryDistSmoothingIterations);
         // SmoothDistToBorder(uv2Float, 4, 0, smoothingRadius, positions);
         // FillCracks(uv4, positions, triangles, halfEdges, vertexGrid, baryMask, numCracksMin, numCracksMax, ref rng, out var cracks);
         // FillCrackSpread(uv2Float, 4, 1, cracks, crackSpread, positions, triangles);
