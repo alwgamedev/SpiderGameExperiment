@@ -395,7 +395,6 @@ public class LegSynchronizer
         var hitGround = map.HitGroundFromReducedPosition(j, a);
 
         var legGrounded = map.HitGroundFromReducedPosition(j, a) ? 1 : 0;
-        Debug.DrawLine((Vector2)effectorPos, (Vector2)map.Point(j));
         grounded |= legGrounded << i;
 
         var gdPt = map.PointFromReducedPosition(j, a);

@@ -3,8 +3,6 @@ using UnityEngine.Events;
 using Unity.U2D.Physics;
 using Unity.Collections;
 using System;
-using Unity.Mathematics;
-using UnityEngine.UIElements;
 
 [Serializable]
 public class SpiderMover
@@ -14,6 +12,7 @@ public class SpiderMover
 
     [Header("Parts")]
     [SerializeField] SpiderBody spiderBody;
+    [SerializeField] SpiderBodyDefinition spiderBodyDef;
     [SerializeField] LegSynchronizer legSynch;
     [SerializeField] LegSynchSettings stdLegSettings;
     [SerializeField] LegSynchSettings freefallLegSettings;
@@ -23,6 +22,7 @@ public class SpiderMover
     [SerializeField] Transform abdomenBone;
     [SerializeField] Transform headRoot;
     [SerializeField] Transform headBone;
+    [SerializeField] Transform grappleArmTransform;
     [SerializeField] GrappleCannon grapple;
     [SerializeField] Thruster thruster;
     [SerializeField] ThrusterFlame thrusterFlame;
@@ -94,6 +94,7 @@ public class SpiderMover
     PhysicsRotate scurryRotateMin;
     float crouchProgress;//0 - 1
     bool canFlip;
+    bool canEngageThruster;
 
     bool grounded;
     Vector2 groundDirection;
@@ -147,7 +148,7 @@ public class SpiderMover
 #if UNITY_EDITOR
     public void CenterPhysicsBodies()
     {
-        spiderBody.CenterRootTransforms(abdomenRoot, abdomenBone, headRoot, headBone);
+        spiderBody.CenterRootTransforms(abdomenRoot, abdomenBone, headRoot, headBone, spiderBodyDef);
     }
 
     public void CreateLegPhysicsBodies(MonoBehaviour owner)
@@ -169,7 +170,7 @@ public class SpiderMover
 
         if (drawBodyGizmos)
         {
-            spiderBody.DrawGizmos(abdomenBone, headBone);
+            spiderBody.DrawGizmos(abdomenBone, headBone, grappleArmTransform, spiderBodyDef);
         }
 
         legSynch.OnDrawGizmos();
@@ -180,7 +181,7 @@ public class SpiderMover
     {
         if (Application.isPlaying)
         {
-            spiderBody.OnValidate();
+            spiderBody.OnValidate(spiderBodyDef);
             thruster.Initialize();
             grapple.OnValidate();
             if (legSynch.settings.stepStrength != null)
@@ -205,7 +206,8 @@ public class SpiderMover
         thruster.Initialize();
         thrusterFlame.Initialize();
 
-        spiderBody.CreatePhysicsBody(new PhysicsRotate() { direction = transform.right }, abdomenRoot, headRoot, headBone);
+        spiderBody.CreatePhysicsBody(new PhysicsRotate() { direction = transform.right }, abdomenRoot, headRoot, headBone,
+            grappleArmTransform, spiderBodyDef);
         InitializeLegSynch();
         InitializeGroundMap();
         grapple.Initialize(spiderInput, World, SpideyBody.LevelRight, TotalMass, FacingRight);
@@ -271,12 +273,13 @@ public class SpiderMover
             needChangeDirection = false;
         }
 
-        bool lyingOnBack = SpideyBody.HasContact() && Up.y < -MathTools.sin30;
-        bool alignedWithGroundDir = Vector2.Dot(Right, groundDirection) > MathTools.cos45;
+        var lyingOnBack = (Abdomen.GetContacts().Length > 0 || Head.GetContacts().Length > 0) && Up.y < 0;
+        bool alignedWithGroundDir = Vector2.Dot(Right, groundDirection) > MathTools.sin30;
         if (canFlip && FlipInput && ((grounded && alignedWithGroundDir) || lyingOnBack))
         {
             //end flip if we come in contact with the ground
             canFlip = false;
+            canEngageThruster = false;
         }
         else if (!canFlip && !FlipInput && !grounded && !lyingOnBack)
         {
@@ -358,14 +361,12 @@ public class SpiderMover
 
     private void UpdateThrusterEngagement()
     {
-        if (thruster.Engaged)
+        bool engageThruster = canEngageThruster && HorizontalMoveInput != 0 && !ForceFreeHang;
+        if (thruster.Engaged && !engageThruster)
         {
-            if (grounded || grapple.FreeHanging || HorizontalMoveInput == 0)
-            {
-                DisengageThruster();
-            }
+            DisengageThruster();
         }
-        else if (!grounded && HorizontalMoveInput != 0 && !ForceFreeHang)
+        else if (engageThruster)
         {
             TryEngageThruster();
         }
@@ -500,7 +501,8 @@ public class SpiderMover
             reflection = new PhysicsTransform(grapple.FreeHangLeveragePoint, new PhysicsRotate() { direction = u });
         }
 
-        SpideyBody.ChangeDirection(reflection, abdomenBone, headBone);
+        SpideyBody.ChangeDirection(reflection, abdomenBone, headBone, grappleArmTransform,
+            spiderBodyDef.grappleArmBoxOffset, spiderBodyDef.grappleArmBoxSize);
         var overlapCorrection = SpideyBody.ResolveOverlaps();
         if (!grounded)
         {
@@ -603,9 +605,15 @@ public class SpiderMover
 
     private float FlippedBalanceAngle()
     {
-        //always flip "backwards," that way it's predictable and you can use the flip to land on walls
-        var sign = FacingRight ? 1 : -1;
-        return sign * Mathf.Abs(MathTools.PseudoAngle(SpideyBody.LevelRight, -balanceDirection));
+        //always flip "backwards," so it's predictable and you can use the flip to adjust rotation for landing on walls
+        var angle = MathTools.PseudoAngle(SpideyBody.LevelRight, -balanceDirection);
+        var dot = Vector2.Dot(SpideyBody.LevelRight, -balanceDirection);
+        if (dot < 0)
+        {
+            return SpideyBody.Orientation * Mathf.Abs(angle);
+        }
+
+        return angle;
     }
 
     private void RotateAbdomen()
@@ -626,8 +634,8 @@ public class SpiderMover
 
     private PhysicsRotate JumpAbdomenRotation()
     {
-        return jumpAngleFraction > 0 ? 
-            PhysicsRotate.LerpRotation(PhysicsRotate.identity, jumpRotateMin, jumpAngleFraction) 
+        return jumpAngleFraction > 0 ?
+            PhysicsRotate.LerpRotation(PhysicsRotate.identity, jumpRotateMin, jumpAngleFraction)
             : PhysicsRotate.identity;
     }
 
@@ -767,6 +775,7 @@ public class SpiderMover
     private void OnLanding()
     {
         SetGravityScale(0f);
+        canEngageThruster = false;
     }
 
     private void OnTakeOff()
@@ -778,6 +787,7 @@ public class SpiderMover
         }
 
         SetGravityScale(1);
+        canEngageThruster = true;
     }
 
     private void SetGravityScale(float val)
@@ -788,7 +798,7 @@ public class SpiderMover
 
     private void UpdateGroundData()
     {
-        
+
         UpdateGroundMap();
 
         if (!VerifyingJump())
@@ -802,7 +812,7 @@ public class SpiderMover
         {
             i = groundMap.CentralIndex;
         }
-        
+
         groundDirection = grounded ?
             groundMap.AverageNormal(i, -groundDirectionSampleWidth, groundDirectionSampleWidth).CWPerp()
             : Vector2.right;

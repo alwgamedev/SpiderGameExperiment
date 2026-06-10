@@ -1716,45 +1716,9 @@ MonoBehaviour:
   health:
     maxHealth: 100
   mover:
-    drawGroundMapGizmos: 1
+    drawGroundMapGizmos: 0
     drawBodyGizmos: 0
-    spiderBody:
-      abdomenCapsuleSize: {x: 2.75, y: 2.3}
-      abdomenCapsuleOffset: {x: 1.325, y: -0.025}
-      headCapsuleSize: {x: 2.1, y: 1.25}
-      headCapsuleOffset: {x: 0.5, y: -0.035}
-      shapeDef:
-        contactFilter:
-          m_Categories:
-            bitMask: 2
-          m_Contacts:
-            bitMask: 65792
-          m_GroupIndex: 0
-        surfaceMaterial:
-          m_Friction: 0
-          m_Bounciness: 0
-          m_FrictionMixing: 0
-          m_BouncinessMixing: 0
-          m_FrictionPriority: 0
-          m_BouncinessPriority: 0
-          m_RollingResistance: 0
-          m_TangentSpeed: 0
-          m_CustomColor:
-            serializedVersion: 2
-            rgba: 0
-        m_Density: 1
-        m_IsTrigger: 0
-        m_TriggerEvents: 0
-        m_ContactEvents: 0
-        m_HitEvents: 0
-        m_ContactFilterCallbacks: 0
-        m_PreSolveCallbacks: 0
-        m_StartStaticContacts: 0
-        m_StartMassUpdate: 1
-        m_WorldDrawing: 0
-        moverData:
-          m_PushLimit: 0
-          m_ClipVelocity: 0
+    spiderBodyDef:
       headJointDef:
         m_LocalAnchorA:
           position: {x: 0, y: 0}
@@ -1795,7 +1759,45 @@ MonoBehaviour:
         m_Awake: 1
         m_Enabled: 1
         m_WorldDrawing: 0
+      shapeDef:
+        contactFilter:
+          m_Categories:
+            bitMask: 2
+          m_Contacts:
+            bitMask: 65792
+          m_GroupIndex: 0
+        surfaceMaterial:
+          m_Friction: 0
+          m_Bounciness: 0
+          m_FrictionMixing: 0
+          m_BouncinessMixing: 0
+          m_FrictionPriority: 0
+          m_BouncinessPriority: 0
+          m_RollingResistance: 0
+          m_TangentSpeed: 0
+          m_CustomColor:
+            serializedVersion: 2
+            rgba: 0
+        m_Density: 1
+        m_IsTrigger: 0
+        m_TriggerEvents: 0
+        m_ContactEvents: 0
+        m_HitEvents: 0
+        m_ContactFilterCallbacks: 0
+        m_PreSolveCallbacks: 0
+        m_StartStaticContacts: 0
+        m_StartMassUpdate: 1
+        m_WorldDrawing: 0
+        moverData:
+          m_PushLimit: 0
+          m_ClipVelocity: 0
       fluidObstacle: {fileID: 11400000, guid: d2d8ad3a676b48d4890f97b033608599, type: 2}
+      abdomenCapsuleSize: {x: 2.75, y: 2.3}
+      abdomenCapsuleOffset: {x: 1.325, y: -0.025}
+      headCapsuleSize: {x: 2.1, y: 1.25}
+      headCapsuleOffset: {x: 0.5, y: -0.035}
+      grappleArmBoxOffset: {x: 0, y: 0.2}
+      grappleArmBoxSize: {x: 0.5, y: 0.6}
     legSynch:
       footHitGround: []
       chainDef:
@@ -1845,7 +1847,7 @@ MonoBehaviour:
             m_CustomColor:
               serializedVersion: 2
               rgba: 0
-          m_Density: 0.05
+          m_Density: 0.25
           m_IsTrigger: 0
           m_TriggerEvents: 0
           m_ContactEvents: 0
@@ -2200,6 +2202,7 @@ MonoBehaviour:
     abdomenBone: {fileID: 6490454046939129288}
     headRoot: {fileID: 6997872735324007566}
     headBone: {fileID: 1544918830229533694}
+    grappleArmTransform: {fileID: 8393107135455579191}
     grapple:
       drawGizmos: 0
       numNodes: 120
@@ -2306,7 +2309,7 @@ MonoBehaviour:
     maxSpeedAirborne: 9
     settleTime: 0.35
     frictionMin: 1
-    frictionMax: 25
+    frictionMax: 35
     frictionModifier: 1
     preferredRideHeight: 0.875
     heightSpringForce: 450
