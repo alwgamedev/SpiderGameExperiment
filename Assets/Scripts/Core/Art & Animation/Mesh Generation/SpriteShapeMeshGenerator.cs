@@ -56,6 +56,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         SplineSampler.SampleSpline(spriteShapeController.spline, arcLengthSamples, splineSampleRate, vertices);
         SplineSampler.RandomizeSpline(vertices.AsArray(), splineMaxOffset, splineSmoothingIterations, rng, transform);
         var (bbMin, bbMax) = BoundingBox(vertices.AsArray());
+
         var triangulator = Triangulate(vertices.AsArray(), maxTriangleArea, minAngleDeg);//TempJob allocated
         vertices.Dispose();
 
@@ -177,9 +178,6 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         };
 
         triangulator.Run();
-
-        constraintEdges.Dispose();
-
         return triangulator;
     }
 

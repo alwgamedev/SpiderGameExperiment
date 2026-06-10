@@ -94,7 +94,9 @@ public class LegSynchronizer
 
     public bool LegGrounded(int i) => (grounded & (1 << i)) != 0;
 
-    public bool AnyLegGrounded() => grounded != 0;
+    public bool AnyLegGrounded => grounded != 0;
+
+    public bool AllLegsGrounded => grounded == (1 << leg.Length) - 1;
 
     public void RecalculateMass()
     {
@@ -331,7 +333,8 @@ public class LegSynchronizer
         for (int i = 0; i < leg.Length; i++)
         {
             var castDir = castDirection[groupIndex[i]];
-            var (j, s) = map.LineCastOrClosest(leg[i].JointPosition(0), castDir);//hip ground point
+            var hipPos = leg[i].JointPosition(0);
+            var (j, s) = map.LineCastOrClosest(hipPos, castDir);//hip ground point
 
             float hipSpeed;
             var n = map.NormalFromReducedPosition(j, s);//normal at hip ground point
@@ -383,9 +386,16 @@ public class LegSynchronizer
 
         timer[i] += dt * goalRelSpd / stepLength[i];
 
-        var targetRelPos = settings.strideMultiplier * StepPosition(stepMax[i], stepLength[i], timer[i]);//target position along ground map, relative to hip
-        var (j, a) = map.AddArcLength(hipGroundMapPosition.Item1, hipGroundMapPosition.Item2 + (facingRight ? targetRelPos : -targetRelPos));//target ground map position
-        var legGrounded = map.HitGround(j) ? 1 : 0;
+        //target ground map position relative to hip
+        var targetRelPos = settings.strideMultiplier * StepPosition(stepMax[i], stepLength[i], timer[i]);
+
+        //target ground map position
+        var (j, a) = map.AddArcLength(hipGroundMapPosition.Item1, 
+            hipGroundMapPosition.Item2 + (facingRight ? targetRelPos : -targetRelPos));
+        var hitGround = map.HitGroundFromReducedPosition(j, a);
+
+        var legGrounded = map.HitGroundFromReducedPosition(j, a) ? 1 : 0;
+        Debug.DrawLine((Vector2)effectorPos, (Vector2)map.Point(j));
         grounded |= legGrounded << i;
 
         var gdPt = map.PointFromReducedPosition(j, a);

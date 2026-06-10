@@ -43,6 +43,33 @@ public class GroundMap
 
     public bool HitGround(int i) => !(i < firstHitRight.Value) || !(i > firstHitLeft.Value);
 
+    public bool HitGround(int i, float a)
+    {
+        (int j, float b) = AddArcLength(i, a);
+        return HitGroundFromReducedPosition(j, b);
+    }
+
+    public bool HitGroundFromReducedPosition(int i, float a)
+    {
+        int iNext;
+        if (a > 0 && i < NumPoints - 1)
+        {
+            iNext = i + 1;
+        }
+        else if (a < 0 && i > 0)
+        {
+            iNext = i - 1;
+        }
+        else
+        {
+            iNext = 0;
+        }
+
+        a = Mathf.Abs(a * (ArcLengthPos(iNext) - ArcLengthPos(i)));
+
+        return a < 0.25f ? HitGround(i) : a > 0.75f ? HitGround(iNext) : HitGround(i) && HitGround(iNext);
+    }
+
     public int FirstGroundHitFromCenter(bool prioritizeRight)
     {
         return prioritizeRight ?
@@ -273,7 +300,7 @@ public class GroundMap
     /// If there are multiple such points, returns closest one.
     /// </summary>
     
-    //2do: might write static bursted versions of some of these (the number of active points now is pretty low)
+    //2do: might write static bursted versions of some of these (although the number of active points now is pretty low)
     public (int, float) LineCastToGround(float2 p, float2 castDir, out float bestSqDist)
     {
         bestSqDist = Mathf.Infinity;
@@ -398,8 +425,6 @@ public class GroundMap
         firstHitRight = new(Allocator.Persistent);
         firstHitLeft = new(Allocator.Persistent);
 
-        //shapeCapture = new(2048, Allocator.Persistent);
-
         //initialize map with flat ground until first job comes in
         var up = originRight.CCWPerp();
         float2 centerPt = origin - raycastLength * up;
@@ -438,8 +463,8 @@ public class GroundMap
         var job = new GroundMapUpdate(point, normal, arcLengthPos, endRight.native, endLeft.native, firstHitRight.native, firstHitLeft.native,
             shapeCapture, world, filter, origin, originUp, raycastLength, intervalWidth);
 
-        //job.Run();
-        //CopyToReadableArrays();
+        // job.Run();
+        // CopyToReadableArrays();
 
         jobHandle = job.Schedule();
     }

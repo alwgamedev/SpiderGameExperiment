@@ -40,6 +40,8 @@ public static class SplineSampler
         }
     }
 
+    //this creates invalid polygons sometimes (overlapping edges) (and sucks in general)
+    //fix.
     [BurstCompile]
     public static void RandomizeSpline(NativeArray<Vector2> points, float maxOffset, float smoothingIterations,
         Unity.Mathematics.Random rng, Transform transform)

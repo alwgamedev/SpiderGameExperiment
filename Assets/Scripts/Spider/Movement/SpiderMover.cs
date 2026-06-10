@@ -46,7 +46,8 @@ public class SpiderMover
     [SerializeField] float maxSpeed;
     [SerializeField] float maxSpeedAirborne;
     [SerializeField] float settleTime;
-    [SerializeField] float friction;
+    [SerializeField] float frictionMin;
+    [SerializeField] float frictionMax;
     [SerializeField] float frictionModifier;
 
     [Header("Height Spring")]
@@ -106,6 +107,7 @@ public class SpiderMover
     bool grappleFreeHangPrerequisites;
 
     bool FlipInput => spiderInput.FAction.IsPressed();
+    bool Flipped => FlipInput && canFlip;
     bool JumpInput => spiderInput.SpaceAction.IsPressed();
     bool CancelJumpInput => spiderInput.ControlAction.IsPressed();
     float HorizontalMoveInput => spiderInput.MoveInput.x;
@@ -252,13 +254,9 @@ public class SpiderMover
         //if jobs try to do something like apply force to a body,
         //and on main thread we access physics shape geometry, the game stalls out,
         //so complete jobs before updating the shape capture.
-
         groundMap.CompleteJobs();
-        if (grapple.JobsComplete())
-        {
-            grapple.CompleteJobs();
-            shapeCapture.Update(HeightReferencePt, World, shapeCaptureFilter);
-        }
+        grapple.CompleteJobs();
+        shapeCapture.Update(HeightReferencePt, World, shapeCaptureFilter);
 
         UpdateGroundData();
         RotateAbdomen();
@@ -273,13 +271,14 @@ public class SpiderMover
         }
 
         bool lyingOnBack = SpideyBody.HasContact() && Up.y < MathTools.sin30;
-        bool alignedWithGroundDir = Mathf.Abs(MathTools.Cross2D(groundDirection, Right)) < MathTools.sin15;
-        if (canFlip && FlipInput && ((grounded && alignedWithGroundDir) || lyingOnBack))//end flip
+        if (canFlip && FlipInput && (grounded || lyingOnBack))
         {
+            //end flip if we come in contact with the ground
             canFlip = false;
         }
-        else if (!canFlip && !FlipInput && !grounded && !lyingOnBack)//re-enable flip once flip input released and we're eligible to flip (not in contact with ground)
+        else if (!canFlip && !FlipInput && !grounded && !lyingOnBack)
         {
+            //re-enable flip once flip input released and we're eligible to flip (not in contact with ground)
             canFlip = true;
         }
 
@@ -495,7 +494,6 @@ public class SpiderMover
         }
         else
         {
-            // var p = HeightReferencePt;
             var u = SpideyBody.LevelRight.direction.CCWPerp();
             reflection = new PhysicsTransform(grapple.FreeHangLeveragePoint, new PhysicsRotate() { direction = u });
         }
@@ -522,6 +520,7 @@ public class SpiderMover
         grapple.SetOrientation(FacingRight);
     }
 
+
     private void HandleMoveInput()
     {
         //accelCap bc otherwise if velocity along movement direction is highly negative, we get ungodly rates of acceleration
@@ -544,7 +543,7 @@ public class SpiderMover
                 }
                 else
                 {
-                    var dir = FlipInput && canFlip ? -OrientedGroundDirection : OrientedGroundDirection;
+                    var dir = Flipped ? -OrientedGroundDirection : OrientedGroundDirection;
                     var accFactor = TotalMass * (thruster.Engaged ? thrustingAccelFactor : deadThrusterAccelFactor * Mathf.Clamp(1 - dir.y, 0, 1));
                     MoveBody(Abdomen, dir, MaxSpeed, accFactor, accelCap, 0);
                 }
@@ -554,9 +553,12 @@ public class SpiderMover
         //apply friction -- maybe this belongs in height spring function (then we can also make sure height spring does not fight with friction)
         if (grounded)
         {
-            var d = OrientedGroundDirection;//OrientedRight;
+            var d = groundDirection;//OrientedRight;
             var vel = Vector2.Dot(Abdomen.linearVelocity, d);
-            Abdomen.ApplyForceToCenter(frictionModifier * TotalMass * -math.sign(vel) * friction * d);
+            var c = Mathf.Lerp(frictionMin, frictionMax, Mathf.Abs(vel) * maxSpeed);
+            //^need to use a low friction when near rest in order to stabilize
+            var f = frictionModifier * TotalMass * -Mathf.Sign(vel) * c * d;
+            Abdomen.ApplyForceToCenter(f);
         }
 
         static void MoveBody(PhysicsBody body, Vector2 direction, float maxSpd, float accFactor, float accCap, float sMin)
@@ -585,11 +587,23 @@ public class SpiderMover
 
         if (!grapple.FreeHanging)
         {
-            var a = MathTools.PseudoAngle(SpideyBody.LevelRight, FlipInput && canFlip ? -balanceDirection : balanceDirection);
+            var a = Flipped ? FlippedBalanceAngle() : BalanceAngle();
             f += a * (grounded ? balanceSpringForce : airborneBalanceSpringForce);
         }
 
         Abdomen.ApplyTorque(TotalMass * f);
+    }
+
+    private float BalanceAngle()
+    {
+        return MathTools.PseudoAngle(SpideyBody.LevelRight, balanceDirection);
+    }
+
+    private float FlippedBalanceAngle()
+    {
+        //always flip "backwards," that way it's predictable and you can use the flip to land on walls
+        var sign = FacingRight ? 1 : -1;
+        return sign * Mathf.Abs(MathTools.PseudoAngle(SpideyBody.LevelRight, -balanceDirection));
     }
 
     private void RotateAbdomen()
@@ -610,7 +624,9 @@ public class SpiderMover
 
     private PhysicsRotate JumpAbdomenRotation()
     {
-        return jumpAngleFraction > 0 ? PhysicsRotate.LerpRotation(PhysicsRotate.identity, jumpRotateMin, jumpAngleFraction) : PhysicsRotate.identity;
+        return jumpAngleFraction > 0 ? 
+            PhysicsRotate.LerpRotation(PhysicsRotate.identity, jumpRotateMin, jumpAngleFraction) 
+            : PhysicsRotate.identity;
     }
 
     private PhysicsRotate ScurryAbdomenRotation()
@@ -699,36 +715,34 @@ public class SpiderMover
     private void UpdateHeightSpring()
     {
         var p0 = HeightReferencePt;
-        Vector2 down = -Up;
-        var (i, t) = groundMap.LineCastOrClosest(HeightReferencePt, down);
+        var (i, t) = groundMap.LineCastOrClosest(HeightReferencePt, -Up);
         var tMin = FacingRight ? t + heightSampleMin : t - heightSampleMax;
         var tMax = tMin + heightSampleMax - heightSampleMin;
         Vector2 p = groundMap.AveragePoint(i, tMin, tMax);
 
-        var v = Vector2.Dot(Abdomen.GetWorldPointVelocity(p0), down);
+        var v = Vector2.Dot(Abdomen.GetWorldPointVelocity(p0), -Up);
         var d = p - p0;
         var l = d.magnitude;
-        // down = d / l;
-        groundDirection.CWPerp();//even though it's not the right direction, we don't want to compete with friction
+        var down = groundDirection.CWPerp();//not the right direction, but we don't want to compete with friction
         var f = (l - EffectiveRideHeight) * heightSpringForce;
         if (grapple.GrappleAnchored)
         {
             var dot = Vector2.Dot(grapple.LastCarryForce, down);
             if (down.y < 0 && dot < 0 && l > EffectiveRideHeight && grapple.GrappleReleaseInput < 0)
-            //allow the grapple to pull you away from ground, except when you're clinging upside down (so you don't fall unintentionally from rope bobbling)
             {
+                //allow the grapple to pull you away from ground, except when you're clinging upside down 
+                //(so you don't fall unintentionally from rope bobbling)
                 return;
             }
             else if (dot > 0 && l < 0)
             {
-                f -= grappleSquatReduction * dot;//fight grapple a little when it's pulling you into the ground (i.e. reduce grappleCarryForce in direction of height spring)
+                f -= grappleSquatReduction * dot;
+                //fight grapple a little when it's pulling you into the ground 
+                // (i.e. reduce grappleCarryForce in direction of height spring)
             }
         }
 
-        Abdomen.ApplyForceToCenter(TotalMass * (f - heightSpringDamping * v /*- Vector2.Dot(World.gravity, down)*/) * down/*, p0*/);
-        //remove affect of gravity while height spring engaged, otherwise you will settle at a height which is off by -Vector2.Dot(gravity, down) / heightSpringForce
-        //(meaning you will be under height when upright, and over height when upside down (which was causing feet to not reach ground while upside down))
-        //(e.g. before ride height on flat ground was always off by around +- 32/400 = 0.08)
+        Abdomen.ApplyForceToCenter(TotalMass * (f - heightSpringDamping * v) * down);
     }
 
 
@@ -750,7 +764,7 @@ public class SpiderMover
 
     private void OnLanding()
     {
-        SetGravityScale(0);
+        SetGravityScale(0f);
     }
 
     private void OnTakeOff()
@@ -774,12 +788,11 @@ public class SpiderMover
     {
         UpdateGroundMap();
         var i = groundMap.FirstGroundHitFromCenter(FacingRight);
-        if (i < groundMap.EndLeft || i > groundMap.EndRight)
+        if (i < 0 || !(i < groundMap.NumPoints))
         {
             i = groundMap.CentralIndex;
         }
-
-
+        
         groundDirection = grounded ?
             groundMap.AverageNormal(i, -groundDirectionSampleWidth, groundDirectionSampleWidth).CWPerp()
             : Vector2.right;
@@ -788,7 +801,7 @@ public class SpiderMover
         {
             balanceDirection = groundDirection;
         }
-        else if (settleTimer > 0)//fixing the ground pt once "settled" stops us from sliding
+        else if (settleTimer > 0)//fix the balance direction once you come to a stop so you don't quiver
         {
             var t = settleTimer / settleTime;
             balanceDirection = MathTools.CheapRotationalLerpClamped(balanceDirection, groundDirection, 1 - 0.5f * t, out _);
@@ -796,7 +809,7 @@ public class SpiderMover
 
         if (!VerifyingJump())
         {
-            SetGrounded(legSynch.AnyLegGrounded());
+            SetGrounded(legSynch.AnyLegGrounded);
             grapple.FreeHanging = grappleFreeHangPrerequisites && !grounded;
         }
     }

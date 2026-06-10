@@ -3,6 +3,7 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.U2D.Physics;
+using UnityEngine;
 
 [BurstCompile]
 public struct GroundMapUpdate : IJob
@@ -136,7 +137,7 @@ public struct GroundMapUpdate : IJob
         {
             iter += sign;
             o += horizontalIncrement;
-            var castResults = CastAndRepair(o, horizontalIncrement, castTranslation);
+            var castResults = CastAndRepair(ref o, horizontalIncrement, castTranslation);
 
             if (SuccessfulCast(castResults))
             {
@@ -173,9 +174,11 @@ public struct GroundMapUpdate : IJob
         return;
     }
 
-    private readonly NativeArray<PhysicsQuery.WorldCastResult> CastAndRepair(float2 origin, float2 horizontalIncrement, float2 translation)
+
+    private readonly NativeArray<PhysicsQuery.WorldCastResult> CastAndRepair(ref float2 origin, float2 horizontalIncrement, float2 translation)
     {
         var cast = world.CastRay(origin, translation, filter);
+        // Debug.DrawLine((Vector2)origin, (Vector2)(origin + translation), Color.blue);
 
         if (SuccessfulCast(cast) && cast[0].fraction == 0)
         {
@@ -192,11 +195,14 @@ public struct GroundMapUpdate : IJob
                 origin += dt;
                 translation -= dt;
                 cast = world.CastRay(origin, horizontalIncrement, filter);
+                // Debug.DrawLine((Vector2)origin, (Vector2)(origin + horizontalIncrement), Color.yellow);
             }
 
+            origin += horizontalIncrement; 
             if (!SuccessfulCast(cast))//our last horizontal cast hit air, so we cast down from its end point
             {
-                cast = world.CastRay(origin + horizontalIncrement, translation, filter);
+                cast = world.CastRay(origin, translation, filter);
+                // Debug.DrawLine((Vector2)(origin + horizontalIncrement), (Vector2)(origin + horizontalIncrement + translation), Color.orange); 
             }
         }
 
@@ -435,7 +441,8 @@ public struct GroundMapUpdate : IJob
         return (seg, uCoord);
     }
 
-    private static (float2 pt, float2 n) ClosestPointOnCapsule(float2 point, int seg, float uCoord, float2 u, float2 v, float2 center1, float2 center2, float radius)
+    private static (float2 pt, float2 n) ClosestPointOnCapsule(float2 point, int seg, float uCoord, 
+        float2 u, float2 v, float2 center1, float2 center2, float radius)
     {
         switch (seg)
         {

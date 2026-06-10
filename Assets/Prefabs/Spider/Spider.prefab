@@ -1716,7 +1716,7 @@ MonoBehaviour:
   health:
     maxHealth: 100
   mover:
-    drawGroundMapGizmos: 0
+    drawGroundMapGizmos: 1
     drawBodyGizmos: 0
     spiderBody:
       abdomenCapsuleSize: {x: 2.75, y: 2.3}
@@ -2204,13 +2204,13 @@ MonoBehaviour:
       drawGizmos: 0
       numNodes: 120
       minLength: 1.2
-      maxLength: 11
+      maxLength: 10
       baseShootSpeed: 18
       shootSpeedPowerUpRate: 4
       shootSpeedPowerUpMax: 3
       releaseRate: 6
       retractMaxTension: 2
-      carrySpringForce: 450
+      carrySpringForce: 400
       grappleSettings:
         collisionFilter:
           m_Categories:
@@ -2220,14 +2220,14 @@ MonoBehaviour:
           m_IgnoreFilter: 8
         collisionBounciness: 0.6
         dynamicCollisionForce: 0.8
-        width: 0.17
+        width: 0.185
         minNodeSpacing: 0.09
-        maxNodeSpacing: 0.095
+        maxNodeSpacing: 0.0905
         drag: 0.02
         nodeMass: 0.1
         terminusMass: 50
         constraintStiffness: 0.99
-        constraintIterations: 35
+        constraintIterations: 30
         itersPulledByOwner: 5
         dynamicAnchorSpringForce: 5
         dynamicAnchorSpringForceCap: 0.5
@@ -2305,7 +2305,8 @@ MonoBehaviour:
     maxSpeed: 6
     maxSpeedAirborne: 9
     settleTime: 0.35
-    friction: 10
+    frictionMin: 1
+    frictionMax: 25
     frictionModifier: 1
     preferredRideHeight: 0.875
     heightSpringForce: 450
@@ -2316,7 +2317,7 @@ MonoBehaviour:
     headRotationMinPos: 0
     headRotationMaxPos: 1
     balanceSpringForce: 650
-    airborneBalanceSpringForce: 50
+    airborneBalanceSpringForce: 40
     balanceSpringDamping: 0.25
     airborneBalanceSpringDamping: 0.04
     grappleScurryResistanceMax: 175
