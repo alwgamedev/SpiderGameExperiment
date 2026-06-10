@@ -69,6 +69,7 @@ public class FastRope
     public float MaxTension => maxTension.Value;
     public float2 CarryForce => carryForce.Value;
     public bool TerminusAnchored => terminusAnchorMode.Value != TerminusAnchorMode.notAnchored;
+    public bool StaticAnchored => terminusAnchorMode.Value == TerminusAnchorMode.staticAnchor;
     public float2 GrappleExtent { get; private set; }//recompute after each simulation step
     public bool JobsComplete => jobHandle.IsCompleted;
 

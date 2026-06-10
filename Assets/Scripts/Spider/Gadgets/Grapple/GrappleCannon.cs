@@ -36,6 +36,7 @@ public class GrappleCannon
 
     public bool GrappleEnabled => grapple != null && grapple.Enabled;
     public bool GrappleAnchored => GrappleEnabled && grapple.TerminusAnchored;
+    public bool GrappleStaticAnchored => GrappleEnabled && grapple.StaticAnchored;
     public float GrappleReleaseInput => spiderInput.SecondaryInput.y;
     public Vector2 LastCarryForce { get; private set; }
     public Vector2 GrappleExtent => grapple.GrappleExtent;

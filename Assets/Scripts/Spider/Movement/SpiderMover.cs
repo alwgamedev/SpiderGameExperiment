@@ -4,6 +4,7 @@ using Unity.U2D.Physics;
 using Unity.Collections;
 using System;
 using Unity.Mathematics;
+using UnityEngine.UIElements;
 
 [Serializable]
 public class SpiderMover
@@ -114,7 +115,7 @@ public class SpiderMover
     float LeanInput => spiderInput.SecondaryInput.x;
     float EffectiveRideHeight => crouchProgress > 0 ? (1 - crouchProgress * crouchHeightFraction) * preferredRideHeight : preferredRideHeight;
     float GroundMapRaycastLength => (grounded ? groundedExitToleranceFactor : groundedEntryToleranceFactor) * EffectiveRideHeight;
-    bool ForceFreeHang => grapple.GrappleAnchored && spiderInput.ShiftAction.IsPressed();
+    bool ForceFreeHang => grapple.GrappleStaticAnchored && spiderInput.ShiftAction.IsPressed();
     Vector2 Right => SpideyBody.LevelRight.direction;
     Vector2 Up => Right.CCWPerp();
     Vector2 OrientedGroundDirection => FacingRight ? groundDirection : -groundDirection;
@@ -270,8 +271,9 @@ public class SpiderMover
             needChangeDirection = false;
         }
 
-        bool lyingOnBack = SpideyBody.HasContact() && Up.y < MathTools.sin30;
-        if (canFlip && FlipInput && (grounded || lyingOnBack))
+        bool lyingOnBack = SpideyBody.HasContact() && Up.y < -MathTools.sin30;
+        bool alignedWithGroundDir = Vector2.Dot(Right, groundDirection) > MathTools.cos45;
+        if (canFlip && FlipInput && ((grounded && alignedWithGroundDir) || lyingOnBack))
         {
             //end flip if we come in contact with the ground
             canFlip = false;
@@ -335,7 +337,7 @@ public class SpiderMover
         {
             case Thruster.ThrustersUpdateResult.ChargeRanOut:
                 OnThrusterRanOutOfCharge();
-                if (!grounded && grapple.GrappleAnchored)
+                if (!grounded && grapple.GrappleStaticAnchored)
                 {
                     grappleFreeHangPrerequisites = true;
                     grapple.FreeHanging = true;
@@ -451,7 +453,7 @@ public class SpiderMover
         UpdateGrappleScurrying();//needs to be updated before changing direction
 
         //update freeHanging (needs to be done before changing direction)
-        if (grapple.GrappleAnchored)
+        if (grapple.GrappleStaticAnchored)
         {
             //hold shift to enter freehang/swing mode (if it's the default state, then repelling and direction change gets annoying)
             grappleFreeHangPrerequisites = HorizontalMoveInput == 0 || ForceFreeHang || thruster.Cooldown;
@@ -555,7 +557,7 @@ public class SpiderMover
         {
             var d = groundDirection;//OrientedRight;
             var vel = Vector2.Dot(Abdomen.linearVelocity, d);
-            var c = Mathf.Lerp(frictionMin, frictionMax, Mathf.Abs(vel) * maxSpeed);
+            var c = Mathf.Lerp(frictionMin, frictionMax, Mathf.Abs(vel));
             //^need to use a low friction when near rest in order to stabilize
             var f = frictionModifier * TotalMass * -Mathf.Sign(vel) * c * d;
             Abdomen.ApplyForceToCenter(f);
@@ -720,10 +722,10 @@ public class SpiderMover
         var tMax = tMin + heightSampleMax - heightSampleMin;
         Vector2 p = groundMap.AveragePoint(i, tMin, tMax);
 
-        var v = Vector2.Dot(Abdomen.GetWorldPointVelocity(p0), -Up);
+        var down = groundDirection.CWPerp();//not the right direction, but we don't want to compete with friction
+        var v = Vector2.Dot(Abdomen.linearVelocity, down);
         var d = p - p0;
         var l = d.magnitude;
-        var down = groundDirection.CWPerp();//not the right direction, but we don't want to compete with friction
         var f = (l - EffectiveRideHeight) * heightSpringForce;
         if (grapple.GrappleAnchored)
         {
@@ -786,7 +788,15 @@ public class SpiderMover
 
     private void UpdateGroundData()
     {
+        
         UpdateGroundMap();
+
+        if (!VerifyingJump())
+        {
+            SetGrounded(legSynch.AnyLegGrounded);
+            grapple.FreeHanging = grappleFreeHangPrerequisites && !grounded;
+        }
+
         var i = groundMap.FirstGroundHitFromCenter(FacingRight);
         if (i < 0 || !(i < groundMap.NumPoints))
         {
@@ -805,12 +815,6 @@ public class SpiderMover
         {
             var t = settleTimer / settleTime;
             balanceDirection = MathTools.CheapRotationalLerpClamped(balanceDirection, groundDirection, 1 - 0.5f * t, out _);
-        }
-
-        if (!VerifyingJump())
-        {
-            SetGrounded(legSynch.AnyLegGrounded);
-            grapple.FreeHanging = grappleFreeHangPrerequisites && !grounded;
         }
     }
 
