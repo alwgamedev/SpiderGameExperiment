@@ -279,8 +279,8 @@ MonoBehaviour:
   numCracksMin: 1
   numCracksMax: 1
   crackSpread: 4
-  splineMaxOffset: 0.2
-  splineSmoothingIterations: 8
+  splineMaxOffset: 0.1
+  splineSmoothingIterations: 5
   barySeedSpacing: 2
   bdryDistSmoothingIterations: 8
   perimeter: []

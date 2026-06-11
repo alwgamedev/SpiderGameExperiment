@@ -2,8 +2,7 @@
 using UnityEngine;
 using Unity.U2D.Physics;
 
-
-public class PhysicsBodyStarter : MonoBehaviour
+public class PhysicsBodyKit : MonoBehaviour
 {
     public PhysicsBody body;
     public PhysicsQuery.QueryFilter queryFilter;//set ignore filter in inspector; categories will be set automatically from shapeDef
@@ -17,34 +16,13 @@ public class PhysicsBodyStarter : MonoBehaviour
 
     enum ShapeType { Circle, Capsule, Box, Polygon };
 
-    private void OnValidate()
+    public void CreateBody()
     {
         if (body.isValid)
         {
-            body.SetBodyDefLive(bodyDef);//do it live
-            body.SetShapeDef(shapeDef);
-            queryFilter = shapeDef.contactFilter.ToQueryFilter(queryFilter.ignoreFilter);
+            body.Destroy();
         }
-    }
 
-    private void OnEnable()
-    {
-        if (body.isValid)
-        {
-            body.enabled = true;
-        }
-    }
-
-    private void OnDisable()
-    {
-        if (body.isValid)
-        {
-            body.enabled = false;
-        }
-    }
-
-    private void Start()
-    {
         bodyDef.position = transform.position;
         bodyDef.rotation = new PhysicsRotate(transform.rotation, PhysicsWorld.TransformPlane.XY);
 
@@ -74,6 +52,40 @@ public class PhysicsBodyStarter : MonoBehaviour
         body.transformObject = transform;
 
         PhysicsRegistry.RegisterBodyAndShapes(body);
+    }
+
+    private void OnValidate()
+    {
+        if (body.isValid)
+        {
+            body.SetBodyDefLive(bodyDef);//do it live
+            body.SetShapeDef(shapeDef);
+            queryFilter = shapeDef.contactFilter.ToQueryFilter(queryFilter.ignoreFilter);
+        }
+    }
+
+    private void OnEnable()
+    {
+        if (body.isValid)
+        {
+            body.enabled = true;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (body.isValid)
+        {
+            body.enabled = false;
+        }
+    }
+
+    private void Start()
+    {
+        if (!body.isValid)
+        {
+            CreateBody();
+        }
 
 #if UNITY_EDITOR
         SceneView.duringSceneGui += OnSceneGUI;

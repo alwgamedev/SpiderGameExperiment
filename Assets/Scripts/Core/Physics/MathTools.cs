@@ -31,6 +31,8 @@ public static class MathTools
     //public const float sin60 = cos30;
     //public const float tan60 = 1.732051f;//sqrt(3)
 
+    public static readonly float fixedDtInverse = 1 / Time.fixedDeltaTime;
+
     public enum OrientationXZ
     {
         front, back, right, left

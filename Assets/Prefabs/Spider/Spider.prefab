@@ -1764,7 +1764,7 @@ MonoBehaviour:
           m_Categories:
             bitMask: 2
           m_Contacts:
-            bitMask: 65792
+            bitMask: 66304
           m_GroupIndex: 0
         surfaceMaterial:
           m_Friction: 0
@@ -1833,7 +1833,7 @@ MonoBehaviour:
             m_Categories:
               bitMask: 2
             m_Contacts:
-              bitMask: 320
+              bitMask: 768
             m_GroupIndex: 0
           surfaceMaterial:
             m_Friction: 0
@@ -2293,7 +2293,7 @@ MonoBehaviour:
       m_Categories:
         bitMask: 18446744073709551615
       m_HitCategories:
-        bitMask: 196864
+        bitMask: 197376
       m_IgnoreFilter: 0
     shapeCapture:
       extents: {x: 50, y: 50}
@@ -2302,15 +2302,12 @@ MonoBehaviour:
     accelFactorFreeHanging: 14
     deadThrusterAccelFactor: 4
     thrustingAccelFactor: 48
-    accelCap: 5
-    gripStrength: 600
-    gripDamping: 50
+    accelCap: 2
     maxSpeed: 6
     maxSpeedAirborne: 9
     settleTime: 0.35
-    frictionMin: 1
-    frictionMax: 35
-    frictionModifier: 1
+    friction: 15
+    frictionCap: 1.75
     preferredRideHeight: 0.875
     heightSpringForce: 450
     heightSpringDamping: 10

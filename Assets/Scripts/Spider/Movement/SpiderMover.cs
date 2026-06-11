@@ -42,14 +42,11 @@ public class SpiderMover
     [SerializeField] float deadThrusterAccelFactor;
     [SerializeField] float thrustingAccelFactor;
     [SerializeField] float accelCap;
-    [SerializeField] float gripStrength;
-    [SerializeField] float gripDamping;
     [SerializeField] float maxSpeed;
     [SerializeField] float maxSpeedAirborne;
     [SerializeField] float settleTime;
-    [SerializeField] float frictionMin;
-    [SerializeField] float frictionMax;
-    [SerializeField] float frictionModifier;
+    [SerializeField] float friction;
+    [SerializeField] float frictionCap;
 
     [Header("Height Spring")]
     [SerializeField] float preferredRideHeight;
@@ -134,7 +131,7 @@ public class SpiderMover
     public Thruster Thruster => thruster;
     public GrappleCannon Grapple => grapple;
     public ref SpiderBody SpideyBody => ref spiderBody;
-    public PhysicsWorld World => SpideyBody.world;
+    public PhysicsWorld World => SpideyBody.World;
     public ref PhysicsBody Abdomen => ref SpideyBody.abdomen;
     public ref PhysicsBody Head => ref SpideyBody.head;
 
@@ -524,16 +521,13 @@ public class SpiderMover
         grapple.SetOrientation(FacingRight);
     }
 
-
     private void HandleMoveInput()
     {
-        //accelCap bc otherwise if velocity along movement direction is highly negative, we get ungodly rates of acceleration
-        //(and note that we are doing it in a way that scales with max speed)
         if (HorizontalMoveInput != 0)
         {
             if (grapple.FreeHanging)
             {
-                Abdomen.ApplyForce(TotalMass * (accelFactorFreeHanging * FreeHangingMoveDirection()), grapple.FreeHangLeveragePoint);
+                Abdomen.ApplyForce(TotalMass * accelFactorFreeHanging * FreeHangingMoveDirection(), grapple.FreeHangLeveragePoint);
             }
             else
             {
@@ -554,21 +548,20 @@ public class SpiderMover
             }
         }
 
-        //apply friction -- maybe this belongs in height spring function (then we can also make sure height spring does not fight with friction)
+        //apply friction aka tofurction
         if (grounded)
         {
-            var d = groundDirection;//OrientedRight;
+            var d = groundDirection;
             var vel = Vector2.Dot(Abdomen.linearVelocity, d);
-            var c = Mathf.Lerp(frictionMin, frictionMax, Mathf.Abs(vel));
-            //^need to use a low friction when near rest in order to stabilize
-            var f = frictionModifier * TotalMass * -Mathf.Sign(vel) * c * d;
+            var c = Mathf.Min(friction, frictionCap * Mathf.Abs(vel) * MathTools.fixedDtInverse);
+            var f = TotalMass * -Mathf.Sign(vel) * c * d;
             Abdomen.ApplyForceToCenter(f);
         }
 
         static void MoveBody(PhysicsBody body, Vector2 direction, float maxSpd, float accFactor, float accCap, float sMin)
         {
             var spd = Vector2.Dot(body.linearVelocity, direction);
-            var s = Mathf.Min(maxSpd - spd, accCap /** maxSpd*/);
+            var s = Mathf.Min(maxSpd - spd, accCap);
 
             if (s > sMin)
             {
@@ -731,7 +724,7 @@ public class SpiderMover
         Vector2 p = groundMap.AveragePoint(i, tMin, tMax);
 
         var down = groundDirection.CWPerp();//not the right direction, but we don't want to compete with friction
-        var v = Vector2.Dot(Abdomen.linearVelocity, down);
+        var v = Vector2.Dot(Abdomen.GetWorldPointVelocity(p0), down);
         var d = p - p0;
         var l = d.magnitude;
         var f = (l - EffectiveRideHeight) * heightSpringForce;
@@ -774,7 +767,7 @@ public class SpiderMover
 
     private void OnLanding()
     {
-        SetGravityScale(0f);
+        SetGravityScale(0);
         canEngageThruster = false;
     }
 

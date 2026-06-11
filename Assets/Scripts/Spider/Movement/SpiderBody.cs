@@ -34,23 +34,10 @@ public struct SpiderBody
     [NonSerialized] public PhysicsRotate abdomenRotationFromBase;
     PhysicsRotate abdomenBaseRotationFromLevel;
 
-    // [SerializeField] Vector2 abdomenCapsuleSize;//(width, height) -- full width and height
-    // [SerializeField] Vector2 abdomenCapsuleOffset;
-    // [SerializeField] Vector2 headCapsuleSize;
-    // [SerializeField] Vector2 headCapsuleOffset;
-    // [SerializeField] Vector2 grappleArmBoxSize;
-    // [SerializeField] Vector2 grappleArmBoxOffset;
-    /// <summary> (when facing right) </summary>
-
     float totalMass;
     bool facingRight;
 
-    // [SerializeField] PhysicsShapeDefinition shapeDef;
-    // [SerializeField] PhysicsFixedJointDefinition headJointDef;
-    // [SerializeField] PhysicsBodyDefinition bodyDef;
-    // [SerializeField] PBFDynamicObstacleSO fluidObstacle;
-
-    public readonly PhysicsWorld world => abdomen.world;
+    public readonly PhysicsWorld World => abdomen.world;
     public readonly bool FacingRight => facingRight;
     public readonly int Orientation => FacingRight ? 1 : -1;
     public readonly float TotalMass => totalMass;
@@ -79,14 +66,15 @@ public struct SpiderBody
             var gAbd = abdomen.gravityScale;
             abdomen.SetBodyDefLive(def.bodyDef);
             abdomenCapsule.definition = def.shapeDef;
-            grappleArm.definition = def.shapeDef;
+            var grappleArmShapeDef = def.shapeDef;
+            grappleArmShapeDef.density *= grappleArmDensityMultiplier;
+            grappleArm.definition = grappleArmShapeDef;
+            abdomen.ApplyMassFromShapes();
             abdomen.gravityScale = gAbd;
-
-            Debug.Log(abdomen.mass);
 
             var gHead = head.gravityScale;
             head.SetBodyDefLive(def.bodyDef);
-            head.SetShapeDef(def.shapeDef);//this also applies mass changes
+            head.SetShapeDef(def.shapeDef);
             head.gravityScale = gHead;
 
             headJoint.UpdateSettings(def.headJointDef);
@@ -148,6 +136,8 @@ public struct SpiderBody
         }
     }
 
+    const float grappleArmDensityMultiplier = 0.001f;
+
     public void CreatePhysicsBody(PhysicsRotate levelDirection, Transform abdomenRoot, Transform headRoot, Transform headBone,
         Transform grappleArmTransform, SpiderBodyDefinition spiderDef)
     {
@@ -167,7 +157,7 @@ public struct SpiderBody
         var boxOffset = spiderDef.grappleArmBoxOffset;
         var boxSize = spiderDef.grappleArmBoxSize;
         var grappleArmShapeDef = shapeDef;
-        grappleArmShapeDef.density *= 0.001f;
+        grappleArmShapeDef.density *= grappleArmDensityMultiplier;//so it doesn't throw off balance
         var grappleArmBox = GrappleArmWorldBox(grappleArmTransform, boxOffset, boxSize).InverseTransform(abdomen.transform);
         grappleArm = abdomen.CreateShape(grappleArmBox, grappleArmShapeDef);
 

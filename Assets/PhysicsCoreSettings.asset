@@ -24,7 +24,7 @@ MonoBehaviour:
     - 
     - 
     - Ground
-    - 
+    - Slippery Ground
     - 
     - 
     - 
@@ -105,9 +105,11 @@ MonoBehaviour:
     m_ContactFrequency: 30
     m_ContactDamping: 10
     m_ContactSpeed: 3
+    m_ContactRecycleDistance: 0.049999997
     m_MaximumLinearSpeed: 100
     m_DrawOptions: 4256
     m_DrawFillOptions: 7
+    m_DrawContactType: 4
     m_DrawFilter: 0
     m_DrawThickness: 1
     m_DrawFillAlpha: 0.1
@@ -149,8 +151,9 @@ MonoBehaviour:
     m_AngularDamping: 0
     m_GravityScale: 1
     m_SleepThreshold: 0.05
-    m_FastRotationAllowed: 0
+    m_CollisionThreshold: 0.5
     m_FastCollisionsAllowed: 0
+    m_FastRotationAllowed: 0
     m_SleepingAllowed: 1
     m_Awake: 1
     m_Enabled: 1
@@ -265,6 +268,7 @@ MonoBehaviour:
       position: {x: 0, y: 0}
       rotation:
         direction: {x: 1, y: 0}
+    m_EnableUnpinned: 0
     m_EnableSpring: 0
     m_SpringTargetAngle: 0
     m_SpringFrequency: 0
@@ -361,6 +365,7 @@ MonoBehaviour:
     m_CollideConnected: 0
   m_TransformChangeMode: 2
   m_ContactFilterMode: 0
+  m_ContactFilterGroupMode: 0
   m_MaximumWorlds: 128
   m_ConcurrentSimulations: 2
   m_LengthUnitsPerMeter: 1
