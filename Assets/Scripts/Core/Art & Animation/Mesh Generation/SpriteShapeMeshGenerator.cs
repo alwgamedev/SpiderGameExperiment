@@ -13,6 +13,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
 
     [SerializeField] SpriteShapeController spriteShapeController;
     [SerializeField] MeshFilter meshFilter;
+    [SerializeField] MeshRenderer meshRenderer;
     [SerializeField] int arcLengthSamples;//samples per spline segment used to calculate arc length
     [SerializeField] float splineSampleRate;//number of vertices per unit arc length
     [SerializeField] float maxTriangleArea;
@@ -124,7 +125,19 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         }
     }
 
-    void OnDestroy()
+    int offsetProperty = Shader.PropertyToID("_RandomOffset");
+
+    private void Start()
+    {
+        var propBlock = new MaterialPropertyBlock();
+        var offset = new Vector2(MathTools.RandomFloat(-10000, 10000), MathTools.RandomFloat(-10000, 10000));
+        propBlock.SetVector(offsetProperty, offset);
+        meshRenderer.SetPropertyBlock(propBlock);
+        meshRenderer.GetPropertyBlock(propBlock);
+        Debug.Log(propBlock.GetVector(offsetProperty));
+    }
+
+    private void OnDestroy()
     {
         if (mesh)
         {

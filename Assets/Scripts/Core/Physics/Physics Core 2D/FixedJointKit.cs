@@ -30,7 +30,10 @@ public class FixedJointKit : MonoBehaviour
 
     void OnValidate()
     {
-        joint.UpdateSettings(jointDef);
+        if (joint.isValid)
+        {
+            joint.UpdateSettings(jointDef);
+        }
     }
 
     void OnDrawGizmos()
@@ -43,9 +46,10 @@ public class FixedJointKit : MonoBehaviour
             var pB = bodyB.transform.TransformPoint(anchorB.position);
             Gizmos.color = Color.red;
             Gizmos.DrawLine(pA, pA + bodyA.transform.rotation * anchorA.rotation.direction);
-            Gizmos.DrawLine(pB, pB + bodyB.transform.rotation * anchorB.rotation.direction);
             Gizmos.color = Color.yellow;
-            Debug.DrawLine(pA, pB);
+            Gizmos.DrawLine(pA, pB);
+            Gizmos.color = Color.green;
+            Gizmos.DrawLine(pB, pB + bodyB.transform.rotation * anchorB.rotation.direction);
         }
     }
 

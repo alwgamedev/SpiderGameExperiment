@@ -264,6 +264,7 @@ MonoBehaviour:
   mesh: {fileID: 0}
   spriteShapeController: {fileID: 7156192905420763951}
   meshFilter: {fileID: 5291316002289393465}
+  meshRenderer: {fileID: 5711968811228248401}
   arcLengthSamples: 10
   splineSampleRate: 5
   maxTriangleArea: 1
