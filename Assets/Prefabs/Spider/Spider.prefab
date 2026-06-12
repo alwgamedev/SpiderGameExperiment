@@ -2219,8 +2219,12 @@ MonoBehaviour:
           m_Categories:
             bitMask: 18446744073709551615
           m_HitCategories:
-            bitMask: 65792
+            bitMask: 1048576
           m_IgnoreFilter: 8
+        anchorMask:
+          bitMask: 327680
+        dynamicCollisionMask:
+          bitMask: 524288
         collisionBounciness: 0.6
         dynamicCollisionForce: 0.8
         width: 0.185
@@ -2909,7 +2913,7 @@ MonoBehaviour:
       m_Categories:
         bitMask: 18446744073709551615
       m_HitCategories:
-        bitMask: 65792
+        bitMask: 1048576
       m_IgnoreFilter: 8
   jumpPreviewArrow:
     arrowNeck: {fileID: 9040078322212251582}

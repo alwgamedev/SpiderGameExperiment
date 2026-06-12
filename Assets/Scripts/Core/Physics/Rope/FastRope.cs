@@ -9,6 +9,8 @@ using UnityEngine.Rendering;
 public struct RopeSettings
 {
     public PhysicsQuery.QueryFilter collisionFilter;
+    public PhysicsMask anchorMask;
+    public PhysicsMask dynamicCollisionMask;
     public float collisionBounciness;
     public float dynamicCollisionForce;
     public float width;//full width of the rope (not half of it)
@@ -342,10 +344,10 @@ public class FastRope
 
         LockWrappers();
 
-        var integrateJob = IntegrateRope(dt * dt, 1, settings.collisionFilter, shapeCapture);
+        var integrateJob = IntegrateRope(dt * dt, 1, shapeCapture);
         var clearConstraintDelta = new ClearArrayJob<float4>(constraintDeltaF4);
         var calculateConstraints = CalculateConstraintsF4(ownerMass, terminusMass);
-        var applyConstraints = ApplyConstraintF4(settings.collisionFilter, shapeCapture);
+        var applyConstraints = ApplyConstraintF4(shapeCapture);
 
         var numActive = TerminusIndex - sourceIndex.Value;
 
@@ -432,11 +434,12 @@ public class FastRope
 
     //JOBS
 
-    private IntegrateRope IntegrateRope(float dt2, float timeScale, PhysicsQuery.QueryFilter collisionFilter, NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture)
+    private IntegrateRope IntegrateRope(float dt2, float timeScale, NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture)
     {
         return new(position, lastPosition, shapeCapture,
-            terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode.native,
-            ownerWorld, collisionFilter, ownerWorld.gravity, settings.drag, settings.NodeRadius, settings.nodeMass, settings.collisionBounciness, settings.dynamicCollisionForce,
+            terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode.native, settings.anchorMask,
+            ownerWorld, settings.collisionFilter, settings.dynamicCollisionMask, ownerWorld.gravity, settings.drag, 
+            settings.NodeRadius, settings.nodeMass,  settings.collisionBounciness, settings.dynamicCollisionForce, 
             dt2, timeScale, sourceIndex.Value + 1);
     }
 
@@ -445,24 +448,12 @@ public class FastRope
         return new(position, constraintDeltaF4, nodeSpacing.Value, settings.nodeMass, sourceMass, terminusMass, settings.constraintStiffness, sourceIndex.Value);
     }
 
-    /// <summary> Batch = 0 or 1 (because adjacent constraints may write to the same index in constraintDelta). </summary>
-    private CalculateRopeConstraints CalculateConstraints(float sourceMass, float terminusMass, int batch)
-    {
-        return new(position, lastPositionBuffer, nodeSpacing.Value, settings.nodeMass, sourceMass, terminusMass, settings.constraintStiffness, sourceIndex.Value, batch);
-    }
-
-    private ApplyRopeConstraintsF4 ApplyConstraintF4(PhysicsQuery.QueryFilter collisionFilter, NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture)
+    private ApplyRopeConstraintsF4 ApplyConstraintF4(NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture)
     {
         return new(constraintDeltaF4, position, lastPosition, shapeCapture,
-            terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode.native, ownerWorld, collisionFilter,
-            settings.NodeRadius, settings.nodeMass, settings.collisionBounciness, settings.dynamicCollisionForce, sourceIndex.Value);
-    }
-
-    private ApplyRopeConstraints ApplyConstraints(PhysicsQuery.QueryFilter collisionFilter, NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture)
-    {
-        return new(lastPositionBuffer, position, lastPosition, shapeCapture,
-            terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode.native, ownerWorld, collisionFilter,
-            settings.NodeRadius, settings.nodeMass, settings.collisionBounciness, settings.dynamicCollisionForce, sourceIndex.Value);
+            terminusAnchor, terminusAnchorLocalPos, terminusAnchorMode.native, ownerWorld, settings.anchorMask, settings.collisionFilter,
+            settings.dynamicCollisionMask, settings.NodeRadius, settings.nodeMass, settings.collisionBounciness, 
+            settings.dynamicCollisionForce, sourceIndex.Value);
     }
 
     private CorrectRopeSourcePosition CorrectSourcePosition(float2 sourcePosition)

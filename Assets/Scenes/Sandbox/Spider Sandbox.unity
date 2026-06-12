@@ -230,7 +230,7 @@ MonoBehaviour:
   shapeDef:
     contactFilter:
       m_Categories:
-        bitMask: 65536
+        bitMask: 1638400
       m_Contacts:
         bitMask: 18446744073709551615
       m_GroupIndex: 0
@@ -412,7 +412,7 @@ MonoBehaviour:
   shapeDef:
     contactFilter:
       m_Categories:
-        bitMask: 512
+        bitMask: 1049088
       m_Contacts:
         bitMask: 18446744073709551615
       m_GroupIndex: 0
@@ -579,7 +579,7 @@ MonoBehaviour:
   shapeDef:
     contactFilter:
       m_Categories:
-        bitMask: 256
+        bitMask: 1310976
       m_Contacts:
         bitMask: 18446744073709551615
       m_GroupIndex: 0
@@ -1108,7 +1108,7 @@ MonoBehaviour:
   shapeDef:
     contactFilter:
       m_Categories:
-        bitMask: 256
+        bitMask: 1310976
       m_Contacts:
         bitMask: 18446744073709551615
       m_GroupIndex: 0
@@ -2002,7 +2002,7 @@ MonoBehaviour:
   shapeDef:
     contactFilter:
       m_Categories:
-        bitMask: 256
+        bitMask: 1310976
       m_Contacts:
         bitMask: 18446744073709551615
       m_GroupIndex: 0
@@ -2154,7 +2154,7 @@ MonoBehaviour:
   shapeDef:
     contactFilter:
       m_Categories:
-        bitMask: 65536
+        bitMask: 1638400
       m_Contacts:
         bitMask: 18446744073709551615
       m_GroupIndex: 0
@@ -2572,7 +2572,7 @@ MonoBehaviour:
       m_Categories:
         bitMask: 131072
       m_Contacts:
-        bitMask: 196868
+        bitMask: 131844
       m_GroupIndex: 0
     surfaceMaterial:
       m_Friction: 0.4
@@ -3010,7 +3010,7 @@ MonoBehaviour:
   shapeDef:
     contactFilter:
       m_Categories:
-        bitMask: 256
+        bitMask: 1310976
       m_Contacts:
         bitMask: 18446744073709551615
       m_GroupIndex: 0
@@ -3275,7 +3275,7 @@ MonoBehaviour:
   shapeDef:
     contactFilter:
       m_Categories:
-        bitMask: 256
+        bitMask: 1310976
       m_Contacts:
         bitMask: 18446744073709551615
       m_GroupIndex: 0
@@ -9790,6 +9790,10 @@ PrefabInstance:
       propertyPath: bodyDef.m_TransformWriteMode
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3093966963722154442, guid: ff2c3baa4c7d2e649bc9dc84f9e83542, type: 3}
+      propertyPath: shapeDef.contactFilter.m_Categories.bitMask
+      value: 1048832
+      objectReference: {fileID: 0}
     - target: {fileID: 4007598523456811302, guid: ff2c3baa4c7d2e649bc9dc84f9e83542, type: 3}
       propertyPath: mesh
       value: 
@@ -15533,6 +15537,10 @@ PrefabInstance:
     - target: {fileID: 2867361545021054118, guid: ff2c3baa4c7d2e649bc9dc84f9e83542, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3093966963722154442, guid: ff2c3baa4c7d2e649bc9dc84f9e83542, type: 3}
+      propertyPath: shapeDef.contactFilter.m_Categories.bitMask
+      value: 1310976
       objectReference: {fileID: 0}
     - target: {fileID: 4007598523456811302, guid: ff2c3baa4c7d2e649bc9dc84f9e83542, type: 3}
       propertyPath: mesh
@@ -21293,6 +21301,10 @@ PrefabInstance:
     - target: {fileID: 2867361545021054118, guid: ff2c3baa4c7d2e649bc9dc84f9e83542, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3093966963722154442, guid: ff2c3baa4c7d2e649bc9dc84f9e83542, type: 3}
+      propertyPath: shapeDef.contactFilter.m_Categories.bitMask
+      value: 1310976
       objectReference: {fileID: 0}
     - target: {fileID: 4007598523456811302, guid: ff2c3baa4c7d2e649bc9dc84f9e83542, type: 3}
       propertyPath: mesh
@@ -30342,6 +30354,10 @@ PrefabInstance:
       propertyPath: pps.subdividedPolygon.Array.data[6].vertices.m_Vertex7.y
       value: -0.3286267
       objectReference: {fileID: 0}
+    - target: {fileID: 9093430336729837584, guid: ff2c3baa4c7d2e649bc9dc84f9e83542, type: 3}
+      propertyPath: m_ShadowShape2DComponent
+      value: 
+      objectReference: {fileID: 2137662005}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -30890,7 +30906,7 @@ Transform:
   m_GameObject: {fileID: 1853681538}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: -0.38268343, w: 0.92387956}
-  m_LocalPosition: {x: 26.76, y: -11.05, z: 0}
+  m_LocalPosition: {x: 30.4, y: -14.4, z: 0}
   m_LocalScale: {x: 8, y: 8, z: 8}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -30987,7 +31003,7 @@ MonoBehaviour:
   shapeDef:
     contactFilter:
       m_Categories:
-        bitMask: 256
+        bitMask: 1310976
       m_Contacts:
         bitMask: 18446744073709551615
       m_GroupIndex: 0
@@ -31296,6 +31312,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2051742198}
   m_CullTransparentMesh: 1
+--- !u!60 &2137662005 stripped
+PolygonCollider2D:
+  m_CorrespondingSourceObject: {fileID: 2817331644348789948, guid: ff2c3baa4c7d2e649bc9dc84f9e83542, type: 3}
+  m_PrefabInstance: {fileID: 1405184564}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &328100115394418497
 PrefabInstance:
   m_ObjectHideFlags: 0

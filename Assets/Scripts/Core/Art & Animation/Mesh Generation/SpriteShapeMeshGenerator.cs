@@ -125,7 +125,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         }
     }
 
-    int offsetProperty = Shader.PropertyToID("_RandomOffset");
+    readonly int offsetProperty = Shader.PropertyToID("_RandomOffset");
 
     private void Start()
     {
@@ -133,8 +133,6 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         var offset = new Vector2(MathTools.RandomFloat(-10000, 10000), MathTools.RandomFloat(-10000, 10000));
         propBlock.SetVector(offsetProperty, offset);
         meshRenderer.SetPropertyBlock(propBlock);
-        meshRenderer.GetPropertyBlock(propBlock);
-        Debug.Log(propBlock.GetVector(offsetProperty));
     }
 
     private void OnDestroy()

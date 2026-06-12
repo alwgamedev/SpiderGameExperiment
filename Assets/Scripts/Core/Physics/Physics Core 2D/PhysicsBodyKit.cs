@@ -31,20 +31,22 @@ public class PhysicsBodyKit : MonoBehaviour
         switch (geometryType)
         {
             case ShapeType.Circle:
-                body = PhysicsCoreHelper.CreateCircleBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef, geometryFloatParam, transform.localToWorldMatrix, out var shape);
+                body = PhysicsCoreHelper.CreateCircleBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef, geometryFloatParam, 
+                    transform.localToWorldMatrix, out _);
                 break;
             case ShapeType.Capsule:
                 Vector2 center = geometryVectorParam;
                 float radius = geometryFloatParam;
-                body = PhysicsCoreHelper.CreateCapsuleBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef, -center, center, radius, transform.localToWorldMatrix, out _);
+                body = PhysicsCoreHelper.CreateCapsuleBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef, 
+                    -center, center, radius, transform.localToWorldMatrix, out _);
                 break;
             case ShapeType.Box:
-                body = PhysicsCoreHelper.CreateBoxBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef, geometryVectorParam, transform.localToWorldMatrix, out _);
+                body = PhysicsCoreHelper.CreateBoxBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef, 
+                    geometryVectorParam, transform.localToWorldMatrix, out _);
                 break;
             case ShapeType.Polygon:
                 body = PhysicsCoreHelper.CreatePolygonBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef, transform.localToWorldMatrix,
                     GetComponent<PolygonPhysicsShapeComponent>().pps.subdividedPolygon);
-                //2do: PolygonGeometry.CreatePolygons has to do some work to split up the polygon, so ideally we can cache that data in edit mode
                 break;
         }
 

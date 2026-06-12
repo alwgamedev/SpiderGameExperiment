@@ -33,9 +33,9 @@ MonoBehaviour:
     - 
     - Grapple Dynamic Anchor
     - Grabber Claw Target
-    - 
-    - 
-    - 
+    - Grapple Static Anchor
+    - Grapple Dynamic Collision
+    - Grapple Collision
     - 
     - 
     - 
