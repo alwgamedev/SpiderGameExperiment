@@ -280,8 +280,6 @@ MonoBehaviour:
   numCracksMin: 1
   numCracksMax: 1
   crackSpread: 4
-  splineMaxOffset: 0.1
-  splineSmoothingIterations: 5
   barySeedSpacing: 2
   bdryDistSmoothingIterations: 8
   perimeter: []
@@ -725,7 +723,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PolygonPhysicsShape
   pps:
     shapeSource: 2
-    optimizationTolerance: 0.05
+    optimizationTolerance: 0.025
     originalPolygon:
     - {x: -1, y: -1}
     - {x: -1.0308768, y: -0.9778544}

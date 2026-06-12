@@ -83,20 +83,23 @@ Material:
     m_Ints: []
     m_Floats:
     - _BoundaryHalfWidth: 0.22
-    - _BoundaryIntensity: 0.7
-    - _BoundaryScale: 0.628
+    - _BoundaryIntensity: 0.4
+    - _BoundaryNoiseBuffer: 0.075
+    - _BoundaryNoiseHeight: 1
+    - _BoundaryNoiseScale: 0.075
+    - _BoundaryScale: 0.3
     - _BoundarySteepness: 0.75
     - _BoundaryWidth: 0.5
     - _BoundaryWidthMax: 100
     - _Color1Weight: 0.6
     - _Color2: 0
-    - _Color2Weight: 0.12
-    - _Color3Weight: 0.25
+    - _Color2Weight: 0.1
+    - _Color3Weight: 0.4
     - _Color4: 0
     - _ColorNoiseDensity: 1
     - _ColorNoiseScale: 0.005
     - _ColorNoiseScale1: 0.001
-    - _ColorNoiseScale2: 0.05
+    - _ColorNoiseScale2: 0.1
     - _ColorNoiseScale3: 0.005
     - _ColorNoiseScale4: 0.0025
     - _ColorSubNoiseDensity: 0.47
@@ -105,11 +108,11 @@ Material:
     - _EnableExternalAlpha: 0
     - _HeightMax1: 40
     - _HeightMax2: 5
-    - _HeightMax3: 0.75
+    - _HeightMax3: 0.5
     - _HeightMin: 11.25
     - _HeightMin1: 0
     - _HeightMin2: -5
-    - _HeightMin3: -0.5
+    - _HeightMin3: -0.25
     - _HeightNoise1: 0.1
     - _HeightNoise2: 0
     - _HeightScale: 40
@@ -144,7 +147,7 @@ Material:
     - _UndersideCutoff: -0.5
     - _UndersideIntensity: 0.75
     - _UndersideScale: 1.25
-    - _UndersideWidthMax: 56.83
+    - _UndersideWidthMax: 5
     - _VoronoiHtScale: 4.05
     - _VoronoiHtScale1: 0.1
     - _VoronoiMin: 0
@@ -160,19 +163,20 @@ Material:
     m_Colors:
     - White: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 0.4716981, g: 0.3490871, b: 0.31950873, a: 1}
-    - _Color1: {r: 0.554717, g: 0.32088014, b: 0.1706016, a: 1}
+    - _Color1: {r: 0.6226415, g: 0.40703604, b: 0.27607688, a: 1}
     - _Color1a: {r: 0.50801086, g: 0.33333334, b: 0.60784316, a: 1}
     - _Color1b: {r: 0.4203132, g: 0.46000823, b: 0.90188676, a: 1}
-    - _Color2: {r: 0.235466, g: 0.21921672, b: 0.3735848, a: 1}
+    - _Color2: {r: 0.013136267, g: 0.19928934, b: 0.4641509, a: 1}
     - _Color2a: {r: 0.6528301, g: 0.35606956, b: 0.1367248, a: 1}
     - _Color2b: {r: 0.7433963, g: 0.42952487, b: 0.34084013, a: 1}
-    - _Color3: {r: 0.12726948, g: 0.24528301, b: 0.19170797, a: 1}
-    - _Color4: {r: 0.4490565, g: 0.2131914, b: 0.16521885, a: 1}
+    - _Color3: {r: 0.110879295, g: 0.3283019, b: 0.30024737, a: 1}
+    - _Color4: {r: 0.6901961, g: 0.34698436, b: 0.29411766, a: 1}
     - _HighlightColor: {r: 0.7059096, g: 0.75542635, b: 0.94716984, a: 1}
     - _HighlightColor1: {r: 0.4415095, g: 0.362371, b: 0.362371, a: 1}
     - _HighlightColor2: {r: 0.8792453, g: 0.25050196, b: 0.25050196, a: 1}
     - _PositionOffset: {r: 0, g: 0, b: 0, a: 0}
+    - _RandomOffset: {r: 0, g: 0, b: 0, a: 0}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
-    - _ShadowColor: {r: 0.5245282, g: 0.4503025, b: 0.46729884, a: 1}
+    - _ShadowColor: {r: 0.3886792, g: 0.33954427, b: 0.3559226, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

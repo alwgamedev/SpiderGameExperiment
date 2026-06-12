@@ -29,8 +29,6 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
     [SerializeField] float numCracksMin;//per unit area
     [SerializeField] float numCracksMax;
     [SerializeField] float crackSpread;
-    [SerializeField] float splineMaxOffset;
-    [SerializeField] float splineSmoothingIterations;
     [SerializeField] int barySeedSpacing;
     [SerializeField] int bdryDistSmoothingIterations;
     [SerializeField] Vector2[] perimeter;
@@ -51,11 +49,10 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         }
 
         var seed = (uint)MathTools.RNG.Next(1, int.MaxValue);
-        var rng = new Unity.Mathematics.Random(seed);
+        // var rng = new Unity.Mathematics.Random(seed);
 
         var vertices = new NativeList<Vector2>(Allocator.TempJob);
         SplineSampler.SampleSpline(spriteShapeController.spline, arcLengthSamples, splineSampleRate, vertices);
-        SplineSampler.RandomizeSpline(vertices.AsArray(), splineMaxOffset, splineSmoothingIterations, rng, transform);
         var (bbMin, bbMax) = BoundingBox(vertices.AsArray());
 
         var triangulator = Triangulate(vertices.AsArray(), maxTriangleArea, minAngleDeg);//TempJob allocated
@@ -64,6 +61,14 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         var positions = triangulator.Output.Positions;
         var triangles = triangulator.Output.Triangles;
         var halfEdges = triangulator.Output.Halfedges;
+
+        if (triangles.Length == 0)
+        {
+            //can happen if your polygon is invalid. this makes sure things get properly disposed.
+            triangulator.Dispose();
+            Debug.LogError("Triangulation failed.");
+            return;
+        }
 
         var boundaryEdges = new NativeList<int>(Allocator.Temp);
         GetBoundaryEdges(boundaryEdges, halfEdges);
@@ -434,7 +439,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
     private static void FillDistToBorder(NativeArray<Vector4> arr, ReadOnlySpan<Vector2> positions,
         ReadOnlySpan<int> triangles, ReadOnlySpan<int> boundaryEdges, int smoothingIterations)
     {
-        NativeArray<float> boundaryHalfWidth = new(boundaryEdges.Length, Allocator.Temp);
+        NativeArray<float> boundaryWidth = new(boundaryEdges.Length, Allocator.Temp);
         for (int i = 0; i < boundaryEdges.Length; i++)
         {
             var v0 = triangles[boundaryEdges[i]];
@@ -460,16 +465,16 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
                 }
             }
 
-            boundaryHalfWidth[i] = 0.5f * minDist;
+            boundaryWidth[i] = minDist;
         }
 
         for (int iter = 0; iter < smoothingIterations; iter++)
         {
-            var iPrev = boundaryHalfWidth.Length - 1;
-            for (int i = 0; i < boundaryHalfWidth.Length; i++)
+            var iPrev = boundaryWidth.Length - 1;
+            for (int i = 0; i < boundaryWidth.Length; i++)
             {
-                var iNext = (i + 1) % boundaryHalfWidth.Length;
-                boundaryHalfWidth[i] = 0.25f * boundaryHalfWidth[i] + 0.375f * (boundaryHalfWidth[iPrev] + boundaryHalfWidth[iNext]);
+                var iNext = (i + 1) % boundaryWidth.Length;
+                boundaryWidth[i] = 0.25f * boundaryWidth[i] + 0.375f * (boundaryWidth[iPrev] + boundaryWidth[iNext]);
                 iPrev = i;
             }
         }
@@ -500,7 +505,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
 
             var minDist = math.sqrt(minDist2);
             var u = (closestBdryPt - p).normalized;
-            arr[i] = new(minDist, boundaryHalfWidth[minJ], u.x, u.y);
+            arr[i] = new(minDist, boundaryWidth[minJ], u.x, u.y);
         }
 
         for (int i = 0; i < boundaryEdges.Length; i++)

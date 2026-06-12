@@ -21081,12 +21081,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 837259404908941842, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5222157793995484295, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
+      propertyPath: staticObstacleSource.Array.size
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5222157793995484295, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
       propertyPath: 'staticObstacleSource.Array.data[0]'
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1396508138}
     - target: {fileID: 5222157793995484295, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
       propertyPath: 'staticObstacleSource.Array.data[1]'
       value: 
@@ -31096,6 +31100,79 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
+--- !u!1001 &1915371549
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 837259404908941842, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
+      propertyPath: m_Name
+      value: PB Fluid (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 837259404908941842, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5222157793995484295, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
+      propertyPath: 'staticObstacleSource.Array.data[0]'
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5222157793995484295, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
+      propertyPath: 'staticObstacleSource.Array.data[1]'
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5222157793995484295, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
+      propertyPath: 'staticObstacleSource.Array.data[2]'
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5648694684584665525, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 7.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5648694684584665525, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 5.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5648694684584665525, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5648694684584665525, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5648694684584665525, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5648694684584665525, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5648694684584665525, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5648694684584665525, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5648694684584665525, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5648694684584665525, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: a7564e18ad2409a4d9ab7d7d283868c6, type: 3}
 --- !u!1 &1945437830
 GameObject:
   m_ObjectHideFlags: 0
@@ -31639,6 +31716,7 @@ SceneRoots:
   - {fileID: 68448495}
   - {fileID: 939140015}
   - {fileID: 1480233300}
+  - {fileID: 1915371549}
   - {fileID: 1405184564}
   - {fileID: 1616337065}
   - {fileID: 923559305}

@@ -39,19 +39,11 @@ public struct PolygonPhysicsShape
                         var v0 = vertices[j];
                         var v1 = vertices[j + 1];
                         Handles.DrawLine(v0, v1);
-                        //var midpoint = 0.5f * (v0 + v1);
-                        //Handles.DrawLine(midpoint, midpoint + 0.25f * geom.normals[j]);
                     }
 
                     var w0 = vertices[ct - 1];
                     var w1 = vertices[0];
                     Handles.DrawLine(w0, w1);
-                    //var nidpoint = 0.5f * (w0 + w1);
-                    //Handles.DrawLine(nidpoint, nidpoint + 0.25f * geom.normals[ct - 1]);
-
-                    //testing circle algorithm
-                    //var circle = SmallestEnclosingCircle(vertices);
-                    //Handles.DrawWireArc(circle.center, Vector3.forward, Vector3.right, 360, circle.radius);
                 }
             }
         }
@@ -63,17 +55,6 @@ public struct PolygonPhysicsShape
         {
             OnDrawGizmos(subdividedPolygon, transform.localToWorldMatrix);
         }
-        //if (optimizedPolygon != null && optimizedPolygon.Length > 0)
-        //{
-        //    Gizmos.color = Color.green;
-        //    for (int i = 1; i < optimizedPolygon.Length; i++)
-        //    {
-        //        Gizmos.DrawLine(transform.TransformPoint(optimizedPolygon[i - 1]), transform.TransformPoint(optimizedPolygon[i]));
-        //    }
-
-        //    Gizmos.DrawLine(transform.TransformPoint(optimizedPolygon[^1]), transform.TransformPoint(optimizedPolygon[0]));
-        //    //^this is why we check length > 0 (just avoid one more annoying error in the editor)
-        //}
     }
 
     public void SetPolygonColliderPoints(GameObject go)
@@ -120,6 +101,8 @@ public struct PolygonPhysicsShape
                 GetShapeFromSpriteShapeMeshGenerator(source.GetComponent<SpriteShapeMeshGenerator>());
                 break;
         }
+
+        CopyOriginalToOptimized();
         EditorUtility.SetDirty(owner);
         PrefabUtility.RecordPrefabInstancePropertyModifications(owner);
     }
@@ -129,8 +112,6 @@ public struct PolygonPhysicsShape
         var shape = sr.sprite.GetPhysicsShape(0);
         Array.Resize(ref originalPolygon, shape.Length);
         shape.CopyTo(originalPolygon);
-
-        CopyOriginalToOptimized();
     }
 
     public void GetShapeFromSpriteShape(SpriteShapeController ssc)
@@ -138,9 +119,6 @@ public struct PolygonPhysicsShape
         var splineSample = new NativeList<Vector2>(Allocator.Temp);
         SplineSampler.SampleSpline(ssc.spline, spriteShapeArcLengthSamplesPerSegment, spriteShapeSamplesPerUnitArcLength, splineSample);
         originalPolygon = splineSample.ToArray();
-        splineSample.Dispose();
-
-        CopyOriginalToOptimized();
     }
 
     public void GetShapeFromSpriteShapeMeshGenerator(SpriteShapeMeshGenerator ssmg)
@@ -148,8 +126,6 @@ public struct PolygonPhysicsShape
         var perimeter = ssmg.GetPerimeter();
         Array.Resize(ref originalPolygon, perimeter.Length);
         perimeter.CopyTo(originalPolygon);
-
-        CopyOriginalToOptimized();
     }
 
     private void CopyOriginalToOptimized()

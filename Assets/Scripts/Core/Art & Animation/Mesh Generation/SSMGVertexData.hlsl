@@ -34,17 +34,6 @@
         NormalZ_float(height, worldPos, nz);
     }
 
-    void SSMGDistToBdry_float(float2 objectScale, float distToBdry, out float d)
-    {
-        float scale = max(objectScale.x, objectScale.y);
-        d = scale * distToBdry;
-    }
-
-    void SSMGDistToBdry_half(float2 objectScale, float distToBdry, out float d)
-    {
-        SSMGDistToBdry_float(objectScale, distToBdry, d);
-    }
-
     void SSMGShadow_float(float concavity, float concavityStrength, float underside, float undersideStrength,
         float border, float borderStrength, float crack, float crackStrengthMin,  float crackStrengthMax,
         float crackSpread, float crackSpreadStrengthMin, float crackSpreadStrengthMax, float crackNoise, 
@@ -74,8 +63,8 @@
     //to get the "local thickness" (in the range [0,1]).
     //-gradient of baryCoord has length = 1 / (height of the triangle) (in direction corresponding to that bary coord)
     //-we need to go from the provided screen space partial derivatives back to world space partial derivatives,
-    //so we use jacInv = (dx/dxWorld, dy/dxWorld, dx/dyWorld, dy/dyWorld) the jacobian
-    //to the transformation (xWorld, yWorld) -> (xScreen, yScreen)
+    //so we use jacInv = (dx/dxWorld, dy/dxWorld, dx/dyWorld, dy/dyWorld),
+    //the jacobian to the transformation (xWorld, yWorld) -> (xScreen, yScreen)
     float HeightInverse(float baryCoord, float4 jacInv)
     {
         float2 gradScreen = float2(ddx(baryCoord), ddy(baryCoord));
