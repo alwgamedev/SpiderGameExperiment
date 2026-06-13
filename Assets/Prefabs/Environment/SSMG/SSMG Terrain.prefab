@@ -723,7 +723,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PolygonPhysicsShape
   pps:
     shapeSource: 2
-    optimizationTolerance: 0.025
+    optimizationTolerance: 0.05
     originalPolygon:
     - {x: -1, y: -1}
     - {x: -1.0308768, y: -0.9778544}

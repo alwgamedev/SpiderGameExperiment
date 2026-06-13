@@ -2310,7 +2310,7 @@ MonoBehaviour:
     maxSpeed: 6
     maxSpeedAirborne: 9
     settleTime: 0.35
-    friction: 15
+    friction: 18
     frictionCap: 1.75
     preferredRideHeight: 0.875
     heightSpringForce: 450
