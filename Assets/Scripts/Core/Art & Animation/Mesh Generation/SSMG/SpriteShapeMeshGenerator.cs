@@ -124,10 +124,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
 
     public void ApplyMesh()
     {
-        if (meshFilter && mesh)
-        {
-            meshFilter.mesh = mesh;
-        }
+        meshFilter.sharedMesh = mesh;
     }
 
     readonly int offsetProperty = Shader.PropertyToID("_RandomOffset");

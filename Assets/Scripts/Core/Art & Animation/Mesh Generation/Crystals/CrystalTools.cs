@@ -3,7 +3,7 @@ using UnityEngine;
 
 public static class CrystalTools
 {
-    public static Mesh CrystalMesh()
+    public static Mesh GenerateCrystalMesh()
     {
         var crystal = StartingCrystal(Allocator.Temp);
 
