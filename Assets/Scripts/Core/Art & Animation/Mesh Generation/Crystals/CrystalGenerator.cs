@@ -4,15 +4,17 @@ public class CrystalGenerator : MonoBehaviour
 {
     [SerializeField] Mesh mesh;
     [SerializeField] MeshFilter meshFilter;
+    [SerializeField] int numLopsMin;
+    [SerializeField] int numLopsMax;
 
-    public void Generate()
+    public void GenerateMesh()
     {
         if (mesh)
         {
             DestroyImmediate(mesh);
         }
 
-        mesh = CrystalTools.GenerateCrystalMesh();
+        mesh = CrystalTools.GenerateCrystalMesh(numLopsMin, numLopsMax);
         meshFilter.sharedMesh = mesh;
     }
 

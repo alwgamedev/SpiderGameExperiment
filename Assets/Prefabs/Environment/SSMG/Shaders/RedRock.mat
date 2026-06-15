@@ -85,8 +85,8 @@ Material:
     - _BoundaryHalfWidth: 0.22
     - _BoundaryIntensity: 0.25
     - _BoundaryNoiseBuffer: 0.07
-    - _BoundaryNoiseHeight: 1
-    - _BoundaryNoiseScale: 0.1
+    - _BoundaryNoiseHeight: 1.25
+    - _BoundaryNoiseScale: 0.05
     - _BoundaryScale: 0.5
     - _BoundarySteepness: 0.75
     - _BoundaryWidth: 0.5

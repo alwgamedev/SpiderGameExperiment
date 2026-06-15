@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: eefd51e18a19f8648a5cbe0171a24e7a
+guid: 514addd3688f62f42994e0e31904565b
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -10,9 +10,11 @@ ScriptedImporter:
   script: {fileID: 11500000, guid: 625f186215c104763be7675aa2d941aa, type: 3}
   useAsTemplate: 0
   exposeTemplateAsShader: 0
+  indexedData: {instanceID: 0}
   template:
     name: 
     category: 
     description: 
     icon: {instanceID: 0}
     thumbnail: {instanceID: 0}
+    order: 0

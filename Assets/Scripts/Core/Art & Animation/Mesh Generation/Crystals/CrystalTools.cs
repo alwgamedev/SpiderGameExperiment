@@ -1,11 +1,13 @@
+using JetBrains.Annotations;
 using Unity.Collections;
 using UnityEngine;
 
 public static class CrystalTools
 {
-    public static Mesh GenerateCrystalMesh()
+    public static Mesh GenerateCrystalMesh(int numLopsMin, int numLopsMax)
     {
-        var crystal = StartingCrystal(Allocator.Temp);
+        int numLops = MathTools.RNG.Next(numLopsMin, numLopsMax);
+        var crystal = RandomCrystal(numLops, Allocator.Temp);
 
         var vertices = crystal.vertex;
         Vector2 bbMin = vertices[0];
@@ -18,10 +20,14 @@ public static class CrystalTools
         }
 
         var bbSpan = bbMax - bbMin;
-        var uv = new NativeArray<Vector2>(vertices.Length, Allocator.Temp);
+        var uv = new NativeArray<Vector3>(vertices.Length, Allocator.Temp);
         for (int i = 0; i < vertices.Length; i++)
         {
-            uv[i] = ((Vector2)vertices[i] - bbMin) / bbSpan;
+            var v = vertices[i];
+            var w = ((Vector2)vertices[i] - bbMin) / bbSpan;
+            uv[i] = new(w.x, w.y, v.z);//store height in uv0.z
+            v.z = 0;
+            vertices[i] = v;
         }
 
         var triangles = new NativeList<int>(Allocator.Temp);
@@ -31,27 +37,14 @@ public static class CrystalTools
         {
             var start = faceStart[i];
             var end = faceStart[i + 1];
-            var faceSize = end - start;
 
-            if (faceSize == 3)
+            //triangulate the face
+            var v0 = face[start];
+            for (int j = start + 1; j < end - 1; j++)
             {
-                triangles.Add(face[start]);
-                triangles.Add(face[start + 1]);
-                triangles.Add(face[start + 2]);
-            }
-            else if (faceSize == 4)
-            {
-                triangles.Add(face[start]);
-                triangles.Add(face[start + 1]);
-                triangles.Add(face[start + 2]);
-
-                triangles.Add(face[start]);
-                triangles.Add(face[start + 2]);
-                triangles.Add(face[start + 3]);
-            }
-            else
-            {
-                Debug.Log("Crystal faces should have <= 4 vertices...");
+                triangles.Add(v0);
+                triangles.Add(face[j]);
+                triangles.Add(face[j + 1]);
             }
         }
 
@@ -65,7 +58,7 @@ public static class CrystalTools
 
     struct Crystal
     {
-        //in our crystals all vertices will have degree 3
+        //all vertices will have degree 3
         //and all faces have 3 or 4 sides
         public NativeList<Vector3> vertex;
         public NativeList<int> face;
@@ -90,22 +83,41 @@ public static class CrystalTools
         }
     }
 
-    static Vector3 RandomV3(float xMin, float xMax, float yMin, float yMax, float zMin, float zMax)
+    static Crystal RandomCrystal(int numLops, Allocator allocator)
     {
-        return new(MathTools.RandomFloat(xMin, xMax), MathTools.RandomFloat(yMin, yMax),
-            MathTools.RandomFloat(zMin, zMax));
+        var c = StartingCrystal(allocator);
+        while (numLops > 0)
+        {
+            var n = c.vertex.Length;
+            for (int i = 0; i < n; i++)
+            {
+                LopVertex(c, i);
+            }
+            numLops--;
+        }
+        // while (numLops > 0)
+        // {
+        //     var v = MathTools.RNG.Next(c.vertex.Length);
+        //     LopVertex(c, v);
+        //     numLops--;
+        // }
+
+        return c;
     }
 
     static Crystal StartingCrystal(Allocator allocator)
     {
-        var v0 = RandomV3(-.625f, -.5f, -.625f, -.5f, 0, 0);
-        var v1 = RandomV3(-.625f, -.5f, .5f, .625f, 0, 0);
-        var v2 = RandomV3(.5f, .625f, 0.5f, 0.625f, 0, 0);
-        var v3 = RandomV3(0.5f, .625f, -.625f, -.5f, 0, 0);
-        var v4 = RandomV3(-.375f, -.25f, -.375f, -.25f, 1, 1);
-        var v5 = RandomV3(-.375f, -.25f, .25f, .375f, 1, 1);
-        var v6 = RandomV3(.25f, .375f, .25f, .375f, 1, 1);
-        var v7 = RandomV3(.25f, .375f, -.375f, -.25f, 1, 1);
+        //if you want to randomize the starting vertices,
+        //need to make sure faces are still planes 
+        //(when interior edges are parallel to outer edges, the interior points have to all have same height)
+        var v0 = new Vector3(-0.5f, -0.5f, 0);
+        var v1 = new Vector3(-0.5f, 0.5f, 0);
+        var v2 = new Vector3(0.5f, 0.5f, 0);
+        var v3 = new Vector3(0.5f, -0.5f, 0);
+        var v4 = new Vector3(-0.25f, -0.25f, .25f);
+        var v5 = new Vector3(-0.25f, 0.25f, .25f);
+        var v6 = new Vector3(0.25f, 0.25f, .25f);
+        var v7 = new Vector3(0.25f, -0.25f, .25f);
 
         var vertex = new NativeList<Vector3>(allocator) { v0, v1, v2, v3, v4, v5, v6, v7 };
         var face = new NativeList<int>(allocator)
@@ -136,6 +148,157 @@ public static class CrystalTools
             faceStart = faceStart,
             neighbor = neighbor
         };
+    }
+
+    static void LopVertex(Crystal crystal, int v)
+    {
+        var vertex = crystal.vertex;
+        var face = crystal.face;
+        var faceStart = crystal.faceStart;
+        var neighbor = crystal.neighbor;
+
+        var v0 = neighbor[3 * v];
+        var v1 = neighbor[3 * v + 1];
+        var v2 = neighbor[3 * v + 2];
+
+        //vertex positions
+        var p = vertex[v];
+        var p0 = vertex[v0];
+        var p1 = vertex[v1];
+        var p2 = vertex[v2];
+
+        //edge directions
+        var u0 = (p0 - p).normalized;
+        var u1 = (p1 - p).normalized;
+        var u2 = (p2 - p).normalized;
+
+        //outward face normals
+        //lop face's normal needs to be a nonnegative combination of these in order to stay above neighbor vertices
+        var n0 = Vector3.Cross(u1, u0);
+        var n1 = Vector3.Cross(u2, u1);
+        var n2 = Vector3.Cross(u0, u2);
+
+        //there may be one normal with n.z < 0 (if one of the faces is the underside)
+        //we need to make sure the lop face's normal has z > 0
+        var t0 = MathTools.RandomFloat(0.25f, 1f);
+        var t1 = MathTools.RandomFloat(0.25f, 1f);
+        var t2 = MathTools.RandomFloat(0.25f, 1f);
+
+        if (n0.z < 0)
+        {
+            t0 = Mathf.Min(t0, 0.9f * (-t1 * n1.z - t2 * n2.z) / n0.z);
+        }
+        else if (n1.z < 0)
+        {
+            t1 = Mathf.Min(t1, 0.9f * (-t0 * n0.z - t2 * n2.z) / n1.z);
+        }
+        else if (n2.z < 0)
+        {
+            t2 = Mathf.Min(t2, 0.9f * (-t0 * n0.z - t1 * n1.z) / n2.z);
+        }
+
+        //lop face's normal
+        var n = (t0 * n0 + t1 * n1 + t2 * n2).normalized;
+        Debug.Log($"n: {n}");
+
+        //our plane will be centered at p - d * n, where d does not exceed minDist to a neighbor
+        var dist0 = Vector3.Dot(p - p0, n);
+        var dist1 = Vector3.Dot(p - p1, n);
+        var dist2 = Vector3.Dot(p - p2, n);
+        var minDist = Mathf.Min(dist0, Mathf.Min(dist1, dist2));
+        var d = MathTools.RandomFloat(0.5f * minDist, 0.95f * minDist);
+        Debug.Log($"minDist {minDist}");
+
+        //new vertices replacing p
+        var q0 = Vector3.Lerp(p, p0, d / dist0);
+        var q1 = Vector3.Lerp(p, p1, d / dist1);
+        var q2 = Vector3.Lerp(p, p2, d / dist2);
+
+        Debug.Log($"Lopped vertex {p} with neighbors {p0}, {p1}, {p2}");
+        Debug.Log($"New face {q0}, {q1}, {q2}");
+
+        //now the hard part -- entering the data :P
+        var w0 = v;
+        var w1 = vertex.Length;
+        var w2 = w1 + 1;
+        vertex[v] = q0;//stick q0 in here rather than remove, so other vertices stay at same index
+        vertex.Add(q1);//add q1, q2 at the end of the list
+        vertex.Add(q2);
+
+        //update neighbors of p1, p2 (p0's nbrs already accurate, since q0 went in the old vert's slot)
+        ReplaceNeighbor(v1, v, w1);
+        ReplaceNeighbor(v2, v, w2);
+
+        //neighbors of q0
+        neighbor[3 * w0] = v0;
+        neighbor[3 * w0 + 1] = w1;
+        neighbor[3 * w0 + 2] = w2;
+
+        //neighbors of q1
+        neighbor.Add(v1);
+        neighbor.Add(w2);
+        neighbor.Add(w0);
+
+        //neighbors of w2
+        neighbor.Add(v2);
+        neighbor.Add(w0);
+        neighbor.Add(w1);
+
+        for (int i = 0; i < faceStart.Length - 1; i++)
+        {
+            var start = faceStart[i];
+            var end = faceStart[i + 1];
+            for (int j = start; j < end; j++)
+            {
+                if (face[j] == v)
+                {
+                    int wA, wB;
+                    var next = face[NextIndexInFace(j, start, end)];
+                    if (next == v0)
+                    {
+                        wA = w1;
+                        wB = w0;
+                    }
+                    else if (next == v1)
+                    {
+                        wA = w2;
+                        wB = w1;
+                    }
+                    else//next = v2
+                    {
+                        wA = w0;
+                        wB = w2;
+                    }
+
+                    face.InsertRange(j + 1, 1);
+                    face[j] = wA;
+                    face[j + 1] = wB;
+                    for (int k = i + 1; k < faceStart.Length; k++)
+                    {
+                        faceStart[k]++;
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        face.Add(w0);
+        face.Add(w1);
+        face.Add(w2);
+        faceStart.Add(face.Length);
+
+        void ReplaceNeighbor(int vert, int nbr, int newNbr)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                if (neighbor[3 * vert + i] == nbr)
+                {
+                    neighbor[3 * vert + i] = newNbr;
+                    return;
+                }
+            }
+        }
     }
 
     static int PrevIndexInFace(int j, int faceStart, int faceEnd)

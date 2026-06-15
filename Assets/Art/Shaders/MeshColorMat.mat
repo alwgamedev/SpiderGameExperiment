@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-2692561122472788194
+--- !u!114 &-2426345583743148563
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
@@ -20,8 +20,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: TerrainUV2TestMat
-  m_Shader: {fileID: -6465566751694194690, guid: 1bdf47a3837547945b1f07ec7094ad8f, type: 3}
+  m_Name: MeshColorMat
+  m_Shader: {fileID: -6465566751694194690, guid: f9f6f944debbca44fb067415a3ef07d9, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -41,7 +41,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: ff03b4727ed2e6543862f31469dd5ddb, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MaskTex:
@@ -66,22 +66,11 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _ConcaveShadowContrast: 1
-    - _ConcaveShadowStrength: 1
-    - _ConvexHighlightContrast: 1
-    - _ConvexHighlightStrength: 1
-    - _ConvexityMax: 0.5
-    - _ConvexityStrength: 10
     - _EnableExternalAlpha: 0
-    - _HighlightMax: 0.4
-    - _UndersideShadowContrast: 1
-    - _UndersideShadowStrength: 1
-    - _UppersideHighlightContrast: 1
-    - _UppersideHighlightStrength: 1
     - _ZWrite: 0
     m_Colors:
     - White: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.7207546, g: 0.461011, b: 0.461011, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
