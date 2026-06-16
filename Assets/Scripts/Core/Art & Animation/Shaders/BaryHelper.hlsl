@@ -6,6 +6,22 @@
 //to extract valid bary coords, we throw out one of the zeroes
 //and replace the other zero (if it occurs) with 1 - sum of other bary coords
 
+void MinBaryCoord_float(float4 bary, out float val)
+{
+    float4 opp = 1 - bary.yzwx - bary.zwxy - bary.wxyz;
+    float4 bad = step(-1E-05, -bary);
+    bary = lerp(bary, opp, bad);//replace any bad bary coords with their opposites
+    bad = step(-1E-05, -bary);
+    bary = lerp(bary, 1, bad);//replace any remaining bad coords with 1
+    float2 min2 = min(bary.xy, bary.zw);
+    val = min(min2.x, min2.y);
+}
+
+void MinBaryCoord_half(half4 bary, out half val)
+{
+    MinBaryCoord_float(bary, val);
+}
+
 void RepairBary3_float(float3 bary, out float3 baryOut)
 {
     float3 bad = step(-1E-05, -bary);

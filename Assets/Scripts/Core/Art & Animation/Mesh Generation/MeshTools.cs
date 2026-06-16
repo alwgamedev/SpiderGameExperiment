@@ -3,6 +3,7 @@ using Unity.Burst;
 using System;
 using UnityEngine;
 using Unity.Mathematics;
+using UnityEngine.Rendering;
 
 public static class MeshTools
 {
@@ -31,6 +32,29 @@ public static class MeshTools
         var v0 = triangles[edge];
         var v1 = triangles[NextIndexInTriangle(edge)];
         return (v0, v1);
+    }
+
+    [BurstCompile]
+    public static void GetHalfEdges(NativeArray<int> triangles, NativeArray<int> halfEdges)
+    {
+        halfEdges.FillArray(-1, 0, halfEdges.Length);
+        for (int i = 0; i < triangles.Length; i++)
+        {
+            var v0 = triangles[i];
+            var v1 = triangles[MeshTools.NextIndexInTriangle(i)];
+
+            for (int j = i + 1; j < triangles.Length; j++)
+            {
+                var w0 = triangles[j];
+                var w1 = triangles[MeshTools.NextIndexInTriangle(j)];
+
+                if (w0 == v1 && w1 == v0)
+                {
+                    halfEdges[i] = j;
+                    halfEdges[j] = i;
+                }
+            }
+        }
     }
 
     [BurstCompile]

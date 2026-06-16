@@ -72,8 +72,8 @@ Material:
     - _ZWrite: 0
     m_Colors:
     - White: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 0.8560899, g: 0.85660374, b: 0.74831605, a: 1}
-    - _EdgeColor: {r: 0.16981131, g: 0.0073691513, b: 0.107599385, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _EdgeColor: {r: 0.509434, g: 0.07593445, b: 0.07593445, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
     - _ShadowColor: {r: 0.554717, g: 0.554717, b: 0.554717, a: 1}
   m_BuildTextureStacks: []

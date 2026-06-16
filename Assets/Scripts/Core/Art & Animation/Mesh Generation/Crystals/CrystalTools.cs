@@ -49,27 +49,10 @@ public static class CrystalTools
         }
 
         var halfEdges = new NativeArray<int>(triangles.Length, Allocator.Temp);
-        halfEdges.FillArray(-1, 0, halfEdges.Length);
-        for (int i = 0; i < triangles.Length; i++)
-        {
-            var v0 = triangles[i];
-            var v1 = triangles[MeshTools.NextIndexInTriangle(i)];
-
-            for (int j = i + 1; j < triangles.Length; j++)
-            {
-                var w0 = triangles[j];
-                var w1 = triangles[MeshTools.NextIndexInTriangle(j)];
-
-                if (w0 == v1 && w1 == v0)
-                {
-                    halfEdges[i] = j;
-                    halfEdges[j] = i;
-                }
-            }
-        }
+        MeshTools.GetHalfEdges(triangles.AsArray(), halfEdges);
 
         var baryCoords = new NativeArray<Vector4>(vertices.Length, Allocator.Temp);
-        MeshTools.FillBaryCoords(baryCoords, triangles, halfEdges, out var baryMask);
+        MeshTools.FillBaryCoords(baryCoords, triangles, halfEdges, out _);
 
         var mesh = new Mesh();
         mesh.SetVertices(vertices.AsArray());
