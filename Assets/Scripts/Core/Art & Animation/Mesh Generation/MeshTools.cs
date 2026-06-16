@@ -6,7 +6,7 @@ using Unity.Mathematics;
 
 public static class MeshTools
 {
-    private static int PrevIndexInTriangle(int j)
+    public static int PrevIndexInTriangle(int j)
     {
         var k = j % 3;
         return k switch
@@ -16,7 +16,7 @@ public static class MeshTools
         };
     }
 
-    private static int NextIndexInTriangle(int j)
+    public static int NextIndexInTriangle(int j)
     {
         var k = j % 3;
         return k switch
@@ -26,7 +26,7 @@ public static class MeshTools
         };
     }
 
-    private static (int, int) EdgeVertices(int edge, ReadOnlySpan<int> triangles)
+    public static (int, int) EdgeVertices(int edge, ReadOnlySpan<int> triangles)
     {
         var v0 = triangles[edge];
         var v1 = triangles[NextIndexInTriangle(edge)];
@@ -34,7 +34,7 @@ public static class MeshTools
     }
 
     [BurstCompile]
-    private static int NextBoundaryEdge(int bdryEdge, ReadOnlySpan<int> halfEdges)
+    public static int NextBoundaryEdge(int bdryEdge, ReadOnlySpan<int> halfEdges)
     {
         var nextEdge = NextIndexInTriangle(bdryEdge);
         var he = halfEdges[nextEdge];
@@ -47,7 +47,7 @@ public static class MeshTools
     }
 
     [BurstCompile]
-    private static void GetBoundaryEdges(NativeList<int> edges, ReadOnlySpan<int> halfEdges)
+    public static void GetBoundaryEdges(NativeList<int> edges, ReadOnlySpan<int> halfEdges)
     {
         for (int i = 0; i < halfEdges.Length; i++)
         {
@@ -69,7 +69,7 @@ public static class MeshTools
     }
 
     [BurstCompile]
-    private static void CalculateBoundingBoxUV(NativeArray<Vector2> uv, ReadOnlySpan<Vector2> vertices, Vector2 bbMin, Vector2 bbMax)
+    public static void CalculateBoundingBoxUV(NativeArray<Vector2> uv, ReadOnlySpan<Vector2> vertices, Vector2 bbMin, Vector2 bbMax)
     {
         var bbSpan = bbMax - bbMin;
         for (int i = 0; i < vertices.Length; i++)
@@ -121,7 +121,7 @@ public static class MeshTools
         return true;
     }
 
-    static int BaryCoord(int mask, int coordIdx)
+    public static int BaryCoord(int mask, int coordIdx)
     {
         return (mask >> coordIdx) & 1;
     }

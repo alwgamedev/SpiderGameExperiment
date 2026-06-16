@@ -85,7 +85,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         // var seed = (uint)MathTools.RNG.Next(1, int.MaxValue);
         // var rng = new Unity.Mathematics.Random(seed);
 
-        CalculateBoundingBoxUV(uv, positions, bbMin, bbMax);
+        MeshTools.CalculateBoundingBoxUV(uv, positions, bbMin, bbMax);
         // FillBarycentricCoords(uv3, triangles, halfEdges, barySeedSpacing, out var baryMask);
         // FillBorderGeometry(uv1, positions, triangles, boundaryEdges, vertexGrid,
         //     convexitySpread, concavitySpread, topsideSpread, undersideSpread,
@@ -210,7 +210,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         float convexityMax, float concavityMax, float topsideMax, float undersideMax)
     {
         var e0 = boundaryEdges[^1];
-        var e0Verts = EdgeVertices(e0, triangles);
+        var e0Verts = MeshTools.EdgeVertices(e0, triangles);
         var u0 = (vertices[e0Verts.Item1] - vertices[e0Verts.Item2]).normalized;
 
         var uv1Float = uv1.Reinterpret<float>(16);
@@ -218,7 +218,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         for (int i = 0; i < boundaryEdges.Length; i++)
         {
             var e1 = boundaryEdges[i];
-            var e1Verts = EdgeVertices(e1, triangles);
+            var e1Verts = MeshTools.EdgeVertices(e1, triangles);
             var u1 = (vertices[e1Verts.Item2] - vertices[e1Verts.Item1]).normalized;
 
             var convexity = MathTools.Cross2D(u0, u1);
@@ -305,7 +305,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
 
             for (int j = 0; j < boundaryEdges.Length; j++)
             {
-                var edge = EdgeVertices(boundaryEdges[j], triangles);
+                var edge = MeshTools.EdgeVertices(boundaryEdges[j], triangles);
                 var p0 = positions[edge.Item1];
                 var p1 = positions[edge.Item2];
 
@@ -370,7 +370,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             for (int j = 0; j < crack.nodes.Length; j++)
             {
                 var node = crack.nodes[j];
-                var vert = Vertex(node.edge, node.outgoing != 0, triangles);
+                var vert = MeshTools.Vertex(node.edge, node.outgoing != 0, triangles);
                 var baryColor = baryMask[vert];
                 var offset = baryColor switch
                 {
@@ -583,14 +583,14 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         public float DistanceSqrd(Vector2 p, ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles)
         {
             var node0 = nodes[0];
-            var p0 = vertices[Vertex(node0.edge, node0.outgoing != 0, triangles)];
+            var p0 = vertices[MeshTools.Vertex(node0.edge, node0.outgoing != 0, triangles)];
             float minDist2 = math.distancesq(p, p0);
 
             for (int i = 1; i < nodes.Length; i++)
             {
                 var node = nodes[i];
-                var p2 = vertices[Vertex(node.edge, node.outgoing != 0, triangles)];
-                var p1 = vertices[Vertex(node.edge, node.outgoing == 0, triangles)];
+                var p2 = vertices[MeshTools.Vertex(node.edge, node.outgoing != 0, triangles)];
+                var p1 = vertices[MeshTools.Vertex(node.edge, node.outgoing == 0, triangles)];
                 minDist2 = math.min(minDist2, math.distancesq(p, p2));
 
                 var edge = p2 - p1;
@@ -611,8 +611,8 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             for (int i = 1; i < nodes.Length; i++)
             {
                 var m = nodes[i];
-                var v = Vertex(m.edge, m.outgoing != 0, triangles);
-                var w = Vertex(m.edge, m.outgoing == 0, triangles);
+                var v = MeshTools.Vertex(m.edge, m.outgoing != 0, triangles);
+                var w = MeshTools.Vertex(m.edge, m.outgoing == 0, triangles);
                 var p = transform.TransformPoint(vertices[v]);
                 var q = transform.TransformPoint(vertices[w]);
                 Debug.DrawLine(p, q, Color.green, drawTime);
@@ -626,7 +626,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
     {
         static bool Valid(int edge, bool outgoing, ReadOnlySpan<bool> seen, ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges)
         {
-            var v = Vertex(edge, outgoing, triangles);
+            var v = MeshTools.Vertex(edge, outgoing, triangles);
             return !seen[v] && !HasSeenNeighbor(edge, outgoing, seen, triangles, halfEdges);
         }
 
@@ -638,22 +638,24 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             var f = edge;
             var fOutgoing = outgoing;
 
-            while (TryGetNextEdgeCCW(f, fOutgoing, halfEdges, out f, out fOutgoing) && !EqualOrHalfEdges(f, edge, halfEdges))
+            while (MeshTools.TryGetNextEdgeCCW(f, fOutgoing, halfEdges, out f, out fOutgoing) 
+                && !MeshTools.EqualOrHalfEdges(f, edge, halfEdges))
             {
-                if (seen[Vertex(f, !fOutgoing, triangles)])
+                if (seen[MeshTools.Vertex(f, !fOutgoing, triangles)])
                 {
                     return true;
                 }
             }
 
             //if we hit a boundary edge while scanning CCW, go back to start and scan CW to make sure we get all neighbors
-            if (!EqualOrHalfEdges(f, edge, halfEdges) || (outgoing && halfEdges[edge] < 0))
+            if (!MeshTools.EqualOrHalfEdges(f, edge, halfEdges) || (outgoing && halfEdges[edge] < 0))
             {
                 f = edge;
                 fOutgoing = outgoing;
-                while (TryGetNextEdgeCW(f, fOutgoing, halfEdges, out f, out fOutgoing) && !EqualOrHalfEdges(f, edge, halfEdges))
+                while (MeshTools.TryGetNextEdgeCW(f, fOutgoing, halfEdges, out f, out fOutgoing) 
+                    && !MeshTools.EqualOrHalfEdges(f, edge, halfEdges))
                 {
-                    if (seen[Vertex(f, !fOutgoing, triangles)])
+                    if (seen[MeshTools.Vertex(f, !fOutgoing, triangles)])
                     {
                         return true;
                     }
@@ -688,7 +690,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             //find an edge containing that vertex, and make sure there is at least one valid neighboring vertex
             for (int i = 0; i < triangles.Length; i++)
             {
-                var edgeVerts = EdgeVertices(i, triangles);
+                var edgeVerts = MeshTools.EdgeVertices(i, triangles);
                 if (edgeVerts.Item1 == vert || edgeVerts.Item2 == vert)
                 {
                     var og = edgeVerts.Item1 == vert;
@@ -742,7 +744,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             ReadOnlySpan<Vector2> vertices, ReadOnlySpan<int> triangles, ref Vector2 bbMin, ref Vector2 bbMax)
         {
             nodes.Add(new() { edge = edge, outgoing = (ushort)math.select(0, 1, outgoing) });
-            var v = Vertex(edge, outgoing, triangles);
+            var v = MeshTools.Vertex(edge, outgoing, triangles);
             var p = vertices[v];
             bbMin = math.min(p, bbMin);
             bbMax = math.max(p, bbMax);
@@ -756,7 +758,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             var node = nodes[i];
             var edge = node.edge;
             var outgoing = node.outgoing != 0;
-            var vert = Vertex(edge, outgoing, triangles);
+            var vert = MeshTools.Vertex(edge, outgoing, triangles);
 
             if (numChildren != 0)
             {
@@ -772,17 +774,19 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
                 }
 
                 //first find all valid children (vertex not seen, has valid bary color, and edge direction has dot > 0 with previous edge)
-                while (TryGetNextEdgeCCW(f, fOutgoing, halfEdges, out f, out fOutgoing) && !EqualOrHalfEdges(f, edge, halfEdges))
+                while (MeshTools.TryGetNextEdgeCCW(f, fOutgoing, halfEdges, out f, out fOutgoing)  
+                    && !MeshTools.EqualOrHalfEdges(f, edge, halfEdges))
                 {
                     possibleChildren.Add(f);
                 }
 
                 //if we hit a boundary edge while scanning CCW, go back to start and scan CW to make sure we get all neighbors
-                if (!EqualOrHalfEdges(f, edge, halfEdges) || (outgoing && halfEdges[edge] < 0))
+                if (!MeshTools.EqualOrHalfEdges(f, edge, halfEdges) || (outgoing && halfEdges[edge] < 0))
                 {
                     f = edge;
                     fOutgoing = outgoing;
-                    while (TryGetNextEdgeCW(f, fOutgoing, halfEdges, out f, out fOutgoing) && !EqualOrHalfEdges(f, edge, halfEdges))
+                    while (MeshTools.TryGetNextEdgeCW(f, fOutgoing, halfEdges, out f, out fOutgoing) 
+                        && !MeshTools.EqualOrHalfEdges(f, edge, halfEdges))
                     {
                         possibleChildren.Add(f);
                     }
