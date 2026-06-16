@@ -7416,6 +7416,24 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "59c2943c2a54499d98cee8c004633ebc",
+    "m_Id": 4,
+    "m_DisplayName": "hy",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_HideConnector": false,
+    "m_ShaderOutputName": "hy",
+    "m_StageCapability": 3,
+    "m_CustomBinding": "",
+    "m_Value": 0.0,
+    "m_DefaultValue": 0.0,
+    "m_Labels": [],
+    "m_LiteralMode": false
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.Vector4MaterialSlot",
     "m_ObjectId": "5b47a5114b854a8da086a93c9af981dc",
     "m_Id": 4,
@@ -10805,6 +10823,24 @@
     ],
     "m_Dropdowns": [],
     "m_DropdownSelectedEntries": []
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "a0eb85f1aaf7463ea23d8393686df909",
+    "m_Id": 3,
+    "m_DisplayName": "hx",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_HideConnector": false,
+    "m_ShaderOutputName": "hx",
+    "m_StageCapability": 3,
+    "m_CustomBinding": "",
+    "m_Value": 0.0,
+    "m_DefaultValue": 0.0,
+    "m_Labels": [],
+    "m_LiteralMode": false
 }
 
 {
@@ -15526,6 +15562,12 @@
         },
         {
             "m_Id": "2356c8c35d2146298439861bffe37346"
+        },
+        {
+            "m_Id": "a0eb85f1aaf7463ea23d8393686df909"
+        },
+        {
+            "m_Id": "59c2943c2a54499d98cee8c004633ebc"
         },
         {
             "m_Id": "a87dbfe0f0ed4ed09cfb489c6105221c"

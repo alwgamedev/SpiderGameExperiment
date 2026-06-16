@@ -21,16 +21,26 @@
         return ddx(val) * jacInv.z + ddy(val) * jacInv.w;
     }
 
-    void NormalZ_float(float height, float2 worldPos, out float nz)
+    void NormalZ_float(float height, float2 worldPos, out float hx, out float hy, out float nz)
     {
         float4 jacInv = ScreenToWorldJacobian(worldPos);
-        float hx = ddxWorld(height, jacInv);
-        float hy = ddyWorld(height, jacInv);
+        hx = ddxWorld(height, jacInv);
+        hy = ddyWorld(height, jacInv);
         nz = rsqrt(1 + hx * hx + hy * hy);
     }
 
-    void NormalZ_half(float height, float2 worldPos, out float nz)
+    void NormalZ_half(float height, float2 worldPos, out float hx, out float hy, out float nz)
     {
-        NormalZ_float(height, worldPos, nz);
+        NormalZ_float(height, worldPos, hx, hy, nz);
+    }
+
+    void HeightNormal_float(float hx, float hy, float nz, out float3 n)
+    {
+        n = float3(-nz * hx, -nz * hy, nz);
+    }
+
+    void HeightNormal_half(float hx, float hy, float nz, out float3 n)
+    {
+        HeightNormal_float(hx, hy, nz, n);
     }
     #endif

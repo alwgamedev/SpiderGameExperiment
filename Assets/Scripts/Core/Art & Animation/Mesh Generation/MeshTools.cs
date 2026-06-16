@@ -131,7 +131,7 @@ public static class MeshTools
     //as the triangle has 2 vertices with valid colors. 
     //for the ruppert triangulations i usually get usable coordinates for ~99.5%+ of the triangles.
     [BurstCompile]
-    public static void BakeBaryCoords(NativeArray<Vector4> bary, ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges,
+    public static void FillBaryCoords(NativeArray<Vector4> bary, ReadOnlySpan<int> triangles, ReadOnlySpan<int> halfEdges,
         out NativeArray<int> baryMask, int seedSpacing = 2)
     {
         baryMask = new(bary.Length, Allocator.Temp);
