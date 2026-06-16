@@ -95,6 +95,9 @@
         },
         {
             "m_Id": "c35c1caa268b40b2822f96a1fb6be652"
+        },
+        {
+            "m_Id": "dc0a327e91584f768495f29a6949dc52"
         }
     ],
     "m_GroupDatas": [],
@@ -151,7 +154,7 @@
             },
             "m_InputSlot": {
                 "m_Node": {
-                    "m_Id": "c73da17b51e0414090fc5d1587b4b462"
+                    "m_Id": "dc0a327e91584f768495f29a6949dc52"
                 },
                 "m_SlotId": 0
             }
@@ -292,6 +295,20 @@
             "m_InputSlot": {
                 "m_Node": {
                     "m_Id": "c35c1caa268b40b2822f96a1fb6be652"
+                },
+                "m_SlotId": 0
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
+                    "m_Id": "dc0a327e91584f768495f29a6949dc52"
+                },
+                "m_SlotId": 1
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "c73da17b51e0414090fc5d1587b4b462"
                 },
                 "m_SlotId": 0
             }
@@ -992,10 +1009,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -2107.2001953125,
-            "y": -576.7999877929688,
-            "width": 208.0001220703125,
-            "height": 310.3999938964844
+            "x": -2315.2001953125,
+            "y": -871.2000122070313,
+            "width": 208.0,
+            "height": 310.39996337890627
         }
     },
     "m_Slots": [
@@ -1443,6 +1460,31 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector3MaterialSlot",
+    "m_ObjectId": "748d5c1acf844ee78281ff3b736da824",
+    "m_Id": 1,
+    "m_DisplayName": "baryOut",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_HideConnector": false,
+    "m_ShaderOutputName": "baryOut",
+    "m_StageCapability": 3,
+    "m_CustomBinding": "",
+    "m_Value": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "m_DefaultValue": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "m_Labels": []
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.DynamicValueMaterialSlot",
     "m_ObjectId": "79212bb04dfc4f9a9b8ad1e890bd7dc1",
     "m_Id": 0,
@@ -1640,6 +1682,31 @@
         "w": 0.0
     },
     "m_LiteralMode": false
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector3MaterialSlot",
+    "m_ObjectId": "8cf138c7e804437aaaa23e89cfbed703",
+    "m_Id": 0,
+    "m_DisplayName": "bary",
+    "m_SlotType": 0,
+    "m_Hidden": false,
+    "m_HideConnector": false,
+    "m_ShaderOutputName": "bary",
+    "m_StageCapability": 3,
+    "m_CustomBinding": "",
+    "m_Value": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "m_DefaultValue": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "m_Labels": []
 }
 
 {
@@ -2273,15 +2340,15 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -1824.0001220703125,
-            "y": -576.7999877929688,
-            "width": 215.199951171875,
-            "height": 93.60000610351563
+            "x": -1592.8001708984375,
+            "y": -654.4000244140625,
+            "width": 215.2000732421875,
+            "height": 93.5999755859375
         }
     },
     "m_Slots": [
         {
-            "m_Id": "d3ce905ba58a4c2d9b877d7dc01d4f9d"
+            "m_Id": "8cf138c7e804437aaaa23e89cfbed703"
         },
         {
             "m_Id": "1f436c4aaaa946e3b7db108e56055265"
@@ -2302,7 +2369,34 @@
     "m_FunctionName": "EdgeValue",
     "m_FunctionSource": "",
     "m_FunctionSourceUsePragmas": true,
-    "m_FunctionBody": "if (bary.x == 0)\n{\n\tbary.x = 1 - bary.y - bary.z - bary.w, bary.y;\n}\nelse if (bary.y == 0)\n{\n\tbary.y = 1 - bary.x - bary.z - bary.w;\n}\nelse if (bary.z == 0)\n{\n\tbary.z = 1 - bary.x - bary.y - bary.w;\n}\nelse\n{\n\tedgeVal = min(bary.x, min(bary.y, bary.z));\n\treturn;\n}\n\nbary = step(0.01, bary);\nbary = max(bary, step(0, -bary));\nfloat2 min2 = min(bary.xy, bary.zw);\nedgeVal = min(min2.x, min2.y);\n\n//float4 opp = 1 - bary.yzwx - bary.zwxy - bary.wxyz;\n//float4 bad = step(0, -bary);\n//bary = max(bary, bad * opp);//any zeroes in bary get replaced with their opp\n//bad = step(0, -bary);\n//bary = max(bary, bad);//replace any remaining zeroes with ones\n\n//float2 min2 = min(bary.xy, bary.zw);\n//edgeVal = min(min2.x, min2.y);"
+    "m_FunctionBody": "edgeVal = min(bary.x, min(bary.y, bary.z));"
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector4MaterialSlot",
+    "m_ObjectId": "c780ad110d12471bba85dc31c1487733",
+    "m_Id": 0,
+    "m_DisplayName": "bary",
+    "m_SlotType": 0,
+    "m_Hidden": false,
+    "m_HideConnector": false,
+    "m_ShaderOutputName": "bary",
+    "m_StageCapability": 3,
+    "m_CustomBinding": "",
+    "m_Value": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+    },
+    "m_DefaultValue": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+    },
+    "m_Labels": []
 }
 
 {
@@ -2395,30 +2489,47 @@
 }
 
 {
-    "m_SGVersion": 0,
-    "m_Type": "UnityEditor.ShaderGraph.Vector4MaterialSlot",
-    "m_ObjectId": "d3ce905ba58a4c2d9b877d7dc01d4f9d",
-    "m_Id": 0,
-    "m_DisplayName": "bary",
-    "m_SlotType": 0,
-    "m_Hidden": false,
-    "m_HideConnector": false,
-    "m_ShaderOutputName": "bary",
-    "m_StageCapability": 3,
-    "m_CustomBinding": "",
-    "m_Value": {
-        "x": 0.0,
-        "y": 0.0,
-        "z": 0.0,
-        "w": 0.0
+    "m_SGVersion": 1,
+    "m_Type": "UnityEditor.ShaderGraph.CustomFunctionNode",
+    "m_ObjectId": "dc0a327e91584f768495f29a6949dc52",
+    "m_Group": {
+        "m_Id": ""
     },
-    "m_DefaultValue": {
-        "x": 0.0,
-        "y": 0.0,
-        "z": 0.0,
-        "w": 0.0
+    "m_Name": "RepairBary4 (Custom Function)",
+    "m_DrawState": {
+        "m_Expanded": true,
+        "m_Position": {
+            "serializedVersion": "2",
+            "x": -1886.545654296875,
+            "y": -809.4299926757813,
+            "width": 0.0,
+            "height": 0.0
+        }
     },
-    "m_Labels": []
+    "m_Slots": [
+        {
+            "m_Id": "c780ad110d12471bba85dc31c1487733"
+        },
+        {
+            "m_Id": "748d5c1acf844ee78281ff3b736da824"
+        }
+    ],
+    "synonyms": [
+        "code",
+        "HLSL"
+    ],
+    "m_Precision": 0,
+    "m_PreviewExpanded": false,
+    "m_DismissedVersion": 0,
+    "m_PreviewMode": 0,
+    "m_CustomColors": {
+        "m_SerializableColors": []
+    },
+    "m_SourceType": 0,
+    "m_FunctionName": "RepairBary4",
+    "m_FunctionSource": "738f689100d3a334c94513a5dd1f247f",
+    "m_FunctionSourceUsePragmas": true,
+    "m_FunctionBody": "Enter function body here..."
 }
 
 {
