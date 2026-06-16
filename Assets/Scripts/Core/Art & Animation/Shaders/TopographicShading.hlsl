@@ -34,9 +34,12 @@
         NormalZ_float(height, worldPos, hx, hy, nz);
     }
 
+    //interpret the height as being measured towards the camera 
+    //(which is in the -z direction, so replace h with -h).
+    //then this is the unit normal that points towards camera (i.e. in -z direction)
     void HeightNormal_float(float hx, float hy, float nz, out float3 n)
     {
-        n = float3(-nz * hx, -nz * hy, nz);
+        n = float3(-nz * hx, -nz * hy, -nz);
     }
 
     void HeightNormal_half(float hx, float hy, float nz, out float3 n)

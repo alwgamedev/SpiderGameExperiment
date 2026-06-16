@@ -1,22 +1,40 @@
 using Unity.Collections;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public static class CrystalTools
 {
-    public static Mesh GenerateCrystalMesh(int numLopsMin, int numLopsMax)
+    public static Mesh GenerateCrystalMesh(int numLops)
     {
-        int numLops = MathTools.RNG.Next(numLopsMin, numLopsMax);
         var crystal = RandomCrystal(numLops, Allocator.Temp);
+        var originalVertices = crystal.vertex;
+        var face = crystal.face;
+        var faceStart = crystal.faceStart;
 
-        var vertices = crystal.vertex;
+        var vertices = new NativeList<Vector3>(originalVertices.Length, Allocator.Temp);
+        vertices.CopyFrom(originalVertices);
+
         Vector2 bbMin = vertices[0];
         Vector2 bbMax = vertices[0];
-        for (int i = 1; i < vertices.Length; i++)
+        for (int i = 1; i < originalVertices.Length; i++)
         {
-            var v = vertices[i];
+            var v = crystal.vertex[i];
             bbMin = Vector2.Min(bbMin, v);
             bbMax = Vector2.Max(bbMax, v);
+        }
+
+        //add a vertex at the midpoint of each face (so we can do face outlines using only one edge per triangle)
+        for (int i = 0; i < faceStart.Length - 1; i++)
+        {
+            var sum = Vector3.zero;
+            var start = faceStart[i];
+            var end = faceStart[i + 1];
+
+            for (int j = start; j < end; j++)
+            {
+                sum += originalVertices[face[j]];
+            }
+
+            vertices.Add(sum / (end - start));
         }
 
         var bbSpan = bbMax - bbMin;
@@ -31,34 +49,43 @@ public static class CrystalTools
         }
 
         var triangles = new NativeList<int>(Allocator.Temp);
-        var face = crystal.face;
-        var faceStart = crystal.faceStart;
         for (int i = 0; i < faceStart.Length - 1; i++)
         {
             var start = faceStart[i];
             var end = faceStart[i + 1];
 
             //triangulate the face
-            var v0 = face[start];
-            for (int j = start + 1; j < end - 1; j++)
+            var v0 = originalVertices.Length + i;//midpoint vert
+            for (int j = start; j < end; j++)
             {
+                var v1 = face[j];
+                var v2 = face[NextIndexInFace(j, start, end)];
                 triangles.Add(v0);
-                triangles.Add(face[j]);
-                triangles.Add(face[j + 1]);
+                triangles.Add(v1);
+                triangles.Add(v2);
             }
         }
 
-        var halfEdges = new NativeArray<int>(triangles.Length, Allocator.Temp);
-        MeshTools.GetHalfEdges(triangles.AsArray(), halfEdges);
+        // var halfEdges = new NativeArray<int>(triangles.Length, Allocator.Temp);
+        // MeshTools.GetHalfEdges(triangles.AsArray(), halfEdges);
 
-        var baryCoords = new NativeArray<Vector4>(vertices.Length, Allocator.Temp);
-        MeshTools.FillBaryCoords(baryCoords, triangles, halfEdges, out _);
+        // var baryCoords = new NativeArray<Vector4>(vertices.Length, Allocator.Temp);
+        // MeshTools.FillBaryCoords(baryCoords, triangles, halfEdges, out _);
+
+        //used to identify the original edges 
+        //(give original verts a value of 1 and midpoints a val of 0)
+        var distFromFaceMidpt = new NativeArray<Vector2>(vertices.Length, Allocator.Temp);
+        for (int i = 0; i < originalVertices.Length; i++)
+        {
+            distFromFaceMidpt[i] = Vector2.right;
+        }
 
         var mesh = new Mesh();
         mesh.SetVertices(vertices.AsArray());
         mesh.SetIndices(triangles.AsArray(), MeshTopology.Triangles, 0);
         mesh.SetUVs(0, uv);
-        mesh.SetUVs(2, baryCoords);
+        // mesh.SetUVs(2, baryCoords);
+        mesh.SetUVs(2, distFromFaceMidpt);
         mesh.RecalculateNormals();
         return mesh;
     }

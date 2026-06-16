@@ -2,6 +2,7 @@ using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
+[CanEditMultipleObjects]
 [CustomEditor(typeof(CrystalGenerator))]
 public class CrystalGeneratorEditor : Editor
 {

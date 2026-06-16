@@ -1,5 +1,7 @@
 #ifndef SSMG_VERTEX_DATA//if we use this file twice in one shader, this code will only get included once (like #pragma once)
-    #define SSMG_VERTEX_DATA
+#define SSMG_VERTEX_DATA
+
+#include "Assets\Scripts\Core\Art & Animation\Shaders\BaryHelper.hlsl"
 
     void SSMGShadow_float(float concavity, float concavityStrength, float underside, float undersideStrength,
         float border, float borderStrength, float crack, float crackStrengthMin,  float crackStrengthMax,
@@ -24,19 +26,6 @@
         SSMGShadow_float(concavity, concavityStrength, underside, undersideStrength, border, borderStrength, crack, 
             crackStrengthMin, crackStrengthMax, crackSpread, crackSpreadStrengthMin, crackSpreadStrengthMax, crackNoise,
             shadow);
-    }
-
-    //-we have an edge thickness we want to use that's measured in world units. we need to divide by the height of triangle
-    //to get the "local thickness" (in the range [0,1]).
-    //-gradient of baryCoord has length = 1 / (height of the triangle) (in direction corresponding to that bary coord)
-    //-we need to go from the provided screen space partial derivatives back to world space partial derivatives,
-    //so we use jacInv = (dx/dxWorld, dy/dxWorld, dx/dyWorld, dy/dyWorld),
-    //the jacobian to the transformation (xWorld, yWorld) -> (xScreen, yScreen)
-    float HeightInverse(float baryCoord, float4 jacInv)
-    {
-        float2 gradScreen = float2(ddx(baryCoord), ddy(baryCoord));
-        float2 gradWorld = float2(dot(gradScreen, jacInv.xy), dot(gradScreen, jacInv.zw));
-        return length(gradWorld);
     }
 
     void SSMGCrackValue_float(float4 crack, float4 bary, float2 worldPos, float thickness, out float val)
