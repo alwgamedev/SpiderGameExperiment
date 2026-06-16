@@ -68,6 +68,7 @@ Material:
     m_Floats:
     - _EnableExternalAlpha: 0
     - _HeightMult: 0
+    - _HeightMultiplier: 1
     - _ZWrite: 0
     m_Colors:
     - White: {r: 1, g: 1, b: 1, a: 1}

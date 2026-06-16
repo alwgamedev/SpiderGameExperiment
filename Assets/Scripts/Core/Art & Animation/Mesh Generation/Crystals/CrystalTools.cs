@@ -114,10 +114,10 @@ public static class CrystalTools
         var v1 = new Vector3(-0.5f, 0.5f, 0);
         var v2 = new Vector3(0.5f, 0.5f, 0);
         var v3 = new Vector3(0.5f, -0.5f, 0);
-        var v4 = new Vector3(-0.25f, -0.25f, .25f);
-        var v5 = new Vector3(-0.25f, 0.25f, .25f);
-        var v6 = new Vector3(0.25f, 0.25f, .25f);
-        var v7 = new Vector3(0.25f, -0.25f, .25f);
+        var v4 = new Vector3(-0.25f, -0.25f, 1f);
+        var v5 = new Vector3(-0.25f, 0.25f, 1f);
+        var v6 = new Vector3(0.25f, 0.25f, 1f);
+        var v7 = new Vector3(0.25f, -0.25f, 1f);
 
         var vertex = new NativeList<Vector3>(allocator) { v0, v1, v2, v3, v4, v5, v6, v7 };
         var face = new NativeList<int>(allocator)
@@ -167,6 +167,12 @@ public static class CrystalTools
         var p1 = vertex[v1];
         var p2 = vertex[v2];
 
+        var area = Vector3.Cross(p2 - p0, p1 - p0).magnitude;
+        if (area < 0.05f)
+        {
+            return;
+        }
+
         //edge directions
         var u0 = (p0 - p).normalized;
         var u1 = (p1 - p).normalized;
@@ -186,20 +192,26 @@ public static class CrystalTools
 
         if (n0.z < 0)
         {
-            t0 = Mathf.Min(t0, 0.9f * (-t1 * n1.z - t2 * n2.z) / n0.z);
+            var nz = Mathf.Min(n0.z, -MathTools.o41);
+            t0 = Mathf.Min(t0, 0.9f * (-t1 * n1.z - t2 * n2.z) / nz);
+            t0 = Mathf.Min(t0, 0.25f);//keep t0 smaller or else get mostly very steep faces near boundary
         }
         else if (n1.z < 0)
         {
-            t1 = Mathf.Min(t1, 0.9f * (-t0 * n0.z - t2 * n2.z) / n1.z);
+            var nz = Mathf.Min(n1.z, -MathTools.o41);
+            t1 = Mathf.Min(t1, 0.95f * (-t0 * n0.z - t2 * n2.z) / nz);
+            t1 = Mathf.Min(t1, 0.25f);
         }
         else if (n2.z < 0)
         {
-            t2 = Mathf.Min(t2, 0.9f * (-t0 * n0.z - t1 * n1.z) / n2.z);
+            var nz = Mathf.Min(n2.z, -MathTools.o41);
+            t2 = Mathf.Min(t2, 0.9f * (-t0 * n0.z - t1 * n1.z) / nz);
+            t2 = Mathf.Min(t2, 0.25f);
         }
 
         //lop face's normal
         var n = (t0 * n0 + t1 * n1 + t2 * n2).normalized;
-        Debug.Log($"n: {n}");
+        // Debug.Log($"n: {n}");
 
         //our plane will be centered at p - d * n, where d does not exceed minDist to a neighbor
         var dist0 = Vector3.Dot(p - p0, n);
@@ -207,15 +219,15 @@ public static class CrystalTools
         var dist2 = Vector3.Dot(p - p2, n);
         var minDist = Mathf.Min(dist0, Mathf.Min(dist1, dist2));
         var d = MathTools.RandomFloat(0.5f * minDist, 0.95f * minDist);
-        Debug.Log($"minDist {minDist}");
+        // Debug.Log($"minDist {minDist}");
 
         //new vertices replacing p
         var q0 = Vector3.Lerp(p, p0, d / dist0);
         var q1 = Vector3.Lerp(p, p1, d / dist1);
         var q2 = Vector3.Lerp(p, p2, d / dist2);
 
-        Debug.Log($"Lopped vertex {p} with neighbors {p0}, {p1}, {p2}");
-        Debug.Log($"New face {q0}, {q1}, {q2}");
+        // Debug.Log($"Lopped vertex {p} with neighbors {p0}, {p1}, {p2}");
+        // Debug.Log($"New face {q0}, {q1}, {q2}");
 
         //now the hard part -- entering the data :P
         var w0 = v;
