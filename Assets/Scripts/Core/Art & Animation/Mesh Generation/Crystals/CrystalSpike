@@ -1,0 +1,6 @@
+using UnityEngine;
+
+public class CrystalSpike : MonoBehaviour
+{
+    //start: instance material
+}

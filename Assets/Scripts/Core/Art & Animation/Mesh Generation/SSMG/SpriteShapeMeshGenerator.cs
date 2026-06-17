@@ -131,10 +131,13 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
 
     private void Start()
     {
-        var propBlock = new MaterialPropertyBlock();
-        var offset = new Vector2(MathTools.RandomFloat(-10000, 10000), MathTools.RandomFloat(-10000, 10000));
-        propBlock.SetVector(offsetProperty, offset);
-        meshRenderer.SetPropertyBlock(propBlock);
+        if (Application.isPlaying)
+        {
+            var material = new Material(meshRenderer.sharedMaterial);
+            var offset = new Vector2(MathTools.RandomFloat(-10000, 10000), MathTools.RandomFloat(-10000, 10000));
+            material.SetVector(offsetProperty, offset);
+            meshRenderer.sharedMaterial = material;
+        }
     }
 
     private void OnDestroy()
@@ -143,6 +146,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         {
             if (Application.isPlaying)
             {
+                Destroy(meshRenderer.sharedMaterial);
                 Destroy(mesh);
             }
             else
