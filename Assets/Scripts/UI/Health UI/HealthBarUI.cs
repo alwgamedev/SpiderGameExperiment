@@ -3,7 +3,9 @@ using UnityEngine.UI;
 
 public class HealthBarUI : MonoBehaviour
 {
-    [SerializeField] Image fillBar;
+    // [SerializeField] Image fillBar;
+    [SerializeField] Color cellFilledColor;
+    [SerializeField] Color cellEmptyColor;
 
     Health health;
 

@@ -4,21 +4,25 @@ using UnityEngine;
 [Serializable]
 public class Health
 {
-    [SerializeField] int maxHealth;
+    public const int CELLS_PER_POD = 3;
+    public const int MAX_NUM_PODS = 6;
 
-    int health;
+    public int numPods;
+    public int health;
+
+    int MaxHealth => numPods * CELLS_PER_POD;
 
     public void Start()
     {
-        health = maxHealth;
+        health = MaxHealth;
     }
 
     public event Action HealthChanged;
 
-    public float HealthFraction()
-    {
-        return (float)health / maxHealth;
-    }
+    // public float HealthFraction()
+    // {
+    //     return (float)health / maxHealth;
+    // }
 
     public void AddHealth(int amount)
     {
@@ -38,12 +42,12 @@ public class Health
     public void RestoreHealthToMax()
     {
         Debug.Log("restoring health...");
-        SetHealth(maxHealth);
+        SetHealth(MaxHealth);
     }
 
     private void SetHealth(int value)
     {
-        health = Mathf.Clamp(value, 0, maxHealth);
+        health = Mathf.Clamp(value, 0, MaxHealth);
         HealthChanged?.Invoke();
     }
 }

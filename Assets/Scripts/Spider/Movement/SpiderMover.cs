@@ -202,7 +202,7 @@ public class SpiderMover
 
         thruster.Initialize();
         thrusterFlame.Initialize();
-
+        
         spiderBody.CreatePhysicsBody(new PhysicsRotate() { direction = transform.right }, abdomenRoot, headRoot, headBone,
             grappleArmTransform, spiderBodyDef);
         InitializeLegSynch();
