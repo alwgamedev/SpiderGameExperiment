@@ -1,4 +1,5 @@
 using System;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -37,16 +38,25 @@ public struct HealthPodUI
 
     //we could easily change this to take a float podHealth and lerp between filled and empty colors
     //(to animate the health bar)
-    public void UpdatePod(int podHealth, HealthPodColors colors)
+    public void UpdatePod(float podHealth, HealthPodColors colors)
     {
-        cell3.color = podHealth > 0 ? colors.cellFilledColor : colors.cellEmptyColor;
-        cell2.color = podHealth > 1 ? colors.cellFilledColor : colors.cellEmptyColor;
-        cell1.color = podHealth > 2 ? colors.cellFilledColor : colors.cellEmptyColor;
-        center.color = podHealth switch
-        {
-            0 => colors.podEmptyColor,
-            3 => colors.podFilledColor,
-            _ => colors.podHurtColor
-        };
+        float t3 = Mathf.Clamp(podHealth, 0, 1);
+        float t2 = Mathf.Clamp(podHealth - 1, 0, 1);
+        float t1 = Mathf.Clamp(podHealth - 2, 0, 1);
+        // cell3.fillAmount = t3;
+        // cell2.fillAmount = t2;
+        // cell1.fillAmount = t1;
+        cell3.color = Color.Lerp(colors.cellEmptyColor, colors.cellFilledColor, t3);//podHealth > 0 ? colors.cellFilledColor : colors.cellEmptyColor;
+        cell2.color = Color.Lerp(colors.cellEmptyColor, colors.cellFilledColor, t2);
+        cell1.color = Color.Lerp(colors.cellEmptyColor, colors.cellFilledColor, t1);
+
+        center.color = t1 > 0 ? Color.Lerp(colors.podHurtColor, colors.podFilledColor, t1)
+            : Color.Lerp(colors.podEmptyColor, colors.podHurtColor, t3);
+        // podHealth switch
+        // {
+        //     0 => colors.podEmptyColor,
+        //     3 => colors.podFilledColor,
+        //     _ => colors.podHurtColor
+        // };
     }
 }

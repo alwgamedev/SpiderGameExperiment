@@ -4,8 +4,10 @@ public class HealthBarUI : MonoBehaviour
 {
     [SerializeField] HealthPodColors colors;
     [SerializeField] HealthPodUI[] pod;
+    [SerializeField] float animationSpeed;
 
     Health health;
+    float animatedHealthPoints;
 
     private void OnEnable()
     {
@@ -13,10 +15,10 @@ public class HealthBarUI : MonoBehaviour
         {
             health = Spider.Player.health;
         }
-        if (health != null)
-        {
-            health.HealthChanged += UpdateHealthBar;
-        }
+        // if (health != null)
+        // {
+        //     health.HealthChanged += UpdateHealthBar;
+        // }
     }
 
     private void Start()
@@ -24,18 +26,32 @@ public class HealthBarUI : MonoBehaviour
         if (health == null)//in case we didn't get subscribed in OnEnable
         {
             health = Spider.Player.health;
-            if (health != null)
-            {
-                health.HealthChanged += UpdateHealthBar;
-                UpdateHealthBar();
-            }
+            animatedHealthPoints = 0;
+            DisplayHealth(0);
+            // if (health != null)
+            // {
+            //     health.HealthChanged += UpdateHealthBar;
+            //     UpdateHealthBar();
+            // }
         }
     }
 
-    private void UpdateHealthBar()
+    private void Update()
     {
-        var curHealth = health.currentHealth;
+        Animate();
+    }
 
+    private void Animate()
+    {
+        if (animatedHealthPoints != health.currentHealth)
+        {
+            animatedHealthPoints = Mathf.Lerp(animatedHealthPoints, health.currentHealth, Time.deltaTime * animationSpeed);
+            DisplayHealth(animatedHealthPoints);
+        }
+    }
+
+    private void DisplayHealth(float healthPoints)
+    {
         for (int i = 0; i < health.numPods; i++)
         {
             if (!pod[i].Enabled)
@@ -43,9 +59,9 @@ public class HealthBarUI : MonoBehaviour
                 pod[i].Enable();
             }
 
-            var podHealth = Mathf.Clamp(curHealth, 0, 3);
+            var podHealth = Mathf.Clamp(healthPoints, 0, 3);
             pod[i].UpdatePod(podHealth, colors);
-            curHealth -= podHealth;
+            healthPoints -= podHealth;
         }
 
         for (int i = health.numPods; i < pod.Length; i++)
@@ -57,11 +73,11 @@ public class HealthBarUI : MonoBehaviour
         }
     }
 
-    private void OnDisable()
-    {
-        if (health != null)
-        {
-            health.HealthChanged -= UpdateHealthBar;
-        }
-    }
+    // private void OnDisable()
+    // {
+    //     if (health != null)
+    //     {
+    //         health.HealthChanged -= UpdateHealthBar;
+    //     }
+    // }
 }

@@ -137,6 +137,6 @@ MonoBehaviour:
   maxStretch: {x: 0.9, y: 2}
   maxHighlight: 1.5
   stretchRate: 15
-  shrinkRateMin: 3
+  shrinkRateMin: 2
   shrinkRateMax: 6
   restRate: 10

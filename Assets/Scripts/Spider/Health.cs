@@ -17,7 +17,7 @@ public class Health
         SetHealth(MaxHealth);
     }
 
-    public event Action HealthChanged;
+    // public event Action HealthChanged;
 
     public void AddHealth(int amount)
     {
@@ -43,6 +43,6 @@ public class Health
     private void SetHealth(int value)
     {
         currentHealth = Mathf.Clamp(value, 0, MaxHealth);
-        HealthChanged?.Invoke();
+        // HealthChanged?.Invoke();
     }
 }
