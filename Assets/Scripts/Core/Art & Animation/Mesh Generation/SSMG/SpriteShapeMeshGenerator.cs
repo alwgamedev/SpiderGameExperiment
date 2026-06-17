@@ -33,6 +33,8 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
     [SerializeField] int bdryDistSmoothingIterations;
     [SerializeField] Vector2[] perimeter;
 
+    Material material;
+
     public ReadOnlySpan<Vector2> GetPerimeter() => perimeter;
 
     public void GenerateMesh()
@@ -133,7 +135,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
     {
         if (Application.isPlaying)
         {
-            var material = new Material(meshRenderer.sharedMaterial);
+            material = new Material(meshRenderer.sharedMaterial);
             var offset = new Vector2(MathTools.RandomFloat(-10000, 10000), MathTools.RandomFloat(-10000, 10000));
             material.SetVector(offsetProperty, offset);
             meshRenderer.sharedMaterial = material;
@@ -146,7 +148,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         {
             if (Application.isPlaying)
             {
-                Destroy(meshRenderer.sharedMaterial);
+                Destroy(material);
                 Destroy(mesh);
             }
             else
