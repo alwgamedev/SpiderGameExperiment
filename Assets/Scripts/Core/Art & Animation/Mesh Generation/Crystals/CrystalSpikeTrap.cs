@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using Unity.U2D.Physics;
 using UnityEngine;
 
@@ -7,6 +6,7 @@ public class CrystalSpikeTrap : MonoBehaviour, PhysicsCallbacks.ITriggerCallback
     [SerializeField] CrystalSpike[] spike;
     [SerializeField] PhysicsBodyKit physicsKit;
     [SerializeField] float impulseForce;
+    [SerializeField] float damagePerSpike;
 
     void Start()
     {
@@ -46,6 +46,7 @@ public class CrystalSpikeTrap : MonoBehaviour, PhysicsCallbacks.ITriggerCallback
             return;
         }
 
+        //apply impulse
         var spider = Spider.Player.mover.Abdomen;
         var mass = Spider.Player.mover.TotalMass;
         var n = (spider.position - physicsKit.body.position).normalized;
@@ -53,7 +54,10 @@ public class CrystalSpikeTrap : MonoBehaviour, PhysicsCallbacks.ITriggerCallback
         {
             n = Vector2.up;
         }
-
         spider.ApplyLinearImpulseToCenter(mass * (impulseForce * n - 0.5f * spider.linearVelocity));
+
+        //apply damage
+        var dmg = (int)Mathf.Ceil(damagePerSpike * count);
+        Spider.Player.health.AddHealth(-dmg);
     }
 }

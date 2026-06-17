@@ -1,11 +1,9 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 
 public class HealthBarUI : MonoBehaviour
 {
-    // [SerializeField] Image fillBar;
-    [SerializeField] Color cellFilledColor;
-    [SerializeField] Color cellEmptyColor;
+    [SerializeField] HealthPodColors colors;
+    [SerializeField] HealthPodUI[] pod;
 
     Health health;
 
@@ -29,13 +27,34 @@ public class HealthBarUI : MonoBehaviour
             if (health != null)
             {
                 health.HealthChanged += UpdateHealthBar;
+                UpdateHealthBar();
             }
         }
     }
 
     private void UpdateHealthBar()
     {
-        fillBar.fillAmount = health.HealthFraction();
+        var curHealth = health.currentHealth;
+
+        for (int i = 0; i < health.numPods; i++)
+        {
+            if (!pod[i].Enabled)
+            {
+                pod[i].Enable();
+            }
+
+            var podHealth = Mathf.Clamp(curHealth, 0, 3);
+            pod[i].UpdatePod(podHealth, colors);
+            curHealth -= podHealth;
+        }
+
+        for (int i = health.numPods; i < pod.Length; i++)
+        {
+            if (pod[i].Enabled)
+            {
+                pod[i].Disable();
+            }
+        }
     }
 
     private void OnDisable()

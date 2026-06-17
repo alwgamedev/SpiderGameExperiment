@@ -8,26 +8,21 @@ public class Health
     public const int MAX_NUM_PODS = 6;
 
     public int numPods;
-    public int health;
+    public int currentHealth;
 
     int MaxHealth => numPods * CELLS_PER_POD;
 
     public void Start()
     {
-        health = MaxHealth;
+        SetHealth(MaxHealth);
     }
 
     public event Action HealthChanged;
 
-    // public float HealthFraction()
-    // {
-    //     return (float)health / maxHealth;
-    // }
-
     public void AddHealth(int amount)
     {
-        SetHealth(health + amount);
-        if (health == 0)
+        SetHealth(currentHealth + amount);
+        if (currentHealth == 0)
         {
             Die();
         }
@@ -47,7 +42,7 @@ public class Health
 
     private void SetHealth(int value)
     {
-        health = Mathf.Clamp(value, 0, MaxHealth);
+        currentHealth = Mathf.Clamp(value, 0, MaxHealth);
         HealthChanged?.Invoke();
     }
 }

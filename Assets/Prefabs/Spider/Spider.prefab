@@ -1714,7 +1714,8 @@ MonoBehaviour:
   spiderInput:
     playerInput: {fileID: 534478759235766021}
   health:
-    maxHealth: 100
+    numPods: 4
+    currentHealth: 0
   mover:
     drawGroundMapGizmos: 0
     drawBodyGizmos: 0
@@ -1780,7 +1781,7 @@ MonoBehaviour:
             rgba: 0
         m_Density: 1
         m_IsTrigger: 0
-        m_TriggerEvents: 0
+        m_TriggerEvents: 1
         m_ContactEvents: 0
         m_HitEvents: 0
         m_ContactFilterCallbacks: 0
@@ -1849,7 +1850,7 @@ MonoBehaviour:
               rgba: 0
           m_Density: 0.25
           m_IsTrigger: 0
-          m_TriggerEvents: 0
+          m_TriggerEvents: 1
           m_ContactEvents: 0
           m_HitEvents: 0
           m_ContactFilterCallbacks: 0
