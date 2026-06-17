@@ -22,5 +22,6 @@ public class CrystalSpike : MonoBehaviour
     private void OnDestroy()
     {
         Destroy(material);
+        
     }
 }
