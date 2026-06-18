@@ -13,24 +13,31 @@ public class HealthBarUI : MonoBehaviour
     {
         health = Spider.Player.health;
         animatedHealthPoints = 0;
-        DisplayHealth(0);
+        UpdatePods(0);
     }
 
     private void Update()
     {
-        Animate();
+        Animate(animationSpeed, Time.deltaTime);
     }
 
-    private void Animate()
+    private void Animate(float speed, float dt)
     {
         if (animatedHealthPoints != health.currentHealth)
         {
-            animatedHealthPoints = Mathf.Lerp(animatedHealthPoints, health.currentHealth, Time.deltaTime * animationSpeed);
-            DisplayHealth(animatedHealthPoints);
+            if (Mathf.Abs(animatedHealthPoints - health.currentHealth) < 0.01f)
+            {
+                animatedHealthPoints = health.currentHealth;
+            }
+            else
+            {
+                animatedHealthPoints = Mathf.Lerp(animatedHealthPoints, health.currentHealth, speed * dt);
+            }
+            UpdatePods(animatedHealthPoints);
         }
     }
 
-    private void DisplayHealth(float healthPoints)
+    private void UpdatePods(float healthPoints)
     {
         for (int i = 0; i < health.numPods; i++)
         {

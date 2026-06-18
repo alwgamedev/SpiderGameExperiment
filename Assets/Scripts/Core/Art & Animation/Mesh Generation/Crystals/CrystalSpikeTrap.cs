@@ -6,6 +6,7 @@ public class CrystalSpikeTrap : MonoBehaviour, PhysicsCallbacks.ITriggerCallback
     [SerializeField] CrystalSpike[] spike;
     [SerializeField] PhysicsBodyKit physicsKit;
     [SerializeField] float impulseForce;
+    [SerializeField] float bounciness;
     [SerializeField] float damagePerSpike;
 
     void Start()
@@ -54,7 +55,7 @@ public class CrystalSpikeTrap : MonoBehaviour, PhysicsCallbacks.ITriggerCallback
         {
             n = Vector2.up;
         }
-        spider.ApplyLinearImpulseToCenter(mass * (impulseForce * n - 0.5f * spider.linearVelocity));
+        spider.ApplyLinearImpulseToCenter(mass * (impulseForce * n - bounciness * spider.linearVelocity));
 
         //apply damage
         var dmg = (int)Mathf.Ceil(damagePerSpike * count);

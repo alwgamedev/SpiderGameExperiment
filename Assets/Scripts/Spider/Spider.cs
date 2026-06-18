@@ -11,6 +11,7 @@ public class Spider : MonoBehaviour
     public Grabber grabber;
     public GrappleShootPreview grappleShootPreview;
     public JumpPreviewArrow jumpPreviewArrow;
+    public SpiderEye eye;
 
     public static Spider Player { get; private set; }
 
@@ -50,6 +51,7 @@ public class Spider : MonoBehaviour
         mover.grabber = grabber;
         jumpPreviewArrow.Start();
         grappleShootPreview.Start(mover.FacingRight, mover.World);
+        eye.Initialize();
 
         grabber.Disable(true);
         grabber.HideSprites();
@@ -59,18 +61,23 @@ public class Spider : MonoBehaviour
     {
         mover.Enable();
         grabber.Enable();
+
+        health.Hurt += eye.HurtFlash;
     }
 
     private void OnDisable()
     {
         mover.Disable();
         grabber.Disable(false);
+
+        health.Hurt -= eye.HurtFlash;
     }
 
     private void Update()
     {
         mover.Update();
-        grabber.Update(Time.deltaTime);
+        grabber.Update();
+        eye.Update();
     }
 
     private void LateUpdate()
@@ -91,6 +98,7 @@ public class Spider : MonoBehaviour
         mover.OnDestroy();
         jumpPreviewArrow.OnDestroy();
         grappleShootPreview.OnDestroy();
+        eye.OnDestroy();
         if (Player == this)
         {
             Player = null;

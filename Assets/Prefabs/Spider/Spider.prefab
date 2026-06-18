@@ -1429,8 +1429,8 @@ Transform:
   m_GameObject: {fileID: 1147273781406288458}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.0869, y: 0.2643, z: 0}
-  m_LocalScale: {x: 0.09085953, y: 0.097968, z: 1}
+  m_LocalPosition: {x: 1.0537, y: 0.2734, z: 0}
+  m_LocalScale: {x: 0.12, y: 0.13042001, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4530260151778528352}
@@ -1462,7 +1462,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 18282bb5117ee4d44956aae9584549cf, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1486,7 +1486,7 @@ SpriteRenderer:
   m_SortingOrder: 1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: a813cf7a7d6720f4b91ed02b63edd96e, type: 3}
-  m_Color: {r: 0, g: 1, b: 0.10743809, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -3448,7 +3448,7 @@ Transform:
   m_GameObject: {fileID: 1563483707937399937}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0.6810022, w: 0.7322814}
-  m_LocalPosition: {x: -7.19, y: -1.25, z: 0}
+  m_LocalPosition: {x: -2.75, y: -0.29, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3473,7 +3473,7 @@ MonoBehaviour:
     rid: -2
   m_SelectionSources:
     rid: 1140529307360165891
-  m_FalloffIntensity: 0.676
+  m_FalloffIntensity: 0.495
   m_Color: {r: 0, g: 1, b: 0.38823533, a: 1}
   m_Intensity: 1.1
   m_LightVolumeIntensity: 1
@@ -3496,10 +3496,10 @@ MonoBehaviour:
   m_LocalBounds:
     m_Center: {x: 0, y: -0.00000011920929, z: 0}
     m_Extent: {x: 0.9985302, y: 0.99853027, z: 0}
-  m_PointLightInnerAngle: 9.600037
-  m_PointLightOuterAngle: 99.32695
-  m_PointLightInnerRadius: 1.1
-  m_PointLightOuterRadius: 35.6
+  m_PointLightInnerAngle: 5.6656337
+  m_PointLightOuterAngle: 58.01548
+  m_PointLightInnerRadius: 4
+  m_PointLightOuterRadius: 15
   m_ShapeLightParametricSides: 5
   m_ShapeLightParametricAngleOffset: 0
   m_ShapeLightParametricRadius: 1
@@ -3522,7 +3522,11 @@ MonoBehaviour:
         m_SelectedSource:
           rid: -2
         m_Provider2DCache:
-          rid: -2
+          rid: 5066533511493058643
+    - rid: 5066533511493058643
+      type: {class: 'Provider2DCache`1[[UnityEngine.Rendering.Universal.Light2DProvider, Unity.RenderPipelines.Universal.2D.Runtime]]', ns: UnityEngine.Rendering.Universal, asm: Unity.RenderPipelines.Universal.2D.Runtime}
+      data:
+        m_Cache: []
 --- !u!1 &1600984667264197528
 GameObject:
   m_ObjectHideFlags: 0

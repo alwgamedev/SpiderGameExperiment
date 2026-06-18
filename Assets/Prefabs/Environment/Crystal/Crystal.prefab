@@ -135,7 +135,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: spydr1.Runtime::CrystalSpike
   meshRenderer: {fileID: 218618546763924115}
   maxStretch: {x: 0.9, y: 2}
-  maxHighlight: 1.5
+  maxHighlight: 2
   stretchRate: 15
   shrinkRateMin: 2
   shrinkRateMax: 6

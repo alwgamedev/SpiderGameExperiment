@@ -9,6 +9,8 @@ public class Health
 
     public int numPods;
     public int currentHealth;
+    public event Action Hurt;
+    public event Action Died;
 
     int MaxHealth => numPods * CELLS_PER_POD;
 
@@ -20,6 +22,10 @@ public class Health
     public void AddHealth(int amount)
     {
         SetHealth(currentHealth + amount);
+        if (amount < 0)
+        {
+            Hurt?.Invoke();
+        }
         if (currentHealth == 0)
         {
             Die();
@@ -29,6 +35,8 @@ public class Health
     public void Die()
     {
         Debug.Log("you died!");
+        Died?.Invoke();
+
         RestoreHealthToMax();
     }
 

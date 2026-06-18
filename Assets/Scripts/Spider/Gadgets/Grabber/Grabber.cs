@@ -189,7 +189,7 @@ public class Grabber
         }
     }
 
-    public void Update(float dt)
+    public void Update()
     {
         //handle input
         if (!taskInProgress)
@@ -214,7 +214,7 @@ public class Grabber
         {
             if (grabTimer > 0)
             {
-                grabTimer -= dt;
+                grabTimer -= Time.deltaTime;
                 if (!(grabTimer > 0))
                 {
                     OnGrabFailed();

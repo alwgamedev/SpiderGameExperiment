@@ -135,8 +135,8 @@ public static class MathTools
     public static Vector3 InFrame(this Vector3 v, Vector3 b1, Vector3 b2, Vector3 b3)
     {
         return new(Vector3.Dot(v, b1), Vector3.Dot(v, b2), Vector3.Dot(v, b3));
-    }    
-    
+    }
+
     //to avoid casting... OK getting a little stupid at this point
     public static Vector2 InFrameV2(this Vector3 v, Vector3 b1, Vector3 b2)
     {
@@ -203,7 +203,7 @@ public static class MathTools
         var l2 = math.lengthsq(v);
         return math.select(0, math.normalize(v), l2 > o91);
     }
-    
+
     //when v1, v2 are unit vectors, this equals the sine of the CCW angle from v1 to v2 (being dot(v1, v2.CWPerp()) = cos(theta-90))
     public static float Cross2D(Vector2 v1, Vector2 v2)
     {
@@ -225,7 +225,7 @@ public static class MathTools
         float b1 = Cross2D(v1, p1);
         float b2 = Cross2D(v2, p2);
         intersection = 1 / det * (b1 * v2 - b2 * v1);
-            //new Vector2((v2.x * b1 - v1.x * b2) / det, (v2.y * b1 - v1.y * b2) / det);
+        //new Vector2((v2.x * b1 - v1.x * b2) / det, (v2.y * b1 - v1.y * b2) / det);
         return true;
     }
 
@@ -346,7 +346,7 @@ public static class MathTools
         }
 
         //this is (b dot a)w + (b dot aPerp)wPerp
-        return Vector2.Dot(a, b) * w + Cross2D(a,b) * w.CCWPerp();
+        return Vector2.Dot(a, b) * w + Cross2D(a, b) * w.CCWPerp();
     }
 
     /// <summary>
