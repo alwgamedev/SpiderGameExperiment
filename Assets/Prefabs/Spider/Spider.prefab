@@ -115,7 +115,7 @@ MonoBehaviour:
     m_Extent: {x: 0.19735992, y: 0.623375, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &155017471851988481
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -190,7 +190,6 @@ GameObject:
   m_Component:
   - component: {fileID: 598239815073018785}
   - component: {fileID: 7795578895907248328}
-  - component: {fileID: 7241931909620465652}
   - component: {fileID: 5702101783005688461}
   - component: {fileID: 6689425273892493431}
   m_Layer: 2
@@ -275,27 +274,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
---- !u!114 &7241931909620465652
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 158983689366788904}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57c008f954fe54a8bb972de1018a2cb8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.2D.Animation.Runtime::UnityEngine.U2D.Animation.SpriteSkin
-  m_RootBone: {fileID: 0}
-  m_BoneTransforms:
-  - {fileID: 4218969973551576729}
-  m_Bounds:
-    m_Center: {x: 7.726305, y: 12.95804, z: 0}
-    m_Extent: {x: 0.8449552, y: 0.8519597, z: 0}
-  m_AlwaysUpdate: 1
-  m_AutoRebind: 0
-  m_BoundsMode: 0
 --- !u!114 &5702101783005688461
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -824,7 +802,7 @@ MonoBehaviour:
     m_Extent: {x: 0.73856974, y: 0.6593349, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &6678569524498031787
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1066,7 +1044,7 @@ MonoBehaviour:
     m_Extent: {x: 0.67999995, y: 0.74257016, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &680462904114713703
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1245,7 +1223,7 @@ MonoBehaviour:
     m_Extent: {x: 0.09482503, y: 0.26392505, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &5400705520408914546
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1392,7 +1370,7 @@ MonoBehaviour:
     m_Extent: {x: 0.8376602, y: 0.35457993, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &280399693479035755
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3660,7 +3638,7 @@ MonoBehaviour:
     m_Extent: {x: 0.67297995, y: 0.7392951, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &4811594221008385648
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4039,7 +4017,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5062349710810623319
 Transform:
   m_ObjectHideFlags: 0
@@ -4243,7 +4221,7 @@ MonoBehaviour:
     m_Extent: {x: 0.71051, y: 0.96127, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &7091552426728504321
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4391,7 +4369,7 @@ MonoBehaviour:
     m_Extent: {x: 0.7888353, y: 0.7449404, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &393477119704344769
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4570,7 +4548,7 @@ MonoBehaviour:
     m_Extent: {x: 0.86084986, y: 0.5278301, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &6866621805815753478
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4790,7 +4768,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 8519ffab940bfd44ca33223642378418, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -4814,7 +4792,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 4155364287473611995, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.26082024, g: 0.26082024, b: 0.26082024, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -4844,7 +4822,7 @@ MonoBehaviour:
     m_Extent: {x: 1.0435348, y: 0.615, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &6783400782339493504
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4859,7 +4837,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   colorControl: {fileID: 259569805516380374}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
-  colorMultiplier: {r: 1.0017012, g: 1.0017012, b: 1.0017012, a: 1}
+  colorMultiplier: {r: 3.8405807, g: 3.8405807, b: 3.8405807, a: 1}
 --- !u!114 &5961982781266149443
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5510,7 +5488,7 @@ MonoBehaviour:
     m_Extent: {x: 0.70607007, y: 0.9741852, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &9112641950334767413
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5890,7 +5868,7 @@ MonoBehaviour:
     m_Extent: {x: 0.8249998, y: 3.7750015, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &6059283008227210837
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6198,7 +6176,7 @@ MonoBehaviour:
     m_Extent: {x: 0.102164984, y: 0.26523998, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &4354779955827289093
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6409,7 +6387,7 @@ MonoBehaviour:
     m_Extent: {x: 3.7750003, y: 0.5, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &1253376219625254014
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6658,7 +6636,7 @@ MonoBehaviour:
     m_Extent: {x: 0.79499984, y: 0.7501948, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &6679602796323770063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6904,7 +6882,7 @@ MonoBehaviour:
     m_Extent: {x: 0.09696531, y: 0.32753512, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &287139600566272358
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7052,7 +7030,7 @@ MonoBehaviour:
     m_Extent: {x: 1.0730402, y: 0.7829951, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &6155684277725889122
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7294,7 +7272,7 @@ MonoBehaviour:
     m_Extent: {x: 0.18517494, y: 0.48755506, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &4197606701073431948
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7493,7 +7471,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5567809194173664299}
   - component: {fileID: 4944418093456694075}
-  - component: {fileID: 2435667186140467309}
   - component: {fileID: 544221034714289328}
   - component: {fileID: 2778992321148657320}
   m_Layer: 2
@@ -7578,27 +7555,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
---- !u!114 &2435667186140467309
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3894571835484058264}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57c008f954fe54a8bb972de1018a2cb8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.2D.Animation.Runtime::UnityEngine.U2D.Animation.SpriteSkin
-  m_RootBone: {fileID: 0}
-  m_BoneTransforms:
-  - {fileID: 5825069205174597496}
-  m_Bounds:
-    m_Center: {x: 15.294998, y: 5.4297214, z: 0}
-    m_Extent: {x: 0.9749999, y: 0.9766998, z: 0}
-  m_AlwaysUpdate: 1
-  m_AutoRebind: 0
-  m_BoundsMode: 0
 --- !u!114 &544221034714289328
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7745,7 +7701,7 @@ MonoBehaviour:
     m_Extent: {x: 0.5938499, y: 0.83848494, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &3176730983044984013
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8027,7 +7983,7 @@ MonoBehaviour:
     m_Extent: {x: 4.1449995, y: 0.50000024, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &8105038851023494064
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8238,7 +8194,7 @@ MonoBehaviour:
     m_Extent: {x: 0.09910011, y: 0.26515502, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &9208761398567447670
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8613,7 +8569,7 @@ MonoBehaviour:
     m_Extent: {x: 0.845, y: 1.3582652, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &1796198411501180353
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8795,7 +8751,7 @@ MonoBehaviour:
     m_Extent: {x: 0.7979851, y: 0.7169602, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &6260671469049556109
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9040,7 +8996,7 @@ MonoBehaviour:
     m_Extent: {x: 0.10373008, y: 0.26371497, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &7100042507734484754
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9223,7 +9179,7 @@ MonoBehaviour:
     m_Extent: {x: 0.5, y: 4.505, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &2496300072034386095
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9433,7 +9389,7 @@ MonoBehaviour:
     m_Extent: {x: 0.28096533, y: 0.5585151, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &1773518811083718624
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9581,7 +9537,7 @@ MonoBehaviour:
     m_Extent: {x: 0.8399997, y: 0.35333502, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &4063087849277041438
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9859,7 +9815,7 @@ MonoBehaviour:
     m_Extent: {x: 0.74000025, y: 0.6650001, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &8462773439020259474
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10039,7 +9995,7 @@ MonoBehaviour:
     m_Extent: {x: 0.35312507, y: 0.705, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &5223232098127877591
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10285,7 +10241,7 @@ MonoBehaviour:
     m_Extent: {x: 0.6562402, y: 0.5328101, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &7989624022521299411
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10622,7 +10578,7 @@ MonoBehaviour:
     m_Extent: {x: 0.5847099, y: 0.8349999, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &2629646918213401696
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11268,7 +11224,7 @@ MonoBehaviour:
     m_Extent: {x: 0.09760523, y: 0.321105, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &235547562854086732
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11637,7 +11593,7 @@ MonoBehaviour:
     m_Extent: {x: 0.86096525, y: 0.52444506, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &4289021326705900459
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11731,7 +11687,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: a3fbc9eae2df12d46a0c295ea56a4482, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -11755,7 +11711,7 @@ SpriteRenderer:
   m_SortingOrder: 1
   m_MaskInteraction: 0
   m_Sprite: {fileID: -4466628975468409916, guid: cdcddbd26090c344888c5f1c10b911be, type: 3}
-  m_Color: {r: 0.25038743, g: 0.25038743, b: 0.25038743, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -11785,7 +11741,7 @@ MonoBehaviour:
     m_Extent: {x: 1.34322, y: 1.188005, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &4102802506871448330
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11800,7 +11756,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   colorControl: {fileID: 259569805516380374}
   colorShift: {r: 0, g: 0, b: 0, a: 0}
-  colorMultiplier: {r: 0.96163315, g: 0.96163315, b: 0.96163315, a: 1}
+  colorMultiplier: {r: 3.8405807, g: 3.8405807, b: 3.8405807, a: 1}
 --- !u!114 &4585055022817763142
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12196,7 +12152,7 @@ MonoBehaviour:
     m_Extent: {x: 0.103820056, y: 0.36755002, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &6202561711453360747
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12344,7 +12300,7 @@ MonoBehaviour:
     m_Extent: {x: 0.18517494, y: 0.48755497, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &847615934571073224
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12513,7 +12469,6 @@ GameObject:
   m_Component:
   - component: {fileID: 532346905367788612}
   - component: {fileID: 3008343964068888382}
-  - component: {fileID: 1876312365190774771}
   - component: {fileID: 8339034522415712282}
   - component: {fileID: 7003505473480707101}
   m_Layer: 2
@@ -12598,27 +12553,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
---- !u!114 &1876312365190774771
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7153344998190150845}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57c008f954fe54a8bb972de1018a2cb8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.2D.Animation.Runtime::UnityEngine.U2D.Animation.SpriteSkin
-  m_RootBone: {fileID: 0}
-  m_BoneTransforms:
-  - {fileID: 7854505857208756092}
-  m_Bounds:
-    m_Center: {x: 15.296008, y: 12.961, z: 0}
-    m_Extent: {x: 0.9660101, y: 0.97456026, z: 0}
-  m_AlwaysUpdate: 1
-  m_AutoRebind: 0
-  m_BoundsMode: 0
 --- !u!114 &8339034522415712282
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12765,7 +12699,7 @@ MonoBehaviour:
     m_Extent: {x: 0.7990551, y: 0.72500014, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &2617157792808624114
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13166,7 +13100,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &459258253997694756
 Transform:
   m_ObjectHideFlags: 0
@@ -13498,7 +13432,7 @@ MonoBehaviour:
     m_Extent: {x: 1.0730398, y: 0.782995, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &7979214547590760017
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13891,7 +13825,7 @@ MonoBehaviour:
     m_Extent: {x: 0.35208988, y: 0.70397484, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &1999349370571143071
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14329,7 +14263,7 @@ MonoBehaviour:
     m_Extent: {x: 0.66499996, y: 0.5350001, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &5515750108178621229
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14660,7 +14594,7 @@ MonoBehaviour:
     m_Extent: {x: 0.19860995, y: 0.61687493, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &4796186650858355005
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14808,7 +14742,7 @@ MonoBehaviour:
     m_Extent: {x: 0.10483, y: 0.37242493, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &4997780708953755272
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14991,7 +14925,7 @@ MonoBehaviour:
     m_Extent: {x: 0.2823348, y: 0.55193496, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
-  m_BoundsMode: 0
+  m_BoundsMode: 1
 --- !u!114 &6837940338494683076
 MonoBehaviour:
   m_ObjectHideFlags: 0

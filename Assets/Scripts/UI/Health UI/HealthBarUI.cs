@@ -9,31 +9,11 @@ public class HealthBarUI : MonoBehaviour
     Health health;
     float animatedHealthPoints;
 
-    private void OnEnable()
-    {
-        if (Spider.Player)
-        {
-            health = Spider.Player.health;
-        }
-        // if (health != null)
-        // {
-        //     health.HealthChanged += UpdateHealthBar;
-        // }
-    }
-
     private void Start()
     {
-        if (health == null)//in case we didn't get subscribed in OnEnable
-        {
-            health = Spider.Player.health;
-            animatedHealthPoints = 0;
-            DisplayHealth(0);
-            // if (health != null)
-            // {
-            //     health.HealthChanged += UpdateHealthBar;
-            //     UpdateHealthBar();
-            // }
-        }
+        health = Spider.Player.health;
+        animatedHealthPoints = 0;
+        DisplayHealth(0);
     }
 
     private void Update()
@@ -72,12 +52,4 @@ public class HealthBarUI : MonoBehaviour
             }
         }
     }
-
-    // private void OnDisable()
-    // {
-    //     if (health != null)
-    //     {
-    //         health.HealthChanged -= UpdateHealthBar;
-    //     }
-    // }
 }
