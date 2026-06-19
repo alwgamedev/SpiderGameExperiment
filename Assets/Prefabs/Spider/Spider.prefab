@@ -1429,8 +1429,8 @@ Transform:
   m_GameObject: {fileID: 1147273781406288458}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.0537, y: 0.2734, z: 0}
-  m_LocalScale: {x: 0.12, y: 0.13042001, z: 1}
+  m_LocalPosition: {x: 0.9955, y: 0.2302, z: 0}
+  m_LocalScale: {x: 0.153456, y: 0.17863628, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4530260151778528352}
@@ -2905,6 +2905,18 @@ MonoBehaviour:
     colorMin1: {r: 0, g: 1, b: 0.7882353, a: 0}
     colorMax0: {r: 0.5019608, g: 1, b: 0.9137255, a: 0}
     colorMax1: {r: 0, g: 1, b: 0.57254905, a: 1}
+  eye:
+    sr: {fileID: 8305450815435666107}
+    light: {fileID: 1085141222351016829}
+    eyeRestColor: {r: 0, g: 1.4980392, b: 0.15861592, a: 0.5019608}
+    eyeHurtColor: {r: 2.1185474, g: 0.13715783, b: 0, a: 0.5019608}
+    eyeOffIntensity: 0.25
+    eyeRestIntensity: 1
+    eyeMaxIntensity: 2.5
+    lightMaxIntensity: 1
+    eyeColorAnimationSpeed: 0.75
+    eyeIntensityAnimationSpeed: 1
+    lightIntensityAnimationSpeed: 1
 --- !u!114 &534478759235766021
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3448,7 +3460,7 @@ Transform:
   m_GameObject: {fileID: 1563483707937399937}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0.6810022, w: 0.7322814}
-  m_LocalPosition: {x: -2.75, y: -0.29, z: 0}
+  m_LocalPosition: {x: -6.91, y: -1.14, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3473,9 +3485,9 @@ MonoBehaviour:
     rid: -2
   m_SelectionSources:
     rid: 1140529307360165891
-  m_FalloffIntensity: 0.495
-  m_Color: {r: 0, g: 1, b: 0.38823533, a: 1}
-  m_Intensity: 1.1
+  m_FalloffIntensity: 0.45
+  m_Color: {r: 0, g: 1, b: 0.10588235, a: 0.5019608}
+  m_Intensity: 1
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
   m_ApplyToSortingLayers: 691757f84123078bc32964b5ed200b95000000003901eb833b0c40755d66887bfd52dab97dc97b56
@@ -3496,10 +3508,10 @@ MonoBehaviour:
   m_LocalBounds:
     m_Center: {x: 0, y: -0.00000011920929, z: 0}
     m_Extent: {x: 0.9985302, y: 0.99853027, z: 0}
-  m_PointLightInnerAngle: 5.6656337
-  m_PointLightOuterAngle: 58.01548
-  m_PointLightInnerRadius: 4
-  m_PointLightOuterRadius: 15
+  m_PointLightInnerAngle: 0
+  m_PointLightOuterAngle: 90
+  m_PointLightInnerRadius: 0
+  m_PointLightOuterRadius: 35
   m_ShapeLightParametricSides: 5
   m_ShapeLightParametricAngleOffset: 0
   m_ShapeLightParametricRadius: 1

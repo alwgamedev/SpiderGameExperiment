@@ -14,25 +14,28 @@ public class SpiderEye
     [SerializeField] float eyeRestIntensity;
     [SerializeField] float eyeMaxIntensity;
     [SerializeField] float lightMaxIntensity;
-    [SerializeField] float colorAnimationSpeed;
-    [SerializeField] float intensityAnimationSpeed;
+    [SerializeField] float eyeColorAnimationSpeed;
+    [SerializeField] float eyeIntensityAnimationSpeed;
     [SerializeField] float lightIntensityAnimationSpeed;
 
     Material material;
     readonly int eyeColorProperty = Shader.PropertyToID("_Color");
     readonly int eyeIntensityProperty = Shader.PropertyToID("_Intensity");
 
-    Color curEyeColor;
+    Color startEyeColor;
     Color goalEyeColor;
-    Color nextEyeColor;
+    // Color nextEyeColor;
+    float eyeColorTimer;
 
-    float curEyeIntensity;
+    float startEyeIntensity;
     float goalEyeIntensity;
-    float nextEyeIntensity;
+    // float nextEyeIntensity;
+    float eyeIntensityTimer;
     
-    float curLightIntensity;
+    float startLightIntensity;
     float goalLightIntensity;
-    float nextLightIntensity;
+    // float nextLightIntensity;
+    float lightIntensityTimer;
     
 
     public void Initialize()
@@ -41,12 +44,13 @@ public class SpiderEye
         sr.sharedMaterial = material;
 
         SnapEyeColor(eyeRestColor);
-        SnapEyeIntensity(eyeRestIntensity);
+        SnapEyeIntensity(eyeOffIntensity);
         SnapLightIntensity(0);
         light.enabled = false;
 
         SetGoalEyeColor(eyeRestColor);
-        TurnLightOn();
+        SetGoalEyeIntensity(eyeRestIntensity);
+        // TurnLightOn();
     }
 
     public void Update()
@@ -95,117 +99,162 @@ public class SpiderEye
     {
         material.SetColor(eyeColorProperty, color);
         light.color = color;
-        curEyeColor = color;
+        startEyeColor = color;
         goalEyeColor = color;
-        nextEyeColor = color;
+        // nextEyeColor = color;
+        eyeColorTimer = 1;
     }
 
     public void SetGoalEyeColor(Color color)
     {
+        var curColor = material.GetColor(eyeColorProperty);
         goalEyeColor = color;
-        nextEyeColor = color;
+        // nextEyeColor = color;
+        BeginColorAnimation(curColor, color, ref startEyeColor, ref eyeColorTimer, eyeColorAnimationSpeed);
     }
 
     public void FlashEyeColor(Color color, Color nextColor)
     {
-        goalEyeColor = color;
-        nextEyeColor = nextColor;
+        SnapEyeColor(color);
+        // var curColor = material.GetColor(eyeColorProperty);
+        goalEyeColor = nextColor;
+        // nextEyeColor = nextColor;
+        BeginColorAnimation(color, nextColor, ref startEyeColor, ref eyeColorTimer, eyeColorAnimationSpeed);
     }
 
     public void SnapEyeIntensity(float intensity)
     {
         material.SetFloat(eyeIntensityProperty, intensity);
-        curEyeIntensity = intensity;
+        startEyeIntensity = intensity;
         goalEyeIntensity = intensity;
-        nextEyeIntensity = intensity;
+        // nextEyeIntensity = intensity;
+        eyeIntensityTimer = 1;
     }
 
     public void SetGoalEyeIntensity(float intensity)
     {
+        var curIntensity = material.GetFloat(eyeIntensityProperty);
         goalEyeIntensity = intensity;
-        nextEyeIntensity = intensity;
+        // nextEyeIntensity = intensity;
+        BeginFloatAnimation(curIntensity, intensity, ref startEyeIntensity, ref eyeIntensityTimer, eyeIntensityAnimationSpeed);
     }
 
-    public void FlashEyeIntensity(float intensity, float nextIntensity)
-    {
-        goalEyeIntensity = intensity;
-        nextEyeIntensity = nextIntensity;
-    }
+    // public void FlashEyeIntensity(float intensity, float nextIntensity)
+    // {
+    //     var curIntensity = material.GetFloat(eyeIntensityProperty);
+    //     goalEyeIntensity = intensity;
+    //     nextEyeIntensity = nextIntensity;
+    //     BeginFloatAnimation(curIntensity, intensity, ref startEyeIntensity, ref eyeIntensityTimer, eyeIntensityAnimationSpeed);
+    // }
 
 
     public void SnapLightIntensity(float intensity)
     {
         light.intensity = intensity;
-        curLightIntensity = intensity;
+        startLightIntensity = intensity;
         goalLightIntensity = intensity;
-        nextLightIntensity = intensity;
+        // nextLightIntensity = intensity;
+        lightIntensityTimer = 1;
     }
 
     public void SetGoalLightIntensity(float intensity)
     {
         goalLightIntensity = intensity;
-        nextLightIntensity = intensity;
+        // nextLightIntensity = intensity;
+        BeginFloatAnimation(light.intensity, intensity, ref startLightIntensity, ref lightIntensityTimer, lightIntensityAnimationSpeed);
     }
 
-    public void FlashLightIntensity(float intensity, float nextIntensity)
+    // public void FlashLightIntensity(float intensity, float nextIntensity)
+    // {
+    //     goalLightIntensity = intensity;
+    //     nextLightIntensity = nextIntensity;
+    //     BeginFloatAnimation(light.intensity, intensity, ref startLightIntensity, ref lightIntensityTimer, lightIntensityAnimationSpeed);
+    // }
+
+    private static void BeginColorAnimation(Color curColor, Color goalColor, 
+        ref Color startColor, ref float timer, float animationSpeed)
     {
-        goalLightIntensity = intensity;
-        nextLightIntensity = nextIntensity;
+        var diff = MaxDifference(curColor, goalColor);
+        var t = Mathf.Clamp(diff / animationSpeed, 0, 1);
+        timer = 1 - t;
+        startColor = curColor;
+    }
+
+    private static void BeginFloatAnimation(float curVal, float goalVal,
+        ref float startVal, ref float timer, float animationSpeed)
+    {
+        var diff = Mathf.Abs(goalVal - curVal);
+        var t = Mathf.Clamp(diff / animationSpeed, 0, 1);
+        timer = 1 - t;
+        startVal = curVal;
     }
 
     private void Animate(float dt)
     {
         //2do: use timers instead (lerp from cached initial val to goal val)
         //just more reliable
-        if (!WithinTolerance(curEyeColor, goalEyeColor))
+        if (eyeColorTimer < 1)
         {
-            curEyeColor = Color.Lerp(curEyeColor, goalEyeColor, colorAnimationSpeed * dt);
+            eyeColorTimer += eyeColorAnimationSpeed * dt;
+            var eyeColor = Color.Lerp(startEyeColor, goalEyeColor, eyeColorTimer);
+            material.SetColor(eyeColorProperty, eyeColor);
+            light.color = eyeColor;
 
-            if (WithinTolerance(curEyeColor, goalEyeColor))
-            {
-                curEyeColor = goalEyeColor;
-                goalEyeColor = nextEyeColor;
-            }
-
-            material.SetColor(eyeColorProperty, curEyeColor);
-            light.color = curEyeColor;
+            // if (eyeColorTimer >= 1 && nextEyeColor != goalEyeColor)
+            // {
+            //     startEyeColor = goalEyeColor;
+            //     goalEyeColor = nextEyeColor;
+            //     BeginColorAnimation(startEyeColor, goalEyeColor, ref startEyeColor, ref eyeColorTimer, eyeColorAnimationSpeed);
+            // }
         }
 
-        if (!WithinTolerance(curEyeIntensity, goalEyeIntensity))
+        if (eyeIntensityTimer < 1)
         {
-            curEyeIntensity = Mathf.Lerp(curEyeIntensity, goalEyeIntensity, intensityAnimationSpeed * dt);
+            eyeIntensityTimer += eyeIntensityAnimationSpeed * dt;
+            var eyeIntensity = Mathf.Lerp(startEyeIntensity, goalEyeIntensity, eyeIntensityTimer);
+            material.SetFloat(eyeIntensityProperty, eyeIntensity);
             
-            if (WithinTolerance(curEyeIntensity, goalEyeIntensity))
-            {
-                curEyeIntensity = goalEyeIntensity;
-                goalEyeIntensity = nextEyeIntensity;
-            }
-
-            material.SetFloat(eyeIntensityProperty, curEyeIntensity);
+            // if (eyeIntensityTimer >= 1 && nextEyeIntensity != goalEyeIntensity)
+            // {
+            //     startEyeIntensity = goalEyeIntensity;
+            //     goalEyeIntensity = nextEyeIntensity;
+            //     BeginFloatAnimation(startEyeIntensity, goalEyeIntensity, ref startEyeIntensity, 
+            //         ref eyeIntensityTimer, eyeIntensityAnimationSpeed);
+            // }
         }
 
-        if (!WithinTolerance(curLightIntensity, goalLightIntensity))
+        if (lightIntensityTimer < 1)
         {
-            curLightIntensity = Mathf.Lerp(curLightIntensity, goalLightIntensity, lightIntensityAnimationSpeed * dt);
+            lightIntensityTimer += lightIntensityAnimationSpeed * dt;
+            light.intensity = Mathf.Lerp(startLightIntensity, goalLightIntensity, lightIntensityTimer);
 
-            if (WithinTolerance(curLightIntensity, goalLightIntensity))
-            {
-                curLightIntensity = goalLightIntensity;
-                goalLightIntensity = nextLightIntensity;
-            }
-
-            light.intensity = curLightIntensity;
+            // if (lightIntensityTimer >= 1 && nextLightIntensity != goalLightIntensity)
+            // {
+            //     startLightIntensity = goalLightIntensity;
+            //     goalLightIntensity = nextLightIntensity;
+            //     BeginFloatAnimation(startLightIntensity, goalLightIntensity, ref startLightIntensity, 
+            //         ref lightIntensityTimer, lightIntensityAnimationSpeed);
+            // }
         }
     }
 
-    public bool WithinTolerance(float x, float y)
+    private static float MaxDifference(Color c1, Color c2)
     {
-        return Mathf.Abs(y - x) < 0.1f;
+        var r = Mathf.Abs(c1.r - c2.r);
+        var g = Mathf.Abs(c1.g - c2.g);
+        var b = Mathf.Abs(c1.b - c2.b);
+        var a = Mathf.Abs(c1.a - c2.a);
+        return Mathf.Max(Mathf.Max(r, g), Mathf.Max(b, a));
     }
 
-    public bool WithinTolerance(Color c1, Color c2)
-    {
-        return WithinTolerance(c1.r, c2.r) && WithinTolerance(c1.g, c2.g)
-            && WithinTolerance(c1.b, c2.b) && WithinTolerance(c1.a, c2.a);
-    }
+    // public bool WithinTolerance(float x, float y)
+    // {
+    //     return Mathf.Abs(y - x) < 0.1f;
+    // }
+
+    // public bool WithinTolerance(Color c1, Color c2)
+    // {
+    //     return WithinTolerance(c1.r, c2.r) && WithinTolerance(c1.g, c2.g)
+    //         && WithinTolerance(c1.b, c2.b) && WithinTolerance(c1.a, c2.a);
+    // }
 }
