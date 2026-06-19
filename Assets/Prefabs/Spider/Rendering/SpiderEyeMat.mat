@@ -58,7 +58,7 @@ Material:
     - _ZWrite: 0
     m_Colors:
     - White: {r: 1, g: 1, b: 1, a: 1}
-    - _BorderColor: {r: 0.2999857, g: 0.3337494, b: 0.3433962, a: 1}
+    - _BorderColor: {r: 0.2057601, g: 0.21276082, b: 0.21509439, a: 1}
     - _Center: {r: 0.85, g: 0.4, b: 0, a: 0}
     - _Color: {r: 0, g: 1.4980392, b: 0.15861592, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
