@@ -77,6 +77,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "PAction",
+                    "type": "Button",
+                    "id": "f2bb783a-e211-43bc-92b2-ee12889fae7e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "LAction",
+                    "type": "Button",
+                    "id": "94288d66-5569-4430-bc8e-bdca29f3a18b",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -253,6 +271,28 @@
                     "processors": "",
                     "groups": ";Keyboard",
                     "action": "FAction",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "29083ee7-f95a-490f-9029-89f5aa747e1f",
+                    "path": "<Keyboard>/p",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard",
+                    "action": "PAction",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "caa7988e-d28c-4efb-81ec-7953aa74a96f",
+                    "path": "<Keyboard>/l",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard",
+                    "action": "LAction",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

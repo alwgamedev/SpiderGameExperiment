@@ -51,7 +51,7 @@ public class Spider : MonoBehaviour
         mover.grabber = grabber;
         jumpPreviewArrow.Start();
         grappleShootPreview.Start(mover.FacingRight, mover.World);
-        lighting.Initialize();
+        lighting.Initialize(spiderInput);
 
         grabber.Disable(true);
         grabber.HideSprites();

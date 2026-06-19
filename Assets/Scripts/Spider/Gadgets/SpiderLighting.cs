@@ -24,6 +24,8 @@ public class SpiderLighting
     [SerializeField] float lightIntensityAnimationSpeed;
     [SerializeField] float bodyColorAnimationSpeed;
 
+    SpiderInput spiderInput;
+
     Material eyeMaterial;
     Material abdomenMaterial;
     Material headMaterial;
@@ -37,8 +39,10 @@ public class SpiderLighting
     AnimationTimer abdomenColorAnimation;
     AnimationTimer headColorAnimation;
 
-    public void Initialize()
+    public void Initialize(SpiderInput spiderInput)
     {
+        this.spiderInput = spiderInput;
+
         eyeMaterial = new(eyeSR.sharedMaterial);
         eyeSR.sharedMaterial = eyeMaterial;
         abdomenMaterial = new(abdomenSR.sharedMaterial);
@@ -66,11 +70,11 @@ public class SpiderLighting
 
     public void Update()
     {
-        if (Keyboard.current.pKey.wasPressedThisFrame)
+        if (spiderInput.PAction.WasPressedThisFrame())
         {
             TurnLightOn();
         }
-        else if (Keyboard.current.lKey.wasPressedThisFrame)
+        else if (spiderInput.LAction.WasPressedThisFrame())
         {
             TurnLightOff();
         }

@@ -67,21 +67,21 @@ Material:
     m_Ints: []
     m_Floats:
     - _EnableExternalAlpha: 0
-    - _HeightMultiplier: 1
+    - _HeightMultiplier: 2
     - _HighlightMax: 1.2
     - _HighlightMin: 0.65
     - _ShadowMax: 1
-    - _ShadowMin: 0.7
+    - _ShadowMin: 0.25
     - _ZWrite: 0
     m_Colors:
     - White: {r: 1, g: 1, b: 1, a: 1}
     - _BaseColor: {r: 0.3207547, g: 0.3207547, b: 0.3207547, a: 1}
     - _CameraOffset: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _HighlightColor: {r: 0.6754716, g: 0.6754716, b: 0.6754716, a: 1}
+    - _HighlightColor: {r: 0.83396226, g: 0.83396226, b: 0.83396226, a: 1}
     - _HighlightPosition: {r: 0.5, g: 0.5, b: 0, a: 0}
     - _HighlightStretch: {r: 0.25, g: 1, b: 0, a: 0}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
-    - _ShadowColor: {r: 0.4566037, g: 0.4566037, b: 0.4566037, a: 1}
+    - _ShadowColor: {r: 0.4943396, g: 0.4943396, b: 0.4943396, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

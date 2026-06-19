@@ -15,6 +15,8 @@ public class SpiderInput
     public InputAction QAction { get; private set; }
     public InputAction ZAction { get; private set; }
     public InputAction FAction { get; private set; }
+    public InputAction PAction { get; private set; }
+    public InputAction LAction { get; private set; }
 
     public Vector2 MoveInput => ArrowsAction.ReadValue<Vector2>();
     public Vector2 SecondaryInput => WASDAction.ReadValue<Vector2>();
@@ -34,5 +36,7 @@ public class SpiderInput
         QAction = playerInput.actions["QAction"];
         ZAction = playerInput.actions["ZAction"];
         FAction = playerInput.actions["FAction"];
+        PAction = playerInput.actions["PAction"];
+        LAction = playerInput.actions["LAction"];
     }
 }

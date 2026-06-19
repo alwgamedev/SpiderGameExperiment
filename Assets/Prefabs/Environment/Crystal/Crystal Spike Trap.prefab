@@ -109,7 +109,7 @@ MonoBehaviour:
       m_ClipVelocity: 0
   geometryType: 0
   geometryVectorParam: {x: 0, y: 0}
-  geometryFloatParam: 0.5
+  geometryFloatParam: 0.35
   unscaledGeometry: 0
 --- !u!114 &2874959627256987539
 MonoBehaviour:
@@ -129,8 +129,8 @@ MonoBehaviour:
   - {fileID: 5324621265114877966}
   - {fileID: 3886532036856883579}
   physicsKit: {fileID: 2761152426928610880}
-  impulseForce: 10
-  bounciness: 1
+  impulseForce: 8.5
+  bounciness: 2
   damagePerSpike: 0.5
 --- !u!1001 &2048215708180193125
 PrefabInstance:
