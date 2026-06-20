@@ -165,18 +165,18 @@ public class PBFRenderer : MonoBehaviour
             particleMaterial.SetFloat(dtProperty, Time.deltaTime);
 
             pbFluid.UpdateDensityTexture();
-            var rpDensity = new RenderParams(densityMaterial);
 
-            //Graphics.DrawMesh(densityMesh, pbFluid.transform.position, Quaternion.identity, densityMaterial, 0);
+            //render density mesh
+            var rpDensity = new RenderParams(densityMaterial);
             Graphics.RenderMesh(in rpDensity, densityMesh, 0, Matrix4x4.TRS(transform.position, transform.rotation, transform.lossyScale));
 
+            //render foam particles
             var rpParticle = new RenderParams(particleMaterial)
             {
                 worldBounds = new(Vector3.zero, new(10000, 10000, 10000))//better options?
-            }
-            ;
+            };
             commandData[0].indexCountPerInstance = particleMesh.GetIndexCount(0);
-            commandData[0].instanceCount = (uint)pbFluid.configuration.numFoamParticles;//it would be nice if we could set this from the foamParticleCounter but idk how bad it would be to get data from GPU
+            commandData[0].instanceCount = (uint)pbFluid.configuration.numFoamParticles;
             commandBuffer.SetData(commandData);
             Graphics.RenderMeshIndirect(in rpParticle, particleMesh, commandBuffer);
         }

@@ -676,7 +676,7 @@ MonoBehaviour:
   shapeDef:
     contactFilter:
       m_Categories:
-        bitMask: 262400
+        bitMask: 1310976
       m_Contacts:
         bitMask: 18446744073709551615
       m_GroupIndex: 0

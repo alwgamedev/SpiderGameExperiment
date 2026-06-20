@@ -59,14 +59,14 @@ Material:
     m_Ints: []
     m_Floats:
     - _EnableExternalAlpha: 0
-    - _HeightMultiplier: 100
+    - _HeightMultiplier: 125
     - _HighlightMax: 0.75
     - _HighlightMin: 0.4
     - _HighlightPower: 1
     - _PatternIntensity: 5
     - _PatternStrength: 1
     - _ShadowMax: 0.5
-    - _ShadowMin: 0.05
+    - _ShadowMin: 0.04
     - _ZWrite: 0
     m_Colors:
     - White: {r: 1, g: 1, b: 1, a: 1}

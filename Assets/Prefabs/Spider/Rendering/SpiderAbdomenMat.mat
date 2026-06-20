@@ -59,7 +59,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _EnableExternalAlpha: 0
-    - _HeightMultiplier: 100
+    - _HeightMultiplier: 125
     - _HighlightMax: 0.75
     - _HighlightMin: 0.4
     - _HighlightPower: 1
@@ -75,7 +75,7 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _HighlightColor: {r: 0.7283019, g: 0.7283019, b: 0.7283019, a: 1}
     - _HighlightPosition: {r: -0.1, g: 0.3, b: 0, a: 0}
-    - _HighlightStretch: {r: 0.2, g: 0.25, b: 0, a: 0}
+    - _HighlightStretch: {r: 0.175, g: 0.225, b: 0, a: 0}
     - _PatternColor: {r: 1.6423985, g: 0.056704145, b: 0, a: 1}
     - _PatternOffset: {r: 0.55, g: 0.51, b: 0, a: 0}
     - _PatternTiling: {r: 1.5, g: -2, b: 0, a: 0}
