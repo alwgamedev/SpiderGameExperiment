@@ -15,7 +15,6 @@ public class PowerBeam : MonoBehaviour
     readonly int lengthProperty = Shader.PropertyToID("Length");
     float length;
     float goalLength;
-    bool snapToGoal;
 
     void Start()
     {
@@ -28,7 +27,7 @@ public class PowerBeam : MonoBehaviour
     {
         if (length != goalLength)
         {
-            if (snapToGoal)
+            if (goalLength < length)
             {
                 length = goalLength;
             }
@@ -36,6 +35,7 @@ public class PowerBeam : MonoBehaviour
             {
                 length = MathTools.LerpAtConstantSpeed(length, goalLength, growthSpeed, Time.deltaTime);
             }
+            
             UpdateVFXLength();
         }
     }
@@ -51,7 +51,6 @@ public class PowerBeam : MonoBehaviour
         {
             var result = cast[0];
             goalLength = result.fraction * maxLength;
-            snapToGoal = true;
             
             if ((result.shape.contactFilter.categories & spiderMask) != 0)
             {
@@ -64,7 +63,6 @@ public class PowerBeam : MonoBehaviour
         else
         {
             goalLength = maxLength;
-            snapToGoal = false;
         }
     }
 

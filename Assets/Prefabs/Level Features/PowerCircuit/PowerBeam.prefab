@@ -56,7 +56,7 @@ VisualEffect:
       - m_Value: 0.025
         m_Name: Thickness
         m_Overridden: 1
-      - m_Value: 10
+      - m_Value: 20
         m_Name: Length
         m_Overridden: 1
       - m_Value: 0.125
@@ -65,7 +65,7 @@ VisualEffect:
       - m_Value: 0.5
         m_Name: HeightMax
         m_Overridden: 1
-      - m_Value: 0.05
+      - m_Value: 0.025
         m_Name: NoiseScaleMin
         m_Overridden: 1
       - m_Value: 0.15
@@ -113,27 +113,54 @@ VisualEffect:
       - m_Value: 3
         m_Name: SparkVelocity
         m_Overridden: 1
-      - m_Value: 0.4
+      - m_Value: 0.75
         m_Name: SparkLifetimeMax
         m_Overridden: 1
-      - m_Value: 0.2
+      - m_Value: 0.25
         m_Name: SparkLifetimeMin
         m_Overridden: 1
-      - m_Value: 0.25
+      - m_Value: 0
         m_Name: SparkRadius
         m_Overridden: 1
-      - m_Value: 0.01
+      - m_Value: 0.005
         m_Name: SparkSpawnDelay
+        m_Overridden: 1
+      - m_Value: 0.5
+        m_Name: SparkStretch
+        m_Overridden: 1
+      - m_Value: 0.2
+        m_Name: SizeMin
+        m_Overridden: 1
+      - m_Value: 0.5
+        m_Name: SizeMax
+        m_Overridden: 1
+      - m_Value: 120
+        m_Name: SparkSphereArc
+        m_Overridden: 1
+      - m_Value: 150
+        m_Name: SparkSphereAngle
+        m_Overridden: 1
+      - m_Value: 0.5
+        m_Name: EndSizeMult
+        m_Overridden: 1
+      - m_Value: 100
+        m_Name: SparkSpawnRate
         m_Overridden: 1
     m_Vector2f:
       m_Array: []
     m_Vector3f:
       m_Array:
-      - m_Value: {x: 0.025, y: 0.25, z: 0}
+      - m_Value: {x: -0.05, y: 0.2, z: 0}
         m_Name: SparkSphereScale
         m_Overridden: 1
       - m_Value: {x: 0, y: 0, z: 180}
         m_Name: SparkSphereAngle
+        m_Overridden: 1
+      - m_Value: {x: 20, y: 0, z: 0}
+        m_Name: BoundsCenter
+        m_Overridden: 1
+      - m_Value: {x: 30, y: 6, z: 0}
+        m_Name: BoundsSize
         m_Overridden: 1
     m_Vector4f:
       m_Array:
@@ -149,7 +176,7 @@ VisualEffect:
       - m_Value: {x: 1.3179945, y: 0.55526686, z: 0.29592693, w: 0.101960786}
         m_Name: Color4
         m_Overridden: 1
-      - m_Value: {x: 0.7727661, y: 0.9245283, z: 0.9023831, w: 1}
+      - m_Value: {x: 0.3584906, y: 0.00628794, z: 0, w: 1}
         m_Name: SparkColor
         m_Overridden: 1
     m_Uint:
@@ -167,7 +194,39 @@ VisualEffect:
     m_AnimationCurve:
       m_Array: []
     m_Gradient:
-      m_Array: []
+      m_Array:
+      - m_Value:
+          serializedVersion: 2
+          key0: {r: 8, g: 7.030884, b: 2.7622638, a: 1}
+          key1: {r: 8, g: 0.3382436, b: 0, a: 1}
+          key2: {r: 0.6094339, g: 1, b: 0.8877414, a: 0}
+          key3: {r: 0, g: 0, b: 0, a: 0}
+          key4: {r: 0, g: 0, b: 0, a: 0}
+          key5: {r: 0, g: 0, b: 0, a: 0}
+          key6: {r: 0, g: 0, b: 0, a: 0}
+          key7: {r: 0, g: 0, b: 0, a: 0}
+          ctime0: 16268
+          ctime1: 32768
+          ctime2: 49151
+          ctime3: 0
+          ctime4: 0
+          ctime5: 0
+          ctime6: 0
+          ctime7: 0
+          atime0: 0
+          atime1: 65535
+          atime2: 65535
+          atime3: 65535
+          atime4: 0
+          atime5: 0
+          atime6: 0
+          atime7: 0
+          m_Mode: 0
+          m_ColorSpace: 1
+          m_NumColorKeys: 3
+          m_NumAlphaKeys: 2
+        m_Name: SparkColor
+        m_Overridden: 1
     m_NamedObject:
       m_Array:
       - m_Value: {fileID: 2800000, guid: 6cc3e081b4fe43342854a94e470bce43, type: 3}
@@ -244,6 +303,6 @@ MonoBehaviour:
   spiderMask:
     bitMask: 2
   maxLength: 20
-  growthSpeed: 50
+  growthSpeed: 25
   force: 150
   damagePerSecond: 3

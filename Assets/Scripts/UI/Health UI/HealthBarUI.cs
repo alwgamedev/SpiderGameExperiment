@@ -39,7 +39,6 @@ public class HealthBarUI : MonoBehaviour
 
     private void UpdatePods(float healthPoints)
     {
-        Debug.Log(healthPoints);
         for (int i = 0; i < health.numPods; i++)
         {
             if (!pod[i].Enabled)
