@@ -58,7 +58,7 @@ public class CrystalSpikeTrap : MonoBehaviour, PhysicsCallbacks.ITriggerCallback
         spider.ApplyLinearImpulseToCenter(mass * (impulseForce * n - bounciness * spider.linearVelocity));
 
         //apply damage
-        var dmg = (int)Mathf.Ceil(damagePerSpike * count);
-        Spider.Player.health.AddHealth(-dmg);
+        // var dmg = (int)Mathf.Ceil(damagePerSpike * count);
+        Spider.Player.health.AddHealth(-damagePerSpike * count);
     }
 }

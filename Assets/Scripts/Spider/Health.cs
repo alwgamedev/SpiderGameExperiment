@@ -8,7 +8,7 @@ public class Health
     public const int MAX_NUM_PODS = 6;
 
     public int numPods;
-    public int currentHealth;
+    public float currentHealth;
     public event Action Hurt;
     public event Action Died;
 
@@ -19,7 +19,7 @@ public class Health
         SetHealth(MaxHealth);
     }
 
-    public void AddHealth(int amount)
+    public void AddHealth(float amount)
     {
         SetHealth(currentHealth + amount);
         if (amount < 0)
@@ -46,7 +46,7 @@ public class Health
         SetHealth(MaxHealth);
     }
 
-    private void SetHealth(int value)
+    private void SetHealth(float value)
     {
         currentHealth = Mathf.Clamp(value, 0, MaxHealth);
     }

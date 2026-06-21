@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5973812960997663465}
   - component: {fileID: 1257191934939543807}
   - component: {fileID: 286950604123023921}
+  - component: {fileID: 5061085267448642495}
   m_Layer: 0
   m_Name: PowerBeam
   m_TagString: Untagged
@@ -41,7 +42,7 @@ VisualEffect:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 498269669786029816}
   m_Enabled: 1
-  m_Asset: {fileID: 8926484042661614526, guid: 6d23219e1f34ce841be5b24eec574518, type: 3}
+  m_Asset: {fileID: 8926484042661614526, guid: b4f57d00ed9a6c541a1622361d4c3ad1, type: 3}
   m_InitialEventName: OnPlay
   m_InitialEventNameOverriden: 0
   m_StartSeed: 0
@@ -55,31 +56,31 @@ VisualEffect:
       - m_Value: 0.025
         m_Name: Thickness
         m_Overridden: 1
-      - m_Value: 9
+      - m_Value: 10
         m_Name: Length
         m_Overridden: 1
       - m_Value: 0.125
         m_Name: NoiseScale
         m_Overridden: 1
-      - m_Value: 0.25
+      - m_Value: 0.5
         m_Name: HeightMax
         m_Overridden: 1
       - m_Value: 0.05
         m_Name: NoiseScaleMin
         m_Overridden: 1
-      - m_Value: 0.25
+      - m_Value: 0.15
         m_Name: NoiseScaleMax
         m_Overridden: 1
       - m_Value: 0.35
         m_Name: HeightMin
         m_Overridden: 1
-      - m_Value: 0.5
+      - m_Value: 0.4
         m_Name: MiddleThickness
         m_Overridden: 1
       - m_Value: 0
         m_Name: StartOffsetMax
         m_Overridden: 1
-      - m_Value: 0.025
+      - m_Value: 0.1
         m_Name: ThicknessMax
         m_Overridden: 1
       - m_Value: 0.01
@@ -94,32 +95,71 @@ VisualEffect:
       - m_Value: 2.45
         m_Name: AlphaNoiseScale
         m_Overridden: 1
-      - m_Value: 0.1
+      - m_Value: 0
         m_Name: OffsetMax
+        m_Overridden: 1
+      - m_Value: 0.5
+        m_Name: Color1Weight
+        m_Overridden: 1
+      - m_Value: 1
+        m_Name: Color2Weight
+        m_Overridden: 1
+      - m_Value: 1
+        m_Name: Color3Weight
+        m_Overridden: 1
+      - m_Value: 1
+        m_Name: Color4Weight
+        m_Overridden: 1
+      - m_Value: 3
+        m_Name: SparkVelocity
+        m_Overridden: 1
+      - m_Value: 0.4
+        m_Name: SparkLifetimeMax
+        m_Overridden: 1
+      - m_Value: 0.2
+        m_Name: SparkLifetimeMin
+        m_Overridden: 1
+      - m_Value: 0.25
+        m_Name: SparkRadius
+        m_Overridden: 1
+      - m_Value: 0.01
+        m_Name: SparkSpawnDelay
         m_Overridden: 1
     m_Vector2f:
       m_Array: []
     m_Vector3f:
-      m_Array: []
+      m_Array:
+      - m_Value: {x: 0.025, y: 0.25, z: 0}
+        m_Name: SparkSphereScale
+        m_Overridden: 1
+      - m_Value: {x: 0, y: 0, z: 180}
+        m_Name: SparkSphereAngle
+        m_Overridden: 1
     m_Vector4f:
       m_Array:
-      - m_Value: {x: 0.74901956, y: 0.74901956, z: 0.3829892, w: 0.5019608}
+      - m_Value: {x: 1.9999999, y: 1.540061, z: 0, w: 0.2509804}
         m_Name: Color1
         m_Overridden: 1
-      - m_Value: {x: 1.4980392, y: 0, z: 0.8644721, w: 0.5019608}
+      - m_Value: {x: 1, y: 0.088679194, z: 0.17820574, w: 0.1254902}
         m_Name: Color2
         m_Overridden: 1
-      - m_Value: {x: 0, y: 0.25298467, z: 1.5100025, w: 0.5019608}
+      - m_Value: {x: 0, y: 0.66338253, z: 0.8901961, w: 0.2509804}
         m_Name: Color3
+        m_Overridden: 1
+      - m_Value: {x: 1.3179945, y: 0.55526686, z: 0.29592693, w: 0.101960786}
+        m_Name: Color4
+        m_Overridden: 1
+      - m_Value: {x: 0.7727661, y: 0.9245283, z: 0.9023831, w: 1}
+        m_Name: SparkColor
         m_Overridden: 1
     m_Uint:
       m_Array: []
     m_Int:
       m_Array:
-      - m_Value: 64
+      - m_Value: 32
         m_Name: NumStrip
         m_Overridden: 1
-      - m_Value: 64
+      - m_Value: 128
         m_Name: ParticlesPerStrip
         m_Overridden: 1
     m_Matrix4x4f:
@@ -178,7 +218,32 @@ VFXRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: -1794432787
-  m_SortingLayer: -1
+  m_SortingLayerID: 2072536669
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_MaskInteraction: 0
+--- !u!114 &5061085267448642495
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 498269669786029816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8bcabec65ae0e64fb2c8aee7a0f5e3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: spydr1.Runtime::PowerBeam
+  visualEffect: {fileID: 1257191934939543807}
+  queryFilter:
+    m_Categories:
+      bitMask: 18446744073709551615
+    m_HitCategories:
+      bitMask: 18446744073709551615
+    m_IgnoreFilter: 8
+  spiderMask:
+    bitMask: 2
+  maxLength: 20
+  growthSpeed: 50
+  force: 150
+  damagePerSecond: 3
