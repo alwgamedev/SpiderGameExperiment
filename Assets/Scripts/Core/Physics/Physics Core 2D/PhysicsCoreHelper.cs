@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Unity.Burst;
@@ -7,6 +8,7 @@ using Unity.Mathematics;
 using Unity.U2D.Physics;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public static class PhysicsCoreHelper
 {
@@ -107,15 +109,15 @@ public static class PhysicsCoreHelper
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ShapeProxyForJobs
-    { 
+    {
         //trying to keep it to 128 bytes.
         //a) polygons:
-            //-it's a polygon iff normal1 != 0
-            //-we don't store the vertex count, so iterate from 0 to 8 and stop when normal = 0
+        //-it's a polygon iff normal1 != 0
+        //-we don't store the vertex count, so iterate from 0 to 8 and stop when normal = 0
         //b) circles and capsule:
-            //-center1, center2 stored at beginning of vertex array.
-            //-normal0.x = radius
-            //-normal0.y = capsule ? 1 : 0
+        //-center1, center2 stored at beginning of vertex array.
+        //-normal0.x = radius
+        //-normal0.y = capsule ? 1 : 0
 
         float2 vertex0;
         float2 vertex1;
@@ -283,44 +285,53 @@ public static class PhysicsCoreHelper
     }
 
     public static PhysicsBody CreateCircleBody(PhysicsWorld world, PhysicsBodyDefinition bodyDef, PhysicsShapeDefinition shapeDef,
-        float radius, Matrix4x4 shapeInputSpace, out PhysicsShape shape)
+        float radius, Matrix4x4 inputSpace, out PhysicsShape shape)
     {
         var body = world.CreateBody(bodyDef);
 
-        var circleGeom = CircleGeometry.Create(radius).Transform(shapeInputSpace, true).InverseTransform(body.transform);
-        shape = body.CreateShape(circleGeom, shapeDef);
+        var circleGeom = CircleGeometry.Create(radius);
+        shape = body.AddShape(circleGeom, inputSpace, shapeDef);
+        // var circleGeom = CircleGeometry.Create(radius).Transform(shapeInputSpace, true).InverseTransform(body.transform);
+        // shape = body.CreateShape(circleGeom, shapeDef);
 
         return body;
     }
 
     public static PhysicsBody CreateCapsuleBody(PhysicsWorld world, PhysicsBodyDefinition bodyDef, PhysicsShapeDefinition shapeDef,
-        Vector2 capCenter1, Vector2 capCenter2, float capRadius, Matrix4x4 shapeInputSpace, out PhysicsShape shape)
+        Vector2 capCenter1, Vector2 capCenter2, float capRadius, Matrix4x4 inputSpace, out PhysicsShape shape)
     {
         var body = world.CreateBody(bodyDef);
 
-        var capsuleGeom = CapsuleGeometry.Create(capCenter1, capCenter2, capRadius).Transform(shapeInputSpace, true).InverseTransform(body.transform);
-        shape = body.CreateShape(capsuleGeom, shapeDef);
+        var capsuleGeom = CapsuleGeometry.Create(capCenter1, capCenter2, capRadius);
+        shape = body.AddShape(capsuleGeom, inputSpace, shapeDef);
+        // var capsuleGeom = CapsuleGeometry.Create(capCenter1, capCenter2, capRadius).Transform(shapeInputSpace, true).InverseTransform(body.transform);
+        // shape = body.CreateShape(capsuleGeom, shapeDef);
 
         return body;
     }
 
     public static PhysicsBody CreateCapsuleBody(PhysicsWorld world, PhysicsBodyDefinition bodyDef, PhysicsShapeDefinition shapeDef,
-        Vector2 capsuleSize, Vector2 capsuleOffset, Matrix4x4 shapeInputSpace, out PhysicsShape shape)
+        Vector2 capsuleSize, Vector2 capsuleOffset, Matrix4x4 inputSpace, out PhysicsShape shape)
     {
         var body = world.CreateBody(bodyDef);
-        var capsuleGeom = CreateCapsule(capsuleSize, capsuleOffset).Transform(shapeInputSpace, true).InverseTransform(body.transform);
-        shape = body.CreateShape(capsuleGeom, shapeDef);
+
+        var capsuleGeom = CreateCapsule(capsuleSize, capsuleOffset);
+        shape = body.AddShape(capsuleGeom, inputSpace, shapeDef);
+        // var capsuleGeom = CreateCapsule(capsuleSize, capsuleOffset).Transform(inputSpace, true).InverseTransform(body.transform);
+        // shape = body.CreateShape(capsuleGeom, shapeDef);
 
         return body;
     }
 
     public static PhysicsBody CreateBoxBody(PhysicsWorld world, PhysicsBodyDefinition bodyDef, PhysicsShapeDefinition shapeDef,
-        Vector2 fullSize, Matrix4x4 shapeInputSpace, out PhysicsShape shape)
+        Vector2 fullSize, Matrix4x4 inputSpace, out PhysicsShape shape)
     {
         var body = world.CreateBody(bodyDef);
 
-        PolygonGeometry boxGeom = PolygonGeometry.CreateBox(fullSize).Transform(shapeInputSpace, true).InverseTransform(body.transform);
-        shape = body.CreateShape(boxGeom, shapeDef);
+        var boxGeom = PolygonGeometry.CreateBox(fullSize);
+        shape = body.AddShape(boxGeom, inputSpace, shapeDef);
+        // PolygonGeometry boxGeom = PolygonGeometry.CreateBox(fullSize).Transform(shapeInputSpace, true).InverseTransform(body.transform);
+        // shape = body.CreateShape(boxGeom, shapeDef);
 
         return body;
     }
@@ -342,6 +353,34 @@ public static class PhysicsCoreHelper
         };
     }
 
+    public static PhysicsShape AddShape(this PhysicsBody body, CircleGeometry circle, Matrix4x4 inputSpace, PhysicsShapeDefinition shapeDef)
+    {
+        circle = circle.Transform(inputSpace, true).InverseTransform(body.transform);
+        return body.CreateShape(circle, shapeDef);
+    }
+
+    public static PhysicsShape AddShape(this PhysicsBody body, CapsuleGeometry capsule, Matrix4x4 inputSpace, PhysicsShapeDefinition shapeDef)
+    {
+        capsule = capsule.Transform(inputSpace, true).InverseTransform(body.transform);
+        return body.CreateShape(capsule, shapeDef);
+    }
+
+    public static PhysicsShape AddShape(this PhysicsBody body, PolygonGeometry polygon, Matrix4x4 inputSpace, PhysicsShapeDefinition shapeDef)
+    {
+        polygon = polygon.Transform(inputSpace, true).InverseTransform(body.transform);
+        return body.CreateShape(polygon, shapeDef);
+    }
+
+    public static NativeArray<PhysicsShape> AddPolygonBatch(this PhysicsBody body, Span<PolygonGeometry> subdividedPolygon, Matrix4x4 inputSpace, 
+        PhysicsShapeDefinition shapeDef)
+    {
+        Span<PolygonGeometry> transformedPolygon = stackalloc PolygonGeometry[subdividedPolygon.Length];
+        for (int i = 0; i < subdividedPolygon.Length; i++)
+        {
+            transformedPolygon[i] = subdividedPolygon[i].Transform(inputSpace, true).InverseTransform(body.transform);
+        }
+        return body.CreateShapeBatch(transformedPolygon, shapeDef);
+    }
 
     public static void DrawCapsule(Color color, Vector2 capsuleSize, Vector2 capsuleOffset, Transform inputSpace = null)
     {

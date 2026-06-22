@@ -4,17 +4,17 @@ using UnityEngine.VFX;
 
 public class PowerBeam : MonoBehaviour
 {
-    [SerializeField] VisualEffect visualEffect;
-    [SerializeField] PhysicsQuery.QueryFilter queryFilter;
-    [SerializeField] PhysicsMask spiderMask;
-    [SerializeField] float maxLength;
-    [SerializeField] float growthSpeed;
-    [SerializeField] float force;
-    [SerializeField] float damagePerSecond;
+    public  VisualEffect visualEffect;
+    public PhysicsQuery.QueryFilter queryFilter;
+    public PhysicsMask spiderMask;
+    public float maxLength;
+    public float growthSpeed;
+    public float force;
+    public float damagePerSecond;
 
+    [System.NonSerialized] public float length;
+    [System.NonSerialized] public float goalLength;
     readonly int lengthProperty = Shader.PropertyToID("Length");
-    float length;
-    float goalLength;
 
     void Start()
     {

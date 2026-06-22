@@ -68,7 +68,7 @@ VisualEffect:
       - m_Value: 0.025
         m_Name: NoiseScaleMin
         m_Overridden: 1
-      - m_Value: 0.15
+      - m_Value: 0.1
         m_Name: NoiseScaleMax
         m_Overridden: 1
       - m_Value: 0.35
@@ -101,13 +101,13 @@ VisualEffect:
       - m_Value: 0.5
         m_Name: Color1Weight
         m_Overridden: 1
-      - m_Value: 1
+      - m_Value: 0.5
         m_Name: Color2Weight
         m_Overridden: 1
       - m_Value: 1
         m_Name: Color3Weight
         m_Overridden: 1
-      - m_Value: 1
+      - m_Value: 0.5
         m_Name: Color4Weight
         m_Overridden: 1
       - m_Value: 3
@@ -279,7 +279,7 @@ VFXRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 2072536669
   m_SortingLayer: 3
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_MaskInteraction: 0
 --- !u!114 &5061085267448642495
 MonoBehaviour:
@@ -302,7 +302,7 @@ MonoBehaviour:
     m_IgnoreFilter: 8
   spiderMask:
     bitMask: 2
-  maxLength: 20
+  maxLength: 25
   growthSpeed: 25
   force: 150
   damagePerSecond: 3
