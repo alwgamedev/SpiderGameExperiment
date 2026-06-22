@@ -42,6 +42,11 @@ public class PowerBeam : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!visualEffect.enabled)
+        {
+            return;
+        }
+
         Vector2 o = transform.position;
         Vector2 r = transform.right;
         var d = maxLength * r;
@@ -56,7 +61,7 @@ public class PowerBeam : MonoBehaviour
             {
                 var player = Spider.Player;
                 var spideyBody = player.mover.SpideyBody;
-                result.shape.body.ApplyForce(spideyBody.TotalMass * force * r, result.point);
+                spideyBody.abdomen.ApplyForce(spideyBody.TotalMass * force * r, result.point);
                 player.health.AddHealth(-damagePerSecond * Time.deltaTime);
             }
         }

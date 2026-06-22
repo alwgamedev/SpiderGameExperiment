@@ -8,6 +8,7 @@ public class FixedJointKit : MonoBehaviour
     public PhysicsFixedJoint joint;
 
     [SerializeField] PhysicsFixedJointDefinition jointDef;
+    [SerializeField] bool drawGizmos;
 
     //2do: validate, gizmos, anchor positioning (well you can just use the joint def)
 
@@ -38,7 +39,7 @@ public class FixedJointKit : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        if (bodyA && bodyB)
+        if (drawGizmos && bodyA && bodyB)
         {
             var anchorA = jointDef.localAnchorA;
             var anchorB = jointDef.localAnchorB;
