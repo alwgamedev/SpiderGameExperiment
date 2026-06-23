@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Unity.Burst;
@@ -8,7 +7,6 @@ using Unity.Mathematics;
 using Unity.U2D.Physics;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
 
 public static class PhysicsCoreHelper
 {
@@ -382,26 +380,55 @@ public static class PhysicsCoreHelper
         return body.CreateShapeBatch(transformedPolygon, shapeDef);
     }
 
-    public static void DrawCapsule(Color color, Vector2 capsuleSize, Vector2 capsuleOffset, Transform inputSpace = null)
+    public static void DrawCircleGizmo(Color color, CircleGeometry circle, Matrix4x4 transformMat)
     {
-        var midPt = capsuleOffset;
-        var leftEndpt = midPt + new Vector2(-0.5f * capsuleSize.x, 0);
-        var c1 = leftEndpt + new Vector2(0.5f * capsuleSize.y, 0);
-        var c2 = midPt + new Vector2(0.5f * (capsuleSize.x - capsuleSize.y), 0);
-        var topLeft = c1 + new Vector2(0, 0.5f * capsuleSize.y);
-        var topRight = c2 + new Vector2(0, 0.5f * capsuleSize.y);
-        var bottomLeft = c1 + new Vector2(0, -0.5f * capsuleSize.y);
-        var bottomRight = c2 + new Vector2(0, -0.5f * capsuleSize.y);
-        var r = 0.5f * capsuleSize.y;
+        using(new Handles.DrawingScope(color, transformMat))
+        {
+            Handles.DrawWireArc(circle.center, Vector3.forward, Vector3.right, 360, circle.radius);
+        }
+    }
 
-        var transformMat = inputSpace ? inputSpace.localToWorldMatrix : Matrix4x4.identity;
+    public static void DrawCapsuleGizmo(Color color, CapsuleGeometry capsule, Matrix4x4 transformMat)
+    {
+        var center1 = capsule.center1;
+        var center2 = capsule.center2;
+        var radius = capsule.radius;
+
+        var d = center2 - center1;
+        var v = d.normalized;
+        var w = v.CCWPerp();
+
+        var topLeft = center1 + radius * w;
+        var topRight = topLeft + d;
+        var bottomLeft = center1 - radius * w;
+        var bottomRight = bottomLeft + d;
 
         using (new Handles.DrawingScope(color, transformMat))
         {
-            Handles.DrawWireArc(c1, Vector3.forward, topLeft - c1, 180, r);
-            Handles.DrawWireArc(c2, Vector3.forward, bottomRight - c2, 180, r);
+            Handles.DrawWireArc(center1, Vector3.forward, topLeft - center1, 180, radius);
+            Handles.DrawWireArc(center2, Vector3.forward, bottomRight - center2, 180, radius);
             Handles.DrawLine(topLeft, topRight);
             Handles.DrawLine(bottomLeft, bottomRight);
+        }
+    }
+
+    public static void DrawCapsuleGizmo(Color color, Vector2 capsuleSize, Vector2 capsuleOffset, Matrix4x4 transformMat)
+    {
+        var capsule = CreateCapsule(capsuleSize, capsuleOffset);
+        DrawCapsuleGizmo(color, capsule, transformMat);
+    }
+
+    public static void DrawPolygonGizmo(Color color, PolygonGeometry polygon, Matrix4x4 transformMat)
+    {
+        using(new Handles.DrawingScope(color, transformMat))
+        {
+            var v0 = polygon.vertices[polygon.count - 1];
+            for (int i = 0; i < polygon.count; i++)
+            {
+                var v1 = polygon.vertices[i];
+                Handles.DrawLine(v0, v1);
+                v0 = v1;
+            }
         }
     }
 

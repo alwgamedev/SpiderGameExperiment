@@ -10,8 +10,6 @@ public class FixedJointKit : MonoBehaviour
     [SerializeField] PhysicsFixedJointDefinition jointDef;
     [SerializeField] bool drawGizmos;
 
-    //2do: validate, gizmos, anchor positioning (well you can just use the joint def)
-
     public void CreateJoint()
     {
         if (!bodyA.body.isValid)
@@ -41,16 +39,22 @@ public class FixedJointKit : MonoBehaviour
     {
         if (drawGizmos && bodyA && bodyB)
         {
-            var anchorA = jointDef.localAnchorA;
-            var anchorB = jointDef.localAnchorB;
-            var pA = bodyA.transform.TransformPoint(anchorA.position);
-            var pB = bodyB.transform.TransformPoint(anchorB.position);
+            var anchorA = joint.isValid ? joint.localAnchorA : jointDef.localAnchorA;
+            var anchorB = joint.isValid ? joint.localAnchorB : jointDef.localAnchorB;
+            var transformA = joint.isValid ? joint.bodyA.transform
+                : new PhysicsTransform(bodyA.transform.position, new PhysicsRotate(bodyA.transform.rotation, PhysicsWorld.TransformPlane.XY));
+            var transformB = joint.isValid ? joint.bodyB.transform
+                : new PhysicsTransform(bodyB.transform.position, new PhysicsRotate(bodyB.transform.rotation, PhysicsWorld.TransformPlane.XY));
+            var pA = transformA.TransformPoint(anchorA.position);
+            var pB = transformB.TransformPoint(anchorB.position);
+            var dirA = transformA.rotation.RotateVector(anchorA.rotation.direction);
+            var dirB = transformB.rotation.RotateVector(anchorB.rotation.direction);
             Gizmos.color = Color.red;
-            Gizmos.DrawLine(pA, pA + bodyA.transform.rotation * anchorA.rotation.direction);
+            Gizmos.DrawLine(pA, pA + dirA);
             Gizmos.color = Color.yellow;
             Gizmos.DrawLine(pA, pB);
             Gizmos.color = Color.green;
-            Gizmos.DrawLine(pB, pB + bodyB.transform.rotation * anchorB.rotation.direction);
+            Gizmos.DrawLine(pB, pB + dirB);
         }
     }
 

@@ -1826,7 +1826,7 @@ MonoBehaviour:
             m_CustomColor:
               serializedVersion: 2
               rgba: 0
-          m_Density: 0.25
+          m_Density: 0.5
           m_IsTrigger: 0
           m_TriggerEvents: 1
           m_ContactEvents: 0
@@ -2215,7 +2215,7 @@ MonoBehaviour:
         constraintStiffness: 0.99
         constraintIterations: 30
         itersPulledByOwner: 5
-        dynamicAnchorSpringForce: 5
+        dynamicAnchorSpringForce: 2
         dynamicAnchorSpringForceCap: 0.5
       cannonFulcrum:
         lever: {fileID: 3468580104259901786}
@@ -3533,7 +3533,7 @@ MonoBehaviour:
   m_Intensity: 1
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
-  m_ApplyToSortingLayers: 691757f84123078bc32964b5ed200b95000000003901eb833b0c40755d66887bfd52dab97dc97b56
+  m_ApplyToSortingLayers: 691757f84123078bc32964b5ed200b95000000003901eb833b0c40755d66887bfd52dab97dc97b56915c2d95
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -15420,7 +15420,7 @@ LineRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 1450953085
-  m_SortingLayer: 5
+  m_SortingLayer: 6
   m_SortingOrder: -1000
   m_MaskInteraction: 0
   m_Positions:
@@ -17980,7 +17980,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -95977505985870133, guid: ad864bcca22f51748ad352a8df355dc7, type: 3}
       propertyPath: m_SortingLayer
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: -95977505985870133, guid: ad864bcca22f51748ad352a8df355dc7, type: 3}
       propertyPath: m_SortingOrder
@@ -18000,7 +18000,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4941343174335184044, guid: ad864bcca22f51748ad352a8df355dc7, type: 3}
       propertyPath: m_SortingLayer
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 4941343174335184044, guid: ad864bcca22f51748ad352a8df355dc7, type: 3}
       propertyPath: m_SortingOrder

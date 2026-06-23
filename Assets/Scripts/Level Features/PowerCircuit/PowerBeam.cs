@@ -15,6 +15,13 @@ public class PowerBeam : MonoBehaviour
     [System.NonSerialized] public float length;
     [System.NonSerialized] public float goalLength;
     readonly int lengthProperty = Shader.PropertyToID("Length");
+    readonly int sparkSpawnMultiplierProperty = Shader.PropertyToID("SparkSpawnRateMultiplier");
+
+    //set a spawn multiplier instead of spawn rate, so you don't have to remember the original spawn rate
+    public void SetSparkSpawnMultiplier(float multiplier)
+    {
+        visualEffect.SetFloat(sparkSpawnMultiplierProperty, multiplier);
+    }
 
     void Start()
     {

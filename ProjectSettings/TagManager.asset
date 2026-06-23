@@ -62,6 +62,9 @@ TagManager:
   - name: World3
     uniqueID: 2072536669
     locked: 0
+  - name: World4
+    uniqueID: 2502778001
+    locked: 0
   - name: Foreground
     uniqueID: 3118093053
     locked: 0

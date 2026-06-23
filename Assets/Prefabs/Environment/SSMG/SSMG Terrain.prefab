@@ -221,7 +221,7 @@ GameObject:
   - component: {fileID: 4007598523456811302}
   - component: {fileID: 5291316002289393465}
   - component: {fileID: 5711968811228248401}
-  - component: {fileID: 7220261769274784571}
+  - component: {fileID: 5478863713552202647}
   - component: {fileID: 9093430336729837584}
   - component: {fileID: 3093966963722154442}
   - component: {fileID: 8608894538070072183}
@@ -282,6 +282,7 @@ MonoBehaviour:
   crackSpread: 4
   barySeedSpacing: 2
   bdryDistSmoothingIterations: 8
+  leavePositionsUntransformed: 0
   perimeter: []
 --- !u!33 &5291316002289393465
 MeshFilter:
@@ -335,24 +336,27 @@ MeshRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1967131707
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!210 &7220261769274784571
-SortingGroup:
+--- !u!114 &5478863713552202647
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2280705025784522866}
   m_Enabled: 1
-  m_SortingLayerID: 1967131707
-  m_SortingLayer: 2
-  m_SortingOrder: -5
-  m_SortAtRoot: 0
-  m_Sort3DAs2D: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03da405f94149654093f18198b324779, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: spydr1.Runtime::AnyRendererSorting
+  sortingLayer:
+    layerNumber: 6
+  sortingOrder: 0
+  renderer: {fileID: 5711968811228248401}
 --- !u!114 &9093430336729837584
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -708,7 +712,11 @@ MonoBehaviour:
   geometryType: 3
   geometryVectorParam: {x: 0, y: 0}
   geometryFloatParam: 0
-  unscaledGeometry: 0
+  basicShape: []
+  polygonShape:
+  - ppsc: {fileID: 8608894538070072183}
+    leaveUntransformed: 0
+  drawGizmos: 0
 --- !u!114 &8608894538070072183
 MonoBehaviour:
   m_ObjectHideFlags: 0

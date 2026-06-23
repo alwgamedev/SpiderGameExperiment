@@ -31,6 +31,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
     [SerializeField] float crackSpread;
     [SerializeField] int barySeedSpacing;
     [SerializeField] int bdryDistSmoothingIterations;
+    [SerializeField] bool leavePositionsUntransformed;
     [SerializeField] Vector2[] perimeter;
 
     Material material;
@@ -50,12 +51,23 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             DestroyImmediate(mesh);
         }
 
-        var seed = (uint)MathTools.RNG.Next(1, int.MaxValue);
+        // var seed = (uint)MathTools.RNG.Next(1, int.MaxValue);
         // var rng = new Unity.Mathematics.Random(seed);
 
         var vertices = new NativeList<Vector2>(Allocator.TempJob);
         SplineSampler.SampleSpline(spriteShapeController.spline, arcLengthSamples, splineSampleRate, vertices);
         var (bbMin, bbMax) = BoundingBox(vertices.AsArray());
+
+        if (!leavePositionsUntransformed)
+        {
+            var tIn = spriteShapeController.transform.localToWorldMatrix;
+            var tOut = transform.localToWorldMatrix;
+            var t = tOut.inverse * tIn;
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                vertices[i] = t.MultiplyPoint3x4(vertices[i]);
+            }
+        }
 
         var triangulator = Triangulate(vertices.AsArray(), maxTriangleArea, minAngleDeg);//TempJob allocated
         vertices.Dispose();
@@ -644,7 +656,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             var f = edge;
             var fOutgoing = outgoing;
 
-            while (MeshTools.TryGetNextEdgeCCW(f, fOutgoing, halfEdges, out f, out fOutgoing) 
+            while (MeshTools.TryGetNextEdgeCCW(f, fOutgoing, halfEdges, out f, out fOutgoing)
                 && !MeshTools.EqualOrHalfEdges(f, edge, halfEdges))
             {
                 if (seen[MeshTools.Vertex(f, !fOutgoing, triangles)])
@@ -658,7 +670,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             {
                 f = edge;
                 fOutgoing = outgoing;
-                while (MeshTools.TryGetNextEdgeCW(f, fOutgoing, halfEdges, out f, out fOutgoing) 
+                while (MeshTools.TryGetNextEdgeCW(f, fOutgoing, halfEdges, out f, out fOutgoing)
                     && !MeshTools.EqualOrHalfEdges(f, edge, halfEdges))
                 {
                     if (seen[MeshTools.Vertex(f, !fOutgoing, triangles)])
@@ -780,7 +792,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
                 }
 
                 //first find all valid children (vertex not seen, has valid bary color, and edge direction has dot > 0 with previous edge)
-                while (MeshTools.TryGetNextEdgeCCW(f, fOutgoing, halfEdges, out f, out fOutgoing)  
+                while (MeshTools.TryGetNextEdgeCCW(f, fOutgoing, halfEdges, out f, out fOutgoing)
                     && !MeshTools.EqualOrHalfEdges(f, edge, halfEdges))
                 {
                     possibleChildren.Add(f);
@@ -791,7 +803,7 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
                 {
                     f = edge;
                     fOutgoing = outgoing;
-                    while (MeshTools.TryGetNextEdgeCW(f, fOutgoing, halfEdges, out f, out fOutgoing) 
+                    while (MeshTools.TryGetNextEdgeCW(f, fOutgoing, halfEdges, out f, out fOutgoing)
                         && !MeshTools.EqualOrHalfEdges(f, edge, halfEdges))
                     {
                         possibleChildren.Add(f);

@@ -78,8 +78,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b72ec042344aa924eb5031b33ef290dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: spydr1.Runtime::FixedJointKit
-  bodyA: {fileID: 4804724494637801396}
-  bodyB: {fileID: 6376953336572344479}
+  bodyA: {fileID: 6376953336572344479}
+  bodyB: {fileID: 4804724494637801396}
   jointDef:
     m_LocalAnchorA:
       position: {x: 0, y: 0}
@@ -100,6 +100,7 @@ MonoBehaviour:
     m_DrawScale: 0.1
     m_WorldDrawing: 0
     m_CollideConnected: 0
+  drawGizmos: 0
 --- !u!114 &6376953336572344479
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -173,7 +174,8 @@ MonoBehaviour:
   geometryType: 0
   geometryVectorParam: {x: 0, y: 0}
   geometryFloatParam: 1
-  unscaledGeometry: 0
+  basicShape: []
+  polygonShape: []
 --- !u!1001 &7512626464218607230
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -184,7 +186,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2280705025784522866, guid: ff2c3baa4c7d2e649bc9dc84f9e83542, type: 3}
       propertyPath: m_Name
-      value: SSMG Terrain (2)
+      value: SSMG Terrain
       objectReference: {fileID: 0}
     - target: {fileID: 2867361545021054118, guid: ff2c3baa4c7d2e649bc9dc84f9e83542, type: 3}
       propertyPath: m_LocalPosition.x

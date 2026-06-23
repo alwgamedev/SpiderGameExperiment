@@ -29,33 +29,30 @@ public class PowerCircuit : MonoBehaviour
             beam.visualEffect.enabled = false;
         }
 
-        public readonly bool HitsTarget(Vector2 target, float distanceTolerance, float verticalTolerance)
+        public readonly bool CanConnect(PowerPort port, float distanceTolerance, float angularTolerance)
         {
             Vector2 beamDir = Direction;
-            Vector2 beamPos = Position;
-            var d = target - beamPos;//not yet normalized
+            Vector2 targetDir = port.Direction;
 
-            if (Vector2.Dot(beamDir, d) < 0)
+            if (Vector2.Dot(beamDir, targetDir) > 0)
             {
                 return false;
             }
 
-            var d2 = d.sqrMagnitude;
-            var l = beam.length;
-            var lTolerant = l + distanceTolerance;
-            if (lTolerant * lTolerant < d.sqrMagnitude)
+            if (Mathf.Abs(MathTools.Cross2D(beamDir, port.Direction)) > angularTolerance)
             {
                 return false;
             }
 
-            return Mathf.Abs(MathTools.Cross2D(d, beamDir)) < verticalTolerance;
+            var beamEnd = Position + beam.length * Direction;
+            return Vector2.SqrMagnitude(beamEnd - port.Position) < distanceTolerance;
         }
     }
 
     [SerializeField] FixedJointKit[] platform;
     [SerializeField] PowerPort[] port;/*//sorted by platform*/ //that's a commented out comment
-    [SerializeField] float horizontalTolerance;
-    [SerializeField] float verticalTolerance;
+    [SerializeField] float distanceTolerance;
+    [SerializeField] float angularTolerance;
     [SerializeField] float looseLinearFrequency;
     [SerializeField] float lockedLinearFrequency;
     [SerializeField] float looseAngularFrequency;
@@ -149,10 +146,11 @@ public class PowerCircuit : MonoBehaviour
             ref var portOut = ref portA.BeamActive ? ref portA : ref portB;
             ref var portIn = ref portA.BeamActive ? ref portB : ref portA;
 
-            if (!portOut.HitsTarget(portIn.Position, horizontalTolerance, verticalTolerance))
+            if (!portOut.CanConnect(portIn, distanceTolerance, angularTolerance))
             {
                 connection[i] = -1;
                 connection[j] = -1;
+                portOut.beam.SetSparkSpawnMultiplier(1);
                 if (!(portIn.platform < 0))
                 {
                     powerIn[portIn.platform]--;
@@ -222,10 +220,11 @@ public class PowerCircuit : MonoBehaviour
                 ref var portOut = ref p.BeamActive ? ref p : ref q;
                 ref var portIn = ref p.BeamActive ? ref q : ref p;
 
-                if (portOut.HitsTarget(portIn.Position, horizontalTolerance, verticalTolerance))
+                if (portOut.CanConnect(portIn, distanceTolerance, angularTolerance))
                 {
                     connection[i] = j;
                     connection[j] = i;
+                    portOut.beam.SetSparkSpawnMultiplier(0);
                     if (!(portIn.platform < 0))
                     {
                         powerIn[portIn.platform]++;
@@ -252,7 +251,7 @@ public class PowerCircuit : MonoBehaviour
                 continue;
             }
 
-            if (connection[j] < 0 || (!port[j].BeamActive && !port[connection[j]].BeamActive))
+            if (connection[j] < 0)
             {
                 lockingPort[i] = -1;
                 UnlockPlatform(platform[i].joint);

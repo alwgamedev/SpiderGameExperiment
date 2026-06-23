@@ -12,7 +12,9 @@ public class PhysicsBodyKit : MonoBehaviour
     [SerializeField] ShapeType geometryType;
     [SerializeField] Vector2 geometryVectorParam;
     [SerializeField] float geometryFloatParam;
-    [SerializeField] bool unscaledGeometry;
+    [SerializeField] BasicKitGeometry[] basicShape;
+    [SerializeField] PolygonKitGeometry[] polygonShape;
+    [SerializeField] bool drawGizmos;
 
     enum ShapeType { Circle, Capsule, Box, Polygon };
 
@@ -28,26 +30,31 @@ public class PhysicsBodyKit : MonoBehaviour
 
         queryFilter = shapeDef.contactFilter.ToQueryFilter(queryFilter.ignoreFilter);
 
-        switch (geometryType)
+        body = PhysicsWorld.defaultWorld.CreateBody(bodyDef);
+
+        var transformMat = transform.localToWorldMatrix;
+        for (int i = 0; i < basicShape.Length; i++)
         {
-            case ShapeType.Circle:
-                body = PhysicsCoreHelper.CreateCircleBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef, geometryFloatParam, 
-                    transform.localToWorldMatrix, out _);
-                break;
-            case ShapeType.Capsule:
-                Vector2 center = geometryVectorParam;
-                float radius = geometryFloatParam;
-                body = PhysicsCoreHelper.CreateCapsuleBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef, 
-                    -center, center, radius, transform.localToWorldMatrix, out _);
-                break;
-            case ShapeType.Box:
-                body = PhysicsCoreHelper.CreateBoxBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef, 
-                    geometryVectorParam, transform.localToWorldMatrix, out _);
-                break;
-            case ShapeType.Polygon:
-                body = PhysicsCoreHelper.CreatePolygonBody(PhysicsWorld.defaultWorld, bodyDef, shapeDef, transform.localToWorldMatrix,
-                    GetComponent<PolygonPhysicsShapeComponent>().pps.subdividedPolygon);
-                break;
+            var shape = basicShape[i];
+            switch(shape.geometryType)
+            {
+                case BasicKitGeometry.BasicGeometryType.Circle:
+                    body.AddShape(shape.Circle(), transformMat, shapeDef);
+                    break;
+                case BasicKitGeometry.BasicGeometryType.Capsule:
+                    body.AddShape(shape.Capsule(), transformMat, shapeDef);
+                    break;
+                case BasicKitGeometry.BasicGeometryType.Box:
+                    body.AddShape(shape.Box(), transformMat, shapeDef);
+                    break;
+            }
+        }
+
+        for (int i = 0; i < polygonShape.Length; i++)
+        {
+            var p = polygonShape[i];
+            var t = p.leaveUntransformed ? transformMat : p.ppsc.transform.localToWorldMatrix;
+            body.AddPolygonBatch(p.ppsc.pps.subdividedPolygon, t, shapeDef); 
         }
 
         //if body not valid error, check correct geometry type selected
@@ -63,6 +70,25 @@ public class PhysicsBodyKit : MonoBehaviour
             body.SetBodyDefLive(bodyDef);//do it live
             body.SetShapeDef(shapeDef);
             queryFilter = shapeDef.contactFilter.ToQueryFilter(queryFilter.ignoreFilter);
+        }
+
+        if (basicShape != null)
+        {
+            for (int i = 0; i < basicShape.Length; i++)
+            {
+                basicShape[i].OnValidate();
+            }
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (drawGizmos && basicShape != null)
+        {
+            for (int i = 0; i < basicShape.Length; i++)
+            {
+                basicShape[i].DrawGizmo(Color.green, transform.localToWorldMatrix);
+            }
         }
     }
 

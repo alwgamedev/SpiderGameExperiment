@@ -78,8 +78,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b72ec042344aa924eb5031b33ef290dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: spydr1.Runtime::FixedJointKit
-  bodyA: {fileID: 6439177137174202164}
-  bodyB: {fileID: 3921256535909269922}
+  bodyA: {fileID: 3921256535909269922}
+  bodyB: {fileID: 6439177137174202164}
   jointDef:
     m_LocalAnchorA:
       position: {x: 0, y: 0}
@@ -90,9 +90,9 @@ MonoBehaviour:
       rotation:
         direction: {x: 1, y: 0}
     m_LinearFrequency: 6
-    m_LinearDamping: 0.5
+    m_LinearDamping: 1
     m_AngularFrequency: 2
-    m_AngularDamping: 0.5
+    m_AngularDamping: 2
     m_ForceThreshold: 0
     m_TorqueThreshold: 0
     m_TuningFrequency: 50
@@ -174,7 +174,8 @@ MonoBehaviour:
   geometryType: 0
   geometryVectorParam: {x: 0, y: 0}
   geometryFloatParam: 1
-  unscaledGeometry: 0
+  basicShape: []
+  polygonShape: []
 --- !u!1001 &5077911261420128665
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -247,7 +248,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2280705025784522866, guid: ff2c3baa4c7d2e649bc9dc84f9e83542, type: 3}
       propertyPath: m_Name
-      value: SSMG Terrain (2)
+      value: SSMG Terrain
       objectReference: {fileID: 0}
     - target: {fileID: 2867361545021054118, guid: ff2c3baa4c7d2e649bc9dc84f9e83542, type: 3}
       propertyPath: m_LocalPosition.x
@@ -295,7 +296,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3093966963722154442, guid: ff2c3baa4c7d2e649bc9dc84f9e83542, type: 3}
       propertyPath: shapeDef.m_Density
-      value: 0.005
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 3093966963722154442, guid: ff2c3baa4c7d2e649bc9dc84f9e83542, type: 3}
+      propertyPath: basicShape.Array.size
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3093966963722154442, guid: ff2c3baa4c7d2e649bc9dc84f9e83542, type: 3}
       propertyPath: shapeDef.m_WorldDrawing
@@ -308,6 +313,14 @@ PrefabInstance:
     - target: {fileID: 3093966963722154442, guid: ff2c3baa4c7d2e649bc9dc84f9e83542, type: 3}
       propertyPath: shapeDef.contactFilter.m_Categories.bitMask
       value: 1638656
+      objectReference: {fileID: 0}
+    - target: {fileID: 3093966963722154442, guid: ff2c3baa4c7d2e649bc9dc84f9e83542, type: 3}
+      propertyPath: basicShape.Array.data[0].transform.rotation.direction.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3093966963722154442, guid: ff2c3baa4c7d2e649bc9dc84f9e83542, type: 3}
+      propertyPath: basicShape.Array.data[0].transform.rotation.direction.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4007598523456811302, guid: ff2c3baa4c7d2e649bc9dc84f9e83542, type: 3}
       propertyPath: mesh

@@ -44,7 +44,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2996001909977221729}
   - component: {fileID: 4263755731446346872}
-  - component: {fileID: 7187415282149919882}
   m_Layer: 0
   m_Name: 'bottom '
   m_TagString: Untagged
@@ -114,7 +113,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 2072536669
   m_SortingLayer: 3
-  m_SortingOrder: 0
+  m_SortingOrder: 99
   m_MaskInteraction: 0
   m_Sprite: {fileID: 3412487312102739164, guid: d8acdf10b059aff42b33b787a82ec5f0, type: 3}
   m_Color: {r: 0.21767882, g: 0.2981131, b: 0.29387972, a: 1}
@@ -127,22 +126,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
---- !u!114 &7187415282149919882
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3346311345636295766}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3df5e66d9b9490d4ab900ac0c33835fe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: spydr1.Runtime::SortingControl
-  children: []
-  sortingLayer:
-    layerNumber: 7
-  sortingOrder: 0
 --- !u!1 &4623334701780206270
 GameObject:
   m_ObjectHideFlags: 0
@@ -186,7 +169,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6517737375824709009}
   - component: {fileID: 8073771356571795809}
-  - component: {fileID: 7901456692426564055}
   m_Layer: 0
   m_Name: 'top '
   m_TagString: Untagged
@@ -256,7 +238,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 2072536669
   m_SortingLayer: 3
-  m_SortingOrder: 0
+  m_SortingOrder: 99
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7761860516276031177, guid: d8acdf10b059aff42b33b787a82ec5f0, type: 3}
   m_Color: {r: 0.7166607, g: 0.7358199, b: 0.7735849, a: 1}
@@ -269,22 +251,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
---- !u!114 &7901456692426564055
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8447784163709451672}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3df5e66d9b9490d4ab900ac0c33835fe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: spydr1.Runtime::SortingControl
-  children: []
-  sortingLayer:
-    layerNumber: 7
-  sortingOrder: 0
 --- !u!1 &9001292477875607747
 GameObject:
   m_ObjectHideFlags: 0
@@ -364,7 +330,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 2072536669
   m_SortingLayer: 3
-  m_SortingOrder: 1
+  m_SortingOrder: 100
   m_MaskInteraction: 0
   m_Sprite: {fileID: 2973893226975088114, guid: d8acdf10b059aff42b33b787a82ec5f0, type: 3}
   m_Color: {r: 0.44071907, g: 0.50162333, b: 0.5320754, a: 1}

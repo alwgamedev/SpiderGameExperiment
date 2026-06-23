@@ -114,12 +114,12 @@ public struct SpiderBody
     {
         if (abdomenBone)
         {
-            PhysicsCoreHelper.DrawCapsule(Color.orange, def.abdomenCapsuleSize, def.abdomenCapsuleOffset, abdomenBone);
+            PhysicsCoreHelper.DrawCapsuleGizmo(Color.orange, def.abdomenCapsuleSize, def.abdomenCapsuleOffset, abdomenBone.localToWorldMatrix);
         }
 
         if (headBone)
         {
-            PhysicsCoreHelper.DrawCapsule(Color.orange, def.headCapsuleSize, def.headCapsuleOffset, headBone);
+            PhysicsCoreHelper.DrawCapsuleGizmo(Color.orange, def.headCapsuleSize, def.headCapsuleOffset, headBone.localToWorldMatrix);
         }
 
         if (grappleArmTransform)

@@ -1,8 +1,6 @@
 ﻿using Unity.Collections;
 using UnityEngine;
 using UnityEngine.U2D;
-using Unity.Burst;
-using Unity.Mathematics;
 
 public static class SplineSampler
 {

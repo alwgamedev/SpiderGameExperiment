@@ -110,7 +110,15 @@ MonoBehaviour:
   geometryType: 0
   geometryVectorParam: {x: 0, y: 0}
   geometryFloatParam: 0.35
-  unscaledGeometry: 0
+  basicShape:
+  - transform:
+      position: {x: 0, y: 0}
+      rotation:
+        direction: {x: 1, y: 0}
+    vectorParameter: {x: 0, y: 0}
+    floatParameter: 0.35
+    geometryType: 0
+  polygonShape: []
 --- !u!114 &2874959627256987539
 MonoBehaviour:
   m_ObjectHideFlags: 0
