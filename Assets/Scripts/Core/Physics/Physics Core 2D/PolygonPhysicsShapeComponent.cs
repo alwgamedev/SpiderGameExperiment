@@ -3,8 +3,10 @@
 public class PolygonPhysicsShapeComponent : MonoBehaviour
 {
     public PolygonPhysicsShape pps;
-
+    [SerializeField] GameObject source;
     [SerializeField] bool drawGizmo;
+
+    public GameObject Source => source ? source : gameObject;
 
     enum ShapeSource
     {

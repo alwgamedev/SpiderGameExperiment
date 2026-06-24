@@ -32,7 +32,7 @@ public class PolygonPhysicsShapeEditor : Editor
             var c = targets[i] as PolygonPhysicsShapeComponent;
             if (c)
             {
-                c.pps.GetShape(c, c.gameObject);
+                c.pps.GetShape(c, c.Source, c.transform.localToWorldMatrix);
             }
         }
     }

@@ -86,19 +86,19 @@ public struct PolygonPhysicsShape
         }
     }
 
-    public void GetShape(UnityEngine.Object owner, GameObject source)
+    public void GetShape(UnityEngine.Object owner, GameObject source, Matrix4x4 targetSpace)
     {
         Undo.RecordObject(owner, "Get Physics Shape");
         switch (shapeSource)
         {
             case ShapeSource.SpriteRenderer:
-                GetShapeFromSpriteRenderer(source.GetComponent<SpriteRenderer>());
+                GetShapeFromSpriteRenderer(source.GetComponent<SpriteRenderer>(), targetSpace);
                 break;
             case ShapeSource.SpriteShape:
-                GetShapeFromSpriteShape(source.GetComponent<SpriteShapeController>());
+                GetShapeFromSpriteShape(source.GetComponent<SpriteShapeController>(), targetSpace);
                 break;
             case ShapeSource.SpriteShapeMeshGenerator:
-                GetShapeFromSpriteShapeMeshGenerator(source.GetComponent<SpriteShapeMeshGenerator>());
+                GetShapeFromSpriteShapeMeshGenerator(source.GetComponent<SpriteShapeMeshGenerator>(), targetSpace);
                 break;
         }
 
@@ -107,25 +107,39 @@ public struct PolygonPhysicsShape
         PrefabUtility.RecordPrefabInstancePropertyModifications(owner);
     }
 
-    public void GetShapeFromSpriteRenderer(SpriteRenderer sr)
+    public void GetShapeFromSpriteRenderer(SpriteRenderer sr, Matrix4x4 targetSpace)
     {
         var shape = sr.sprite.GetPhysicsShape(0);
-        Array.Resize(ref originalPolygon, shape.Length);
-        shape.CopyTo(originalPolygon);
+        // Array.Resize(ref originalPolygon, shape.Length);
+        // shape.CopyTo(originalPolygon);
+
+        CopyToOriginal(shape, sr.transform.localToWorldMatrix, targetSpace);
     }
 
-    public void GetShapeFromSpriteShape(SpriteShapeController ssc)
+    public void GetShapeFromSpriteShape(SpriteShapeController ssc, Matrix4x4 targetSpace)
     {
         var splineSample = new NativeList<Vector2>(Allocator.Temp);
         SplineSampler.SampleSpline(ssc.spline, spriteShapeArcLengthSamplesPerSegment, spriteShapeSamplesPerUnitArcLength, splineSample);
-        originalPolygon = splineSample.ToArray();
+        // originalPolygon = splineSample.ToArray();
+        CopyToOriginal(splineSample, ssc.transform.localToWorldMatrix, targetSpace);
     }
 
-    public void GetShapeFromSpriteShapeMeshGenerator(SpriteShapeMeshGenerator ssmg)
+    public void GetShapeFromSpriteShapeMeshGenerator(SpriteShapeMeshGenerator ssmg, Matrix4x4 targetSpace)
     {
         var perimeter = ssmg.GetPerimeter();
-        Array.Resize(ref originalPolygon, perimeter.Length);
-        perimeter.CopyTo(originalPolygon);
+        // Array.Resize(ref originalPolygon, perimeter.Length);
+        // perimeter.CopyTo(originalPolygon);
+        CopyToOriginal(perimeter, ssmg.transform.localToWorldMatrix, targetSpace);
+    }
+
+    private void CopyToOriginal(ReadOnlySpan<Vector2> points, Matrix4x4 inputSpace, Matrix4x4 targetSpace)
+    {
+        Array.Resize(ref originalPolygon, points.Length);
+        var t = targetSpace.inverse * inputSpace;
+        for (int i = 0; i < originalPolygon.Length; i++)
+        {
+            originalPolygon[i] = t.MultiplyPoint3x4(points[i]);
+        }
     }
 
     private void CopyOriginalToOptimized()

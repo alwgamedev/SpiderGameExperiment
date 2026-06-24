@@ -90,9 +90,9 @@ MonoBehaviour:
       rotation:
         direction: {x: 1, y: 0}
     m_LinearFrequency: 6
-    m_LinearDamping: 1
+    m_LinearDamping: 25
     m_AngularFrequency: 2
-    m_AngularDamping: 2
+    m_AngularDamping: 1
     m_ForceThreshold: 0
     m_TorqueThreshold: 0
     m_TuningFrequency: 50
@@ -176,6 +176,7 @@ MonoBehaviour:
   geometryFloatParam: 1
   basicShape: []
   polygonShape: []
+  drawGizmos: 0
 --- !u!1001 &5077911261420128665
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -296,15 +297,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3093966963722154442, guid: ff2c3baa4c7d2e649bc9dc84f9e83542, type: 3}
       propertyPath: shapeDef.m_Density
-      value: 0.01
+      value: 0.005
       objectReference: {fileID: 0}
     - target: {fileID: 3093966963722154442, guid: ff2c3baa4c7d2e649bc9dc84f9e83542, type: 3}
       propertyPath: basicShape.Array.size
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3093966963722154442, guid: ff2c3baa4c7d2e649bc9dc84f9e83542, type: 3}
+      propertyPath: bodyDef.m_LinearDamping
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 3093966963722154442, guid: ff2c3baa4c7d2e649bc9dc84f9e83542, type: 3}
       propertyPath: shapeDef.m_WorldDrawing
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3093966963722154442, guid: ff2c3baa4c7d2e649bc9dc84f9e83542, type: 3}
+      propertyPath: bodyDef.m_AngularDamping
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 3093966963722154442, guid: ff2c3baa4c7d2e649bc9dc84f9e83542, type: 3}
       propertyPath: bodyDef.m_TransformWriteMode
