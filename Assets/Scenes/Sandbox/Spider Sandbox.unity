@@ -188,6 +188,7 @@ MonoBehaviour:
       m_Count: 5
     spriteShapeArcLengthSamplesPerSegment: 0
     spriteShapeSamplesPerUnitArcLength: 0
+  source: {fileID: 0}
   drawGizmo: 1
 --- !u!114 &68448493
 MonoBehaviour:
@@ -262,7 +263,11 @@ MonoBehaviour:
   geometryType: 3
   geometryVectorParam: {x: 1, y: 1}
   geometryFloatParam: 0
-  unscaledGeometry: 0
+  basicShape: []
+  polygonShape:
+  - ppsc: {fileID: 68448492}
+    leaveUntransformed: 0
+  drawGizmos: 0
 --- !u!212 &68448494
 SpriteRenderer:
   serializedVersion: 3
@@ -444,7 +449,16 @@ MonoBehaviour:
   geometryType: 2
   geometryVectorParam: {x: 1, y: 1}
   geometryFloatParam: 0
-  unscaledGeometry: 0
+  basicShape:
+  - transform:
+      position: {x: 0, y: 0}
+      rotation:
+        direction: {x: 1, y: 0}
+    vectorParameter: {x: 1, y: 1}
+    floatParameter: 0
+    geometryType: 2
+  polygonShape: []
+  drawGizmos: 0
 --- !u!212 &164227660
 SpriteRenderer:
   serializedVersion: 3
@@ -552,7 +566,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PhysicsBodyStarter
   queryFilter:
     m_Categories:
-      bitMask: 64
+      bitMask: 0
     m_HitCategories:
       bitMask: 18446744073709551615
     m_IgnoreFilter: 0
@@ -611,7 +625,16 @@ MonoBehaviour:
   geometryType: 2
   geometryVectorParam: {x: 1, y: 1}
   geometryFloatParam: 0
-  unscaledGeometry: 0
+  basicShape:
+  - transform:
+      position: {x: 0, y: 0}
+      rotation:
+        direction: {x: 1, y: 0}
+    vectorParameter: {x: 1, y: 1}
+    floatParameter: 0
+    geometryType: 2
+  polygonShape: []
+  drawGizmos: 0
 --- !u!212 &230581973
 SpriteRenderer:
   serializedVersion: 3
@@ -1140,7 +1163,16 @@ MonoBehaviour:
   geometryType: 2
   geometryVectorParam: {x: 1, y: 1}
   geometryFloatParam: 0
-  unscaledGeometry: 0
+  basicShape:
+  - transform:
+      position: {x: 0, y: 0}
+      rotation:
+        direction: {x: 1, y: 0}
+    vectorParameter: {x: 1, y: 1}
+    floatParameter: 0
+    geometryType: 2
+  polygonShape: []
+  drawGizmos: 0
 --- !u!212 &721224711
 SpriteRenderer:
   serializedVersion: 3
@@ -1681,7 +1713,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fdf6330a4938e446aa8b0315e04b7e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fillBar: {fileID: 721875632}
+  colors:
+    cellFilledColor: {r: 0, g: 0, b: 0, a: 0}
+    cellEmptyColor: {r: 0, g: 0, b: 0, a: 0}
+    podFilledColor: {r: 0, g: 0, b: 0, a: 0}
+    podHurtColor: {r: 0, g: 0, b: 0, a: 0}
+    podEmptyColor: {r: 0, g: 0, b: 0, a: 0}
+  pod: []
+  animationSpeed: 0
 --- !u!114 &888499536
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1828,7 +1867,16 @@ MonoBehaviour:
   geometryType: 1
   geometryVectorParam: {x: 0.25, y: 0}
   geometryFloatParam: 0.25
-  unscaledGeometry: 0
+  basicShape:
+  - transform:
+      position: {x: 0, y: 0}
+      rotation:
+        direction: {x: 1, y: 0}
+    vectorParameter: {x: 0.25, y: 0}
+    floatParameter: 0.25
+    geometryType: 1
+  polygonShape: []
+  drawGizmos: 1
 --- !u!212 &928936813
 SpriteRenderer:
   serializedVersion: 3
@@ -1980,7 +2028,16 @@ MonoBehaviour:
   geometryType: 0
   geometryVectorParam: {x: 1, y: 1}
   geometryFloatParam: 0.5
-  unscaledGeometry: 0
+  basicShape:
+  - transform:
+      position: {x: 0, y: 0}
+      rotation:
+        direction: {x: 1, y: 0}
+    vectorParameter: {x: 0, y: 0}
+    floatParameter: 0.5
+    geometryType: 0
+  polygonShape: []
+  drawGizmos: 0
 --- !u!212 &939140014
 SpriteRenderer:
   serializedVersion: 3
@@ -2396,7 +2453,16 @@ MonoBehaviour:
   geometryType: 0
   geometryVectorParam: {x: 1, y: 1}
   geometryFloatParam: 0.5
-  unscaledGeometry: 0
+  basicShape:
+  - transform:
+      position: {x: 0, y: 0}
+      rotation:
+        direction: {x: 1, y: 0}
+    vectorParameter: {x: 1, y: 1}
+    floatParameter: 0.5
+    geometryType: 0
+  polygonShape: []
+  drawGizmos: 0
 --- !u!212 &1046592143
 SpriteRenderer:
   serializedVersion: 3
@@ -2658,7 +2724,16 @@ MonoBehaviour:
   geometryType: 0
   geometryVectorParam: {x: 1, y: 1}
   geometryFloatParam: 0.5
-  unscaledGeometry: 0
+  basicShape:
+  - transform:
+      position: {x: 0, y: 0}
+      rotation:
+        direction: {x: 1, y: 0}
+    vectorParameter: {x: 0, y: 0}
+    floatParameter: 0.5
+    geometryType: 0
+  polygonShape: []
+  drawGizmos: 0
 --- !u!212 &1351955844
 SpriteRenderer:
   serializedVersion: 3
@@ -2923,7 +2998,11 @@ MonoBehaviour:
   geometryType: 3
   geometryVectorParam: {x: 0, y: 0}
   geometryFloatParam: 0
-  unscaledGeometry: 0
+  basicShape: []
+  polygonShape:
+  - ppsc: {fileID: 1396508138}
+    leaveUntransformed: 0
+  drawGizmos: 0
 --- !u!114 &1396508138
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8420,6 +8499,7 @@ MonoBehaviour:
       m_Count: 8
     spriteShapeArcLengthSamplesPerSegment: 25
     spriteShapeSamplesPerUnitArcLength: 12
+  source: {fileID: 0}
   drawGizmo: 1
 --- !u!114 &1396508139
 MonoBehaviour:
@@ -25244,6 +25324,7 @@ MonoBehaviour:
       m_Count: 4
     spriteShapeArcLengthSamplesPerSegment: 0
     spriteShapeSamplesPerUnitArcLength: 0
+  source: {fileID: 0}
   drawGizmo: 0
 --- !u!114 &1853681541
 MonoBehaviour:
@@ -25318,7 +25399,16 @@ MonoBehaviour:
   geometryType: 3
   geometryVectorParam: {x: 1, y: 1}
   geometryFloatParam: 0
-  unscaledGeometry: 0
+  basicShape:
+  - transform:
+      position: {x: 0, y: 0}
+      rotation:
+        direction: {x: 1, y: 0}
+    vectorParameter: {x: 1, y: 1}
+    floatParameter: 0
+    geometryType: 2
+  polygonShape: []
+  drawGizmos: 0
 --- !u!212 &1853681542
 SpriteRenderer:
   serializedVersion: 3

@@ -3,6 +3,7 @@ using System;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Mathematics;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.U2D;
 
@@ -45,6 +46,8 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
             Debug.LogWarning($"No Sprite Shape Controller.");
             return;
         }
+
+        Undo.RecordObject(this, "SSMG Mesh");
 
         if (mesh)
         {
@@ -133,6 +136,9 @@ public class SpriteShapeMeshGenerator : MonoBehaviour
         mesh.RecalculateNormals();
 
         triangulator.Dispose();
+
+        EditorUtility.SetDirty(this);
+        PrefabUtility.RecordPrefabInstancePropertyModifications(this);
     }
 
 

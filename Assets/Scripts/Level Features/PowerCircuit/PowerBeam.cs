@@ -4,7 +4,7 @@ using UnityEngine.VFX;
 
 public class PowerBeam : MonoBehaviour
 {
-    public  VisualEffect visualEffect;
+    public VisualEffect visualEffect;
     public PhysicsQuery.QueryFilter queryFilter;
     public PhysicsMask spiderMask;
     public float maxLength;
@@ -21,6 +21,11 @@ public class PowerBeam : MonoBehaviour
     public void SetSparkSpawnMultiplier(float multiplier)
     {
         visualEffect.SetFloat(sparkSpawnMultiplierProperty, multiplier);
+    }
+
+    public void UpdateVFXLength()
+    {
+        visualEffect.SetFloat(lengthProperty, length);
     }
 
     void Start()
@@ -42,7 +47,7 @@ public class PowerBeam : MonoBehaviour
             {
                 length = MathTools.LerpAtConstantSpeed(length, goalLength, growthSpeed, Time.deltaTime);
             }
-            
+
             UpdateVFXLength();
         }
     }
@@ -63,7 +68,7 @@ public class PowerBeam : MonoBehaviour
         {
             var result = cast[0];
             goalLength = result.fraction * maxLength;
-            
+
             if ((result.shape.contactFilter.categories & spiderMask) != 0)
             {
                 var player = Spider.Player;
@@ -76,10 +81,5 @@ public class PowerBeam : MonoBehaviour
         {
             goalLength = maxLength;
         }
-    }
-
-    private void UpdateVFXLength()
-    {
-        visualEffect.SetFloat(lengthProperty, length);
     }
 }

@@ -19,6 +19,7 @@ public class PowerCircuit : MonoBehaviour
         {
             beam.length = 0;
             beam.goalLength = beam.maxLength;
+            beam.UpdateVFXLength();
             beam.visualEffect.enabled = true;
         }
 
@@ -26,6 +27,7 @@ public class PowerCircuit : MonoBehaviour
         {
             beam.length = 0;
             beam.goalLength = 0;
+            beam.UpdateVFXLength();
             beam.visualEffect.enabled = false;
         }
 

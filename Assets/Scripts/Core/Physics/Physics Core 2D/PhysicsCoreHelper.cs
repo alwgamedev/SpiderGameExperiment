@@ -390,6 +390,7 @@ public static class PhysicsCoreHelper
 
     public static void DrawCapsuleGizmo(Color color, CapsuleGeometry capsule, Matrix4x4 transformMat)
     {
+        capsule = capsule.Transform(transformMat, true);
         var center1 = capsule.center1;
         var center2 = capsule.center2;
         var radius = capsule.radius;
@@ -403,7 +404,7 @@ public static class PhysicsCoreHelper
         var bottomLeft = center1 - radius * w;
         var bottomRight = bottomLeft + d;
 
-        using (new Handles.DrawingScope(color, transformMat))
+        using (new Handles.DrawingScope(color))
         {
             Handles.DrawWireArc(center1, Vector3.forward, topLeft - center1, 180, radius);
             Handles.DrawWireArc(center2, Vector3.forward, bottomRight - center2, 180, radius);

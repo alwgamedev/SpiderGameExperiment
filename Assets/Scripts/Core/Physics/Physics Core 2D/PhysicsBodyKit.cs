@@ -9,15 +9,10 @@ public class PhysicsBodyKit : MonoBehaviour
 
     [SerializeField] PhysicsBodyDefinition bodyDef;
     [SerializeField] PhysicsShapeDefinition shapeDef;
-    [SerializeField] ShapeType geometryType;
-    [SerializeField] Vector2 geometryVectorParam;
-    [SerializeField] float geometryFloatParam;
     [SerializeField] BasicKitGeometry[] basicShape;
     [SerializeField] PolygonKitGeometry[] polygonShape;
     [SerializeField] bool drawGizmos;
-
-    enum ShapeType { Circle, Capsule, Box, Polygon };
-
+    
     public void CreateBody()
     {
         if (body.isValid)
