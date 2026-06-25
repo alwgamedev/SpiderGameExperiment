@@ -1,4 +1,6 @@
-﻿using Unity.Collections;
+﻿using System;
+using Unity.Burst;
+using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.U2D.Physics;
@@ -234,35 +236,44 @@ public class FastRope
         }
     }
 
-    public void SetRenderPositions(Vector4[] renderData, float2 sourcePosition, float taperBaseScale, float taperLength)
+    public void SetRenderPositions(NativeArray<float4> renderData, float2 sourcePosition, float taperBaseScale, float taperLength)
     {
-        float taperMult = taperBaseScale;
-        var taperRate = (1 - taperBaseScale) / taperLength;
-
-        var dSourcePos = sourcePosition - positionBuffer[sourceIndex.Value];
-
-        for (int i = 0; i < positionBuffer.Length; i++)
-        {
-            float2 p;
-            if (!(i > sourceIndex.Value))
-            {
-                p = sourcePosition;
-            }
-            else
-            {
-                p = positionBuffer[i];
-
-                if (taperMult < 1)
-                {
-                    p += (1 - taperMult) * dSourcePos;
-                    taperMult += taperRate * Vector2.Distance(renderData[i - 1], p);
-                    taperMult = Mathf.Min(taperMult, 1);
-                }
-            }
-
-            renderData[i] = new(p.x, p.y, taperMult, 0);
-        }
+        var job = new SetRopeRenderPositions(renderData, positionBuffer, sourcePosition, sourceIndex.Value, taperBaseScale, taperLength);
+        job.Run();
+        // SetRenderPositions(renderData, positionBuffer, sourceIndex.Value, sourcePosition, taperBaseScale, taperLength);
     }
+
+    // [BurstCompile]
+    // public static void SetRenderPositions(NativeArray<float4> renderData, NativeArray<float2> position,
+    //     int sourceIndex, float2 sourcePosition, float taperBaseScale, float taperLength)
+    // {
+    //     float taperMult = taperBaseScale;
+    //     var taperRate = (1 - taperBaseScale) / taperLength;
+
+    //     var dSourcePos = sourcePosition - position[sourceIndex];
+
+    //     for (int i = 0; i < position.Length; i++)
+    //     {
+    //         float2 p;
+    //         if (!(i > sourceIndex))
+    //         {
+    //             p = sourcePosition;
+    //         }
+    //         else
+    //         {
+    //             p = position[i];
+
+    //             if (taperMult < 1)
+    //             {
+    //                 p += (1 - taperMult) * dSourcePos;
+    //                 taperMult += taperRate * Vector2.Distance((Vector4)renderData[i - 1], p);
+    //                 taperMult = Mathf.Min(taperMult, 1);
+    //             }
+    //         }
+
+    //         renderData[i] = new(p.x, p.y, taperMult, 0);
+    //     }
+    // }
 
     public void Shoot(float2 shootVelocity, float dt)
     {

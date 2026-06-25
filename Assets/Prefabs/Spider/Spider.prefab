@@ -2233,7 +2233,7 @@ MonoBehaviour:
         meshRenderer: {fileID: 8668545299952063791}
         meshFilter: {fileID: 6131955794355331125}
         drawGizmos: 0
-        endCapTriangles: 12
+        endcapTriangles: 12
         taperLength: 0.5
         taperBaseScale: 0.5
       grappleShot:

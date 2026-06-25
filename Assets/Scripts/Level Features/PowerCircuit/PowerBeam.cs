@@ -73,7 +73,7 @@ public class PowerBeam : MonoBehaviour
             {
                 var player = Spider.Player;
                 var spideyBody = player.mover.SpideyBody;
-                spideyBody.abdomen.ApplyForce(spideyBody.TotalMass * force * r, result.point);
+                result.shape.body.ApplyForce(spideyBody.TotalMass * force * 0.5f * (r - result.normal), result.point);
                 player.health.AddHealth(-damagePerSecond * Time.deltaTime);
             }
         }

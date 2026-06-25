@@ -126,7 +126,7 @@ public struct ApplyRopeConstraints : IJobParallelFor
     public ApplyRopeConstraints(NativeArray<float2> constraintDelta, NativeArray<float2> position, NativeArray<float2> lastPosition,
         NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture, NativeReference<PhysicsShape> terminusAnchor,
         NativeReference<float2> terminusAnchorLocalPos, NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode, PhysicsWorld world,
-        PhysicsMask anchorMask, PhysicsQuery.QueryFilter collisionFilter, PhysicsMask dynamicCollisionMask, 
+        PhysicsMask anchorMask, PhysicsQuery.QueryFilter collisionFilter, PhysicsMask dynamicCollisionMask,
         float nodeRadius, float nodeMass, float collisionBounciness, float dynamicCollisionForce, int offset)
     {
         this.constraintDelta = constraintDelta;
@@ -193,7 +193,7 @@ public struct ApplyRopeConstraintsF4 : IJobParallelFor
     public ApplyRopeConstraintsF4(NativeArray<float4> constraintDelta, NativeArray<float2> position, NativeArray<float2> lastPosition,
         NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture, NativeReference<PhysicsShape> terminusAnchor,
         NativeReference<float2> terminusAnchorLocalPos, NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode, PhysicsWorld world,
-        PhysicsMask anchorMask, PhysicsQuery.QueryFilter collisionFilter, PhysicsMask dynamicCollisionMask, float nodeRadius, 
+        PhysicsMask anchorMask, PhysicsQuery.QueryFilter collisionFilter, PhysicsMask dynamicCollisionMask, float nodeRadius,
         float nodeMass, float collisionBounciness, float dynamicCollisionForce, int sourceIndex)
     {
         this.constraintDelta = constraintDelta;
@@ -266,7 +266,7 @@ public struct IntegrateRope : IJobParallelFor
         NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture,
         NativeReference<PhysicsShape> terminusAnchor, NativeReference<float2> terminusAnchorLocalPos,
         NativeReference<FastRope.TerminusAnchorMode> terminusAnchorMode, PhysicsMask anchorMask,
-        PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter, PhysicsMask dynamicCollisionMask, 
+        PhysicsWorld world, PhysicsQuery.QueryFilter collisionFilter, PhysicsMask dynamicCollisionMask,
         float2 gravity, float drag, float nodeRadius, float nodeMass, float collisionBounciness, float dynamicCollisionForce,
         float dt2, float timeScale, int offset)
     {
@@ -421,7 +421,7 @@ public struct RopeReparametrization : IJob
 [BurstCompile(FloatMode = FloatMode.Fast)]
 public struct CalculateRopeMaxTension : IJob
 {
-    [NoAlias][ReadOnly] public NativeArray<float2> position;
+    [ReadOnly] public NativeArray<float2> position;
     public NativeReference<float> maxTension;
     public readonly float nodeSpacing;
     public readonly int sourceIndex;
@@ -450,5 +450,53 @@ public struct CalculateRopeMaxTension : IJob
         }
 
         maxTension.Value = max;
+    }
+}
+
+[BurstCompile]
+public struct SetRopeRenderPositions : IJob
+{
+    public NativeArray<float4> renderData;
+    public NativeArray<float2> position;
+    public float2 sourcePosition;
+    public int sourceIndex;
+    public float taperBaseScale;
+    public float taperLength;
+
+    public SetRopeRenderPositions(NativeArray<float4> renderData, NativeArray<float2> position, float2 sourcePosition, 
+        int sourceIndex, float taperBaseScale, float taperLength)
+    {
+        this.renderData = renderData;
+        this.position = position;
+        this.sourcePosition = sourcePosition;
+        this.sourceIndex = sourceIndex;
+        this.taperBaseScale = taperBaseScale;
+        this.taperLength = taperLength;
+    }
+
+    public void Execute()
+    {
+        for (int i = 0; i < sourceIndex; i++)
+        {
+            renderData[i] = new(sourcePosition.x, sourcePosition.y, 0, 0);
+        }
+
+        float taperMult = taperBaseScale;
+        var taperRate = (1 - taperBaseScale) / taperLength;
+        var changeInSourcePosition = sourcePosition - position[sourceIndex];
+        var pPrev = sourcePosition;
+        for (int i = sourceIndex; i < position.Length; i++)
+        {
+            var p = position[i];
+            p += (1 - taperMult) * changeInSourcePosition;
+            //^if source position has changed since the last physics update for the rope,
+            //we'll set the first point at that new (correct) source position, and gradually lerp back towards the physics positions over
+            //the early part of the rope
+
+            taperMult += taperRate * math.distance(pPrev, p);
+            taperMult = math.min(taperMult, 1);
+            renderData[i] = new(p.x, p.y, taperMult, 0);
+            pPrev = p;
+        }
     }
 }

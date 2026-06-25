@@ -52,7 +52,7 @@ public class PowerCircuit : MonoBehaviour
     }
 
     [SerializeField] FixedJointKit[] platform;
-    [SerializeField] PowerPort[] port;/*//sorted by platform*/ //that's a commented out comment
+    [SerializeField] PowerPort[] port;
     [SerializeField] float distanceTolerance;
     [SerializeField] float angularTolerance;
     [SerializeField] float looseLinearFrequency;
@@ -124,7 +124,9 @@ public class PowerCircuit : MonoBehaviour
     {
         for (int i = 0; i < platform.Length; i++)
         {
-            //make sure port transforms are accurate
+            //sync platform transforms so port transforms are accurate
+            //we could also cache local port positions... 
+            //but for now it's nice to be able to move them around
             if (platform[i])
             {
                 platform[i].joint.bodyB.SyncTransform();
@@ -180,6 +182,7 @@ public class PowerCircuit : MonoBehaviour
                     p.DeactivateBeam();
                     if (!(conn < 0))
                     {
+                        p.beam.SetSparkSpawnMultiplier(1);
                         connection[i] = -1;
                         connection[conn] = -1;
                         if (!(port[conn].platform < 0))
@@ -196,6 +199,7 @@ public class PowerCircuit : MonoBehaviour
                     //it's beam should be activated. note that this doesn't create any new connections or
                     //affect power available to any other platforms, because the beam starts at length zero and can't reach anything yet.
                     p.ActivateBeam();
+                    p.beam.SetSparkSpawnMultiplier(1);
                 }
             }
         }

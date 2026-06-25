@@ -306,6 +306,6 @@ MonoBehaviour:
   spiderMask:
     bitMask: 2
   maxLength: 35
-  growthSpeed: 25
+  growthSpeed: 20
   force: 100
   damagePerSecond: 3

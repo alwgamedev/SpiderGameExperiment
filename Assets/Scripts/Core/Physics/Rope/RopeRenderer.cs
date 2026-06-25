@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -8,49 +10,49 @@ public class RopeRenderer
     [SerializeField] MeshRenderer meshRenderer;
     [SerializeField] MeshFilter meshFilter;
     [SerializeField] bool drawGizmos;
-    [Min(2)][SerializeField] int endCapTriangles;
+    [Min(2)][SerializeField] int endcapTriangles;
     [SerializeField] float taperLength;//measured in number of rope segments, just to keep things simple
     [SerializeField] float taperBaseScale;
 
-    Mesh mesh;
-    Material material;
+    Mesh ropeMesh;
+    Material bodyMaterial;
+    Material endcapMaterial;
 
-    Vector4[] nodePositions;
-    int positionsProperty;
-
-    public void OnDrawGizmos()
-    {
-        if (drawGizmos && nodePositions != null)
-        {
-            Gizmos.color = Color.red;
-            for (int i = 0; i < nodePositions.Length; i++)
-            {
-                Gizmos.DrawSphere(nodePositions[i], 0.1f);
-            }
-        }
-    }
+    GraphicsBuffer nodePositionGB;
+    readonly int nodePositionProperty = Shader.PropertyToID("_NodePosition");
+    readonly int numNodesProperty = Shader.PropertyToID("_NumNodes");
+    readonly int endcapTrianglesProperty = Shader.PropertyToID("_EndcapTriangles");
+    readonly int halfWidthProperty = Shader.PropertyToID("_HalfWidth");
+    readonly int orientationProperty = Shader.PropertyToID("_Orientation");
 
     public void Initialize()
     {
-        positionsProperty = Shader.PropertyToID("_NodePositions");
-
-        material = new Material(meshRenderer.sharedMaterial);
-        meshRenderer.sharedMaterial = material;
+        var mats = new List<Material>();
+        meshRenderer.GetSharedMaterials(mats);
+        bodyMaterial = new Material(mats[0]);
+        endcapMaterial = new Material(mats[1]);
+        mats[0] = bodyMaterial;
+        mats[1] = endcapMaterial;
+        meshRenderer.SetSharedMaterials(mats);
         meshRenderer.enabled = false;
     }
 
     public void OnDestroy()
     {
-        UnityEngine.Object.Destroy(material);
-        UnityEngine.Object.Destroy(mesh);
+        UnityEngine.Object.Destroy(bodyMaterial);
+        UnityEngine.Object.Destroy(endcapMaterial);
+        UnityEngine.Object.Destroy(ropeMesh);
+        nodePositionGB?.Release();
     }
 
     public void OnRopeSpawned(FastRope rope, float2 sourcePosition)
     {
-        if (nodePositions == null || nodePositions.Length != rope.NumNodes)
+        if (nodePositionGB == null || !nodePositionGB.IsValid() || nodePositionGB.count != rope.NumNodes)
         {
-            nodePositions = new Vector4[rope.NumNodes];
-            CreateMesh(nodePositions.Length);
+            InitializeBuffer(rope.NumNodes);
+            bodyMaterial.SetBuffer(nodePositionProperty, nodePositionGB);
+            endcapMaterial.SetBuffer(nodePositionProperty, nodePositionGB);
+            InitializeRopeMesh(rope.NumNodes);
         }
         meshRenderer.enabled = true;
         SetRenderWidth(rope.settings.width);
@@ -59,12 +61,16 @@ public class RopeRenderer
 
     public void SetRenderWidth(float ropeWidth)
     {
-        material.SetFloat("_HalfWidth", 0.5f * ropeWidth);
+        var hw = 0.5f * ropeWidth;
+        bodyMaterial.SetFloat(halfWidthProperty, hw);
+        endcapMaterial.SetFloat(halfWidthProperty, hw);
     }
 
     public void SetOrientation(bool facingRight)
     {
-        material.SetFloat("_Orientation", facingRight ? 1 : -1);
+        var o = facingRight ? 1 : -1;
+        bodyMaterial.SetFloat(orientationProperty, o);
+        endcapMaterial.SetFloat(orientationProperty, o);
     }
 
     public void OnRopeDestroyed()
@@ -74,12 +80,23 @@ public class RopeRenderer
 
     public void UpdateRenderPositions(FastRope rope, float2 sourcePosition)
     {
-        rope.SetRenderPositions(nodePositions, sourcePosition, taperBaseScale, taperLength);
-        material.SetVectorArray(positionsProperty, nodePositions);
+        var nodePosition = nodePositionGB.LockBufferForWrite<float4>(0, nodePositionGB.count);
+        rope.SetRenderPositions(nodePosition, sourcePosition, taperBaseScale, taperLength);
+        nodePositionGB.UnlockBufferAfterWrite<float4>(nodePositionGB.count);
     }
 
-    private void CreateMesh(int numNodes)
+    private void InitializeBuffer(int numNodes)
     {
+        nodePositionGB?.Release();
+        nodePositionGB = new(GraphicsBuffer.Target.Structured, GraphicsBuffer.UsageFlags.LockBufferForWrite, numNodes, 16);
+    }
+
+    private void InitializeRopeMesh(int numNodes)
+    {
+        if (ropeMesh)
+        {
+            UnityEngine.Object.Destroy(ropeMesh);
+        }
         //with 3 nodes and 2 endcap triangles, the vertices would be ordered like this
         //               1 ---------------- 3 ---------------- 5
         //               |                  |                  |\
@@ -89,14 +106,15 @@ public class RopeRenderer
         //               |                  |                  |/
         //               0 ---------------- 2 ---------------- 4
 
-        mesh = new();
+        ropeMesh = new() { subMeshCount = 2 };
 
-        var vertices = new Vector3[2 * numNodes + endCapTriangles];
-        var triangles = new int[6 * (numNodes - 1) + 3 * endCapTriangles];
-        var uv = new Vector2[vertices.Length];
+        var vertices = new NativeArray<Vector3>(2 * numNodes + endcapTriangles, Allocator.Temp);
+        var uv = new NativeArray<Vector2>(vertices.Length, Allocator.Temp);
+        var bodyTris = new NativeArray<int>(6 * (numNodes - 1), Allocator.Temp);
+        var endcapTris = new NativeArray<int>(3 * endcapTriangles, Allocator.Temp);
 
-        float du = 1 / (numNodes - 1);
-
+        //SUBMESH 0: rope body
+        var du = 1f / (numNodes - 1);
         int k = -1;
         for (int i = 0; i < numNodes - 1; i++)
         {
@@ -104,40 +122,43 @@ public class RopeRenderer
             var j = i << 1;
             uv[j] = new Vector2(u, 0);
             uv[j + 1] = new Vector2(u, 1);
-            triangles[++k] = j;
-            triangles[++k] = j + 1;
-            triangles[++k] = j + 3;
-            triangles[++k] = j;
-            triangles[++k] = j + 3;
-            triangles[++k] = j + 2;
+            bodyTris[++k] = j;
+            bodyTris[++k] = j + 1;
+            bodyTris[++k] = j + 3;
+            bodyTris[++k] = j;
+            bodyTris[++k] = j + 3;
+            bodyTris[++k] = j + 2;
         }
 
         uv[2 * numNodes - 2] = new Vector2(1, 0);
         uv[2 * numNodes - 1] = new Vector2(1, 1);
 
-        var dv = 1 / (float)(endCapTriangles + 1);
-
-        //endcap at end of rope
-        int bottom = 2 * (numNodes - 1);
-        int top = bottom + 1;
+        //SUBMESH 1: rope endcap
+        var dv = 1f / (endcapTriangles + 1);
+        var bottom = 2 * (numNodes - 1);
+        var top = bottom + 1;
         int l = top + 1;
-        for (int i = l; i < l + endCapTriangles; i++)
+        k = -1;
+        for (int i = l; i < l + endcapTriangles; i++)
         {
             uv[i] = new Vector2(1, (i - l + 1) * dv);
-            triangles[++k] = i;
-            triangles[++k] = bottom;
-            triangles[++k] = top;
+            endcapTris[++k] = i;
+            endcapTris[++k] = bottom;
+            endcapTris[++k] = top;
             bottom = i;
         }
 
-        mesh.vertices = vertices;
-        mesh.triangles = triangles;
-        mesh.uv = uv;
-        mesh.RecalculateNormals();
+        ropeMesh.SetVertices(vertices);
+        ropeMesh.SetIndices(bodyTris, MeshTopology.Triangles, 0);
+        ropeMesh.SetIndices(endcapTris, MeshTopology.Triangles, 1);
+        ropeMesh.SetUVs(0, uv);
+        ropeMesh.RecalculateNormals();
 
-        meshFilter.mesh = mesh;
+        meshFilter.mesh = ropeMesh;
 
-        material.SetInt("_NumNodes", numNodes);
-        material.SetInt("_EndcapTriangles", endCapTriangles);
+        bodyMaterial.SetInt(numNodesProperty, numNodes);
+        bodyMaterial.SetInt(endcapTrianglesProperty, endcapTriangles);
+        endcapMaterial.SetInt(numNodesProperty, numNodes);
+        endcapMaterial.SetInt(endcapTrianglesProperty, endcapTriangles);
     }
 }

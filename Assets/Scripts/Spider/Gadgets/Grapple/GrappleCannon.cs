@@ -82,7 +82,7 @@ public class GrappleCannon
         if (drawGizmos && GrappleEnabled)
         {
             grapple.DrawGizmos();
-            grappleRenderer.OnDrawGizmos();
+            // grappleRenderer.OnDrawGizmos();
         }
     }
 
