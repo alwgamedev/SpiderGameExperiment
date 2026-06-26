@@ -10,98 +10,32 @@ float _Orientation;
 
 StructuredBuffer<float4> _NodePosition;
 
-//output vertex object position, to be used in shader graph
-// void RopeVertexPosition_float(float vertID, out float3 objectPos)
-// {
-//     int vID = (int) vertID;//shader graph function doesn't have option for int parameters...
-//     if (vID < 2 * _NumNodes)
-//     {
-//         int nodeIndex = vID / 2;
-//         int displacement = vID % 2 == 0 ? -_Orientation : _Orientation;
-//         float4 nodeData = _NodePosition[nodeIndex];
-//         float2 segmentDirection = nodeIndex < _NumNodes - 1 ?
-//                         _NodePosition[nodeIndex + 1].xy - nodeData.xy : nodeData.xy - _NodePosition[nodeIndex - 1].xy;
-//         if (segmentDirection.x == 0 && segmentDirection.y == 0)
-//         {
-//             int k = nodeIndex + 1;
-//             while (++k < _NumNodes && segmentDirection.x == 0 && segmentDirection.y == 0)
-//             {
-//                 segmentDirection = normalize(_NodePosition[k].xy - nodeData.xy);
-//             }
-//         }
-//         segmentDirection = normalize(segmentDirection);
-//         float a = displacement * _HalfWidth * nodeData.z;
-//         objectPos = TransformWorldToObject(float3(nodeData.x - a * segmentDirection.y, nodeData.y + a * segmentDirection.x, 0));
-//     }
-//     else//we're on an endcap vertex
-//     {
-//         half2 center = _NodePosition[(uint) (_NumNodes - 1)].xy;
-//         half2 right = normalize(center - _NodePosition[(uint) (_NumNodes - 2)].xy);
-//         half2 down = _Orientation > 0 ? half2(right.y, -right.x) : half2(-right.y, right.x);
-//         if (right.x == 0 && right.y == 0)
-//         {
-//             int k = _NumNodes - 2;
-//             while (!(--k < 0) && right.x == 0 && right.y == 0)
-//             {
-//                 right = normalize(center - _NodePosition[k].xy);
-//             }
-//         }
-//         int i = vID - (2 * _NumNodes) + 1; //which endcap triangle are we on? (not zero indexed)
-//         half t = (3.14 * i) / (_EndcapTriangles + 1);
-//         half2 p = center + _HalfWidth * (cos(t) * down + sin(t) * right);
-//         objectPos = TransformWorldToObject(float3(p, 0));
-//     }
-// }
-
-void RopeBodyPosition_float(float vertID, out float3 objectPos)
+void RopeBodyPosition_float(float vertID, float2 uv, out float3 objectPos)
 {
-    int vID = (int) vertID;//shader graph function doesn't have option for int parameters...
-    int nodeIndex = vID / 2;
-    int displacement = vID % 2 == 0 ? -_Orientation : _Orientation;
-    float4 nodeData = _NodePosition[nodeIndex];
-    float2 segmentDirection = nodeIndex < _NumNodes - 1 ?
-                    _NodePosition[nodeIndex + 1].xy - nodeData.xy : nodeData.xy - _NodePosition[nodeIndex - 1].xy;
-    if (segmentDirection.x == 0 && segmentDirection.y == 0)
-    {
-        int k = nodeIndex + 1;
-        while (++k < _NumNodes && segmentDirection.x == 0 && segmentDirection.y == 0)
-        {
-            segmentDirection = normalize(_NodePosition[k].xy - nodeData.xy);
-        }
-    }
-    segmentDirection = normalize(segmentDirection);
-    float a = displacement * _HalfWidth * nodeData.z;
-    objectPos = TransformWorldToObject(float3(nodeData.x - a * segmentDirection.y, nodeData.y + a * segmentDirection.x, 0));
-}
-
-void RopeBodyPosition_half(half vertID, out half3 objectPos)
-{
-    RopeBodyPosition_float(vertID, objectPos);
-}
-
-void RopeEndcapPosition_float(float vertID, out float3 objectPos)
-{
-    int vID = (int) vertID;//shader graph function doesn't have option for int parameters...
-    half2 center = _NodePosition[(uint) (_NumNodes - 1)].xy;
-    half2 right = normalize(center - _NodePosition[(uint) (_NumNodes - 2)].xy);
-    half2 down = _Orientation > 0 ? half2(right.y, -right.x) : half2(-right.y, right.x);
-    if (right.x == 0 && right.y == 0)
-    {
-        int k = _NumNodes - 2;
-        while (!(--k < 0) && right.x == 0 && right.y == 0)
-        {
-            right = normalize(center - _NodePosition[k].xy);
-        }
-    }
-    int i = vID - (2 * _NumNodes) + 1; //which endcap triangle are we on? (not zero indexed)
-    half t = (3.14 * i) / (_EndcapTriangles + 1);
-    half2 p = center + _HalfWidth * (cos(t) * down + sin(t) * right);
+    float4 nodeData = _NodePosition[((int)vertID) / 2];
+    float displacementDir = (2 * uv.y - 1) * _Orientation;//when ori < 0, need to flip the rope upside down
+    float2 p = nodeData.xy + displacementDir * _HalfWidth * nodeData.zw;
     objectPos = TransformWorldToObject(float3(p, 0));
 }
 
-void RopeEndcapPosition_half(half vertID, out half3 objectPos)
+void RopeBodyPosition_half(half vertID, half2 uv, out half3 objectPos)
 {
-    RopeEndcapPosition_float(vertID, objectPos);
+    RopeBodyPosition_float(vertID, uv, objectPos);
+}
+
+void RopeEndcapPosition_float(float2 endCapPos, out float3 objectPos)
+{
+    float4 lastNode = _NodePosition[_NumNodes - 1];
+    float2 center = lastNode.xy;
+    float2 up = normalize(lastNode.zw);
+    float2 right = float2(up.y, -up.x);
+    float2 p = center + _HalfWidth * (endCapPos.x * right + _Orientation * endCapPos.y * up);
+    objectPos = TransformWorldToObject(float3(p, 0));
+}
+
+void RopeEndcapPosition_half(half2 endCapPos, out half3 objectPos)
+{
+    RopeEndcapPosition_float(endCapPos, objectPos);
 }
 
 #endif

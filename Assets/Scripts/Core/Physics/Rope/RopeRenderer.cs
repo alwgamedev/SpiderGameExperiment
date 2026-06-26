@@ -93,10 +93,6 @@ public class RopeRenderer
 
     private void InitializeRopeMesh(int numNodes)
     {
-        if (ropeMesh)
-        {
-            UnityEngine.Object.Destroy(ropeMesh);
-        }
         //with 3 nodes and 2 endcap triangles, the vertices would be ordered like this
         //               1 ---------------- 3 ---------------- 5
         //               |                  |                  |\
@@ -105,6 +101,11 @@ public class RopeRenderer
         //               |                  |                  | 6
         //               |                  |                  |/
         //               0 ---------------- 2 ---------------- 4
+
+        if (ropeMesh)
+        {
+            UnityEngine.Object.Destroy(ropeMesh);
+        }
 
         ropeMesh = new() { subMeshCount = 2 };
 
@@ -119,9 +120,9 @@ public class RopeRenderer
         for (int i = 0; i < numNodes - 1; i++)
         {
             var u = i * du;
-            var j = i << 1;
-            uv[j] = new Vector2(u, 0);
-            uv[j + 1] = new Vector2(u, 1);
+            var j = 2 * i;
+            uv[j] = new(u, 0);
+            uv[j + 1] = new(u, 1);
             bodyTris[++k] = j;
             bodyTris[++k] = j + 1;
             bodyTris[++k] = j + 3;
@@ -134,14 +135,24 @@ public class RopeRenderer
         uv[2 * numNodes - 1] = new Vector2(1, 1);
 
         //SUBMESH 1: rope endcap
-        var dv = 1f / (endcapTriangles + 1);
         var bottom = 2 * (numNodes - 1);
         var top = bottom + 1;
+        vertices[bottom] = new(0, -1);
+        vertices[top] = new(0, 1);
+
         int l = top + 1;
         k = -1;
+        var angle = -Mathf.PI / 2;
+        var dAngle = Mathf.PI / (endcapTriangles + 1);
+        var v = 0f;
+        var dv = 1f / (endcapTriangles + 1);
         for (int i = l; i < l + endcapTriangles; i++)
         {
-            uv[i] = new Vector2(1, (i - l + 1) * dv);
+            v += dv;
+            angle += dAngle;
+            uv[i] = new(1, v);
+            vertices[i] = new(Mathf.Cos(angle), Mathf.Sin(angle));
+
             endcapTris[++k] = i;
             endcapTris[++k] = bottom;
             endcapTris[++k] = top;

@@ -1,4 +1,5 @@
-﻿using Unity.Burst;
+﻿using System.Diagnostics;
+using Unity.Burst;
 using Unity.Burst.CompilerServices;
 using Unity.Collections;
 using Unity.Jobs;
@@ -457,7 +458,7 @@ public struct CalculateRopeMaxTension : IJob
 public struct SetRopeRenderPositions : IJob
 {
     public NativeArray<float4> renderData;
-    public NativeArray<float2> position;
+    [ReadOnly] public NativeArray<float2> position;
     public float2 sourcePosition;
     public int sourceIndex;
     public float taperBaseScale;
@@ -485,17 +486,23 @@ public struct SetRopeRenderPositions : IJob
         var taperRate = (1 - taperBaseScale) / taperLength;
         var changeInSourcePosition = sourcePosition - position[sourceIndex];
         var pPrev = sourcePosition;
+        float2 lastDirection = 0;
         for (int i = sourceIndex; i < position.Length; i++)
         {
             var p = position[i];
             p += (1 - taperMult) * changeInSourcePosition;
             //^if source position has changed since the last physics update for the rope,
-            //we'll set the first point at that new (correct) source position, and gradually lerp back towards the physics positions over
+            //we'll set the first point at the new (correct) source position, and gradually lerp back towards the physics positions over
             //the early part of the rope
 
-            taperMult += taperRate * math.distance(pPrev, p);
+            var d = p - pPrev;
+            var l = math.length(d);
+            taperMult += taperRate * l;
             taperMult = math.min(taperMult, 1);
-            renderData[i] = new(p.x, p.y, taperMult, 0);
+            var segDir = math.select(lastDirection, d / l, l > MathTools.o41);
+            lastDirection = math.select(lastDirection, segDir, l > MathTools.o41);
+            var displacement = taperMult * segDir.CCWPerp();
+            renderData[i] = new(p.x, p.y, displacement.x, displacement.y);
             pPrev = p;
         }
     }
