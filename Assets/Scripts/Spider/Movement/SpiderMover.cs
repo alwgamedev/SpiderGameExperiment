@@ -202,7 +202,7 @@ public class SpiderMover
 
         thruster.Initialize();
         thrusterFlame.Initialize();
-        
+
         spiderBody.CreatePhysicsBody(new PhysicsRotate() { direction = transform.right }, abdomenRoot, headRoot, headBone,
             grappleArmTransform, spiderBodyDef);
         InitializeLegSynch();
@@ -648,7 +648,14 @@ public class SpiderMover
         if (grounded)
         {
             var p0 = Head.position;
-            var (i, t) = groundMap.LineCastOrClosest(p0, Head.rotation.direction.CCWPerp());
+            var headUp = Head.rotation.direction.CCWPerp();
+            var (i, t) = groundMap.LineCastOrClosest(p0, headUp);
+            Vector2 q = groundMap.PointFromReducedPosition(i, t);
+            if (Vector2.Dot(q - p0, headUp) > 0)//happens when you change direction with steeply angled head
+            {
+                (i, t) = groundMap.LineCastOrClosest(p0, -Up);
+            }
+
             var tMin = FacingRight ? t + headRotationMinPos : t - headRotationMaxPos;
             var tMax = tMin + headRotationMaxPos - headRotationMinPos;
             Vector2 n = groundMap.AverageNormal(i, tMin, tMax);
