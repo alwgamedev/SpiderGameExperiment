@@ -7,7 +7,7 @@ using Unity.Collections;
 [Serializable]
 public class GrappleCannon
 {
-    //made constants because pre-baked mesh depends on them
+    //made constants now that we're using baked mesh
     public const int NUM_GRAPPLE_NODES = 120;
     public const int NUM_ENDCAP_TRIANGLES = 12;
 

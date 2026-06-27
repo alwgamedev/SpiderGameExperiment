@@ -3,7 +3,7 @@ using UnityEditor;
 
 public static class EditorTools
 {
-    public static bool CreateAndSaveAsset(Object obj)
+    public static bool SaveAsset(Object obj)
     {
         var path = EditorUtility.SaveFilePanel("Save Asset", "Assets/", "Unnamed Asset", "asset");
         //^and this gives you a warning if asset already exists at that path, which is nice

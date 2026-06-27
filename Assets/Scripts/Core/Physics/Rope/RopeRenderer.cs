@@ -95,7 +95,7 @@ public class RopeRenderer
         nodePositionGB.UnlockBufferAfterWrite<float4>(nodePositionGB.count);
     }
 
-    public static Mesh BakeMesh(int numNodes, int endcapTriangles)
+    public static Mesh CreateMesh(int numNodes, int endcapTriangles)
     {
         var vertices = new NativeArray<Vector3>(2 * numNodes + endcapTriangles, Allocator.TempJob);
         var uv = new NativeArray<Vector2>(vertices.Length, Allocator.TempJob);
@@ -161,91 +161,4 @@ public class RopeRenderer
 
         return ropeMesh;
     }
-
-    // private void InitializeBuffer(int numNodes)
-    // {
-    //     nodePositionGB?.Release();
-    //     nodePositionGB = new(GraphicsBuffer.Target.Structured, GraphicsBuffer.UsageFlags.LockBufferForWrite, numNodes, 16);
-    // }
-
-    // private void InitializeRopeMesh(int numNodes)
-    // {
-    //     //with 3 nodes and 2 endcap triangles, the vertices would be ordered like this
-    //     //               1 ---------------- 3 ---------------- 5
-    //     //               |                  |                  |\
-    //     //               |                  |                  | 7
-    //     //               |                  |                  | |
-    //     //               |                  |                  | 6
-    //     //               |                  |                  |/
-    //     //               0 ---------------- 2 ---------------- 4
-
-    //     // if (ropeMesh)
-    //     // {
-    //     //     UnityEngine.Object.Destroy(ropeMesh);
-    //     // }
-
-    //     // var vertices = new NativeArray<Vector3>(2 * numNodes + endcapTriangles, Allocator.Temp);
-    //     // var uv = new NativeArray<Vector2>(vertices.Length, Allocator.Temp);
-    //     // var bodyTris = new NativeArray<int>(6 * (numNodes - 1), Allocator.Temp);
-    //     // var endcapTris = new NativeArray<int>(3 * endcapTriangles, Allocator.Temp);
-
-    //     // //SUBMESH 0: rope body
-    //     // var du = 1f / (numNodes - 1);
-    //     // int k = -1;
-    //     // for (int i = 0; i < numNodes - 1; i++)
-    //     // {
-    //     //     var u = i * du;
-    //     //     var j = 2 * i;
-    //     //     uv[j] = new(u, 0);
-    //     //     uv[j + 1] = new(u, 1);
-    //     //     bodyTris[++k] = j;
-    //     //     bodyTris[++k] = j + 1;
-    //     //     bodyTris[++k] = j + 3;
-    //     //     bodyTris[++k] = j;
-    //     //     bodyTris[++k] = j + 3;
-    //     //     bodyTris[++k] = j + 2;
-    //     // }
-
-    //     // uv[2 * numNodes - 2] = new Vector2(1, 0);
-    //     // uv[2 * numNodes - 1] = new Vector2(1, 1);
-
-    //     // //SUBMESH 1: rope endcap
-    //     // var bottom = 2 * (numNodes - 1);
-    //     // var top = bottom + 1;
-    //     // vertices[bottom] = new(0, -1);
-    //     // vertices[top] = new(0, 1);
-
-    //     // int l = top + 1;
-    //     // k = -1;
-    //     // var angle = -Mathf.PI / 2;
-    //     // var dAngle = Mathf.PI / (endcapTriangles + 1);
-    //     // var v = 0f;
-    //     // var dv = 1f / (endcapTriangles + 1);
-    //     // for (int i = l; i < l + endcapTriangles; i++)
-    //     // {
-    //     //     v += dv;
-    //     //     angle += dAngle;
-    //     //     uv[i] = new(1, v);
-    //     //     vertices[i] = new(Mathf.Cos(angle), Mathf.Sin(angle));
-
-    //     //     endcapTris[++k] = i;
-    //     //     endcapTris[++k] = bottom;
-    //     //     endcapTris[++k] = top;
-    //     //     bottom = i;
-    //     // }
-
-    //     // ropeMesh = new() { subMeshCount = 2 };
-    //     // ropeMesh.SetVertices(vertices);
-    //     // ropeMesh.SetIndices(bodyTris, MeshTopology.Triangles, 0);
-    //     // ropeMesh.SetIndices(endcapTris, MeshTopology.Triangles, 1);
-    //     // ropeMesh.SetUVs(0, uv);
-    //     // ropeMesh.RecalculateNormals();
-
-    //     // meshFilter.sharedMesh = mesh;
-
-    //     // bodyMaterial.SetInt(numNodesProperty, numNodes);
-    //     // bodyMaterial.SetInt(endcapTrianglesProperty, endcapTriangles);
-    //     // endcapMaterial.SetInt(numNodesProperty, numNodes);
-    //     // endcapMaterial.SetInt(endcapTrianglesProperty, endcapTriangles);
-    // }
 }

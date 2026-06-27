@@ -40,8 +40,8 @@ public class SpiderEditor : Editor
 
     private static void BakeRopeMesh()
     {
-        var mesh = RopeRenderer.BakeMesh(GrappleCannon.NUM_GRAPPLE_NODES, GrappleCannon.NUM_ENDCAP_TRIANGLES);
-        if (!EditorTools.CreateAndSaveAsset(mesh))
+        var mesh = RopeRenderer.CreateMesh(GrappleCannon.NUM_GRAPPLE_NODES, GrappleCannon.NUM_ENDCAP_TRIANGLES);
+        if (!EditorTools.SaveAsset(mesh))
         {
             DestroyImmediate(mesh);
         }

@@ -36,7 +36,7 @@ public class SpriteShapeMeshGeneratorEditor : Editor
         var mesh = ((SpriteShapeMeshGenerator)target).mesh;
         if (mesh)
         {
-            EditorTools.CreateAndSaveAsset(mesh);
+            EditorTools.SaveAsset(mesh);
         }
     }
 }
