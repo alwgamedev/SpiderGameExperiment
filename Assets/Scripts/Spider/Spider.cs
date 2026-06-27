@@ -25,6 +25,7 @@ public class Spider : MonoBehaviour
 
         mover.OnValidate();
         grabber.OnValidate();
+        grappleShootPreview.OnValidate();
     }
 
     private void OnDrawGizmos()
@@ -50,7 +51,7 @@ public class Spider : MonoBehaviour
         grabber.Initialize(spiderInput, mover.SpideyBody.head, mover.SpideyBody.abdomen);
         mover.grabber = grabber;
         jumpPreviewArrow.Start();
-        grappleShootPreview.Start(mover.FacingRight, mover.World);
+        grappleShootPreview.Start(/*mover.FacingRight,*/ mover.World);
         lighting.Initialize(spiderInput);
 
         grabber.Disable(true);
@@ -84,7 +85,7 @@ public class Spider : MonoBehaviour
     {
         mover.LateUpdate();
         jumpPreviewArrow.LateUpdate(mover);
-        grappleShootPreview.LateUpdate(mover.Grapple, mover.FacingRight);
+        grappleShootPreview.LateUpdate(mover.Grapple);
     }
 
     private void FixedUpdate()

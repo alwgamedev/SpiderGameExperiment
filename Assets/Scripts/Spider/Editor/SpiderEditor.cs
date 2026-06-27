@@ -33,6 +33,17 @@ public class SpiderEditor : Editor
             text = "Center Grabber Arm Physics Bodies"
         });
 
+        root.Add(new Button(BakeRopeMesh) { text = "Bake Rope Mesh" });
+
         return root;
+    }
+
+    private static void BakeRopeMesh()
+    {
+        var mesh = RopeRenderer.BakeMesh(GrappleCannon.NUM_GRAPPLE_NODES, GrappleCannon.NUM_ENDCAP_TRIANGLES);
+        if (!EditorTools.CreateAndSaveAsset(mesh))
+        {
+            DestroyImmediate(mesh);
+        }
     }
 }

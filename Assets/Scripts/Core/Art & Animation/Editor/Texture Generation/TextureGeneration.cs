@@ -16,11 +16,6 @@ public static class TextureGeneration
 
         SaveTexture(tex, format);
         Object.DestroyImmediate(tex);
-
-        // var png = tex.EncodeToPNG();
-        // Object.DestroyImmediate(tex);
-
-        // SaveTexture(png);
     }
 
     /// <summary> Remember to destroy the texture when you're done using it. </summary>

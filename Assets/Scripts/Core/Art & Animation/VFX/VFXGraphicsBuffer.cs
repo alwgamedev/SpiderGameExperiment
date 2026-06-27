@@ -41,7 +41,7 @@ public class VFXGraphicsBuffer<T> where T : unmanaged
         vfx.SetGraphicsBuffer(id, bufferWrapper.buffer);
     }
 
-    public void OnDisable()
+    public void ReleaseBuffer()
     {
         bufferWrapper.ReleaseBuffer();
     }

@@ -42,15 +42,17 @@ public class BezierArcLengthBuffer : MonoBehaviour
 
     void OnDisable()
     {
-        bufferManager.OnDisable();
+        bufferManager.ReleaseBuffer();
     }
 
-    void OnDestroy()
+    void OnDestroy()//
     {
         if (arcLengthPosition.IsCreated)
         {
             arcLengthPosition.Dispose();
         }
+
+        bufferManager.ReleaseBuffer();
     }
 
     void UpdateArcLength()

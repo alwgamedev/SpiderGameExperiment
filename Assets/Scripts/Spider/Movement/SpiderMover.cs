@@ -207,7 +207,7 @@ public class SpiderMover
             grappleArmTransform, spiderBodyDef);
         InitializeLegSynch();
         InitializeGroundMap();
-        grapple.Initialize(spiderInput, World, SpideyBody.LevelRight, TotalMass, FacingRight);
+        grapple.Initialize(spiderInput, World, TotalMass, FacingRight);
     }
 
     public void Enable()
@@ -270,8 +270,8 @@ public class SpiderMover
             needChangeDirection = false;
         }
 
-        var lyingOnBack = (Abdomen.GetContacts().Length > 0 || Head.GetContacts().Length > 0) && Up.y < 0;
-        bool alignedWithGroundDir = Vector2.Dot(Right, groundDirection) > MathTools.sin30;
+        var lyingOnBack = Abdomen.GetContacts().Length > 0 && Up.y < -MathTools.sin30;
+        bool alignedWithGroundDir = Vector2.Dot(Right, groundDirection) > MathTools.cos15;
         if (canFlip && FlipInput && ((grounded && alignedWithGroundDir) || lyingOnBack))
         {
             //end flip if we come in contact with the ground

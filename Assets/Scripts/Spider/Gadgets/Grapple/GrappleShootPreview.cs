@@ -1,123 +1,121 @@
 ﻿using UnityEngine;
 using System;
 using Unity.U2D.Physics;
+using UnityEngine.VFX;
+using Unity.Mathematics;
+using Unity.Collections;
 
 [Serializable]
 public class GrappleShootPreview
 {
-    [SerializeField] LineRenderer lineRenderer;
+    [SerializeField] VisualEffect visualEffect;
+    [SerializeField] int spawnCount;
     [SerializeField] float arcLengthStep;
-    [SerializeField] float velocitySmoothingRate;
+    [SerializeField] int spacing;//how many arc length steps between particles
     [SerializeField] PhysicsQuery.QueryFilter terminationFilter;
 
-    Vector3[] positions;
-    Vector3 lastShootPosition;
-    Vector3 lastShootDirection;
-    Vector3 lastTerminusPosition;
-    bool playerFacingRight;
+    GraphicsBuffer positionGB;
     PhysicsWorld world;
 
-    Material material;
-    float length;
-    int lengthProperty;
+    readonly int positionGBProperty = Shader.PropertyToID("Position");
+    readonly int endProperty = Shader.PropertyToID("End");//particles at index >= end are invisible
+    readonly int spawnCountProperty = Shader.PropertyToID("SpawnCount");
+    readonly int boundsCenterProperty = Shader.PropertyToID("BoundsCenter");
 
-
-    public void Start(bool playerFacingRight, PhysicsWorld world)
+    public void OnValidate()
     {
-        positions = new Vector3[lineRenderer.positionCount];
-        lineRenderer.enabled = false;
-        lengthProperty = Shader.PropertyToID("_Length");
-        material = new Material(lineRenderer.sharedMaterial);
-        lineRenderer.sharedMaterial = material;
-        this.playerFacingRight = playerFacingRight;
+        if (visualEffect)
+        {
+            spawnCount = visualEffect.GetInt(spawnCountProperty);
+        }
+    }
+
+    public void Start(PhysicsWorld world)
+    {
         this.world = world;
+
+        positionGB = new(GraphicsBuffer.Target.Structured, GraphicsBuffer.UsageFlags.LockBufferForWrite, spawnCount, 16);
+        visualEffect.SetGraphicsBuffer(positionGBProperty, positionGB);
+        // visualEffect.SetInt(spawnCountProperty, spawnCount);
+        visualEffect.enabled = false;
+        // visualEffect.Play();//make sure vfx doesn't play on awake (initial spawn event is empty)
     }
 
     public void OnDestroy()
     {
-        UnityEngine.Object.Destroy(material);
+        positionGB?.Release();
     }
 
-    public void LateUpdate(GrappleCannon grapple, bool playerFacingRight)
+    public void LateUpdate(GrappleCannon grapple)
     {
         if (grapple.PoweringUp)
         {
-            if (!lineRenderer.enabled)
+            if (!visualEffect.enabled)
             {
-                lineRenderer.enabled = true;
-                lastShootDirection = grapple.ShootDirection;
+                visualEffect.enabled = true;
             }
-            SetLineRendererPositions(grapple, playerFacingRight);
+            UpdateVFXData(grapple);
         }
-        else if (lineRenderer.enabled)
+        else if (visualEffect.enabled)
         {
-            lineRenderer.enabled = false;
+            visualEffect.enabled = false;
         }
     }
 
-    private void SetLineRendererPositions(GrappleCannon grapple, bool playerFacingRight)
+    //we could move this to job
+    private void UpdateVFXData(GrappleCannon grapple)
     {
-        Vector3 p = grapple.SourcePosition;
-        bool directionChange = playerFacingRight != this.playerFacingRight;
-        lastShootDirection = directionChange ? grapple.ShootDirection :
-            MathTools.CheapRotationalLerpClamped(lastShootDirection, grapple.ShootDirection, velocitySmoothingRate * Time.deltaTime, out directionChange);
-        Vector3 v = grapple.ShootSpeed * lastShootDirection;
+        var position = positionGB.LockBufferForWrite<Vector4>(0, positionGB.count);
 
-        if (!directionChange && grapple.PowerUpFraction == 1)
+        var p = grapple.SourcePosition;
+        var v0 = grapple.ShootSpeed * grapple.ShootDirection;//initial velocity
+        var g = world.gravity;
+        var l = 0.5f * g;
+
+        var p0 = p;
+        position[0] = p;
+        visualEffect.SetVector3(boundsCenterProperty, p0);
+
+        float t = 0;
+        int i = 0;
+        int j = spacing / 2;
+        var v = v0 + t * g;//curve velocity
+        var speedInverse = math.rsqrt(v.x * v.x + v.y * v.y);
+        while (i < position.Length - 1)
         {
-            var d = p - lastShootPosition;
-            for (int i = 0; i < lineRenderer.positionCount; i++)
-            {
-                positions[i] += d;
-            }
-        }
-        else
-        {
-            Vector3 g = world.gravity;
-            Vector3 l = 0.5f * g;
+            t += arcLengthStep * speedInverse;//increases arc length by ~arcLengthStep
+            var p1 = new Vector2(p.x + t * v0.x + t * t * l.x, p.y + t * v0.y + t * t * l.y);//evaluate shoot curve at time t
+            v = v0 + t * g;//ready for next iteration, or if we need tangentDir to add point
+            speedInverse = math.rsqrt(v.x * v.x + v.y * v.y);
 
-            positions[0] = p;
-            bool hitGround = false;
-            float a = arcLengthStep;
-            float t = 0;
-            length = 0f;
-
-            for (int i = 1; i < positions.Length; i++)
+            var cast = PhysicsWorld.defaultWorld.CastRay(p0, p1 - p0, terminationFilter);
+            if (cast.Length > 0)
             {
-                if (hitGround)
+                if (j > 0.25f * spacing)
                 {
-                    positions[i] = positions[i - 1];
+                    AddPoint(position, ref i, ref p0, cast[0].point, speedInverse * v);
                 }
-                else
-                {
-                    float vx = t * g.x + v.x;
-                    float vy = t * g.y + v.y;
-                    float dt = a / Mathf.Sqrt(vx * vx + vy * vy);//time to increase arc length by fixed amount (results in better rendering than fixed time step)
-                    t += dt;
-                    positions[i] = new Vector3(p.x + t * v.x + t * t * l.x, p.y + t * v.y + t * t * l.y, 0);
-
-                    var cast = PhysicsWorld.defaultWorld.CastRay(positions[i - 1], positions[i] - positions[i - 1], terminationFilter);
-                    if (cast.Length > 0)
-                    {
-                        hitGround = true;
-                        lastTerminusPosition = cast[0].point;
-                        positions[i] = lastTerminusPosition;
-                        length = i * arcLengthStep;
-                    }
-                }
+                break;
             }
 
-            if (!hitGround)
+            if (j == spacing)
             {
-                lastTerminusPosition = positions[^1];
-                length = arcLengthStep * (positions.Length - 1);
+                j = 0;
+                AddPoint(position, ref i, ref p0, p1, speedInverse * v);
             }
 
-            material.SetFloat(lengthProperty, length);
+            j++;
         }
 
-        lastShootPosition = p;
-        this.playerFacingRight = playerFacingRight;
-        lineRenderer.SetPositions(positions);
+        positionGB.UnlockBufferAfterWrite<Vector4>(i);
+
+        visualEffect.SetInt(endProperty, i);
+
+        static void AddPoint(NativeArray<Vector4> position, ref int i, ref Vector2 p0, Vector2 p1, Vector2 tangentDir)
+        {
+            i++;
+            position[i] = new Vector4(p1.x, p1.y, tangentDir.x, tangentDir.y);
+            p0 = p1;
+        }
     }
 }

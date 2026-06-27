@@ -1730,7 +1730,7 @@
     "m_Group": {
         "m_Id": ""
     },
-    "m_Name": "RopeBodyPosition (Custom Function)",
+    "m_Name": "LineBodyPosition (Custom Function)",
     "m_DrawState": {
         "m_Expanded": true,
         "m_Position": {
@@ -1764,7 +1764,7 @@
         "m_SerializableColors": []
     },
     "m_SourceType": 0,
-    "m_FunctionName": "RopeBodyPosition",
+    "m_FunctionName": "LineBodyPosition",
     "m_FunctionSource": "f82fce754acfe0947a0286d39c3f1d7a",
     "m_FunctionSourceUsePragmas": true,
     "m_FunctionBody": "Enter function body here..."

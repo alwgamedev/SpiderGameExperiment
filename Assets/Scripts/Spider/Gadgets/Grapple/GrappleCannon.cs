@@ -7,10 +7,13 @@ using Unity.Collections;
 [Serializable]
 public class GrappleCannon
 {
+    //made constants because pre-baked mesh depends on them
+    public const int NUM_GRAPPLE_NODES = 120;
+    public const int NUM_ENDCAP_TRIANGLES = 12;
+
     [NonSerialized] public float aimInput;
 
     [SerializeField] bool drawGizmos;
-    [SerializeField] int numNodes;
     [SerializeField] float minLength;
     [SerializeField] float maxLength;
     [SerializeField] float baseShootSpeed;
@@ -86,15 +89,15 @@ public class GrappleCannon
         }
     }
 
-    public void Initialize(SpiderInput spiderInput, PhysicsWorld ownerWorld, PhysicsRotate levelRotation, float ownerMass, bool facingRight)
+    public void Initialize(SpiderInput spiderInput, PhysicsWorld ownerWorld, float ownerMass, bool facingRight)
     {
         this.spiderInput = spiderInput;
 
-        grapple = new FastRope(grappleSettings, ownerWorld, ownerMass, SourcePosition, minLength, numNodes);
+        grapple = new FastRope(grappleSettings, ownerWorld, ownerMass, SourcePosition, minLength, NUM_GRAPPLE_NODES);
         grapple.Disable();
 
         cannonFulcrum.Initialize();
-        grappleRenderer.Initialize();
+        grappleRenderer.Initialize(NUM_GRAPPLE_NODES, NUM_ENDCAP_TRIANGLES);
         SetOrientation(facingRight);
     }
 
@@ -167,13 +170,7 @@ public class GrappleCannon
             }
         }
     }
-
-    //public void OnDirectionChanged(PhysicsRotate reflection, bool facingRight)
-    //{
-    //    SetOrientation(facingRight);
-    //    cannonFulcrum.OnDirectionChanged(reflection);
-    //}
-
+    
     public void SetOrientation(bool facingRight)
     {
         this.facingRight = facingRight;
@@ -245,7 +242,7 @@ public class GrappleCannon
 
     private void ShootGrapple(float dt)
     {
-        grapple.Respawn(SourcePosition, minLength, numNodes);
+        grapple.Respawn(SourcePosition, minLength, NUM_GRAPPLE_NODES);
 
         var shootSpeed = ShootSpeed;
         lastShootDirection = ShootDirection;
