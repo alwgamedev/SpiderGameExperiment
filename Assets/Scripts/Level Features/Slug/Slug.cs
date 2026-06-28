@@ -3,6 +3,7 @@ using Unity.Collections;
 using Unity.Mathematics;
 using Unity.U2D.Physics;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Slug : MonoBehaviour
 {
@@ -49,6 +50,18 @@ public class Slug : MonoBehaviour
 
     NativeArray<float4> controlPoint;
 
+    public float Orientation
+    {
+        get => transform.localScale.x;
+        set
+        {
+            var s = transform.localScale;
+            s.x = value;
+            transform.localScale = s;
+            lr.SetOrientation(Mathf.Sign(value));
+        }
+    }
+
     void OnValidate()
     {
         lr.OnValidate();
@@ -61,12 +74,18 @@ public class Slug : MonoBehaviour
 
     void Start()
     {
-        lr.Start();
+        lr.Initialize();
+        Orientation = transform.localScale.x;
         controlPoint = new(3, Allocator.Persistent);
     }
 
     void LateUpdate()
     {
+        if (Keyboard.current.cKey.wasPressedThisFrame)
+        {
+            Orientation = -Orientation;
+        }
+
         //it will cull when transform is far away, so may as well keep gameobject transform accurate
         //and use it to set slug transform (we'll probably only be setting the transform position on spawn)
         UpdateControlPoints(pose.Transform(transform.localToWorldMatrix).Aim(aim));

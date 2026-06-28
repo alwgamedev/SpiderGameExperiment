@@ -79,8 +79,8 @@ MeshRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 2072536669
-  m_SortingLayer: 3
+  m_SortingLayerID: -2081750727
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
@@ -114,8 +114,8 @@ MonoBehaviour:
   aim:
     direction: {x: 1, y: 0}
   lr:
-    numNodes: 40
-    halfWidth: 0.5
+    numNodes: 32
+    halfWidth: 0.25
     meshRenderer: {fileID: 6747921897116692078}
     meshFilter: {fileID: 2513965754309310280}
 --- !u!114 &2231333822043508456
@@ -131,6 +131,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: spydr1.Runtime::AnyRendererSorting
   sortingLayer:
-    layerNumber: 7
+    layerNumber: 5
   sortingOrder: 0
   renderer: {fileID: 6747921897116692078}

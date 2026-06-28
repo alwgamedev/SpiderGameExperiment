@@ -1,7 +1,6 @@
 using UnityEngine;
 using System;
 using UnityEngine.Rendering.Universal;
-using UnityEngine.InputSystem;
 
 [Serializable]
 public class SpiderLighting
@@ -33,11 +32,11 @@ public class SpiderLighting
     readonly int eyeIntensityProperty = Shader.PropertyToID("_Intensity");
     readonly int bodyColorProperty = Shader.PropertyToID("_PatternColor");
 
-    AnimationTimer eyeColorAnimation;//will also control light color
-    AnimationTimer eyeIntensityAnimation;
-    AnimationTimer lightIntensityAnimation;
-    AnimationTimer abdomenColorAnimation;
-    AnimationTimer headColorAnimation;
+    AnimationTimer<Vector4, Vector4AnimationUtility> eyeColorAnimation;//will also control light color
+    AnimationTimer<float, FloatAnimationUtility> eyeIntensityAnimation;
+    AnimationTimer<float, FloatAnimationUtility> lightIntensityAnimation;
+    AnimationTimer<Vector4, Vector4AnimationUtility> abdomenColorAnimation;
+    AnimationTimer<Vector4, Vector4AnimationUtility> headColorAnimation;
 
     public void Initialize(SpiderInput spiderInput)
     {
@@ -51,19 +50,24 @@ public class SpiderLighting
         headSR.sharedMaterial = headMaterial;
         
         var eyeColor = eyeRestColor.linear;
-        eyeColorAnimation.SnapTo(eyeColor, eyeMaterial, eyeColorProperty, false);
+        eyeColorAnimation.SnapTo(eyeColor);
+        eyeMaterial.SetVector(eyeColorProperty, eyeColor);
         light.color = eyeColor;
+        
+        eyeIntensityAnimation.SnapTo(eyeRestIntensity);
+        eyeMaterial.SetFloat(eyeIntensityProperty, eyeRestIntensity);
 
-        eyeIntensityAnimation.SnapTo(new Vector4(eyeRestIntensity, 0), eyeMaterial, eyeIntensityProperty, true);
-
-        lightIntensityAnimation.SnapTo(Vector4.zero);
+        lightIntensityAnimation.SnapTo(0);
         light.intensity = 0;
         light.enabled = false;
 
         var bodyOffColor = this.bodyOffColor.linear;
         var bodyRestColor = this.bodyRestColor.linear;
-        abdomenColorAnimation.SnapTo(bodyOffColor, abdomenMaterial, bodyColorProperty, false);
-        headColorAnimation.SnapTo(bodyOffColor, headMaterial, bodyColorProperty, false);
+        
+        abdomenColorAnimation.SnapTo(bodyOffColor);
+        abdomenMaterial.SetVector(bodyColorProperty, bodyOffColor);
+        headColorAnimation.SnapTo(bodyOffColor);
+        headMaterial.SetVector(bodyColorProperty, bodyOffColor);
         abdomenColorAnimation.BeginAnimation(bodyOffColor, bodyRestColor, bodyColorAnimationSpeed);
         headColorAnimation.BeginAnimation(bodyOffColor, bodyRestColor, bodyColorAnimationSpeed);
     }
@@ -93,46 +97,69 @@ public class SpiderLighting
     {
         var eyeHurtColor = this.eyeHurtColor.linear;
         var eyeRestColor = this.eyeRestColor.linear;
-        eyeColorAnimation.SnapTo(eyeHurtColor, eyeMaterial, eyeColorProperty, false);
+        
+        eyeColorAnimation.SnapTo(eyeHurtColor);
+        eyeMaterial.SetVector(eyeColorProperty, eyeHurtColor);
         eyeColorAnimation.BeginAnimation(eyeHurtColor, eyeRestColor, eyeColorAnimationSpeed);
 
         var bodyHurtColor = this.bodyHurtColor.linear;
         var bodyRestColor = this.bodyRestColor.linear;
-        abdomenColorAnimation.SnapTo(bodyHurtColor.linear, abdomenMaterial, bodyColorProperty, false);
+    
+        abdomenColorAnimation.SnapTo(bodyHurtColor);
+        abdomenMaterial.SetVector(bodyColorProperty, bodyHurtColor);
         abdomenColorAnimation.BeginAnimation(bodyHurtColor, bodyRestColor, bodyColorAnimationSpeed);
-        headColorAnimation.SnapTo(bodyHurtColor.linear, headMaterial, bodyColorProperty, false);
+        
+        headColorAnimation.SnapTo(bodyHurtColor);
+        headMaterial.SetVector(bodyColorProperty, bodyHurtColor);
         headColorAnimation.BeginAnimation(bodyHurtColor, bodyRestColor, bodyColorAnimationSpeed);
     }
 
     public void TurnLightOn()
     {
-        lightIntensityAnimation.BeginAnimation(new Vector4(light.intensity, 0), new Vector4(lightMaxIntensity, 0), 
-            lightIntensityAnimationSpeed);
+        lightIntensityAnimation.BeginAnimation(light.intensity, lightMaxIntensity, lightIntensityAnimationSpeed);
         var curEyeIntensity = eyeMaterial.GetFloat(eyeIntensityProperty);
-        eyeIntensityAnimation.BeginAnimation(new Vector4(curEyeIntensity, 0), new Vector4(eyeMaxIntensity, 0), 
-            eyeIntensityAnimationSpeed);
+        
+        eyeIntensityAnimation.BeginAnimation(curEyeIntensity, eyeMaxIntensity, eyeIntensityAnimationSpeed);
         light.enabled = true;
     }
 
     public void TurnLightOff()
     {
-        eyeIntensityAnimation.SnapTo(new Vector4(eyeRestIntensity, 0), eyeMaterial, eyeIntensityProperty, true);
-        lightIntensityAnimation.SnapTo(Vector4.zero);
+        eyeIntensityAnimation.SnapTo(eyeRestIntensity);
+        eyeMaterial.SetFloat(eyeIntensityProperty, eyeRestIntensity);
+        
+        lightIntensityAnimation.SnapTo(0);
         light.intensity = 0;
         light.enabled = false;
     }
 
     private void Animate(float dt)
     {
-        eyeColorAnimation.Update(dt, eyeMaterial, eyeColorProperty, false);
-        light.color = eyeColorAnimation.AnimatedVal;
+        if (eyeColorAnimation.Update(dt))
+        {
+            var eyeColor = eyeColorAnimation.AnimatedValue;
+            eyeMaterial.SetVector(eyeColorProperty, eyeColor);
+            light.color = eyeColor;
+        }
+        
+        if (eyeIntensityAnimation.Update(dt))
+        {
+            eyeMaterial.SetFloat(eyeIntensityProperty, eyeIntensityAnimation.AnimatedValue);
+        }
+        
+        if (lightIntensityAnimation.Update(dt))
+        {
+            light.intensity = lightIntensityAnimation.AnimatedValue;
+        }
 
-        eyeIntensityAnimation.Update(dt, eyeMaterial, eyeIntensityProperty, true);
+        if (abdomenColorAnimation.Update(dt))
+        {
+            abdomenMaterial.SetVector(bodyColorProperty, abdomenColorAnimation.AnimatedValue);
+        }
 
-        lightIntensityAnimation.Update(dt);
-        light.intensity = lightIntensityAnimation.AnimatedVal.x;
-
-        abdomenColorAnimation.Update(dt, abdomenMaterial, bodyColorProperty, false);
-        headColorAnimation.Update(dt, headMaterial, bodyColorProperty, false);
+        if (headColorAnimation.Update(dt))
+        {
+            headMaterial.SetVector(bodyColorProperty, headColorAnimation.AnimatedValue);
+        }
     }
 }
