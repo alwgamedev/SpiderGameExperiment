@@ -103,6 +103,12 @@ public static class MathTools
         return (x > 0 && y < 0) || (x < 0 && y > 0);
     }
 
+    public static float MaxDifference(Vector4 v, Vector4 w)
+    {
+        var u = w - v;
+        return Mathf.Max(Mathf.Max(Mathf.Abs(u.x), Mathf.Abs(u.y)), Mathf.Max(Mathf.Abs(u.z), Mathf.Abs(u.w)));
+    }
+
     public static float RandomFloat(float min, float max)
     {
         return min + (max - min) * (float)RNG.NextDouble();

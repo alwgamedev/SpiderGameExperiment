@@ -1,56 +1,22 @@
-using System;
-using Unity.Collections;
-using Unity.Mathematics;
 using Unity.U2D.Physics;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class Slug : MonoBehaviour
 {
-    [Serializable]
-    public struct SlugPose
-    {
-        public Vector2 p0;
-        public Vector2 v0;
-        public Vector2 p1;
-        public Vector2 v1;
-        public Vector2 p2;
-        public Vector2 v2;
+    const int shootFrame = 3;
 
-        public readonly SlugPose Transform(Matrix4x4 transform)
-        {
-            return new()
-            {
-                p0 = transform.MultiplyPoint3x4(p0),
-                p1 = transform.MultiplyPoint3x4(p1),
-                p2 = transform.MultiplyPoint3x4(p2),
-                v0 = transform.MultiplyVector(v0),
-                v1 = transform.MultiplyVector(v1),
-                v2 = transform.MultiplyVector(v2)
-            };
-        }
+    [SerializeField] SlugRenderer renderer;
+    [SerializeField] SlugPose[] pose;//dormant, idle, prepareShoot, shoot
+    [SerializeField] int[] animation;//0, 1, 2, 3, 1, 0 (poses)
+    [SerializeField] float[] animationSpeed;//of length animation.Length - 1
 
-        public readonly SlugPose Aim(PhysicsRotate aim)
-        {
-            return new()
-            {
-                p0 = p0,
-                p1 = p1,
-                p2 = p1 + aim.RotateVector(p2 - p1),
-                v0 = v0,
-                v1 = aim.RotateVector(v1),
-                v2 = aim.RotateVector(v2)
-            };
-        }
-    }
+    AnimationTimer<SlugPose, SlugAnimationUtility> animationTimer;
+    PhysicsRotate aim;
+    int animFrame;
+    //animFrame = i means we're moving tweening from animation[i] to animation[i + 1], with speed animationSpeed[i]
+    //or set animFrame = animationSpeed.Length for dormant
 
-    public SlugPose pose;
-    public PhysicsRotate aim;
-    [SerializeField] SimpleLineRenderer lr;
-
-    NativeArray<float4> controlPoint;
-
-    public float Orientation
+    float Orientation
     {
         get => transform.localScale.x;
         set
@@ -58,53 +24,60 @@ public class Slug : MonoBehaviour
             var s = transform.localScale;
             s.x = value;
             transform.localScale = s;
-            lr.SetOrientation(Mathf.Sign(value));
+            renderer.SetOrientation(value);
         }
     }
 
     void OnValidate()
     {
-        lr.OnValidate();
-
-        if (aim.direction == Vector2.zero)
-        {
-            aim = PhysicsRotate.identity;
-        }
+        renderer.OnValidate();
     }
 
     void Start()
     {
-        lr.Initialize();
-        Orientation = transform.localScale.x;
-        controlPoint = new(3, Allocator.Persistent);
-    }
+        renderer.Initialize();
+        Orientation = Orientation;
+        aim = PhysicsRotate.identity;
 
-    void LateUpdate()
-    {
-        if (Keyboard.current.cKey.wasPressedThisFrame)
-        {
-            Orientation = -Orientation;
-        }
-
-        //it will cull when transform is far away, so may as well keep gameobject transform accurate
-        //and use it to set slug transform (we'll probably only be setting the transform position on spawn)
-        UpdateControlPoints(pose.Transform(transform.localToWorldMatrix).Aim(aim));
-        lr.InterpolatePositions(controlPoint);
+        animationTimer.SnapTo(pose[0]);
+        animFrame = animationSpeed.Length;
+        UpdatePose();
     }
 
     void OnDestroy()
     {
-        lr.OnDestroy();
-        if (controlPoint.IsCreated)
+        renderer.OnDestroy();
+    }
+
+    void Update()
+    {
+        //we would also need to update the pose if transform changes,
+        //but plan is to keep the transform planted once we spawn
+        if (animationTimer.Update(Time.deltaTime))
         {
-            controlPoint.Dispose();
+            UpdatePose();
+        }
+        else if (animFrame < animationSpeed.Length)
+        {
+            BeginAnimation(++animFrame);
+            if (animFrame == shootFrame)
+            {
+                Debug.Log("Shoot!");
+            }
+
+            animationTimer.Update(Time.deltaTime);
+            UpdatePose();
         }
     }
 
-    void UpdateControlPoints(SlugPose pose)
+    void UpdatePose()
     {
-        controlPoint[0] = new(pose.p0, pose.v0);
-        controlPoint[1] = new(pose.p1, pose.v1);
-        controlPoint[2] = new(pose.p2, pose.v2);
+        renderer.SetPose(animationTimer.AnimatedValue, transform.localToWorldMatrix, aim);
+    }
+
+    void BeginAnimation(int i)
+    {
+        animFrame = i;
+        animationTimer.BeginAnimation(animationTimer.AnimatedValue, pose[animation[i + 1]], animationSpeed[i]);
     }
 }

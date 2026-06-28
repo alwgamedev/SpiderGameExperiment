@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 4663596254457460193}
   - component: {fileID: 6747921897116692078}
   - component: {fileID: 2513965754309310280}
-  - component: {fileID: 5021622172684758788}
   - component: {fileID: 2231333822043508456}
   m_Layer: 0
   m_Name: Slug
@@ -92,32 +91,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6774876281071325959}
   m_Mesh: {fileID: 0}
---- !u!114 &5021622172684758788
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6774876281071325959}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc82f9681c72e3c4c8017ae172349c99, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: spydr1.Runtime::Slug
-  pose:
-    p0: {x: 0, y: 0}
-    v0: {x: 0, y: 4}
-    p1: {x: -1, y: 3}
-    v1: {x: 0, y: 3}
-    p2: {x: 1.5, y: 4}
-    v2: {x: 5, y: -2}
-  aim:
-    direction: {x: 1, y: 0}
-  lr:
-    numNodes: 32
-    halfWidth: 0.25
-    meshRenderer: {fileID: 6747921897116692078}
-    meshFilter: {fileID: 2513965754309310280}
 --- !u!114 &2231333822043508456
 MonoBehaviour:
   m_ObjectHideFlags: 0

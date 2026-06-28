@@ -1,5 +1,9 @@
+using System;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
+[Serializable]
+[StructLayout(LayoutKind.Sequential)]
 public struct AnimationTimer<T, TUtility>
     where T : struct
     where TUtility : struct, IAnimationUtility<T>
@@ -67,12 +71,6 @@ public struct Vector4AnimationUtility : IAnimationUtility<Vector4>
 
     public readonly float InitialTimer(in Vector4 startVal, in Vector4 goalVal, float speed)
     {
-        return 1 - Mathf.Clamp(MaxDifference(startVal, goalVal) / speed, 0, 1);
-    }
-
-    public readonly float MaxDifference(Vector4 v, Vector4 w)
-    {
-        var u = w - v;
-        return Mathf.Max(Mathf.Max(Mathf.Abs(u.x), Mathf.Abs(u.y)), Mathf.Max(Mathf.Abs(u.z), Mathf.Abs(u.w)));
+        return 1 - Mathf.Clamp(MathTools.MaxDifference(startVal, goalVal) / speed, 0, 1);
     }
 }
