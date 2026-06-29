@@ -25,7 +25,7 @@ public struct SlugRenderer
 
     public readonly void OnValidate()
     {
-        lr.OnValidate();
+        lr?.OnValidate();
     }
 
     public void Initialize()

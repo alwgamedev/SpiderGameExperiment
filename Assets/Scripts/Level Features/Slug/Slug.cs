@@ -6,12 +6,13 @@ public class Slug : MonoBehaviour
     const int shootFrame = 3;
 
     [SerializeField] SlugRenderer renderer;
+    [SerializeField] SlugPose testPose;
+    [SerializeField] PhysicsRotate testAim;
     [SerializeField] SlugPose[] pose;//dormant, idle, prepareShoot, shoot
-    [SerializeField] int[] animation;//0, 1, 2, 3, 1, 0 (poses)
+    [SerializeField] int[] animationPose;//0, 1, 2, 3, 1, 0 (poses)
     [SerializeField] float[] animationSpeed;//of length animation.Length - 1
 
     AnimationTimer<SlugPose, SlugAnimationUtility> animationTimer;
-    PhysicsRotate aim;
     int animFrame;
     //animFrame = i means we're moving tweening from animation[i] to animation[i + 1], with speed animationSpeed[i]
     //or set animFrame = animationSpeed.Length for dormant
@@ -37,11 +38,10 @@ public class Slug : MonoBehaviour
     {
         renderer.Initialize();
         Orientation = Orientation;
-        aim = PhysicsRotate.identity;
+        testAim = PhysicsRotate.identity;
 
-        animationTimer.SnapTo(pose[0]);
-        animFrame = animationSpeed.Length;
-        UpdatePose();
+        // animationTimer.SnapTo(pose[0]);
+        // animFrame = animationSpeed.Length;
     }
 
     void OnDestroy()
@@ -51,33 +51,35 @@ public class Slug : MonoBehaviour
 
     void Update()
     {
+        SetPose(testPose);
+
         //we would also need to update the pose if transform changes,
         //but plan is to keep the transform planted once we spawn
-        if (animationTimer.Update(Time.deltaTime))
-        {
-            UpdatePose();
-        }
-        else if (animFrame < animationSpeed.Length)
-        {
-            BeginAnimation(++animFrame);
-            if (animFrame == shootFrame)
-            {
-                Debug.Log("Shoot!");
-            }
+        // if (animationTimer.Update(Time.deltaTime))
+        // {
+        //     SetPose(animationTimer.AnimatedValue);
+        // }
+        // else if (animFrame < animationSpeed.Length)
+        // {
+        //     BeginAnimation(++animFrame);
+        //     if (animFrame == shootFrame)
+        //     {
+        //         Debug.Log("Shoot!");
+        //     }
 
-            animationTimer.Update(Time.deltaTime);
-            UpdatePose();
-        }
+        //     animationTimer.Update(Time.deltaTime);
+        //     SetPose(animationTimer.AnimatedValue);
+        // }
     }
 
-    void UpdatePose()
+    void SetPose(SlugPose pose)
     {
-        renderer.SetPose(animationTimer.AnimatedValue, transform.localToWorldMatrix, aim);
+        renderer.SetPose(pose, transform.localToWorldMatrix, testAim);
     }
 
     void BeginAnimation(int i)
     {
         animFrame = i;
-        animationTimer.BeginAnimation(animationTimer.AnimatedValue, pose[animation[i + 1]], animationSpeed[i]);
+        animationTimer.BeginAnimation(animationTimer.AnimatedValue, pose[animationPose[i + 1]], animationSpeed[i]);
     }
 }

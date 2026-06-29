@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6747921897116692078}
   - component: {fileID: 2513965754309310280}
   - component: {fileID: 2231333822043508456}
+  - component: {fileID: 6045811663350773612}
   m_Layer: 0
   m_Name: Slug
   m_TagString: Untagged
@@ -107,3 +108,51 @@ MonoBehaviour:
     layerNumber: 5
   sortingOrder: 0
   renderer: {fileID: 6747921897116692078}
+--- !u!114 &6045811663350773612
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6774876281071325959}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3566505d014352944b5524aeed15d5c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: spydr1.Runtime::Slug
+  renderer:
+    lr:
+      numNodes: 32
+      halfWidth: 0.1
+      meshRenderer: {fileID: 6747921897116692078}
+      meshFilter: {fileID: 2513965754309310280}
+  testPose:
+    p0: {x: 0, y: 0}
+    v0: {x: 0, y: 1}
+    p1: {x: -0.25, y: 0.85}
+    v1: {x: -0.1, y: 0.75}
+    p2: {x: 0.3, y: 1}
+    v2: {x: 1.3, y: -1}
+  testAim:
+    direction: {x: 1, y: 0}
+  pose:
+  - p0: {x: 0, y: -1.25}
+    v0: {x: 0, y: 0.25}
+    p1: {x: 0, y: -0.75}
+    v1: {x: 0, y: 0.25}
+    p2: {x: 0, y: -0.25}
+    v2: {x: 0, y: 0.25}
+  - p0: {x: 0, y: 0}
+    v0: {x: 0, y: 1}
+    p1: {x: -0.25, y: 0.85}
+    v1: {x: -0.1, y: 0.75}
+    p2: {x: 0.3, y: 1}
+    v2: {x: 1.3, y: -1}
+  - p0: {x: 0, y: 0}
+    v0: {x: 0, y: 4}
+    p1: {x: -1, y: 3}
+    v1: {x: 0, y: 3}
+    p2: {x: 1.5, y: 4}
+    v2: {x: 5, y: -2}
+  animationPose: 
+  animationSpeed: []
