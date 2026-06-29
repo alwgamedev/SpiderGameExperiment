@@ -150,7 +150,7 @@ public class SimpleLineRenderer
                 var quot = i / segsPerCtrl;
                 var remainder = i % segsPerCtrl;
                 var c0 = controlPoint[quot];
-                var c1 = controlPoint[quot + 1];
+                var c1 = controlPoint[math.min(quot + 1, controlPoint.Length - 1)];
                 var t = remainder * segsPerCtrlInv;
                 float2 p = MathTools.CubicInterpolation(c0.xy, c0.zw, c1.xy, c1.zw, t);
                 float2 v = MathTools.CubicTangent(c0.xy, c0.zw, c1.xy, c1.zw, t);

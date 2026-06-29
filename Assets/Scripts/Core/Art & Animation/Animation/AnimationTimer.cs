@@ -15,7 +15,7 @@ public struct AnimationTimer<T, TUtility>
 
     public readonly T AnimatedValue => default(TUtility).AnimatedValue(in startVal, in goalVal, timer);
 
-    public void SnapTo(T val)
+    public void SnapTo(in T val)
     {
         startVal = val;
         goalVal = val;
@@ -23,7 +23,7 @@ public struct AnimationTimer<T, TUtility>
         timer = 1;
     }
 
-    public void BeginAnimation(T startVal, T goalVal, float speed)
+    public void BeginAnimation(in T startVal, in T goalVal, float speed)
     {
         this.startVal = startVal;
         this.goalVal = goalVal;
