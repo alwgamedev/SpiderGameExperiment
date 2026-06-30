@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using Unity.Collections;
 using Unity.U2D.Physics;
 using UnityEngine;
 
@@ -17,19 +17,15 @@ public static class PhysicsRegistry
     [Serializable]
     public struct ShapeData
     {
-       public PBFDynamicObstacle fluidObstacle;
-       public int projectileTarget;
-       //+ anything else we need
+        public PBFDynamicObstacle fluidObstacle;
+        public int projectileTarget;
+        //+ anything else we need
+        //if gets large we can make a separate list for each item
+
+        public readonly bool IsFluidObstacle => fluidObstacle.repulsionRadius != 0;
     }
 
-    //[Serializable]
-    //public struct BodyData
-    //{
-    //    public bool reversed;
-    //}
-
-    //public static NativeHashMap<uint, BodyData> bodyData;
-    //public static NativeHashMap<uint, ShapeData> shapeData;
+    static NativeList<ShapeData> shapeDataList;
 
     static int nextBodyId;
     static int nextShapeId;
@@ -52,24 +48,55 @@ public static class PhysicsRegistry
         return shape.userData.intValue;
     }
 
-    //public static void UpdateData(PhysicsBody body, BodyData data)
-    //{
-    //    var id = body.Id();
-    //    if (bodyData.ContainsKey(id))
-    //    {
-    //        bodyData[id] = data;
-    //    }
-    //}
+    public static ShapeData GetShapeData(int id)
+    {
+        return shapeDataList[id];
+    }
 
-    //public static void UpdateData(PhysicsShape shape, ShapeData data)
-    //{
-    //    var id = shape.Id();
-    //    if (shapeData.ContainsKey(id))
-    //    {
-    //        shapeData[id] = data;
-    //    }
-    //}
+    public static ShapeData GetShapeData(this PhysicsShape shape)
+    {
+        return shapeDataList[shape.Id()];
+    }
 
+    public static bool TryGetShapeData(int id, out ShapeData sd)
+    {
+        if (id == 0 || !(id < shapeDataList.Length))
+        {
+            sd = default;
+            return false;
+        }
+
+        sd = shapeDataList[id];
+        return true;
+    }
+
+    public static bool TryGetShapeData(this PhysicsShape shape, out ShapeData sd)
+    {
+        return TryGetShapeData(shape.Id(), out sd);
+    }
+
+    public static void SetShapeData(int id, ShapeData shapeData)
+    {
+        if (id == 0)
+        {
+            Debug.Log("Shape not registered.");
+            return;
+        }
+
+        if (!(shapeDataList.Count > id))
+        {
+            shapeDataList.Resize(id + 1, NativeArrayOptions.ClearMemory);
+        }
+
+        shapeDataList[id] = shapeData;
+    }
+
+    public static void SetShapeData(this PhysicsShape shape, ShapeData shapeData)
+    {
+        SetShapeData(shape.Id(), shapeData);
+    }
+
+    /// <summary> Uses the same ShapeData for all shapes. </summary>
     public static void RegisterBodyAndShapes(PhysicsBody body)
     {
         RegisterBody(body);
@@ -81,7 +108,7 @@ public static class PhysicsRegistry
         }
     }
 
-    public static void RegisterBody(PhysicsBody body/*, BodyData data*/)
+    public static void RegisterBody(PhysicsBody body)
     {
         if (body.Id() != 0)
         {
@@ -89,7 +116,7 @@ public static class PhysicsRegistry
             return;
         }
 
-        if (nextBodyId < 0)
+        if (!(nextBodyId > 0))
         {
             Debug.Log($"Out of body ids!");
             return;
@@ -101,7 +128,7 @@ public static class PhysicsRegistry
         nextBodyId++;
     }
 
-    public static void RegisterShape(PhysicsShape shape/*, ShapeData data*/)
+    public static void RegisterShape(PhysicsShape shape)
     {
         if (shape.Id() != 0)
         {
@@ -109,83 +136,54 @@ public static class PhysicsRegistry
             return;
         }
 
-        if (nextShapeId < 0)
+        if (!(nextShapeId > 0))
         {
             Debug.Log($"Out of shape ids!");
             return;
         }
 
+        var id = nextShapeId;
         var userData = shape.userData;
-        userData.intValue = nextShapeId;
+        userData.intValue = id;
         shape.userData = userData;
+
         nextShapeId++;
     }
-
-    //public static void UnregisterBodyAndShapes(PhysicsBody body)
-    //{
-    //    var bodyId = (uint)body.userData.intValue;
-    //    bodyData.Remove(bodyId);
-
-    //    var shape = body.GetShapes();
-    //    for (int i = 0; i <shape.Length; i++)
-    //    {
-    //        UnregisterShape(shape[i]);
-    //    }
-    //}
-
-    //public static void UnregisterShape(PhysicsShape shape)
-    //{
-    //    var shapeId = (uint)shape.userData.intValue;
-    //    shapeData.Remove(shapeId);
-    //}
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Initialize()
     {
         nextBodyId = 1;
         nextShapeId = 1;
-        //if (!bodyData.IsCreated)
-        //{
-        //    bodyData = new NativeHashMap<uint, BodyData>(1024, Allocator.Persistent);
-        //    nextBodyId = 1;
-        //}
-        //if (!shapeData.IsCreated)
-        //{
-        //    shapeData = new NativeHashMap<uint, ShapeData>(4096, Allocator.Persistent);
-        //    nextShapeId = 1;
-        //}
+        
+        if (!shapeDataList.IsCreated)
+        {
+            shapeDataList = new NativeList<ShapeData>(1024, Allocator.Persistent);
+        }
 
-        //Application.quitting += OnApplicationQuit;
-        //AppDomain.CurrentDomain.DomainUnload += OnDomainUnload;
+        Application.quitting += OnApplicationQuit;
+        AppDomain.CurrentDomain.DomainUnload += OnDomainUnload;
     }
 
-    //private static void OnApplicationQuit()
-    //{
-    //    Dispose();
-    //    Application.quitting -= OnApplicationQuit;
-    //    AppDomain.CurrentDomain.DomainUnload -= OnDomainUnload;
-    //}
+    private static void OnApplicationQuit()
+    {
+        Dispose();
+        Application.quitting -= OnApplicationQuit;
+        AppDomain.CurrentDomain.DomainUnload -= OnDomainUnload;
+    }
 
-    //private static void OnDomainUnload(object sender, EventArgs e)
-    //{
-    //    Dispose();
-    //    Application.quitting -= OnApplicationQuit;
-    //    AppDomain.CurrentDomain.DomainUnload -= OnDomainUnload;
-    //}
+    private static void OnDomainUnload(object sender, EventArgs e)
+    {
+        OnApplicationQuit();
+    }
 
-    //private static void Dispose()
-    //{
-    //    if (bodyData.IsCreated)
-    //    {
-    //        bodyData.Dispose();
-    //    }
+    private static void Dispose()
+    {
+        if (shapeDataList.IsCreated)
+        {
+            shapeDataList.Dispose();
+        }
 
-    //    if (shapeData.IsCreated)
-    //    {
-    //        shapeData.Dispose();
-    //    }
-
-    //    bodyData = default;
-    //    shapeData = default;
-    //}
+        shapeDataList = default;
+    }
 }

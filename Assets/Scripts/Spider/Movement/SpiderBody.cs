@@ -89,11 +89,11 @@ public struct SpiderBody
     public void CenterRootTransforms(Transform abdomenRoot, Transform abdomenBone, Transform headRoot, Transform headBone,
         SpiderBodyDefinition def)
     {
-        CenterRootInCapsule(abdomenRoot, abdomenBone, def.abdomenCapsuleSize, def.abdomenCapsuleOffset);
-        CenterRootInCapsule(headRoot, headBone, def.headCapsuleSize, def.headCapsuleOffset);
+        CenterRootInCapsule(abdomenRoot, abdomenBone, def.abdomenCapsuleOffset);
+        CenterRootInCapsule(headRoot, headBone, def.headCapsuleOffset);
     }
 
-    public static void CenterRootInCapsule(Transform root, Transform bone, Vector2 capsuleSize, Vector2 capsuleOffset)
+    public static void CenterRootInCapsule(Transform root, Transform bone, Vector2 capsuleOffset)
     {
         var recordTargets = new UnityEngine.Object[] { root, bone };
         Undo.RecordObjects(recordTargets, "Center root in capsule");
@@ -141,7 +141,7 @@ public struct SpiderBody
     const float grappleArmDensityMultiplier = 0.001f;
 
     public void CreatePhysicsBody(PhysicsRotate levelDirection, Transform abdomenRoot, Transform headRoot, Transform headBone,
-        Transform grappleArmTransform, SpiderBodyDefinition spiderDef)
+        Transform grappleArmTransform, SpiderBodyDefinition spiderDef, int projectileTargetID)
     {
         var defaultWorld = PhysicsWorld.defaultWorld;
 
@@ -171,13 +171,13 @@ public struct SpiderBody
         head.transformObject = headRoot;
 
         //set user data
-        var abdomenUserData = abdomenCapsule.userData;
-        abdomenUserData.objectValue = spiderDef.fluidObstacle;
-        abdomenCapsule.userData = abdomenUserData;
+        // var abdomenUserData = abdomenCapsule.userData;
+        // abdomenUserData.objectValue = spiderDef.fluidObstacle;
+        // abdomenCapsule.userData = abdomenUserData;
 
-        var headUserData = headCapsule.userData;
-        headUserData.objectValue = spiderDef.fluidObstacle;
-        headCapsule.userData = headUserData;
+        // var headUserData = headCapsule.userData;
+        // headUserData.objectValue = spiderDef.fluidObstacle;
+        // headCapsule.userData = headUserData;
 
         //fixed joints: anchorB on bodyB will be pulled towards anchorA on bodyA;
         //for rotation that means bodyB will rotate so that its anchor direction lines up with the anchor direction on bodyA
@@ -199,6 +199,14 @@ public struct SpiderBody
 
         PhysicsRegistry.RegisterBodyAndShapes(head);
         PhysicsRegistry.RegisterBodyAndShapes(abdomen);
+
+        var shapeData = new PhysicsRegistry.ShapeData()
+        {
+            fluidObstacle = spiderDef.fluidObstacle.settings,
+            projectileTarget = projectileTargetID
+        };
+        headCapsule.SetShapeData(shapeData);
+        abdomenCapsule.SetShapeData(shapeData);
     }
 
     public void Enable()

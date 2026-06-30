@@ -190,7 +190,7 @@ public class SpiderMover
     }
 #endif
 
-    public void Initialize(Transform transform, SpiderInput spiderInput)
+    public void Initialize(Transform transform, SpiderInput spiderInput, int projectileTargetID)
     {
         this.spiderInput = spiderInput;
 
@@ -204,7 +204,7 @@ public class SpiderMover
         thrusterFlame.Initialize();
 
         spiderBody.CreatePhysicsBody(new PhysicsRotate() { direction = transform.right }, abdomenRoot, headRoot, headBone,
-            grappleArmTransform, spiderBodyDef);
+            grappleArmTransform, spiderBodyDef, projectileTargetID);
         InitializeLegSynch();
         InitializeGroundMap();
         grapple.Initialize(spiderInput, World, TotalMass, FacingRight);

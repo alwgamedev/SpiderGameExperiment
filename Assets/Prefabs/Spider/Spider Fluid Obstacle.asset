@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d6021e56b57ded4184ed094887c5726, type: 3}
   m_Name: Spider Fluid Obstacle
   m_EditorClassIdentifier: spydr1.Runtime::PBFDynamicObstacleSO
-  repulsionRadius: 0.4
-  repulsionRadiusMax: 2
-  extentsMultiplier: 3
+  settings:
+    repulsionRadius: 0.4
+    repulsionRadiusMax: 2
+    extentsMultiplier: 3

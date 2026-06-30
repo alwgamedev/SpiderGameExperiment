@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class Spider : MonoBehaviour
+public class Spider : MonoBehaviour, IProjectileTarget
 {
 #if UNITY_EDITOR
     [SerializeField] float timeScale;
@@ -13,7 +13,14 @@ public class Spider : MonoBehaviour
     public JumpPreviewArrow jumpPreviewArrow;
     public SpiderLighting lighting;
 
+    public int ProjectileTargetID { get; private set; }
+
     public static Spider Player { get; private set; }
+
+    public void HandleProjectileHit(ProjectileCollision hit)
+    {
+        health.AddHealth(-hit.projectile.damage);
+    }
 
 #if UNITY_EDITOR
     private void OnValidate()
@@ -45,13 +52,15 @@ public class Spider : MonoBehaviour
 #if UNITY_EDITOR
         Time.timeScale = timeScale;
 #endif
+        ProjectileTargetRegistry.Register(this);
+
         spiderInput.Initialize();
         health.Start();
-        mover.Initialize(transform, spiderInput);
+        mover.Initialize(transform, spiderInput, ProjectileTargetID);
         grabber.Initialize(spiderInput, mover.SpideyBody.head, mover.SpideyBody.abdomen);
         mover.grabber = grabber;
         jumpPreviewArrow.Start();
-        grappleShootPreview.Start(/*mover.FacingRight,*/ mover.World);
+        grappleShootPreview.Start(mover.World);
         lighting.Initialize(spiderInput);
 
         grabber.Disable(true);
@@ -100,6 +109,9 @@ public class Spider : MonoBehaviour
         jumpPreviewArrow.OnDestroy();
         grappleShootPreview.OnDestroy();
         lighting.OnDestroy();
+
+        ProjectileTargetRegistry.Release(this);
+
         if (Player == this)
         {
             Player = null;

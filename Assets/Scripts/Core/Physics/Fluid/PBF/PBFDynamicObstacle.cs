@@ -6,8 +6,16 @@ using UnityEngine;
 using UnityEngine.Rendering;
 
 [Serializable]
-[StructLayout(LayoutKind.Sequential)]
 public struct PBFDynamicObstacle
+{
+    public float repulsionRadius;
+    public float repulsionRadiusMax;
+    public float extentsMultiplier;
+}
+
+[Serializable]//was for debugging purposes only
+[StructLayout(LayoutKind.Sequential)]
+public struct PBFDynamicObstacleState
 {
     public Vector2 center;
     public Vector2 extents;

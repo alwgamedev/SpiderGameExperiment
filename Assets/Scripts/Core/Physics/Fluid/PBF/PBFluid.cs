@@ -66,7 +66,7 @@ public class PBFluid : MonoBehaviour
     ComputeBuffer dynamicObstacle;
     ComputeBuffer obstacleDisplacement;
     [SerializeField] PhysicsQuery.QueryFilter obstacleFilter;
-    PBFDynamicObstacle[] obstacleDataToTransfer;
+    PBFDynamicObstacleState[] obstacleDataToTransfer;
     PBFDisplacementReadback[] displacementReadback;
     int incomingRequest;
     int outgoingRequest;
@@ -205,9 +205,9 @@ public class PBFluid : MonoBehaviour
             //compute buffer cannot have size 0, and can't be left unbound
         }
 
-        dynamicObstacle = new ComputeBuffer(MAX_NUM_OBSTACLES, MiscTools.Stride<PBFDynamicObstacle>());
+        dynamicObstacle = new ComputeBuffer(MAX_NUM_OBSTACLES, MiscTools.Stride<PBFDynamicObstacleState>());
         obstacleDisplacement = new ComputeBuffer(MAX_NUM_OBSTACLES, 4);
-        obstacleDataToTransfer ??= new PBFDynamicObstacle[MAX_NUM_OBSTACLES];
+        obstacleDataToTransfer ??= new PBFDynamicObstacleState[MAX_NUM_OBSTACLES];
 
         if (displacementReadback == null)
         {
@@ -495,8 +495,9 @@ public class PBFluid : MonoBehaviour
             }
 
             var shape = overlapResults[i].shape;
-            if (shape.isValid && shape.userData.objectValue is PBFDynamicObstacleSO o && o)
+            if (shape.isValid && shape.TryGetShapeData(out var sd) && sd.IsFluidObstacle)
             {
+                var o = sd.fluidObstacle;
                 var spd = shape.body.linearVelocity.magnitude;
                 var scale = Mathf.Min(simSettings.velocityBasedObstacleScaleMultiplier * spd, simSettings.obstacleUpscaleMax);
                 var repulsion = Mathf.Min(simSettings.velocityBasedObstacleRepulsionMultiplier * spd, 1);
@@ -511,21 +512,6 @@ public class PBFluid : MonoBehaviour
                     speedScaledRadius = Mathf.Min(scale * o.repulsionRadius, o.repulsionRadiusMax),
                     repulsionMultiplier = repulsion
                 };
-
-                //var center = shape.transform.TransformPoint(localBB.center);
-                //var right = o.extentsMultiplier * localBB.extents.x * shape.transform.rotation.direction;
-                //var up = o.extentsMultiplier * localBB.extents.y * shape.transform.rotation.direction.CCWPerp();
-                //Debug.DrawLine(center + right + up, center + right - up, Color.red);
-                //Debug.DrawLine(center + right - up, center - right - up, Color.red);
-                //Debug.DrawLine(center - right - up, center - right + up, Color.red);
-                //Debug.DrawLine(center - right + up, center + right + up, Color.red);
-                //var ssr = obstacleDataToTransfer[r.numObstacles - 1].speedScaledRadius;
-                //right *= ssr;
-                //up *= ssr;
-                //Debug.DrawLine(center + right + up, center + right - up, Color.orange);
-                //Debug.DrawLine(center + right - up, center - right - up, Color.orange);
-                //Debug.DrawLine(center - right - up, center - right + up, Color.orange);
-                //Debug.DrawLine(center - right + up, center + right + up, Color.orange);
             }
         }
 
@@ -540,26 +526,18 @@ public class PBFluid : MonoBehaviour
         {
             var o = r.obstacle[i];
             float d = r.displacement[i];
-            if (o.isValid && d > 0)
+            if (o.isValid && d > 0 && o.TryGetShapeData(out var sd) && sd.IsFluidObstacle)
             {
                 var body = o.body;
                 var v = body.linearVelocity;
-                float extentsMult;
-                if (o.userData.objectValue is PBFDynamicObstacleSO dfo && dfo)
-                {
-                    extentsMult = dfo.extentsMultiplier;
-                }
-                else
-                {
-                    extentsMult = 1;
-                }
 
                 var area = o.body.mass / o.definition.density;
-                //^we'll multiply drag by displacement / area (so less drag when displace less fluid, and divide by area so this term not affected by size of object)
+                //^we'll multiply drag by displacement / area (so less drag when displace less fluid, and divide by area 
+                //so this term not affected by size of object)
                 //then we'll use sqrt(area) as the drag cross-section, so in the end we multiply by displacemt / sqrt(area)
                 //(nonsense approach, but good enough)
 
-                var f = d * (b - simSettings.obstacleDrag * extentsMult / Mathf.Sqrt(area) * v.magnitude * v);
+                var f = d * (b - simSettings.obstacleDrag * sd.fluidObstacle.extentsMultiplier / Mathf.Sqrt(area) * v.magnitude * v);
                 body.ApplyForceToCenter(f);
             }
         }
