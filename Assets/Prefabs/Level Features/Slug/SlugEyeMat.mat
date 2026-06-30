@@ -83,6 +83,6 @@ Material:
     - _Color0: {r: 1, g: 1, b: 1, a: 1}
     - _Color1: {r: 0.2603773, g: 0.25388184, b: 0.2490779, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
-    - _StemColor: {r: 0.5331643, g: 0.7584905, b: 0.095884636, a: 1}
+    - _StemColor: {r: 0.21960784, g: 0.38039216, b: 0.047058824, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

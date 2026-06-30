@@ -44,7 +44,9 @@ public struct SpiderBody
     /// <summary> (accurate when facing right; when facing left it is the inverse of this) </summary>
     public readonly PhysicsRotate AbdomenBaseRotationFromLevel => abdomenBaseRotationFromLevel;
     //The heightRefPos and levelRight make up the spider's "true" transform, now that spider is made up of three separate bodies
-    public readonly PhysicsTransform VirtualTransform => new(HeightReferencePosition, LevelRight);
+    public readonly PhysicsTransform VirtualTransform => new(VirtualPosition, VirtualRotation);
+    public readonly Vector2 VirtualPosition => HeightReferencePosition;
+    public readonly PhysicsRotate VirtualRotation => LevelRight;
     public readonly PhysicsRotate LevelRight
     {
         get

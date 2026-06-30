@@ -143,7 +143,8 @@ public class GrappleCannon
         grapple.CompleteJobs();
     }
 
-    public void FixedUpdate(float dt, PhysicsRotate levelRotation, PhysicsBody ownerBody, NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture)
+    public void FixedUpdate(float dt, PhysicsRotate levelRotation, PhysicsBody ownerBody, 
+        NativeArray<PhysicsCoreHelper.ShapeProxyForJobs> shapeCapture)
     {
         ownerBody.SyncTransform();
         UpdateCannonFulcrum(levelRotation);

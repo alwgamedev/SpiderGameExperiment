@@ -6,7 +6,7 @@ public class HealthBarUI : MonoBehaviour
     [SerializeField] HealthPodUI[] pod;
     [SerializeField] float animationSpeed;
 
-    Health health;
+    SpiderHealth health;
     float animatedHealthPoints;
 
     private void Start()

@@ -8,14 +8,15 @@ using Unity.Burst;
 [Serializable]
 public class SimpleLineRenderer
 {
-    public GraphicsBuffer nodePosition;
+    public GraphicsBuffer nodePosition;    
+    [System.NonSerialized] public Mesh mesh;
+    [System.NonSerialized] public Material material;
+
     [SerializeField] int numNodes;
     [SerializeField] float halfWidth;
     [SerializeField] MeshRenderer meshRenderer;
     [SerializeField] MeshFilter meshFilter;
 
-    Mesh mesh;
-    Material material;
     float orientation;
 
     readonly int numNodesProperty = Shader.PropertyToID("_NumNodes");

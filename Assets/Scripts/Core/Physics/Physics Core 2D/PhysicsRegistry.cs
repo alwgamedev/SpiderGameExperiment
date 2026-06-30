@@ -1,4 +1,6 @@
-﻿using Unity.U2D.Physics;
+﻿using System;
+using System.Collections.Generic;
+using Unity.U2D.Physics;
 using UnityEngine;
 
 public static class PhysicsRegistry
@@ -12,13 +14,13 @@ public static class PhysicsRegistry
     //and want to be able to recognize them if you find them again in a subsequent query, like for rope collision where you snapshot nearby shapes to send data into a job).
     //sadly you can't access the built-in body/shape id's, and their GetHashCode combines the id with the world generation (which expires frequently)
 
-    //[Serializable]
-    //public struct ShapeData
-    //{
-    //    public PBFDynamicObstacleSettings fluidObstacleSettings;
-
-    //    //+ anything else we need
-    //}
+    [Serializable]
+    public struct ShapeData
+    {
+       public PBFDynamicObstacle fluidObstacle;
+       public int projectileTarget;
+       //+ anything else we need
+    }
 
     //[Serializable]
     //public struct BodyData

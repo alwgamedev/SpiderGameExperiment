@@ -4,22 +4,27 @@ using UnityEngine.InputSystem;
 
 public class Slug : MonoBehaviour
 {
-    const int shootFrame = 3;
+    const int prepareShootPose = 2;
+    const int shootPose = 3;
 
-    [SerializeField] SlugRenderer renderer;
-    [SerializeField] SlugeEye eye;
-    [SerializeField] PhysicsRotate testAim;
     [SerializeField] SlugPose[] pose;//dormant, idle, prepareShoot, shoot
     [SerializeField] int[] animationSequence;//0, 1, 2, 3, 1, 0 (poses)
     [SerializeField] float[] animationSpeed;//of length animation.Length - 1
-    // [SerializeField] float testAnim;
+    [SerializeField] SlugRenderer renderer;
+    [SerializeField] SlugeEye eye;
+    [SerializeField] float aimSpeed;
 
     AnimationTimer<SlugPose, SlugAnimationUtility> animationTimer;
     int animFrame;
+    int NextFrame => Mathf.Min(animFrame + 1, animationSequence.Length - 1);
     //animFrame = i means we're moving tweening from animation[i] to animation[i + 1], with speed animationSpeed[i]
     //or set animFrame = animationSpeed.Length for dormant
 
+    PhysicsRotate aim;
+    bool changeOrientation;
+
     float _orientation;
+    float scheduledOrientation;
     float Orientation
     {
         get => _orientation;
@@ -47,14 +52,15 @@ public class Slug : MonoBehaviour
         renderer.Initialize();
 
         Orientation = transform.localScale.x;
-        testAim = PhysicsRotate.identity;
+        scheduledOrientation = Orientation;
+        aim = PhysicsRotate.identity;
         animFrame = animationSpeed.Length;
 
         var p = pose[0];
         animationTimer.SnapTo(p);
 
         p.Transform(transform.localToWorldMatrix);
-        p.Aim(testAim);
+        p.Aim(aim);
         eye.SnapToPosition(in p, Orientation);
 
         //first update will take care of setting renderer control points
@@ -73,6 +79,8 @@ public class Slug : MonoBehaviour
         // var p = SlugPose.Lerp(pose[animationSequence[i]], pose[animationSequence[i + 1]], t);
         // SetPose(p);
 
+        Orientation = scheduledOrientation;
+
         if (Keyboard.current.cKey.wasPressedThisFrame)
         {
             BeginAnimation(0);
@@ -83,7 +91,8 @@ public class Slug : MonoBehaviour
 
         var p = animationTimer.AnimatedValue;
         p.Transform(transform.localToWorldMatrix);
-        p.Aim(testAim);
+        p.Aim(aim);
+        UpdateAim(dt, in p);//aim won't take effect until next frame
 
         eye.UpdateSpring(in p, Orientation, dt);
         renderer.SetBodyPose(in p);
@@ -95,11 +104,11 @@ public class Slug : MonoBehaviour
         if (!animationTimer.Update(dt) && animFrame < animationSpeed.Length - 1)
         {
             BeginAnimation(++animFrame);
-            if (animFrame == shootFrame)
+            if (animationSequence[animFrame] == shootPose)
             {
                 Debug.Log("Shoot!");
             }
-
+            
             animationTimer.Update(Time.deltaTime);
         }
     }
@@ -107,6 +116,43 @@ public class Slug : MonoBehaviour
     void BeginAnimation(int i)
     {
         animFrame = i;
-        animationTimer.BeginAnimation(animationTimer.AnimatedValue, pose[animationSequence[i + 1]], animationSpeed[i]);
+        animationTimer.BeginAnimation(pose[i], pose[animationSequence[i + 1]], animationSpeed[i]);
+    }
+
+    void UpdateAim(float dt, in SlugPose worldPose)
+    {
+        var a = aim.direction;
+        var g = GoalAim(in worldPose);
+        if (g.direction.x < 0)
+        {
+            Debug.Log("change direction");
+            scheduledOrientation = -Orientation;
+        }
+
+        a = MathTools.CheapRotationBySpeedClamped(a, g, aimSpeed, dt, out _);
+        aim.direction = a;
+    }
+
+    //note that aim direction is relative to transform 
+    PhysicsRotate GoalAim(in SlugPose worldPose)
+    {
+        if (ActiveAim())
+        {
+            Vector2 p = worldPose.p2;
+            var q = Spider.Player.mover.SpideyBody.VirtualPosition;
+            var u = (q - p).normalized;
+            var worldRot = new PhysicsRotate() { direction = Orientation * u };
+            var baseRot = new PhysicsRotate() { direction = transform.right };
+            return baseRot.InverseMultiplyRotation(worldRot);
+        }
+        else
+        {
+            return PhysicsRotate.identity;
+        }
+    }
+
+    bool ActiveAim()
+    {
+        return animationSequence[NextFrame] == prepareShootPose || animationSequence[NextFrame] == shootPose;
     }
 }

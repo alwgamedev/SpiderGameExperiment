@@ -6,7 +6,7 @@ public class Spider : MonoBehaviour
     [SerializeField] float timeScale;
 #endif
     public SpiderInput spiderInput;
-    public Health health;
+    public SpiderHealth health;
     public SpiderMover mover;
     public Grabber grabber;
     public GrappleShootPreview grappleShootPreview;

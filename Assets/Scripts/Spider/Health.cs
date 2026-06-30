@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [Serializable]
-public class Health
+public class SpiderHealth
 {
     public const int CELLS_PER_POD = 3;
     public const int MAX_NUM_PODS = 6;

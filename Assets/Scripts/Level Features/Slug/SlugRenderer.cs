@@ -6,8 +6,8 @@ using UnityEngine;
 [Serializable]
 public struct SlugRenderer
 {
-    [SerializeField] SimpleLineRenderer bodyRenderer;
-    [SerializeField] SimpleLineRenderer eyeRenderer;
+    public SimpleLineRenderer bodyRenderer;
+    public SimpleLineRenderer eyeRenderer;
 
     NativeArray<float4> bodyControlPoint;
     NativeArray<float4> eyeControlPoint;
@@ -22,6 +22,8 @@ public struct SlugRenderer
     {
         bodyRenderer.Initialize();
         bodyControlPoint = new(3, Allocator.Persistent);
+        var offset = new Vector2(MathTools.RandomFloat(-10000, 10000), MathTools.RandomFloat(-10000, 10000));
+        bodyRenderer.material.SetVector("_RandomOffset", offset);
 
         eyeRenderer.Initialize();
         eyeControlPoint = new(2, Allocator.Persistent);
