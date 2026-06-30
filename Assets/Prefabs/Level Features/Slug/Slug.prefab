@@ -59,7 +59,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 657ba45b8b392104bbbd532e9ff608f8, type: 2}
+  - {fileID: 2100000, guid: 3d445f28637d77a429c0995375bc8593, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -161,16 +161,16 @@ MonoBehaviour:
       meshFilter: {fileID: 3365525312188804572}
     eyeRenderer:
       numNodes: 8
-      halfWidth: 0.1
+      halfWidth: 0.075
       meshRenderer: {fileID: 3542215859060234815}
       meshFilter: {fileID: 8118590443572690350}
   eye:
-    bodyPosX: 0.6
-    bodyPosY: 0.3
+    bodyPosX: 0.65
+    bodyPosY: 0.35
     tangentStrength0: 0.5
     tangentStrength1: 0.5
-    springForce: 600
-    springDamping: 20
+    springForce: 800
+    springDamping: 15
   testAim:
     direction: {x: 1, y: 0}
   pose:
@@ -201,9 +201,9 @@ MonoBehaviour:
   animationSequence: 0000000001000000020000000300000000000000
   animationSpeed:
   - 2.5
-  - 1.5
+  - 1.75
   - 3.5
-  - 2.5
+  - 2.75
 --- !u!1 &7727245759001728954
 GameObject:
   m_ObjectHideFlags: 0

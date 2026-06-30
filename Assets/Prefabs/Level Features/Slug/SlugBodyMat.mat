@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: SlugMat
+  m_Name: SlugBodyMat
   m_Shader: {fileID: -6465566751694194690, guid: 31ce8bb974f053e4d9a78bc0db8bb8f2, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -70,7 +70,7 @@ Material:
     - _ZWrite: 0
     m_Colors:
     - White: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.53333336, g: 0.75686276, b: 0.09411765, a: 1}
     - _Color0: {r: 1, g: 1, b: 1, a: 1}
     - _Color1: {r: 0.2603773, g: 0.25388184, b: 0.2490779, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
