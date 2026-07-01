@@ -1,16 +1,17 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Unity.Mathematics;
 using Unity.U2D.Physics;
 using System;
+using UnityEngine.VFX;
 
+[VFXType(VFXTypeAttribute.Usage.GraphicsBuffer)]
 public struct Projectile
 {
-    public float2 position;
-    public float2 velocity;
-    public float2 acceleration;
+    public Vector2 position;
+    public Vector2 velocity;
+    public Vector2 acceleration;
     public float damage;
-    public float alive;
+    public float lifetime;//remaining lifetime
 }
 
 public struct ProjectileCollision

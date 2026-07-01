@@ -1,3 +1,4 @@
+using System;
 using Unity.Burst;
 using Unity.Burst.CompilerServices;
 using Unity.Collections;
@@ -6,61 +7,74 @@ using Unity.U2D.Physics;
 using UnityEngine;
 using UnityEngine.VFX;
 
-public class VFXGun
+[Serializable]
+public class VFXShooter
 {
     [SerializeField] VisualEffect vfx;
     [SerializeField] PhysicsQuery.QueryFilter collisionFilter;
     [SerializeField] int capacity;
     [SerializeField] float collisionRadius;
+    [SerializeField] float lifetime;
 
-    public GraphicsBuffer projectile;
+    GraphicsBuffer projectileGB;
+    NativeArray<Projectile> projectile;//because we can't read from gb (to see current position, etc.) we need to keep data on cpu
     public NativeArray<ProjectileCollision> collision;
-    NativeArray<bool> alive;//can't read from GraphicsBuffer so need a cpu-side alive tracker
     int nextProjectileID;
 
     readonly int bufferProperty = Shader.PropertyToID("Projectile");
+    readonly int projectileIDProperty = Shader.PropertyToID("ProjectileID");
+    readonly int shootEventProperty = Shader.PropertyToID("ShootProjectileEvent");
 
     public void Initialize()
     {
         ReleaseBuffers();
 
-        projectile = new(GraphicsBuffer.Target.Structured, GraphicsBuffer.UsageFlags.LockBufferForWrite, capacity, 32);
-        vfx.SetGraphicsBuffer(bufferProperty, projectile);
+        projectileGB = new(GraphicsBuffer.Target.Structured, GraphicsBuffer.UsageFlags.LockBufferForWrite, capacity, 32);
+        vfx.SetGraphicsBuffer(bufferProperty, projectileGB);
 
         collision = new(capacity, Allocator.Persistent);
-        alive = new(alive, Allocator.Persistent);
+        projectile = new(capacity, Allocator.Persistent);
 
         nextProjectileID = 0;
     }
 
     public void Shoot(Projectile p)
     {
-        if (alive[nextProjectileID])
+        if (projectile[nextProjectileID].lifetime > 0)
         {
+            //this just means we've circled back to the beginning of queue (first fired projectile)
+            //and it's still alive... there could be free slots past it.
+            //so we could loop until we find a free id but meh just use a large enough capacity.
             return;
         }
 
-        p.alive = 1;
-        var projSlice = projectile.LockBufferForWrite<Projectile>(nextProjectileID, 1);
+        var id = nextProjectileID;
+        p.lifetime = lifetime;
+        projectile[id] = p;
+        var projSlice = projectileGB.LockBufferForWrite<Projectile>(id, 1);
         projSlice[0] = p;
-        projectile.UnlockBufferAfterWrite<Projectile>(1);
+        projectileGB.UnlockBufferAfterWrite<Projectile>(1);
         
-        alive[nextProjectileID] = true;
+        var shootEvent = vfx.CreateVFXEventAttribute();
+        shootEvent.SetInt(projectileIDProperty, id);
+        vfx.SendEvent(shootEventProperty, shootEvent);
+
         nextProjectileID++;
-        if (nextProjectileID == projectile.count)
+        if (nextProjectileID == projectile.Length)
         {
             nextProjectileID = 0;
         }
-
-        //we still need to send spawn event to vfx (with event attribute for the projectile id)
     }
 
     public void Update(float dt)
     {
-        var proj = projectile.LockBufferForWrite<Projectile>(0, projectile.count);
-        var updateJob = new UpdateProjectilesJob(proj, collision, alive, PhysicsWorld.defaultWorld, collisionFilter, dt, collisionRadius);
-        updateJob.Run();
-        projectile.UnlockBufferAfterWrite<Projectile>(projectile.count);
+
+        var updateJob = new UpdateProjectilesJob(projectile, collision, PhysicsWorld.defaultWorld,
+            collisionFilter, dt, collisionRadius);
+        updateJob.Run();        
+        var proj = projectileGB.LockBufferForWrite<Projectile>(0, projectileGB.count);
+        proj.CopyFrom(projectile);
+        projectileGB.UnlockBufferAfterWrite<Projectile>(projectileGB.count);
 
         //then owner can handle collisions 
         //including (optionally) setting collision[i] back to default after handled
@@ -68,14 +82,14 @@ public class VFXGun
 
     public void ReleaseBuffers()
     {
-        projectile?.Release();
+        projectileGB?.Release();
+        if (projectile.IsCreated)
+        {
+            projectile.Dispose();
+        }
         if (collision.IsCreated)
         {
             collision.Dispose();
-        }
-        if (alive.IsCreated)
-        {
-            alive.Dispose();
         }
     }
 
@@ -84,18 +98,16 @@ public class VFXGun
     {
         public NativeArray<Projectile> projectile;
         public NativeArray<ProjectileCollision> collision;
-        public NativeArray<bool> alive;
         [ReadOnly] public readonly PhysicsWorld world;
         public readonly PhysicsQuery.QueryFilter filter;
         public readonly float dt;
         public readonly float collisionRadius;
 
-        public UpdateProjectilesJob(NativeArray<Projectile> projectile, NativeArray<ProjectileCollision> collision,
-            NativeArray<bool> alive, PhysicsWorld world, PhysicsQuery.QueryFilter filter, float dt, float collisionRadius)
+        public UpdateProjectilesJob(NativeArray<Projectile> projectile, NativeArray<ProjectileCollision> collision, 
+            PhysicsWorld world, PhysicsQuery.QueryFilter filter, float dt, float collisionRadius)
         {
             this.projectile = projectile;
             this.collision = collision;
-            this.alive = alive;
             this.world = world;
             this.filter = filter;
             this.dt = dt;
@@ -107,22 +119,21 @@ public class VFXGun
             for (int i = 0; i < projectile.Length; i++)
             {
                 var p = projectile[i];
-                if (p.alive == 0)
+                if (!(p.lifetime > 0))
                 {
-                    return;
+                    continue;
                 }
-
+                
+                p.lifetime -= dt;
                 p.velocity += dt * p.acceleration;
                 p.position += dt * p.velocity;
 
                 var circle = new CircleGeometry() { center = p.position, radius = collisionRadius };
                 var overlap = world.OverlapGeometry(circle, filter);
-
                 if (Hint.Unlikely(overlap.Length > 0))
                 {
                     collision[i] = new() { projectile = p, hitShape = overlap[0].shape };
-                    p.alive = 0;
-                    alive[i] = false;
+                    p.lifetime = 0;//kill particle
                 }
 
                 projectile[i] = p;

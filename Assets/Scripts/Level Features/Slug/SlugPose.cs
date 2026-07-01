@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 using Unity.U2D.Physics;
-using Unity.Mathematics;
 
 [Serializable]
 public struct SlugPose
@@ -35,6 +34,16 @@ public struct SlugPose
         p2 = p1 + d1;
         v1 = aim.RotateVector(v1);
         v2 = aim.RotateVector(v2);
+    }
+
+    public void Reflect(Vector2 origin, Vector2 n)
+    {
+        p0 = origin + MathTools.ReflectAcrossHyperplane(p0 - origin, n);
+        p1 = origin + MathTools.ReflectAcrossHyperplane(p1 - origin, n);
+        p2 = origin + MathTools.ReflectAcrossHyperplane(p2 - origin, n);
+        v0 = MathTools.ReflectAcrossHyperplane(v0, n);
+        v1 = MathTools.ReflectAcrossHyperplane(v1, n);
+        v2 = MathTools.ReflectAcrossHyperplane(v2, n);
     }
 
     public static SlugPose Lerp(in SlugPose x, in SlugPose y, float t)

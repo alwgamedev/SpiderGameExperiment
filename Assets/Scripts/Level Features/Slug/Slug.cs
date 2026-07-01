@@ -13,6 +13,11 @@ public class Slug : MonoBehaviour
     [SerializeField] SlugRenderer renderer;
     [SerializeField] SlugeEye eye;
     [SerializeField] float aimSpeed;
+    [SerializeField] VFXShooter shooter;
+    [SerializeField] float shootPosition;
+    [SerializeField] float shootSpeed;
+    [SerializeField] float gravityScale;
+    [SerializeField] float damage;
 
     AnimationTimer<SlugPose, SlugAnimationUtility> animationTimer;
     int animFrame;
@@ -21,7 +26,7 @@ public class Slug : MonoBehaviour
     //or set animFrame = animationSpeed.Length for dormant
 
     PhysicsRotate aim;
-    bool changeOrientation;
+    SlugPose lastWorldPose;
 
     float _orientation;
     float scheduledOrientation;
@@ -38,6 +43,7 @@ public class Slug : MonoBehaviour
                 transform.localScale = s;
                 renderer.SetOrientation(value);
                 eye.OnChangeOrientation(transform.right);
+                lastWorldPose.Reflect(transform.position, transform.right);
             }
         }
     }
@@ -50,6 +56,7 @@ public class Slug : MonoBehaviour
     void Start()
     {
         renderer.Initialize();
+        shooter.Initialize();
 
         Orientation = transform.localScale.x;
         scheduledOrientation = Orientation;
@@ -61,6 +68,7 @@ public class Slug : MonoBehaviour
 
         p.Transform(transform.localToWorldMatrix);
         p.Aim(aim);
+        lastWorldPose = p;
         eye.SnapToPosition(in p, Orientation);
 
         //first update will take care of setting renderer control points
@@ -69,16 +77,11 @@ public class Slug : MonoBehaviour
     void OnDestroy()
     {
         renderer.OnDestroy();
+        shooter.ReleaseBuffers();
     }
 
     void Update()
     {
-        // testAnim = Mathf.Clamp(testAnim, 0, animationSequence.Length - 1.001f);
-        // var i = (int)testAnim;
-        // var t = testAnim - i;
-        // var p = SlugPose.Lerp(pose[animationSequence[i]], pose[animationSequence[i + 1]], t);
-        // SetPose(p);
-
         Orientation = scheduledOrientation;
 
         if (Keyboard.current.cKey.wasPressedThisFrame)
@@ -86,13 +89,16 @@ public class Slug : MonoBehaviour
             BeginAnimation(0);
         }
 
-        var dt = Time.deltaTime;
+        var dt = Time.deltaTime;        
+        shooter.Update(dt);
+        HandleProjectileHits();
         UpdateAnimation(dt);
+        UpdateAim(dt, in lastWorldPose);
 
         var p = animationTimer.AnimatedValue;
         p.Transform(transform.localToWorldMatrix);
         p.Aim(aim);
-        UpdateAim(dt, in p);//aim won't take effect until next frame
+        lastWorldPose = p;
 
         eye.UpdateSpring(in p, Orientation, dt);
         renderer.SetBodyPose(in p);
@@ -106,10 +112,53 @@ public class Slug : MonoBehaviour
             BeginAnimation(++animFrame);
             if (animationSequence[animFrame] == shootPose)
             {
-                Debug.Log("Shoot!");
+                Shoot(in lastWorldPose);
             }
             
             animationTimer.Update(Time.deltaTime);
+        }
+    }
+
+    void Shoot(in SlugPose worldPose)
+    {
+
+        var baseRot = new PhysicsRotate() { direction = transform.right };
+        var worldAim = aim.MultiplyRotation(baseRot);
+        var shootDir = Orientation * worldAim.direction;
+        var velocity = shootSpeed * shootDir;
+        
+        var position = worldPose.p2 + shootPosition * shootDir;
+
+        var acceleration = gravityScale * PhysicsWorld.defaultWorld.gravity;
+
+        var projectile = new Projectile()
+        {
+            position = position,
+            velocity = velocity,
+            acceleration = acceleration,
+            damage = damage
+        };
+
+        shooter.Shoot(projectile);
+    }
+
+    void HandleProjectileHits()
+    {
+        var coll = shooter.collision;
+        for (int i = 0; i < coll.Length; i++)
+        {
+            var c = coll[i];
+            var shape = c.hitShape;
+            if (!shape.isValid)
+            {
+                continue;
+            }
+
+            Debug.Log($"handling hit on {shape.body.transformObject.name}");
+            shape.TryGetShapeData(out var sd);
+            var target = ProjectileTargetRegistry.Target(sd.projectileTarget);
+            target?.HandleProjectileHit(c);
+            coll[i] = default;
         }
     }
 
@@ -125,7 +174,6 @@ public class Slug : MonoBehaviour
         var g = GoalAim(in worldPose);
         if (g.direction.x < 0)
         {
-            Debug.Log("change direction");
             scheduledOrientation = -Orientation;
         }
 

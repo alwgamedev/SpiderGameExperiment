@@ -58,6 +58,9 @@ public static class PhysicsRegistry
         return shapeDataList[shape.Id()];
     }
 
+    /// <summary>
+    /// Outputs default shape data if id not registered.
+    /// </summary>
     public static bool TryGetShapeData(int id, out ShapeData sd)
     {
         if (id == 0 || !(id < shapeDataList.Length))
@@ -70,6 +73,9 @@ public static class PhysicsRegistry
         return true;
     }
 
+    /// <summary>
+    /// Outputs default shape data if shape not registered.
+    /// </summary>
     public static bool TryGetShapeData(this PhysicsShape shape, out ShapeData sd)
     {
         return TryGetShapeData(shape.Id(), out sd);
