@@ -13,6 +13,7 @@ public class SpiderMover
     [Header("Parts")]
     [SerializeField] SpiderBody spiderBody;
     [SerializeField] SpiderBodyDefinition spiderBodyDef;
+    [SerializeField] PBFDynamicObstacleSO fluidObstacle;
     [SerializeField] LegSynchronizer legSynch;
     [SerializeField] LegSynchSettings stdLegSettings;
     [SerializeField] LegSynchSettings freefallLegSettings;
@@ -203,9 +204,19 @@ public class SpiderMover
         thruster.Initialize();
         thrusterFlame.Initialize();
 
+        var shapeData = new PhysicsRegistry.ShapeData()
+        {
+            fluidObstacle = fluidObstacle.settings,
+            projectileTarget = projectileTargetID
+        };
         spiderBody.CreatePhysicsBody(new PhysicsRotate() { direction = transform.right }, abdomenRoot, headRoot, headBone,
-            grappleArmTransform, spiderBodyDef, projectileTargetID);
-        InitializeLegSynch();
+            grappleArmTransform, spiderBodyDef, shapeData);
+
+        var legShapeData = new PhysicsRegistry.ShapeData()//no fluid obstacle
+        {
+            projectileTarget = projectileTargetID
+        };
+        InitializeLegSynch(legShapeData);
         InitializeGroundMap();
         grapple.Initialize(spiderInput, World, TotalMass, FacingRight);
     }
@@ -897,7 +908,7 @@ public class SpiderMover
         legSynch.UpdateAllLegs(dt, groundMap, legCastDirection, FacingRight);
     }
 
-    private void InitializeLegSynch()
+    private void InitializeLegSynch(PhysicsRegistry.ShapeData shapeData)
     {
         var anchorBody = new NativeArray<PhysicsBody>(8, Allocator.Temp);
         for (int i = 0; i < 4; i++)
@@ -906,7 +917,7 @@ public class SpiderMover
             anchorBody[4 + i] = SpideyBody.abdomen;
         }
 
-        legSynch.Initialize(anchorBody);
+        legSynch.Initialize(anchorBody, shapeData);
         legSynch.settings = stdLegSettings.Clone();
         legState = LegState.std;
     }

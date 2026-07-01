@@ -42,9 +42,6 @@ public class VFXShooter
     {
         if (projectile[nextProjectileID].lifetime > 0)
         {
-            //this just means we've circled back to the beginning of queue (first fired projectile)
-            //and it's still alive... there could be free slots past it.
-            //so we could loop until we find a free id but meh just use a large enough capacity.
             return;
         }
 
@@ -59,10 +56,22 @@ public class VFXShooter
         shootEvent.SetInt(projectileIDProperty, id);
         vfx.SendEvent(shootEventProperty, shootEvent);
 
-        nextProjectileID++;
-        if (nextProjectileID == projectile.Length)
+        var max = projectile.Length;
+        Increment(ref nextProjectileID, max);
+        var start = nextProjectileID;
+        while (projectile[nextProjectileID].lifetime > 0 && nextProjectileID != start)
         {
-            nextProjectileID = 0;
+            //cycle through until we find an available projectile id
+            Increment(ref nextProjectileID, max);
+        }       
+        
+        static void Increment(ref int x, int max)
+        {
+            x++;
+            if (x == max)
+            {
+                x = 0;
+            }
         }
     }
 

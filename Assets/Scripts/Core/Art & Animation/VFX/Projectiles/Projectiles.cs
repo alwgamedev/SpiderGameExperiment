@@ -77,6 +77,11 @@ public static class ProjectileTargetRegistry
 
     public static void Release(IProjectileTarget t)
     {
+        if (t == null || targetList == null)
+        {
+            return;
+        }
+
         var id = t.ProjectileTargetID;
         if (id != 0 && id < targetList.Count)
         {

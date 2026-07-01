@@ -107,7 +107,7 @@ public struct GrabberClaw
     }
 
     //geometry should be local to physics transforms
-    public void Initialize(PhysicsBody anchorBody, GrabberClawDefinition def,
+    public void Initialize(PhysicsBody anchorBody, GrabberClawDefinition def, PhysicsRegistry.ShapeData shapeData,
         Transform upperArmPhysTransform, Transform[] upperArmBone,
         Transform lowerArmPhysTransform, Transform[] lowerArmBone)
     {
@@ -117,8 +117,10 @@ public struct GrabberClaw
         CreateArmGeometry(upperArmGeometry, upperArmPhysTransform, upperArmBone, def.upperWidth, ref upperArmInterior0, ref upperArmInterior1, false);
         CreateArmGeometry(lowerArmGeometry, lowerArmPhysTransform, lowerArmBone, def.lowerWidth, ref lowerArmInterior0, ref lowerArmInterior1, true);
 
-        upperArm = CreateArmBody(def.bodyDef, def.shapeDef, anchorBody, upperArmPhysTransform, upperArmGeometry);
-        lowerArm = CreateArmBody(def.bodyDef, def.shapeDef, anchorBody, lowerArmPhysTransform, lowerArmGeometry);
+        upperArm = CreateArmBody(def.bodyDef, def.shapeDef, anchorBody, 
+            upperArmPhysTransform, upperArmGeometry, shapeData);
+        lowerArm = CreateArmBody(def.bodyDef, def.shapeDef, anchorBody, 
+            lowerArmPhysTransform, lowerArmGeometry, shapeData);
 
         upperArmJoint = CreateArmJoint(def.jointDef, anchorBody, upperArm, upperArmBone[0].position);
         lowerArmJoint = CreateArmJoint(def.jointDef, anchorBody, lowerArm, lowerArmBone[0].position);
@@ -173,7 +175,7 @@ public struct GrabberClaw
         }
 
         static PhysicsBody CreateArmBody(PhysicsBodyDefinition bodyDef, PhysicsShapeDefinition shapeDef, PhysicsBody anchorBody,
-            Transform physTransform, Span<PolygonGeometry> geometry)
+            Transform physTransform, Span<PolygonGeometry> geometry, PhysicsRegistry.ShapeData shapeData)
         {
             bodyDef.position = physTransform.position;
             bodyDef.rotation = new PhysicsRotate(physTransform.rotation, PhysicsWorld.TransformPlane.XY);

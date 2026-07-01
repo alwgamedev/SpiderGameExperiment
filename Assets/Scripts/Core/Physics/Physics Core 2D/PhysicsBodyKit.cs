@@ -9,6 +9,7 @@ public class PhysicsBodyKit : MonoBehaviour
 
     [SerializeField] PhysicsBodyDefinition bodyDef;
     [SerializeField] PhysicsShapeDefinition shapeDef;
+    [SerializeField] PBFDynamicObstacleSO fluidObstacle;
     [SerializeField] BasicKitGeometry[] basicShape;
     [SerializeField] PolygonKitGeometry[] polygonShape;
     [SerializeField] bool drawGizmos;
@@ -54,8 +55,11 @@ public class PhysicsBodyKit : MonoBehaviour
 
         //if body not valid error, check correct geometry type selected
         body.transformObject = transform;
-
-        PhysicsRegistry.RegisterBodyAndShapes(body);
+        var shapeData = new PhysicsRegistry.ShapeData()
+        {
+            fluidObstacle = fluidObstacle ? fluidObstacle.settings : default
+        };
+        PhysicsRegistry.RegisterBodyAndShapes(body, shapeData);
     }
 
     private void OnValidate()

@@ -9,7 +9,6 @@ public struct SpiderBodyDefinition
     public PhysicsFixedJointDefinition headJointDef;
     public PhysicsBodyDefinition bodyDef;
     public PhysicsShapeDefinition shapeDef;
-    public PBFDynamicObstacleSO fluidObstacle;
 
     public Vector2 abdomenCapsuleSize;//(width, height) -- full width and height
     public Vector2 abdomenCapsuleOffset;
@@ -141,7 +140,7 @@ public struct SpiderBody
     const float grappleArmDensityMultiplier = 0.001f;
 
     public void CreatePhysicsBody(PhysicsRotate levelDirection, Transform abdomenRoot, Transform headRoot, Transform headBone,
-        Transform grappleArmTransform, SpiderBodyDefinition spiderDef, int projectileTargetID)
+        Transform grappleArmTransform, SpiderBodyDefinition spiderDef, PhysicsRegistry.ShapeData shapeData)
     {
         var defaultWorld = PhysicsWorld.defaultWorld;
 
@@ -170,15 +169,6 @@ public struct SpiderBody
             Vector2.zero, headRoot.localToWorldMatrix, out var headCapsule);
         head.transformObject = headRoot;
 
-        //set user data
-        // var abdomenUserData = abdomenCapsule.userData;
-        // abdomenUserData.objectValue = spiderDef.fluidObstacle;
-        // abdomenCapsule.userData = abdomenUserData;
-
-        // var headUserData = headCapsule.userData;
-        // headUserData.objectValue = spiderDef.fluidObstacle;
-        // headCapsule.userData = headUserData;
-
         //fixed joints: anchorB on bodyB will be pulled towards anchorA on bodyA;
         //for rotation that means bodyB will rotate so that its anchor direction lines up with the anchor direction on bodyA
         var headJointDef = spiderDef.headJointDef;
@@ -200,13 +190,13 @@ public struct SpiderBody
         PhysicsRegistry.RegisterBodyAndShapes(head);
         PhysicsRegistry.RegisterBodyAndShapes(abdomen);
 
-        var shapeData = new PhysicsRegistry.ShapeData()
-        {
-            fluidObstacle = spiderDef.fluidObstacle.settings,
-            projectileTarget = projectileTargetID
-        };
         headCapsule.SetShapeData(shapeData);
         abdomenCapsule.SetShapeData(shapeData);
+        var grappleArmShapeData = new PhysicsRegistry.ShapeData()//no fluid obstacle
+        {
+            projectileTarget = shapeData.projectileTarget
+        };
+        grappleArm.SetShapeData(grappleArmShapeData);
     }
 
     public void Enable()

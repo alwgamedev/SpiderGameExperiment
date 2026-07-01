@@ -110,16 +110,17 @@ public class Grabber
     //LIFETIME
 
     //anchor body will be head of spider
-    public void Initialize(SpiderInput input, PhysicsBody anchorBody, PhysicsBody depositTargetBody)
+    public void Initialize(SpiderInput input, PhysicsBody anchorBody, PhysicsBody depositTargetBody,
+        PhysicsRegistry.ShapeData shapeData)
     {
         this.input = input;
         world = anchorBody.world;
         this.depositTargetBody = depositTargetBody;
         depositTargetPosition = depositTargetBody.transform.InverseTransformPoint(depositTarget.position);
 
-        arm.Initialize(armPhysTransforms, armNodes, anchorBody, armDef, armSettings);
+        arm.Initialize(armPhysTransforms, armNodes, anchorBody, armDef, armSettings, shapeData);
         anchor.Initialize(arm.jointedChain.joint[0], offAnchor.position, deployedAnchor.position);
-        claw.Initialize(arm.jointedChain.body[^1], clawDef,
+        claw.Initialize(arm.jointedChain.body[^1], clawDef, shapeData,
             upperClawPhysTransform, upperClawBone,
             lowerClawPhysTransform, lowerClawBone);
         mask.Initialize(sprite);

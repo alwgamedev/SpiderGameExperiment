@@ -213,7 +213,7 @@ public class LegSynchronizer
     }
 #endif
 
-    public void Initialize(ReadOnlySpan<PhysicsBody> anchorBody)
+    public void Initialize(ReadOnlySpan<PhysicsBody> anchorBody, PhysicsRegistry.ShapeData shapeData)
     {
         var numLegs = chainTransform.Length;
 
@@ -245,7 +245,7 @@ public class LegSynchronizer
 
         void InitializeLeg(int i, PhysicsBody body)
         {
-            leg[i].Initialize(chainTransform[i].array, bones[i].array, body, chainDef, chainSettings[i], false);
+            leg[i].Initialize(chainTransform[i].array, bones[i].array, body, chainDef, chainSettings[i], false, shapeData);
             length[i] = new float[leg[i].JointCount];
             var totLength = 0f;
             for (int j = 0; j < leg[i].JointCount; j++)

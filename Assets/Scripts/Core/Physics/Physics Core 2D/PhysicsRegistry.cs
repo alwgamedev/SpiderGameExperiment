@@ -102,7 +102,6 @@ public static class PhysicsRegistry
         SetShapeData(shape.Id(), shapeData);
     }
 
-    /// <summary> Uses the same ShapeData for all shapes. </summary>
     public static void RegisterBodyAndShapes(PhysicsBody body)
     {
         RegisterBody(body);
@@ -110,7 +109,22 @@ public static class PhysicsRegistry
         var shape = body.GetShapes();
         for (int i = 0; i < shape.Length; i++)
         {
-            RegisterShape(shape[i]);
+            var s = shape[i];
+            RegisterShape(s);
+        }
+    }
+
+    /// <summary> Uses the same ShapeData for all shapes. </summary>
+    public static void RegisterBodyAndShapes(PhysicsBody body, ShapeData shapeData)
+    {
+        RegisterBody(body);
+
+        var shape = body.GetShapes();
+        for (int i = 0; i < shape.Length; i++)
+        {
+            var s = shape[i];
+            RegisterShape(s);
+            s.SetShapeData(shapeData);
         }
     }
 

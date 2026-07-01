@@ -14,6 +14,7 @@ public class Slug : MonoBehaviour
     [SerializeField] SlugeEye eye;
     [SerializeField] float aimSpeed;
     [SerializeField] VFXShooter shooter;
+    [SerializeField] float shootTime;
     [SerializeField] float shootPosition;
     [SerializeField] float shootSpeed;
     [SerializeField] float gravityScale;
@@ -22,6 +23,7 @@ public class Slug : MonoBehaviour
     AnimationTimer<SlugPose, SlugAnimationUtility> animationTimer;
     int animFrame;
     int NextFrame => Mathf.Min(animFrame + 1, animationSequence.Length - 1);
+    bool shoot;
     //animFrame = i means we're moving tweening from animation[i] to animation[i + 1], with speed animationSpeed[i]
     //or set animFrame = animationSpeed.Length for dormant
 
@@ -90,8 +92,7 @@ public class Slug : MonoBehaviour
         }
 
         var dt = Time.deltaTime;        
-        shooter.Update(dt);
-        HandleProjectileHits();
+        UpdateShooter(dt);
         UpdateAnimation(dt);
         UpdateAim(dt, in lastWorldPose);
 
@@ -110,18 +111,29 @@ public class Slug : MonoBehaviour
         if (!animationTimer.Update(dt) && animFrame < animationSpeed.Length - 1)
         {
             BeginAnimation(++animFrame);
-            if (animationSequence[animFrame] == shootPose)
+            if (animationSequence[NextFrame] == shootPose)
             {
-                Shoot(in lastWorldPose);
+                shoot = true;
             }
             
             animationTimer.Update(Time.deltaTime);
         }
     }
 
+    void UpdateShooter(float dt)
+    {
+        shooter.Update(dt);
+        HandleProjectileHits();
+
+        if (shoot && animationTimer.timer > shootTime)
+        {
+            Shoot(in lastWorldPose);
+            shoot = false;
+        }
+    }
+
     void Shoot(in SlugPose worldPose)
     {
-
         var baseRot = new PhysicsRotate() { direction = transform.right };
         var worldAim = aim.MultiplyRotation(baseRot);
         var shootDir = Orientation * worldAim.direction;
@@ -154,7 +166,6 @@ public class Slug : MonoBehaviour
                 continue;
             }
 
-            Debug.Log($"handling hit on {shape.body.transformObject.name}");
             shape.TryGetShapeData(out var sd);
             var target = ProjectileTargetRegistry.Target(sd.projectileTarget);
             target?.HandleProjectileHit(c);
@@ -188,6 +199,10 @@ public class Slug : MonoBehaviour
         {
             Vector2 p = worldPose.p2;
             var q = Spider.Player.mover.SpideyBody.VirtualPosition;
+            if (Vector2.SqrMagnitude(p - q) < 2.25)//prevent direction change flickering
+            {
+                return aim;
+            }
             var u = (q - p).normalized;
             var worldRot = new PhysicsRotate() { direction = Orientation * u };
             var baseRot = new PhysicsRotate() { direction = transform.right };

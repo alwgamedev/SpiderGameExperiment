@@ -177,7 +177,7 @@ MonoBehaviour:
     serializedVersion: 2
     x: -122
     y: -616
-    width: 1276
+    width: 1277
     height: 1530
 --- !u!114 &114350483966674976
 MonoBehaviour:
@@ -255,7 +255,7 @@ MonoBehaviour:
   - {fileID: 114780028408030698}
   - {fileID: 114063133802684794}
   dataType: 0
-  capacity: 16
+  capacity: 32
   stripCapacity: 16
   particlePerStripCount: 16
   needsComputeBounds: 1

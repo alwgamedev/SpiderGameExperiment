@@ -52,12 +52,13 @@ public class Spider : MonoBehaviour, IProjectileTarget
 #if UNITY_EDITOR
         Time.timeScale = timeScale;
 #endif
-        ProjectileTargetRegistry.Register(this);
+        ProjectileTargetID = ProjectileTargetRegistry.Register(this);
 
         spiderInput.Initialize();
         health.Start();
         mover.Initialize(transform, spiderInput, ProjectileTargetID);
-        grabber.Initialize(spiderInput, mover.SpideyBody.head, mover.SpideyBody.abdomen);
+        grabber.Initialize(spiderInput, mover.SpideyBody.head, mover.SpideyBody.abdomen, 
+            new() { projectileTarget = ProjectileTargetID });
         mover.grabber = grabber;
         jumpPreviewArrow.Start();
         grappleShootPreview.Start(mover.World);

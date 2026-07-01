@@ -65,9 +65,9 @@ public struct GrabberArm
     public readonly bool Enabled() => jointedChain.Enabled();
 
     public void Initialize(Transform[] physTransform, Transform[] bone, PhysicsBody anchorBody,
-        JointedChainDefinition def, JointedChainSettings settings)
+        JointedChainDefinition def, JointedChainSettings settings, PhysicsRegistry.ShapeData shapeData)
     {
-        jointedChain.Initialize(physTransform, bone, anchorBody, def, settings, true);
+        jointedChain.Initialize(physTransform, bone, anchorBody, def, settings, true, shapeData);
         targetPose = new PhysicsRotate[jointedChain.JointCount];
     }
 

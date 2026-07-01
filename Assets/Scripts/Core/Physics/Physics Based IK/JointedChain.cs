@@ -203,9 +203,9 @@ public struct JointedChain
     /// Bone array should list the joint positions and effector position, and
     /// physTransforms are expected to be centered between the bone positions.</summary>
     public void Initialize(Transform[] physTransform, Transform[] bone, PhysicsBody anchorBody, 
-        JointedChainDefinition def, JointedChainSettings settings, bool alignArmRotations)
+        JointedChainDefinition def, JointedChainSettings settings, bool alignArmRotations, PhysicsRegistry.ShapeData shapeData)
     {
-        Initialize(physTransform, bone, anchorBody.world, def, settings, alignArmRotations);
+        Initialize(physTransform, bone, anchorBody.world, def, settings, alignArmRotations, shapeData);
 
         var jointDef = def.jointDef;
         if (settings.upperAngleLimit != null)
@@ -240,7 +240,7 @@ public struct JointedChain
     /// Bone array should list the joint positions and effector position, and
     /// physTransforms are expected to be centered between the bone positions.</summary>
     public void Initialize(Transform[] physTransform, Transform[] bone, PhysicsWorld world, JointedChainDefinition def, JointedChainSettings settings,
-        bool alignArmRotations)
+        bool alignArmRotations, PhysicsRegistry.ShapeData shapeData)
     {
         this.world = world;
         body = new PhysicsBody[bone.Length - 1];
@@ -263,7 +263,7 @@ public struct JointedChain
             chainBody.transformObject = physTransform[i];
             body[i] = chainBody;
 
-            PhysicsRegistry.RegisterBodyAndShapes(chainBody);
+            PhysicsRegistry.RegisterBodyAndShapes(chainBody, shapeData);
         }
 
         var jointDefCopy = def.jointDef;
